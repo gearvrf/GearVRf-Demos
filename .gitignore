@@ -1,0 +1,27 @@
+/////////////////////////
+// Ignored Folders      /
+/////////////////////////
+bin/
+gen/
+obj/
+ovr_mobile_sdk/
+ovr_sdk_mobile/
+.metadata/
+.recommenders/
+
+////////////////////////
+// Ignored Extensions  /
+////////////////////////
+*.prefs
+*.so
+
+/////////////////////////
+// Ignored Files        /
+/////////////////////////
+.DS_Store
+lint.xml
+oculussig_*
+proguard-project.txt
+SystemUtils.jar
+VrApi.jar
+VrAppFramework.jar
