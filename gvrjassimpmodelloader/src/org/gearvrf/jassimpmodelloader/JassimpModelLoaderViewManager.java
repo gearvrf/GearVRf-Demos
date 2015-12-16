@@ -27,8 +27,6 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
-import org.gearvrf.jassimp2.GVRJassimpSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
@@ -74,27 +72,27 @@ public class JassimpModelLoaderViewManager extends GVRScript {
             setup(animations.get(0));
         }
 
-        ModelPosition astroBoyModelPosition = new ModelPosition();
-        astroBoyModelPosition.setPosition(0.0f, -0.4f, -0.5f);
-
         astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
         astroBoyModel.getTransform().setScale(3, 3, 3);
-        astroBoyModel.getTransform().setPosition(astroBoyModelPosition.x,
-                astroBoyModelPosition.y, astroBoyModelPosition.z);
+        astroBoyModel.getTransform().setPosition(0.0f, -0.4f, -0.5f);
 
         // Model with color
-        GVRSceneObject benchModel = gvrContext.loadJassimpModel("bench.dae");
+        GVRSceneObject benchModel = gvrContext.loadModel("bench.dae");
 
-        ModelPosition benchModelPosition = new ModelPosition();
-        benchModelPosition.setPosition(0.0f, -4.0f, -30.0f);
-
-        benchModel.getTransform().setPosition(benchModelPosition.x,
-                benchModelPosition.y, benchModelPosition.z);
-        benchModel.getTransform()
-        .setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
+        benchModel.getTransform().setScale(0.66f, 0.66f, 0.66f);
+        benchModel.getTransform().setPosition(0.0f, -4.0f, -20.0f);
+        benchModel.getTransform().setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
         mMainScene.addSceneObject(astroBoyModel);
         mMainScene.addSceneObject(benchModel);
+
+        // Model over network
+        String urlBase = "https://raw.githubusercontent.com/gearvrf/GearVRf-Demos/master/gvrjassimpmodelloader/assets/";
+        GVRSceneObject treesModel = gvrContext.loadModelFromURL(urlBase + "trees/trees9.3ds");
+        if (treesModel != null) {
+            treesModel.getTransform().setPosition(5.0f, 0.0f, 0.0f);
+            mMainScene.addSceneObject(treesModel);
+        }
     }
 
     @Override
@@ -112,17 +110,5 @@ public class JassimpModelLoaderViewManager extends GVRScript {
     private void setup(GVRAnimation animation) {
         animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
         mAnimations.add(animation);
-    }
-}
-
-class ModelPosition {
-    float x;
-    float y;
-    float z;
-
-    void setPosition(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
     }
 }
