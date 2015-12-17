@@ -27,7 +27,8 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
+import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
+import org.gearvrf.jassimp2.GVRJassimpSceneObject;
 import org.gearvrf.utility.Log;
 
 import android.graphics.Color;
@@ -65,25 +66,25 @@ public class JassimpModelLoaderViewManager extends GVRScript {
         mainCameraRig.getRightCamera().setBackgroundColor(Color.BLACK);
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
 
-        // Model with texture
-        GVRSceneObject astroBoyModel = gvrContext.loadJassimpModel("astro_boy.dae");
+        // Model with texture and animation
+        GVRJassimpSceneObject astroBoyModel = (GVRJassimpSceneObject) gvrContext.loadJassimpModel("astro_boy.dae");
+        List<GVRKeyFrameAnimation> animations = astroBoyModel.getAnimations();
+        if (animations.size() >= 1) {
+            setup(animations.get(0));
+        }
+
+        ModelPosition astroBoyModelPosition = new ModelPosition();
+        astroBoyModelPosition.setPosition(0.0f, -0.4f, -0.5f);
+
+        astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
+        astroBoyModel.getTransform().setScale(3, 3, 3);
+        astroBoyModel.getTransform().setPosition(astroBoyModelPosition.x,
+                astroBoyModelPosition.y, astroBoyModelPosition.z);
 
         // Model with color
         GVRSceneObject benchModel = gvrContext.loadJassimpModel("bench.dae");
 
-        ModelPosition astroBoyModelPosition = new ModelPosition();
-
-        astroBoyModelPosition.setPosition(0.0f, -0.4f, -0.5f);
-
-        astroBoyModel.getTransform().setScale(3, 3, 3);
-
-        astroBoyModel.getTransform().setPosition(astroBoyModelPosition.x,
-                astroBoyModelPosition.y, astroBoyModelPosition.z);
-        astroBoyModel.getTransform()
-                .setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
-
         ModelPosition benchModelPosition = new ModelPosition();
-
         benchModelPosition.setPosition(0.0f, -4.0f, -30.0f);
 
         benchModel.getTransform().setPosition(benchModelPosition.x,
@@ -93,8 +94,6 @@ public class JassimpModelLoaderViewManager extends GVRScript {
 
         mMainScene.addSceneObject(astroBoyModel);
         mMainScene.addSceneObject(benchModel);
-
-        rotateModel(astroBoyModel, 10f, astroBoyModelPosition);
     }
 
     @Override
@@ -112,14 +111,6 @@ public class JassimpModelLoaderViewManager extends GVRScript {
     private void setup(GVRAnimation animation) {
         animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
         mAnimations.add(animation);
-    }
-
-    private void rotateModel(GVRSceneObject model, float duration,
-            ModelPosition modelPosition) {
-        setup(new GVRRotationByAxisWithPivotAnimation( //
-                model, duration, -360.0f, //
-                0.0f, 1.0f, 0.0f, //
-                modelPosition.x, modelPosition.y, modelPosition.z));
     }
 }
 
