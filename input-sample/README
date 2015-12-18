@@ -1,0 +1,34 @@
+GVRf IO
+
+This folder contains files required to implement User Interaction with GVRf using input devices attached to 
+the Android device.
+
+GVRf contains modules to help developers integrate input devices faster. For now the framework supports a 
+standard mouse along with a few common game controllers(list below).
+
+The InputSample folder contains a sample program that demonstrates using a Mouse or Controller with GVRf.
+It makes use of the IO framework to generate InputEvents for the GVRInputManager. 
+
+Game Controllers supported for now:
+1) Samsung Gamepad
+2) Steel Series Stratus XL
+3) Sony Dualshock 3 (tested using an USB OTG cable)
+3) Sony Dualshock 4 (tested using an USB OTG cable)
+
+Note: For Bluetooth controllers make sure that the controller is paired with the Samsung Device 
+before launching the app.
+
+Known Issues:
+1) USB Mice can only be connected to Gear VR devices that have a USB port (via an USB OTG cable).
+
+2) The standard Android mouse pointer shows up in the VR mode.
+
+This issue has been fixed and should not affect Android devices that have been updated after 
+September 2015. Make sure you have pulled the latest Android updates if the issue still persists.
+
+Note that the pointer only disappears when the device is docked in the VR headset. It still shows 
+up when developing using the developer mode.
+
+3) Apps closing when the USB dongle is plugged in or removed.
+
+
