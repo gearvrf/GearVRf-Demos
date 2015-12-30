@@ -29,6 +29,7 @@ import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
 import org.gearvrf.jassimp2.GVRJassimpSceneObject;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
 import android.graphics.Color;
@@ -67,8 +68,8 @@ public class JassimpModelLoaderViewManager extends GVRScript {
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
 
         // Model with texture and animation
-        GVRJassimpSceneObject astroBoyModel = (GVRJassimpSceneObject) gvrContext.loadJassimpModel("astro_boy.dae");
-        List<GVRKeyFrameAnimation> animations = astroBoyModel.getAnimations();
+        GVRModelSceneObject astroBoyModel = gvrContext.loadModel("astro_boy.dae");
+        List<GVRAnimation> animations = astroBoyModel.getAnimations();
         if (animations.size() >= 1) {
             setup(animations.get(0));
         }
