@@ -45,7 +45,7 @@ public class MeshAnimationScript extends GVRScript {
         });
 
         try {
-            mCharacter = gvrContext.loadJassimpModel(mModelPath);
+            mCharacter = gvrContext.loadModel(mModelPath);
             mCharacter.getTransform().setPosition(0.0f, -10.0f, -10.0f);
             mCharacter.getTransform().setRotationByAxis(90.0f, 1.0f, 0.0f, 0.0f);
             mCharacter.getTransform().setRotationByAxis(40.0f, 0.0f, 1.0f, 0.0f);
