@@ -27,8 +27,6 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
-import org.gearvrf.jassimp2.GVRJassimpSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
@@ -44,12 +42,11 @@ public class JassimpModelLoaderViewManager extends GVRScript {
     private GVRScene mMainScene;
 
     @Override
-    public void onInit(GVRContext gvrContext) throws IOException {
+    public void onInit(GVRContext gvrContext) {
 
         mAnimationEngine = gvrContext.getAnimationEngine();
 
         mMainScene = gvrContext.getNextMainScene(new Runnable() {
-
             @Override
             public void run() {
                 for (GVRAnimation animation : mAnimations) {
@@ -68,33 +65,44 @@ public class JassimpModelLoaderViewManager extends GVRScript {
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
 
         // Model with texture and animation
-        GVRModelSceneObject astroBoyModel = gvrContext.loadModel("astro_boy.dae");
-        List<GVRAnimation> animations = astroBoyModel.getAnimations();
-        if (animations.size() >= 1) {
-            setup(animations.get(0));
+        try {
+            GVRModelSceneObject astroBoyModel = gvrContext.loadModel("astro_boy.dae");
+            List<GVRAnimation> animations = astroBoyModel.getAnimations();
+            if (animations.size() >= 1) {
+                setup(animations.get(0));
+            }
+
+            astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
+            astroBoyModel.getTransform().setScale(3, 3, 3);
+            astroBoyModel.getTransform().setPosition(0.0f, -0.4f, -0.5f);
+
+            mMainScene.addSceneObject(astroBoyModel);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load a model: %s", e);
         }
 
-        ModelPosition astroBoyModelPosition = new ModelPosition();
-        astroBoyModelPosition.setPosition(0.0f, -0.4f, -0.5f);
-
-        astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
-        astroBoyModel.getTransform().setScale(3, 3, 3);
-        astroBoyModel.getTransform().setPosition(astroBoyModelPosition.x,
-                astroBoyModelPosition.y, astroBoyModelPosition.z);
-
         // Model with color
-        GVRSceneObject benchModel = gvrContext.loadJassimpModel("bench.dae");
+        try {
+            GVRSceneObject benchModel = gvrContext.loadModel("bench.dae");
 
-        ModelPosition benchModelPosition = new ModelPosition();
-        benchModelPosition.setPosition(0.0f, -4.0f, -30.0f);
+            benchModel.getTransform().setScale(0.66f, 0.66f, 0.66f);
+            benchModel.getTransform().setPosition(0.0f, -4.0f, -20.0f);
+            benchModel.getTransform().setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
-        benchModel.getTransform().setPosition(benchModelPosition.x,
-                benchModelPosition.y, benchModelPosition.z);
-        benchModel.getTransform()
-        .setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
+            mMainScene.addSceneObject(benchModel);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load a model: %s", e);
+        }
 
-        mMainScene.addSceneObject(astroBoyModel);
-        mMainScene.addSceneObject(benchModel);
+        // Model over network
+        String urlBase = "https://raw.githubusercontent.com/gearvrf/GearVRf-Demos/master/gvrjassimpmodelloader/assets/";
+        try {
+            GVRSceneObject treesModel = gvrContext.loadModelFromURL(urlBase + "trees/trees9.3ds");
+            treesModel.getTransform().setPosition(5.0f, 0.0f, 0.0f);
+            mMainScene.addSceneObject(treesModel);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to load a model from URL: %s", e);
+        }
     }
 
     @Override
@@ -112,17 +120,5 @@ public class JassimpModelLoaderViewManager extends GVRScript {
     private void setup(GVRAnimation animation) {
         animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
         mAnimations.add(animation);
-    }
-}
-
-class ModelPosition {
-    float x;
-    float y;
-    float z;
-
-    void setPosition(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
     }
 }
