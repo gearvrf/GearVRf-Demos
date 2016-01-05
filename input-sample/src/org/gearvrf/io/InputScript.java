@@ -16,14 +16,28 @@ package org.gearvrf.io;
 
 import java.util.Random;
 import java.util.concurrent.Future;
-import org.gearvrf.*;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRTextViewSceneObject;
-import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
-import org.gearvrf.utility.Log;
 
-import android.graphics.Color;
-import android.view.Gravity;
+import org.gearvrf.FutureWrapper;
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRBaseSensor;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVRCustomMaterialShaderId;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMaterialMap;
+import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRScript;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.SensorEvent;
+import org.gearvrf.SensorEventListener;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
+import org.gearvrf.scene_objects.view.GVRTextView;
+import org.gearvrf.utility.Log;
 
 public class InputScript extends GVRScript implements CursorControllerListener {
     private static final String TAG = InputScript.class.getSimpleName();
@@ -44,6 +58,11 @@ public class InputScript extends GVRScript implements CursorControllerListener {
     private final long interval = 100;
 
     private Random random;
+    private final GVRTextView textView;
+
+    public InputScript(GVRTextView textView) {
+        this.textView = textView;
+    }
 
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -67,23 +86,21 @@ public class InputScript extends GVRScript implements CursorControllerListener {
             onCursorControllerAdded(cursor);
         }
 
-        final GVRTextViewSceneObject text = new GVRTextViewSceneObject(
-                gvrContext, gvrContext.getActivity(), 40.0f, 20.0f,
-                SELECT_TEXT);
+        // set the default text
+        setTextOnMainThread(SELECT_TEXT);
 
-        text.setGravity(Gravity.CENTER);
-        text.setTextSize(35.0f);
-        text.setTextColor(Color.WHITE);
-        text.setRefreshFrequency(IntervalFrequency.HIGH);
+        GVRViewSceneObject text = new GVRViewSceneObject(gvrContext, textView,
+                gvrContext.createQuad(30.0f, 20.0f));
+        text.getTransform().setPosition(0.0f, 17.0f, -35.0f);
         text.getRenderData().setRenderingOrder(10002);
-        text.getTransform().setPosition(0.0f, 20.0f, -45.0f);
+
         mainScene.addSceneObject(text);
 
         GVRSceneObject cube1 = new Cube(gvrContext, "Cube 1", shaderManager);
         cube1.getTransform().setPosition(0.0f, 1.0f, -10.0f);
         mainScene.addSceneObject(cube1);
         // add the sensor to the cube
-        cube1.setSensor(new CubeSensor(text));
+        cube1.setSensor(new CubeSensor());
 
         GVRSceneObject cube2 = new Cube(gvrContext, "Cube 2", shaderManager);
         cube2.getTransform().setPosition(0.0f, 1.0f, -12.0f);
@@ -92,7 +109,7 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube2.getTransform().setRotation(1.0f, 0.0f, 0.0f, 0.0f);
         mainScene.addSceneObject(cube2);
         // add the sensor to the cube
-        cube2.setSensor(new CubeSensor(text));
+        cube2.setSensor(new CubeSensor());
 
         GVRSceneObject cube3 = new Cube(gvrContext, "Cube 3", shaderManager);
         cube3.getTransform().setPosition(0.0f, 1.0f, -15.0f);
@@ -103,19 +120,17 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube3.getTransform().setRotation(1.0f, 0.0f, 0.0f, 0.0f);
         mainScene.addSceneObject(cube3);
         // add the sensor to the cube
-        cube3.setSensor(new CubeSensor(text));
+        cube3.setSensor(new CubeSensor());
 
     }
 
     private class CubeSensor extends GVRBaseSensor
             implements SensorEventListener {
-        private final GVRTextViewSceneObject text;
         private GVRSceneObject selected;
         private int selectedCursorId;
 
-        public CubeSensor(GVRTextViewSceneObject text) {
+        public CubeSensor() {
             super();
-            this.text = text;
             registerSensorEventListener(this);
         }
 
@@ -123,6 +138,7 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         public void onSensorEvent(SensorEvent event) {
             GVRSceneObject cursor = event.getCursorController()
                     .getSceneObject();
+
             int id = event.getCursorController().getId();
             // Safe to assume that the returned object is a cube
             Cube cube = (Cube) event.getObject();
@@ -160,19 +176,19 @@ public class InputScript extends GVRScript implements CursorControllerListener {
                     cursor.addChildObject(selected);
 
                     cube.setGreen();
-                    text.setText(MOVE_CUBE_TEXT);
+                    setTextOnMainThread(MOVE_CUBE_TEXT);
                 }
             } else if (event.isOver()) {
                 if (cube.isColliding(cursor)) {
                     cube.setRed();
-                    text.setText(BUTTON_SELECT_TEXT);
+                    setTextOnMainThread(BUTTON_SELECT_TEXT);
                 } else {
                     cube.setGrey();
-                    text.setText(SELECT_TEXT);
+                    setTextOnMainThread(SELECT_TEXT);
                 }
             } else {
                 cube.setGrey();
-                text.setText(SELECT_TEXT);
+                setTextOnMainThread(SELECT_TEXT);
             }
         }
     }
@@ -346,5 +362,14 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         public GVRCustomMaterialShaderId getShaderId() {
             return shaderId;
         }
+    }
+
+    private void setTextOnMainThread(final String text) {
+        gvrContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textView.setText(text);
+            }
+        });
     }
 }
