@@ -15,8 +15,12 @@
 
 package org.gearvrf.io;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Gravity;
+
 import org.gearvrf.GVRActivity;
+import org.gearvrf.scene_objects.view.GVRTextView;
 
 public class InputActivity extends GVRActivity {
     private static final String TAG = InputActivity.class.getSimpleName();
@@ -25,7 +29,17 @@ public class InputActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        script = new InputScript();
+
+        // create a textview on the main thread for the script
+        GVRTextView textView = new GVRTextView(this);
+        textView.layout(0, 0, 500, 500);
+        textView.measure(500, 500);
+        textView.setBackgroundColor(Color.BLACK);
+        textView.setTextColor(Color.WHITE);
+        textView.setTextSize(50);
+        textView.setGravity(Gravity.CENTER);
+
+        script = new InputScript(textView);
         setScript(script, "gvr_note4.xml");
     }
 
