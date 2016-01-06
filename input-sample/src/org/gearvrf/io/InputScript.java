@@ -46,6 +46,11 @@ public class InputScript extends GVRScript implements CursorControllerListener {
     private static final String BUTTON_SELECT_TEXT = "Press and hold down a button to select";
     private static final String MOVE_CUBE_TEXT = "Now move the cube";
 
+    private static final float[] INITIAL_CURSOR_POSITION = { 0.0f, 0.0f,
+            -7.0f };
+    private static final float NEAR_DEPTH = -2.0f;
+    private static final float FAR_DEPTH = -30.0f;
+
     private static final float CUBE_WIDTH = 200.0f;
 
     private GVRContext gvrContext = null;
@@ -297,6 +302,16 @@ public class InputScript extends GVRScript implements CursorControllerListener {
 
         mainScene.addSceneObject(sceneObject);
         controller.setSceneObject(sceneObject);
+
+        // set the initial cursor position
+        controller.setPosition(INITIAL_CURSOR_POSITION[0],
+                INITIAL_CURSOR_POSITION[1], INITIAL_CURSOR_POSITION[2]);
+
+        // set the min cursor depth
+        controller.setNearDepth(NEAR_DEPTH);
+
+        // set the max cursor depth
+        controller.setFarDepth(FAR_DEPTH);
     }
 
     @Override
