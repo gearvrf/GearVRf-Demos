@@ -15,11 +15,11 @@
 
 package org.gearvrf.immersivepedia.util;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
+import org.joml.Vector3d;
 
 public class MathUtils {
 
@@ -27,15 +27,15 @@ public class MathUtils {
 
     public static float distance(GVRSceneObject obj1, GVRSceneObject obj2) {
 
-        Vector3D v1 = new Vector3D(obj1.getTransform().getPositionX(),
+        Vector3d v1 = new Vector3d(obj1.getTransform().getPositionX(),
                 obj1.getTransform().getPositionY(),
                 obj1.getTransform().getPositionZ());
 
-        Vector3D v2 = new Vector3D(obj2.getTransform().getPositionX(),
+        Vector3d v2 = new Vector3d(obj2.getTransform().getPositionX(),
                 obj2.getTransform().getPositionY(),
                 obj2.getTransform().getPositionZ());
 
-        return (float) Vector3D.distance(v1, v2);
+        return (float) v1.distance(v2);
     }
 
     public static float[] direction(GVRTransform origin, GVRTransform dest) {
@@ -51,28 +51,28 @@ public class MathUtils {
 
     public static float distance(GVRTransform obj1, GVRTransform obj2) {
 
-        Vector3D v1 = new Vector3D(obj1.getPositionX(),
+        Vector3d v1 = new Vector3d(obj1.getPositionX(),
                 obj1.getPositionY(),
                 obj1.getPositionZ());
 
-        Vector3D v2 = new Vector3D(obj2.getPositionX(),
+        Vector3d v2 = new Vector3d(obj2.getPositionX(),
                 obj2.getPositionY(),
                 obj2.getPositionZ());
 
-        return (float) Vector3D.distance(v1, v2);
+        return (float) v1.distance(v2);
     }
 
     public static float distance(GVRTransform obj1, float[] obj2) {
 
-        Vector3D v1 = new Vector3D(obj1.getPositionX(),
+        Vector3d v1 = new Vector3d(obj1.getPositionX(),
                 obj1.getPositionY(),
                 obj1.getPositionZ());
 
-        Vector3D v2 = new Vector3D(obj2[0],
+        Vector3d v2 = new Vector3d(obj2[0],
                 obj2[1],
                 obj2[2]);
 
-        return (float) Vector3D.distance(v1, v2);
+        return (float) v1.distance(v2);
     }
 
     public static float getYRotationAngle(GVRSceneObject rotatingObject, GVRSceneObject targetObject) {
