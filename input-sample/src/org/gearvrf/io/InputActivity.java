@@ -31,12 +31,10 @@ public class InputActivity extends GVRActivity {
         super.onCreate(bundle);
 
         // create a textview on the main thread for the script
-        GVRTextView textView = new GVRTextView(this);
-        textView.layout(0, 0, 500, 500);
-        textView.measure(500, 500);
+        GVRTextView textView = new GVRTextView(this, 1000, 500);
         textView.setBackgroundColor(Color.BLACK);
         textView.setTextColor(Color.WHITE);
-        textView.setTextSize(50);
+        textView.setTextSize(18);
         textView.setGravity(Gravity.CENTER);
 
         script = new InputScript(textView);
