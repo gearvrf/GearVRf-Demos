@@ -66,33 +66,31 @@ public class SpatialAudioScript extends GVRScript
         light.setDiffuseIntensity(0.8f, 0.8f, 0.8f, 1.0f);
         light.setSpecularIntensity(1.0f, 0.5f, 0.5f, 1.0f);
 
-        // load texture
-        Future<GVRTexture> futureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.gearvr_logo));
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        material.setMainTexture(futureTexture);
-
-        // setup lighting
-        setupLight(material);
-
-        // create a scene object 
-        cubeObject = new GVRCubeSceneObject(gvrContext, true, material);
-
-        // set the scene object position
-        cubeObject.getTransform().setPosition(modelX, modelY, modelZ);
-
-        // enable lighting for the object
-        cubeObject.getRenderData().setLight(light);
-        cubeObject.getRenderData().enableLight();
-
-        // add the scene object to the scene graph
-        //scene.addSceneObject(cubeObject);
-
-
         try {
             GVRModelSceneObject r2d2Model = gvrContext.loadModel("R2D2/R2D2.dae");
             r2d2Model.getTransform().setPosition(modelX, modelY, modelZ);
             scene.addSceneObject(r2d2Model);
         } catch (IOException e) {
+            // load texture
+            Future<GVRTexture> futureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.gearvr_logo));
+            GVRMaterial material = new GVRMaterial(gvrContext);
+            material.setMainTexture(futureTexture);
+
+            // setup lighting
+            setupLight(material);
+
+            // create a scene object 
+            cubeObject = new GVRCubeSceneObject(gvrContext, true, material);
+
+            // set the scene object position
+            cubeObject.getTransform().setPosition(modelX, modelY, modelZ);
+
+            // enable lighting for the object
+            cubeObject.getRenderData().setLight(light);
+            cubeObject.getRenderData().enableLight();
+
+            // add the scene object to the scene graph
+            scene.addSceneObject(cubeObject);
         }
 
         // add a floor
