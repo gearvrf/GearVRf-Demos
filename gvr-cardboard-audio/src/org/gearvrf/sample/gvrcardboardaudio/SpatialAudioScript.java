@@ -1,0 +1,157 @@
+/* Copyright 2015 Samsung Electronics Co., LTD
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.gearvrf.sample.gvrcardboardaudio;
+
+import java.io.IOException;
+import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRScript;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRLight;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+
+import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
+
+
+public class SpatialAudioScript extends GVRScript
+{
+    private GVRContext gvrContext;
+    private GVRCameraRig cameraRig;
+    private static final String SOUND_FILE = "cube_sound.wav";
+    private CardboardAudioEngine audioEngine;
+    private volatile int soundId = CardboardAudioEngine.INVALID_ID;
+    private float modelX = 0.0f;
+    private float modelY = 0.0f;
+    private float modelZ = -3.0f;
+    private GVRCubeSceneObject cubeObject;
+    private GVRLight light;
+    private static final float LIGHT_Z = 100.0f;
+
+    public SpatialAudioScript(CardboardAudioEngine audioEngine) {
+        this.audioEngine = audioEngine;
+    }
+
+    @Override
+    public void onInit(GVRContext gvrContext) {
+        this.gvrContext = gvrContext;
+        GVRScene scene = gvrContext.getNextMainScene();
+        cameraRig = scene.getMainCameraRig();
+
+        // setup light
+        light = new GVRLight(gvrContext);
+        light.setPosition(0.0f, 0.0f, LIGHT_Z);
+        light.setAmbientIntensity(0.5f, 0.5f, 0.5f, 1.0f);
+        light.setDiffuseIntensity(0.8f, 0.8f, 0.8f, 1.0f);
+        light.setSpecularIntensity(1.0f, 0.5f, 0.5f, 1.0f);
+
+        // load texture
+        Future<GVRTexture> futureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.gearvr_logo));
+        GVRMaterial material = new GVRMaterial(gvrContext);
+        material.setMainTexture(futureTexture);
+
+        // setup lighting
+        setupLight(material);
+
+        // create a scene object 
+        cubeObject = new GVRCubeSceneObject(gvrContext, true, material);
+
+        // set the scene object position
+        cubeObject.getTransform().setPosition(modelX, modelY, modelZ);
+
+        // enable lighting for the object
+        cubeObject.getRenderData().setLight(light);
+        cubeObject.getRenderData().enableLight();
+
+        // add the scene object to the scene graph
+        scene.addSceneObject(cubeObject);
+
+        // add a floor
+		GVRSceneObject floor = new GVRSceneObject(gvrContext, gvrContext.createQuad(120.0f, 120.0f),
+				gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor2)));
+
+        GVRMaterial floorMaterial = floor.getRenderData().getMaterial();
+        setupLight(floorMaterial);
+
+		floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
+		floor.getTransform().setPositionY(-10.0f);
+		floor.getRenderData().setRenderingOrder(0);
+        floor.getRenderData().setLight(light);
+        floor.getRenderData().enableLight();
+
+		scene.addSceneObject(floor);
+
+        // Avoid any delays during start-up due to decoding of sound files.
+        new Thread(
+            new Runnable() {
+              public void run() {
+                // Start spatial audio playback of SOUND_FILE at the model postion. The returned
+                //soundId handle is stored and allows for repositioning the sound object whenever
+                // the cube position changes.
+                audioEngine.preloadSoundFile(SOUND_FILE);
+                soundId = audioEngine.createSoundObject(SOUND_FILE);
+                audioEngine.setSoundObjectPosition(soundId, modelX, modelY, modelZ);
+                audioEngine.playSound(soundId, true /* looped playback */);
+              }
+            })
+        .start();
+
+        updateModelPosition();
+    }
+
+    private void setupLight(GVRMaterial material) {
+        material.setColor(0.8f, 0.8f, 0.8f);
+        material.setOpacity(1.0f);
+        material.setAmbientColor(1.0f, 1.0f, 1.0f, 1.0f);
+        material.setDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+        material.setSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+        material.setSpecularExponent(128.0f);
+    }
+
+    private void updateModelPosition() {
+        // Update the sound location to match it with the new cube position.
+        if (soundId != CardboardAudioEngine.INVALID_ID) {
+            audioEngine.setSoundObjectPosition(soundId, modelX, modelY, modelZ);
+        }
+    }
+
+    @Override
+    public void onStep() {
+        // Update the 3d audio engine with the most recent head rotation.
+        float headX = cameraRig.getHeadTransform().getRotationX();
+        float headY = cameraRig.getHeadTransform().getRotationY();
+        float headZ = cameraRig.getHeadTransform().getRotationZ();
+        float headW = cameraRig.getHeadTransform().getRotationW();
+        audioEngine.setHeadRotation(headX, headY, headZ, headW);
+
+        // rotate the cube
+        cubeObject.getTransform().rotateByAxis(0.5f, 1.0f, 0.0f, 0.0f);
+        cubeObject.getTransform().rotateByAxis(0.5f, 0.0f, 1.0f, 0.0f);
+        cubeObject.getTransform().rotateByAxis(0.5f, 0.0f, 0.0f, 1.0f);
+
+        // update audio position if need be
+        updateModelPosition();
+    }
+
+
+}
