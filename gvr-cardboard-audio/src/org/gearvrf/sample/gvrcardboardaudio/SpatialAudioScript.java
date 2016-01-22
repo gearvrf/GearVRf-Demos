@@ -30,6 +30,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRLight;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
 
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 
@@ -42,8 +43,8 @@ public class SpatialAudioScript extends GVRScript
     private CardboardAudioEngine audioEngine;
     private volatile int soundId = CardboardAudioEngine.INVALID_ID;
     private float modelX = 0.0f;
-    private float modelY = 0.0f;
-    private float modelZ = -3.0f;
+    private float modelY = -1.5f;
+    private float modelZ = -9.0f;
     private GVRCubeSceneObject cubeObject;
     private GVRLight light;
     private static final float LIGHT_Z = 100.0f;
@@ -84,17 +85,25 @@ public class SpatialAudioScript extends GVRScript
         cubeObject.getRenderData().enableLight();
 
         // add the scene object to the scene graph
-        scene.addSceneObject(cubeObject);
+        //scene.addSceneObject(cubeObject);
+
+
+        try {
+            GVRModelSceneObject r2d2Model = gvrContext.loadModel("R2D2/R2D2.dae");
+            r2d2Model.getTransform().setPosition(modelX, modelY, modelZ);
+            scene.addSceneObject(r2d2Model);
+        } catch (IOException e) {
+        }
 
         // add a floor
 		GVRSceneObject floor = new GVRSceneObject(gvrContext, gvrContext.createQuad(120.0f, 120.0f),
-				gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor2)));
+				gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
 
         GVRMaterial floorMaterial = floor.getRenderData().getMaterial();
         setupLight(floorMaterial);
 
 		floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
-		floor.getTransform().setPositionY(-10.0f);
+		floor.getTransform().setPositionY(-1.5f);
 		floor.getRenderData().setRenderingOrder(0);
         floor.getRenderData().setLight(light);
         floor.getRenderData().enableLight();
