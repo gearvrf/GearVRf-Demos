@@ -32,8 +32,8 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.ISensorEvents;
 import org.gearvrf.SensorEvent;
-import org.gearvrf.SensorEventListener;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRTextView;
@@ -105,7 +105,7 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube1.getTransform().setPosition(0.0f, 1.0f, -10.0f);
         mainScene.addSceneObject(cube1);
         // add the sensor to the cube
-        cube1.setSensor(new CubeSensor());
+        cube1.setSensor(new CubeSensor(gvrContext));
 
         GVRSceneObject cube2 = new Cube(gvrContext, "Cube 2", shaderManager);
         cube2.getTransform().setPosition(0.0f, 1.0f, -12.0f);
@@ -114,7 +114,7 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube2.getTransform().setRotation(1.0f, 0.0f, 0.0f, 0.0f);
         mainScene.addSceneObject(cube2);
         // add the sensor to the cube
-        cube2.setSensor(new CubeSensor());
+        cube2.setSensor(new CubeSensor(gvrContext));
 
         GVRSceneObject cube3 = new Cube(gvrContext, "Cube 3", shaderManager);
         cube3.getTransform().setPosition(0.0f, 1.0f, -15.0f);
@@ -125,17 +125,17 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube3.getTransform().setRotation(1.0f, 0.0f, 0.0f, 0.0f);
         mainScene.addSceneObject(cube3);
         // add the sensor to the cube
-        cube3.setSensor(new CubeSensor());
+        cube3.setSensor(new CubeSensor(gvrContext));
 
     }
 
     private class CubeSensor extends GVRBaseSensor
-            implements SensorEventListener {
+            implements ISensorEvents {
         private GVRSceneObject selected;
         private int selectedCursorId;
 
-        public CubeSensor() {
-            super();
+        public CubeSensor(GVRContext gvrContext) {
+            super(gvrContext);
             registerSensorEventListener(this);
         }
 
