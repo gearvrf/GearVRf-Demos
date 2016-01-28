@@ -13,6 +13,8 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilityManager;
 
+import android.view.MotionEvent;
+
 public class MainScript extends GVRScript {
 
     GVRSceneObject objectSeen;
@@ -82,6 +84,8 @@ public class MainScript extends GVRScript {
 
     @Override
     public void onStep() {
+        FocusableController.process(mGVRContext);
+
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker
                 .pickScene(mGVRContext.getMainScene());
         if (eyePointeeHolders.length == 0) {
@@ -99,6 +103,8 @@ public class MainScript extends GVRScript {
     }
 
     public void onSingleTap(MotionEvent e) {
+        FocusableController.clickProcess(mGVRContext);
+
         if (objectSeen != null) {
             mGVRContext.runOnGlThread(new Runnable() {
                 @Override
