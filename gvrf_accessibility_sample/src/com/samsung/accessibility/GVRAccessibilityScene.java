@@ -163,7 +163,7 @@ public class GVRAccessibilityScene extends GVRScene {
         talkBack.getTransform().setPosition(positionX, positionY, positionZ);
         talkBack.getTransform().setScale(scale, scale, scale);
         talkBack.attachEyePointeeHolder();
-        
+
         this.addSceneObject(talkBack);
 
         GVRAccessibilityItem speech = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
@@ -171,7 +171,7 @@ public class GVRAccessibilityScene extends GVRScene {
         speech.getTransform().setPosition(positionX, positionY, positionZ);
         speech.getTransform().setScale(scale, scale, scale);
         speech.attachEyePointeeHolder();
-        
+
         this.addSceneObject(speech);
 
         GVRAccessibilityItem captions = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
@@ -179,7 +179,7 @@ public class GVRAccessibilityScene extends GVRScene {
         captions.getTransform().setPosition(positionX, positionY, positionZ);
         captions.getTransform().setScale(scale, scale, scale);
         captions.attachEyePointeeHolder();
-        
+
         this.addSceneObject(captions);
 
         GVRAccessibilityItem settings = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
@@ -189,6 +189,13 @@ public class GVRAccessibilityScene extends GVRScene {
         settings.attachEyePointeeHolder();
         this.addSceneObject(settings);
 
+        GVRAccessibilityCursorItem cursor = new GVRAccessibilityCursorItem(getGVRContext(), mesh, getGVRContext()
+                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.cursor)));
+        cursor.getTransform().setPosition(positionX, positionY, positionZ);
+        cursor.getTransform().setScale(scale, scale, scale);
+        cursor.attachEyePointeeHolder();
+        this.addSceneObject(cursor);
+
         float angle = -20;
 
         invertedColors.getTransform().rotateByAxisWithPivot(-3 * angle, 0, 1, 0, 0, 0, 0);
@@ -197,6 +204,7 @@ public class GVRAccessibilityScene extends GVRScene {
         speech.getTransform().rotateByAxisWithPivot(0 * angle, 0, 1, 0, 0, 0, 0);
         captions.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
         settings.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
+        cursor.getTransform().rotateByAxisWithPivot(3 * angle, 0, 1, 0, 0, 0, 0);
     }
 
     /**
@@ -209,7 +217,7 @@ public class GVRAccessibilityScene extends GVRScene {
      */
     public void setItemsRelativePosition(float positionX, float positionY, float positionZ) {
         for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object instanceof GVRAccessibilityItem) {
+            if (object instanceof GVRAccessibilityItem || object instanceof GVRAccessibilityCursorItem) {
                 object.getTransform().setPosition(object.getTransform().getPositionX() + positionX, object.getTransform().getPositionY() + positionY,
                         object.getTransform().getPositionZ() + positionZ);
             }
