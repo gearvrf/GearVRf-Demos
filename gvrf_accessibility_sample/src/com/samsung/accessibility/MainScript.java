@@ -3,6 +3,8 @@ package com.samsung.accessibility;
 
 import android.view.MotionEvent;
 
+import com.samsung.accessibility.focus.FocusableController;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
@@ -12,8 +14,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilityManager;
-
-import android.view.MotionEvent;
 
 public class MainScript extends GVRScript {
 

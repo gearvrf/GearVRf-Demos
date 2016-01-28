@@ -8,7 +8,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.R;
 
 public class GVRGazeCursorSceneObject extends GVRSceneObject {
 

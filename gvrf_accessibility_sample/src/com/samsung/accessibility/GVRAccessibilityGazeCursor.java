@@ -2,7 +2,6 @@
 package com.samsung.accessibility;
 
 import org.gearvrf.GVRTexture;
-import org.gearvrf.scene_objects.GVRGazeCursorSceneObject;
 
 import java.util.ArrayList;
 
@@ -28,9 +27,6 @@ public class GVRAccessibilityGazeCursor {
     }
 
     public void selectCursor() {
-        if (mAccessibilityItem.isActive) {
-
-        }
     }
 
 }
