@@ -13,18 +13,15 @@ package com.samsung.accessibility.focus;
 
 import java.util.ArrayList;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRSceneObject;
-
-import com.samsung.accessibility.R;
 
 public final class FocusableController {
 
     public static ArrayList<FocusableSceneObject> interactiveObjects = new ArrayList<FocusableSceneObject>();
-    private boolean isEmptyTexture;
+    private static boolean mIsEmptyTexture;
+    private static boolean mIsVisible;
 
     public static void process(GVRContext context) {
 
@@ -61,60 +58,17 @@ public final class FocusableController {
 
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context
                 .getMainScene());
-        if (eyePointeeHolders.length == 0
-                || !isAVisibleObjectBeingSeen(context, eyePointeeHolders)) {
-            // MainScript.clickOut();
-        } else {
-            for (GVREyePointeeHolder holder : eyePointeeHolders) {
-                for (FocusableSceneObject object : interactiveObjects) {
-                    if (holder.getOwnerObject().equals(object)) {
-                        object.dispatchInClick();
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
 
-    private static boolean isAVisibleObjectBeingSeen(GVRContext gvrContext,
-            GVREyePointeeHolder[] eyePointeeHolders) {
         for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            GVRSceneObject object = holder.getOwnerObject();
-            if (isVisible(object) && !hasEmptyTexture(gvrContext, object)) {
-                return true;
+            for (FocusableSceneObject object : interactiveObjects) {
+                if (holder.getOwnerObject().equals(object)) {
+                    object.dispatchInClick();
+                    return true;
+                }
             }
         }
-        return false;
-    }
-
-    private static boolean isVisible(GVRSceneObject object) {
-        return object.getRenderData() != null
-                && object.getRenderData().getMaterial() != null
-                && object.getRenderData().getMaterial().getOpacity() > 0;
-    }
-
-    private static boolean hasEmptyTexture(final GVRContext gvrContext,
-            final GVRSceneObject object) {
-
-        gvrContext.getActivity().runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (object.getRenderData().getMaterial().getMainTexture() != null
-                        && object
-                                .getRenderData()
-                                .getMaterial()
-                                .getMainTexture()
-                                .equals(gvrContext
-                                        .loadTexture(new GVRAndroidResource(
-                                                gvrContext, R.drawable.empty)))) {
-
-                }
-
-            }
-        });
 
         return false;
     }
+
 }
