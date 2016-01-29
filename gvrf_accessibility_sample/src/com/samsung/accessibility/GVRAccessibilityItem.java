@@ -1,8 +1,14 @@
 
 package com.samsung.accessibility;
 
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
+
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
@@ -16,6 +22,38 @@ final class GVRAccessibilityItem extends GVRAccessibilityInteractiveObject {
 
     public GVRAccessibilityItem(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
+
+        final GVRSceneObject onFocusSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
+                R.raw.edge_box_normal)), gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
+        onFocusSceneObject.getTransform().setPositionZ(-.1f);
+        onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
+        onFocusSceneObject.getRenderData().getMaterial().setOpacity(0);
+        addChildObject(onFocusSceneObject);
+
+        setOnFocusListener(new OnFocusListener() {
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+                onFocusSceneObject.getRenderData().getMaterial().setOpacity(0);
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                onFocusSceneObject.getRenderData().getMaterial().setOpacity(1);
+            }
+        });
+
+        setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                interact();
+            }
+        });
     }
 
     @Override

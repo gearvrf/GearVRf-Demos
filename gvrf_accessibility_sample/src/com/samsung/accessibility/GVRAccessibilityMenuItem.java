@@ -1,4 +1,8 @@
+
 package com.samsung.accessibility;
+
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnFocusListener;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -8,9 +12,6 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-
-import com.samsung.accessibility.focus.FocusListener;
-import com.samsung.accessibility.focus.FocusableSceneObject;
 
 final class GVRAccessibilityMenuItem extends GVRAccessibilityInteractiveObject {
 
@@ -33,7 +34,7 @@ final class GVRAccessibilityMenuItem extends GVRAccessibilityInteractiveObject {
         this.getRenderData().getMaterial().setMainTexture(mSpacerTexture);
         setFocus(true);
         GVRAccessibilityMenuItem.this.getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
-        focusListener = new FocusListener() {
+        setOnFocusListener(new OnFocusListener() {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
@@ -50,7 +51,7 @@ final class GVRAccessibilityMenuItem extends GVRAccessibilityInteractiveObject {
             public void gainedFocus(FocusableSceneObject object) {
 
             }
-        };
+        });
         createIcon(iconMenu);
     }
 

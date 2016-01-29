@@ -1,13 +1,5 @@
-package com.samsung.accessibility;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
-import org.gearvrf.GVRTexture;
+package com.samsung.accessibility;
 
 import android.view.MotionEvent;
 
@@ -15,9 +7,15 @@ import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
 
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRScript;
+import org.gearvrf.GVRTexture;
+
 public class MainScript extends GVRScript {
 
-    private GVRSceneObject objectSeen;
     private static GVRContext mGVRContext;
     private FocusableSceneObject object;
     private GVRGazeCursorSceneObject cursor;
@@ -84,21 +82,6 @@ public class MainScript extends GVRScript {
     @Override
     public void onStep() {
         FocusableController.process(mGVRContext);
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker
-                .pickScene(mGVRContext.getMainScene());
-        if (eyePointeeHolders.length == 0) {
-            objectSeen = null;
-        } else {
-            for (GVREyePointeeHolder gvrEyePointeeHolder : eyePointeeHolders) {
-                if (gvrEyePointeeHolder.getOwnerObject().equals(object)) {
-                    objectSeen = gvrEyePointeeHolder.getOwnerObject();
-                } else {
-                    objectSeen = null;
-                }
-            }
-        }
-
     }
 
     public void onSingleTap(MotionEvent e) {

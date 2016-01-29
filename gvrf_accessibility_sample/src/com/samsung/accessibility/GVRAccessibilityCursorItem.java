@@ -3,6 +3,10 @@ package com.samsung.accessibility;
 
 import android.util.Log;
 
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
@@ -21,12 +25,44 @@ public class GVRAccessibilityCursorItem extends GVRAccessibilityInteractiveObjec
 
     public GVRAccessibilityCursorItem(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
-        selectMaskSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.edge)),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.box_edge)));
+        selectMaskSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.edge_menu)),
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_menu)));
         selectMaskSceneObject.getTransform().setPosition(0, 23f, -.000001f);
         selectMaskSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
         selectMaskSceneObject.getTransform().rotateByAxis(180, 0, 1, 0);
         addChildObject(selectMaskSceneObject);
+
+        final GVRSceneObject onFocusSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
+                R.raw.edge_box)), gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
+        onFocusSceneObject.getTransform().setPositionZ(-.1f);
+        onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
+        onFocusSceneObject.getRenderData().getMaterial().setOpacity(0);
+        addChildObject(onFocusSceneObject);
+
+        setOnFocusListener(new OnFocusListener() {
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+                onFocusSceneObject.getRenderData().getMaterial().setOpacity(0);
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                onFocusSceneObject.getRenderData().getMaterial().setOpacity(1);
+            }
+        });
+
+        setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                interact();
+            }
+        });
     }
 
     @Override

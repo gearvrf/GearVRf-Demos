@@ -15,7 +15,7 @@
 
 package com.samsung.accessibility.focus;
 
-public interface FocusListener {
+public interface OnFocusListener {
 
     public void gainedFocus(FocusableSceneObject object);
 

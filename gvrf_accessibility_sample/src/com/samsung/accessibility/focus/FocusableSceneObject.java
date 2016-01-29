@@ -20,99 +20,92 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 
-import com.samsung.accessibility.VRTouchPadGestureDetector.SwipeDirection;
-
 public class FocusableSceneObject extends GVRSceneObject {
 
-	private boolean focus = false;
-	public FocusListener focusListener = null;
-	public String tag = null;
-	public boolean showInteractiveCursor = true;
-	private OnClickListener onClickListener;
-	private OnGestureListener onGestureListener;
-	private int focusCount = 0;
+    private boolean focus = false;
+    private OnFocusListener onFocusListener = null;
+    public String tag = null;
+    public boolean showInteractiveCursor = true;
+    private OnClickListener onClickListener;
+    private int focusCount = 0;
 
-	public FocusableSceneObject(GVRContext gvrContext) {
-		super(gvrContext);
-		FocusableController.interactiveObjects.add(this);
-	}
+    public FocusableSceneObject(GVRContext gvrContext) {
+        super(gvrContext);
+        FocusableController.interactiveObjects.add(this);
+    }
 
-	public FocusableSceneObject(GVRContext gvrContext, GVRMesh gvrMesh,
-			GVRTexture gvrTexture) {
-		super(gvrContext, gvrMesh, gvrTexture);
-		FocusableController.interactiveObjects.add(this);
-	}
+    public FocusableSceneObject(GVRContext gvrContext, GVRMesh gvrMesh,
+            GVRTexture gvrTexture) {
+        super(gvrContext, gvrMesh, gvrTexture);
+        FocusableController.interactiveObjects.add(this);
+    }
 
-	public FocusableSceneObject(GVRContext gvrContext, float width,
-			float height, GVRTexture t) {
-		super(gvrContext, width, height, t);
-		FocusableController.interactiveObjects.add(this);
-	}
+    public FocusableSceneObject(GVRContext gvrContext, float width,
+            float height, GVRTexture t) {
+        super(gvrContext, width, height, t);
+        FocusableController.interactiveObjects.add(this);
+    }
 
-	public void dispatchGainedFocus() {
-		if (this.focusListener != null) {
-			this.focusListener.gainedFocus(this);
-		}
-		if (showInteractiveCursor) {
-			// GazeController.enableInteractiveCursor();
-		}
-	}
+    public void dispatchGainedFocus() {
+        if (this.onFocusListener != null) {
+            this.onFocusListener.gainedFocus(this);
+        }
+        if (showInteractiveCursor) {
+            // GazeController.enableInteractiveCursor();
+        }
+    }
 
-	public void dispatchLostFocus() {
-		if (this.focusListener != null) {
-			focusListener.lostFocus(this);
-			focusCount = 0;
-		}
-		if (showInteractiveCursor) {
-			// GazeController.disableInteractiveCursor();
-		}
-	}
+    public void dispatchLostFocus() {
+        if (this.onFocusListener != null) {
+            onFocusListener.lostFocus(this);
+            focusCount = 0;
+        }
+        if (showInteractiveCursor) {
+            // GazeController.disableInteractiveCursor();
+        }
+    }
 
-	public void setFocus(boolean state) {
-		if (state == true && focus == false && focusCount > 1) {
-			focus = true;
-			this.dispatchGainedFocus();
-			return;
-		}
+    public void setFocus(boolean state) {
+        if (state == true && focus == false && focusCount > 1) {
+            focus = true;
+            this.dispatchGainedFocus();
+            return;
+        }
 
-		if (state == false && focus == true) {
-			focus = false;
-			this.dispatchLostFocus();
-			return;
-		}
-	}
+        if (state == false && focus == true) {
+            focus = false;
+            this.dispatchLostFocus();
+            return;
+        }
+    }
 
-	public void dispatchInFocus() {
-		if (this.focusListener != null) {
-			if (focusCount > 1)
-				this.focusListener.inFocus(this);
-			if (focusCount <= 2)
-				focusCount++;
-		}
-		if (showInteractiveCursor) {
-		//	GazeController.enableInteractiveCursor();
-		}
-	}
+    public void dispatchInFocus() {
+        if (this.onFocusListener != null) {
+            if (focusCount > 1)
+                this.onFocusListener.inFocus(this);
+            if (focusCount <= 2)
+                focusCount++;
+        }
+        if (showInteractiveCursor) {
+            // GazeController.enableInteractiveCursor();
+        }
+    }
 
-	public void dispatchInClick() {
-		if (this.onClickListener != null)
-			this.onClickListener.onClick();
-	}
+    public void dispatchInClick() {
+        if (this.onClickListener != null)
+            this.onClickListener.onClick();
+    }
 
-	public boolean hasFocus() {
-		return focus;
-	}
+    public boolean hasFocus() {
+        return focus;
+    }
 
-	public void setOnClickListener(OnClickListener onClickListener) {
-		this.onClickListener = onClickListener;
-	}
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+    }
 
-	public void setOnGestureListener(OnGestureListener onGestureListener) {
-		this.onGestureListener = onGestureListener;
-	}
-
-	public boolean isFocus() {
-		return focus;
-	}
+    public void setOnFocusListener(OnFocusListener onFocusListener) {
+        this.onFocusListener = onFocusListener;
+    }
 
 }
