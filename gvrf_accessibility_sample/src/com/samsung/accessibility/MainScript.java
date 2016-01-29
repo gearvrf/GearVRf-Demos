@@ -18,7 +18,7 @@ public class MainScript extends GVRScript {
 
     private static GVRContext mGVRContext;
     private FocusableSceneObject object;
-    private GVRGazeCursorSceneObject cursor;
+    public static GVRGazeCursorSceneObject cursor;
 
     @Override
     public void onInit(final GVRContext gvrContext) {

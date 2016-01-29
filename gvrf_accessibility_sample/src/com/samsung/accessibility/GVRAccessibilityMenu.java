@@ -1,4 +1,7 @@
+
 package com.samsung.accessibility;
+
+import com.samsung.accessibility.focus.OnClickListener;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -6,8 +9,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-
-import com.samsung.accessibility.focus.OnClickListener;
 
 public class GVRAccessibilityMenu extends GVRSceneObject {
 
@@ -43,8 +44,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
             public void onClick() {
                 item.getRenderData().getMaterial().setColor(12631476);
                 mGvrContext.setMainScene(mainApplicationScene);
-                GVRGazeCursorSceneObject cursor = new GVRGazeCursorSceneObject(mGvrContext);
-                mGvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
+                mGvrContext.getMainScene().getMainCameraRig().addChildObject(MainScript.cursor);
             }
         });
         addChildObject(item);
