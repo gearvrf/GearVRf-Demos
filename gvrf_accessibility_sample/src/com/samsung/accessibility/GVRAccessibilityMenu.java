@@ -1,4 +1,3 @@
-
 package com.samsung.accessibility;
 
 import org.gearvrf.GVRAndroidResource;
@@ -6,7 +5,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-
 
 public class GVRAccessibilityMenu extends GVRSceneObject {
 
@@ -38,9 +36,10 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
 
     private void createGazeButton(float degree) {
         GVRTexture icon = mGvrContext.loadTexture(new GVRAndroidResource(mGvrContext, R.drawable.ico_cursor));
-        GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
+        final GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+
         addChildObject(item);
     }
 

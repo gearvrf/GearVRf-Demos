@@ -1,12 +1,12 @@
-
 package com.samsung.accessibility;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 
-class GVRAccessibilityInteractiveObject extends GVRSceneObject {
+import com.samsung.accessibility.focus.FocusableSceneObject;
+
+class GVRAccessibilityInteractiveObject extends FocusableSceneObject {
 
     private GVRAccessibilityOnAction mOnAction;
 

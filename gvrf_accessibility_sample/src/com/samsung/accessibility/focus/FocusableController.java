@@ -20,8 +20,6 @@ import org.gearvrf.GVRPicker;
 public final class FocusableController {
 
     public static ArrayList<FocusableSceneObject> interactiveObjects = new ArrayList<FocusableSceneObject>();
-    private static boolean mIsEmptyTexture;
-    private static boolean mIsVisible;
 
     public static void process(GVRContext context) {
 
