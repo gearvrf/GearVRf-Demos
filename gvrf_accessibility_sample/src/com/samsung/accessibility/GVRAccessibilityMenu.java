@@ -3,19 +3,24 @@ package com.samsung.accessibility;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+
+import com.samsung.accessibility.focus.OnClickListener;
 
 public class GVRAccessibilityMenu extends GVRSceneObject {
 
     private GVRContext mGvrContext;
     private float angle = 45;
+    private GVRScene mainApplicationScene;
 
-    public GVRAccessibilityMenu(GVRContext gvrContext) {
+    public GVRAccessibilityMenu(GVRContext gvrContext, GVRScene mainApplicationScene) {
         super(gvrContext);
         this.getTransform().rotateByAxis(20, 0, 1, 0);
         mGvrContext = gvrContext;
         int multiplier = 2;
+        this.mainApplicationScene = mainApplicationScene;
         createBackButton(multiplier++ * angle);
         createGazeButton(multiplier++ * angle);
         createZoomButton(multiplier++ * angle);
@@ -28,9 +33,20 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
 
     private void createBackButton(float degree) {
         GVRTexture icon = mGvrContext.loadTexture(new GVRAndroidResource(mGvrContext, R.drawable.ico_back));
-        GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
+        final GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+        item.attachEyePointeeHolder();
+        item.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                item.getRenderData().getMaterial().setColor(12631476);
+                mGvrContext.setMainScene(mainApplicationScene);
+                GVRGazeCursorSceneObject cursor = new GVRGazeCursorSceneObject(mGvrContext);
+                mGvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
+            }
+        });
         addChildObject(item);
     }
 
@@ -39,7 +55,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         final GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
-
+        item.attachEyePointeeHolder();
         addChildObject(item);
     }
 
@@ -48,6 +64,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+        item.attachEyePointeeHolder();
         addChildObject(item);
     }
 
@@ -56,6 +73,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+        item.attachEyePointeeHolder();
         addChildObject(item);
     }
 
@@ -64,6 +82,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+        item.attachEyePointeeHolder();
         addChildObject(item);
     }
 
@@ -72,6 +91,14 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+        item.attachEyePointeeHolder();
+        item.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+
+            }
+        });
         addChildObject(item);
     }
 
@@ -80,6 +107,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
+        item.attachEyePointeeHolder();
         addChildObject(item);
     }
 
@@ -89,7 +117,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
         GVRSceneObject item = new GVRSceneObject(mGvrContext, slotMesh, spacerTexture);
         item.getTransform().setPosition(0, -1f, 0);
         item.getTransform().rotateByAxis(degree, 0, 1, 0);
-        item.getRenderData().getMaterial().setColor(255, 255, 0);
+        item.getRenderData().getMaterial().setColor(6186095);
         addChildObject(item);
     }
 }

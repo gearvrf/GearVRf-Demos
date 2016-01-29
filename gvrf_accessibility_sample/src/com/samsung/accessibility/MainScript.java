@@ -8,7 +8,6 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.GVRAccessibilityManager;
 
 import android.view.MotionEvent;
 
@@ -18,21 +17,17 @@ import com.samsung.accessibility.focus.OnClickListener;
 
 public class MainScript extends GVRScript {
 
-    GVRSceneObject objectSeen;
-
+    private GVRSceneObject objectSeen;
     private static GVRContext mGVRContext;
-    private GVRAccessibilityManager accessibilityManager;
     private FocusableSceneObject object;
     private GVRGazeCursorSceneObject cursor;
 
-    private GVRAccessibilityScene accessibilityScene;
-
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
         cursor = new GVRGazeCursorSceneObject(gvrContext);
+        final GVRAccessibilityScene accessibilityScene = new GVRAccessibilityScene(gvrContext, gvrContext.getMainScene());
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-
         GVRSceneObject skybox = createSkybox();
         skybox.getRenderData().setRenderingOrder(0);
         gvrContext.getMainScene().addSceneObject(skybox);
@@ -47,16 +42,11 @@ public class MainScript extends GVRScript {
 
             @Override
             public void onClick() {
+                mGVRContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
+                accessibilityScene.getMainCameraRig().addChildObject(cursor);
                 mGVRContext.setMainScene(accessibilityScene);
-                mGVRContext.getMainScene().getMainCameraRig().addChildObject(cursor);
             }
         });
-
-        accessibilityManager = new GVRAccessibilityManager(mGVRContext,
-                gvrContext.getMainScene());
-        // accessibilityManager.getAccessiblityScene().setSkybox(skybox);
-        accessibilityScene = new GVRAccessibilityScene(gvrContext,
-                accessibilityManager);
 
     }
 
@@ -113,9 +103,5 @@ public class MainScript extends GVRScript {
 
     public void onSingleTap(MotionEvent e) {
         FocusableController.clickProcess(mGVRContext);
-
-        if (mGVRContext.getMainScene().equals(accessibilityScene)) {
-            accessibilityScene.interact();
-        }
     }
 }

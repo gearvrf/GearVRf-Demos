@@ -16,7 +16,7 @@ final class GVRAccessibilityMenuItem extends GVRAccessibilityInteractiveObject {
 
     private GVRContext mGvrContext;
     public GVRSceneObject backIcon;
-    private static final int IN_FOCUS_COLOR = 5735295;
+    private static final int IN_FOCUS_COLOR = 8570046;
     private static final int LOST_FOCUS_COLOR = 6186095;
 
     public GVRAccessibilityMenuItem(GVRContext gvrContext, GVRTexture iconMenu) {

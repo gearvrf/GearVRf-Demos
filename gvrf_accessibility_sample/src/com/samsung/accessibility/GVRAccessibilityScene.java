@@ -1,4 +1,3 @@
-
 package com.samsung.accessibility;
 
 import org.gearvrf.GVRAndroidResource;
@@ -10,11 +9,9 @@ import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.GVRAccessibilityManager;
 
 /**
- * {@link GVRAccessibilityScene} is responsible for encapsulating all
- * accessibility features interactions.<br/>
+ * {@link GVRAccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -28,8 +25,7 @@ public class GVRAccessibilityScene extends GVRScene {
     private GVRSceneObject mLeftEyeSkyBox;
     private GVRSceneObject mBothEyesSkyBox;
     private GVRContext mGvrContext;
-
-    private GVRAccessibilityManager mAccessibilityManager;
+    private GVRScene mainApplicationScene;
 
     /**
      * This constructor creates default scene</p>
@@ -41,18 +37,17 @@ public class GVRAccessibilityScene extends GVRScene {
      * 
      * @param gvrContext
      */
-    public GVRAccessibilityScene(GVRContext gvrContext, GVRAccessibilityManager accessibilityManager) {
+    public GVRAccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene) {
         super(gvrContext);
         mGvrContext = gvrContext;
-        mAccessibilityManager = accessibilityManager;
+        this.mainApplicationScene = mainApplicationScene;
         createDefaultSkyBox();
         createItems();
         backToMainScene();
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought
-     * {@link GVRSceneObject}.</br></br>
+     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</br></br>
      * 
      * <pre>
      * GVRSceneObject leftScreen = new GVRSceneObject(gvrContext);
@@ -87,8 +82,7 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought
-     * {@link GVRSceneObject}.</p>
+     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</p>
      * 
      * <pre>
      * GVRSceneObject skyBox = new GVRSceneObject(gvrContext);
@@ -208,8 +202,7 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * Update accessibility items position to fit user's skybox and camera
-     * position.
+     * Update accessibility items position to fit user's skybox and camera position.
      * 
      * @param positionX
      * @param positionY
@@ -247,17 +240,13 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     private void backToMainScene() {
-        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGvrContext);
-        menu.attachEyePointeeHolder();
+        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGvrContext, mainApplicationScene);
         this.addSceneObject(menu);
     }
 
     /**
-     * Select and unselect a certain menu item. This serves to activate or
-     * deactivate accessibility functions. It is advisable that this method is
-     * called after a click on an item, but it can also be called in
-     * {@link org.gearvrf.GVRScript#onStep()} </br> It will only work if this
-     * scene is the main scene.</br>
+     * Select and unselect a certain menu item. This serves to activate or deactivate accessibility functions. It is advisable that this method is called after a click on an item, but it can also be called in {@link org.gearvrf.GVRScript#onStep()}
+     * </br> It will only work if this scene is the main scene.</br>
      * 
      * <pre>
      * public void onSingleTap(MotionEvent e) {
