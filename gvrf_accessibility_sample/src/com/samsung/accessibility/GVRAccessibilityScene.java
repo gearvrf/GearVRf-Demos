@@ -10,6 +10,8 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVROpacityAnimation;
 
+import com.samsung.accessibility.GVRAccessibilityMenu.SceneType;
+
 /**
  * {@link GVRAccessibilityScene} is responsible for encapsulating all
  * accessibility features interactions.<br/>
@@ -27,6 +29,7 @@ public class GVRAccessibilityScene extends GVRScene {
     private GVRSceneObject mBothEyesSkyBox;
     private GVRContext mGvrContext;
     private GVRScene mainApplicationScene;
+    private SceneType sceneType;
 
     /**
      * This constructor creates default scene</p>
@@ -38,9 +41,10 @@ public class GVRAccessibilityScene extends GVRScene {
      * 
      * @param gvrContext
      */
-    public GVRAccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene) {
+    public GVRAccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene, SceneType sceneType) {
         super(gvrContext);
         mGvrContext = gvrContext;
+        this.sceneType = sceneType;
         this.mainApplicationScene = mainApplicationScene;
         createDefaultSkyBox();
         createItems();
@@ -244,7 +248,7 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     private void backToMainScene() {
-        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGvrContext, mainApplicationScene);
+        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGvrContext, mainApplicationScene, SceneType.MAIN_SCENE_APPLICATION);
         this.addSceneObject(menu);
     }
 

@@ -12,6 +12,7 @@ import org.gearvrf.animation.GVROpacityAnimation;
 
 import android.view.MotionEvent;
 
+import com.samsung.accessibility.GVRAccessibilityMenu.SceneType;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
@@ -64,7 +65,7 @@ public class MainScript extends GVRScript {
             }
         });
 
-        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGVRContext, mGVRContext.getMainScene());
+        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGVRContext, accessibilityScene, SceneType.ACCESSIBILITY_SCENE);
         mGVRContext.getMainScene().addSceneObject(menu);
 
     }

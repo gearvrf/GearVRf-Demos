@@ -18,17 +18,20 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
 
     private GVRContext mGvrContext;
     private float angle = 45;
-    private GVRScene mainApplicationScene;
+    private GVRScene scene;
     private GVRAccessibilityManager manager;
+    private SceneType sceneType;
     private static final int LOST_FOCUS_COLOR = 6186095;
     private static final int CLICKED_COLOR = 12631476;
 
-    public GVRAccessibilityMenu(GVRContext gvrContext, GVRScene mainApplicationScene) {
+    public GVRAccessibilityMenu(GVRContext gvrContext, GVRScene scene, SceneType sceneType) {
         super(gvrContext);
         this.getTransform().rotateByAxis(20, 0, 1, 0);
         mGvrContext = gvrContext;
         int multiplier = 2;
-        this.mainApplicationScene = mainApplicationScene;
+        this.sceneType = sceneType;
+
+        this.scene = scene;
         manager = new GVRAccessibilityManager(getGVRContext());
         createBackButton(multiplier++ * angle);
         createGazeButton(multiplier++ * angle);
@@ -41,12 +44,17 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
     }
 
     private void createBackButton(float degree) {
-        GVRTexture icon = mGvrContext.loadTexture(new GVRAndroidResource(mGvrContext, R.drawable.ico_back));
-        final GVRAccessibilityMenuItem item = new GVRAccessibilityMenuItem(mGvrContext, icon);
-        item.getTransform().setPosition(0, -1f, 0);
-        item.getTransform().rotateByAxis(degree, 0, 1, 0);
-        item.attachEyePointeeHolder();
-        item.setOnClickListener(new OnClickListener() {
+        GVRTexture icon = null;
+        if (isAccessibilityScene())
+            icon = mGvrContext.loadTexture(new GVRAndroidResource(mGvrContext, R.drawable.ico_accessibility));
+        else
+            icon = mGvrContext.loadTexture(new GVRAndroidResource(mGvrContext, R.drawable.ico_back));
+
+        final GVRAccessibilityMenuItem mainButton = new GVRAccessibilityMenuItem(mGvrContext, icon);
+        mainButton.getTransform().setPosition(0, -1f, 0);
+        mainButton.getTransform().rotateByAxis(degree, 0, 1, 0);
+        mainButton.attachEyePointeeHolder();
+        mainButton.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick() {
@@ -57,7 +65,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
 
                             @Override
                             public void finished(GVRAnimation arg0) {
-                                mGvrContext.setMainScene(mainApplicationScene);
+                                mGvrContext.setMainScene(scene);
                                 mGvrContext.getMainScene().getMainCameraRig().addChildObject(MainScript.cursor);
                                 for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
                                     if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
@@ -135,7 +143,7 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
             @Override
             public void onClick() {
                 clickEffectMenu(item);
-                manager.getInvertedColors().switchState(mainApplicationScene);
+                manager.getInvertedColors().switchState(scene);
             }
         });
         addChildObject(item);
@@ -193,6 +201,13 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
             item.setClicked(false);
             item.getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
         }
+    }
+
+    private boolean isAccessibilityScene() {
+
+        if (sceneType == SceneType.ACCESSIBILITY_SCENE)
+            return true;
+        return false;
     }
 
     public enum SceneType {
