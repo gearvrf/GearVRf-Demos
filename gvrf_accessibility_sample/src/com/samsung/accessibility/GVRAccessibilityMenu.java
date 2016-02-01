@@ -24,14 +24,14 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
     private static final int LOST_FOCUS_COLOR = 6186095;
     private static final int CLICKED_COLOR = 12631476;
 
-    public GVRAccessibilityMenu(GVRContext gvrContext, GVRScene scene, SceneType sceneType) {
+    public GVRAccessibilityMenu(GVRContext gvrContext, GVRScene accessibilityScene, SceneType sceneType) {
         super(gvrContext);
         this.getTransform().rotateByAxis(20, 0, 1, 0);
         mGvrContext = gvrContext;
         int multiplier = 2;
         this.sceneType = sceneType;
 
-        this.scene = scene;
+        this.scene = accessibilityScene;
         manager = new GVRAccessibilityManager(getGVRContext());
         createBackButton(multiplier++ * angle);
         createGazeButton(multiplier++ * angle);

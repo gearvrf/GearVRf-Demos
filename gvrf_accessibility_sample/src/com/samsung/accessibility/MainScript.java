@@ -1,21 +1,25 @@
 package com.samsung.accessibility;
 
+import java.util.Locale;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import com.samsung.accessibility.GVRAccessibilityMenu.SceneType;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
 
 public class MainScript extends GVRScript {
 
@@ -39,38 +43,104 @@ public class MainScript extends GVRScript {
         skybox.getRenderData().setRenderingOrder(0);
         gvrContext.getMainScene().addSceneObject(skybox);
 
-        object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(1, 1),
+        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGVRContext, accessibilityScene, SceneType.ACCESSIBILITY_SCENE);
+        mGVRContext.getMainScene().addSceneObject(menu);
+        createObjectTalkBack();
+        createObject1TalkBack();
+        createObject2TalkBack();
+    }
+
+    private void createObjectTalkBack() {
+
+        FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
+                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                        R.drawable.skybox_accessibility)));
+        object.getTransform().setPosition(-1, 0, -1);
+        object.attachEyePointeeHolder();
+        object.setTalkBack(new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object"));
+        object.setOnFocusListener(new OnFocusListener() {
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+                
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                object.getTalkBack().speak();
+                Log.e("test", "gained focus");
+
+            }
+        });
+        mGVRContext.getMainScene().addSceneObject(object);
+    }
+
+    private void createObject1TalkBack() {
+
+        FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
+                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                        R.drawable.skybox_accessibility)));
+        object.getTransform().setPosition(1, 0, -1);
+        object.attachEyePointeeHolder();
+        object.setTalkBack(new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "First Object"));
+        object.setOnFocusListener(new OnFocusListener() {
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                object.getTalkBack().speak();
+                Log.e("test", "gained focus");
+
+            }
+        });
+        mGVRContext.getMainScene().addSceneObject(object);
+    }
+
+    private void createObject2TalkBack() {
+        final FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
                 mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.skybox_accessibility)));
         object.getTransform().setPosition(0, 0, -1);
         object.attachEyePointeeHolder();
-        mGVRContext.getMainScene().addSceneObject(object);
-        object.setOnClickListener(new OnClickListener() {
+        object.setTalkBack(new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Second Object"));
+        object.setOnFocusListener(new OnFocusListener() {
 
             @Override
-            public void onClick() {
-                for (GVRSceneObject object : mGVRContext.getMainScene().getWholeSceneObjects()) {
-                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                        new GVROpacityAnimation(object, 1f, 0f).start(mGVRContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
+            public void lostFocus(FocusableSceneObject object) {
 
-                            @Override
-                            public void finished(GVRAnimation arg0) {
-                                mGVRContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
-                                accessibilityScene.getMainCameraRig().addChildObject(cursor);
-                                accessibilityScene.show();
-                            }
-                        });
-                    }
-                }
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                object.getTalkBack().speak();
+                Log.e("test", "gained focus");
             }
         });
-
-        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGVRContext, accessibilityScene, SceneType.ACCESSIBILITY_SCENE);
-        mGVRContext.getMainScene().addSceneObject(menu);
-
+        mGVRContext.getMainScene().addSceneObject(object);
     }
 
-    public GVRSceneObject createSkybox() {
+    private GVRSceneObject createSkybox() {
 
         GVRMesh mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
                 R.raw.skybox_esphere_acessibility));

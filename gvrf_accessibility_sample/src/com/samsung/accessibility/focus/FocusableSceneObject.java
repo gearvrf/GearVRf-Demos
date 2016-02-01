@@ -15,8 +15,9 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.accessibility.GVRAccessiblityObject;
 
-public class FocusableSceneObject extends GVRSceneObject {
+public class FocusableSceneObject extends GVRAccessiblityObject {
 
     private boolean focus = false;
     private OnFocusListener onFocusListener = null;
