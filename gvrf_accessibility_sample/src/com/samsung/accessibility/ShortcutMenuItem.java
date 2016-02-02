@@ -1,4 +1,8 @@
+
 package com.samsung.accessibility;
+
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnFocusListener;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -9,10 +13,7 @@ import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnFocusListener;
-
-final class ShortcutMenuItem extends FocusableSceneObject {
+public class ShortcutMenuItem extends FocusableSceneObject {
 
     private GVRContext gvrContext;
     private static final int IN_FOCUS_COLOR = 8570046;
