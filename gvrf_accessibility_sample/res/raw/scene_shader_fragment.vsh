@@ -18,15 +18,6 @@ void main() {
 	color += texture2D(texture, (coord + vec2(-0.001, -0.001))) / division;
 	color += texture2D(texture, (coord + vec2(0.0, -0.001))) / division;
 	
-	
-	color += texture2D(texture, (coord + vec2(0.002, 0.0))) / division;
-	color += texture2D(texture, (coord + vec2(0.002, 0.002))) / division;
-	color += texture2D(texture, (coord + vec2(0.0, 0.002))) / division;
-	
-	color += texture2D(texture, (coord + vec2(-0.002, 0.0))) / division;
-	color += texture2D(texture, (coord + vec2(-0.002, -0.002))) / division;
-	color += texture2D(texture, (coord + vec2(0.0, -0.002))) / division;
-	
 	vec3 finalColor = (color.rgb * blur) + (color2 * (1.0-blur));
 	
 	gl_FragColor = vec4( finalColor * (1.0 - blur/2.0), 1.0 );

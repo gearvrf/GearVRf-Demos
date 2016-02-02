@@ -36,14 +36,12 @@ public class GVRAccessibilityCursorItem extends GVRAccessibilityInteractiveObjec
                 R.raw.edge_box)), gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
         onFocusSceneObject.getTransform().setPositionZ(-.1f);
         onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
-        onFocusSceneObject.getRenderData().getMaterial().setOpacity(0);
-        addChildObject(onFocusSceneObject);
 
         setOnFocusListener(new OnFocusListener() {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
-                onFocusSceneObject.getRenderData().getMaterial().setOpacity(0);
+                removeChildObject(onFocusSceneObject);
             }
 
             @Override
@@ -52,7 +50,7 @@ public class GVRAccessibilityCursorItem extends GVRAccessibilityInteractiveObjec
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-                onFocusSceneObject.getRenderData().getMaterial().setOpacity(1);
+                addChildObject(onFocusSceneObject);
             }
         });
 

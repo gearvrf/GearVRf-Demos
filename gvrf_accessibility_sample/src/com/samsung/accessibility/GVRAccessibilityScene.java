@@ -1,17 +1,18 @@
+
 package com.samsung.accessibility;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.animation.GVROpacityAnimation;
 
 /**
- * {@link GVRAccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
+ * {@link GVRAccessibilityScene} is responsible for encapsulating all
+ * accessibility features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -47,7 +48,8 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</br></br>
+     * With this constructor it is possible to customize sky box thought
+     * {@link GVRSceneObject}.</br></br>
      * 
      * <pre>
      * GVRSceneObject leftScreen = new GVRSceneObject(gvrContext);
@@ -82,7 +84,8 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</p>
+     * With this constructor it is possible to customize sky box thought
+     * {@link GVRSceneObject}.</p>
      * 
      * <pre>
      * GVRSceneObject skyBox = new GVRSceneObject(gvrContext);
@@ -202,7 +205,8 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * Update accessibility items position to fit user's skybox and camera position.
+     * Update accessibility items position to fit user's skybox and camera
+     * position.
      * 
      * @param positionX
      * @param positionY
@@ -242,6 +246,15 @@ public class GVRAccessibilityScene extends GVRScene {
     private void backToMainScene() {
         GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGvrContext, mainApplicationScene);
         this.addSceneObject(menu);
+    }
+
+    public void show() {
+        getGVRContext().setMainScene(this);
+        for (GVRSceneObject object : getWholeSceneObjects()) {
+            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
+            }
+        }
     }
 
 }

@@ -13,18 +13,27 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVROnFinish;
+import org.gearvrf.animation.GVROpacityAnimation;
 
 public class MainScript extends GVRScript {
 
     private static GVRContext mGVRContext;
     private FocusableSceneObject object;
     public static GVRGazeCursorSceneObject cursor;
+    private GVRAccessibilityScene accessibilityScene;
 
     @Override
     public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
         cursor = new GVRGazeCursorSceneObject(gvrContext);
-        final GVRAccessibilityScene accessibilityScene = new GVRAccessibilityScene(gvrContext, gvrContext.getMainScene());
+        accessibilityScene = new GVRAccessibilityScene(gvrContext, gvrContext.getMainScene());
+        for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {
+            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                object.getRenderData().getMaterial().setOpacity(0);
+            }
+        }
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
         GVRSceneObject skybox = createSkybox();
         skybox.getRenderData().setRenderingOrder(0);
@@ -40,9 +49,19 @@ public class MainScript extends GVRScript {
 
             @Override
             public void onClick() {
-                mGVRContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
-                accessibilityScene.getMainCameraRig().addChildObject(cursor);
-                mGVRContext.setMainScene(accessibilityScene);
+                for (GVRSceneObject object : mGVRContext.getMainScene().getWholeSceneObjects()) {
+                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                        new GVROpacityAnimation(object, 1f, 0f).start(mGVRContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
+
+                            @Override
+                            public void finished(GVRAnimation arg0) {
+                                mGVRContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
+                                accessibilityScene.getMainCameraRig().addChildObject(cursor);
+                                accessibilityScene.show();
+                            }
+                        });
+                    }
+                }
             }
         });
 

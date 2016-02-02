@@ -9,6 +9,9 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVROnFinish;
+import org.gearvrf.animation.GVROpacityAnimation;
 
 public class GVRAccessibilityMenu extends GVRSceneObject {
 
@@ -43,8 +46,23 @@ public class GVRAccessibilityMenu extends GVRSceneObject {
             @Override
             public void onClick() {
                 item.getRenderData().getMaterial().setColor(12631476);
-                mGvrContext.setMainScene(mainApplicationScene);
-                mGvrContext.getMainScene().getMainCameraRig().addChildObject(MainScript.cursor);
+                for (GVRSceneObject object : getGVRContext().getMainScene().getWholeSceneObjects()) {
+                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                        new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
+
+                            @Override
+                            public void finished(GVRAnimation arg0) {
+                                mGvrContext.setMainScene(mainApplicationScene);
+                                mGvrContext.getMainScene().getMainCameraRig().addChildObject(MainScript.cursor);
+                                for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
+                                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                                        new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
             }
         });
         addChildObject(item);
