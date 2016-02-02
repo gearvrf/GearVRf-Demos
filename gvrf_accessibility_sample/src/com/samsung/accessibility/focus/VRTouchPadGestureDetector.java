@@ -24,7 +24,7 @@ limitations under the License.
 
  *************************************************************************************/
 
-package com.samsung.accessibility;
+package com.samsung.accessibility.focus;
 
 import android.content.Context;
 import android.os.Handler;

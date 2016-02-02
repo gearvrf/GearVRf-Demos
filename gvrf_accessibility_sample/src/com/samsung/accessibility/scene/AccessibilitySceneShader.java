@@ -13,23 +13,26 @@
  * limitations under the License.
  */
 
-package com.samsung.accessibility;
+package com.samsung.accessibility.scene;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
 
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.R.raw;
 
 
-final class GVRAccessibilitySceneShader {
+
+final class AccessibilitySceneShader {
 
     public static final String TEXTURE_KEY = "texture";
     public static final String BLUR_INTENSITY = "blur";
     private GVRCustomMaterialShaderId mShaderId;
     private GVRMaterialMap mCustomShader = null;
 
-    public GVRAccessibilitySceneShader(GVRContext gvrContext) {
+    public AccessibilitySceneShader(GVRContext gvrContext) {
         final GVRMaterialShaderManager shaderManager = gvrContext
                 .getMaterialShaderManager();
         mShaderId = shaderManager.addShader(R.raw.scene_shader_vertex, R.raw.scene_shader_fragment);

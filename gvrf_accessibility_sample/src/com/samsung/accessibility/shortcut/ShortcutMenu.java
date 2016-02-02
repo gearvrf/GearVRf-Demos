@@ -1,4 +1,4 @@
-package com.samsung.accessibility;
+package com.samsung.accessibility.shortcut;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,8 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilityManager;
+
+import android.util.Log;
 
 import com.samsung.accessibility.focus.OnClickListener;
 

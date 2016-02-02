@@ -1,5 +1,5 @@
 
-package com.samsung.accessibility;
+package com.samsung.accessibility.gaze;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -11,7 +11,10 @@ import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 
-public class GVRGazeCursorSceneObject extends GVRSceneObject {
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.R.drawable;
+
+public class GazeCursorSceneObject extends GVRSceneObject {
 
     private static final float NEAR_CLIPPING_OFFSET = 0.00001f;
     private static final float NORMAL_CURSOR_SIZE = 0.0028f;
@@ -21,7 +24,7 @@ public class GVRGazeCursorSceneObject extends GVRSceneObject {
     private GVRSceneObject rightCursor;
     private GVRSceneObject leftCursor;
 
-    public GVRGazeCursorSceneObject(GVRContext gvrContext) {
+    public GazeCursorSceneObject(GVRContext gvrContext) {
         super(gvrContext);
 
         rightCursor = new GVRSceneObject(gvrContext);
@@ -47,14 +50,14 @@ public class GVRGazeCursorSceneObject extends GVRSceneObject {
         addChildObject(leftCursor);
     }
 
-    public GVRGazeCursorSceneObject(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
+    public GazeCursorSceneObject(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
         getTransform().setPositionZ(CURSOR_Z_POSITION);
         getRenderData().setDepthTest(false);
         getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
     }
 
-    public GVRGazeCursorSceneObject(GVRContext gvrContext, float width, float height, GVRTexture texture) {
+    public GazeCursorSceneObject(GVRContext gvrContext, float width, float height, GVRTexture texture) {
         super(gvrContext, width, height, texture);
         getTransform().setPositionZ(CURSOR_Z_POSITION);
         getRenderData().setDepthTest(false);

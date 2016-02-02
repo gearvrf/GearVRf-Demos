@@ -1,5 +1,4 @@
-
-package com.samsung.accessibility;
+package com.samsung.accessibility.scene;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -13,17 +12,22 @@ import org.gearvrf.animation.GVRRotationByAxisAnimation;
 
 import android.util.Log;
 
+import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.focus.OnFocusListener;
+import com.samsung.accessibility.interpolator.InterpolatorBackEaseIn;
+import com.samsung.accessibility.interpolator.InterpolatorBackEaseOut;
+import com.samsung.accessibility.interpolator.InterpolatorStrongEaseInOut;
+import com.samsung.accessibility.util.Utils;
 
-public class GVRAccessibilityCursorItem extends FocusableSceneObject {
+public class CursorSceneItem extends FocusableSceneObject {
     protected boolean isActive = false;
     private boolean isAnimating = false;
     private static final float duration = 0.35f;
     private GVRSceneObject selectMaskSceneObject;
 
-    public GVRAccessibilityCursorItem(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
+    public CursorSceneItem(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
         selectMaskSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.edge_menu)),
                 gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_menu)));
@@ -63,14 +67,13 @@ public class GVRAccessibilityCursorItem extends FocusableSceneObject {
         });
     }
 
-    
     public void animate() {
-        float distance = (float) GVRAccessibilityUtils.distance(this, getGVRContext().getMainScene().getMainCameraRig());
+        float distance = (float) Utils.distance(this, getGVRContext().getMainScene().getMainCameraRig());
         final float[] initialPosition = new float[3];
         initialPosition[0] = getTransform().getPositionX();
         initialPosition[1] = getTransform().getPositionY();
         initialPosition[2] = getTransform().getPositionZ();
-        final float[] newPosition = GVRAccessibilityUtils.calculatePointBetweenTwoObjects(this, getGVRContext().getMainScene().getMainCameraRig(),
+        final float[] newPosition = Utils.calculatePointBetweenTwoObjects(this, getGVRContext().getMainScene().getMainCameraRig(),
                 distance + 2);
 
         if (!isAnimating) {
@@ -81,21 +84,21 @@ public class GVRAccessibilityCursorItem extends FocusableSceneObject {
 
                 new GVRRelativeMotionAnimation(this, duration, newPosition[0] - initialPosition[0], newPosition[1] - initialPosition[1],
                         newPosition[2] - initialPosition[2]).start(getGVRContext().getAnimationEngine())
-                        .setInterpolator(GVRAccessibilityInterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {
+                        .setInterpolator(InterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {
 
                             @Override
                             public void finished(GVRAnimation animation) {
-                                new GVRRotationByAxisAnimation(GVRAccessibilityCursorItem.this, duration * 3, 180, 0, 1, 0)
+                                new GVRRotationByAxisAnimation(CursorSceneItem.this, duration * 3, 180, 0, 1, 0)
                                         .start(getGVRContext().getAnimationEngine())
-                                        .setInterpolator(GVRAccessibilityInterpolatorStrongEaseInOut.getInstance()).setOnFinish(new GVROnFinish() {
+                                        .setInterpolator(InterpolatorStrongEaseInOut.getInstance()).setOnFinish(new GVROnFinish() {
 
                                             @Override
                                             public void finished(GVRAnimation animation) {
-                                                new GVRRelativeMotionAnimation(GVRAccessibilityCursorItem.this, duration, initialPosition[0]
+                                                new GVRRelativeMotionAnimation(CursorSceneItem.this, duration, initialPosition[0]
                                                         - newPosition[0],
                                                         initialPosition[1] - newPosition[1], initialPosition[2] - newPosition[2])
                                                         .start(getGVRContext().getAnimationEngine())
-                                                        .setInterpolator(GVRAccessibilityInterpolatorBackEaseIn.getInstance())
+                                                        .setInterpolator(InterpolatorBackEaseIn.getInstance())
                                                         .setOnFinish(new GVROnFinish() {
 
                                                             @Override
@@ -111,21 +114,21 @@ public class GVRAccessibilityCursorItem extends FocusableSceneObject {
             } else {
                 new GVRRelativeMotionAnimation(this, duration, newPosition[0] - initialPosition[0], newPosition[1] - initialPosition[1],
                         newPosition[2] - initialPosition[2]).start(getGVRContext().getAnimationEngine())
-                        .setInterpolator(GVRAccessibilityInterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {
+                        .setInterpolator(InterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {
 
                             @Override
                             public void finished(GVRAnimation animation) {
-                                new GVRRotationByAxisAnimation(GVRAccessibilityCursorItem.this, duration * 3, -180, 0, 1, 0)
+                                new GVRRotationByAxisAnimation(CursorSceneItem.this, duration * 3, -180, 0, 1, 0)
                                         .start(getGVRContext().getAnimationEngine())
-                                        .setInterpolator(GVRAccessibilityInterpolatorStrongEaseInOut.getInstance()).setOnFinish(new GVROnFinish() {
+                                        .setInterpolator(InterpolatorStrongEaseInOut.getInstance()).setOnFinish(new GVROnFinish() {
 
                                             @Override
                                             public void finished(GVRAnimation animation) {
-                                                new GVRRelativeMotionAnimation(GVRAccessibilityCursorItem.this, duration, initialPosition[0]
+                                                new GVRRelativeMotionAnimation(CursorSceneItem.this, duration, initialPosition[0]
                                                         - newPosition[0],
                                                         initialPosition[1] - newPosition[1], initialPosition[2] - newPosition[2])
                                                         .start(getGVRContext().getAnimationEngine())
-                                                        .setInterpolator(GVRAccessibilityInterpolatorBackEaseIn.getInstance())
+                                                        .setInterpolator(InterpolatorBackEaseIn.getInstance())
                                                         .setOnFinish(new GVROnFinish() {
 
                                                             @Override

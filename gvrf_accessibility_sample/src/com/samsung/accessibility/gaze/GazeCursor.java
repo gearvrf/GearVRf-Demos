@@ -1,15 +1,15 @@
 
-package com.samsung.accessibility;
+package com.samsung.accessibility.gaze;
 
 import org.gearvrf.GVRTexture;
 
 import java.util.ArrayList;
 
-public class GVRAccessibilityGazeCursor {
-    private GVRGazeCursorSceneObject gazeCursor;
+public class GazeCursor {
+    private GazeCursorSceneObject gazeCursor;
     private ArrayList<GVRTexture> customCursorTextures = new ArrayList<GVRTexture>();
 
-    protected GVRAccessibilityGazeCursor(GVRGazeCursorSceneObject cursor) {
+    protected GazeCursor(GazeCursorSceneObject cursor) {
         gazeCursor = cursor;
     }
 

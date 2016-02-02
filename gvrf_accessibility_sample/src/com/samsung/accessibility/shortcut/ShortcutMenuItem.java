@@ -1,6 +1,9 @@
 
-package com.samsung.accessibility;
+package com.samsung.accessibility.shortcut;
 
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.R.drawable;
+import com.samsung.accessibility.R.raw;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnFocusListener;
 
@@ -47,7 +50,6 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         renderData.setMesh(mesh);
         attachRenderData(renderData);
         getRenderData().getMaterial().setMainTexture(texture);
-        focusAndUnFocus();
     }
 
     private void loadFiles() {

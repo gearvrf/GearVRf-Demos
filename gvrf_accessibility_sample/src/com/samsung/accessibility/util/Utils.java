@@ -1,10 +1,9 @@
-
-package com.samsung.accessibility;
+package com.samsung.accessibility.util;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRSceneObject;
 
-final class GVRAccessibilityUtils {
+public class Utils {
 
     public static double distance(GVRSceneObject object, GVRCameraRig gvrCameraRig) {
         return Math.sqrt(Math.pow(object.getTransform().getPositionX()

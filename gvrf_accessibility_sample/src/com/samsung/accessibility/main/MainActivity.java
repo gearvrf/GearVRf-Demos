@@ -1,4 +1,4 @@
-package com.samsung.accessibility;
+package com.samsung.accessibility.main;
 
 import org.gearvrf.GVRActivity;
 
@@ -7,7 +7,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import com.samsung.accessibility.VRTouchPadGestureDetector.SwipeDirection;
+import com.samsung.accessibility.focus.VRTouchPadGestureDetector;
+import com.samsung.accessibility.focus.VRTouchPadGestureDetector.SwipeDirection;
 
 public class MainActivity extends GVRActivity implements
 		VRTouchPadGestureDetector.OnTouchPadGestureListener {

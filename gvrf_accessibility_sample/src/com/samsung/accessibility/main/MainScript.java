@@ -1,4 +1,4 @@
-package com.samsung.accessibility;
+package com.samsung.accessibility.main;
 
 import java.util.Locale;
 
@@ -16,23 +16,30 @@ import org.gearvrf.animation.GVROpacityAnimation;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.R.drawable;
+import com.samsung.accessibility.R.raw;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.focus.OnFocusListener;
+import com.samsung.accessibility.gaze.GazeCursorSceneObject;
+import com.samsung.accessibility.scene.AccessibilityScene;
+import com.samsung.accessibility.shortcut.ShortcutMenu;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 
 public class MainScript extends GVRScript {
 
     private static GVRContext mGVRContext;
     private FocusableSceneObject object;
-    public static GVRGazeCursorSceneObject cursor;
-    private GVRAccessibilityScene accessibilityScene;
+    public static GazeCursorSceneObject cursor;
+    private AccessibilityScene accessibilityScene;
 
     @Override
     public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
-        cursor = new GVRGazeCursorSceneObject(gvrContext);
-        accessibilityScene = new GVRAccessibilityScene(gvrContext, gvrContext.getMainScene());
+        cursor = new GazeCursorSceneObject(gvrContext);
+        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene());
         for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {
             if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
                 object.getRenderData().getMaterial().setOpacity(0);
