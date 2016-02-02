@@ -1,12 +1,6 @@
 
 package com.samsung.accessibility;
 
-import android.util.Log;
-
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.focus.OnFocusListener;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
@@ -17,7 +11,13 @@ import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
 
-public class GVRAccessibilityCursorItem extends GVRAccessibilityInteractiveObject {
+import android.util.Log;
+
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
+
+public class GVRAccessibilityCursorItem extends FocusableSceneObject {
     protected boolean isActive = false;
     private boolean isAnimating = false;
     private static final float duration = 0.35f;
@@ -58,13 +58,13 @@ public class GVRAccessibilityCursorItem extends GVRAccessibilityInteractiveObjec
 
             @Override
             public void onClick() {
-                interact();
+                animate();
             }
         });
     }
 
-    @Override
-    public void interact() {
+    
+    public void animate() {
         float distance = (float) GVRAccessibilityUtils.distance(this, getGVRContext().getMainScene().getMainCameraRig());
         final float[] initialPosition = new float[3];
         initialPosition[0] = getTransform().getPositionX();

@@ -10,7 +10,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVROpacityAnimation;
 
-import com.samsung.accessibility.GVRAccessibilityMenu.SceneType;
+import com.samsung.accessibility.focus.OnClickListener;
 
 /**
  * {@link GVRAccessibilityScene} is responsible for encapsulating all
@@ -29,7 +29,7 @@ public class GVRAccessibilityScene extends GVRScene {
     private GVRSceneObject mBothEyesSkyBox;
     private GVRContext mGvrContext;
     private GVRScene mainApplicationScene;
-    private SceneType sceneType;
+    private ShortcutMenu shortCurtMenu;
 
     /**
      * This constructor creates default scene</p>
@@ -41,11 +41,11 @@ public class GVRAccessibilityScene extends GVRScene {
      * 
      * @param gvrContext
      */
-    public GVRAccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene, SceneType sceneType) {
+    public GVRAccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene) {
         super(gvrContext);
         mGvrContext = gvrContext;
-        this.sceneType = sceneType;
         this.mainApplicationScene = mainApplicationScene;
+        shortCurtMenu = new ShortcutMenu(mGvrContext);
         createDefaultSkyBox();
         createItems();
         backToMainScene();
@@ -145,49 +145,92 @@ public class GVRAccessibilityScene extends GVRScene {
         float positionZ = -10f;
         float scale = 0.03f;
         GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.accessibility_item));
-        GVRAccessibilityItem invertedColors = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
+        final GVRAccessibilityItem invertedColors = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.inverted_colors)));
         invertedColors.getTransform().setPosition(positionX, positionY, positionZ);
         invertedColors.getTransform().setScale(scale, scale, scale);
         invertedColors.attachEyePointeeHolder();
+        invertedColors.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                invertedColors.animate();
+                
+            }
+        });
         this.addSceneObject(invertedColors);
 
-        GVRAccessibilityItem zoom = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
+        final GVRAccessibilityItem zoom = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.zoom)));
         zoom.getTransform().setPosition(positionX, positionY, positionZ);
         zoom.getTransform().setScale(scale, scale, scale);
         zoom.attachEyePointeeHolder();
+        zoom.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                zoom.animate();
+            }
+        });
         this.addSceneObject(zoom);
 
-        GVRAccessibilityItem talkBack = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
+        final GVRAccessibilityItem talkBack = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.talk_back)));
         talkBack.getTransform().setPosition(positionX, positionY, positionZ);
         talkBack.getTransform().setScale(scale, scale, scale);
         talkBack.attachEyePointeeHolder();
+        talkBack.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                talkBack.animate();
+            }
+        });
 
         this.addSceneObject(talkBack);
 
-        GVRAccessibilityItem speech = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
+        final GVRAccessibilityItem speech = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.speech)));
         speech.getTransform().setPosition(positionX, positionY, positionZ);
         speech.getTransform().setScale(scale, scale, scale);
         speech.attachEyePointeeHolder();
+        speech.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                speech.animate();
+            }
+        });
 
         this.addSceneObject(speech);
 
-        GVRAccessibilityItem captions = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
+        final GVRAccessibilityItem captions = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.captions)));
         captions.getTransform().setPosition(positionX, positionY, positionZ);
         captions.getTransform().setScale(scale, scale, scale);
         captions.attachEyePointeeHolder();
+        captions.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                captions.animate();
+            }
+        });
 
         this.addSceneObject(captions);
 
-        GVRAccessibilityItem settings = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
+        final GVRAccessibilityItem settings = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.settings)));
         settings.getTransform().setPosition(positionX, positionY, positionZ);
         settings.getTransform().setScale(scale, scale, scale);
         settings.attachEyePointeeHolder();
+        settings.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                settings.animate();
+            }
+        });
         this.addSceneObject(settings);
 
         GVRAccessibilityCursorItem cursor = new GVRAccessibilityCursorItem(getGVRContext(), mesh, getGVRContext()
@@ -248,8 +291,17 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     private void backToMainScene() {
-        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGvrContext, mainApplicationScene, SceneType.MAIN_SCENE_APPLICATION);
-        this.addSceneObject(menu);
+        ShortcutMenuItem mainItem = shortCurtMenu.getMenuItems().get(7);
+        mainItem.focusAndUnFocus();
+        mainItem.createIcon(mainItem.getBackIcon());
+        mainItem.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                mGvrContext.setMainScene(mainApplicationScene);
+            }
+        });
+        addSceneObject(shortCurtMenu);
     }
 
     public void show() {

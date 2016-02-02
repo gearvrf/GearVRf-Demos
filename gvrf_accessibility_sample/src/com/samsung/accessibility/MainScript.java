@@ -16,9 +16,9 @@ import org.gearvrf.animation.GVROpacityAnimation;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.samsung.accessibility.GVRAccessibilityMenu.SceneType;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.focus.OnFocusListener;
 
 public class MainScript extends GVRScript {
@@ -43,11 +43,26 @@ public class MainScript extends GVRScript {
         skybox.getRenderData().setRenderingOrder(0);
         gvrContext.getMainScene().addSceneObject(skybox);
 
-        GVRAccessibilityMenu menu = new GVRAccessibilityMenu(mGVRContext, accessibilityScene, SceneType.ACCESSIBILITY_SCENE);
-        mGVRContext.getMainScene().addSceneObject(menu);
+        createShortCut();
         createObjectTalkBack();
         createObject1TalkBack();
         createObject2TalkBack();
+    }
+
+    private void createShortCut() {
+        ShortcutMenu menu = new ShortcutMenu(mGVRContext);
+        ShortcutMenuItem mainItem = menu.getMenuItems().get(7);
+        mainItem.focusAndUnFocus();
+        mainItem.createIcon(mainItem.getAccessibilityIcon());
+        mainItem.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick() {
+                mGVRContext.setMainScene(accessibilityScene);
+            }
+        });
+        mGVRContext.getMainScene().addSceneObject(menu);
+
     }
 
     private void createObjectTalkBack() {
@@ -62,7 +77,7 @@ public class MainScript extends GVRScript {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
-                
+
             }
 
             @Override
