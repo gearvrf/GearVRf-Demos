@@ -58,7 +58,20 @@ public class MainScript extends GVRScript {
 
             @Override
             public void onClick() {
-                mGVRContext.setMainScene(accessibilityScene);
+
+                for (GVRSceneObject object : mGVRContext.getMainScene().getWholeSceneObjects()) {
+                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                        new GVROpacityAnimation(object, 1f, 0f).start(mGVRContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
+
+                            @Override
+                            public void finished(GVRAnimation arg0) {
+                                mGVRContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
+                                accessibilityScene.getMainCameraRig().addChildObject(cursor);
+                                accessibilityScene.show();
+                            }
+                        });
+                    }
+                }
             }
         });
         mGVRContext.getMainScene().addSceneObject(menu);

@@ -1,4 +1,3 @@
-
 package com.samsung.accessibility;
 
 import org.gearvrf.GVRAndroidResource;
@@ -8,13 +7,14 @@ import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
 import com.samsung.accessibility.focus.OnClickListener;
 
 /**
- * {@link GVRAccessibilityScene} is responsible for encapsulating all
- * accessibility features interactions.<br/>
+ * {@link GVRAccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -52,8 +52,7 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought
-     * {@link GVRSceneObject}.</br></br>
+     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</br></br>
      * 
      * <pre>
      * GVRSceneObject leftScreen = new GVRSceneObject(gvrContext);
@@ -88,8 +87,7 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought
-     * {@link GVRSceneObject}.</p>
+     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</p>
      * 
      * <pre>
      * GVRSceneObject skyBox = new GVRSceneObject(gvrContext);
@@ -155,7 +153,7 @@ public class GVRAccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 invertedColors.animate();
-                
+
             }
         });
         this.addSceneObject(invertedColors);
@@ -252,8 +250,7 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * Update accessibility items position to fit user's skybox and camera
-     * position.
+     * Update accessibility items position to fit user's skybox and camera position.
      * 
      * @param positionX
      * @param positionY
@@ -298,7 +295,23 @@ public class GVRAccessibilityScene extends GVRScene {
 
             @Override
             public void onClick() {
-                mGvrContext.setMainScene(mainApplicationScene);
+                for (GVRSceneObject object : getGVRContext().getMainScene().getWholeSceneObjects()) {
+                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                        new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
+
+                            @Override
+                            public void finished(GVRAnimation arg0) {
+                                mGvrContext.setMainScene(mainApplicationScene);
+                                mGvrContext.getMainScene().getMainCameraRig().addChildObject(MainScript.cursor);
+                                for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
+                                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                                        new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
             }
         });
         addSceneObject(shortCurtMenu);
