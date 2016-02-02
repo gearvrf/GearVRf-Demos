@@ -1,4 +1,7 @@
+
 package com.samsung.accessibility;
+
+import com.samsung.accessibility.focus.OnClickListener;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -11,10 +14,9 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
-import com.samsung.accessibility.focus.OnClickListener;
-
 /**
- * {@link GVRAccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
+ * {@link GVRAccessibilityScene} is responsible for encapsulating all
+ * accessibility features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -52,7 +54,8 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</br></br>
+     * With this constructor it is possible to customize sky box thought
+     * {@link GVRSceneObject}.</br></br>
      * 
      * <pre>
      * GVRSceneObject leftScreen = new GVRSceneObject(gvrContext);
@@ -87,7 +90,8 @@ public class GVRAccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</p>
+     * With this constructor it is possible to customize sky box thought
+     * {@link GVRSceneObject}.</p>
      * 
      * <pre>
      * GVRSceneObject skyBox = new GVRSceneObject(gvrContext);
@@ -217,20 +221,6 @@ public class GVRAccessibilityScene extends GVRScene {
 
         this.addSceneObject(captions);
 
-        final GVRAccessibilityItem settings = new GVRAccessibilityItem(getGVRContext(), mesh, getGVRContext()
-                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.settings)));
-        settings.getTransform().setPosition(positionX, positionY, positionZ);
-        settings.getTransform().setScale(scale, scale, scale);
-        settings.attachEyePointeeHolder();
-        settings.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick() {
-                settings.animate();
-            }
-        });
-        this.addSceneObject(settings);
-
         GVRAccessibilityCursorItem cursor = new GVRAccessibilityCursorItem(getGVRContext(), mesh, getGVRContext()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.cursor)));
         cursor.getTransform().setPosition(positionX, positionY, positionZ);
@@ -245,12 +235,12 @@ public class GVRAccessibilityScene extends GVRScene {
         talkBack.getTransform().rotateByAxisWithPivot(-1 * angle, 0, 1, 0, 0, 0, 0);
         speech.getTransform().rotateByAxisWithPivot(0 * angle, 0, 1, 0, 0, 0, 0);
         captions.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
-        settings.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
-        cursor.getTransform().rotateByAxisWithPivot(3 * angle, 0, 1, 0, 0, 0, 0);
+        cursor.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
     }
 
     /**
-     * Update accessibility items position to fit user's skybox and camera position.
+     * Update accessibility items position to fit user's skybox and camera
+     * position.
      * 
      * @param positionX
      * @param positionY
