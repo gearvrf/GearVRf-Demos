@@ -1,4 +1,3 @@
-
 package com.samsung.accessibility.scene;
 
 import com.samsung.accessibility.R;
@@ -19,8 +18,8 @@ import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
 /**
- * {@link AccessibilityScene} is responsible for encapsulating all accessibility
- * features interactions.<br/>
+ * {@link AccessibilityScene} is responsible for encapsulating all
+ * accessibility features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -58,8 +57,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought
-     * {@link GVRSceneObject}.</br></br>
+     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</br></br>
      * 
      * <pre>
      * GVRSceneObject leftScreen = new GVRSceneObject(gvrContext);
@@ -94,8 +92,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     /**
-     * With this constructor it is possible to customize sky box thought
-     * {@link GVRSceneObject}.</p>
+     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</p>
      * 
      * <pre>
      * GVRSceneObject skyBox = new GVRSceneObject(gvrContext);
@@ -246,8 +243,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     /**
-     * Update accessibility items position to fit user's skybox and camera
-     * position.
+     * Update accessibility items position to fit user's skybox and camera position.
      * 
      * @param positionX
      * @param positionY

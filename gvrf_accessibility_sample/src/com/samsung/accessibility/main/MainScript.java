@@ -30,7 +30,7 @@ import java.util.Locale;
 public class MainScript extends GVRScript {
 
     private static GVRContext mGVRContext;
-    private FocusableSceneObject object;
+
     public static GazeCursorSceneObject cursor;
     private AccessibilityScene accessibilityScene;
 
