@@ -2,10 +2,8 @@
 package com.samsung.accessibility.scene;
 
 import com.samsung.accessibility.R;
-import com.samsung.accessibility.R.drawable;
-import com.samsung.accessibility.R.raw;
 import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.main.MainScript;
+import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 
@@ -21,8 +19,8 @@ import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
 /**
- * {@link AccessibilityScene} is responsible for encapsulating all
- * accessibility features interactions.<br/>
+ * {@link AccessibilityScene} is responsible for encapsulating all accessibility
+ * features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -37,7 +35,7 @@ public class AccessibilityScene extends GVRScene {
     private GVRSceneObject mBothEyesSkyBox;
     private GVRContext mGvrContext;
     private GVRScene mainApplicationScene;
-    private ShortcutMenu shortCurtMenu;
+    private ShortcutMenu shortcutMenu;
 
     /**
      * This constructor creates default scene</p>
@@ -53,7 +51,7 @@ public class AccessibilityScene extends GVRScene {
         super(gvrContext);
         mGvrContext = gvrContext;
         this.mainApplicationScene = mainApplicationScene;
-        shortCurtMenu = new ShortcutMenu(mGvrContext);
+        shortcutMenu = new ShortcutMenu(mGvrContext);
         createDefaultSkyBox();
         createItems();
         backToMainScene();
@@ -163,8 +161,8 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 invertedColors.animate();
-                for (ShortcutMenuItem shortcut : shortCurtMenu.getMenuItems()) {
-                    
+                for (ShortcutMenuItem shortcut : shortcutMenu.getMenuItems()) {
+
                 }
 
             }
@@ -287,7 +285,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private void backToMainScene() {
-        ShortcutMenuItem shortcutItem = shortCurtMenu.getMenuItems().get(7);
+        ShortcutMenuItem shortcutItem = shortcutMenu.getMenuItems().get(7);
         shortcutItem.focusAndUnFocus();
         shortcutItem.createIcon(shortcutItem.getBackIcon());
         shortcutItem.setOnClickListener(new OnClickListener() {
@@ -301,7 +299,7 @@ public class AccessibilityScene extends GVRScene {
                             @Override
                             public void finished(GVRAnimation arg0) {
                                 mGvrContext.setMainScene(mainApplicationScene);
-                                mGvrContext.getMainScene().getMainCameraRig().addChildObject(MainScript.cursor);
+                                mGvrContext.getMainScene().getMainCameraRig().addChildObject(GazeCursorSceneObject.getInstance(mGvrContext));
                                 for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
                                     if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
                                         new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
@@ -313,7 +311,7 @@ public class AccessibilityScene extends GVRScene {
                 }
             }
         });
-        addSceneObject(shortCurtMenu);
+        addSceneObject(shortcutMenu);
     }
 
     public void show() {

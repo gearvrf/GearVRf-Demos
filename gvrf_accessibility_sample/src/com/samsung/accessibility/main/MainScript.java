@@ -1,6 +1,18 @@
+
 package com.samsung.accessibility.main;
 
-import java.util.Locale;
+import android.util.Log;
+import android.view.MotionEvent;
+
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.FocusableController;
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
+import com.samsung.accessibility.gaze.GazeCursorSceneObject;
+import com.samsung.accessibility.scene.AccessibilityScene;
+import com.samsung.accessibility.shortcut.ShortcutMenu;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -13,20 +25,7 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
-import android.util.Log;
-import android.view.MotionEvent;
-
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.R.drawable;
-import com.samsung.accessibility.R.raw;
-import com.samsung.accessibility.focus.FocusableController;
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.focus.OnFocusListener;
-import com.samsung.accessibility.gaze.GazeCursorSceneObject;
-import com.samsung.accessibility.scene.AccessibilityScene;
-import com.samsung.accessibility.shortcut.ShortcutMenu;
-import com.samsung.accessibility.shortcut.ShortcutMenuItem;
+import java.util.Locale;
 
 public class MainScript extends GVRScript {
 
@@ -38,7 +37,7 @@ public class MainScript extends GVRScript {
     @Override
     public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
-        cursor = new GazeCursorSceneObject(gvrContext);
+        cursor = GazeCursorSceneObject.getInstance(gvrContext);
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene());
         for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {
             if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {

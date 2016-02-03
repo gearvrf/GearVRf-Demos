@@ -1,6 +1,8 @@
 
 package com.samsung.accessibility.gaze;
 
+import com.samsung.accessibility.R;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -9,22 +11,25 @@ import org.gearvrf.GVRPerspectiveCamera;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
-
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.R.drawable;
 
 public class GazeCursorSceneObject extends GVRSceneObject {
 
     private static final float NEAR_CLIPPING_OFFSET = 0.00001f;
     private static final float NORMAL_CURSOR_SIZE = 0.0028f;
-    private static final float CURSOR_Z_POSITION = -.5f;
     private static final int CURSOR_RENDER_ORDER = 100000;
 
     private GVRSceneObject rightCursor;
     private GVRSceneObject leftCursor;
+    private static GazeCursorSceneObject sInstance;
 
-    public GazeCursorSceneObject(GVRContext gvrContext) {
+    public static GazeCursorSceneObject getInstance(GVRContext gvrContext) {
+        if (sInstance == null) {
+            sInstance = new GazeCursorSceneObject(gvrContext);
+        }
+        return sInstance;
+    }
+
+    private GazeCursorSceneObject(GVRContext gvrContext) {
         super(gvrContext);
 
         rightCursor = new GVRSceneObject(gvrContext);
@@ -48,20 +53,6 @@ public class GazeCursorSceneObject extends GVRSceneObject {
                         0,
                         -(((GVRPerspectiveCamera) gvrContext.getMainScene().getMainCameraRig().getLeftCamera()).getNearClippingDistance() + NEAR_CLIPPING_OFFSET));
         addChildObject(leftCursor);
-    }
-
-    public GazeCursorSceneObject(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
-        super(gvrContext, mesh, texture);
-        getTransform().setPositionZ(CURSOR_Z_POSITION);
-        getRenderData().setDepthTest(false);
-        getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
-    }
-
-    public GazeCursorSceneObject(GVRContext gvrContext, float width, float height, GVRTexture texture) {
-        super(gvrContext, width, height, texture);
-        getTransform().setPositionZ(CURSOR_Z_POSITION);
-        getRenderData().setDepthTest(false);
-        getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
     }
 
     private GVRRenderData createRenderData(GVRContext gvrContext) {
