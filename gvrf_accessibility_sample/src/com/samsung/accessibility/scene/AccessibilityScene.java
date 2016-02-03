@@ -1,10 +1,6 @@
 package com.samsung.accessibility.scene;
 
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.gaze.GazeCursorSceneObject;
-import com.samsung.accessibility.shortcut.ShortcutMenu;
-import com.samsung.accessibility.shortcut.ShortcutMenuItem;
+import java.util.List;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -17,9 +13,14 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.gaze.GazeCursorSceneObject;
+import com.samsung.accessibility.shortcut.ShortcutMenu;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem;
+
 /**
- * {@link AccessibilityScene} is responsible for encapsulating all
- * accessibility features interactions.<br/>
+ * {@link AccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
  * &nbsp; &nbsp;&nbsp; Add to scene in your project:
  * 
  * <pre>
@@ -158,7 +159,13 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 invertedColors.animate();
-                for (ShortcutMenuItem shortcut : shortcutMenu.getMenuItems()) {
+                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
+                for (int i = 0; i < shortcutItems.size(); i++) {
+
+                    if (shortcutItems.get(i).isEmpty()) {
+                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getInvertedColorsIcon());
+                        break;
+                    }
 
                 }
 
@@ -176,6 +183,17 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 zoom.animate();
+
+                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
+                for (int i = 0; i < shortcutItems.size(); i++) {
+
+                    if (shortcutItems.get(i).isEmpty()) {
+                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getZoomIn());
+                        shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getZoomOut());
+                        break;
+                    }
+
+                }
             }
         });
         this.addSceneObject(zoom);
@@ -190,6 +208,16 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 talkBack.animate();
+                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
+                for (int i = 0; i < shortcutItems.size(); i++) {
+
+                    if (shortcutItems.get(i).isEmpty()) {
+                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getTalkBackLess());
+                        shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getTalkBackMore());
+                        break;
+                    }
+
+                }
             }
         });
 
@@ -205,6 +233,15 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 speech.animate();
+                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
+                for (int i = 0; i < shortcutItems.size(); i++) {
+
+                    if (shortcutItems.get(i).isEmpty()) {
+                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getSpeechIcon());
+                        break;
+                    }
+
+                }
             }
         });
 
@@ -281,7 +318,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private void backToMainScene() {
-        ShortcutMenuItem shortcutItem = shortcutMenu.getMenuItems().get(7);
+        ShortcutMenuItem shortcutItem = shortcutMenu.getShortcutItems().get(0);
         shortcutItem.focusAndUnFocus();
         shortcutItem.createIcon(shortcutItem.getBackIcon());
         shortcutItem.setOnClickListener(new OnClickListener() {

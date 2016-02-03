@@ -1,5 +1,17 @@
-
 package com.samsung.accessibility.main;
+
+import java.util.Locale;
+
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRScript;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVROnFinish;
+import org.gearvrf.animation.GVROpacityAnimation;
 
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,24 +26,11 @@ import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
-import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVROnFinish;
-import org.gearvrf.animation.GVROpacityAnimation;
-
-import java.util.Locale;
-
 public class MainScript extends GVRScript {
 
     private static GVRContext mGVRContext;
 
-    public static GazeCursorSceneObject cursor;
+    private GazeCursorSceneObject cursor;
     private AccessibilityScene accessibilityScene;
 
     @Override
@@ -57,7 +56,7 @@ public class MainScript extends GVRScript {
 
     private void createShortCut() {
         ShortcutMenu menu = new ShortcutMenu(mGVRContext);
-        ShortcutMenuItem mainItem = menu.getMenuItems().get(7);
+        ShortcutMenuItem mainItem = menu.getShortcutItems().get(0);
         mainItem.focusAndUnFocus();
         mainItem.createIcon(mainItem.getAccessibilityIcon());
         mainItem.setOnClickListener(new OnClickListener() {

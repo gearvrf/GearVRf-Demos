@@ -23,20 +23,24 @@ public class ShortcutMenu extends GVRSceneObject {
     }
 
     public void createDefaultMenu() {
-
+        int offset = 0;
         float angle = 45;
         int size = 8;
 
         for (int i = 0; i < size; i++) {
             ShortcutMenuItem shortcutItem = new ShortcutMenuItem(mGvrContext);
             shortcutItem.getTransform().setPosition(0, -1f, 0);
-            shortcutItem.getTransform().rotateByAxis(i * angle, 0, 1, 0);
+            if (i % 2 == 1) {
+                shortcutItem.getTransform().rotateByAxis((int) (offset + 1 / 2) * angle, 0, 1, 0);
+            } else {
+                shortcutItem.getTransform().rotateByAxis((int) (offset + 1 / 2) * -angle, 0, 1, 0);
+                offset++;
+            }
+
             shortcutItem.setEmpty(true);
             addChildObject(shortcutItem);
             shortcutItems.add(shortcutItem);
-
         }
-
     }
 
     public void clickEffectMenu(ShortcutMenuItem shortcutItem) {
@@ -49,7 +53,7 @@ public class ShortcutMenu extends GVRSceneObject {
         }
     }
 
-    public List<ShortcutMenuItem> getMenuItems() {
+    public List<ShortcutMenuItem> getShortcutItems() {
         return shortcutItems;
     }
 

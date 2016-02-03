@@ -1,11 +1,4 @@
-
 package com.samsung.accessibility.shortcut;
-
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.R.drawable;
-import com.samsung.accessibility.R.raw;
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnFocusListener;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -15,6 +8,10 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnFocusListener;
 
 public class ShortcutMenuItem extends FocusableSceneObject {
 
@@ -31,6 +28,8 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private GVRTexture zoomIn;
     private GVRTexture talkBackLess;
     private GVRTexture talkBackMore;
+    private GVRTexture invertedColorsIcon;
+    private GVRTexture speechIcon;
 
     public ShortcutMenuItem(GVRContext gvrContext) {
         super(gvrContext);
@@ -59,7 +58,9 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         talkBackMore = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_mais));
         talkBackLess = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_menos));
         zoomIn = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_mais));
+        invertedColorsIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_inverted));
         zoomOut = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_menos));
+        speechIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_speech));
     }
 
     public void focusAndUnFocus() {
@@ -94,6 +95,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         backIcon.getTransform().rotateByAxisWithPivot(245, 0, 1, 0, 0, 0, 0);
         backIcon.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
         getRenderData().getMaterial().setMainTexture(spaceTexture);
+        empty = false;
         addChildObject(backIcon);
     }
 
@@ -136,4 +138,13 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     public GVRTexture getTalkBackMore() {
         return talkBackMore;
     }
+
+    public GVRTexture getInvertedColorsIcon() {
+        return invertedColorsIcon;
+    }
+
+    public GVRTexture getSpeechIcon() {
+        return speechIcon;
+    }
+
 }
