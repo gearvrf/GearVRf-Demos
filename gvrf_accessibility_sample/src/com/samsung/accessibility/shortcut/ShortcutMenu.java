@@ -1,13 +1,13 @@
-
 package com.samsung.accessibility.shortcut;
 
-import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
+import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class ShortcutMenu extends GVRSceneObject {
 
@@ -15,12 +15,14 @@ public class ShortcutMenu extends GVRSceneObject {
     private static final int LOST_FOCUS_COLOR = 6186095;
     private static final int CLICKED_COLOR = 12631476;
     private List<ShortcutMenuItem> shortcutItems;
-    ShortcutMenuItem sortAux;
+    private ShortcutMenuItem sortAux;
+    private AccessibilityTexture textures;
 
     public ShortcutMenu(GVRContext gvrContext) {
         super(gvrContext);
         this.getTransform().rotateByAxis(110, 0, 1, 0);
         shortcutItems = new ArrayList<ShortcutMenuItem>();
+        textures = AccessibilityTexture.getInstance(gvrContext);
         mGvrContext = gvrContext;
         createDefaultMenu();
         sortAux = new ShortcutMenuItem(mGvrContext);
@@ -43,7 +45,7 @@ public class ShortcutMenu extends GVRSceneObject {
 
             addChildObject(shortcutItem);
             shortcutItem.setTypeItem(TypeItem.EMPTY);
-            shortcutItem.createIcon(shortcutItem.getEmptyIcon(), TypeItem.EMPTY);
+            shortcutItem.createIcon(textures.getEmptyIcon(), TypeItem.EMPTY);
             shortcutItems.add(shortcutItem);
         }
     }

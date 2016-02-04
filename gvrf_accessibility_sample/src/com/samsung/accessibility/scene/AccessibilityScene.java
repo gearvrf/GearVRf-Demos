@@ -19,6 +19,7 @@ import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
+import com.samsung.accessibility.util.AccessibilityTexture;
 
 /**
  * {@link AccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
@@ -37,6 +38,7 @@ public class AccessibilityScene extends GVRScene {
     private GVRContext mGvrContext;
     private GVRScene mainApplicationScene;
     private ShortcutMenu shortcutMenu;
+    private AccessibilityTexture textures;
 
     /**
      * This constructor creates default scene</p>
@@ -51,6 +53,7 @@ public class AccessibilityScene extends GVRScene {
     public AccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene) {
         super(gvrContext);
         mGvrContext = gvrContext;
+        textures = AccessibilityTexture.getInstance(gvrContext);
         this.mainApplicationScene = mainApplicationScene;
         shortcutMenu = new ShortcutMenu(mGvrContext);
         createDefaultSkyBox();
@@ -166,7 +169,7 @@ public class AccessibilityScene extends GVRScene {
                     for (int i = 0; i < shortcutItems.size(); i++) {
 
                         if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getInvertedColorsIcon(), TypeItem.INVERTED_COLORS);
+                            shortcutItems.get(i).createIcon(textures.getInvertedColorsIcon(), TypeItem.INVERTED_COLORS);
                             break;
                         }
 
@@ -199,8 +202,8 @@ public class AccessibilityScene extends GVRScene {
                     for (int i = 0; i < shortcutItems.size(); i++) {
 
                         if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getZoomIn(), TypeItem.ZOOM);
-                            shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getZoomOut(), TypeItem.ZOOM);
+                            shortcutItems.get(i).createIcon(textures.getZoomIn(), TypeItem.ZOOM);
+                            shortcutItems.get(i + 2).createIcon(textures.getZoomOut(), TypeItem.ZOOM);
                             break;
                         }
 
@@ -234,8 +237,8 @@ public class AccessibilityScene extends GVRScene {
                     for (int i = 0; i < shortcutItems.size(); i++) {
 
                         if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getTalkBackLess(), TypeItem.TALK_BACK);
-                            shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getTalkBackMore(), TypeItem.TALK_BACK);
+                            shortcutItems.get(i).createIcon(textures.getTalkBackLess(), TypeItem.TALK_BACK);
+                            shortcutItems.get(i + 2).createIcon(textures.getTalkBackMore(), TypeItem.TALK_BACK);
                             break;
                         }
 
@@ -272,7 +275,7 @@ public class AccessibilityScene extends GVRScene {
                     for (int i = 0; i < shortcutItems.size(); i++) {
 
                         if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getSpeechIcon(), TypeItem.SPEECH);
+                            shortcutItems.get(i).createIcon(textures.getSpeechIcon(), TypeItem.SPEECH);
                             break;
                         }
 
@@ -364,7 +367,7 @@ public class AccessibilityScene extends GVRScene {
     private void backToMainScene() {
         ShortcutMenuItem shortcutItem = shortcutMenu.getShortcutItems().get(0);
         shortcutItem.focusAndUnFocus();
-        shortcutItem.createIcon(shortcutItem.getBackIcon(), TypeItem.BACK);
+        shortcutItem.createIcon(textures.getBackIcon(), TypeItem.BACK);
         shortcutItem.setOnClickListener(new OnClickListener() {
 
             @Override
