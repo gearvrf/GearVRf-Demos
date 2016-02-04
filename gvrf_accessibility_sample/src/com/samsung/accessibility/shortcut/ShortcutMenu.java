@@ -1,14 +1,13 @@
+
 package com.samsung.accessibility.shortcut;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 
-import android.util.Log;
-
-import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ShortcutMenu extends GVRSceneObject {
 
@@ -16,6 +15,7 @@ public class ShortcutMenu extends GVRSceneObject {
     private static final int LOST_FOCUS_COLOR = 6186095;
     private static final int CLICKED_COLOR = 12631476;
     private List<ShortcutMenuItem> shortcutItems;
+    ShortcutMenuItem sortAux;
 
     public ShortcutMenu(GVRContext gvrContext) {
         super(gvrContext);
@@ -23,7 +23,7 @@ public class ShortcutMenu extends GVRSceneObject {
         shortcutItems = new ArrayList<ShortcutMenuItem>();
         mGvrContext = gvrContext;
         createDefaultMenu();
-
+        sortAux = new ShortcutMenuItem(mGvrContext);
     }
 
     public void createDefaultMenu() {
@@ -65,7 +65,6 @@ public class ShortcutMenu extends GVRSceneObject {
     public void removeShortcut(int... position) {
 
         for (int i = 0; i < position.length; i++) {
-            Log.e("test", "position: " + position[i]);
             shortcutItems.get(position[i]).removeIcon();
         }
 
@@ -73,47 +72,7 @@ public class ShortcutMenu extends GVRSceneObject {
     }
 
     private void sort(int position) {
-
-        // for (int i = position; i < shortcutItems.size() - 1; i++) {
-        //
-        // if (shortcutItems.get(i - 1).getTypeItem() == shortcutItems.get(i + 1).getTypeItem()
-        // /* || (i >= 2 && shortcutItems.get(i) == shortcutItems.get(i - 2)) */) {
-        //
-        // } else {
-        // shortcutItems.get(i).createIcon(shortcutItems.get(i + 1).getIcon().getRenderData().getMaterial().getMainTexture(),
-        // shortcutItems.get(i + 1).getTypeItem());
-        // }
-        // }
-        // shortcutItems.get(7).removeIcon();
-        //
-        // // for (int i = 2; i < shortcutItems.size(); i++) {
-        // // if (shortcutItems.get(i - 2).getTypeItem() == TypeItem.EMPTY) {
-        // // shortcutItems.get(i - 2).createIcon(shortcutItems.get(i).getIcon().getRenderData().getMaterial().getMainTexture(),
-        // // shortcutItems.get(i).getTypeItem());
-        // // }
-        // // }
-
-        // for (int i = 0; i < shortcutItems.size() - 1; i++) {
-        // if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-        // for (int j = i + 1; j < shortcutItems.size(); j++) {
-        // if (shortcutItems.get(j).getTypeItem() != TypeItem.EMPTY) {
-        // shortcutItems.get(i).createIcon(shortcutItems.get(j).getIcon().getRenderData().getMaterial().getMainTexture(),
-        // shortcutItems.get(j).getTypeItem());
-        // if (j + 2 < shortcutItems.size() && shortcutItems.get(j).getTypeItem() == shortcutItems.get(j + 2).getTypeItem()) {
-        // shortcutItems.get(j).createIcon(shortcutItems.get(j + 1).getIcon().getRenderData().getMaterial().getMainTexture(),
-        // shortcutItems.get(j + 1).getTypeItem());
-        // shortcutItems.get(i + 2).createIcon(shortcutItems.get(j + 2).getIcon().getRenderData().getMaterial().getMainTexture(),
-        // shortcutItems.get(j + 2).getTypeItem());
-        // } else {
-        // // shortcutItems.get(j).removeIcon();
-        // }
-        // break;
-        // }
-        // }
-        // }
-        // }
-
-        for (int i = position + 1; i < shortcutItems.size() - 1; i++) {
+        for (int i = position + 1; i < shortcutItems.size(); i++) {
             if (shortcutItems.get(i).getTypeItem() != TypeItem.EMPTY && shortcutItems.get(i).getTypeItem() != shortcutItems.get(i - 2).getTypeItem()) {
                 for (int j = 0; j < i; j++) {
                     if (shortcutItems.get(j).getTypeItem() == TypeItem.EMPTY) {
@@ -122,17 +81,24 @@ public class ShortcutMenu extends GVRSceneObject {
                         shortcutItems.get(i).removeIcon();
 
                         if (shortcutItems.get(j).getTypeItem() == shortcutItems.get(j - 1).getTypeItem()) {
-                            shortcutItems.get(j).createIcon(shortcutItems.get(j + 1).getIcon().getRenderData().getMaterial().getMainTexture(),
-                                    shortcutItems.get(j + 1).getTypeItem());
-                            shortcutItems.get(j + 1).createIcon(shortcutItems.get(j).getIcon().getRenderData().getMaterial().getMainTexture(),
-                                    shortcutItems.get(j).getTypeItem());
+                            switchItems(j, j + 1);
+                        } else if (j < shortcutItems.size() - 2 && j > 1
+                                && shortcutItems.get(j + 2).getTypeItem() == shortcutItems.get(j - 2).getTypeItem()) {
+                            switchItems(j, j + 2);
                         }
                         break;
                     }
                 }
             }
         }
+    }
 
-        shortcutItems.get(shortcutItems.size() - 1).removeIcon();
+    private void switchItems(int position1, int position2) {
+        sortAux.createIcon(shortcutItems.get(position1).getIcon().getRenderData().getMaterial().getMainTexture(),
+                shortcutItems.get(position1).getTypeItem());
+        shortcutItems.get(position1).createIcon(shortcutItems.get(position2).getIcon().getRenderData().getMaterial().getMainTexture(),
+                shortcutItems.get(position2).getTypeItem());
+        shortcutItems.get(position2).createIcon(sortAux.getIcon().getRenderData().getMaterial().getMainTexture(),
+                sortAux.getTypeItem());
     }
 }

@@ -1,4 +1,9 @@
+
 package com.samsung.accessibility.shortcut;
+
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnFocusListener;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -8,10 +13,6 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnFocusListener;
 
 public class ShortcutMenuItem extends FocusableSceneObject {
 
@@ -107,7 +108,6 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     public void removeIcon() {
-        // removeChildObject(icon);
         typeItem = TypeItem.EMPTY;
         icon.getRenderData().getMaterial().setMainTexture(emptyIcon);
     }
