@@ -13,6 +13,7 @@ import org.gearvrf.animation.GVROpacityAnimation;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.main.MainScript;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
@@ -173,8 +174,12 @@ public class AccessibilityScene extends GVRScene {
                     }
                 } else {
                     for (int i = 0; i < shortcutItems.size(); i++) {
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.INVERTED_COLORS)
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.INVERTED_COLORS) {
+                            shortcutItems.get(i).resetClick();
                             shortcutMenu.removeShortcut(i);
+                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
+                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
+                        }
                     }
 
                 }

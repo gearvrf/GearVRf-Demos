@@ -8,6 +8,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.accessibility.GVRAccessibilityManager;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 
 import android.util.Log;
@@ -30,12 +31,14 @@ public class MainScript extends GVRScript {
 
     private GazeCursorSceneObject cursor;
     public static AccessibilityScene accessibilityScene;
+    public static GVRAccessibilityManager manager;
 
     @Override
     public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
+        manager = new GVRAccessibilityManager(gvrContext);
         ShortcutMenu shortcutMenu = createShortCut();
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
         for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {

@@ -50,16 +50,6 @@ public class ShortcutMenu extends GVRSceneObject {
         }
     }
 
-    public void clickEffectMenu(ShortcutMenuItem shortcutItem) {
-        if (!shortcutItem.isClicked()) {
-            shortcutItem.setClicked(true);
-            shortcutItem.getRenderData().getMaterial().setColor(CLICKED_COLOR);
-        } else {
-            shortcutItem.setClicked(false);
-            shortcutItem.getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
-        }
-    }
-
     public List<ShortcutMenuItem> getShortcutItems() {
         return shortcutItems;
     }

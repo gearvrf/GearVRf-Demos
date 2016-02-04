@@ -38,6 +38,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         createRenderData();
         attachEyePointeeHolder();
         getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
+        focusAndUnFocus();
         clickEvent();
     }
 
@@ -53,7 +54,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         getRenderData().getMaterial().setMainTexture(texture);
     }
 
-    public void focusAndUnFocus() {
+    private void focusAndUnFocus() {
         setOnFocusListener(new OnFocusListener() {
 
             @Override
@@ -73,7 +74,8 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-                object.getRenderData().getMaterial().setColor(IN_FOCUS_COLOR);
+                if (typeItem != TypeItem.EMPTY)
+                    object.getRenderData().getMaterial().setColor(IN_FOCUS_COLOR);
             }
         });
     }
@@ -101,6 +103,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                 final GVRSceneObject wholeSceneObjects[] = gvrContext.getMainScene().getWholeSceneObjects();
                 switch (typeItem) {
                 case TALK_BACK:
+                    clickEffectMenu();
 
                     break;
 
@@ -134,14 +137,23 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                     break;
 
                 case ZOOM:
-
+                    clickEffectMenu();
                     break;
 
                 case INVERTED_COLORS:
+                    clickEffectMenu();
+                    if (MainScript.manager.getInvertedColors().isInverted()) {
+                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
+                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
+                    } else {
+                        MainScript.manager.getInvertedColors().turnOn(MainScript.accessibilityScene.getMainApplicationScene());
+                        MainScript.manager.getInvertedColors().turnOn(MainScript.accessibilityScene);
+                    }
 
                     break;
 
                 case SPEECH:
+                    clickEffectMenu();
 
                     break;
 
@@ -172,6 +184,20 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
             }
         });
+    }
+
+    private void clickEffectMenu() {
+        if (!isClicked()) {
+            setClicked(true);
+            getRenderData().getMaterial().setColor(CLICKED_COLOR);
+        } else {
+            resetClick();
+        }
+    }
+
+    public void resetClick() {
+        setClicked(false);
+        getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
     }
 
     public void removeIcon() {
