@@ -9,9 +9,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
-import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVROnFinish;
-import org.gearvrf.animation.GVROpacityAnimation;
 
 import android.util.Log;
 import android.view.MotionEvent;
@@ -19,7 +16,6 @@ import android.view.MotionEvent;
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.focus.OnFocusListener;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.scene.AccessibilityScene;
@@ -33,14 +29,15 @@ public class MainScript extends GVRScript {
     private static GVRContext mGVRContext;
 
     private GazeCursorSceneObject cursor;
-    private AccessibilityScene accessibilityScene;
+    public static AccessibilityScene accessibilityScene;
 
     @Override
     public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
-        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene());
+        ShortcutMenu shortcutMenu = createShortCut();
+        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
         for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {
             if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
                 object.getRenderData().getMaterial().setOpacity(0);
@@ -51,39 +48,17 @@ public class MainScript extends GVRScript {
         skybox.getRenderData().setRenderingOrder(0);
         gvrContext.getMainScene().addSceneObject(skybox);
 
-        createShortCut();
         createObjectTalkBack();
         createObject1TalkBack();
         createObject2TalkBack();
+        mGVRContext.getMainScene().addSceneObject(shortcutMenu);
     }
 
-    private void createShortCut() {
-        ShortcutMenu menu = new ShortcutMenu(mGVRContext);
-        ShortcutMenuItem mainItem = menu.getShortcutItems().get(0);
-        mainItem.focusAndUnFocus();
-        mainItem.createIcon(AccessibilityTexture.getInstance(mGVRContext).getAccessibilityIcon(), TypeItem.BACK);
-        mainItem.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick() {
-
-                for (GVRSceneObject object : mGVRContext.getMainScene().getWholeSceneObjects()) {
-                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                        new GVROpacityAnimation(object, 1f, 0f).start(mGVRContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
-
-                            @Override
-                            public void finished(GVRAnimation arg0) {
-                                mGVRContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
-                                accessibilityScene.getMainCameraRig().addChildObject(cursor);
-                                accessibilityScene.show();
-                            }
-                        });
-                    }
-                }
-            }
-        });
-        mGVRContext.getMainScene().addSceneObject(menu);
-
+    private ShortcutMenu createShortCut() {
+        ShortcutMenu shortcuteMenu = new ShortcutMenu(mGVRContext);
+        ShortcutMenuItem shortcuteItem = shortcuteMenu.getShortcutItems().get(0);
+        shortcuteItem.createIcon(AccessibilityTexture.getInstance(mGVRContext).getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
+        return shortcuteMenu;
     }
 
     private void createObjectTalkBack() {
