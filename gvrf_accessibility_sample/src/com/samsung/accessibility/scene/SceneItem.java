@@ -126,4 +126,8 @@ public class SceneItem extends FocusableSceneObject {
         }
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
 }

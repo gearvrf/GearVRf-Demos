@@ -18,6 +18,7 @@ import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 
 /**
  * {@link AccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
@@ -160,11 +161,20 @@ public class AccessibilityScene extends GVRScene {
             public void onClick() {
                 invertedColors.animate();
                 List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
-                for (int i = 0; i < shortcutItems.size(); i++) {
 
-                    if (shortcutItems.get(i).isEmpty()) {
-                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getInvertedColorsIcon());
-                        break;
+                if (invertedColors.isActive) {
+                    for (int i = 0; i < shortcutItems.size(); i++) {
+
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
+                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getInvertedColorsIcon(), TypeItem.INVERTED_COLORS);
+                            break;
+                        }
+
+                    }
+                } else {
+                    for (int i = 0; i < shortcutItems.size(); i++) {
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.INVERTED_COLORS)
+                            shortcutMenu.removeShortcut(i);
                     }
 
                 }
@@ -185,12 +195,23 @@ public class AccessibilityScene extends GVRScene {
                 zoom.animate();
 
                 List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
-                for (int i = 0; i < shortcutItems.size(); i++) {
+                if (zoom.isActive) {
+                    for (int i = 0; i < shortcutItems.size(); i++) {
 
-                    if (shortcutItems.get(i).isEmpty()) {
-                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getZoomIn());
-                        shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getZoomOut());
-                        break;
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
+                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getZoomIn(), TypeItem.ZOOM);
+                            shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getZoomOut(), TypeItem.ZOOM);
+                            break;
+                        }
+
+                    }
+                } else {
+
+                    for (int i = 0; i < shortcutItems.size(); i++) {
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.ZOOM) {
+                            shortcutMenu.removeShortcut(i, i + 2);
+                            break;
+                        }
                     }
 
                 }
@@ -209,12 +230,23 @@ public class AccessibilityScene extends GVRScene {
             public void onClick() {
                 talkBack.animate();
                 List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
-                for (int i = 0; i < shortcutItems.size(); i++) {
+                if (talkBack.isActive) {
+                    for (int i = 0; i < shortcutItems.size(); i++) {
 
-                    if (shortcutItems.get(i).isEmpty()) {
-                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getTalkBackLess());
-                        shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getTalkBackMore());
-                        break;
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
+                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getTalkBackLess(), TypeItem.TALK_BACK);
+                            shortcutItems.get(i + 2).createIcon(shortcutItems.get(i).getTalkBackMore(), TypeItem.TALK_BACK);
+                            break;
+                        }
+
+                    }
+                } else {
+
+                    for (int i = 0; i < shortcutItems.size(); i++) {
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.TALK_BACK) {
+                            shortcutMenu.removeShortcut(i, i + 2);
+                            break;
+                        }
                     }
 
                 }
@@ -234,11 +266,23 @@ public class AccessibilityScene extends GVRScene {
             public void onClick() {
                 speech.animate();
                 List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
-                for (int i = 0; i < shortcutItems.size(); i++) {
 
-                    if (shortcutItems.get(i).isEmpty()) {
-                        shortcutItems.get(i).createIcon(shortcutItems.get(i).getSpeechIcon());
-                        break;
+                if (speech.isActive) {
+
+                    for (int i = 0; i < shortcutItems.size(); i++) {
+
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
+                            shortcutItems.get(i).createIcon(shortcutItems.get(i).getSpeechIcon(), TypeItem.SPEECH);
+                            break;
+                        }
+
+                    }
+
+                } else {
+
+                    for (int i = 0; i < shortcutItems.size(); i++) {
+                        if (shortcutItems.get(i).getTypeItem() == TypeItem.SPEECH)
+                            shortcutMenu.removeShortcut(i);
                     }
 
                 }
@@ -320,7 +364,7 @@ public class AccessibilityScene extends GVRScene {
     private void backToMainScene() {
         ShortcutMenuItem shortcutItem = shortcutMenu.getShortcutItems().get(0);
         shortcutItem.focusAndUnFocus();
-        shortcutItem.createIcon(shortcutItem.getBackIcon());
+        shortcutItem.createIcon(shortcutItem.getBackIcon(), TypeItem.BACK);
         shortcutItem.setOnClickListener(new OnClickListener() {
 
             @Override

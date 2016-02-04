@@ -25,6 +25,7 @@ import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
+import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 
 public class MainScript extends GVRScript {
 
@@ -58,7 +59,7 @@ public class MainScript extends GVRScript {
         ShortcutMenu menu = new ShortcutMenu(mGVRContext);
         ShortcutMenuItem mainItem = menu.getShortcutItems().get(0);
         mainItem.focusAndUnFocus();
-        mainItem.createIcon(mainItem.getAccessibilityIcon());
+        mainItem.createIcon(mainItem.getAccessibilityIcon(), TypeItem.BACK);
         mainItem.setOnClickListener(new OnClickListener() {
 
             @Override

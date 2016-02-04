@@ -20,7 +20,6 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private static final int LOST_FOCUS_COLOR = 6186095;
     private static final int CLICKED_COLOR = 12631476;
     private boolean clicked;
-    private boolean empty;
     private GVRTexture accessibilityIcon;
     private GVRTexture backIcon;
     private GVRTexture spaceTexture;
@@ -29,7 +28,10 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private GVRTexture talkBackLess;
     private GVRTexture talkBackMore;
     private GVRTexture invertedColorsIcon;
+    private GVRTexture emptyIcon;
     private GVRTexture speechIcon;
+    private GVRSceneObject icon;
+    private TypeItem typeItem;
 
     public ShortcutMenuItem(GVRContext gvrContext) {
         super(gvrContext);
@@ -61,6 +63,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         invertedColorsIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_inverted));
         zoomOut = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_menos));
         speechIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_speech));
+        emptyIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
     }
 
     public void focusAndUnFocus() {
@@ -88,23 +91,25 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         });
     }
 
-    public void createIcon(GVRTexture iconMenu) {
-        GVRSceneObject backIcon = new GVRSceneObject(gvrContext, gvrContext.createQuad(.60f, .20f), iconMenu);
-        backIcon.getTransform().setPosition(-0f, 0.02f, -0.7f);
-        backIcon.getTransform().rotateByAxis(-90, 1, 0, 0);
-        backIcon.getTransform().rotateByAxisWithPivot(245, 0, 1, 0, 0, 0, 0);
-        backIcon.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
+    public void createIcon(GVRTexture iconMenu, TypeItem typeItem) {
+
+        if (icon != null) {
+            removeIcon();
+        }
+        icon = new GVRSceneObject(gvrContext, gvrContext.createQuad(.60f, .20f), iconMenu);
+        icon.getTransform().setPosition(-0f, 0.02f, -0.7f);
+        icon.getTransform().rotateByAxis(-90, 1, 0, 0);
+        icon.getTransform().rotateByAxisWithPivot(245, 0, 1, 0, 0, 0, 0);
+        icon.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
         getRenderData().getMaterial().setMainTexture(spaceTexture);
-        empty = false;
-        addChildObject(backIcon);
+        this.typeItem = typeItem;
+        addChildObject(icon);
     }
 
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
+    public void removeIcon() {
+        // removeChildObject(icon);
+        typeItem = TypeItem.EMPTY;
+        icon.getRenderData().getMaterial().setMainTexture(emptyIcon);
     }
 
     public void setClicked(boolean clicked) {
@@ -113,6 +118,14 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     public boolean isClicked() {
         return this.clicked;
+    }
+
+    public TypeItem getTypeItem() {
+        return typeItem;
+    }
+
+    public void setTypeItem(TypeItem typeItem) {
+        this.typeItem = typeItem;
     }
 
     public GVRTexture getAccessibilityIcon() {
@@ -145,6 +158,18 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     public GVRTexture getSpeechIcon() {
         return speechIcon;
+    }
+
+    public GVRSceneObject getIcon() {
+        return icon;
+    }
+
+    public GVRTexture getEmptyIcon() {
+        return emptyIcon;
+    }
+
+    public enum TypeItem {
+        SPEECH, INVERTED_COLORS, TALK_BACK, ZOOM, EMPTY, BACK
     }
 
 }
