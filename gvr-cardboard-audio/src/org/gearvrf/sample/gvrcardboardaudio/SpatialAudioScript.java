@@ -29,7 +29,6 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRLight;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
@@ -45,7 +44,6 @@ public class SpatialAudioScript extends GVRScript
     private float modelX = 0.0f;
     private float modelY = -1.5f;
     private float modelZ = -9.0f;
-    private GVRCubeSceneObject cubeObject;
     private GVRLight light;
     private static final float LIGHT_Z = 100.0f;
 
@@ -71,42 +69,23 @@ public class SpatialAudioScript extends GVRScript
             r2d2Model.getTransform().setPosition(modelX, modelY, modelZ);
             scene.addSceneObject(r2d2Model);
         } catch (IOException e) {
-            // load texture
-            Future<GVRTexture> futureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.gearvr_logo));
-            GVRMaterial material = new GVRMaterial(gvrContext);
-            material.setMainTexture(futureTexture);
-
-            // setup lighting
-            setupLight(material);
-
-            // create a scene object 
-            cubeObject = new GVRCubeSceneObject(gvrContext, true, material);
-
-            // set the scene object position
-            cubeObject.getTransform().setPosition(modelX, modelY, modelZ);
-
-            // enable lighting for the object
-            cubeObject.getRenderData().setLight(light);
-            cubeObject.getRenderData().enableLight();
-
-            // add the scene object to the scene graph
-            scene.addSceneObject(cubeObject);
+            e.printStackTrace();
         }
 
         // add a floor
-		GVRSceneObject floor = new GVRSceneObject(gvrContext, gvrContext.createQuad(120.0f, 120.0f),
-				gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
+        GVRSceneObject floor = new GVRSceneObject(gvrContext, gvrContext.createQuad(120.0f, 120.0f),
+        gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
 
         GVRMaterial floorMaterial = floor.getRenderData().getMaterial();
         setupLight(floorMaterial);
 
-		floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
-		floor.getTransform().setPositionY(-1.5f);
-		floor.getRenderData().setRenderingOrder(0);
+        floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
+        floor.getTransform().setPositionY(-1.5f);
+        floor.getRenderData().setRenderingOrder(0);
         floor.getRenderData().setLight(light);
         floor.getRenderData().enableLight();
 
-		scene.addSceneObject(floor);
+        scene.addSceneObject(floor);
 
         // Avoid any delays during start-up due to decoding of sound files.
         new Thread(
@@ -150,11 +129,6 @@ public class SpatialAudioScript extends GVRScript
         float headZ = cameraRig.getHeadTransform().getRotationZ();
         float headW = cameraRig.getHeadTransform().getRotationW();
         audioEngine.setHeadRotation(headX, headY, headZ, headW);
-
-        // rotate the cube
-        cubeObject.getTransform().rotateByAxis(0.5f, 1.0f, 0.0f, 0.0f);
-        cubeObject.getTransform().rotateByAxis(0.5f, 0.0f, 1.0f, 0.0f);
-        cubeObject.getTransform().rotateByAxis(0.5f, 0.0f, 0.0f, 1.0f);
 
         // update audio position if need be
         updateModelPosition();
