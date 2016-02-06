@@ -51,7 +51,7 @@ public class SampleViewManager extends GVRScript {
 
         // create a scene object (this constructor creates a rectangular scene
         // object that uses the standard 'unlit' shader)
-        GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, 4.0f, 2.0f,
+        GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, 2.0f, 2.0f,
                 texture);
 
         // set the scene object position
