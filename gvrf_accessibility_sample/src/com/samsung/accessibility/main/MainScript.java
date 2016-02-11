@@ -90,8 +90,6 @@ public class MainScript extends GVRScript {
             @Override
             public void gainedFocus(FocusableSceneObject object) {
                 object.getTalkBack().speak();
-                Log.e("test", "gained focus");
-
             }
         });
         mGVRContext.getMainScene().addSceneObject(object);
@@ -153,7 +151,6 @@ public class MainScript extends GVRScript {
             @Override
             public void gainedFocus(FocusableSceneObject object) {
                 object.getTalkBack().speak();
-                Log.e("test", "gained focus");
             }
         });
         mGVRContext.getMainScene().addSceneObject(object);

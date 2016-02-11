@@ -107,66 +107,21 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                 switch (typeItem) {
                 case TALK_BACK:
 
-                    AudioManager audioManager = (AudioManager) gvrContext.getActivity().getSystemService(Context.AUDIO_SERVICE);
-                    if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getTalkBackLess())) {
-                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                                AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
-
-                    } else {
-                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
-                                AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
-                    }
+                    talkBack();
                     break;
 
                 case BACK:
 
-                    final AccessibilityScene accessibilityScene = MainScript.accessibilityScene;
-                    for (final GVRSceneObject object : wholeSceneObjects) {
-                        if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                            new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
-
-                                @Override
-                                public void finished(GVRAnimation arg0) {
-
-                                    if (object.equals(wholeSceneObjects[wholeSceneObjects.length - 1])) {
-                                        gvrContext.setMainScene(accessibilityScene.getMainApplicationScene());
-                                        createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
-                                        accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
-                                        accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
-                                        gvrContext.getMainScene().getMainCameraRig()
-                                                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-                                        for (GVRSceneObject object : accessibilityScene.getMainApplicationScene().getWholeSceneObjects()) {
-                                            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                                                new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
-                                            }
-                                        }
-                                    }
-
-                                }
-                            });
-                        }
-                    }
+                    back(wholeSceneObjects);
                     break;
 
                 case ZOOM:
-                    if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getZoomIn())) {
-                        MainScript.manager.getZoom().zoomIn(MainScript.accessibilityScene.getMainApplicationScene(),
-                                MainScript.accessibilityScene);
-                    } else {
-                        MainScript.manager.getZoom().zoomOut(MainScript.accessibilityScene.getMainApplicationScene(),
-                                MainScript.accessibilityScene);
-                    }
+                    zoom();
                     break;
 
                 case INVERTED_COLORS:
                     clickEffectMenu();
-                    if (MainScript.manager.getInvertedColors().isInverted()) {
-                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene(),
-                                MainScript.accessibilityScene);
-                    } else {
-                        MainScript.manager.getInvertedColors().turnOn(MainScript.accessibilityScene.getMainApplicationScene(),
-                                MainScript.accessibilityScene);
-                    }
+                    invertedColors();
 
                     break;
 
@@ -176,33 +131,97 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                     break;
 
                 case ACCESSIBILITY:
-
-                    for (final GVRSceneObject object : wholeSceneObjects) {
-                        if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                            new GVROpacityAnimation(object, 1f, 0f).start(gvrContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
-
-                                @Override
-                                public void finished(GVRAnimation arg0) {
-                                    if (object.equals(wholeSceneObjects[wholeSceneObjects.length - 1])) {
-                                        gvrContext.getMainScene().getMainCameraRig()
-                                                .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-                                        MainScript.accessibilityScene.getMainCameraRig()
-                                                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-                                        createIcon(textures.getBackIcon(), TypeItem.BACK);
-                                        MainScript.accessibilityScene.show();
-                                    }
-                                }
-                            });
-                        }
-                    }
+                    accessibility(wholeSceneObjects);
                     break;
-
                 default:
                     break;
+
                 }
 
             }
         });
+    }
+
+    private void talkBack() {
+        AudioManager audioManager = (AudioManager) gvrContext.getActivity().getSystemService(Context.AUDIO_SERVICE);
+        if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getTalkBackLess())) {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+
+        } else {
+            audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                    AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+        }
+    }
+
+    private void back(final GVRSceneObject[] wholeSceneObjects) {
+        final AccessibilityScene accessibilityScene = MainScript.accessibilityScene;
+        for (final GVRSceneObject object : wholeSceneObjects) {
+            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
+
+                    @Override
+                    public void finished(GVRAnimation arg0) {
+
+                        if (object.equals(wholeSceneObjects[wholeSceneObjects.length - 1])) {
+                            gvrContext.setMainScene(accessibilityScene.getMainApplicationScene());
+                            createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
+                            accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
+                            accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
+                            gvrContext.getMainScene().getMainCameraRig()
+                                    .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+                            for (GVRSceneObject object : accessibilityScene.getMainApplicationScene().getWholeSceneObjects()) {
+                                if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                                    new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
+                                }
+                            }
+                        }
+
+                    }
+                });
+            }
+        }
+    }
+
+    private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
+        for (final GVRSceneObject object : wholeSceneObjects) {
+            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                new GVROpacityAnimation(object, 1f, 0f).start(gvrContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
+
+                    @Override
+                    public void finished(GVRAnimation arg0) {
+                        if (object.equals(wholeSceneObjects[wholeSceneObjects.length - 1])) {
+                            gvrContext.getMainScene().getMainCameraRig()
+                                    .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+                            MainScript.accessibilityScene.getMainCameraRig()
+                                    .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+                            createIcon(textures.getBackIcon(), TypeItem.BACK);
+                            MainScript.accessibilityScene.show();
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    private void invertedColors() {
+        if (MainScript.manager.getInvertedColors().isInverted()) {
+            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene(),
+                    MainScript.accessibilityScene);
+        } else {
+            MainScript.manager.getInvertedColors().turnOn(MainScript.accessibilityScene.getMainApplicationScene(),
+                    MainScript.accessibilityScene);
+        }
+    }
+
+    private void zoom() {
+        if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getZoomIn())) {
+            MainScript.manager.getZoom().zoomIn(MainScript.accessibilityScene.getMainApplicationScene(),
+                    MainScript.accessibilityScene);
+        } else {
+            MainScript.manager.getZoom().zoomOut(MainScript.accessibilityScene.getMainApplicationScene(),
+                    MainScript.accessibilityScene);
+        }
     }
 
     private void clickEffectMenu() {

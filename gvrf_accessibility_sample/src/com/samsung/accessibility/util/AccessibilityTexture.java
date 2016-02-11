@@ -36,7 +36,7 @@ public class AccessibilityTexture {
     private void loadFiles() {
         accessibilityIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_accessibility));
         backIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_back));
-        spaceTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal_alpha));
+        spaceTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
         talkBackMore = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_mais));
         talkBackLess = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_menos));
         zoomIn = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_mais));

@@ -22,7 +22,7 @@ import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class AccessibilityScene extends GVRScene {
 
-    private GVRSceneObject mBothEyesSkyBox;
+    private GVRSceneObject skybox;
     private GVRContext mGvrContext;
     private GVRScene mainApplicationScene;
     private ShortcutMenu shortcutMenu;
@@ -42,10 +42,11 @@ public class AccessibilityScene extends GVRScene {
     private AccessibilityScene createDefaultSkyBox() {
         GVRMesh defaultMesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_esphere_acessibility));
         GVRTexture defaultTexture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.skybox_accessibility));
-        mBothEyesSkyBox = new GVRSceneObject(getGVRContext(), defaultMesh, defaultTexture);
-        mBothEyesSkyBox.getTransform().setScale(1, 1, 1);
-        mBothEyesSkyBox.getRenderData().setRenderingOrder(0);
-        addSceneObject(mBothEyesSkyBox);
+        skybox = new GVRSceneObject(getGVRContext(), defaultMesh, defaultTexture);
+        skybox.getTransform().setScale(1, 1, 1);
+        skybox.getRenderData().setRenderingOrder(0);
+        addSceneObject(skybox);
+        applyShaderOnSkyBox(skybox);
         return this;
     }
 
