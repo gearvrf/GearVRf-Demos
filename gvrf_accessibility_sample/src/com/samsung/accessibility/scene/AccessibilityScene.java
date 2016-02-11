@@ -5,10 +5,10 @@ import java.util.List;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.accessibility.GVRAccessibilityManager;
 import org.gearvrf.animation.GVROpacityAnimation;
 
 import com.samsung.accessibility.R;
@@ -19,122 +19,26 @@ import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 import com.samsung.accessibility.util.AccessibilityTexture;
 
-/**
- * {@link AccessibilityScene} is responsible for encapsulating all accessibility features interactions.<br/>
- * &nbsp; &nbsp;&nbsp; Add to scene in your project:
- * 
- * <pre>
- * GVRAccessibilityScene scene = new GVRAccessibilityScene(gvrContext);
- * gvrContextYouApplication.setMainScene(scene);
- * </pre>
- */
 public class AccessibilityScene extends GVRScene {
 
-    private GVRSceneObject mRightEyeSkyBox;
-    private GVRSceneObject mLeftEyeSkyBox;
     private GVRSceneObject mBothEyesSkyBox;
     private GVRContext mGvrContext;
     private GVRScene mainApplicationScene;
     private ShortcutMenu shortcutMenu;
     private AccessibilityTexture textures;
-    private ShortcutMenuItem shortcutItem;
+    private GVRAccessibilityManager manager;
 
-    /**
-     * This constructor creates default scene</p>
-     * 
-     * <pre>
-     * GVRAccessibilityScene scene = new GVRAccessibilityScene(gvrContext);
-     * gvrContextYouApplication.setMainScene(scene);
-     * </pre>
-     * 
-     * @param gvrContext
-     */
     public AccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene, ShortcutMenu shortcutMenu) {
         super(gvrContext);
         mGvrContext = gvrContext;
         textures = AccessibilityTexture.getInstance(gvrContext);
         this.mainApplicationScene = mainApplicationScene;
         this.shortcutMenu = shortcutMenu;
+        manager = new GVRAccessibilityManager(gvrContext);
         createDefaultSkyBox();
         createItems();
     }
 
-    /**
-     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</br></br>
-     * 
-     * <pre>
-     * GVRSceneObject leftScreen = new GVRSceneObject(gvrContext);
-     * GVRSceneObject rightScreen = new GVRSceneObject(gvrContext);
-     * 
-     * GVRAccessibilityScene scene = new GVRAccessibilityScene(gvrContext,rightScreen, leftScreen);
-     * gvrContextYourApplication.setMainScene(scene)
-     * </pre>
-     * 
-     * }
-     * 
-     * @param gvrContext
-     * @param rightEye
-     * @param leftEye
-     */
-    public void setSkyBox(GVRSceneObject rightEyeSkyBox, GVRSceneObject leftEyeSkyBox) {
-        removePreviousSkybox();
-        mRightEyeSkyBox = rightEyeSkyBox;
-        mLeftEyeSkyBox = leftEyeSkyBox;
-
-        mRightEyeSkyBox.getRenderData().setRenderingOrder(0);
-        mRightEyeSkyBox.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
-
-        mLeftEyeSkyBox.getRenderData().setRenderingOrder(0);
-        mLeftEyeSkyBox.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
-
-        applyShaderOnSkyBox(mRightEyeSkyBox);
-        applyShaderOnSkyBox(mLeftEyeSkyBox);
-
-        addSceneObject(mRightEyeSkyBox);
-        addSceneObject(mLeftEyeSkyBox);
-    }
-
-    /**
-     * With this constructor it is possible to customize sky box thought {@link GVRSceneObject}.</p>
-     * 
-     * <pre>
-     * GVRSceneObject skyBox = new GVRSceneObject(gvrContext);
-     * GVRAccessibilityScene scene = new GVRAccessibilityScene(gvrContext,skyBox);
-     * gvrContextYourApplication.setMainScene(scene)
-     * </pre>
-     * 
-     * @param gvrContext
-     * @param bothEyeSkyBox
-     */
-    public void setSkybox(GVRSceneObject bothEyesSkyBox) {
-        removePreviousSkybox();
-        mBothEyesSkyBox = bothEyesSkyBox;
-
-        mBothEyesSkyBox.getRenderData().setRenderingOrder(0);
-        applyShaderOnSkyBox(mBothEyesSkyBox);
-        addSceneObject(mBothEyesSkyBox);
-    }
-
-    private void removePreviousSkybox() {
-        if (mBothEyesSkyBox != null) {
-            removeSceneObject(mBothEyesSkyBox);
-            mBothEyesSkyBox = null;
-        }
-        if (mRightEyeSkyBox != null) {
-            removeSceneObject(mRightEyeSkyBox);
-            mRightEyeSkyBox = null;
-        }
-        if (mLeftEyeSkyBox != null) {
-            removeSceneObject(mLeftEyeSkyBox);
-            mLeftEyeSkyBox = null;
-        }
-    }
-
-    /**
-     * Create default sky box for accessibility scene.
-     * 
-     * @return
-     */
     private AccessibilityScene createDefaultSkyBox() {
         GVRMesh defaultMesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_esphere_acessibility));
         GVRTexture defaultTexture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.skybox_accessibility));
@@ -177,8 +81,8 @@ public class AccessibilityScene extends GVRScene {
                         if (shortcutItems.get(i).getTypeItem() == TypeItem.INVERTED_COLORS) {
                             shortcutItems.get(i).resetClick();
                             shortcutMenu.removeShortcut(i);
-                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
-                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
+                            manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
+                            manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
                         }
                     }
 
