@@ -8,10 +8,11 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.GVRAccessibilityManager;
+import org.gearvrf.accessibility.GVRAccessiblityObject;
 import org.gearvrf.animation.GVROpacityAnimation;
 
 import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.main.MainScript;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
@@ -26,7 +27,6 @@ public class AccessibilityScene extends GVRScene {
     private GVRScene mainApplicationScene;
     private ShortcutMenu shortcutMenu;
     private AccessibilityTexture textures;
-    private GVRAccessibilityManager manager;
 
     public AccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene, ShortcutMenu shortcutMenu) {
         super(gvrContext);
@@ -34,7 +34,7 @@ public class AccessibilityScene extends GVRScene {
         textures = AccessibilityTexture.getInstance(gvrContext);
         this.mainApplicationScene = mainApplicationScene;
         this.shortcutMenu = shortcutMenu;
-        manager = new GVRAccessibilityManager(gvrContext);
+
         createDefaultSkyBox();
         createItems();
     }
@@ -81,8 +81,8 @@ public class AccessibilityScene extends GVRScene {
                         if (shortcutItems.get(i).getTypeItem() == TypeItem.INVERTED_COLORS) {
                             shortcutItems.get(i).resetClick();
                             shortcutMenu.removeShortcut(i);
-                            manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
-                            manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
+                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
+                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
                         }
                     }
 
@@ -138,6 +138,8 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 talkBack.animate();
+                setActivityOrInactiveTalkBackObjects(talkBack.isActive);
+
                 List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
                 if (talkBack.isActive) {
                     for (int i = 0; i < shortcutItems.size(); i++) {
@@ -174,6 +176,7 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 speech.animate();
+
                 List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
 
                 if (speech.isActive) {
@@ -232,13 +235,6 @@ public class AccessibilityScene extends GVRScene {
         cursor.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
     }
 
-    /**
-     * Update accessibility items position to fit user's skybox and camera position.
-     * 
-     * @param positionX
-     * @param positionY
-     * @param positionZ
-     */
     public void setItemsRelativePosition(float positionX, float positionY, float positionZ) {
         for (GVRSceneObject object : getWholeSceneObjects()) {
             if (object instanceof SceneItem || object instanceof CursorSceneItem) {
@@ -248,11 +244,6 @@ public class AccessibilityScene extends GVRScene {
         }
     }
 
-    /**
-     * Apply blur effect on SkyBox
-     * 
-     * @param skyBox
-     */
     private void applyShaderOnSkyBox(GVRSceneObject skyBox) {
         AccessibilitySceneShader shader = new AccessibilitySceneShader(mGvrContext);
         applyShader(shader, skyBox);
@@ -276,6 +267,14 @@ public class AccessibilityScene extends GVRScene {
 
     public ShortcutMenu getShortcutMenu() {
         return shortcutMenu;
+    }
+
+    private void setActivityOrInactiveTalkBackObjects(boolean active) {
+        for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
+            if (object instanceof FocusableSceneObject) {
+                ((GVRAccessiblityObject) object).getTalkBack().setActive(active);
+            }
+        }
     }
 
     public void show() {

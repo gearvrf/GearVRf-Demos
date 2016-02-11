@@ -8,10 +8,12 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.GVRAccessibilityManager;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
+
+import android.content.Context;
+import android.media.AudioManager;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableSceneObject;
@@ -32,12 +34,10 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private GVRSceneObject icon;
     private TypeItem typeItem;
     private AccessibilityTexture textures;
-    private GVRAccessibilityManager manager;
 
     public ShortcutMenuItem(GVRContext gvrContext) {
         super(gvrContext);
         this.gvrContext = gvrContext;
-        manager = new GVRAccessibilityManager(gvrContext);
         createRenderData();
         attachEyePointeeHolder();
         getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
@@ -106,8 +106,16 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                 final GVRSceneObject wholeSceneObjects[] = gvrContext.getMainScene().getWholeSceneObjects();
                 switch (typeItem) {
                 case TALK_BACK:
-                    clickEffectMenu();
 
+                    AudioManager audioManager = (AudioManager) gvrContext.getActivity().getSystemService(Context.AUDIO_SERVICE);
+                    if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getTalkBackLess())) {
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_LOWER, AudioManager.FLAG_SHOW_UI);
+
+                    } else {
+                        audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,
+                                AudioManager.ADJUST_RAISE, AudioManager.FLAG_SHOW_UI);
+                    }
                     break;
 
                 case BACK:
@@ -142,21 +150,21 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
                 case ZOOM:
                     if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getZoomIn())) {
-                        manager.getZoom().zoomIn(MainScript.accessibilityScene.getMainApplicationScene(),
+                        MainScript.manager.getZoom().zoomIn(MainScript.accessibilityScene.getMainApplicationScene(),
                                 MainScript.accessibilityScene);
                     } else {
-                        manager.getZoom().zoomOut(MainScript.accessibilityScene.getMainApplicationScene(),
+                        MainScript.manager.getZoom().zoomOut(MainScript.accessibilityScene.getMainApplicationScene(),
                                 MainScript.accessibilityScene);
                     }
                     break;
 
                 case INVERTED_COLORS:
                     clickEffectMenu();
-                    if (manager.getInvertedColors().isInverted()) {
-                        manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene(),
+                    if (MainScript.manager.getInvertedColors().isInverted()) {
+                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene(),
                                 MainScript.accessibilityScene);
                     } else {
-                        manager.getInvertedColors().turnOn(MainScript.accessibilityScene.getMainApplicationScene(),
+                        MainScript.manager.getInvertedColors().turnOn(MainScript.accessibilityScene.getMainApplicationScene(),
                                 MainScript.accessibilityScene);
                     }
 

@@ -22,6 +22,7 @@ import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
+import com.samsung.accessibility.util.AccessibilityManager;
 import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class MainScript extends GVRScript {
@@ -30,12 +31,14 @@ public class MainScript extends GVRScript {
 
     private GazeCursorSceneObject cursor;
     public static AccessibilityScene accessibilityScene;
+    public static AccessibilityManager manager;
 
     @Override
     public void onInit(final GVRContext gvrContext) {
         mGVRContext = gvrContext;
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
+        manager = new AccessibilityManager(gvrContext);
         ShortcutMenu shortcutMenu = createShortCut();
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
         for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {
@@ -66,9 +69,11 @@ public class MainScript extends GVRScript {
         FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
                 mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.skybox_accessibility)));
+
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object");
         object.getTransform().setPosition(-1, 0, -1);
         object.attachEyePointeeHolder();
-        object.setTalkBack(new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object"));
+        object.setTalkBack(talkBack);
         object.setOnFocusListener(new OnFocusListener() {
 
             @Override
@@ -94,13 +99,14 @@ public class MainScript extends GVRScript {
 
     private void createObject1TalkBack() {
 
-        FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
+        final FocusableSceneObject object1 = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
                 mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.skybox_accessibility)));
-        object.getTransform().setPosition(1, 0, -1);
-        object.attachEyePointeeHolder();
-        object.setTalkBack(new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "First Object"));
-        object.setOnFocusListener(new OnFocusListener() {
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object 2");
+        object1.getTransform().setPosition(1, 0, -1);
+        object1.attachEyePointeeHolder();
+        object1.setTalkBack(talkBack);
+        object1.setOnFocusListener(new OnFocusListener() {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
@@ -114,21 +120,23 @@ public class MainScript extends GVRScript {
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-                object.getTalkBack().speak();
+                object1.getTalkBack().speak();
                 Log.e("test", "gained focus");
 
             }
         });
-        mGVRContext.getMainScene().addSceneObject(object);
+        mGVRContext.getMainScene().addSceneObject(object1);
     }
 
     private void createObject2TalkBack() {
         final FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
                 mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.skybox_accessibility)));
+
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object 3");
         object.getTransform().setPosition(0, 0, -1);
         object.attachEyePointeeHolder();
-        object.setTalkBack(new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Second Object"));
+        object.setTalkBack(talkBack);
         object.setOnFocusListener(new OnFocusListener() {
 
             @Override
