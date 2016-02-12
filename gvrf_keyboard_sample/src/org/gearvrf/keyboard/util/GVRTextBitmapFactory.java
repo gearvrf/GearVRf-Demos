@@ -1,34 +1,30 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright 2015 Samsung Electronics Co., LTD
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
  */
 
 package org.gearvrf.keyboard.util;
 
-/* Copyright 2015 Samsung Electronics Co., LTD
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright 2015 Samsung Electronics Co., LTD
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
  */
+
+import java.util.ArrayList;
+
+import org.gearvrf.keyboard.textField.Text;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -39,10 +35,6 @@ import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 
-import org.gearvrf.keyboard.textField.Text;
-
-import java.util.ArrayList;
-
 /**
  * A class which creates Bitmaps with texts on them.
  *
@@ -51,7 +43,7 @@ import java.util.ArrayList;
 public class GVRTextBitmapFactory {
 
     public static boolean cacheOn = true;
-    ArrayList<GVRTextBitmapFactory> cache = new ArrayList<>();
+    ArrayList<GVRTextBitmapFactory> cache = new ArrayList<GVRTextBitmapFactory>();
 
     private GVRTextBitmapFactory() {
     }
@@ -59,13 +51,20 @@ public class GVRTextBitmapFactory {
     /**
      * Creates a Bitmap with texts.
      *
-     * @param width The width of the Bitmap.
-     * @param height The height of the Bitmap.
-     * @param text The text.
-     * @param textSize The size of the texts.
-     * @param textAlign The way to align the texts.
-     * @param textColor The color of the texts.
-     * @param backgroundColor The color of the background.
+     * @param width
+     *            The width of the Bitmap.
+     * @param height
+     *            The height of the Bitmap.
+     * @param text
+     *            The text.
+     * @param textSize
+     *            The size of the texts.
+     * @param textAlign
+     *            The way to align the texts.
+     * @param textColor
+     *            The color of the texts.
+     * @param backgroundColor
+     *            The color of the background.
      * @return The Bitmap.
      */
     public static Bitmap create(float width, float height, String character, int textSize,

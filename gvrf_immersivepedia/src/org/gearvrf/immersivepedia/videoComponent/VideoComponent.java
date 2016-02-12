@@ -15,8 +15,6 @@
 
 package org.gearvrf.immersivepedia.videoComponent;
 
-import android.media.MediaPlayer;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
@@ -28,6 +26,8 @@ import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 import org.gearvrf.immersivepedia.focus.OnClickListener;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
+
+import android.media.MediaPlayer;
 
 public class VideoComponent extends GVRSceneObject {
 

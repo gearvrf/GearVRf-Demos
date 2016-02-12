@@ -1,16 +1,12 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright 2015 Samsung Electronics Co., LTD
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
  */
 
 package org.gearvrf.immersivepedia.dinosaur;
@@ -52,18 +48,11 @@ public class DinosaurFactory {
             .getRecommendedSettingsWith(additionalSettings);
 
     boolean getFromFile = false;
-    private Dinosaur styracosaurus;
-    private Dinosaur ankylosaurus;
     private Dinosaur apatosaurus;
-    private Dinosaur tRex;
 
     private DinosaurFactory(GVRContext gvrContext) throws IOException {
         this.gvrContext = gvrContext;
-        styracosaurus = createStyrocosaurus();
-        ankylosaurus = createAnkylosaurus();
         apatosaurus = createApatosaurus();
-        tRex = createTRex();
-
     }
 
     public static synchronized DinosaurFactory getInstance(GVRContext gvrContext)
@@ -109,21 +98,6 @@ public class DinosaurFactory {
         return dinosaurGround;
     }
 
-    private Dinosaur createStyrocosaurus() {
-
-        return createDinosauros("styracosaurus",
-                R.raw.styracosaurus_mesh, R.drawable.styracosaurus_tex_diffuse,
-                R.raw.styracosaurus_base_mesh, R.raw.styracosaurus_ground_mesh);
-
-    }
-
-    private Dinosaur createAnkylosaurus() {
-
-        return createDinosauros("ankylosaurus",
-                R.raw.ankylosaurus_mesh, R.drawable.ankylosaurus_tex_diffuse,
-                R.raw.ankylosaurus_base_mesh, R.raw.ankylosaurus_ground_mesh);
-    }
-
     private Dinosaur createApatosaurus() {
 
         return createDinosauros("apatosaurus",
@@ -131,27 +105,8 @@ public class DinosaurFactory {
                 R.raw.apatosaurus_base_mesh, R.raw.apatosaurus_ground_mesh);
     }
 
-    private Dinosaur createTRex() {
-
-        return createDinosauros("trex",
-                R.raw.trex_mesh, R.drawable.trex_tex_diffuse,
-                R.raw.trex_base_mesh, R.raw.trex_ground_mesh);
-    }
-
-    public Dinosaur getStyracosaurus() {
-        return styracosaurus;
-    }
-
-    public Dinosaur getAnkylosaurus() {
-        return ankylosaurus;
-    }
-
     public Dinosaur getApatosaurus() {
         return apatosaurus;
-    }
-
-    public Dinosaur getTRex() {
-        return tRex;
     }
 
 }

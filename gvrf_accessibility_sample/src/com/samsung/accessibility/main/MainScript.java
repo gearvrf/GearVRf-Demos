@@ -27,7 +27,7 @@ import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class MainScript extends GVRScript {
 
-    private static GVRContext mGVRContext;
+    private GVRContext gvrContext;
 
     private GazeCursorSceneObject cursor;
     public static AccessibilityScene accessibilityScene;
@@ -35,7 +35,7 @@ public class MainScript extends GVRScript {
 
     @Override
     public void onInit(final GVRContext gvrContext) {
-        mGVRContext = gvrContext;
+        this.gvrContext = gvrContext;
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
@@ -54,23 +54,24 @@ public class MainScript extends GVRScript {
         createObjectTalkBack();
         createObject1TalkBack();
         createObject2TalkBack();
-        mGVRContext.getMainScene().addSceneObject(shortcutMenu);
+        gvrContext.getMainScene().addSceneObject(shortcutMenu);
     }
 
     private ShortcutMenu createShortCut() {
-        ShortcutMenu shortcuteMenu = new ShortcutMenu(mGVRContext);
+        ShortcutMenu shortcuteMenu = new ShortcutMenu(gvrContext);
         ShortcutMenuItem shortcuteItem = shortcuteMenu.getShortcutItems().get(0);
-        shortcuteItem.createIcon(AccessibilityTexture.getInstance(mGVRContext).getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
+        shortcuteMenu.getTransform().setPositionY(-.5f);
+        shortcuteItem.createIcon(AccessibilityTexture.getInstance(gvrContext).getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         return shortcuteMenu;
     }
 
     private void createObjectTalkBack() {
 
-        FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+        FocusableSceneObject object = new FocusableSceneObject(gvrContext, gvrContext.createQuad(.5f, .5f),
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.skybox_accessibility)));
 
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object");
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getActivity(), "Object");
         object.getTransform().setPosition(-1, 0, -1);
         object.attachEyePointeeHolder();
         object.setTalkBack(talkBack);
@@ -92,15 +93,15 @@ public class MainScript extends GVRScript {
                 object.getTalkBack().speak();
             }
         });
-        mGVRContext.getMainScene().addSceneObject(object);
+        gvrContext.getMainScene().addSceneObject(object);
     }
 
     private void createObject1TalkBack() {
 
-        final FocusableSceneObject object1 = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+        final FocusableSceneObject object1 = new FocusableSceneObject(gvrContext, gvrContext.createQuad(.5f, .5f),
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.skybox_accessibility)));
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object 2");
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getActivity(), "Object 2");
         object1.getTransform().setPosition(1, 0, -1);
         object1.attachEyePointeeHolder();
         object1.setTalkBack(talkBack);
@@ -123,15 +124,15 @@ public class MainScript extends GVRScript {
 
             }
         });
-        mGVRContext.getMainScene().addSceneObject(object1);
+        gvrContext.getMainScene().addSceneObject(object1);
     }
 
     private void createObject2TalkBack() {
-        final FocusableSceneObject object = new FocusableSceneObject(mGVRContext, mGVRContext.createQuad(.5f, .5f),
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+        final FocusableSceneObject object = new FocusableSceneObject(gvrContext, gvrContext.createQuad(.5f, .5f),
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.skybox_accessibility)));
 
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, mGVRContext.getActivity(), "Object 3");
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getActivity(), "Object 3");
         object.getTransform().setPosition(0, 0, -1);
         object.attachEyePointeeHolder();
         object.setTalkBack(talkBack);
@@ -153,16 +154,16 @@ public class MainScript extends GVRScript {
                 object.getTalkBack().speak();
             }
         });
-        mGVRContext.getMainScene().addSceneObject(object);
+        gvrContext.getMainScene().addSceneObject(object);
     }
 
     private GVRSceneObject createSkybox() {
 
-        GVRMesh mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
                 R.raw.skybox_esphere_acessibility));
-        GVRTexture texture = mGVRContext.loadTexture(new GVRAndroidResource(
-                mGVRContext, R.drawable.skybox_accessibility));
-        GVRSceneObject skybox = new GVRSceneObject(mGVRContext, mesh, texture);
+        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(
+                gvrContext, R.drawable.skybox_accessibility));
+        GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
@@ -189,10 +190,10 @@ public class MainScript extends GVRScript {
 
     @Override
     public void onStep() {
-        FocusableController.process(mGVRContext);
+        FocusableController.process(gvrContext);
     }
 
     public void onSingleTap(MotionEvent e) {
-        FocusableController.clickProcess(mGVRContext);
+        FocusableController.clickProcess(gvrContext);
     }
 }

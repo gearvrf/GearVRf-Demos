@@ -15,6 +15,8 @@
 
 package org.gearvrf.immersivepedia.gallery;
 
+import java.util.ArrayList;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
@@ -29,8 +31,6 @@ import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
-
-import java.util.ArrayList;
 
 public class Gallery extends FocusableSceneObject implements PhotoEventListener, TotemEventListener {
 

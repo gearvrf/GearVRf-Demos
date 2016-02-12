@@ -15,47 +15,47 @@ public class MainActivity extends GVRActivity implements
 
 	private static final int BUTTON_INTERVAL = 500;
 	private static final int TAP_INTERVAL = 300;
-	private long mLatestButton = 0;
-	private long mLatestTap = 0;
-	private MainScript mScript = null;
-	private VRTouchPadGestureDetector mDetector = null;
+	private long latestButton = 0;
+	private long latestTap = 0;
+	private MainScript script = null;
+	private VRTouchPadGestureDetector detector = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mScript = new MainScript();
+		script = new MainScript();
 
-		setScript(mScript, "gvr.xml");
-		mDetector = new VRTouchPadGestureDetector(this, this);
+		setScript(script, "gvr.xml");
+		detector = new VRTouchPadGestureDetector(this, this);
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
-			mLatestButton = System.currentTimeMillis();
+		if (System.currentTimeMillis() > latestButton + BUTTON_INTERVAL) {
+			latestButton = System.currentTimeMillis();
 		}
 	}
 
 	@Override
 	public boolean onKeyLongPress(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			mLatestButton = System.currentTimeMillis();
+			latestButton = System.currentTimeMillis();
 		}
 		return super.onKeyLongPress(keyCode, event);
 	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		mDetector.onTouchEvent(event);
+		detector.onTouchEvent(event);
 		return super.onTouchEvent(event);
 	}
 
 	@Override
 	public boolean onSingleTap(MotionEvent e) {
 		Log.d(MainActivity.class.getSimpleName(), "onSingleTap");
-		if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-			mLatestTap = System.currentTimeMillis();
-			mScript.onSingleTap(e);
+		if (System.currentTimeMillis() > latestTap + TAP_INTERVAL) {
+			latestTap = System.currentTimeMillis();
+			script.onSingleTap(e);
 		}
 		return false;
 	}

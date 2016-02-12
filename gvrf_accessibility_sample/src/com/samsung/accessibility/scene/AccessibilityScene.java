@@ -23,15 +23,15 @@ import com.samsung.accessibility.util.AccessibilityTexture;
 public class AccessibilityScene extends GVRScene {
 
     private GVRSceneObject skybox;
-    private GVRContext mGvrContext;
+    private GVRContext gvrContext;
     private GVRScene mainApplicationScene;
     private ShortcutMenu shortcutMenu;
     private AccessibilityTexture textures;
 
     public AccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene, ShortcutMenu shortcutMenu) {
         super(gvrContext);
-        mGvrContext = gvrContext;
         textures = AccessibilityTexture.getInstance(gvrContext);
+        this.gvrContext = gvrContext;
         this.mainApplicationScene = mainApplicationScene;
         this.shortcutMenu = shortcutMenu;
 
@@ -246,7 +246,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private void applyShaderOnSkyBox(GVRSceneObject skyBox) {
-        AccessibilitySceneShader shader = new AccessibilitySceneShader(mGvrContext);
+        AccessibilitySceneShader shader = new AccessibilitySceneShader(gvrContext);
         applyShader(shader, skyBox);
         for (GVRSceneObject object : skyBox.getChildren()) {
             applyShader(shader, object);

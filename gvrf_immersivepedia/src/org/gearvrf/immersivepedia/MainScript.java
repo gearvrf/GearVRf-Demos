@@ -15,8 +15,6 @@
 
 package org.gearvrf.immersivepedia;
 
-import android.media.MediaPlayer;
-
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScript;
 import org.gearvrf.immersivepedia.focus.FocusableController;
@@ -24,6 +22,8 @@ import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
+
+import android.media.MediaPlayer;
 
 public class MainScript extends GVRScript {
 

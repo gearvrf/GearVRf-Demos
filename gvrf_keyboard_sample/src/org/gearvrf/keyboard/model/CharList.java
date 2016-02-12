@@ -1,37 +1,33 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright 2015 Samsung Electronics Co., LTD
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
  */
 
 package org.gearvrf.keyboard.model;
 
-import android.content.res.Resources;
-import android.content.res.TypedArray;
+import java.util.ArrayList;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.keyboard.numeric.Keyboard;
 import org.gearvrf.keyboard.util.CircularList;
 
-import java.util.ArrayList;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 
 public class CharList {
 
     private static CharList instance;
-    private ArrayList<String> softKeyboardListUpperCase = new ArrayList<>();
-    private ArrayList<String> softKeyboardListLowerCase = new ArrayList<>();
-    private ArrayList<String> numericKeyboardList = new ArrayList<>();
-    private ArrayList<String> specialKeyboardList = new ArrayList<>();
+    private ArrayList<String> softKeyboardListUpperCase = new ArrayList<String>();
+    private ArrayList<String> softKeyboardListLowerCase = new ArrayList<String>();
+    private ArrayList<String> numericKeyboardList = new ArrayList<String>();
+    private ArrayList<String> specialKeyboardList = new ArrayList<String>();
 
     private CircularList<CharItem> softKeyboardListUpperCaseCircular = new CircularList<CharItem>(
             new ArrayList<CharItem>());
@@ -99,17 +95,17 @@ public class CharList {
         // Keyboard.getMode()
         switch (Keyboard.mode) {
 
-            case Keyboard.SOFT_KEYBOARD_UPPERCASE:
-                return softKeyboardListUpperCase;
+        case Keyboard.SOFT_KEYBOARD_UPPERCASE:
+            return softKeyboardListUpperCase;
 
-            case Keyboard.SOFT_KEYBOARD_LOWERCASE:
-                return softKeyboardListLowerCase;
+        case Keyboard.SOFT_KEYBOARD_LOWERCASE:
+            return softKeyboardListLowerCase;
 
-            case Keyboard.NUMERIC_KEYBOARD:
-                return numericKeyboardList;
+        case Keyboard.NUMERIC_KEYBOARD:
+            return numericKeyboardList;
 
-            default:
-                return specialKeyboardList;
+        default:
+            return specialKeyboardList;
         }
     }
 
@@ -117,18 +113,18 @@ public class CharList {
 
         switch (mode) {
 
-            case Keyboard.SOFT_KEYBOARD_UPPERCASE:
-                return softKeyboardListUpperCaseCircular;
+        case Keyboard.SOFT_KEYBOARD_UPPERCASE:
+            return softKeyboardListUpperCaseCircular;
 
-            case Keyboard.SOFT_KEYBOARD_LOWERCASE:
+        case Keyboard.SOFT_KEYBOARD_LOWERCASE:
 
-                return softKeyboardListLowerCaseCircular;
+            return softKeyboardListLowerCaseCircular;
 
-            case Keyboard.NUMERIC_KEYBOARD:
-                return numericKeyboardListCircular;
+        case Keyboard.NUMERIC_KEYBOARD:
+            return numericKeyboardListCircular;
 
-            default:
-                return softKeyboardListSpecialCircular;
+        default:
+            return softKeyboardListSpecialCircular;
         }
     }
 
@@ -136,17 +132,17 @@ public class CharList {
 
         switch (mode) {
 
-            case Keyboard.SOFT_KEYBOARD_UPPERCASE:
-                return softKeyboardListUpperCase;
+        case Keyboard.SOFT_KEYBOARD_UPPERCASE:
+            return softKeyboardListUpperCase;
 
-            case Keyboard.SOFT_KEYBOARD_LOWERCASE:
-                return softKeyboardListLowerCase;
+        case Keyboard.SOFT_KEYBOARD_LOWERCASE:
+            return softKeyboardListLowerCase;
 
-            case Keyboard.NUMERIC_KEYBOARD:
-                return numericKeyboardList;
+        case Keyboard.NUMERIC_KEYBOARD:
+            return numericKeyboardList;
 
-            default:
-                return specialKeyboardList;
+        default:
+            return specialKeyboardList;
         }
     }
 
@@ -168,34 +164,34 @@ public class CharList {
     public int indexOf(String character, int keyboardmode) {
 
         switch (keyboardmode) {
-            case Keyboard.SOFT_KEYBOARD_UPPERCASE:
-                return softKeyboardListUpperCase.indexOf(character);
+        case Keyboard.SOFT_KEYBOARD_UPPERCASE:
+            return softKeyboardListUpperCase.indexOf(character);
 
-            case Keyboard.SOFT_KEYBOARD_LOWERCASE:
-                return softKeyboardListLowerCase.indexOf(character);
+        case Keyboard.SOFT_KEYBOARD_LOWERCASE:
+            return softKeyboardListLowerCase.indexOf(character);
 
-            case Keyboard.NUMERIC_KEYBOARD:
-                return numericKeyboardList.indexOf(character);
+        case Keyboard.NUMERIC_KEYBOARD:
+            return numericKeyboardList.indexOf(character);
 
-            default:
-                return specialKeyboardList.indexOf(character);
+        default:
+            return specialKeyboardList.indexOf(character);
         }
     }
 
     public int indexOf(String character) {
 
         switch (Keyboard.mode) {
-            case Keyboard.SOFT_KEYBOARD_UPPERCASE:
-                return softKeyboardListUpperCase.indexOf(character);
+        case Keyboard.SOFT_KEYBOARD_UPPERCASE:
+            return softKeyboardListUpperCase.indexOf(character);
 
-            case Keyboard.SOFT_KEYBOARD_LOWERCASE:
-                return softKeyboardListLowerCase.indexOf(character);
+        case Keyboard.SOFT_KEYBOARD_LOWERCASE:
+            return softKeyboardListLowerCase.indexOf(character);
 
-            case Keyboard.NUMERIC_KEYBOARD:
-                return numericKeyboardList.indexOf(character);
+        case Keyboard.NUMERIC_KEYBOARD:
+            return numericKeyboardList.indexOf(character);
 
-            default:
-                return specialKeyboardList.indexOf(character);
+        default:
+            return specialKeyboardList.indexOf(character);
         }
     }
 }

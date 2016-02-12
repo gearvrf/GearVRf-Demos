@@ -1,16 +1,12 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+ * Copyright 2015 Samsung Electronics Co., LTD
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License.
  */
 
 package org.gearvrf.immersivepedia.scene;
@@ -28,9 +24,6 @@ import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.dinosaur.DinosaurFactory;
 import org.gearvrf.immersivepedia.model.GalleryDinosaurGroup;
-import org.gearvrf.immersivepedia.model.RotateDinosaurGroup;
-import org.gearvrf.immersivepedia.model.TextDinosaurGroup;
-import org.gearvrf.immersivepedia.model.VideoDinosaurGroup;
 import org.gearvrf.immersivepedia.util.FPSCounter;
 
 public class DinosaurScene extends GVRScene {
@@ -39,10 +32,8 @@ public class DinosaurScene extends GVRScene {
 
     GVRScene scene;
 
-    private VideoDinosaurGroup videoDinosaur;
     private GalleryDinosaurGroup galleryDinosaur = null;
     private GVRContext gvrContext;
-    private TextDinosaurGroup textDinosaur;
 
     public DinosaurScene(GVRContext gvrContext) throws IOException {
         super(gvrContext);
@@ -50,45 +41,12 @@ public class DinosaurScene extends GVRScene {
         DinosaurFactory.getInstance(gvrContext);
         getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
 
-        createVideoDinosauGroup(); // TRex
-        createTextDinosaurGroup(); // Ankylosaurus
-        createRotateDinosaurGroup(); // Styracosaurus
         createGalleryDinosaurGroup(); // Apatosaurus
 
         addSceneObject(createSkybox()); //
 
         hide();
         addSceneObject(createBlueSkybox()); //
-    }
-
-    private void createRotateDinosaurGroup() throws IOException {
-        RotateDinosaurGroup rotateDinosaur = new RotateDinosaurGroup(getGVRContext(), this);
-        addSceneObject(rotateDinosaur);
-    }
-
-    private void createTextDinosaurGroup() throws IOException {
-
-        textDinosaur = new TextDinosaurGroup(getGVRContext(), this);
-
-        textDinosaur.getTransform().setPositionZ(-DinosaurFactory.ANKYLOSAURUS_DISTANCE);
-
-        textDinosaur.getTransform().rotateByAxisWithPivot(
-                DinosaurFactory.ANKYLOSAURUS_ANGLE_AROUND_CAMERA, 0, 1, 0, 0, 0, 0);
-
-        addSceneObject(textDinosaur);
-
-    }
-
-    private void createVideoDinosauGroup() throws IOException {
-
-        videoDinosaur = new VideoDinosaurGroup(getGVRContext(), this);
-
-        videoDinosaur.getTransform().setPositionZ(-DinosaurFactory.TREX_DISTANCE);
-
-        videoDinosaur.getTransform().rotateByAxisWithPivot(
-                DinosaurFactory.TREX_ANGLE_AROUND_CAMERA, 0, 1, 0, 0, 0, 0);
-
-        addSceneObject(videoDinosaur);
     }
 
     private void createGalleryDinosaurGroup() throws IOException {
@@ -98,9 +56,6 @@ public class DinosaurScene extends GVRScene {
 
     public void onStep() {
         FPSCounter.tick();
-        if (this.videoDinosaur != null) {
-            this.videoDinosaur.onStep();
-        }
     }
 
     public void show() {
@@ -160,11 +115,6 @@ public class DinosaurScene extends GVRScene {
         if (galleryDinosaur.isOpen()) {
             galleryDinosaur.closeThis();
         }
-        if (textDinosaur.isOpen()) {
-            textDinosaur.closeAction();
-        }
-        if (videoDinosaur.isOpen()) {
-            videoDinosaur.closeAction();
-        }
+
     }
 }
