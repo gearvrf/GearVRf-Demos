@@ -10,7 +10,6 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.samsung.accessibility.R;
@@ -47,9 +46,8 @@ public class MainScript extends GVRScript {
             }
         }
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-        GVRSceneObject skybox = createSkybox();
-        skybox.getRenderData().setRenderingOrder(0);
-        gvrContext.getMainScene().addSceneObject(skybox);
+        // skybox.getRenderData().setRenderingOrder(0);
+        gvrContext.getMainScene().addSceneObject(test());
 
         createObjectTalkBack();
         createObject1TalkBack();
@@ -120,8 +118,6 @@ public class MainScript extends GVRScript {
             @Override
             public void gainedFocus(FocusableSceneObject object) {
                 object1.getTalkBack().speak();
-                Log.e("test", "gained focus");
-
             }
         });
         gvrContext.getMainScene().addSceneObject(object1);
@@ -157,31 +153,27 @@ public class MainScript extends GVRScript {
         gvrContext.getMainScene().addSceneObject(object);
     }
 
-    private GVRSceneObject createSkybox() {
-
-        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
-                R.raw.skybox_esphere_acessibility));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(
-                gvrContext, R.drawable.skybox_accessibility));
+    private GVRSceneObject test() {
+        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
+        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
 
-        // applyShaderOnSkyBox(skybox);
+        GVRMesh meshGround = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
+        GVRTexture textureGround = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
+        GVRSceneObject skyboxGround = new GVRSceneObject(gvrContext, meshGround, textureGround);
+        skyboxGround.getRenderData().setRenderingOrder(0);
 
+        GVRMesh meshFx = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
+        GVRTexture textureFx = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
+        GVRSceneObject skyboxFx = new GVRSceneObject(gvrContext, meshFx, textureFx);
+        skyboxGround.getRenderData().setRenderingOrder(0);
+        skybox.addChildObject(skyboxFx);
+        skybox.addChildObject(skyboxGround);
         return skybox;
     }
-
-    // private void applyShaderOnSkyBox(GVRSceneObject skyBox) {
-    // GVRAccessibilitySceneShader shader = new
-    // GVRAccessibilitySceneShader(mGVRContext);
-    // skyBox.getRenderData().getMaterial().setShaderType(shader.getShaderId());
-    // skyBox.getRenderData().getMaterial().setTexture(GVRAccessibilitySceneShader.TEXTURE_KEY,
-    // skyBox.getRenderData().getMaterial().getMainTexture());
-    // skyBox.getRenderData().getMaterial().setFloat(GVRAccessibilitySceneShader.BLUR_INTENSITY,
-    // 1);
-    // }
 
     @Override
     public SplashMode getSplashMode() {
