@@ -46,8 +46,7 @@ public class MainScript extends GVRScript {
             }
         }
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-        // skybox.getRenderData().setRenderingOrder(0);
-        gvrContext.getMainScene().addSceneObject(test());
+        gvrContext.getMainScene().addSceneObject(createSkybox());
 
         createObjectTalkBack();
         createObject1TalkBack();
@@ -153,7 +152,7 @@ public class MainScript extends GVRScript {
         gvrContext.getMainScene().addSceneObject(object);
     }
 
-    private GVRSceneObject test() {
+    private GVRSceneObject createSkybox() {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
         GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);

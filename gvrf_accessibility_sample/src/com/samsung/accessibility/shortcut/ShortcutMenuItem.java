@@ -184,6 +184,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
                     }
                 });
+
             }
         }
     }
