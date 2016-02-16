@@ -48,10 +48,9 @@ public class MainScript extends GVRScript {
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
         gvrContext.getMainScene().addSceneObject(createSkybox());
 
-        createObjectTalkBack();
-        createObject1TalkBack();
         createObject2TalkBack();
         gvrContext.getMainScene().addSceneObject(shortcutMenu);
+
     }
 
     private ShortcutMenu createShortCut() {
@@ -60,66 +59,6 @@ public class MainScript extends GVRScript {
         shortcuteMenu.getTransform().setPositionY(-.5f);
         shortcuteItem.createIcon(AccessibilityTexture.getInstance(gvrContext).getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         return shortcuteMenu;
-    }
-
-    private void createObjectTalkBack() {
-
-        FocusableSceneObject object = new FocusableSceneObject(gvrContext, gvrContext.createQuad(.5f, .5f),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-                        R.drawable.skybox_accessibility)));
-
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getActivity(), "Object");
-        object.getTransform().setPosition(-1, 0, -1);
-        object.attachEyePointeeHolder();
-        object.setTalkBack(talkBack);
-        object.setOnFocusListener(new OnFocusListener() {
-
-            @Override
-            public void lostFocus(FocusableSceneObject object) {
-
-            }
-
-            @Override
-            public void inFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void gainedFocus(FocusableSceneObject object) {
-                object.getTalkBack().speak();
-            }
-        });
-        gvrContext.getMainScene().addSceneObject(object);
-    }
-
-    private void createObject1TalkBack() {
-
-        final FocusableSceneObject object1 = new FocusableSceneObject(gvrContext, gvrContext.createQuad(.5f, .5f),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-                        R.drawable.skybox_accessibility)));
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getActivity(), "Object 2");
-        object1.getTransform().setPosition(1, 0, -1);
-        object1.attachEyePointeeHolder();
-        object1.setTalkBack(talkBack);
-        object1.setOnFocusListener(new OnFocusListener() {
-
-            @Override
-            public void lostFocus(FocusableSceneObject object) {
-            }
-
-            @Override
-            public void inFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public void gainedFocus(FocusableSceneObject object) {
-                object1.getTalkBack().speak();
-            }
-        });
-        gvrContext.getMainScene().addSceneObject(object1);
     }
 
     private void createObject2TalkBack() {
@@ -135,13 +74,10 @@ public class MainScript extends GVRScript {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
-
             }
 
             @Override
             public void inFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
-
             }
 
             @Override

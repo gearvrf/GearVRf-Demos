@@ -13,7 +13,6 @@ package com.samsung.accessibility.focus;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessiblityObject;
 

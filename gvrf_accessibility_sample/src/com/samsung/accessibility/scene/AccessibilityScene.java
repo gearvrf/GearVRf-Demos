@@ -231,21 +231,14 @@ public class AccessibilityScene extends GVRScene {
 
         this.addSceneObject(captions);
 
-        CursorSceneItem cursor = new CursorSceneItem(getGVRContext(), mesh, getGVRContext()
-                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.cursor)));
-        cursor.getTransform().setPosition(positionX, positionY, positionZ);
-        cursor.getTransform().setScale(scale, scale, scale);
-        cursor.attachEyePointeeHolder();
-        this.addSceneObject(cursor);
-
         float angle = -20;
 
-        invertedColors.getTransform().rotateByAxisWithPivot(-3 * angle, 0, 1, 0, 0, 0, 0);
-        zoom.getTransform().rotateByAxisWithPivot(-2 * angle, 0, 1, 0, 0, 0, 0);
-        talkBack.getTransform().rotateByAxisWithPivot(-1 * angle, 0, 1, 0, 0, 0, 0);
-        speech.getTransform().rotateByAxisWithPivot(0 * angle, 0, 1, 0, 0, 0, 0);
-        captions.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
-        cursor.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
+        invertedColors.getTransform().rotateByAxisWithPivot(-2 * angle, 0, 1, 0, 0, 0, 0);
+        zoom.getTransform().rotateByAxisWithPivot(-1 * angle, 0, 1, 0, 0, 0, 0);
+        talkBack.getTransform().rotateByAxisWithPivot(0 * angle, 0, 1, 0, 0, 0, 0);
+        speech.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
+        captions.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
+
     }
 
     public void setItemsRelativePosition(float positionX, float positionY, float positionZ) {
