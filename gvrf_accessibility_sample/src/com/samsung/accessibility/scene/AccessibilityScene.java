@@ -9,7 +9,6 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessiblityObject;
-import org.gearvrf.animation.GVROpacityAnimation;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.OnClickListener;
@@ -215,29 +214,11 @@ public class AccessibilityScene extends GVRScene {
         });
 
         this.addSceneObject(speech);
-
-        final SceneItem captions = new SceneItem(getGVRContext(), mesh, getGVRContext()
-                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.captions)));
-        captions.getTransform().setPosition(positionX, positionY, positionZ);
-        captions.getTransform().setScale(scale, scale, scale);
-        captions.attachEyePointeeHolder();
-        captions.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick() {
-                captions.animate();
-            }
-        });
-
-        this.addSceneObject(captions);
-
         float angle = -20;
-
-        invertedColors.getTransform().rotateByAxisWithPivot(-2 * angle, 0, 1, 0, 0, 0, 0);
-        zoom.getTransform().rotateByAxisWithPivot(-1 * angle, 0, 1, 0, 0, 0, 0);
-        talkBack.getTransform().rotateByAxisWithPivot(0 * angle, 0, 1, 0, 0, 0, 0);
-        speech.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
-        captions.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
+        invertedColors.getTransform().rotateByAxisWithPivot(-1 * angle, 0, 1, 0, 0, 0, 0);
+        zoom.getTransform().rotateByAxisWithPivot(0 * angle, 0, 1, 0, 0, 0, 0);
+        talkBack.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
+        speech.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
 
     }
 
@@ -277,7 +258,7 @@ public class AccessibilityScene extends GVRScene {
 
     private void setActivityOrInactiveTalkBackObjects(boolean active) {
         for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
-            if (object instanceof GVRAccessiblityObject) {
+            if (object instanceof GVRAccessiblityObject && ((GVRAccessiblityObject) object).getTalkBack() != null) {
                 ((GVRAccessiblityObject) object).getTalkBack().setActive(active);
             }
         }
@@ -287,12 +268,6 @@ public class AccessibilityScene extends GVRScene {
         getGVRContext().setMainScene(this);
         mainApplicationScene.removeSceneObject(shortcutMenu);
         addSceneObject(shortcutMenu);
-        for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
-
-            }
-        }
     }
 
 }

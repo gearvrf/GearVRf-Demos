@@ -1,6 +1,7 @@
 package com.samsung.accessibility.main;
 
 import java.util.EnumSet;
+import java.util.Locale;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -9,12 +10,14 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 
 import android.view.MotionEvent;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnFocusListener;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
@@ -28,6 +31,8 @@ public class MainScript extends GVRScript {
     private GVRContext gvrContext;
 
     private GazeCursorSceneObject cursor;
+
+    private FocusableSceneObject trex;
     public static AccessibilityScene accessibilityScene;
     public static AccessibilityManager manager;
 
@@ -37,7 +42,7 @@ public class MainScript extends GVRScript {
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
-        ShortcutMenu shortcutMenu = createShortCut();
+        ShortcutMenu shortcutMenu = createShortcut();
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
 
         createPedestalObject();
@@ -49,7 +54,7 @@ public class MainScript extends GVRScript {
 
     }
 
-    private ShortcutMenu createShortCut() {
+    private ShortcutMenu createShortcut() {
         ShortcutMenu shortcuteMenu = new ShortcutMenu(gvrContext);
         ShortcutMenuItem shortcuteItem = shortcuteMenu.getShortcutItems().get(0);
         shortcuteMenu.getTransform().setPositionY(-.5f);
@@ -65,12 +70,16 @@ public class MainScript extends GVRScript {
 
         FocusableSceneObject baseObject = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         FocusableSceneObject bookObject = new FocusableSceneObject(gvrContext, bookMesh, bookTexture);
+        FocusableSceneObject pedestalObject = new FocusableSceneObject(gvrContext);
 
         baseObject.getTransform().setScale(0.005f, 0.005f, 0.005f);
         bookObject.getTransform().setScale(0.005f, 0.005f, 0.005f);
 
         baseObject.getTransform().setPosition(0, -1.6f, -2);
         bookObject.getTransform().setPosition(0, -1.6f, -2);
+
+        pedestalObject.addChildObject(baseObject);
+        pedestalObject.addChildObject(bookObject);
 
         gvrContext.getMainScene().addSceneObject(bookObject);
         gvrContext.getMainScene().addSceneObject(baseObject);
@@ -108,11 +117,12 @@ public class MainScript extends GVRScript {
 
         GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
         GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
-        FocusableSceneObject apatosaurus = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
-        apatosaurus.getTransform().setPosition(0, -1.6f, -7f);
-        apatosaurus.getTransform().rotateByAxis(-90, 1, 0, 0);
-        apatosaurus.getTransform().rotateByAxis(90, 0, 1, 0);
-        gvrContext.getMainScene().addSceneObject(apatosaurus);
+        trex = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
+        trex.getTransform().setPosition(0, -1.6f, -7f);
+        trex.getTransform().rotateByAxis(-90, 1, 0, 0);
+        trex.getTransform().rotateByAxis(90, 0, 1, 0);
+        activeTalkBack();
+        gvrContext.getMainScene().addSceneObject(trex);
     }
 
     @Override
@@ -127,5 +137,26 @@ public class MainScript extends GVRScript {
 
     public void onSingleTap(MotionEvent e) {
         FocusableController.clickProcess(gvrContext);
+    }
+
+    private void activeTalkBack() {
+        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Trex dinossaur");
+        trex.setTalkBack(talkBack);
+        trex.attachEyePointeeHolder();
+        trex.setOnFocusListener(new OnFocusListener() {
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                trex.getTalkBack().speak();
+            }
+        });
     }
 }

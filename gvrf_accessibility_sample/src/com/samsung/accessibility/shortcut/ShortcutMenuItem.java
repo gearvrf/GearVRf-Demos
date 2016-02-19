@@ -10,8 +10,8 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.speech.GVRAccessibilitySpeech;
-import org.gearvrf.accessibility.speech.GVRAccessibilitySpeechListener;
+import org.gearvrf.accessibility.GVRAccessibilitySpeech;
+import org.gearvrf.accessibility.GVRAccessibilitySpeechListener;
 
 import android.content.Context;
 import android.media.AudioManager;

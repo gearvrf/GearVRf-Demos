@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.accessibility.GVRAccessibilityInvertedColors;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 import org.gearvrf.accessibility.GVRAccessibilityZoom;
-import org.gearvrf.accessibility.invertedcolors.GVRAccessibilityInvertedColors;
 
 public class AccessibilityManager {
 
