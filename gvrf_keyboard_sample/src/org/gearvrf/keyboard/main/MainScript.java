@@ -438,10 +438,15 @@ public class MainScript extends GVRScript implements KeyboardEventListener {
         removeQuestionChildren();
 
         String questionString = lastSelectedSphereFlag.getQuestion();
-        Vector<StringBuffer> lines = StringUtil.splitStringInLines(questionString,
+        final Vector<StringBuffer> lines = StringUtil.splitStringInLines(questionString,
                 QUESTION_LINE_LENGTH);
 
-        addQuestionLines(lines);
+        mGVRContext.runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                addQuestionLines(lines);
+            }
+        });
     }
 
     private void removeQuestionChildren() {
