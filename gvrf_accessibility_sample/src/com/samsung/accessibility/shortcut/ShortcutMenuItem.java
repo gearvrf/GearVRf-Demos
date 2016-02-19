@@ -10,9 +10,8 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVROnFinish;
-import org.gearvrf.animation.GVROpacityAnimation;
+import org.gearvrf.accessibility.speech.GVRAccessibilitySpeech;
+import org.gearvrf.accessibility.speech.GVRAccessibilitySpeechListener;
 
 import android.content.Context;
 import android.media.AudioManager;
@@ -36,6 +35,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private GVRSceneObject icon;
     private TypeItem typeItem;
     private AccessibilityTexture textures;
+    private GVRAccessibilitySpeech speech;
 
     public ShortcutMenuItem(GVRContext gvrContext) {
         super(gvrContext);
@@ -131,8 +131,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                     break;
 
                 case SPEECH:
-                    clickEffectMenu();
-
+                    speech();
                     break;
 
                 case ACCESSIBILITY:
@@ -143,6 +142,37 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
                 }
 
+            }
+        });
+    }
+
+    private void speech() {
+        speech = new GVRAccessibilitySpeech(gvrContext);
+        speech.start(new GVRAccessibilitySpeechListener() {
+
+            @Override
+            public void onRmsChanged(float arg0) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onFinish() {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onError(int arg0) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onEndOfSpeech() {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onBeginningOfSpeech() {
+                // TODO Auto-generated method stub
             }
         });
     }
@@ -161,53 +191,21 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     private void back(final GVRSceneObject[] wholeSceneObjects) {
         final AccessibilityScene accessibilityScene = MainScript.accessibilityScene;
-        for (final GVRSceneObject object : wholeSceneObjects) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
-
-                    @Override
-                    public void finished(GVRAnimation arg0) {
-
-                        if (object.equals(wholeSceneObjects[wholeSceneObjects.length - 1])) {
-                            gvrContext.setMainScene(accessibilityScene.getMainApplicationScene());
-                            createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
-                            accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
-                            accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
-                            gvrContext.getMainScene().getMainCameraRig()
-                                    .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-                            for (GVRSceneObject object : accessibilityScene.getMainApplicationScene().getWholeSceneObjects()) {
-                                if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                                    new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
-                                }
-                            }
-                        }
-
-                    }
-                });
-
-            }
-        }
+        gvrContext.setMainScene(accessibilityScene.getMainApplicationScene());
+        createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
+        accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
+        accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
+        gvrContext.getMainScene().getMainCameraRig()
+                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
     }
 
     private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
-        for (final GVRSceneObject object : wholeSceneObjects) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                new GVROpacityAnimation(object, 1f, 0f).start(gvrContext.getAnimationEngine()).setOnFinish(new GVROnFinish() {
-
-                    @Override
-                    public void finished(GVRAnimation arg0) {
-                        if (object.equals(wholeSceneObjects[wholeSceneObjects.length - 1])) {
-                            gvrContext.getMainScene().getMainCameraRig()
-                                    .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-                            MainScript.accessibilityScene.getMainCameraRig()
-                                    .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-                            createIcon(textures.getBackIcon(), TypeItem.BACK);
-                            MainScript.accessibilityScene.show();
-                        }
-                    }
-                });
-            }
-        }
+        gvrContext.getMainScene().getMainCameraRig()
+                .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+        MainScript.accessibilityScene.getMainCameraRig()
+                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+        createIcon(textures.getBackIcon(), TypeItem.BACK);
+        MainScript.accessibilityScene.show();
     }
 
     private void invertedColors() {

@@ -12,12 +12,12 @@ import org.gearvrf.accessibility.GVRAccessiblityObject;
 import org.gearvrf.animation.GVROpacityAnimation;
 
 import com.samsung.accessibility.R;
-import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.main.MainScript;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
+import com.samsung.accessibility.util.AccessibilitySceneShader;
 import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class AccessibilityScene extends GVRScene {
@@ -277,7 +277,7 @@ public class AccessibilityScene extends GVRScene {
 
     private void setActivityOrInactiveTalkBackObjects(boolean active) {
         for (GVRSceneObject object : mainApplicationScene.getWholeSceneObjects()) {
-            if (object instanceof FocusableSceneObject) {
+            if (object instanceof GVRAccessiblityObject) {
                 ((GVRAccessiblityObject) object).getTalkBack().setActive(active);
             }
         }

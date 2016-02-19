@@ -1,21 +1,20 @@
 package com.samsung.accessibility.main;
 
-import java.util.Locale;
+import java.util.EnumSet;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 
 import android.view.MotionEvent;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnFocusListener;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
@@ -40,16 +39,13 @@ public class MainScript extends GVRScript {
         manager = new AccessibilityManager(gvrContext);
         ShortcutMenu shortcutMenu = createShortCut();
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
-        for (GVRSceneObject object : accessibilityScene.getWholeSceneObjects()) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                object.getRenderData().getMaterial().setOpacity(0);
-            }
-        }
+
+        createPedestalObject();
+        createDinossaur();
+
+        gvrContext.getMainScene().addSceneObject(shortcutMenu);
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
         gvrContext.getMainScene().addSceneObject(createSkybox());
-
-        createObject2TalkBack();
-        gvrContext.getMainScene().addSceneObject(shortcutMenu);
 
     }
 
@@ -61,31 +57,23 @@ public class MainScript extends GVRScript {
         return shortcuteMenu;
     }
 
-    private void createObject2TalkBack() {
-        final FocusableSceneObject object = new FocusableSceneObject(gvrContext, gvrContext.createQuad(.5f, .5f),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-                        R.drawable.skybox_accessibility)));
+    private void createPedestalObject() {
+        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
+        GVRMesh bookMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
+        GVRTexture bookTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
+        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
 
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getActivity(), "Object 3");
-        object.getTransform().setPosition(0, 0, -1);
-        object.attachEyePointeeHolder();
-        object.setTalkBack(talkBack);
-        object.setOnFocusListener(new OnFocusListener() {
+        FocusableSceneObject baseObject = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
+        FocusableSceneObject bookObject = new FocusableSceneObject(gvrContext, bookMesh, bookTexture);
 
-            @Override
-            public void lostFocus(FocusableSceneObject object) {
-            }
+        baseObject.getTransform().setScale(0.005f, 0.005f, 0.005f);
+        bookObject.getTransform().setScale(0.005f, 0.005f, 0.005f);
 
-            @Override
-            public void inFocus(FocusableSceneObject object) {
-            }
+        baseObject.getTransform().setPosition(0, -1.6f, -2);
+        bookObject.getTransform().setPosition(0, -1.6f, -2);
 
-            @Override
-            public void gainedFocus(FocusableSceneObject object) {
-                object.getTalkBack().speak();
-            }
-        });
-        gvrContext.getMainScene().addSceneObject(object);
+        gvrContext.getMainScene().addSceneObject(bookObject);
+        gvrContext.getMainScene().addSceneObject(baseObject);
     }
 
     private GVRSceneObject createSkybox() {
@@ -108,6 +96,23 @@ public class MainScript extends GVRScript {
         skybox.addChildObject(skyboxFx);
         skybox.addChildObject(skyboxGround);
         return skybox;
+    }
+
+    private void createDinossaur() {
+
+        EnumSet<GVRImportSettings> additionalSettings = EnumSet
+                .of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
+
+        EnumSet<GVRImportSettings> settings = GVRImportSettings
+                .getRecommendedSettingsWith(additionalSettings);
+
+        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
+        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
+        FocusableSceneObject apatosaurus = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
+        apatosaurus.getTransform().setPosition(0, -1.6f, -7f);
+        apatosaurus.getTransform().rotateByAxis(-90, 1, 0, 0);
+        apatosaurus.getTransform().rotateByAxis(90, 0, 1, 0);
+        gvrContext.getMainScene().addSceneObject(apatosaurus);
     }
 
     @Override
