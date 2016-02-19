@@ -9,11 +9,10 @@ import android.util.Log;
 import com.qualcomm.vuforia.CameraDevice;
 import com.qualcomm.vuforia.DataSet;
 import com.qualcomm.vuforia.HINT;
-import com.qualcomm.vuforia.ImageTracker;
+import com.qualcomm.vuforia.ObjectTracker;
 import com.qualcomm.vuforia.STORAGE_TYPE;
 import com.qualcomm.vuforia.State;
 import com.qualcomm.vuforia.Trackable;
-import com.qualcomm.vuforia.Tracker;
 import com.qualcomm.vuforia.TrackerManager;
 import com.qualcomm.vuforia.Vuforia;
 import com.qualcomm.vuforia.misc.VuforiaApplicationControl;
@@ -161,10 +160,10 @@ public class VuforiaSampleActivity extends GVRActivity implements
         boolean result = true;
 
         TrackerManager tManager = TrackerManager.getInstance();
-        Tracker tracker;
+        ObjectTracker tracker;
 
         // Trying to initialize the image tracker
-        tracker = tManager.initTracker(ImageTracker.getClassType());
+        tracker = (ObjectTracker)tManager.initTracker(ObjectTracker.getClassType());
         if (tracker == null) {
             Log.e(TAG,
                     "Tracker not initialized. Tracker already initialized or the camera is already started");
@@ -178,8 +177,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
     // To be called to load the trackers' data
     public boolean doLoadTrackersData() {
         TrackerManager tManager = TrackerManager.getInstance();
-        ImageTracker imageTracker = (ImageTracker) tManager
-                .getTracker(ImageTracker.getClassType());
+        ObjectTracker imageTracker =  (ObjectTracker)tManager
+                .getTracker(ObjectTracker.getClassType());
 
         if (imageTracker == null) {
             return false;
@@ -222,8 +221,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
         // Indicate if the trackers were started correctly
         boolean result = true;
 
-        Tracker imageTracker = TrackerManager.getInstance().getTracker(
-                ImageTracker.getClassType());
+        ObjectTracker imageTracker = (ObjectTracker)TrackerManager.getInstance().getTracker(
+                ObjectTracker.getClassType());
         if (imageTracker != null) {
             imageTracker.start();
         }
@@ -237,8 +236,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
         boolean result = true;
 
         if (isVuforiaActive()) {
-            Tracker imageTracker = TrackerManager.getInstance().getTracker(
-                    ImageTracker.getClassType());
+            ObjectTracker imageTracker = (ObjectTracker)TrackerManager.getInstance().getTracker(
+                    ObjectTracker.getClassType());
             if (imageTracker != null)
                 imageTracker.stop();
         }
@@ -253,8 +252,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
         if (isVuforiaActive()) {
             TrackerManager tManager = TrackerManager.getInstance();
-            ImageTracker imageTracker = (ImageTracker) tManager
-                    .getTracker(ImageTracker.getClassType());
+            ObjectTracker imageTracker = (ObjectTracker)tManager
+                    .getTracker(ObjectTracker.getClassType());
             if (imageTracker == null)
                 return false;
 
@@ -279,7 +278,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
         if (isVuforiaActive()) {
             TrackerManager tManager = TrackerManager.getInstance();
-            tManager.deinitTracker(ImageTracker.getClassType());
+            tManager.deinitTracker(ObjectTracker.getClassType());
         }
 
         return result;
