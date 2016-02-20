@@ -30,7 +30,8 @@ public class VuforiaApplicationSession implements UpdateCallbackInterface
 {
     
     private static final String LOGTAG = "Vuforia_Sample_Applications";
-    
+
+    private final String licenseKey = "AVUdgen/////AAAAARstQwK5r0TMhV1r5rVYLfoK6mEkcm+9dxNOSuZscys6w4uSsJyAFl/hbJohWnMF1grq0p2GqHZrWDh4TqP6x37RFm7p1zxQgdlDWZz8R/78Ga8zLdah23OXohLjlZ1/Y7+pHLqAyF2KQKIoH2HH9Wz47vVKidGQRY9R25QzV0cJKCvt6Zmjfryv5yrcsI20ZQVp7A3dX1G1MCSOwAWamtCN59LYHuRAr01xjK3eZWKquzQzJKmTxcczzl322+IxyGknlY63QVvS7DZrPS8dRS/tRVgyQYGqPSd/cfDWInDUC3k1SynzkvoXJKkZ9JPsCaFBCgiyLg3d/y0lsgT6AoOkRjuY4EQEyVT+lDC0mRBc";
     // Reference to the current activity
     private Activity mActivity;
     private VuforiaApplicationControl mSessionControl;
@@ -331,8 +332,8 @@ public class VuforiaApplicationSession implements UpdateCallbackInterface
             // Prevent the onDestroy() method to overlap with initialization:
             synchronized (mShutdownLock)
             {
-                Vuforia.setInitParameters(mActivity, mVuforiaFlags);
-                
+                Vuforia.setInitParameters(mActivity, mVuforiaFlags, licenseKey);
+
                 do
                 {
                     // Vuforia.init() blocks until an initialization step is
@@ -538,7 +539,6 @@ public class VuforiaApplicationSession implements UpdateCallbackInterface
         
         VideoBackgroundConfig config = new VideoBackgroundConfig();
         config.setEnabled(true);
-        config.setSynchronous(true);
         config.setPosition(new Vec2I(0, 0));
         
         int xSize = 0, ySize = 0;
