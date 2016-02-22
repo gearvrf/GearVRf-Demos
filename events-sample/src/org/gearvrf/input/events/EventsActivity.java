@@ -15,26 +15,47 @@
 
 package org.gearvrf.input.events;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRScript;
 
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class EventsActivity extends GVRActivity {
     private static final String TAG = EventsActivity.class.getSimpleName();
     private GVRScript script;
     private GVRFrameLayout frameLayout;
-    private TextView buttonTextView, keyTextView;
+    private TextView buttonTextView, keyTextView, listTextView;
     private Button button1, button2;
     private CheckBox checkBox;
-    private String buttonPressed;
+    private String buttonPressed, listItemClicked;
+    private ListView listView;
+
+    private static final List<String> items = new ArrayList<String>(5);
+
+    static {
+        items.add("Note 4");
+        items.add("GS 6");
+        items.add("GS 6 Edge");
+        items.add("Note 5");
+        items.add("GS 6 Edge Plus");
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,10 +69,19 @@ public class EventsActivity extends GVRActivity {
         keyTextView = (TextView) frameLayout.findViewById(R.id.keyTextView);
         buttonTextView = (TextView) frameLayout
                 .findViewById(R.id.buttonTextView);
+        listTextView = (TextView) frameLayout.findViewById(R.id.listTextView);
+        listView = (ListView) findViewById(R.id.listView);
+        listView.setBackgroundColor(Color.LTGRAY);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_list_item_1, items);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(itemClickListener);
         button1.setOnClickListener(clickListener);
         button2.setOnClickListener(clickListener);
         checkBox.setOnClickListener(clickListener);
         buttonPressed = getResources().getString(R.string.buttonPressed);
+        listItemClicked = getResources().getString(R.string.listClicked);
         script = new EventsScript(this, frameLayout, keyTextView);
         setScript(script, "gvr.xml");
     }
@@ -77,6 +107,21 @@ public class EventsActivity extends GVRActivity {
 
             buttonTextView
                     .setText(String.format("%s %s", buttonPressed, button));
+        }
+    };
+
+    private OnItemClickListener itemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+                long arg3) {
+            // TODO Auto-generated method stub
+            String str = String.format("%s %s", listItemClicked,
+                    items.get(position));
+            Log.d(TAG, "String is " + str);
+            listTextView.setText(String.format("%s %s", listItemClicked,
+                    items.get(position)));
+
         }
     };
 }
