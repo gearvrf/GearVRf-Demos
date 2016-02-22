@@ -111,17 +111,11 @@ public class EventsActivity extends GVRActivity {
     };
 
     private OnItemClickListener itemClickListener = new OnItemClickListener() {
-
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int position,
                 long arg3) {
-            // TODO Auto-generated method stub
-            String str = String.format("%s %s", listItemClicked,
-                    items.get(position));
-            Log.d(TAG, "String is " + str);
             listTextView.setText(String.format("%s %s", listItemClicked,
                     items.get(position)));
-
         }
     };
 }
