@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GVR Events</string>
+    <string name="buttonPressed">Button Pressed: </string>
+    <string name="keyCode">Key Code: </string>
+    <string name="listClicked">List Item Clicked: </string>
+    <string name="button1">Button 1</string>
+    <string name="button2">Button 2</string>
+    <string name="checkbox">Check Box</string>
+    <string name="listView">List View</string>
+
+</resources>
