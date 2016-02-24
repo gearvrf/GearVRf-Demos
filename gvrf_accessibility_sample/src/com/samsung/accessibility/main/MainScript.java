@@ -33,6 +33,8 @@ public class MainScript extends GVRScript {
     private GazeCursorSceneObject cursor;
 
     private FocusableSceneObject trex;
+
+    private FocusableSceneObject bookObject;
     public static AccessibilityScene accessibilityScene;
     public static AccessibilityManager manager;
 
@@ -69,7 +71,7 @@ public class MainScript extends GVRScript {
         GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
 
         FocusableSceneObject baseObject = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
-        FocusableSceneObject bookObject = new FocusableSceneObject(gvrContext, bookMesh, bookTexture);
+        bookObject = new FocusableSceneObject(gvrContext, bookMesh, bookTexture);
         FocusableSceneObject pedestalObject = new FocusableSceneObject(gvrContext);
 
         baseObject.getTransform().setScale(0.005f, 0.005f, 0.005f);
@@ -140,8 +142,8 @@ public class MainScript extends GVRScript {
     }
 
     private void activeTalkBack() {
-        GVRAccessibilityTalkBack talkBack = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Trex dinossaur");
-        trex.setTalkBack(talkBack);
+        GVRAccessibilityTalkBack talkBackDinossaur = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Dinossaur");
+        trex.setTalkBack(talkBackDinossaur);
         trex.attachEyePointeeHolder();
         trex.setOnFocusListener(new OnFocusListener() {
 
@@ -156,6 +158,27 @@ public class MainScript extends GVRScript {
             @Override
             public void gainedFocus(FocusableSceneObject object) {
                 trex.getTalkBack().speak();
+            }
+        });
+
+        GVRAccessibilityTalkBack talkBackBook = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Book");
+        bookObject.setTalkBack(talkBackBook);
+        bookObject.attachEyePointeeHolder();
+        bookObject.setOnFocusListener(new OnFocusListener() {
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void inFocus(FocusableSceneObject object) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                bookObject.getTalkBack().speak();
             }
         });
     }
