@@ -1,0 +1,30 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 28.01.2016 13:42:08
+
+mtllib edge_menu.mtl
+
+#
+# object edgeMenu
+#
+
+v  44.9879 94.7632 0.6957
+v  -44.7834 94.7632 0.6957
+v  -44.7834 66.2732 0.6957
+v  44.9879 66.2732 0.6957
+# 4 vertices
+
+vn 0.0000 0.0000 1.0000
+# 1 vertex normals
+
+vt 1.0005 1.0000 0.5076
+vt 0.0014 1.0000 0.5076
+vt 0.0014 0.0000 0.5076
+vt 1.0005 0.0000 0.5076
+# 4 texture coords
+
+g edgeMenu
+usemtl 01___Default
+s 2
+f 1/1/1 2/2/1 3/3/1 4/4/1 
+# 1 polygons
+
