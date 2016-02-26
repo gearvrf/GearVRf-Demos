@@ -2,10 +2,8 @@ package com.samsung.accessibility.shortcut;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
@@ -28,7 +26,7 @@ import com.samsung.accessibility.util.AccessibilityTexture;
 public class ShortcutMenuItem extends FocusableSceneObject {
 
     private GVRContext gvrContext;
-    private static final int IN_FOCUS_COLOR = 5046206;
+    private static final int IN_FOCUS_COLOR = 8570046;
     private static final int LOST_FOCUS_COLOR = 6186095;
     private static final int CLICKED_COLOR = 12631476;
     private boolean clicked;
@@ -40,18 +38,15 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     public ShortcutMenuItem(GVRContext gvrContext) {
         super(gvrContext);
         this.gvrContext = gvrContext;
-        preparShortcutMenuItem();
+        createRenderData();
+        attachEyePointeeHolder();
         getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
         focusAndUnFocus();
         clickEvent();
     }
 
-    private void preparShortcutMenuItem() {
+    private void createRenderData() {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.circle_menu));
-        GVRMeshEyePointee meshEyePointee = new GVRMeshEyePointee(mesh);
-        GVREyePointeeHolder holder = new GVREyePointeeHolder(gvrContext);
-        holder.addPointee(meshEyePointee);
-        attachEyePointeeHolder(holder);
         GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
         textures = AccessibilityTexture.getInstance(gvrContext);
         GVRMaterial material = new GVRMaterial(gvrContext);

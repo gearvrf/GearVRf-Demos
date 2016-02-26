@@ -28,8 +28,8 @@ public class AccessibilityScene extends GVRScene {
 
     public AccessibilityScene(GVRContext gvrContext, GVRScene mainApplicationScene, ShortcutMenu shortcutMenu) {
         super(gvrContext);
+        mGvrContext = gvrContext;
         textures = AccessibilityTexture.getInstance(gvrContext);
-        this.gvrContext = gvrContext;
         this.mainApplicationScene = mainApplicationScene;
         this.shortcutMenu = shortcutMenu;
 
@@ -232,7 +232,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private void applyShaderOnSkyBox(GVRSceneObject skyBox) {
-        AccessibilitySceneShader shader = new AccessibilitySceneShader(gvrContext);
+        AccessibilitySceneShader shader = new AccessibilitySceneShader(mGvrContext);
         applyShader(shader, skyBox);
         for (GVRSceneObject object : skyBox.getChildren()) {
             applyShader(shader, object);

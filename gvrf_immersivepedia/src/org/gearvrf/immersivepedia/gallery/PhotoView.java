@@ -15,6 +15,8 @@
 
 package org.gearvrf.immersivepedia.gallery;
 
+import android.graphics.Color;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRTexture;
@@ -29,8 +31,6 @@ import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
-
-import android.graphics.Color;
 
 public class PhotoView extends FocusableSceneObject implements FocusListener {
 

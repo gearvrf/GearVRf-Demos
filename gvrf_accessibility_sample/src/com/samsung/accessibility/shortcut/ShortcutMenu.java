@@ -11,7 +11,9 @@ import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class ShortcutMenu extends GVRSceneObject {
 
-    private GVRContext gvrContext;
+    private GVRContext mGvrContext;
+    private static final int LOST_FOCUS_COLOR = 6186095;
+    private static final int CLICKED_COLOR = 12631476;
     private List<ShortcutMenuItem> shortcutItems;
     private ShortcutMenuItem sortAux;
     private AccessibilityTexture textures;
@@ -19,11 +21,11 @@ public class ShortcutMenu extends GVRSceneObject {
     public ShortcutMenu(GVRContext gvrContext) {
         super(gvrContext);
         this.getTransform().rotateByAxis(110, 0, 1, 0);
-        this.gvrContext = gvrContext;
         shortcutItems = new ArrayList<ShortcutMenuItem>();
         textures = AccessibilityTexture.getInstance(gvrContext);
+        mGvrContext = gvrContext;
         createDefaultMenu();
-        sortAux = new ShortcutMenuItem(gvrContext);
+        sortAux = new ShortcutMenuItem(mGvrContext);
     }
 
     public void createDefaultMenu() {
@@ -32,7 +34,7 @@ public class ShortcutMenu extends GVRSceneObject {
         int size = 8;
 
         for (int i = 0; i < size; i++) {
-            ShortcutMenuItem shortcutItem = new ShortcutMenuItem(gvrContext);
+            ShortcutMenuItem shortcutItem = new ShortcutMenuItem(mGvrContext);
             shortcutItem.getTransform().setPosition(0, -1f, 0);
             if (i % 2 == 1) {
                 shortcutItem.getTransform().rotateByAxis((int) (offset + 1 / 2) * angle, 0, 1, 0);

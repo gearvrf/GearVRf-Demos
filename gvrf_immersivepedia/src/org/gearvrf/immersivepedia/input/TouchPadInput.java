@@ -15,10 +15,10 @@
 
 package org.gearvrf.immersivepedia.input;
 
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
-
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+
+import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
 
 public class TouchPadInput {
 

@@ -15,8 +15,8 @@
 
 package org.gearvrf.immersivepedia.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import android.os.Environment;
+import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -25,8 +25,8 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.R;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 
-import android.os.Environment;
-import android.util.Log;
+import java.io.File;
+import java.io.FileNotFoundException;
 
 public class Loader {
 

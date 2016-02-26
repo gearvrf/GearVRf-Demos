@@ -15,6 +15,9 @@
 
 package org.gearvrf.immersivepedia.scene;
 
+import android.graphics.Color;
+import android.view.Gravity;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -30,9 +33,6 @@ import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.MathUtils;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
-
-import android.graphics.Color;
-import android.view.Gravity;
 
 public class MenuItem extends FocusableSceneObject {
     
