@@ -25,3 +25,8 @@ proguard-project.txt
 SystemUtils.jar
 VrApi.jar
 VrAppFramework.jar
+
+
+
+
+gvrf_accessibility_sample/project.properties

@@ -1,0 +1,30 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 28.01.2016 13:41:36
+
+mtllib edge_box.mtl
+
+#
+# object edgeBox
+#
+
+v  -46.3786 2.8340 0.5783
+v  46.4415 2.8340 0.5783
+v  46.4415 155.7440 0.5783
+v  -46.3786 155.7440 0.5783
+# 4 vertices
+
+vn 0.0000 -0.0000 1.0000
+# 1 vertex normals
+
+vt 0.0070 0.0000 0.5000
+vt 0.9930 0.0000 0.5000
+vt 0.9930 1.0000 0.5000
+vt 0.0070 1.0000 0.5000
+# 4 texture coords
+
+g edgeBox
+usemtl 03___Default
+s 1
+f 1/1/1 2/2/1 3/3/1 4/4/1 
+# 1 polygons
+
