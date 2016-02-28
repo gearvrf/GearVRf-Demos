@@ -125,7 +125,7 @@ public class EventsScript extends GVRScript {
             listener.onCursorControllerAdded(cursor);
         }
         GVRBaseSensor sensor = new GVRBaseSensor(gvrContext);
-        sensor.registerSensorEventListener(eventListener);
+        layoutSceneObject.getEventReceiver().addListener(eventListener);
         layoutSceneObject.setSensor(sensor);
     }
 
@@ -168,9 +168,11 @@ public class EventsScript extends GVRScript {
                 pointerCoords.y = -(hitPoint[1] - HALF_QUAD_Y) * frameHeight;
 
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    // save the co ordinates on down
-                    savedMotionEventX = motionEvent.getX();
-                    savedMotionEventY = motionEvent.getY();
+                    if (motionEvent != null) {
+                        // save the co ordinates on down
+                        savedMotionEventX = motionEvent.getX();
+                        savedMotionEventY = motionEvent.getY();
+                    }
                     savedHitPointX = pointerCoords.x;
                     savedHitPointY = pointerCoords.y;
                 }
