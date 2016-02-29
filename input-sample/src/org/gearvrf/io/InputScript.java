@@ -105,7 +105,7 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube1.getTransform().setPosition(0.0f, 1.0f, -10.0f);
         mainScene.addSceneObject(cube1);
         // add the sensor to the cube
-        cube1.setSensor(new CubeSensor(gvrContext));
+        addSensor(cube1);
 
         GVRSceneObject cube2 = new Cube(gvrContext, "Cube 2", shaderManager);
         cube2.getTransform().setPosition(0.0f, 1.0f, -12.0f);
@@ -114,7 +114,7 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube2.getTransform().setRotation(1.0f, 0.0f, 0.0f, 0.0f);
         mainScene.addSceneObject(cube2);
         // add the sensor to the cube
-        cube2.setSensor(new CubeSensor(gvrContext));
+        addSensor(cube2);
 
         GVRSceneObject cube3 = new Cube(gvrContext, "Cube 3", shaderManager);
         cube3.getTransform().setPosition(0.0f, 1.0f, -15.0f);
@@ -125,18 +125,22 @@ public class InputScript extends GVRScript implements CursorControllerListener {
         cube3.getTransform().setRotation(1.0f, 0.0f, 0.0f, 0.0f);
         mainScene.addSceneObject(cube3);
         // add the sensor to the cube
-        cube3.setSensor(new CubeSensor(gvrContext));
+        addSensor(cube3);
 
     }
 
-    private class CubeSensor extends GVRBaseSensor
-            implements ISensorEvents {
+    private void addSensor(GVRSceneObject sceneObject) {
+        CubeSensor sensor = new CubeSensor(gvrContext);
+        sceneObject.setSensor(sensor);
+        sceneObject.getEventReceiver().addListener(sensor);
+    }
+
+    private class CubeSensor extends GVRBaseSensor implements ISensorEvents {
         private GVRSceneObject selected;
         private int selectedCursorId;
 
         public CubeSensor(GVRContext gvrContext) {
             super(gvrContext);
-            registerSensorEventListener(this);
         }
 
         @Override
