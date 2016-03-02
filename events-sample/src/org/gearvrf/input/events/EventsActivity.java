@@ -73,7 +73,7 @@ public class EventsActivity extends GVRActivity {
         listView = (ListView) findViewById(R.id.listView);
         listView.setBackgroundColor(Color.LTGRAY);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, items);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(itemClickListener);
