@@ -14,7 +14,7 @@ public class ScriptUtils {
      * This helper function invokes the constructor with parameters.
      */
     public GVRTextViewSceneObject newTextViewSceneObject(GVRContext gvrContext, String text) {
-        GVRTextViewSceneObject res = new GVRTextViewSceneObject(gvrContext, gvrContext.getActivity());
+        GVRTextViewSceneObject res = new GVRTextViewSceneObject(gvrContext);
         res.setText(text);
         res.setRefreshFrequency(IntervalFrequency.LOW);
         return res;

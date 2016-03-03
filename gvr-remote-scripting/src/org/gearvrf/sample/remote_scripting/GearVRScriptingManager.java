@@ -15,9 +15,6 @@
 
 package org.gearvrf.sample.remote_scripting;
 
-import android.app.Activity;
-import android.os.Bundle;
-import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
@@ -37,9 +34,9 @@ public class GearVRScriptingManager extends GVRScript
         String telnetString = "telnet " + ipAddress + " 1645";
 
         // create text object to tell the user where to connect
-        GVRTextViewSceneObject textViewSceneObject = new GVRTextViewSceneObject(gvrContext, gvrContext.getActivity(), telnetString);
+        GVRTextViewSceneObject textViewSceneObject = new GVRTextViewSceneObject(gvrContext, telnetString);
         textViewSceneObject.setGravity(Gravity.CENTER);
-        textViewSceneObject.setTextSize(textViewSceneObject.getTextSize() * 1.2f);
+        textViewSceneObject.setTextSize(8);
         textViewSceneObject.getTransform().setPosition(0.0f, 0.0f, -3.0f);
 
         // make sure to set a name so we can reference it when we log in

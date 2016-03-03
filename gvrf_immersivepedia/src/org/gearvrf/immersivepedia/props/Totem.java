@@ -26,7 +26,6 @@ import org.gearvrf.immersivepedia.focus.OnClickListener;
 import org.gearvrf.immersivepedia.loadComponent.LoadComponent;
 import org.gearvrf.immersivepedia.loadComponent.LoadComponentListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
-import org.gearvrf.immersivepedia.util.MathUtils;
 import org.gearvrf.immersivepedia.util.PlayPauseButton;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
@@ -119,10 +118,8 @@ public class Totem extends FocusableSceneObject implements FocusListener {
     }
 
     public void setText(String text) {
-        GVRTextViewSceneObject textTitle = new GVRTextViewSceneObject(gvrContext, gvrContext.getActivity(), TEXT_WIDTH, TEXT_HEIGHT,
-                MathUtils.getViewContainerMeasurement(
-                        getGVRContext(), TEXT_WIDTH), MathUtils.getViewContainerMeasurement(getGVRContext(), TEXT_HEIGHT), text);
-        textTitle.setTextSize(22);
+        GVRTextViewSceneObject textTitle = new GVRTextViewSceneObject(gvrContext, TEXT_WIDTH, TEXT_HEIGHT, text);
+        textTitle.setTextSize(7);
         textTitle.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
         textTitle.getTransform().setPosition(0f, .6f, -0.1f);
         textTitle.getTransform().rotateByAxis(-180, 0, 1, 0);

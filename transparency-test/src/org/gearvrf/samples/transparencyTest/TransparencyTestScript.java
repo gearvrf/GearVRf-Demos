@@ -27,9 +27,9 @@ public class TransparencyTestScript extends GVRScript {
         mScene = gvrContext.getNextMainScene();
         mScene.setFrustumCulling(false);
 
-        GVRTextViewSceneObject helloSceneObject = new GVRTextViewSceneObject(gvrContext, gvrContext.getActivity(), "H___________");
+        GVRTextViewSceneObject helloSceneObject = new GVRTextViewSceneObject(gvrContext, "H___________");
         helloSceneObject.setGravity(Gravity.CENTER);
-        helloSceneObject.setTextSize(helloSceneObject.getTextSize() * 1.5f);
+        helloSceneObject.setTextSize(10);
         helloSceneObject.getTransform().setPosition(0.0f, 0.0f, -2.11f);
         
         // since we didn't mark this one as transparent, it will go in the Geometry bin
@@ -50,10 +50,10 @@ public class TransparencyTestScript extends GVRScript {
     }
     
     private void addString(String string, float distance) {
-        GVRTextViewSceneObject sceneObject = new GVRTextViewSceneObject(mContext, mContext.getActivity(), string);
+        GVRTextViewSceneObject sceneObject = new GVRTextViewSceneObject(mContext, string);
 
         sceneObject.setGravity(Gravity.CENTER);
-        sceneObject.setTextSize(sceneObject.getTextSize() * 1.5f);
+        sceneObject.setTextSize(10);
         sceneObject.getTransform().setPosition(0.0f, 0.0f, distance);
         sceneObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         

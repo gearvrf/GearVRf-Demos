@@ -11,8 +11,7 @@ function onInit(gvrf)
 
   -- Text
   local textView = utils:newTextViewSceneObject(gvrf, "GVRf scripting in Lua")
-  local textSize = textView:getTextSize()
-  textView:setTextSize(textSize)
+  textView:setTextSize(6)
   textView:getTransform():setPosition(0, 0, -2)
 
   mainScene:addSceneObject(textView)

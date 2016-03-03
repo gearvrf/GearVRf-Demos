@@ -180,11 +180,10 @@ public class MenuItem extends FocusableSceneObject {
     }
 
     private void createMainText(String text) {
-        mainText = new GVRTextViewSceneObject(getGVRContext(), getGVRContext().getActivity(), TEXT_WIDTH, TEXT_HEIGHT / 2,
-                MathUtils.getViewContainerMeasurement(getGVRContext(), TEXT_WIDTH), MathUtils.getViewContainerMeasurement(getGVRContext(), TEXT_HEIGHT / 2), text);
+        mainText = new GVRTextViewSceneObject(getGVRContext(), TEXT_WIDTH, TEXT_HEIGHT / 2, text);
 
         mainText.setTextColor(Color.WHITE);
-        mainText.setTextSize(16.36f);
+        mainText.setTextSize(5);
         mainText.setGravity(Gravity.CENTER);
 
         mainText.getTransform().setPosition(0, MAIN_TEXT_Y, TEXT_BACKGROUND_Z + 0.01f);
@@ -195,11 +194,10 @@ public class MenuItem extends FocusableSceneObject {
     }
 
     public void createSubText(String text) {
-        subText = new GVRTextViewSceneObject(getGVRContext(), getGVRContext().getActivity(), TEXT_WIDTH, TEXT_HEIGHT / 2,
-                MathUtils.getViewContainerMeasurement(getGVRContext(), TEXT_WIDTH), MathUtils.getViewContainerMeasurement(getGVRContext(), TEXT_HEIGHT / 2), text);
+        subText = new GVRTextViewSceneObject(getGVRContext(), TEXT_WIDTH, TEXT_HEIGHT / 2, text);
 
         subText.setTextColor(Color.WHITE);
-        subText.setTextSize(12.27f);
+        subText.setTextSize(3);
         subText.setGravity(Gravity.CENTER);
 
         subText.getTransform().setPosition(0, SUB_TEXT_Y, TEXT_BACKGROUND_Z + 0.01f);
