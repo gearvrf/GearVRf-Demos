@@ -19,9 +19,6 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
-
-import android.util.Log;
-
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
@@ -90,8 +87,6 @@ public class CursorSceneItem extends FocusableSceneObject {
             isAnimating = true;
             if (isActive) {
                 float[] hit = getEyePointeeHolder().getHit();
-                Log.d("AAA", "hit[0]" + hit[0] + ", hit[1]" + hit[1] + ", hit[2]" + hit[2]);
-
                 new GVRRelativeMotionAnimation(this, duration, newPosition[0] - initialPosition[0], newPosition[1] - initialPosition[1],
                         newPosition[2] - initialPosition[2]).start(getGVRContext().getAnimationEngine())
                         .setInterpolator(InterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {
