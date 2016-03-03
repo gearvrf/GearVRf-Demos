@@ -141,7 +141,7 @@ public class SceneObjectActivity extends GVRActivity {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(MotionEvent event) {
         if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
             lastDownTime = event.getDownTime();
         }

@@ -32,7 +32,6 @@ import org.gearvrf.immersivepedia.focus.OnGestureListener;
 import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
-import org.gearvrf.immersivepedia.util.MathUtils;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
@@ -150,13 +149,12 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     private void createDinosaurTitle() {
         String stringTitle = getGVRContext().getContext().getString(R.string.ankylosaurus_title);
         Drawable background = gvrContext.getActivity().getDrawable(R.drawable.title_background);
-        title = new GVRTextViewSceneObject(gvrContext, gvrContext.getActivity(), TITLE_WIDTH, TITLE_HEIGHT, MathUtils.getViewContainerMeasurement(getGVRContext(), TITLE_WIDTH), MathUtils.getViewContainerMeasurement(
-                getGVRContext(), TITLE_HEIGHT), stringTitle);
-        title.setRefreshFrequency(IntervalFrequency.HIGH);
+        title = new GVRTextViewSceneObject(gvrContext, TITLE_WIDTH, TITLE_HEIGHT, stringTitle);
+        title.setRefreshFrequency(IntervalFrequency.LOW);
         title.setTextColor(Color.BLACK);
         title.setBackGround(background);
         title.getTransform().setScale(0.3f, 0.3f, 0.3f);
-        title.setTextSize(51);
+        title.setTextSize(16);
         title.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
         title.getTransform().setPosition(-2f, 2.6f, 3f);
         addChildObject(title);
@@ -164,15 +162,14 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     }
 
     private void createDinosaurDescription() {
-        description = new GVRTextViewSceneObject(getGVRContext(), gvrContext.getActivity()
-                , DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT, MathUtils.getViewContainerMeasurement(getGVRContext(), DESCRIPTION_WIDTH), MathUtils.getViewContainerMeasurement(getGVRContext(), DESCRIPTION_HEIGHT), getGVRContext().getContext().getString(
-                        R.string.ankylosaurus_text));
+        description = new GVRTextViewSceneObject(getGVRContext(), DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT,
+                getGVRContext().getContext().getString(R.string.ankylosaurus_text));
         Drawable background = gvrContext.getActivity().getDrawable(R.drawable.white_texture);
         description.setGravity(Gravity.LEFT);
         description.setTextColor(Color.BLACK);
         description.getTransform().setPositionY(2f);
         description.getRenderData().setRenderingOrder(RenderingOrderApplication.TEXT_BACKGROUND);
-        description.setTextSize(49);
+        description.setTextSize(5);
         description.setBackGround(background);
         description.getTransform().setScale(0.3f, 0.3f, 0.3f);
         description.getTransform().setPosition(-.3f, 1.7f, 3f);

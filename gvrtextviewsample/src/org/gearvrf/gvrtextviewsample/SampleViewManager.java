@@ -24,20 +24,20 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
 
 import android.graphics.Color;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 
 public class SampleViewManager extends GVRScript {
 
     GVRTextViewSceneObject sceneObject;
     SampleActivity mActivity;
-    private final String[] strings = new String[] { "good", "verygood",
-            "veryverygood", "veryverygood", "veryveryverygood" };
+    private final String[] strings = new String[] { "veryveryverygood", "veryverygood",
+            "veryverygood", "verygood", "good" };
     private final int[] colors = new int[] { Color.RED, Color.YELLOW,
             Color.GREEN, Color.WHITE, Color.MAGENTA };
     private final IntervalFrequency[] frequencies = new IntervalFrequency[] {
             IntervalFrequency.HIGH, IntervalFrequency.MEDIUM,
             IntervalFrequency.LOW };
-    private float textSize;
     private int counter = 0;
     Random random = new Random();
 
@@ -49,21 +49,22 @@ public class SampleViewManager extends GVRScript {
 
     @Override
     public void onInit(GVRContext gvrContext) {
+        float textSize = 6;
         for (int i = 0; i < 5; i++) {
-            sceneObject = new GVRTextViewSceneObject(gvrContext, mActivity);
-            textSize = sceneObject.getTextSize();
-
+            sceneObject = new GVRTextViewSceneObject(gvrContext);
             // set the scene object position
             float x = i * 2.0f;// i * 2.0f - 4.0f;
             sceneObject.getTransform().setPosition(x - 4.0f, 0.0f, -2.0f);
             sceneObject.setText(strings[i]);
             sceneObject.setTextColor(colors[i]);
-            sceneObject.setTextSize(textSize * (i + 1) / 2);
+            sceneObject.setGravity(Gravity.TOP | Gravity.LEFT);
+            sceneObject.setTextSize(textSize);
             sceneObject.setRefreshFrequency(frequencies[i % 3]);
             // add the scene object to the scene graph
             gvrContext.getNextMainScene().addSceneObject(sceneObject);
             sceneObject.getTransform().setPositionZ(-3.0f);
             textviews.add(sceneObject);
+            textSize += 2;
         }
     }
 
