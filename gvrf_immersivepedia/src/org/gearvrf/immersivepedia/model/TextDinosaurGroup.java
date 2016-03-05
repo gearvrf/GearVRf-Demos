@@ -15,9 +15,13 @@
 
 package org.gearvrf.immersivepedia.model;
 
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
+import android.content.res.Resources;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -147,8 +151,10 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     }
 
     private void createDinosaurTitle() {
+    	Resources resources = gvrContext.getActivity().getResources();
         String stringTitle = getGVRContext().getContext().getString(R.string.ankylosaurus_title);
-        Drawable background = gvrContext.getActivity().getDrawable(R.drawable.title_background);
+        Bitmap titleBitmap = BitmapFactory.decodeResource(resources, R.drawable.title_background);
+        BitmapDrawable background = new BitmapDrawable(resources, titleBitmap);
         title = new GVRTextViewSceneObject(gvrContext, TITLE_WIDTH, TITLE_HEIGHT, stringTitle);
         title.setRefreshFrequency(IntervalFrequency.LOW);
         title.setTextColor(Color.BLACK);
@@ -164,13 +170,12 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     private void createDinosaurDescription() {
         description = new GVRTextViewSceneObject(getGVRContext(), DESCRIPTION_WIDTH, DESCRIPTION_HEIGHT,
                 getGVRContext().getContext().getString(R.string.ankylosaurus_text));
-        Drawable background = gvrContext.getActivity().getDrawable(R.drawable.white_texture);
         description.setGravity(Gravity.LEFT);
         description.setTextColor(Color.BLACK);
         description.getTransform().setPositionY(2f);
         description.getRenderData().setRenderingOrder(RenderingOrderApplication.TEXT_BACKGROUND);
         description.setTextSize(5);
-        description.setBackGround(background);
+        description.setBackgroundColor(Color.WHITE);
         description.getTransform().setScale(0.3f, 0.3f, 0.3f);
         description.getTransform().setPosition(-.3f, 1.7f, 3f);
         addChildObject(description);
