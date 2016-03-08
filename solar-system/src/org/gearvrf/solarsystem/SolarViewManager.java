@@ -205,14 +205,10 @@ public class SolarViewManager extends GVRScript {
 
             lightMapTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, "lightmap_texture.png"));
 
-            for (GVRAtlasInformation gvrAtlasInformation : atlasInformation) {
-                GVRSceneObject sceneObj = scene.getSceneObjectByName(gvrAtlasInformation.getName());
-                if (sceneObj != null && sceneObj.getRenderData().isLightMapEnabled()) {
-                    sceneObj.getRenderData().getMaterial().setShaderType(GVRMaterial.GVRShaderType.LightMap.ID);
-                    sceneObj.getRenderData().getMaterial().setLightMapInfo(gvrAtlasInformation);
-                    sceneObj.getRenderData().getMaterial().setLightMapTexture(lightMapTexture);
-                }
-            }
+            lightMapTexture.setAtlasInformation(atlasInformation);
+
+            scene.applyLightMapTexture(lightMapTexture);
+
         } catch (IOException ioe) {
             // TODO Auto-generated catch block
             ioe.printStackTrace();
