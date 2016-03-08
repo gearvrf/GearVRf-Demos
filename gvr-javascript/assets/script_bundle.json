@@ -1,0 +1,15 @@
+{
+    name: "Javascript Demo",
+    binding: [
+    {
+		target: "@GVRScript",
+		script: "script.js",
+		language: "js"
+    },
+    {
+		target: "text",
+		script: "text.js",
+		language: "js"
+    }
+    ]
+}

@@ -16,18 +16,81 @@
 package org.gearvrf.sample.gvrjavascript;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
+import org.gearvrf.io.CursorControllerListener;
+import org.gearvrf.io.GVRCursorType;
+import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
 public class GearVRJavascriptScript extends GVRScript {
     private static final String TAG = GearVRJavascriptScript.class.getSimpleName();
+    private static final float DEPTH = -1.5f;
+
+    private GVRContext context;
+    private CustomShaderManager shaderManager;
+    private GVRScene mainScene;
 
     @Override
     public void onInit(GVRContext gvrContext) {
         // The onInit function in script.js will be invoked
+
+        gvrContext.startDebugServer();        
+
+        context = gvrContext;
+        mainScene = gvrContext.getNextMainScene();
+
+        // shader for cursor
+        shaderManager = new CustomShaderManager(gvrContext);
+
+        // set up the input manager for the main scene
+        GVRInputManager inputManager = gvrContext.getInputManager();
+        inputManager.addCursorControllerListener(listener);
+        for (GVRCursorController cursor : inputManager.getCursorControllers()) {
+            listener.onCursorControllerAdded(cursor);
+        }
     }
 
     @Override
     public void onStep() {
         // The onStep function in script.js will be invoked
     }
+
+    private CursorControllerListener listener = new CursorControllerListener() {
+        @Override
+        public void onCursorControllerRemoved(GVRCursorController controller) {
+            if (controller.getCursorType() == GVRCursorType.GAZE) {
+                controller.resetSceneObject();
+                controller.setEnable(false);
+            }
+        }
+
+        @Override
+        public void onCursorControllerAdded(GVRCursorController controller) {
+            // Only allow only gaze
+            if (controller.getCursorType() == GVRCursorType.GAZE) {
+                GVRSceneObject cursor = new GVRSphereSceneObject(context);
+                GVRRenderData cursorRenderData = cursor.getRenderData();
+                GVRMaterial material = cursorRenderData.getMaterial();
+                material.setShaderType(shaderManager.getShaderId());
+                material.setVec4(CustomShaderManager.COLOR_KEY, 1.0f, 0.0f,
+                        0.0f, 0.5f);
+                mainScene.addSceneObject(cursor);
+                cursor.getRenderData().setDepthTest(false);
+                cursor.getRenderData().setRenderingOrder(100000);
+                controller.setSceneObject(cursor);
+                controller.setPosition(0.0f, 0.0f, DEPTH);
+                controller.setNearDepth(DEPTH);
+                controller.setFarDepth(DEPTH);
+                cursor.getTransform().setScale(-0.015f, -0.015f, -0.015f);
+            } else {
+                // disable all other types
+                controller.setEnable(false);
+            }
+        }
+    };
 }

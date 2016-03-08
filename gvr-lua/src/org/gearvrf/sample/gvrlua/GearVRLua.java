@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRScript;
+import org.gearvrf.script.GVRScriptException;
 import org.gearvrf.script.GVRScriptFile;
 import org.gearvrf.script.GVRScriptManager;
 
@@ -51,6 +52,8 @@ public class GearVRLua extends GVRActivity
                     GVRScriptManager.LANG_LUA);
             sm.attachScriptFile(script, scriptFile);
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (GVRScriptException e) {
             e.printStackTrace();
         }
     }
