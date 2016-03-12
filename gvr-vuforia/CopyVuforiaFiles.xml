@@ -5,4 +5,5 @@
 			<fileset dir="src/armeabi-v7a"/>
 		</copy>
     </target>
+    <copy file="Vuforia.jar" todir="libs"/>
 </project>
