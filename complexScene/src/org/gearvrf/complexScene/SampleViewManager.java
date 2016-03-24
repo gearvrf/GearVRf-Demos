@@ -24,6 +24,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
+import org.gearvrf.GVRScript.SplashMode;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.debug.GVRConsole;
 import org.gearvrf.utility.Log;
@@ -37,6 +38,11 @@ public class SampleViewManager extends GVRScript {
     private GVRConsole console;
     
     private ColorShader mColorShader = null;
+
+    @Override
+    public SplashMode getSplashMode() {
+        return SplashMode.NONE;
+    }
 
     @Override
     public void onInit(GVRContext gvrContext) throws IOException {
