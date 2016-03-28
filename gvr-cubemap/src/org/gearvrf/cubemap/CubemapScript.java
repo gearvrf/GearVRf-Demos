@@ -49,7 +49,7 @@ public class CubemapScript extends GVRScript {
     //    (method C)
     // 4: surrounding cylinder using GVRCylinderSceneObject
     // 5: surrounding cube using six GVRSceneOjbects (quads)
-    private static final int mEnvironmentType = 2;
+    private static final int mEnvironmentType = 1;
 
     // Type of object for the reflective object
     // 0: reflective sphere using GVRSphereSceneObject
@@ -67,7 +67,7 @@ public class CubemapScript extends GVRScript {
         // Uncompressed cubemap texture
         Future<GVRTexture> futureCubemapTexture = gvrContext
                 .loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext,
-                        R.raw.beach));
+                        R.raw.glasgow_university));
 
         GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,
                 GVRMaterial.GVRShaderType.Cubemap.ID);
