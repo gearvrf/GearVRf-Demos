@@ -7,14 +7,14 @@ and other countries. Trademarks of QUALCOMM Incorporated are used with permissio
 
 package com.qualcomm.vuforia.misc;
 
-import android.util.Log;
+import com.vuforia.Matrix44F;
+import com.vuforia.Renderer;
+import com.vuforia.Vec2F;
+import com.vuforia.Vec3F;
+import com.vuforia.Vec4F;
+import com.vuforia.VideoBackgroundConfig;
 
-import com.qualcomm.vuforia.Matrix44F;
-import com.qualcomm.vuforia.Renderer;
-import com.qualcomm.vuforia.Vec2F;
-import com.qualcomm.vuforia.Vec3F;
-import com.qualcomm.vuforia.Vec4F;
-import com.qualcomm.vuforia.VideoBackgroundConfig;
+import android.util.Log;
 
 
 public class VuforiaMath
