@@ -7,6 +7,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
+import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderTexture;
@@ -54,6 +55,7 @@ public class VuforiaSampleScript extends GVRScript {
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
         mainScene = gvrContext.getMainScene();
+        mainScene.getMainCameraRig().setFarClippingDistance(20000);
 
         createTeaPotObject();
 
@@ -111,6 +113,7 @@ public class VuforiaSampleScript extends GVRScript {
         GVRMesh mesh = renderData.getMesh();
         mesh.setTexCoords(texCoords);
         renderData.setMesh(mesh);
+        renderData.setDepthTest(false);
 
         mTextureUnit = new GLTextureUnit(0);
         GLTextureData textureData = new GLTextureData(passThroughTexture.getId());
@@ -140,6 +143,8 @@ public class VuforiaSampleScript extends GVRScript {
                             .getContext(), "teapot.obj")),
                     gvrContext.loadTexture(new GVRAndroidResource(gvrContext
                             .getContext(), "teapot_tex1.jpg")));
+            teapot.getRenderData().setDepthTest(false);
+            teapot.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
         } catch (IOException e) {
             e.printStackTrace();
         }
