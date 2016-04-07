@@ -112,13 +112,11 @@ public class MultiLightScript extends GVRScript {
 
     public void onTouchEvent(MotionEvent event) {
         if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-            for (GVRLightTemplate light : mScene.getLightList()) {
-                GVRRenderData rdata = litObject.getRenderData();
-                if (lightEnabled)
-                    rdata.disableLight();
-                else
-                    rdata.enableLight();
-            }
+            GVRRenderData rdata = litObject.getRenderData();
+            if (lightEnabled)
+                rdata.disableLight();
+            else
+                rdata.enableLight();
             lightEnabled = !lightEnabled;
         }
     }
