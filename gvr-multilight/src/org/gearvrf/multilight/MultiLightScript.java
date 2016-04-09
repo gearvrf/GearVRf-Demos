@@ -16,28 +16,19 @@
 package org.gearvrf.multilight;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRLight;
-import org.gearvrf.GVRLightTemplate;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPhongLight;
-import org.gearvrf.GVRPhongPointLight;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.GVRPhongSpotLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
+import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 
 import android.util.Log;
@@ -129,7 +120,7 @@ public class MultiLightScript extends GVRScript {
     private GVRSceneObject createLight(GVRContext context, float r, float g, float b, float y)
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
-        GVRPhongSpotLight light = new GVRPhongSpotLight(context);
+        GVRSpotLight light = new GVRSpotLight(context);
         Quaternionf q = new Quaternionf();
         
         lightNode.attachLight(light);         
