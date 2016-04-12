@@ -77,7 +77,7 @@ public class MultiLightScript extends GVRScript {
             Quaternionf q = new Quaternionf();
             q.rotateAxis((float) theta, 0.0f, 1.0f, 0.0f);
             GVRTransform trans = rotateObject.getTransform();
-            //trans.setRotation(q.w, q.x, q.y, q.z);
+            trans.setRotation(q.w, q.x, q.y, q.z);
         }
     }
 
