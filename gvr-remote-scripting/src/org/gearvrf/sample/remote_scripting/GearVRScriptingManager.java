@@ -20,9 +20,11 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import android.view.Gravity;
+import org.gearvrf.script.GVRScriptManager;
 
 public class GearVRScriptingManager extends GVRScript
 {
+
     @Override
     public void onInit(GVRContext gvrContext) {
         gvrContext.startDebugServer();
@@ -44,9 +46,14 @@ public class GearVRScriptingManager extends GVRScript
 
         // add it to the scene
         scene.addSceneObject(textViewSceneObject);
+
+        // Add display utils for scripts
+        GVRScriptManager scriptManager = gvrContext.getScriptManager();
+        scriptManager.addVariable("display", new DisplayUtils(gvrContext));
     }
 
     @Override
     public void onStep() {
     }
+
 }
