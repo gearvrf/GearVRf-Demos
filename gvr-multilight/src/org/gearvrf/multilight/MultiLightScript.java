@@ -145,7 +145,7 @@ public class MultiLightScript extends GVRScript {
     private GVRSceneObject createBackdrop(GVRContext context)
     {
         GVRTexture tex = context.loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.gearvrflogo));
-        GVRSceneObject backdrop = new GVRSceneObject(context, 10.0f, 5.0f, tex);
+        GVRSceneObject backdrop = new GVRSceneObject(context, 10.0f, 4.0f, tex);
         GVRRenderData rdata = backdrop.getRenderData();
         GVRMaterial material = new GVRMaterial(context);
         
@@ -156,7 +156,7 @@ public class MultiLightScript extends GVRScript {
         material.setFloat("specular_exponent", 10.0f);
         material.setTexture("diffuseTexture", tex);
         backdrop.setName("Backdrop");
-        backdrop.getTransform().setPositionZ(-3.0f);
+        backdrop.getTransform().setPositionZ(-2.0f);
         rdata.setMaterial(material);
     	rdata.setShaderTemplate(GVRPhongShader.class);
     	return backdrop;
