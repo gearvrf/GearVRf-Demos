@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAtlasInformation;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -41,8 +44,9 @@ public class SolarViewManager extends GVRScript {
 
     private GVRSceneObject asyncSceneObject(GVRContext context,
             String textureName) throws IOException {
-        return new GVRSceneObject(context, //
-                new GVRAndroidResource(context, "sphere.obj"), //
+
+        return new GVRSceneObject(context,
+                new GVRAndroidResource(context, "sphere.obj"),
                 new GVRAndroidResource(context, textureName));
     }
 
@@ -57,6 +61,8 @@ public class SolarViewManager extends GVRScript {
                 for (GVRAnimation animation : mAnimations) {
                     animation.start(mAnimationEngine);
                 }
+
+                // mMainScene.export( "/storage/sdcard0/Download/SolarSystem.obj");
                 mAnimations = null;
             }
         });
@@ -77,11 +83,12 @@ public class SolarViewManager extends GVRScript {
         GVRSceneObject sunRotationObject = new GVRSceneObject(gvrContext);
         solarSystemObject.addChildObject(sunRotationObject);
 
-        GVRSceneObject sunMeshObject = asyncSceneObject(gvrContext,
-                "sunmap.astc");
+        GVRSceneObject sunMeshObject = asyncSceneObject(gvrContext, "sunmap.astc");
         sunMeshObject.getTransform().setPosition(0.0f, 0.0f, 0.0f);
         sunMeshObject.getTransform().setScale(10.0f, 10.0f, 10.0f);
         sunRotationObject.addChildObject(sunMeshObject);
+        sunMeshObject.setName("SUN");
+        sunMeshObject.getRenderData().disableLightMap();
 
         GVRSceneObject mercuryRevolutionObject = new GVRSceneObject(gvrContext);
         mercuryRevolutionObject.getTransform().setPosition(14.0f, 0.0f, 0.0f);
@@ -90,10 +97,11 @@ public class SolarViewManager extends GVRScript {
         GVRSceneObject mercuryRotationObject = new GVRSceneObject(gvrContext);
         mercuryRevolutionObject.addChildObject(mercuryRotationObject);
 
-        GVRSceneObject mercuryMeshObject = asyncSceneObject(gvrContext,
-                "mercurymap.jpg");
+        GVRSceneObject mercuryMeshObject = asyncSceneObject(gvrContext, "mercurymap.jpg");
         mercuryMeshObject.getTransform().setScale(0.3f, 0.3f, 0.3f);
         mercuryRotationObject.addChildObject(mercuryMeshObject);
+        mercuryMeshObject.setName("MERCURY");
+        mercuryMeshObject.getRenderData().enableLightMap();
 
         GVRSceneObject venusRevolutionObject = new GVRSceneObject(gvrContext);
         venusRevolutionObject.getTransform().setPosition(17.0f, 0.0f, 0.0f);
@@ -102,10 +110,11 @@ public class SolarViewManager extends GVRScript {
         GVRSceneObject venusRotationObject = new GVRSceneObject(gvrContext);
         venusRevolutionObject.addChildObject(venusRotationObject);
 
-        GVRSceneObject venusMeshObject = asyncSceneObject(gvrContext,
-                "venusmap.jpg");
+        GVRSceneObject venusMeshObject = asyncSceneObject(gvrContext, "venusmap.jpg");
         venusMeshObject.getTransform().setScale(0.8f, 0.8f, 0.8f);
         venusRotationObject.addChildObject(venusMeshObject);
+        venusMeshObject.setName("VENUS");
+        venusMeshObject.getRenderData().enableLightMap();
 
         GVRSceneObject earthRevolutionObject = new GVRSceneObject(gvrContext);
         earthRevolutionObject.getTransform().setPosition(22.0f, 0.0f, 0.0f);
@@ -114,10 +123,11 @@ public class SolarViewManager extends GVRScript {
         GVRSceneObject earthRotationObject = new GVRSceneObject(gvrContext);
         earthRevolutionObject.addChildObject(earthRotationObject);
 
-        GVRSceneObject earthMeshObject = asyncSceneObject(gvrContext,
-                "earthmap1k.jpg");
+        GVRSceneObject earthMeshObject = asyncSceneObject(gvrContext, "earthmap1k.jpg");
         earthMeshObject.getTransform().setScale(1.0f, 1.0f, 1.0f);
         earthRotationObject.addChildObject(earthMeshObject);
+        earthMeshObject.setName("EARTH");
+        earthMeshObject.getRenderData().enableLightMap();
 
         GVRSceneObject moonRevolutionObject = new GVRSceneObject(gvrContext);
         moonRevolutionObject.getTransform().setPosition(4.0f, 0.0f, 0.0f);
@@ -131,28 +141,27 @@ public class SolarViewManager extends GVRScript {
         GVRSceneObject marsRotationObject = new GVRSceneObject(gvrContext);
         marsRevolutionObject.addChildObject(marsRotationObject);
 
-        GVRSceneObject marsMeshObject = asyncSceneObject(gvrContext,
-                "mars_1k_color.jpg");
+        GVRSceneObject marsMeshObject = asyncSceneObject(gvrContext, "mars_1k_color.jpg");
         marsMeshObject.getTransform().setScale(0.6f, 0.6f, 0.6f);
         marsRotationObject.addChildObject(marsMeshObject);
+        marsMeshObject.setName("MARS");
+        marsMeshObject.getRenderData().enableLightMap();
 
         counterClockwise(sunRotationObject, 50f);
 
         counterClockwise(mercuryRevolutionObject, 150f);
-        counterClockwise(mercuryRotationObject, 100f);
 
         counterClockwise(venusRevolutionObject, 400f);
-        clockwise(venusRotationObject, 400f);
 
         counterClockwise(earthRevolutionObject, 600f);
-        counterClockwise(earthRotationObject, 1.5f);
 
         counterClockwise(moonRevolutionObject, 60f);
 
         clockwise(mMainScene.getMainCameraRig().getTransform(), 60f);
 
         counterClockwise(marsRevolutionObject, 1200f);
-        counterClockwise(marsRotationObject, 200f);
+
+        applySceneLightMap(mMainScene, gvrContext);
     }
 
     @Override
@@ -181,17 +190,28 @@ public class SolarViewManager extends GVRScript {
                 0.0f, 0.0f, 0.0f));
     }
 
-    private void clockwise(GVRSceneObject object, float duration) {
-        setup(new GVRRotationByAxisWithPivotAnimation( //
-                object, duration, -360.0f, //
-                0.0f, 1.0f, 0.0f, //
-                0.0f, 0.0f, 0.0f));
-    }
-
     private void clockwise(GVRTransform transform, float duration) {
         setup(new GVRRotationByAxisWithPivotAnimation( //
                 transform, duration, -360.0f, //
                 0.0f, 1.0f, 0.0f, //
                 0.0f, 0.0f, 0.0f));
+    }
+
+    public void applySceneLightMap(GVRScene scene, GVRContext gvrContext) {
+        List<GVRAtlasInformation> atlasInformation;
+        GVRTexture lightMapTexture;
+        try {
+            atlasInformation = gvrContext.loadTextureAtlasInformation(new GVRAndroidResource(gvrContext, "lightmap_info.json"));
+
+            lightMapTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, "lightmap_texture.png"));
+
+            lightMapTexture.setAtlasInformation(atlasInformation);
+
+            scene.applyLightMapTexture(lightMapTexture);
+
+        } catch (IOException ioe) {
+            // TODO Auto-generated catch block
+            ioe.printStackTrace();
+        }
     }
 }

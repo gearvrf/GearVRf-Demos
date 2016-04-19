@@ -1,0 +1,7 @@
+[
+{name: SUN, offset.x: 0.000977, offset.y: 0.000977, scale.x: 0.552734, scale.y: 0.552734},
+{name: EARTH, offset.x: 0.555664, offset.y: 0.000977, scale.x: 0.054688, scale.y: 0.054688},
+{name: MARS, offset.x: 0.555664, offset.y: 0.102539, scale.x: 0.033203, scale.y: 0.033203},
+{name: MERCURY, offset.x: 0.590820, offset.y: 0.102539, scale.x: 0.015625, scale.y: 0.015625},
+{name: VENUS, offset.x: 0.555664, offset.y: 0.057617, scale.x: 0.042969, scale.y: 0.042969}
+]

@@ -16,10 +16,10 @@
 
 package org.gearvrf.solarsystem;
 
+import org.gearvrf.GVRActivity;
+
 import android.os.Bundle;
 import android.view.MotionEvent;
-
-import org.gearvrf.GVRActivity;
 
 public class SolarActivity extends GVRActivity {
 
