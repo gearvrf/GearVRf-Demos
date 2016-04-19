@@ -91,7 +91,6 @@ public class TestViewManager extends GVRScript {
         mDegreeBoard = new GVRSceneObject(mGVRContext, 2.0f, 0.5f,
                 new GVRBitmapTexture(mGVRContext, degreeBitmap));
         mDegreeBoard.getTransform().setPosition(-0.5f, 0.7f, -2.0f);
-        degreeBitmap.recycle();
         mainScene.getMainCameraRig().addChildObject(mDegreeBoard);
 
         Bitmap angularVelocityBitmap = GVRTextBitmapFactory2.create(1024, 128,
@@ -100,7 +99,6 @@ public class TestViewManager extends GVRScript {
         mAngularVelocityBoard = new GVRSceneObject(mGVRContext, 2.0f, 0.5f,
                 new GVRBitmapTexture(mGVRContext, angularVelocityBitmap));
         mAngularVelocityBoard.getTransform().setPosition(-0.5f, -0.7f, -2.0f);
-        angularVelocityBitmap.recycle();
         mainScene.getMainCameraRig().addChildObject(mAngularVelocityBoard);
 
         Bitmap aValueBitmap = GVRTextBitmapFactory2.create(1024, 128, String
@@ -109,7 +107,6 @@ public class TestViewManager extends GVRScript {
         mValueBoard = new GVRSceneObject(mGVRContext, 2.0f, 0.5f,
                 new GVRBitmapTexture(mGVRContext, aValueBitmap));
         mValueBoard.getTransform().setPosition(-0.5f, 0.5f, -2.0f);
-        aValueBitmap.recycle();
         mainScene.getMainCameraRig().addChildObject(mValueBoard);
 
         Bitmap stateBitmap = GVRTextBitmapFactory2.create(1024, 128, "", 50,
@@ -117,7 +114,6 @@ public class TestViewManager extends GVRScript {
         mStateBoard = new GVRSceneObject(mGVRContext, 2.5f, 0.625f,
                 new GVRBitmapTexture(mGVRContext, stateBitmap));
         mStateBoard.getTransform().setPosition(-0.5f, -0.7f, -5.0f);
-        stateBitmap.recycle();
         mainScene.getMainCameraRig().addChildObject(mStateBoard);
 
     }
@@ -171,7 +167,6 @@ public class TestViewManager extends GVRScript {
         GVRMaterial degreeMaterial = mDegreeBoard.getRenderData().getMaterial();
         degreeMaterial.setMainTexture(new GVRBitmapTexture(mGVRContext,
                 degreeBitmap));
-        degreeBitmap.recycle();
 
         Bitmap angularVelocityBitmap = GVRTextBitmapFactory2.create(1024, 128,
                 String.format("velocity : %.2f", angularVelocity), 50,
@@ -180,7 +175,6 @@ public class TestViewManager extends GVRScript {
                 .getRenderData().getMaterial();
         angularVelocityMaterial.setMainTexture(new GVRBitmapTexture(
                 mGVRContext, angularVelocityBitmap));
-        angularVelocityBitmap.recycle();
 
         Bitmap aValueBitmap = GVRTextBitmapFactory2.create(1024, 128, String
                 .format("ZRO : %.2f, Spec degree : %.2f", mAValue, mBValue),
@@ -188,7 +182,6 @@ public class TestViewManager extends GVRScript {
         GVRMaterial aValueMaterial = mValueBoard.getRenderData().getMaterial();
         aValueMaterial.setMainTexture(new GVRBitmapTexture(mGVRContext,
                 aValueBitmap));
-        aValueBitmap.recycle();
 
         Bitmap stateBitmap = null;
 
@@ -220,7 +213,6 @@ public class TestViewManager extends GVRScript {
         GVRMaterial stateMaterial = mStateBoard.getRenderData().getMaterial();
         stateMaterial.setMainTexture(new GVRBitmapTexture(mGVRContext,
                 stateBitmap));
-        stateBitmap.recycle();
     }
 
     public void onDoubleTap() {

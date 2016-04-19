@@ -6,15 +6,15 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.qualcomm.vuforia.CameraDevice;
-import com.qualcomm.vuforia.DataSet;
-import com.qualcomm.vuforia.HINT;
-import com.qualcomm.vuforia.ObjectTracker;
-import com.qualcomm.vuforia.STORAGE_TYPE;
-import com.qualcomm.vuforia.State;
-import com.qualcomm.vuforia.Trackable;
-import com.qualcomm.vuforia.TrackerManager;
-import com.qualcomm.vuforia.Vuforia;
+import com.vuforia.CameraDevice;
+import com.vuforia.DataSet;
+import com.vuforia.HINT;
+import com.vuforia.ObjectTracker;
+import com.vuforia.STORAGE_TYPE;
+import com.vuforia.State;
+import com.vuforia.Trackable;
+import com.vuforia.TrackerManager;
+import com.vuforia.Vuforia;
 import com.qualcomm.vuforia.misc.VuforiaApplicationControl;
 import com.qualcomm.vuforia.misc.VuforiaApplicationException;
 import com.qualcomm.vuforia.misc.VuforiaApplicationSession;
@@ -52,9 +52,6 @@ public class VuforiaSampleActivity extends GVRActivity implements
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         Log.d(TAG, "onCreate");
-        
-        script = new VuforiaSampleScript();
-        setScript(script, "gvr_note4.xml");
 
         datasetStrings.add("StonesAndChips.xml");
 
@@ -62,6 +59,9 @@ public class VuforiaSampleActivity extends GVRActivity implements
         vuforiaAppSession = new VuforiaApplicationSession(this);
         vuforiaAppSession.setZPlanes(NEAR_Z_PLANE, FAR_Z_PLANE);
         vuforiaAppSession.initAR(this);
+
+        script = new VuforiaSampleScript();
+        setScript(script, "gvr_note4.xml");
     }
 
     public static boolean isVuforiaActive() {
@@ -138,7 +138,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
             initApplicationAR();
 
             try {
-                vuforiaAppSession.startAR(CameraDevice.CAMERA.CAMERA_DEFAULT);
+                vuforiaAppSession.startAR(CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT);
             } catch (VuforiaApplicationException e) {
                 Log.e(TAG, e.getString());
             }
@@ -149,6 +149,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
             if (result == false) {
                 Log.e(TAG, "Unable to enable continuous autofocus");
             }
+
+            script.onVuforiaInitialized();
         } else {
             Log.e(TAG, exception.getString());
         }

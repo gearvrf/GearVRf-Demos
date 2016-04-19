@@ -15,7 +15,7 @@ function onInit(gvrf) {
   // Text
   var textView = new GVRTextViewSceneObject(gvrf);
   textView.setText("GVRf scripting in Javascript");
-  textView.setRefreshFrequency(GVRTextViewSceneObject.IntervalFrequency.HIGH);
+  textView.setRefreshFrequency(GVRTextViewSceneObject.IntervalFrequency.REALTIME);
   textView.setName("text");
   textView.setTextSize(6);
   textView.getTransform().setPosition(0, 0, -100);

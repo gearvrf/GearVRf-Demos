@@ -12,18 +12,18 @@ import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.qualcomm.vuforia.CameraCalibration;
-import com.qualcomm.vuforia.CameraDevice;
-import com.qualcomm.vuforia.Matrix44F;
-import com.qualcomm.vuforia.PIXEL_FORMAT;
-import com.qualcomm.vuforia.Renderer;
-import com.qualcomm.vuforia.State;
-import com.qualcomm.vuforia.Tool;
-import com.qualcomm.vuforia.Vec2I;
-import com.qualcomm.vuforia.VideoBackgroundConfig;
-import com.qualcomm.vuforia.VideoMode;
-import com.qualcomm.vuforia.Vuforia;
-import com.qualcomm.vuforia.Vuforia.UpdateCallbackInterface;
+import com.vuforia.CameraCalibration;
+import com.vuforia.CameraDevice;
+import com.vuforia.Matrix44F;
+import com.vuforia.PIXEL_FORMAT;
+import com.vuforia.Renderer;
+import com.vuforia.State;
+import com.vuforia.Tool;
+import com.vuforia.Vec2I;
+import com.vuforia.VideoBackgroundConfig;
+import com.vuforia.VideoMode;
+import com.vuforia.Vuforia;
+import com.vuforia.Vuforia.UpdateCallbackInterface;
 
 
 public class VuforiaApplicationSession implements UpdateCallbackInterface
@@ -58,7 +58,7 @@ public class VuforiaApplicationSession implements UpdateCallbackInterface
     private int mVuforiaFlags = 0;
     
     // Holds the camera configuration to use upon resuming
-    private int mCamera = CameraDevice.CAMERA.CAMERA_DEFAULT;
+    private int mCamera = CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT;
     
     // Stores the projection matrix to use for rendering purposes
     private Matrix44F mProjectionMatrix;
@@ -270,16 +270,7 @@ public class VuforiaApplicationSession implements UpdateCallbackInterface
     {
         return mProjectionMatrix;
     }
-    
-    
-    // Callback called every cycle
-    @Override
-    public void QCAR_onUpdate(State s)
-    {
-        mSessionControl.onQCARUpdate(s);
-    }
-    
-    
+
     // Manages the configuration changes
     public void onConfigurationChanged()
     {   
@@ -573,16 +564,20 @@ public class VuforiaApplicationSession implements UpdateCallbackInterface
         Log.i(LOGTAG, "Configure Video Background : Video (" + vm.getWidth()
             + " , " + vm.getHeight() + "), Screen (" + mScreenWidth + " , "
             + mScreenHeight + "), mSize (" + xSize + " , " + ySize + ")");
-        
+
         Renderer.getInstance().setVideoBackgroundConfig(config);
-        
     }
-    
+
     // Returns true if Vuforia is initialized, the trackers started and the
     // tracker data loaded
     private boolean isARRunning()
     {
         return mStarted;
     }
-    
+
+    @Override
+    public void Vuforia_onUpdate(State state) {
+        mSessionControl.onQCARUpdate(state);
+    }
+
 }
