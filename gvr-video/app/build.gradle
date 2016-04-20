@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "org.gearvrf.video"
+        minSdkVersion 19
+        targetSdkVersion 19
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] // no auto generation of Android.mk
+        jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+}
+
+dependencies {
+    compile project(':framework')
+}
