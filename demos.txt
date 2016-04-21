@@ -9,7 +9,7 @@ NOLA	gvr-cubemap		DONE
 NOLA	gvrexposeapisample	DONE
 NOLA	gvrf_controls_sample
 	gvrf_immersivepedia
-	gvrf_keyboard_sample
+NOLA	gvrf_keyboard_sample	DONE
 	gvrf_minimal360photo
 	gvrf_minimal360video
 NOLA	gvrjassimpmodelloader	DONE
