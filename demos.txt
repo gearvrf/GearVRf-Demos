@@ -1,5 +1,6 @@
 NOLA	collision		DONE
 NOLA	complexScene		DONE
+NOLA	events-sampls
 NOLA	eye-picking		DONE
 NOLA	gamepad			DONE
 NOLA	gvrbulletsample		DONE
@@ -24,8 +25,8 @@ NOLA	gvr-outlinesample	DONE
 	gvr-pickandmove
 JASON	gvr-sample		DONE
 	gvrsixaxissensortest_v1_5_0
-	gvr-testcube
-	gvr-test-screenshot3Dresult
+NOLA	gvr-testcube		DONE
+NOLA	gvr-test-screenshot3Dresult	DONE
 MIHAIL	gvrtextviewsample	DONE
 MIHAIL	gvr-video		DONE
 MIHAIL	gvr-vuforia		DONE
