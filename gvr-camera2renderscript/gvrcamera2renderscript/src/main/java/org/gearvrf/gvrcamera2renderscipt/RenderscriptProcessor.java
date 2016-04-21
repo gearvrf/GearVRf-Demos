@@ -1,14 +1,11 @@
-package org.gearvrf.sample.gvrcamera2renderscript;
+package org.gearvrf.gvrcamera2renderscript;
 
 import android.graphics.ImageFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicYuvToRGB;
-import android.renderscript.Type;
+//import android.support.v8.renderscript.*;
+import android.renderscript.*;
 import android.util.Log;
 import android.view.Surface;
 
