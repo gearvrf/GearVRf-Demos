@@ -6,8 +6,8 @@ NOLA	gvrbulletsample		DONE
 NOLA	gvrcamera2renderscript	DONE
 NOLA	gvrcockpit_v1_5_0	DONE
 NOLA	gvr-cubemap		DONE
-	gvrexposeapisample
-	gvrf_controls_sample
+NOLA	gvrexposeapisample	DONE
+NOLA	gvrf_controls_sample
 	gvrf_immersivepedia
 	gvrf_keyboard_sample
 	gvrf_minimal360photo
