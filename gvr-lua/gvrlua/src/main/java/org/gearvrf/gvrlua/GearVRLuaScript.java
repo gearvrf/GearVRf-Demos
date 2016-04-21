@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.sample.gvrlua;
+package org.gearvrf.gvrlua;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScript;

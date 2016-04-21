@@ -1,4 +1,4 @@
-package org.gearvrf.sample.gvrlua;
+package org.gearvrf.gvrlua;
 
 import java.util.List;
 
