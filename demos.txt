@@ -19,9 +19,9 @@ NOLA	gvr-multilight		DONE
 NOLA	gvr-meshanimationsample	DONE
 NOLA	gvropacityanigallery	not working
 NOLA	gvr-outlinesample	DONE
-	gvrpanoramasstereoimagesample_v1_5_0
-	gvrperformancetest_v1_5_0
-	gvr-pickandmove
+NOLA	gvrpanoramasstereoimagesample_v1_5_0	DONE
+NOLA	gvrperformancetest_v1_5_0	DONE
+NOLA	gvr-pickandmove
 JASON	gvr-sample		DONE
 	gvrsixaxissensortest_v1_5_0
 	gvr-testcube
