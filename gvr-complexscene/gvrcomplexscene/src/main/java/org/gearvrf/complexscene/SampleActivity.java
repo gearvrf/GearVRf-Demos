@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.complexScene;
+package org.gearvrf.complexscene;
 
 import org.gearvrf.GVRActivity;
 

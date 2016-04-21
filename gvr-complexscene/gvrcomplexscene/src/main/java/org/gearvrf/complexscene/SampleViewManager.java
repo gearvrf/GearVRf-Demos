@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.complexScene;
+package org.gearvrf.complexscene;
 
 import java.io.IOException;
 
@@ -24,7 +24,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
-import org.gearvrf.GVRScript.SplashMode;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.debug.GVRConsole;
 import org.gearvrf.utility.Log;
@@ -36,13 +35,6 @@ public class SampleViewManager extends GVRScript {
     private GVRContext mGVRContext;
 
     private GVRConsole console;
-    
-    private ColorShader mColorShader = null;
-
-    @Override
-    public SplashMode getSplashMode() {
-        return SplashMode.NONE;
-    }
 
     @Override
     public void onInit(GVRContext gvrContext) throws IOException {
@@ -50,10 +42,9 @@ public class SampleViewManager extends GVRScript {
         // save context for possible use in onStep(), even though that's empty
         // in this sample
         mGVRContext = gvrContext;
-        mColorShader = new ColorShader(mGVRContext);
 
         // set background color
-        GVRScene scene = gvrContext.getMainScene();
+        GVRScene scene = gvrContext.getNextMainScene();
         scene.getMainCameraRig().getLeftCamera()
                 .setBackgroundColor(Color.WHITE);
         scene.getMainCameraRig().getRightCamera()
@@ -64,11 +55,13 @@ public class SampleViewManager extends GVRScript {
 
             GVRMesh mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
                     "bunny.obj"));
-            
+            GVRMaterial material = new GVRMaterial(mGVRContext);
+
+            material.setVec4("u_color", 1.0f, 0.0f, 1.0f, 1.0f);
             final int OBJECTS_CNT = 5;
             for (int x=-OBJECTS_CNT; x<=OBJECTS_CNT; ++x) {
                 for (int y=-OBJECTS_CNT; y<=OBJECTS_CNT; ++y) {
-                    GVRSceneObject sceneObject = getColorMesh(1.0f, mesh);
+                    GVRSceneObject sceneObject = getColorMesh(1.0f, mesh, material);
                     sceneObject.getTransform().setPosition(1.0f*x, 1.0f*y, -5.0f);
                     sceneObject.getTransform().setScale(0.5f, 0.5f, 1.0f);
                     scene.addSceneObject(sceneObject); 
@@ -92,17 +85,12 @@ public class SampleViewManager extends GVRScript {
     public void onStep() {
     }
 
-    private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext,
-                mColorShader.getShaderId());
-        material.setVec4(ColorShader.COLOR_KEY, 1.0f,
-                0.0f, 1.0f, 1.0f);
+    private GVRSceneObject getColorMesh(float scale, GVRMesh mesh, GVRMaterial material) {
+        GVRSceneObject meshObject  = new GVRSceneObject(mGVRContext, mesh);
 
-        GVRSceneObject meshObject = null;
-        meshObject = new GVRSceneObject(mGVRContext, mesh);
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
-
+        meshObject.getRenderData().setShaderTemplate(ColorShader.class);
         return meshObject;
     }
     
