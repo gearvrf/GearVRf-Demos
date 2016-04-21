@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.gvroutlinesample;
+package org.gearvrf.gvroutline;
 
 import java.io.IOException;
 import java.util.EnumSet;
@@ -71,9 +71,7 @@ public class OutlineScript extends GVRScript {
 
           // Create Base Material Pass
           // ---------------------------------------------------------------
-          OutlineShader outlineShader = new OutlineShader(mGVRContext);
-          GVRMaterial outlineMaterial = new GVRMaterial(mGVRContext,
-                  outlineShader.getShaderId());
+          GVRMaterial outlineMaterial = new GVRMaterial(mGVRContext);
   
           // Brown-ish outline color
           outlineMaterial.setVec4(OutlineShader.COLOR_KEY, 0.4f, 0.1725f,
@@ -82,6 +80,7 @@ public class OutlineScript extends GVRScript {
   
           // For outline we want to cull front faces
           mCharacter.getRenderData().setMaterial(outlineMaterial);
+          mCharacter.getRenderData().setShaderTemplate(OutlineShader.class);
           mCharacter.getRenderData().setCullFace(GVRCullFaceEnum.Front);
 
           // Create Additional Pass
@@ -90,8 +89,7 @@ public class OutlineScript extends GVRScript {
           GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(
                   mGVRContext, mDiffuseTexturePath));
 
-          GVRMaterial material = new GVRMaterial(mGVRContext,
-                  GVRShaderType.Texture.ID);
+          GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.Texture.ID);
           material.setMainTexture(texture);
 
           GVRRenderPass pass = new GVRRenderPass(mGVRContext);
