@@ -1,0 +1,3 @@
+include ':framework'
+include ':gvreyepicking'
+project(':framework').projectDir = new File('../../GearVRf/GVRf/Framework/framework')

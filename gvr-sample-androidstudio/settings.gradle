@@ -1,3 +1,0 @@
-include ':framework'
-include ':gvrsample'
-project(':framework').projectDir = new File('../../GearVRf/GVRf/Framework/framework')
