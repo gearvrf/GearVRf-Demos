@@ -1,4 +1,4 @@
-package org.gearvrf.sample.gvrcamera2renderscript;
+package org.gearvrf.gvrcamera2renderscript;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScript;
@@ -8,7 +8,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.*;
 import android.renderscript.RenderScript;
 import android.util.Size;
 import java.util.Arrays;

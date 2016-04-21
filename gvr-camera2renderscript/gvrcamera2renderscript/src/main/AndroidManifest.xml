@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.gearvrf.sample.gvrcamera2renderscript"
+    package="org.gearvrf.gvrcamera2renderscript"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -23,7 +23,7 @@
         
         <!-- <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/> --> 
         <activity
-            android:name="org.gearvrf.sample.gvrcamera2renderscript.Camera2RenderscriptActivity"
+            android:name="org.gearvrf.gvrcamera2renderscript.Camera2RenderscriptActivity"
             android:screenOrientation="landscape"
             android:launchMode="singleTask"
             android:label="@string/app_name" >

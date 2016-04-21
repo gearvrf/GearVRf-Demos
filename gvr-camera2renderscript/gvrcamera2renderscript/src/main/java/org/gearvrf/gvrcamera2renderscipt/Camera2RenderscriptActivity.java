@@ -1,4 +1,4 @@
-package org.gearvrf.sample.gvrcamera2renderscript;
+package org.gearvrf.gvrcamera2renderscript;
 
 import org.gearvrf.GVRActivity;
 import android.os.Bundle;
