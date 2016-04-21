@@ -1,0 +1,3 @@
+include ':framework'
+include ':gvrcamera2renderscript'
+project(':framework').projectDir = new File('../../GearVRf/GVRf/Framework/framework')

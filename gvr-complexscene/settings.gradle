@@ -1,0 +1,3 @@
+include ':framework'
+include ':gvrcomplexscene'
+project(':framework').projectDir = new File('../../GearVRf/GVRf/Framework/framework')
