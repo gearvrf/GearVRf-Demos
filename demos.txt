@@ -1,0 +1,39 @@
+NOLA	collision
+NOLA	complexScene
+NOLA	eye-picking
+NOLA	gamepad
+NOLA	gvrbulletsample
+NOLA	gvrcamera2renderscript
+NOLA	gvrcockpit_v1_5_0
+NOLA	gvr-cubemap		DONE
+	gvrexposeapisample
+	gvrf_controls_sample
+	gvrf_immersivepedia
+	gvrf_keyboard_sample
+	gvrf_minimal360photo
+	gvrf_minimal360video
+NOLA	gvrjassimpmodelloader	DONE
+NOLA	gvr-litshader		DONE
+NOLA	gvr-multilight		DONE
+NOLA	gvr-meshanimationsample	DONE
+	gvropacityanigallery
+	gvr-outlinesample
+	gvrpanoramasstereoimagesample_v1_5_0
+	gvrperformancetest_v1_5_0
+	gvr-pickandmove
+JASON	gvr-sample		DONE
+	gvrsixaxissensortest_v1_5_0
+	gvr-testcube
+	gvr-test-screenshot3Dresult
+MIHAIL	gvrtextviewsample
+MIHAIL	gvr-video		DONE
+MIHAIL	gvr-vuforia		DONE
+MIHAIL	input-sample		DONE
+MIHAIL	lod-test		DONE
+MIHAIL	model-viewer		DONE
+MIHAIL	nonglthreadupdate	DONE
+MIHAIL	scene-objects		DONE
+NOLA	simple-gallery		DONE
+NOLA	simple-sample		DONE
+MIHAIL	solar-system		DONE
+MIHAIL	transparency-test	DONE
