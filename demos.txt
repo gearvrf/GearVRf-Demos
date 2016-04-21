@@ -10,10 +10,11 @@ NOLA	gvrexposeapisample	DONE
 NOLA	gvrf_controls_sample
 	gvrf_immersivepedia
 NOLA	gvrf_keyboard_sample	DONE
-	gvrf_minimal360photo
-	gvrf_minimal360video
+NOLA	gvrf_minimal360photo	DONE
+NOLA	gvrf_minimal360video	DONE
 NOLA	gvrjassimpmodelloader	DONE
 NOLA	gvr-litshader		DONE
+NOLA	gvr-lua			DONE
 NOLA	gvr-multilight		DONE
 NOLA	gvr-meshanimationsample	DONE
 	gvropacityanigallery

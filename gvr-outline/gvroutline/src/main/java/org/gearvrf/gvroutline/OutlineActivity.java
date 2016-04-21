@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.gvroutlinesample;
+package org.gearvrf.gvroutline;
 
 import org.gearvrf.GVRActivity;
 
