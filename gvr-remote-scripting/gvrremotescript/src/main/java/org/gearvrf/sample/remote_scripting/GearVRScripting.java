@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.remotescripting;
+package org.gearvrf.sample.remote_scripting;
 
 import android.app.Activity;
 import android.os.Bundle;
