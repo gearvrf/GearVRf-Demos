@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="d1ec552d5ca0276e47b47acc9ade2b441cfdd14d">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/classes-f3e2b1d65d06963ddbec5078aa3679fb41a431c5.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/jline-android.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="3937c8bad0468172c156ed3b8fe60ee5bb924993">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/jline-android-f0751ffef9c6cbf37a50d8719a9451466d1d83fe.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/jsr223.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="1f7b65bf95cfb09514802d57424c23f07fc33096">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/jsr223-43cb78beeb8a6c55a89b15547660f37e657b8c27.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/js.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="b95d5212ff4cea92cee1c3c6fa50aa82c9d4905b">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/js-0e7cc88f00d0b33e6d608c49771d9c8e5517d78a.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/jnlua-android.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="25be5f2cb854bdbdd489ac6ff164fa6fdc78c0f7">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/jnlua-android-29a4d165a91d3e4f452999f512c54c71a1af49ac.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/gson-2.2.4.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="a60a5e993c98c864010053cb901b7eab25306568">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/gson-2.2.4-35e872e61dbb4177c7e42b02aa0e2550d06526ea.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/SystemUtils.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="28970f2ad3443bb3ca17aceb15bdf915a0ac0319">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/SystemUtils-728faf3ef60cf114e6f5ad4d4ba9c69710abff0a.jar" />
+    </item>
+    <item
+        jar="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/exploded-aar/gvrperformancetest_v1_5_0/framework/unspecified/libs/VrApi.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="9a52c3c26684cb3e71cf6b1827c4ac1445452cd3">
+        <dex dex="/home/mmarinov/git/vrtop_public/GearVRf-Demos/gvrperformancetest_v1_5_0/app/build/intermediates/pre-dexed/debug/VrApi-09b87fc578a5de26645874974357f433af1df783.jar" />
+    </item>
+
+</items>
