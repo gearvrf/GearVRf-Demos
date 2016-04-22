@@ -1,4 +1,6 @@
-NOLA	gvrf_accessibility_sample
+NOLA	gvropacityanigallery	not working
+
+NOLA	gvrf_accessibility_sample	DONE
 NOLA	collision		DONE
 NOLA	complexScene		DONE
 NOLA	events-sample		DONE
@@ -19,11 +21,10 @@ NOLA	gvr-litshader		DONE
 NOLA	gvr-lua			DONE
 NOLA	gvr-multilight		DONE
 NOLA	gvr-meshanimationsample	DONE
-NOLA	gvropacityanigallery	not working
 NOLA	gvr-outlinesample	DONE
 NOLA	gvrpanoramasstereoimagesample_v1_5_0	DONE
 NOLA	gvrperformancetest_v1_5_0	DONE
-NOLA	gvr-pickandmove
+NOLA	gvr-pickandmove		DONE
 NOLA	gvr-remote-scripting	DONE
 NOLA	gvr-renerableview	DONE
 JASON	gvr-sample		DONE
