@@ -1,15 +1,16 @@
+NOLA	gvrf_accessibility_sample
 NOLA	collision		DONE
 NOLA	complexScene		DONE
-NOLA	events-sampls
+NOLA	events-sample		DONE
 NOLA	eye-picking		DONE
 NOLA	gamepad			DONE
 NOLA	gvrbulletsample		DONE
-NOLA	gvrcamera2renderscript	needs testing
+NOLA	gvrcamera2renderscript	DONE
 NOLA	gvrcockpit_v1_5_0	DONE
 NOLA	gvr-cubemap		DONE
 NOLA	gvrexposeapisample	DONE
-NOLA	gvrf_controls_sample	needs testing
-	gvrf_immersivepedia
+NOLA	gvrf_controls_sample	DONE
+NOLA	gvrf_immersivepedia	DONE
 NOLA	gvrf_keyboard_sample	DONE
 NOLA	gvrf_minimal360photo	DONE
 NOLA	gvrf_minimal360video	DONE
@@ -20,11 +21,13 @@ NOLA	gvr-multilight		DONE
 NOLA	gvr-meshanimationsample	DONE
 NOLA	gvropacityanigallery	not working
 NOLA	gvr-outlinesample	DONE
-	gvrpanoramasstereoimagesample_v1_5_0
-	gvrperformancetest_v1_5_0
-	gvr-pickandmove
+NOLA	gvrpanoramasstereoimagesample_v1_5_0	DONE
+NOLA	gvrperformancetest_v1_5_0	DONE
+NOLA	gvr-pickandmove
+NOLA	gvr-remote-scripting	DONE
+NOLA	gvr-renerableview	DONE
 JASON	gvr-sample		DONE
-	gvrsixaxissensortest_v1_5_0
+NOLA	gvrsixaxissensortest_v1_5_0	DONE
 NOLA	gvr-testcube		DONE
 NOLA	gvr-test-screenshot3Dresult	DONE
 MIHAIL	gvrtextviewsample	DONE
