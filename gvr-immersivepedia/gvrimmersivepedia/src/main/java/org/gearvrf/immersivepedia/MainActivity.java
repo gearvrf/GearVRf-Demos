@@ -64,4 +64,10 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
         return false;
     }
 
+    @Override
+    public final void onPause() {
+        mainScript.onPause();
+        super.onPause();
+    }
+
 }
