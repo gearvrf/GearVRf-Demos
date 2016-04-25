@@ -15,8 +15,6 @@
 
 package org.gearvrf.immersivepedia;
 
-import android.media.MediaPlayer;
-
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScript;
 import org.gearvrf.immersivepedia.focus.FocusableController;
@@ -24,6 +22,8 @@ import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
+
+import android.media.MediaPlayer;
 
 public class MainScript extends GVRScript {
 
@@ -35,12 +35,10 @@ public class MainScript extends GVRScript {
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
-
         mGvrContext = gvrContext;
         GazeController.setupGazeCursor(gvrContext);
 
-        AudioClip.getInstance(gvrContext.getActivity());
-
+        AudioClip.getInstance(gvrContext.getContext());
         mediaPlayer = MediaPlayer.create(gvrContext.getContext(), R.raw.sfx_ambient_1_1);
         mediaPlayer.setLooping(true);
         mediaPlayer.setVolume(1.0f, 1.0f);
@@ -80,4 +78,7 @@ public class MainScript extends GVRScript {
         }
     }
 
+    public void onPause() {
+        mediaPlayer.stop();
+    }
 }
