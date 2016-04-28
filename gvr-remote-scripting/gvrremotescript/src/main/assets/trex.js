@@ -2,7 +2,7 @@ importPackage(org.gearvrf);
 
 var scene = gvrf.getMainScene();
 
-var trex_url = new java.net.URL("https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-meshanimationsample/assets/TRex_NoGround.fbx");
+var trex_url = new java.net.URL("https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-meshanimation/gvrmeshanimation/src/main/assets/TRex_NoGround.fbx");
 var trex = gvrf.loadModelFromURL(trex_url);
 scene.addSceneObject(trex);
 
