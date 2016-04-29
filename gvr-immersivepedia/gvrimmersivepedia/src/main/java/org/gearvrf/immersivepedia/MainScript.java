@@ -37,6 +37,7 @@ public class MainScript extends GVRScript {
     public void onInit(GVRContext gvrContext) throws Throwable {
         mGvrContext = gvrContext;
         GazeController.setupGazeCursor(gvrContext);
+        GazeController.enableGaze();
 
         AudioClip.getInstance(gvrContext.getContext());
         mediaPlayer = MediaPlayer.create(gvrContext.getContext(), R.raw.sfx_ambient_1_1);
@@ -79,6 +80,8 @@ public class MainScript extends GVRScript {
     }
 
     public void onPause() {
-        mediaPlayer.stop();
+        if (null != mediaPlayer) {
+            mediaPlayer.stop();
+        }
     }
 }
