@@ -26,7 +26,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRCursorType;
+import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.GVRSceneObject;
@@ -72,7 +72,7 @@ public class CursorUtils {
 
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
-            if (controller.getCursorType() == GVRCursorType.GAZE) {
+            if (controller.getControllerType() == GVRControllerType.GAZE) {
                 controller.resetSceneObject();
                 controller.setEnable(false);
                 gvrContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
@@ -84,7 +84,7 @@ public class CursorUtils {
             float DEPTH = -1.5f;
 
             // Only allow only gaze
-            if (controller.getCursorType() == GVRCursorType.GAZE) {
+            if (controller.getControllerType() == GVRControllerType.GAZE) {
                 if(cursor != null) {
                     gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
                     controller.setEnable(true);
