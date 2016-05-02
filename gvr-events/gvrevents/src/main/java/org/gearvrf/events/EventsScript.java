@@ -15,11 +15,21 @@
 
 package org.gearvrf.events;
 
+import android.os.Handler;
+import android.os.Message;
+import android.view.InputDevice;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.MotionEvent.PointerCoords;
+import android.view.MotionEvent.PointerProperties;
+import android.widget.TextView;
+
+import org.gearvrf.FutureWrapper;
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
@@ -28,22 +38,8 @@ import org.gearvrf.SensorEvent;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRCursorType;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
-import org.gearvrf.utility.Log;
-
-import android.graphics.Point;
-import android.os.Handler;
-import android.os.Message;
-import android.view.Display;
-import android.view.InputDevice;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.MotionEvent.PointerCoords;
-import android.view.MotionEvent.PointerProperties;
-import android.widget.ListView;
-import android.widget.TextView;
 
 public class EventsScript extends GVRScript {
     private static final String TAG = EventsScript.class.getSimpleName();
@@ -68,18 +64,19 @@ public class EventsScript extends GVRScript {
     private final static PointerProperties[] pointerProperties;
     private final static PointerCoords[] pointerCoordsArray;
     private final static PointerCoords pointerCoords;
+    private GVRSceneObject cursor;
 
     static {
         PointerProperties properties = new PointerProperties();
         properties.id = 0;
         properties.toolType = MotionEvent.TOOL_TYPE_MOUSE;
-        pointerProperties = new PointerProperties[] { properties };
+        pointerProperties = new PointerProperties[]{properties};
         pointerCoords = new PointerCoords();
-        pointerCoordsArray = new PointerCoords[] { pointerCoords };
+        pointerCoordsArray = new PointerCoords[]{pointerCoords};
     }
 
     public EventsScript(EventsActivity activity,
-            final GVRFrameLayout frameLayout, final TextView keyTextView) {
+                        final GVRFrameLayout frameLayout, final TextView keyTextView) {
         this.frameLayout = frameLayout;
         final String keyPressed = activity.getResources()
                 .getString(R.string.keyCode);
@@ -134,6 +131,7 @@ public class EventsScript extends GVRScript {
 
         @Override
         public void onSensorEvent(SensorEvent event) {
+
             final MotionEvent motionEvent = event.getCursorController()
                     .getMotionEvent();
             if (motionEvent != null
@@ -152,7 +150,6 @@ public class EventsScript extends GVRScript {
                 Message message = Message.obtain(mainThreadHandler, 0, 0, 0,
                         clone);
                 mainThreadHandler.sendMessage(message);
-
             } else {
                 KeyEvent keyEvent = event.getCursorController().getKeyEvent();
 
@@ -161,9 +158,8 @@ public class EventsScript extends GVRScript {
                 }
 
                 float[] hitPoint = event.getHitPoint();
-
-                pointerCoords.x = (hitPoint[0] + HALF_QUAD_X) * frameWidth;
-                pointerCoords.y = -(hitPoint[1] - HALF_QUAD_Y) * frameHeight;
+                pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
+                pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
 
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     if (motionEvent != null) {
@@ -197,7 +193,9 @@ public class EventsScript extends GVRScript {
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
             if (controller.getCursorType() == GVRCursorType.GAZE) {
-                controller.resetSceneObject();
+                if (cursor != null) {
+                    mainScene.getMainCameraRig().removeChildObject(cursor);
+                }
                 controller.setEnable(false);
             }
         }
@@ -206,19 +204,18 @@ public class EventsScript extends GVRScript {
         public void onCursorControllerAdded(GVRCursorController controller) {
             // Only allow only gaze
             if (controller.getCursorType() == GVRCursorType.GAZE) {
-                GVRSceneObject cursor = new GVRSphereSceneObject(context);
-                GVRRenderData cursorRenderData = cursor.getRenderData();
-                GVRMaterial material = cursorRenderData.getMaterial();
-                material.setVec4("u_color", 1.0f, 0.0f, 0.0f, 0.5f);
-                mainScene.addSceneObject(cursor);
+
+                cursor = new GVRSceneObject(context,
+                        new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
+                        context.loadFutureTexture(new GVRAndroidResource(context, R.raw.cursor)));
+
+                cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
+                mainScene.getMainCameraRig().addChildObject(cursor);
                 cursor.getRenderData().setDepthTest(false);
                 cursor.getRenderData().setRenderingOrder(100000);
-                cursor.getRenderData().setShaderTemplate(ColorShader.class);
-                controller.setSceneObject(cursor);
                 controller.setPosition(0.0f, 0.0f, DEPTH);
                 controller.setNearDepth(DEPTH);
                 controller.setFarDepth(DEPTH);
-                cursor.getTransform().setScale(-0.015f, -0.015f, -0.015f);
             } else {
                 // disable all other types
                 controller.setEnable(false);
