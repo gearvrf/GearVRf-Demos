@@ -209,8 +209,8 @@ public class EditorUtils {
 
                 float[] hitPoint = event.getHitPoint();
 
-                pointerCoords.x = (hitPoint[0] + HALF_QUAD_X) * frameWidth;
-                pointerCoords.y = -(hitPoint[1] - HALF_QUAD_Y) * frameHeight;
+                pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
+                pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
 
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
                     if (motionEvent != null) {
