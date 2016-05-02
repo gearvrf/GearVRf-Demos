@@ -51,9 +51,6 @@ public class MenuScene extends GVRScene {
         addSceneObject(createBlueSkybox()); //
 
         getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
-
-        gvrContext.setMainScene(this);
-        GazeController.enableGaze();
     }
 
     private void createDinosaursMenuItem() {
