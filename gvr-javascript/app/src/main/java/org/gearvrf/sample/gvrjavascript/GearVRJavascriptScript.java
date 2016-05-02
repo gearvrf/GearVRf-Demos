@@ -23,7 +23,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRCursorType;
+import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
@@ -63,7 +63,7 @@ public class GearVRJavascriptScript extends GVRScript {
     private CursorControllerListener listener = new CursorControllerListener() {
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
-            if (controller.getCursorType() == GVRCursorType.GAZE) {
+            if (controller.getControllerType() == GVRControllerType.GAZE) {
                 controller.resetSceneObject();
                 controller.setEnable(false);
             }
@@ -72,7 +72,7 @@ public class GearVRJavascriptScript extends GVRScript {
         @Override
         public void onCursorControllerAdded(GVRCursorController controller) {
             // Only allow only gaze
-            if (controller.getCursorType() == GVRCursorType.GAZE) {
+            if (controller.getControllerType() == GVRControllerType.GAZE) {
                 GVRSceneObject cursor = new GVRSphereSceneObject(context);
                 GVRRenderData cursorRenderData = cursor.getRenderData();
                 GVRMaterial material = cursorRenderData.getMaterial();

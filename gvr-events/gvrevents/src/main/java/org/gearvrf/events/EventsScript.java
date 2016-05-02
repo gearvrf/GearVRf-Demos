@@ -36,7 +36,7 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.ISensorEvents;
 import org.gearvrf.SensorEvent;
 import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRCursorType;
+import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
@@ -192,7 +192,7 @@ public class EventsScript extends GVRScript {
 
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
-            if (controller.getCursorType() == GVRCursorType.GAZE) {
+            if (controller.getControllerType() == GVRControllerType.GAZE) {
                 if (cursor != null) {
                     mainScene.getMainCameraRig().removeChildObject(cursor);
                 }
@@ -203,12 +203,10 @@ public class EventsScript extends GVRScript {
         @Override
         public void onCursorControllerAdded(GVRCursorController controller) {
             // Only allow only gaze
-            if (controller.getCursorType() == GVRCursorType.GAZE) {
-
+            if (controller.getControllerType() == GVRControllerType.GAZE) {
                 cursor = new GVRSceneObject(context,
                         new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
                         context.loadFutureTexture(new GVRAndroidResource(context, R.raw.cursor)));
-
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                 mainScene.getMainCameraRig().addChildObject(cursor);
                 cursor.getRenderData().setDepthTest(false);
