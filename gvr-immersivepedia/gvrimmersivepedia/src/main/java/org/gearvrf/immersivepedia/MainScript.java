@@ -34,9 +34,8 @@ public class MainScript extends GVRScript {
     private static MediaPlayer mediaPlayer;
 
     @Override
-    public void onInit(GVRContext gvrContext) throws Throwable {
+    public void onInit(final GVRContext gvrContext) throws Throwable {
         mGvrContext = gvrContext;
-        GazeController.setupGazeCursor(gvrContext);
 
         AudioClip.getInstance(gvrContext.getContext());
         mediaPlayer = MediaPlayer.create(gvrContext.getContext(), R.raw.sfx_ambient_1_1);
@@ -46,11 +45,22 @@ public class MainScript extends GVRScript {
 
         dinosaurScene = new DinosaurScene(gvrContext);
         menuScene = new MenuScene(gvrContext);
+
+        GazeController.setupGazeCursor(gvrContext);
+        closeSplashScreen();
+
+        gvrContext.runOnGlThreadPostRender(64, new Runnable() {
+            @Override
+            public void run() {
+                gvrContext.setMainScene(menuScene);
+                GazeController.enableGaze();
+            }
+        });
     }
 
     @Override
     public SplashMode getSplashMode() {
-        return SplashMode.NONE;
+        return SplashMode.MANUAL;
     }
 
     @Override
@@ -79,6 +89,8 @@ public class MainScript extends GVRScript {
     }
 
     public void onPause() {
-        mediaPlayer.stop();
+        if (null != mediaPlayer) {
+            mediaPlayer.stop();
+        }
     }
 }
