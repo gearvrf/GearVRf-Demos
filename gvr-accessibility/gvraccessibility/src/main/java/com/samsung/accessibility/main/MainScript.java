@@ -55,14 +55,14 @@ public class MainScript extends GVRScript {
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
         ShortcutMenu shortcutMenu = createShortcut();
-        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
+        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getNextMainScene(), shortcutMenu);
 
         createPedestalObject();
         createDinossaur();
 
-        gvrContext.getMainScene().addSceneObject(shortcutMenu);
-        gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-        gvrContext.getMainScene().addSceneObject(createSkybox());
+        gvrContext.getNextMainScene().addSceneObject(shortcutMenu);
+        gvrContext.getNextMainScene().getMainCameraRig().addChildObject(cursor);
+        gvrContext.getNextMainScene().addSceneObject(createSkybox());
 
     }
 
@@ -92,8 +92,8 @@ public class MainScript extends GVRScript {
         pedestalObject.addChildObject(baseObject);
         pedestalObject.addChildObject(bookObject);
 
-        gvrContext.getMainScene().addSceneObject(bookObject);
-        gvrContext.getMainScene().addSceneObject(baseObject);
+        gvrContext.getNextMainScene().addSceneObject(bookObject);
+        gvrContext.getNextMainScene().addSceneObject(baseObject);
     }
 
     private GVRSceneObject createSkybox() {
@@ -133,12 +133,7 @@ public class MainScript extends GVRScript {
         trex.getTransform().rotateByAxis(-90, 1, 0, 0);
         trex.getTransform().rotateByAxis(90, 0, 1, 0);
         activeTalkBack();
-        gvrContext.getMainScene().addSceneObject(trex);
-    }
-
-    @Override
-    public SplashMode getSplashMode() {
-        return SplashMode.NONE;
+        gvrContext.getNextMainScene().addSceneObject(trex);
     }
 
     @Override
