@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.EnumSet;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAndroidResource.TextureCallback;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
@@ -88,8 +89,27 @@ public class DinosaurFactory {
 
     private FocusableSceneObject createDinosaur(int dinoMeshId, int dinoTextureId) {
         GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, dinoMeshId), settings);
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, dinoTextureId));
-        FocusableSceneObject dino = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
+        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
+        final FocusableSceneObject dino = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
+        gvrContext.loadTexture(new TextureCallback() {
+
+            @Override
+            public void loaded(GVRTexture arg0, GVRAndroidResource arg1) {
+                dino.getRenderData().getMaterial().setMainTexture(arg0);
+            }
+
+            @Override
+            public void failed(Throwable arg0, GVRAndroidResource arg1) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public boolean stillWanted(GVRAndroidResource arg0) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+        }, new GVRAndroidResource(gvrContext, dinoTextureId));
+
         return dino;
     }
 
@@ -104,8 +124,30 @@ public class DinosaurFactory {
     private FocusableSceneObject createDinosaurGround(int groundMesh) {
 
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
-        GVRTexture groundTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ground_tex_diffuse));
-        FocusableSceneObject dinosaurGround = new FocusableSceneObject(gvrContext, mesh, groundTexture);
+        // GVRTexture groundTexture = gvrContext.loadTexture(new
+        // GVRAndroidResource(gvrContext, R.drawable.ground_tex_diffuse));
+        GVRTexture groundTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
+        final FocusableSceneObject dinosaurGround = new FocusableSceneObject(gvrContext, mesh, groundTexture);
+        gvrContext.loadTexture(new TextureCallback() {
+
+            @Override
+            public void loaded(GVRTexture texture, GVRAndroidResource arg1) {
+                dinosaurGround.getRenderData().getMaterial().setMainTexture(texture);
+
+            }
+
+            @Override
+            public void failed(Throwable arg0, GVRAndroidResource arg1) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public boolean stillWanted(GVRAndroidResource arg0) {
+                // TODO Auto-generated method stub
+                return false;
+            }
+        }, new GVRAndroidResource(gvrContext, R.drawable.ground_tex_diffuse));
         return dinosaurGround;
     }
 
