@@ -14,18 +14,16 @@
  */
 package org.gearvrf.cubemap;
 
-import java.util.HashMap;
-import org.gearvrf.GVRContext;
-import java.util.HashMap;
-import org.gearvrf.GVRRenderData;
-import org.gearvrf.utility.TextFile;
-
 import android.content.Context;
 
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.R;
+import org.gearvrf.utility.TextFile;
 
-public class CubeMapShader extends org.gearvrf.GVRShaderTemplate
-{
+import java.util.HashMap;
+
+public class CubeMapShader extends org.gearvrf.GVRShaderTemplate {
     private static String fragTemplate = null;
     private static String vtxTemplate = null;
     private static String surfaceShader = null;
@@ -34,16 +32,15 @@ public class CubeMapShader extends org.gearvrf.GVRShaderTemplate
     private static String normalShader = null;
     private static String skinShader = null;
 
-    public CubeMapShader(GVRContext gvrcontext)
-    {
+    public CubeMapShader(GVRContext gvrcontext) {
         super("float4 ambient_color; float4 diffuse_color; float4 specular_color; float4 emissive_color; float specular_exponent");
         if (fragTemplate == null) {
             Context context = gvrcontext.getContext();
             fragTemplate = TextFile.readTextFile(context, R.raw.fragment_template);
             vtxTemplate = TextFile.readTextFile(context, R.raw.vertex_template);
-            surfaceShader = TextFile.readTextFile(context, R.raw.phong_cubemap);
-            vtxShader = TextFile.readTextFile(context, R.raw.vertex_cubemap);
-             skinShader = TextFile.readTextFile(context, R.raw.vertexskinning);
+            surfaceShader = TextFile.readTextFile(context, org.gearvrf.cubemap.R.raw.phong_cubemap);
+            vtxShader = TextFile.readTextFile(context, org.gearvrf.cubemap.R.raw.vertex_cubemap);
+            skinShader = TextFile.readTextFile(context, R.raw.vertexskinning);
             addLight = TextFile.readTextFile(context, R.raw.addlight);
         }
         setSegment("FragmentTemplate", fragTemplate);
