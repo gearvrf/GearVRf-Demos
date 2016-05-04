@@ -15,6 +15,7 @@
 
 package org.gearvrf.sample.sceneobjects;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -38,6 +39,7 @@ import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRView;
 
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.view.Gravity;
 
@@ -52,7 +54,7 @@ public class SampleViewManager extends GVRScript {
     }
 
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext) throws IOException {
 
         GVRScene scene = gvrContext.getNextMainScene();
 
@@ -135,9 +137,11 @@ public class SampleViewManager extends GVRScript {
         }
     }
 
-    private GVRVideoSceneObject createVideoObject(GVRContext gvrContext) {
-        MediaPlayer mediaPlayer = MediaPlayer.create(gvrContext.getContext(),
-                R.drawable.tron);
+    private GVRVideoSceneObject createVideoObject(GVRContext gvrContext) throws IOException {
+        final AssetFileDescriptor afd = gvrContext.getActivity().getAssets().openFd("tron.mp4");
+        final MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+        mediaPlayer.prepare();
         GVRVideoSceneObject video = new GVRVideoSceneObject(gvrContext, 8.0f,
                 4.0f, mediaPlayer, GVRVideoType.MONO);
         video.setName("video");
