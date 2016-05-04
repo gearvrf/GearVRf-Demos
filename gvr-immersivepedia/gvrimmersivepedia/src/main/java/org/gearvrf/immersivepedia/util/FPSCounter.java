@@ -22,16 +22,13 @@ public class FPSCounter {
     private static long startTimeMillis = 0;
     private static final long interval = 10000;
 
-    public static String tick() {
+    public static void tick() {
         ++frames;
         if (System.currentTimeMillis() - startTimeMillis >= interval) {
-
-            float fps = frames / (interval / 1000.0f);
-            Log.v("FPS", "FPS : " + fps);
+            Log.v("test", "FPS : " + frames / (interval / 1000.0f));
             frames = 0;
             startTimeMillis = System.currentTimeMillis();
-            return String.valueOf(fps);
         }
-        return "";
     }
+
 }
