@@ -61,7 +61,7 @@ public class MainScript extends GVRScript {
 
     @Override
     public SplashMode getSplashMode() {
-        return SplashMode.MANUAL;
+        return SplashMode.AUTOMATIC;
     }
 
     @Override
