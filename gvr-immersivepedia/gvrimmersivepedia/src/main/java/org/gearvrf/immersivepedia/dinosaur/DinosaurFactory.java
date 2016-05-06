@@ -80,7 +80,9 @@ public class DinosaurFactory {
     private Dinosaur createDinosauros(String name, int dinoMeshId, int dinoTextureId,
             int baseMeshId, int groundMeshId) {
 
-        FocusableSceneObject dino = createDinosaur(dinoMeshId, dinoTextureId);
+        FocusableSceneObject dino = null;
+        dino = createDinosaur(dinoMeshId, dinoTextureId);
+
         FocusableSceneObject base = createDinosaurBase(baseMeshId);
         FocusableSceneObject ground = createDinosaurGround(groundMeshId);
 
@@ -114,9 +116,8 @@ public class DinosaurFactory {
     }
 
     private FocusableSceneObject createDinosaurBase(int baseMeshId) {
-
         GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
+        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.raw.base_tex_diffuse));
         FocusableSceneObject dinosaurBase = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         return dinosaurBase;
     }
@@ -124,8 +125,6 @@ public class DinosaurFactory {
     private FocusableSceneObject createDinosaurGround(int groundMesh) {
 
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
-        // GVRTexture groundTexture = gvrContext.loadTexture(new
-        // GVRAndroidResource(gvrContext, R.drawable.ground_tex_diffuse));
         GVRTexture groundTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
         final FocusableSceneObject dinosaurGround = new FocusableSceneObject(gvrContext, mesh, groundTexture);
         gvrContext.loadTexture(new TextureCallback() {
@@ -154,7 +153,7 @@ public class DinosaurFactory {
     private Dinosaur createStyrocosaurus() {
 
         return createDinosauros("styracosaurus",
-                R.raw.styracosaurus_mesh, R.drawable.styracosaurus_tex_diffuse,
+                R.raw.styracosaurus_mesh, R.raw.styracosaurus_tex_diffuse,
                 R.raw.styracosaurus_base_mesh, R.raw.styracosaurus_ground_mesh);
 
     }
@@ -162,21 +161,21 @@ public class DinosaurFactory {
     private Dinosaur createAnkylosaurus() {
 
         return createDinosauros("ankylosaurus",
-                R.raw.ankylosaurus_mesh, R.drawable.ankylosaurus_tex_diffuse,
+                R.raw.ankylosaurus_mesh, R.raw.ankyosaurus_tex_diffuse,
                 R.raw.ankylosaurus_base_mesh, R.raw.ankylosaurus_ground_mesh);
     }
 
     private Dinosaur createApatosaurus() {
 
         return createDinosauros("apatosaurus",
-                R.raw.apatosaurus_mesh, R.drawable.apatosaurus_tex_diffuse,
+                R.raw.apatosaurus_mesh, R.raw.apatosaurus_tex_diffuse,
                 R.raw.apatosaurus_base_mesh, R.raw.apatosaurus_ground_mesh);
     }
 
     private Dinosaur createTRex() {
 
         return createDinosauros("trex",
-                R.raw.trex_mesh, R.drawable.trex_tex_diffuse,
+                R.raw.trex_mesh, R.raw.trex_tex_diffuse,
                 R.raw.trex_base_mesh, R.raw.trex_ground_mesh);
     }
 

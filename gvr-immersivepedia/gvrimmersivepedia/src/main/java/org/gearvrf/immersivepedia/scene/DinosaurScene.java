@@ -148,7 +148,7 @@ public class DinosaurScene extends GVRScene {
             public boolean stillWanted(GVRAndroidResource resource) {
                 return false;
             }
-        }, new GVRAndroidResource(getGVRContext().getContext(), R.drawable.environment_walls_tex_diffuse));
+        }, new GVRAndroidResource(getGVRContext().getContext(), R.raw.environment_walls_tex_diffuse));
 
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getRenderData().setRenderingOrder(0);
@@ -180,12 +180,12 @@ public class DinosaurScene extends GVRScene {
                 // TODO Auto-generated method stub
                 return false;
             }
-        }, new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
+        }, new GVRAndroidResource(gvrContext, R.raw.environment_ground_tex_diffuse));
 
         skyboxGround.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshFx = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
-        GVRTexture textureFx = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
+        GVRTexture textureFx = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.raw.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
 
