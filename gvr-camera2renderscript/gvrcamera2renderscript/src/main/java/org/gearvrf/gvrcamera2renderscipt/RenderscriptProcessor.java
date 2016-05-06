@@ -28,7 +28,8 @@ public class RenderscriptProcessor
     {
     	String model = Build.MODEL;
     	Log.d("MODEL",model);
-    	if( model.contains("SM-G920") || model.contains("SM-G925") || model.contains("SM-G928") )
+    	if( model.contains("SM-G920") || model.contains("SM-G925") || model.contains("SM-G928")
+            || model.contains("SM-G93"))
     	{
     		mNeedYuvConversion = true;
     	}
@@ -111,7 +112,6 @@ public class RenderscriptProcessor
 
         @Override
         public void run() {
-
             // Find out how many frames have arrived
             int pendingFrames;
             synchronized(this) {
