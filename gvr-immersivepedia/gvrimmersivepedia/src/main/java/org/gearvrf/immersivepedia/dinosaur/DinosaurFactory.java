@@ -146,7 +146,7 @@ public class DinosaurFactory {
                 // TODO Auto-generated method stub
                 return false;
             }
-        }, new GVRAndroidResource(gvrContext, R.drawable.ground_tex_diffuse));
+        }, new GVRAndroidResource(gvrContext, R.raw.ground_tex_diffuse));
         return dinosaurGround;
     }
 
