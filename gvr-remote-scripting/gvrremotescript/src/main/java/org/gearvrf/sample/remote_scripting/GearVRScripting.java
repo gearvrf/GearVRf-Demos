@@ -19,17 +19,25 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Context;
 import org.gearvrf.GVRActivity;
+import android.graphics.ImageFormat;
 import android.net.wifi.WifiManager;
 import java.nio.ByteOrder;
 import java.lang.Integer;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.PreviewCallback;
+import android.os.Handler;
 
 public class GearVRScripting extends GVRActivity
 {
     private final String TAG = "GearVRScripting";
     String ipAddress;
+    private Camera camera;
+    private Handler handler = new Handler();
 
     /** Called when the activity is first created. */
     @Override
@@ -38,8 +46,28 @@ public class GearVRScripting extends GVRActivity
         super.onCreate(savedInstanceState);
 
         ipAddress = getWifiIpAddress(this);
+        createCameraView();
 
         setScript(new GearVRScriptingManager(), "gvr.xml");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(camera != null) {
+            camera.release();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        createCameraView();
+    }
+
+
+    public Handler getHandler() {
+        return handler;
     }
 
     /* 
@@ -71,4 +99,29 @@ public class GearVRScripting extends GVRActivity
     public String getIpAddress() {
         return ipAddress;
     }
+
+    private boolean checkCameraHardware(Context context) {
+        return context.getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA);
+    }
+
+    private void createCameraView() {
+        if (!checkCameraHardware(this)) {
+            android.util.Log.d(TAG, "Camera hardware not available.");
+            return;
+        }
+
+        camera = null;
+        try {
+            camera = Camera.open();
+        } catch (Exception exception) {
+            android.util.Log.d(TAG, "Camera not available or is in use");
+        }
+    }
+
+    Camera getCamera() {
+        return camera;
+    }
+
+
 }
