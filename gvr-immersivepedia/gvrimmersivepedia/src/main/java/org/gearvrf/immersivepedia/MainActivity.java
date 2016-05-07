@@ -30,13 +30,13 @@ public class MainActivity extends GVRActivity implements
 	private MainScript mainScript;
 	private VRTouchPadGestureDetector touchPadGestureDetector;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		mainScript = new MainScript();
-		touchPadGestureDetector = new VRTouchPadGestureDetector(this);
-		setScript(mainScript, "gvr_note4.xml");
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mainScript = new MainScript();
+        touchPadGestureDetector = new VRTouchPadGestureDetector(this);
+        setScript(mainScript, "gvr.xml");
+    }
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {

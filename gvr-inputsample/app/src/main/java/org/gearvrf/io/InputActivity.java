@@ -38,7 +38,7 @@ public class InputActivity extends GVRActivity {
         textView.setGravity(Gravity.CENTER);
 
         script = new InputScript(textView);
-        setScript(script, "gvr_note4.xml");
+        setScript(script, "gvr.xml");
     }
 
     @Override

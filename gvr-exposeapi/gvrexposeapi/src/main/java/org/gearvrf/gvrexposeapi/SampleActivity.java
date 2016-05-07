@@ -28,7 +28,7 @@ public class SampleActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr_note4.xml");
+        setScript(script, "gvr.xml");
     }
 
 

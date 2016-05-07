@@ -54,7 +54,7 @@ public class GVRWidgetViewer extends GVRActivity implements
         mScript = new ViewerScript(mPlugin);
         mPlugin.setCurrentScript(mScript);
         mWidget.mScript = mScript;
-        setScript(mScript, "gvr_note4.xml");
+        setScript(mScript, "gvr.xml");
     }
 
     @Override

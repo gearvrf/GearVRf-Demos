@@ -25,6 +25,6 @@ public class GalleryActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(new GalleryViewManager(), "gvr_note4.xml");
+        setScript(new GalleryViewManager(), "gvr.xml");
     }
 }

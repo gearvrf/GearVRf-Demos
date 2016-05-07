@@ -29,7 +29,7 @@ public class CollisionActivity extends GVRActivity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         viewManager = new CollisionViewManager();
-        setScript(viewManager, "gvr_note4.xml");
+        setScript(viewManager, "gvr.xml");
     }
 
     @Override
