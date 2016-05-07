@@ -37,7 +37,7 @@ public class MainActivity extends GVRActivity implements
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mainScript = new MainScript();
-        setScript(mainScript, "gvr_note4.xml");
+        setScript(mainScript, "gvr.xml");
         mDetector = new VRSamplesTouchPadGesturesDetector(this, this);
     }
 

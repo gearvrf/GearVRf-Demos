@@ -27,7 +27,7 @@ public class CockpitActivity extends GVRActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setScript(new CockpitViewManager(), "gvr_note4.xml");
+        setScript(new CockpitViewManager(), "gvr.xml");
     }
 
 }

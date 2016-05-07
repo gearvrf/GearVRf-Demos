@@ -42,7 +42,7 @@ public class MainActivity extends GVRActivity {
         createView();
 
         mScript = new MainScript(this);
-        setScript(mScript, "gvr_note4.xml");
+        setScript(mScript, "gvr.xml");
     }
 
     private void createView() {
