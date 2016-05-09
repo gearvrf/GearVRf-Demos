@@ -54,7 +54,7 @@ public class VideoActivity extends GVRActivity implements
                 }
             }
         };
-        setScript(mScript, "gvr_note4.xml");
+        setScript(mScript, "gvr.xml");
         registerReceiver(mBatteryReceiver, new IntentFilter(
                 Intent.ACTION_BATTERY_CHANGED));
     }

@@ -61,7 +61,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
         vuforiaAppSession.initAR(this);
 
         script = new VuforiaSampleScript();
-        setScript(script, "gvr_note4.xml");
+        setScript(script, "gvr.xml");
     }
 
     public static boolean isVuforiaActive() {

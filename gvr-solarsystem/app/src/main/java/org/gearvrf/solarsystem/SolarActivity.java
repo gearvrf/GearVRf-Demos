@@ -30,7 +30,7 @@ public class SolarActivity extends GVRActivity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         viewManager = new SolarViewManager();
-        setScript(viewManager, "gvr_note4.xml");
+        setScript(viewManager, "gvr.xml");
     }
 
     @Override

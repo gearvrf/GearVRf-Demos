@@ -30,7 +30,7 @@ public class TransparencyTest extends GVRActivity
     {
         super.onCreate(savedInstanceState);
         mScript = new TransparencyTestScript();
-        setScript(mScript, "gvr_note4.xml");
+        setScript(mScript, "gvr.xml");
     }
     
     @Override

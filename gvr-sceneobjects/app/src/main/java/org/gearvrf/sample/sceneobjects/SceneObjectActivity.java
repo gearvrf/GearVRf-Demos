@@ -48,7 +48,7 @@ public class SceneObjectActivity extends GVRActivity {
         createCameraView();
 
         mViewManager = new SampleViewManager(this);
-        setScript(mViewManager, "gvr_note4.xml");
+        setScript(mViewManager, "gvr.xml");
     }
 
     private void createWebView() {
