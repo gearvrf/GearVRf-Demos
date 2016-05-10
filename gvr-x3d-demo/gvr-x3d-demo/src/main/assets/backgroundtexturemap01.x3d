@@ -1,0 +1,61 @@
+<x3d width='500px' height='400px'>
+    <scene>
+
+   	<Background skyColor='0 .2 .5'
+   		backUrl='negz.jpg'
+   		frontUrl='posz.jpg'
+   		bottomUrl='negy.jpg'
+   		topUrl='posy.jpg'
+   		leftUrl='negx.jpg'
+   		rightUrl='posx.jpg'
+   		>
+   	</Background>
+   	
+   	<Viewpoint position='0 0 0'/>
+
+        <transform DEF="rotateddog" translation="0 0 -8" rotation="0 0 1 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="dog1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+        <transform DEF="ball" translation="0 0 -7" rotation="0 0 1 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="dog2.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+    
+        <PointLight location="0 0 -1"  color=".8 .9 1" intensity="1" on="TRUE" radius="300"/>
+
+        <timeSensor DEF="time" cycleInterval="8" loop="true"></timeSensor>
+        <PositionInterpolator DEF="move" key="0 0.5 1" keyValue="5 -6 -10  -5 3 -8  5 -6 -10"></PositionInterpolator>
+        <Route fromNode="time" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
+        <Route fromNode="move" fromField ="value_changed" toNode="ball" toField="translation"></Route>
+        
+    </scene>
+</x3d>

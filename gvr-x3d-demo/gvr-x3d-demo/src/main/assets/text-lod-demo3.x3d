@@ -1,0 +1,16 @@
+<x3d width='500px' height='400px'>
+    <scene>
+
+	        <Shape>
+	          <Text DEF='TextMessage' string='"Text" "Demo" "3 - THREE"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 .5 .5"/>
+	          </Appearance>
+	        </Shape>
+
+ 
+        
+    </scene>
+</x3d>

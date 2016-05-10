@@ -1,0 +1,21 @@
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+	<Scene>
+		<Transform translation="0 1 -8" rotation="-0 0 1 0"  scale="2.0 2.2 3.1">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 -.2   1 2.4    0 2.4   1 -.2'/>
+					<Normal vector='0 0 1   0 .6 .8'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor=".4 0 .4"/>
+					<ImageTexture url="news_texture_map.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='0 0' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+	</Scene>
+</X3D>

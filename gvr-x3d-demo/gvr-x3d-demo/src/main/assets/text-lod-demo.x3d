@@ -1,0 +1,87 @@
+<x3d width='500px' height='400px'>
+    <scene>
+		<Background skyColor='.2 .2 .3'/>
+		
+		<Viewpoint DEF="vp1" position='0 0 0'/>
+		<Viewpoint DEF="vp2" position='0 0 2.6'/>
+
+ 		<Transform DEF="lodTest01">
+			<LOD range='4 9'>
+				<Inline url="text-lod-demo1.x3d" />
+				<Inline url="text-lod-demo2.x3d" />
+				<Inline url="text-lod-demo3.x3d" />
+			</LOD>
+		</Transform>
+
+         <transform DEF="train" translation="2 -3 -3" rotation="0 0 1 0">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="caltrain.png" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+
+         <transform translation="1.5 1.5 -4" rotation="0 0 1 0">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="brick.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+
+         <transform translation="-1.5 -1.5 -9" rotation="0 0 1 0">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 -0.0    1 1 -0.0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+    	
+        <timeSensor DEF="time" cycleInterval="30" loop="true"></timeSensor>
+ 
+     	    <PositionInterpolator DEF="move" key="0 .1 .2 .3 .4 .5  .6  .7  .8  .9  1" keyValue="0 0 -.5   0 0 -3.5   0 0 -3.5   0 0 -4.5   0 0 -4.5   0 0 -8.5   0 0 -8.5   0 0 -9.5   0 0 -9.5   0 0 -20    0 0 -.5"></PositionInterpolator>
+	        <Route fromNode="time" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
+	        <Route fromNode="move" fromField ="value_changed" toNode="lodTest01" toField="translation"></Route>
+        
+
+        <PositionInterpolator DEF="movetrain" key="0 0.5 1" keyValue="-2 -2 -1  -8 -8 -20  -2 -2 -1"></PositionInterpolator>
+        <Route fromNode="time" fromField ="fraction_changed" toNode="movetrain" toField="set_fraction"></Route>
+        <Route fromNode="movetrain" fromField ="value_changed" toNode="train" toField="translation"></Route>
+
+    
+    </scene>
+</x3d>
