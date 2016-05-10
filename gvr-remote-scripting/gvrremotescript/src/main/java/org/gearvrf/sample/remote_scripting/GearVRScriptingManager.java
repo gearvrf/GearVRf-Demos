@@ -54,6 +54,7 @@ public class GearVRScriptingManager extends GVRScript
         scriptManager.addVariable("editor", new EditorUtils(gvrContext));
         scriptManager.addVariable("passthrough", new PassthroughUtils(gvrContext, activity));
         scriptManager.addVariable("filebrowser", new FileBrowserUtils(gvrContext));
+        scriptManager.addVariable("source", new SourceUtils(gvrContext));
     }
 
     @Override
