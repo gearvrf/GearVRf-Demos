@@ -87,29 +87,16 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 invertedColors.animate();
-                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
-
                 if (invertedColors.isActive) {
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(textures.getInvertedColorsIcon(), TypeItem.INVERTED_COLORS);
-                            break;
-                        }
-
-                    }
+                    shortcutMenu.addShortcut(TypeItem.INVERTED_COLORS, textures.getInvertedColorsIcon());
                 } else {
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.INVERTED_COLORS) {
-                            shortcutItems.get(i).resetClick();
-                            shortcutMenu.removeShortcut(i);
-                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
-                            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
-                        }
-                    }
-
+                    ShortcutMenuItem shortcut = shortcutMenu.removeShortcut(TypeItem.INVERTED_COLORS);
+                    if (shortcut != null) {
+                        shortcut.resetClick();
+                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
+                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
+                     }
                 }
-
             }
         });
         this.addSceneObject(invertedColors);
@@ -124,27 +111,11 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 zoom.animate();
-
-                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
                 if (zoom.isActive) {
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(textures.getZoomIn(), TypeItem.ZOOM);
-                            shortcutItems.get(i + 2).createIcon(textures.getZoomOut(), TypeItem.ZOOM);
-                            break;
-                        }
-
-                    }
+                    shortcutMenu.addShortcut(TypeItem.ZOOM, textures.getZoomOut());
+                    shortcutMenu.addShortcut(TypeItem.ZOOM, textures.getZoomIn());
                 } else {
-
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.ZOOM) {
-                            shortcutMenu.removeShortcut(i, i + 2);
-                            break;
-                        }
-                    }
-
+                    shortcutMenu.removeShortcut(TypeItem.ZOOM);
                 }
             }
         });
@@ -161,27 +132,11 @@ public class AccessibilityScene extends GVRScene {
             public void onClick() {
                 talkBack.animate();
                 setActivityOrInactiveTalkBackObjects(talkBack.isActive);
-
-                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
                 if (talkBack.isActive) {
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(textures.getTalkBackLess(), TypeItem.TALK_BACK);
-                            shortcutItems.get(i + 2).createIcon(textures.getTalkBackMore(), TypeItem.TALK_BACK);
-                            break;
-                        }
-
-                    }
+                    shortcutMenu.addShortcut(TypeItem.TALK_BACK, textures.getTalkBackLess());
+                    shortcutMenu.addShortcut(TypeItem.TALK_BACK, textures.getTalkBackMore());
                 } else {
-
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.TALK_BACK) {
-                            shortcutMenu.removeShortcut(i, i + 2);
-                            break;
-                        }
-                    }
-
+                    shortcutMenu.removeShortcut(TypeItem.TALK_BACK);
                 }
             }
         });
@@ -198,27 +153,10 @@ public class AccessibilityScene extends GVRScene {
             @Override
             public void onClick() {
                 speech.animate();
-
-                List<ShortcutMenuItem> shortcutItems = shortcutMenu.getShortcutItems();
-
                 if (speech.isActive) {
-
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
-                            shortcutItems.get(i).createIcon(textures.getSpeechIcon(), TypeItem.SPEECH);
-                            break;
-                        }
-
-                    }
-
+                    shortcutMenu.addShortcut(TypeItem.SPEECH, textures.getSpeechIcon());
                 } else {
-
-                    for (int i = 0; i < shortcutItems.size(); i++) {
-                        if (shortcutItems.get(i).getTypeItem() == TypeItem.SPEECH)
-                            shortcutMenu.removeShortcut(i);
-                    }
-
+                    shortcutMenu.removeShortcut(TypeItem.SPEECH);
                 }
             }
         });
@@ -230,15 +168,6 @@ public class AccessibilityScene extends GVRScene {
         talkBack.getTransform().rotateByAxisWithPivot(1 * angle, 0, 1, 0, 0, 0, 0);
         speech.getTransform().rotateByAxisWithPivot(2 * angle, 0, 1, 0, 0, 0, 0);
 
-    }
-
-    public void setItemsRelativePosition(float positionX, float positionY, float positionZ) {
-        for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object instanceof SceneItem || object instanceof CursorSceneItem) {
-                object.getTransform().setPosition(object.getTransform().getPositionX() + positionX, object.getTransform().getPositionY() + positionY,
-                        object.getTransform().getPositionZ() + positionZ);
-            }
-        }
     }
 
     private void applyShaderOnSkyBox(GVRSceneObject skyBox) {

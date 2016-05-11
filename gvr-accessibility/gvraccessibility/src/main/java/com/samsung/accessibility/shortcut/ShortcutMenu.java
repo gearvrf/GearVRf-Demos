@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 import com.samsung.accessibility.util.AccessibilityTexture;
@@ -39,68 +40,58 @@ public class ShortcutMenu extends GVRSceneObject {
     }
 
     public void createDefaultMenu() {
-        int offset = 0;
-        float angle = 45;
+        float angleInc = 45;
+        float angle = 0;
         int size = 8;
 
         for (int i = 0; i < size; i++) {
             ShortcutMenuItem shortcutItem = new ShortcutMenuItem(mGvrContext);
             shortcutItem.getTransform().setPosition(0, -1f, 0);
-            if (i % 2 == 1) {
-                shortcutItem.getTransform().rotateByAxis((int) (offset + 1 / 2) * angle, 0, 1, 0);
-            } else {
-                shortcutItem.getTransform().rotateByAxis((int) (offset + 1 / 2) * -angle, 0, 1, 0);
-                offset++;
-            }
-
+            shortcutItem.getTransform().rotateByAxis(angle, 0, 1, 0);
             addChildObject(shortcutItem);
             shortcutItem.setTypeItem(TypeItem.EMPTY);
             shortcutItem.createIcon(textures.getEmptyIcon(), TypeItem.EMPTY);
             shortcutItems.add(shortcutItem);
+            angle += angleInc;
         }
     }
-
-    public List<ShortcutMenuItem> getShortcutItems() {
-        return shortcutItems;
-    }
-
-    public void removeShortcut(int... position) {
-
-        for (int i = 0; i < position.length; i++) {
-            shortcutItems.get(position[i]).removeIcon();
-        }
-
-        sort(position[0]);
-    }
-
-    private void sort(int position) {
-        for (int i = position + 1; i < shortcutItems.size(); i++) {
-            if (shortcutItems.get(i).getTypeItem() != TypeItem.EMPTY && shortcutItems.get(i).getTypeItem() != shortcutItems.get(i - 2).getTypeItem()) {
-                for (int j = 0; j < i; j++) {
-                    if (shortcutItems.get(j).getTypeItem() == TypeItem.EMPTY) {
-                        shortcutItems.get(j).createIcon(shortcutItems.get(i).getIcon().getRenderData().getMaterial().getMainTexture(),
-                                shortcutItems.get(i).getTypeItem());
-                        shortcutItems.get(i).removeIcon();
-
-                        if (shortcutItems.get(j).getTypeItem() == shortcutItems.get(j - 1).getTypeItem()) {
-                            switchItems(j, j + 1);
-                        } else if (j < shortcutItems.size() - 2 && j > 1
-                                && shortcutItems.get(j + 2).getTypeItem() == shortcutItems.get(j - 2).getTypeItem()) {
-                            switchItems(j, j + 2);
-                        }
-                        break;
-                    }
-                }
+    
+    public void addShortcut(TypeItem type, GVRTexture iconTexture) {
+        for (int i = 0; i < shortcutItems.size(); i++) {
+            if (shortcutItems.get(i).getTypeItem() == TypeItem.EMPTY) {
+                shortcutItems.get(i).createIcon(iconTexture, type);
+                break;
             }
         }
     }
 
-    private void switchItems(int position1, int position2) {
-        sortAux.createIcon(shortcutItems.get(position1).getIcon().getRenderData().getMaterial().getMainTexture(),
-                shortcutItems.get(position1).getTypeItem());
-        shortcutItems.get(position1).createIcon(shortcutItems.get(position2).getIcon().getRenderData().getMaterial().getMainTexture(),
-                shortcutItems.get(position2).getTypeItem());
-        shortcutItems.get(position2).createIcon(sortAux.getIcon().getRenderData().getMaterial().getMainTexture(),
-                sortAux.getTypeItem());
+    public ShortcutMenuItem removeShortcut(TypeItem type) {
+        int i = -1;
+        int shuffle = -1;
+        ShortcutMenuItem removed = null;
+        
+        while (++i < shortcutItems.size()) {
+            ShortcutMenuItem shortcut = shortcutItems.get(i);
+            if (shortcut.getTypeItem() == type) {
+                shortcut.removeIcon();
+                if (shuffle < 0) {
+                    shuffle = i;
+                    removed = shortcut;
+                }
+            }
+            else if (shortcut.getTypeItem() == TypeItem.EMPTY)
+                break;
+            else if (shuffle >= 0) {
+                shortcutItems.get(shuffle).createIcon(shortcut.getIconTexture(), shortcut.getTypeItem());
+                shortcut.removeIcon();
+                ++shuffle;               
+            }
+        }
+        return removed;
     }
+    
+    public List<ShortcutMenuItem> getShortcutItems() {
+        return shortcutItems;
+    }
+
 }

@@ -67,10 +67,10 @@ public class MainScript extends GVRScript {
     }
 
     private ShortcutMenu createShortcut() {
-        ShortcutMenu shortcuteMenu = new ShortcutMenu(gvrContext);
-        ShortcutMenuItem shortcuteItem = shortcuteMenu.getShortcutItems().get(0);
-        shortcuteItem.createIcon(AccessibilityTexture.getInstance(gvrContext).getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
-        return shortcuteMenu;
+        ShortcutMenu shortcutMenu = new ShortcutMenu(gvrContext);
+        ShortcutMenuItem shortcuteItem = shortcutMenu.getShortcutItems().get(0);
+        shortcuteItem.createIcon(AccessibilityTexture.getInstance(gvrContext).getAccessibilityIcon(), TypeItem.ACCESSIBILITY);        
+        return shortcutMenu;
     }
 
     private void createPedestalObject() {
