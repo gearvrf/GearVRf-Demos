@@ -16,7 +16,6 @@
 package org.gearvrf.x3ddemo;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.animation.GVRAnimation;
 //import org.gearvrf.util.VRTouchPadGestureDetector;
 //import org.gearvrf.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
 //import org.gearvrf.util.VRTouchPadGestureDetector.SwipeDirection;
@@ -24,7 +23,7 @@ import org.gearvrf.x3ddemo.VRTouchPadGestureDetector.OnTouchPadGestureListener;
 import org.gearvrf.x3ddemo.VRTouchPadGestureDetector.SwipeDirection;
 
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.MotionEvent;
 
 public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureListener {
@@ -52,36 +51,19 @@ public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureL
     }
 
   public boolean onSingleTap(MotionEvent e) {
-    script.tappedObject = true;
-    if ( script.currentPickedObject != null) {
-      //String text = "Tapped " + script.currentPickedObject.getName();
-          //script.myTouchSensor(text, 4);
-
-            for (GVRAnimation animation : script.mAnimations) {
-                animation.start(script.mAnimationEngine);
-            }
-            //script.mAnimations = null;
-
-    }
-    else {
-      String text = "Last action: TAP over non-interactive";
-          script.myTouchSensor(text, 1);
-    }
-        //GazeController.enableInteractiveCursor();
+	script.SingleTap();
     return false;
   }
 
   public void onLongPress(MotionEvent e) {
     String text = "Long Press " + e.getAction();
-        script.myTouchSensor(text, 2);
-        Log.v("", "onLongPress");
+        script.PickedObjectActivity(text, 2);
   }
 
   @Override
   public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX, float velocityY) {
     String text = "Swipe; direction " + swipeDirection + ", " + e.getAction();
-        script.myTouchSensor(text, 3);
-        Log.v("", "onSwipe");
+        script.PickedObjectActivity(text, 3);
     return false;
   }
 }
