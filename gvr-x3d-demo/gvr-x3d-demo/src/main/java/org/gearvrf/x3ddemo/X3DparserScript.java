@@ -73,6 +73,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.x3d.*;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
 //import org.gearvrf.x3dparser.X3Dobject.UserHandler;
 import org.joml.Vector3f;
 
@@ -84,7 +86,7 @@ public class X3DparserScript extends GVRScript {
     private GVRContext mGVRContext = null;
 
     public GVRAnimationEngine mAnimationEngine;
-    public List<GVRAnimation> mAnimations = new ArrayList<GVRAnimation>();
+    public List<GVRKeyFrameAnimation> mAnimations = new ArrayList<GVRKeyFrameAnimation>();
 
     //private SensorManager sensorManager = new SensorManager();
     //private GVRBaseSensor gvrBaseSensor = null;
@@ -110,12 +112,17 @@ public class X3DparserScript extends GVRScript {
 
             @Override
             public void run() {
-              /*
-                for (GVRAnimation animation : mAnimations) {
-                    animation.start(mAnimationEngine);
+                for (GVRKeyFrameAnimation animation : mAnimations) {
+                  boolean sensorFound = false;
+	    		  for (Sensor x3dSensor: x3dObject.sensors) {
+	    			GVRKeyFrameAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
+	    			// if a sensor is pointing to this animation, then don't start this animation
+	    			//    until the sensor is invoked.
+	    			if (gvrKeyFrameAnimationPointedFromSensor == animation) sensorFound = true;
+                  }
+                  if (!sensorFound) animation.start(mAnimationEngine);
                 }
-                mAnimations = null;
-                */
+                //mAnimations = null;   
             }
         });
 
@@ -220,8 +227,8 @@ public class X3DparserScript extends GVRScript {
           //String filename = "animation07.x3d";
           //String filename = "animation08.x3d";
           //String filename = "animation09.x3d";
-  //        String filename = "multiviewpoints01.x3d";
-          String filename = "touchSensor.x3d";
+          String filename = "multiviewpoints01.x3d";
+  //        String filename = "touchSensor.x3d";
           //String filename = "animation_scale01.x3d";
           //String filename = "animation_center10.x3d";
           //String filename = "teapottorusdirlights.x3d";
@@ -264,8 +271,8 @@ public class X3DparserScript extends GVRScript {
         /*
          * This was test code to check if GVRKeyFrameAnimation worked for
          * the camera transformation.  One can modify the Transform attached
-         * to the camera and it does work, just not sure in KeyFrameAnimation
-         * though was working.
+         * to the camera and it does work, but doesn't look like GVRKeyFrameAnimation
+         * works with the camera.
          *
         //float zPosition = gvrSceneObjectCameraOwnerTransform.getPositionZ();
         //zPosition += .02;
@@ -277,50 +284,28 @@ public class X3DparserScript extends GVRScript {
         gvrAnimatedCameraTransform.setPositionX(xPosition);
         */
 
-        // test picking
-        //if (lastPickedObject != null) {
-        //  lastPickedObject.getTransform().setScale(1, 1, 1);
-        //  myTouchSensor("", 0);
-        //}
         currentPickedObject = null;
         for (GVRPickedObject pickedObject : GVRPicker.findObjects(mGVRContext
                 .getMainScene())) {
-
-          //Vector<Sensor> sensors = x3dObject.sensors;
-
-          //Sensor sensor = sensors.firstElement();
           GVRSceneObject hitObject = pickedObject.getHitObject();
-          //System.out.println("got picked element: " + hitObject.getName());
-          //hitObject.getTransform().setScale(1.5f, 1, 1);
-          //if ( lastPickedObject != hitObject) {
-          //  lastPickedObject.getTransform().setScale(1, 1, 1);
-          //}
-          currentPickedObject = hitObject;
-          /*
-            //for (GVRSceneObject object : mobject) {
-            for (GVRSceneObject object : x3dObject.sensors) {
-                if (pickedObject.getHitObject().equals(object)) {
-                  System.out.println("got picked object");
-                    break;
-                }
-            }*/
+           currentPickedObject = hitObject;
         }
         if ( currentPickedObject != null) {
           if (tappedObject) {
-          String text = "Last touched " + currentPickedObject.getName();
-            myTouchSensor(text, 4);
+        	  String text = "Last touched " + currentPickedObject.getName();
+        	  PickedObjectActivity(text, 4);
           }
           else {
-        String text = "Over " + currentPickedObject.getName();
-      //  GazeController.enableInteractiveCursor();
-            //tappedObject = true;
-            myTouchSensor(text, 0);
+        	  String text = "Over " + currentPickedObject.getName();
+        	  //  GazeController.enableInteractiveCursor();
+        	  //tappedObject = true;
+        	  PickedObjectActivity(text, 0);
           }
         }
         else {
-          //myTouchSensor("all quiet", 5);
-        //    GazeController.disableInteractiveCursor();
-          tappedObject = false;
+        	//myTouchSensor("all quiet", 5);
+        	//    GazeController.disableInteractiveCursor();
+        	tappedObject = false;
         }
 
     } // end onStep()
@@ -364,7 +349,7 @@ public class X3DparserScript extends GVRScript {
     }
 
     int textChangeMade = 0;
-    public void myTouchSensor(String text, int textChangeMade) {
+    public void PickedObjectActivity(String text, int textChangeMade) {
       GVRSceneObject gvrSceneObject = scene.getSceneObjectByName("textDisplay");
 
       int count = gvrSceneObject.getChildrenCount();
@@ -372,8 +357,7 @@ public class X3DparserScript extends GVRScript {
       for (int i = 0; i < count; i++) {
         textObject = (GVRTextViewSceneObject)gvrSceneObject.getChildByIndex(i);
       }
-      //textObject.setText("Click @ " + e.getAction() + ", X:" + e.getX() + ", Y:"+ e.getY());
-      //textObject.setText("Click: " + e.getAction() + ", tapper: " + tapper);
+
       if (text != "") {
         textObject.setText(text);
 
@@ -388,6 +372,72 @@ public class X3DparserScript extends GVRScript {
       }
     }
 
+    // called by X3DparserActivity when a single tap is detected
+    public void SingleTap() {
+        tappedObject = true;
+        if ( currentPickedObject != null) {
+            
+        	// check if we tapped on a sensor'd object to begin an animation or chg camera
+            boolean interactivityFound = false;
+    		for (Sensor x3dSensor: x3dObject.sensors) {
+    			// 1) check if this [Touch] sensor initiates an animation
+    			for (GVRKeyFrameAnimation animation : mAnimations) {
+        			GVRKeyFrameAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
+        			// if a sensor is pointing to this animation, then start this animation
+        			if (gvrKeyFrameAnimationPointedFromSensor == animation) {
+        				animation.start(mAnimationEngine);
+        				interactivityFound = true;
+        			}
+        		}
+    			if (!interactivityFound) {
+    				// 2) if clicked object wasn't part of a [Touch] sensor, check if it's a child of an Anchor
+    				GVRSceneObject parent = currentPickedObject.getParent();
+    				while (parent != null) {
+    					if ( parent == x3dSensor.sensorSceneObject ) {
+    						interactivityFound = true;
+    						String url = x3dSensor.getAnchorURL();
+    					    String text = "Anchor picked " + url + ", " + parent.getName();
+    				        PickedObjectActivity(text, 6);
+    				        if (url.charAt(0) == '#') {
+    				        	// go to a new viewpoint
+    				        	String viewpointURL = url.substring(1);  // get rid of the #
+    				        	for (Viewpoint viewpoint: x3dObject.viewpoints) {
+    				        		if (viewpoint.getName().equals(viewpointURL)) {
+    				        			// jump or animate to the new viewpoint
+    				        			GVRCameraRig gvrCameraRig = scene.getMainCameraRig();
+    				        			GVRTransform cameraTransform = gvrCameraRig.getTransform();
+    				        			float[] position = viewpoint.getPosition();
+    				        			float[] orientation = viewpoint.getOrientation();
+    				        			cameraTransform.setPosition(position[0], position[1], position[2]);
+    				  			        AxisAngle4f axisAngle4f = new AxisAngle4f(orientation[3], orientation[0], orientation[1], orientation[2]);
+    								    Quaternionf quaternionf = new Quaternionf(axisAngle4f);
+    							        cameraTransform.setRotation(quaternionf.w, quaternionf.x, quaternionf.y, quaternionf.z);
+
+    				        			break;
+    				        		}
+    				        	}
+    				        }
+    				        else if (url.endsWith(".x3d")) {
+    				        	// load another x3d file
+    				        }
+    				        else {
+    				        	//presumably, this is a web page, but can begin with 'http://' or 'www.' or really anything
+    				        }
+    						break;
+    					}
+    					else parent = parent.getParent();
+    				}
+    			}
+        	}  //  end for sensor loop
+        } // end if script.currentPickedObject != null
+        else {
+          String text = "Last action: TAP over non-interactive";
+          PickedObjectActivity(text, 1);
+        }
+            //GazeController.enableInteractiveCursor();
+    }  //  end onSingleTap
+    
+    
     public void captureScreen3D(String filename) {
         if (lastScreenshot3DFinished) {
             mGVRContext.captureScreen3D(newScreenshot3DCallback(filename));

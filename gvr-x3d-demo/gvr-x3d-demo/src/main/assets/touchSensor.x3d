@@ -50,7 +50,7 @@
     <ROUTE fromNode='TouchSensor01-SENSOR' fromField='touchTime' toNode='Box01-TIMER' toField='set_startTime'/>
 
 
-	<transform DEF="textDisplay" translation="1 -1.2 2" rotation="0 1 0 0">
+	<transform DEF="textDisplay" translation=".5 -1 2" rotation="0 1 0 0">
 	        <Shape>
 	          <Text DEF='TextMessage' string='"Animation" "BEGIN"'>
 	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
