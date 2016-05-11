@@ -26,5 +26,5 @@ android {
 dependencies {
     compile project(':framework')
     compile 'com.android.support:support-v4:+'
-    compile files('libs/commons-math3-3.6.1.jar')
+    compile files('src/main/libs/commons-math3-3.6.1.jar')
 }
