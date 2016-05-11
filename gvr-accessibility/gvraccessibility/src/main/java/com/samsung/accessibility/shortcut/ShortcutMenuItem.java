@@ -41,6 +41,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private static final int CLICKED_COLOR = 12631476;
     private boolean clicked;
     private GVRSceneObject icon;
+    private GVRTexture iconTexture;
     private TypeItem typeItem;
     private AccessibilityTexture textures;
     private GVRAccessibilitySpeech speech;
@@ -94,18 +95,21 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     public void createIcon(GVRTexture iconMenu, TypeItem typeItem) {
-
         if (icon != null)
             removeIcon();
-
+        iconTexture = iconMenu;
         icon = new GVRSceneObject(gvrContext, gvrContext.createQuad(.60f, .20f), iconMenu);
         icon.getTransform().setPosition(-0f, 0.02f, -0.7f);
         icon.getTransform().rotateByAxis(-90, 1, 0, 0);
         icon.getTransform().rotateByAxisWithPivot(245, 0, 1, 0, 0, 0, 0);
         icon.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
+        addChildObject(icon);
         getRenderData().getMaterial().setMainTexture(textures.getSpaceTexture());
         this.typeItem = typeItem;
-        addChildObject(icon);
+    }
+    
+    public GVRTexture getIconTexture() {
+        return iconTexture;
     }
 
     private void clickEvent() {
