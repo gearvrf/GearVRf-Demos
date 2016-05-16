@@ -16,9 +16,7 @@
 package org.gearvrf.cubemap;
 
 import org.gearvrf.GVRActivity;
-
 import android.os.Bundle;
-import android.view.MotionEvent;
 
 public class CubemapActivity extends GVRActivity {
 
@@ -27,15 +25,6 @@ public class CubemapActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            script.onTouch();
-            return true;
-        }
-        return super.onTouchEvent(event);
+        setScript(script, "gvr_note4.xml");
     }
 }
