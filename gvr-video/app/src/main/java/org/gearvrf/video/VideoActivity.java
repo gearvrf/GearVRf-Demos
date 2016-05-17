@@ -66,6 +66,15 @@ public class VideoActivity extends GVRActivity implements
     }
 
     @Override
+    protected void onDestroy() {
+        try {
+            unregisterReceiver(mBatteryReceiver);
+        } finally {
+            super.onDestroy();
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
             mLatestButton = System.currentTimeMillis();
