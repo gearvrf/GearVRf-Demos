@@ -124,7 +124,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
 
         Totem totem = new Totem(getGVRContext(),
                 getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(),
-                        R.drawable.totem_tex_diffuse)));
+                        R.raw.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(-1f, 0f, -3f);
         totem.setTotemEventListener(gallery);
