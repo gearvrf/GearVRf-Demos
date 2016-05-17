@@ -39,12 +39,9 @@ public class ScreenShader {
             + "#extension GL_OES_EGL_image_external : require\n"
             + "precision mediump float;\n"
             + "uniform samplerExternalOES u_screen;\n"
-            + "uniform int u_right_eye;\n"
             + "varying vec2 v_tex_coord;\n"
             + "void main() {\n"
-            + "  float offset = 0.0; if(u_right_eye==1) offset = 0.5;\n"
-            + "  vec2 coord = vec2( offset + 0.5*v_tex_coord.x, v_tex_coord.y );\n"
-            + "  gl_FragColor = texture2D(u_screen, coord);\n" //
+            + "  gl_FragColor = texture2D(u_screen, v_tex_coord);\n" //
             + "}\n";
 
     private GVRCustomMaterialShaderId mShaderId;
