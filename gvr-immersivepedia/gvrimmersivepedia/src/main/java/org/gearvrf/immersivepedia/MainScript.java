@@ -22,6 +22,7 @@ import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
+import org.gearvrf.immersivepedia.util.FPSCounter;
 
 import android.media.MediaPlayer;
 
@@ -60,7 +61,7 @@ public class MainScript extends GVRScript {
 
     @Override
     public SplashMode getSplashMode() {
-        return SplashMode.MANUAL;
+        return SplashMode.AUTOMATIC;
     }
 
     @Override
@@ -68,6 +69,7 @@ public class MainScript extends GVRScript {
 
         TouchPadInput.process();
         FocusableController.process(mGvrContext);
+        FPSCounter.tick();
 
         if (mGvrContext.getMainScene().equals(dinosaurScene)) {
             dinosaurScene.onStep();

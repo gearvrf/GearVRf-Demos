@@ -68,7 +68,7 @@ public class RotateDinosaurGroup extends GVRSceneObject implements OnGestureList
     private void createTotem() {
 
         totem = new Totem(this.gvrContext, this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.totem_tex_diffuse)));
+                R.raw.totem_tex_diffuse)));
         totem.setTotemEventListener(null);
         scene.addSceneObject(totem);
         totem.getTransform().setPosition(-.3f, 0f, -5.0f);

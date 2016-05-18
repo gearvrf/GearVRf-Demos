@@ -15,6 +15,8 @@
 
 package org.gearvrf.immersivepedia.model;
 
+import java.io.IOException;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
@@ -28,8 +30,6 @@ import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.videoComponent.VideoComponent;
-
-import java.io.IOException;
 
 public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventListener, OnGestureListener {
 
@@ -72,7 +72,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
     private void createTotem() {
         Totem totem = new Totem(this.gvrContext,
                 this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-                        R.drawable.totem_tex_diffuse)));
+                        R.raw.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);
         totem.setTotemEventListener(this);
