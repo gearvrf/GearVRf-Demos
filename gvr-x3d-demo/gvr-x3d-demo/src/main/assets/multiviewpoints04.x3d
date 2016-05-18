@@ -3,9 +3,9 @@
 
       <Viewpoint DEF='center' position='0 0 0' orientation='0 1 0 0' description='main camera'/>
       <Viewpoint DEF='cam2' position='-5 0 0' orientation='0 1 0 -.785' description='camera 2 TWO!'/>
-      <Viewpoint DEF='cam1' position='5 0 0' orientation='0 1 0 .785' jump="FALSE" description='camera 1 ONE!'/>
+      <Viewpoint DEF='cam1' position='5 0 0' orientation='0 1 0 .785' description='camera 1 ONE!'/>
 
-        <transform DEF="panel" translation="2 -2 -12" rotation="0 1 0 0">
+        <transform DEF="panel" translation="5 -4 -12" rotation="0 1 0 0">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -33,7 +33,7 @@
 
 
     <Anchor description='go to other camera' parameter='' url='#cam1'>
-        <transform DEF="myAnchorObject" translation="-3 -1 -12" rotation="0 0 1 0">
+        <transform DEF="myAnchorObj" translation="-1 -6 -12" rotation="0 0 1 0">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -72,7 +72,50 @@
         </transform>
     </Anchor>
 
-	<transform DEF="textDisplay" translation=".5 .25 -5" rotation="0 1 0 0">
+
+    <Anchor description='go to other camera' parameter='' url='#center'>
+        <transform DEF="way back" translation="-9 -2 -6" rotation="0 1 0 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="sun.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='3 3' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+    </Anchor>
+
+
+    <Anchor description='go to other camera' parameter='' url='#cam2'>
+        <transform DEF="new came 2" translation="-9 3 -6" rotation="0 1 0 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+    </Anchor>
+	<transform DEF="textDisplay" translation=".5 -5 -5" rotation="0 1 0 0">
 	        <Shape>
 	          <Text DEF='TextMessage' string='"Animation" "BEGIN"'>
 	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>

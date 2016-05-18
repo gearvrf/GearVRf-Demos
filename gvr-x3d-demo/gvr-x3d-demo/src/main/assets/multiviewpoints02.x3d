@@ -3,7 +3,7 @@
 
       <Viewpoint DEF='center' position='0 0 0' orientation='0 1 0 0' description='main camera'/>
       <Viewpoint DEF='cam2' position='-5 0 0' orientation='0 1 0 -.785' description='camera 2 TWO!'/>
-      <Viewpoint DEF='cam1' position='5 0 0' orientation='0 1 0 .785' jump="FALSE" description='camera 1 ONE!'/>
+      <Viewpoint DEF='cam1' position='5 0 0' orientation='0 1 0 .785' description='camera 1 ONE!'/>
 
         <transform DEF="panel" translation="2 -2 -12" rotation="0 1 0 0">
 	        <shape>
@@ -32,7 +32,7 @@
 
 
 
-    <Anchor description='go to other camera' parameter='' url='#cam1'>
+    <Anchor description='go to other camera' parameter='' url='http://www.samsung.com'>
         <transform DEF="myAnchorObject" translation="-3 -1 -12" rotation="0 0 1 0">
 	        <shape>
 				<Appearance>

@@ -16,6 +16,8 @@
 package org.gearvrf.x3ddemo;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.scene_objects.view.GVRView;
+import org.gearvrf.scene_objects.view.GVRWebView;
 //import org.gearvrf.util.VRTouchPadGestureDetector;
 //import org.gearvrf.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
 //import org.gearvrf.util.VRTouchPadGestureDetector.SwipeDirection;
@@ -29,13 +31,18 @@ import android.view.MotionEvent;
 public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureListener {
 
     private VRTouchPadGestureDetector mVRTouchPadDetector = null;
-    X3DparserScript script = new X3DparserScript();
+    X3DparserScript script = new X3DparserScript(this);
+    private GVRWebView mWebView;
+
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setScript(script, "gvr_note4.xml");
         mVRTouchPadDetector = new VRTouchPadGestureDetector(this);
+        
+    	mWebView = new GVRWebView( this );
+
     }
 
     @Override
@@ -51,6 +58,7 @@ public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureL
     }
 
   public boolean onSingleTap(MotionEvent e) {
+
 	script.SingleTap();
     return false;
   }
@@ -65,5 +73,9 @@ public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureL
     String text = "Swipe; direction " + swipeDirection + ", " + e.getAction();
         script.PickedObjectActivity(text, 3);
     return false;
+  }
+  
+  public GVRWebView getWebView() {
+      return mWebView;
   }
 }

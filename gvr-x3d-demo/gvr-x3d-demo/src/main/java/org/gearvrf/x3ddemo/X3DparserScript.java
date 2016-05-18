@@ -24,12 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+//import javax.xml.parsers.SAXParser;
+//import javax.xml.parsers.SAXParserFactory;
 
+import org.gearvrf.FutureWrapper;
+import org.gearvrf.GVRActivity;
 //import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBaseSensor;
+//import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventReceiver;
@@ -40,17 +42,19 @@ import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRPicker.GVRPickedObject;
-//import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
-import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
+//import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.keyframe.GVRAnimationBehavior;
 import org.gearvrf.animation.keyframe.GVRAnimationChannel;
 import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
+import org.gearvrf.x3d.ViewpointAnimation;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 //import org.gearvrf.util.GazeController;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
-//import org.gearvrf.eyepickingsample.ColorShader;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
+import org.gearvrf.scene_objects.view.GVRWebView;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshot3DCallback;
@@ -59,50 +63,57 @@ import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.IEventReceiver;
+//import org.gearvrf.IEventReceiver;
 //import org.gearvrf.NativeMesh;
 import org.gearvrf.utility.Threads;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
-//import android.opengl.X3Dobject;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout.LayoutParams;
 
 import org.gearvrf.x3d.*;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
-//import org.gearvrf.x3dparser.X3Dobject.UserHandler;
 import org.joml.Vector3f;
 
 //import org.gearvrf.SensorEvent;
 
 public class X3DparserScript extends GVRScript {
 
-  private static final String TAG = "X3D Parser Script";
+    private static final String TAG = "X3D Parser Script";
     private GVRContext mGVRContext = null;
 
     public GVRAnimationEngine mAnimationEngine;
     public List<GVRKeyFrameAnimation> mAnimations = new ArrayList<GVRKeyFrameAnimation>();
 
-    //private SensorManager sensorManager = new SensorManager();
-    //private GVRBaseSensor gvrBaseSensor = null;
-    //private GVRBaseSensor(GVRContext gvrContext) {
-
-    // test code
-  //GVRTransform gvrSceneObjectCameraOwnerTransform = null;
-  //GVRTransform gvrAnimatedCameraTransform = null;
-  // end test code
+    // test code for animating viewpoints
+    //GVRTransform gvrSceneObjectCameraOwnerTransform = null;
+    //GVRTransform gvrAnimatedCameraTransform = null;
+    // end test code
 
     X3Dobject x3dObject = null;
     GVRScene scene = null;
 
     public GVRSceneObject currentPickedObject = null;
     public boolean tappedObject = false;
+    private X3DparserActivity mActivity;
+    private AssetManager assetManager = null;
+    
+    
+    // Animation viewpoint run from Script onStep() function
+    private ViewpointAnimation viewpointAnimation = new ViewpointAnimation();
 
+
+    public X3DparserScript(X3DparserActivity activity) {
+        mActivity = activity;
+    }
 
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
@@ -122,7 +133,6 @@ public class X3DparserScript extends GVRScript {
                   }
                   if (!sensorFound) animation.start(mAnimationEngine);
                 }
-                //mAnimations = null;   
             }
         });
 
@@ -135,67 +145,73 @@ public class X3DparserScript extends GVRScript {
 
 
 
+        // head-tracking pointer
+        GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
+                new FutureWrapper<GVRMesh>(gvrContext.createQuad(0.1f, 0.1f)),
+                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                        mGVRContext, R.drawable.headtrackingpointer)));
+        headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
+        headTracker.getRenderData().setDepthTest(false);
+        headTracker.getRenderData().setRenderingOrder(100000);
+        scene.getMainCameraRig().addChildObject(headTracker);
+
+
         /*
          * This was test code to check if GVRKeyFrameAnimation worked for
          * the camera transformation.  At the moment it doesn't seem
          * supported but we will think about this and test further.
         GVRCameraRig gvrCameraRig = scene.getMainCameraRig();
         GVRSceneObject gvrSceneObjectCameraOwner = gvrCameraRig.getOwnerObject();
-      gvrSceneObjectCameraOwner.setName("dummyName");
-    //gvrSceneObjectCameraOwnerTransform = gvrSceneObjectCameraOwner.getTransform();
+		gvrSceneObjectCameraOwner.setName("dummyName");
+		//gvrSceneObjectCameraOwnerTransform = gvrSceneObjectCameraOwner.getTransform();
+		
+		
+		//  GVRSceneObject gvrAnimatedCameraSceneObject = new GVRSceneObject(mGVRContext);
+		//  gvrAnimatedCameraSceneObject.setName("animatedViewpointSceneObject test");
+		//gvrAnimatedCameraTransform = gvrAnimatedCameraSceneObject.getTransform();
+		//gvrAnimatedCameraTransform.setPosition(0, 0, -12);
+		
+		GVRKeyFrameAnimation gvrKeyFrameAnimation = new GVRKeyFrameAnimation("TestKeyFrameAnimation",
+		        gvrSceneObjectCameraOwner, 4.0f * 60.0f, 60.0f);
+		        //  gvrAnimatedCameraSceneObject, 4.0f * 60.0f, 60.0f);
+		GVRAnimationChannel gvrAnimationChannel = new GVRAnimationChannel(
+		        gvrSceneObjectCameraOwner.getName(), 3, 0, 0,
+		      //gvrAnimatedCameraSceneObject.getName(), 3, 0, 0,
+		      GVRAnimationBehavior.DEFAULT, GVRAnimationBehavior.DEFAULT);
+		Vector3f vector3fa = new Vector3f(-3, 0, 0);
+		gvrAnimationChannel.setPosKeyVector(0, 0, vector3fa);
+		Vector3f vector3fb = new Vector3f(3, 0, 0);
+		gvrAnimationChannel.setPosKeyVector(1, 120, vector3fb);
+		Vector3f vector3fc = new Vector3f(-3, 0, 0);
+    	gvrAnimationChannel.setPosKeyVector(2, 240, vector3fc);
 
-
-  //  GVRSceneObject gvrAnimatedCameraSceneObject = new GVRSceneObject(mGVRContext);
-  //  gvrAnimatedCameraSceneObject.setName("animatedViewpointSceneObject test");
-    //gvrAnimatedCameraTransform = gvrAnimatedCameraSceneObject.getTransform();
-    //gvrAnimatedCameraTransform.setPosition(0, 0, -12);
-
-    GVRKeyFrameAnimation gvrKeyFrameAnimation = new GVRKeyFrameAnimation("TestKeyFrameAnimation",
-        gvrSceneObjectCameraOwner, 4.0f * 60.0f, 60.0f);
-        //  gvrAnimatedCameraSceneObject, 4.0f * 60.0f, 60.0f);
-    GVRAnimationChannel gvrAnimationChannel = new GVRAnimationChannel(
-        gvrSceneObjectCameraOwner.getName(), 3, 0, 0,
-      //gvrAnimatedCameraSceneObject.getName(), 3, 0, 0,
-      GVRAnimationBehavior.DEFAULT, GVRAnimationBehavior.DEFAULT);
-    Vector3f vector3fa = new Vector3f(-3, 0, 0);
-    gvrAnimationChannel.setPosKeyVector(0, 0, vector3fa);
-    Vector3f vector3fb = new Vector3f(3, 0, 0);
-    gvrAnimationChannel.setPosKeyVector(1, 120, vector3fb);
-    Vector3f vector3fc = new Vector3f(-3, 0, 0);
-    gvrAnimationChannel.setPosKeyVector(2, 240, vector3fc);
-
-//                      gvrAnimationChannel.setPosKeyVector(j,
-//      routeToInterpolator.key[j] * routeTimeSensor.cycleInterval * framesPerSecond, vector3f);
+//      gvrAnimationChannel.setPosKeyVector(j,
+//      	routeToInterpolator.key[j] * routeTimeSensor.cycleInterval * framesPerSecond, vector3f);
 
 
         if ( gvrSceneObjectCameraOwner.getParent() == null) {
-          //System.out.println("gvrSceneObject.getParent() == null");
-        scene.removeSceneObject(gvrSceneObjectCameraOwner);
-        scene.addSceneObject(gvrAnimatedCameraSceneObject);
+        	//System.out.println("gvrSceneObject.getParent() == null");
+        	scene.removeSceneObject(gvrSceneObjectCameraOwner);
+        	scene.addSceneObject(gvrAnimatedCameraSceneObject);
         }
         else {
           System.out.println("gvrSceneObject.getParent() != null");
         }
-      gvrAnimatedCameraSceneObject.addChildObject(gvrSceneObjectCameraOwner);
-
-
-    gvrKeyFrameAnimation.addChannel(gvrAnimationChannel);
-    gvrKeyFrameAnimation.setRepeatMode(GVRRepeatMode.REPEATED);
-    gvrKeyFrameAnimation.setRepeatCount(-1);
-
-    gvrKeyFrameAnimation.prepare();
-    mAnimations.add(gvrKeyFrameAnimation);
+	    gvrAnimatedCameraSceneObject.addChildObject(gvrSceneObjectCameraOwner);
+	
+	
+	    gvrKeyFrameAnimation.addChannel(gvrAnimationChannel);
+	    gvrKeyFrameAnimation.setRepeatMode(GVRRepeatMode.REPEATED);
+	    gvrKeyFrameAnimation.setRepeatCount(-1);
+	
+	    gvrKeyFrameAnimation.prepare();
+	    mAnimations.add(gvrKeyFrameAnimation);
       */
         // end test code
 
 
         Context activityContext = gvrContext.getContext();
-        AssetManager assetManager = activityContext.getAssets();
-        //gvrBaseSensor = new GVRBaseSensor(gvrContext);
-       //public GVREventReceiver getEventReceiver()
-
-        //GazeController.setupGazeCursor(mGVRContext);
-      //  GazeController.enableGaze();
+        assetManager = activityContext.getAssets();
 
       x3dObject = new X3Dobject(gvrContext, scene, mAnimations);
         try {
@@ -227,32 +243,36 @@ public class X3DparserScript extends GVRScript {
           //String filename = "animation07.x3d";
           //String filename = "animation08.x3d";
           //String filename = "animation09.x3d";
-          String filename = "multiviewpoints01.x3d";
+          //String filename = "multiviewpoints01.x3d";
+          //String filename = "multiviewpoints02.x3d";
+          //String filename = "multiviewpoints03.x3d";
+          String filename = "multiviewpoints04.x3d";
   //        String filename = "touchSensor.x3d";
           //String filename = "animation_scale01.x3d";
           //String filename = "animation_center10.x3d";
           //String filename = "teapottorusdirlights.x3d";
           //String filename = "pointlightattenuationtest.x3d";
-            try {
-          ShaderSettings shaderSettings = new ShaderSettings();
-            if (!X3Dobject.UNIVERSAL_LIGHTS) {
-                  X3DparseLights x3dParseLights = new X3DparseLights(gvrContext, scene);
-            inputStream = assetManager.open(filename);
-            Log.d(TAG, "Parse: " + filename);
-            x3dParseLights.Parse(inputStream, shaderSettings);
-            inputStream.close();
-            }
-          inputStream = assetManager.open(filename);
-          x3dObject.Parse(inputStream, shaderSettings);
-          inputStream.close();
-          assetManager.close();
+          try {
+	         ShaderSettings shaderSettings = new ShaderSettings();
+	         if (!X3Dobject.UNIVERSAL_LIGHTS) {
+	            X3DparseLights x3dParseLights = new X3DparseLights(gvrContext, scene);
+	            inputStream = assetManager.open(filename);
+	            Log.d(TAG, "Parse: " + filename);
+	            x3dParseLights.Parse(inputStream, shaderSettings);
+	            inputStream.close();
+	          }
+	          inputStream = assetManager.open(filename);
+	          x3dObject.Parse(inputStream, shaderSettings);
+	          inputStream.close();
+	          // since the Anchor node may direct us to display another X3D file,
+	          // we are not closing the assetManger.
+	          //assetManager.close();
             }
             catch (FileNotFoundException e) {
-          Log.d(TAG, "ERROR: FileNotFoundException: " + filename);
-          //Log.d(TAG, "ERROR: " + e);
+            	Log.d(TAG, "ERROR: FileNotFoundException: " + filename);
             }
             catch (IOException e) {
-          Log.d(TAG, "Error IOException = " + e);
+            	Log.d(TAG, "Error IOException = " + e);
             }
          } catch (Exception e) {
             e.printStackTrace();
@@ -270,8 +290,8 @@ public class X3DparserScript extends GVRScript {
 
         /*
          * This was test code to check if GVRKeyFrameAnimation worked for
-         * the camera transformation.  One can modify the Transform attached
-         * to the camera and it does work, but doesn't look like GVRKeyFrameAnimation
+         * the camera transformation.  One can set GVRTransform values attached
+         * to the camera, but doesn't look like GVRKeyFrameAnimation
          * works with the camera.
          *
         //float zPosition = gvrSceneObjectCameraOwnerTransform.getPositionZ();
@@ -283,13 +303,13 @@ public class X3DparserScript extends GVRScript {
         if (xPosition > 3.0f) xPosition = -3.0f;
         gvrAnimatedCameraTransform.setPositionX(xPosition);
         */
+        // end test code to animate the camera
 
         currentPickedObject = null;
-        for (GVRPickedObject pickedObject : GVRPicker.findObjects(mGVRContext
-                .getMainScene())) {
-          GVRSceneObject hitObject = pickedObject.getHitObject();
-           currentPickedObject = hitObject;
-        }
+    	List<GVRPickedObject> gvrPickedObjectList = GVRPicker.findObjects(mGVRContext.getMainScene());
+    	// GRPicker orders the list closest to further, so just grab the first pickable object
+        if ( !gvrPickedObjectList.isEmpty() ) currentPickedObject = gvrPickedObjectList.get(0).getHitObject();
+    
         if ( currentPickedObject != null) {
           if (tappedObject) {
         	  String text = "Last touched " + currentPickedObject.getName();
@@ -307,7 +327,14 @@ public class X3DparserScript extends GVRScript {
         	//    GazeController.disableInteractiveCursor();
         	tappedObject = false;
         }
-
+        if ( viewpointAnimation.getActiveAnimation()) {
+			GVRCameraRig gvrCameraRig = scene.getMainCameraRig();
+			GVRTransform cameraTransform = gvrCameraRig.getTransform();
+			viewpointAnimation.updateAnimation();
+			cameraTransform.setPosition(viewpointAnimation.currentPos[0], viewpointAnimation.currentPos[1], viewpointAnimation.currentPos[2]);
+	        cameraTransform.setRotation(viewpointAnimation.currentQuaternion.w, 
+	        	viewpointAnimation.currentQuaternion.x, viewpointAnimation.currentQuaternion.y, viewpointAnimation.currentQuaternion.z );
+        }
     } // end onStep()
 
 
@@ -403,25 +430,99 @@ public class X3DparserScript extends GVRScript {
     				        	String viewpointURL = url.substring(1);  // get rid of the #
     				        	for (Viewpoint viewpoint: x3dObject.viewpoints) {
     				        		if (viewpoint.getName().equals(viewpointURL)) {
-    				        			// jump or animate to the new viewpoint
-    				        			GVRCameraRig gvrCameraRig = scene.getMainCameraRig();
-    				        			GVRTransform cameraTransform = gvrCameraRig.getTransform();
-    				        			float[] position = viewpoint.getPosition();
-    				        			float[] orientation = viewpoint.getOrientation();
-    				        			cameraTransform.setPosition(position[0], position[1], position[2]);
-    				  			        AxisAngle4f axisAngle4f = new AxisAngle4f(orientation[3], orientation[0], orientation[1], orientation[2]);
-    								    Quaternionf quaternionf = new Quaternionf(axisAngle4f);
-    							        cameraTransform.setRotation(quaternionf.w, quaternionf.x, quaternionf.y, quaternionf.z);
+    				        			// only go to a new viewpoint if Jump is true
+    				        			if (viewpoint.getJump()) {
+	    				        			// if jump = true, animate to the new viewpoint
+    				        				//   Note, the type of navigatio (teleport, linear)
+    				        				//   is controlled by NavigationInfo
+	    				        			GVRCameraRig gvrCameraRig = scene.getMainCameraRig();
+	    				        			GVRTransform cameraTransform = gvrCameraRig.getTransform();
+	    				        			// we either animate [jump=false] to the new camera location
+	    				        			// or jump, in which case just set the new position and orientation.
+	    				        			float[] endPosition = viewpoint.getPosition();
+	    				        			float[] endOrientation = viewpoint.getOrientation();
+	    				  			        AxisAngle4f axisAngle4f = new AxisAngle4f(endOrientation[3], endOrientation[0], endOrientation[1], endOrientation[2]);
+	    								    Quaternionf endQuat = new Quaternionf(axisAngle4f).normalize();
+	    								    /*
+	    								     // NavigationInfo currently not implemented, 
+	    								     //    but if translationType set to TELEPORT, then use these lines of code
+	    								     if ( NavigationInfo.getTransitionType == NavigationInfo.TELEPORT ) {
+	    				        				cameraTransform.setPosition(endPosition[0], endPosition[1], endPosition[2]);
+	    							        	cameraTransform.setRotation(endQuat.w, endQuat.x, endQuat.y, endQuat.z);
+	    							         }
+	    							         else 
+	    								     */
+	    								    {
+	    								    	// NavigationInfo transitionType either "LINEAR" or "ANIMATE"
+	        				        			float[] bgnPosition = {cameraTransform.getPositionX(), cameraTransform.getPositionY(), cameraTransform.getPositionZ() };
+	        				        			float[] bgnOrientation = {cameraTransform.getRotationX(), cameraTransform.getRotationY(), cameraTransform.getRotationZ(), cameraTransform.getRotationW()};
+	        				  			        axisAngle4f = new AxisAngle4f(bgnOrientation[3], bgnOrientation[0], bgnOrientation[1], bgnOrientation[2]);
+	        								    Quaternionf bgnQuat = new Quaternionf(axisAngle4f).normalize();
+	        								    
+	        								    // use the log of the distance for amount of time to navigate
+	        								    float distance = 0;
+	        								    for (int i = 0; i < 3; i++) {
+	        								    	distance += (float) Math.pow((bgnPosition[i]-endPosition[i]), 2);
+	        								    }
+	        								    // take the log 10 so long distance animations are still fast.
+	        								    distance = (float) Math.log10(distance);
+	        								    if (distance < 2) distance = 2; // animations must take at least 1 second
+	        								    viewpointAnimation.setupAnimation(distance, bgnPosition, endPosition, bgnQuat, endQuat);
+	        								    viewpointAnimation.startAnimation();
+    				        				}
+    				        				
+        								    // next two lines here for development purposes
+	    				        			cameraTransform.setPosition(endPosition[0], endPosition[1], endPosition[2]);
+	    							        cameraTransform.setRotation(endQuat.w, endQuat.x, endQuat.y, endQuat.z);
+	    				        		}   				        			
 
     				        			break;
     				        		}
     				        	}
     				        }
     				        else if (url.endsWith(".x3d")) {
-    				        	// load another x3d file
+    				        	// load another x3d file based on the 'url' parameter
+    				        	scene.removeAllSceneObjects();
+    				        	System.out.println("Anchor for loading another X3D file not fully implemented");
+    			        		 GVRAndroidResource gvrAndroidResource = null;
+    			        	     Context activityContext = mGVRContext.getContext();
+    			        	     //assetManager = activityContext.getAssets();
+
+    			        		 try {
+    			        	        ShaderSettings shaderSettings = new ShaderSettings();
+    			        			 
+    						        gvrAndroidResource = new GVRAndroidResource(mGVRContext, url);
+    						        InputStream inputStream = null;
+    						        	
+    						        if (!X3Dobject.UNIVERSAL_LIGHTS) {
+	            						X3DparseLights x3dParseLights = new X3DparseLights(mGVRContext, scene);
+	            						inputStream = assetManager.open(url);
+	            						Log.d(TAG, "Parse: " + url);
+	            						x3dParseLights.Parse(inputStream, shaderSettings);
+	            						inputStream.close();
+	          						}
+	          						inputStream = assetManager.open(url);
+	          						x3dObject.Parse(inputStream, shaderSettings);
+	          						inputStream.close();
+    			        		  }
+    			        		  catch (FileNotFoundException e) {
+    					        		System.out.println("Error Loading new X3D file. File Not Found Exception: " + e);
+    			        		  }
+    			        		  catch (IOException ioException) {
+    					        		System.out.println("Error Loading new X3D file. IOException url " + url);
+    					        		System.out.println(ioException);
+    			        		  }
+    			        		  catch (Exception exception) {
+    					        		System.out.println("Error Loading new X3D file. Exception: " + exception);
+    			        		  }
     				        }
     				        else {
-    				        	//presumably, this is a web page, but can begin with 'http://' or 'www.' or really anything
+    				        	//A web page beginning with 'http://' or 'www.', etc.   
+    				        	// X3D only specifies to open a web page, not inject a new
+    				        	// scene object textured with a web page.  This issue will
+    				        	// need to be re-visited.
+    				        	GVRWebView gvrWebView = mActivity.getWebView();
+    				        	gvrWebView.loadUrl(url);
     				        }
     						break;
     					}
