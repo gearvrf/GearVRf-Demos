@@ -71,21 +71,18 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 
 	private void createTotem() {
 
-		totem = new Totem(this.gvrContext,
-				this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-						R.drawable.totem_tex_diffuse)));
-		totem.setTotemEventListener(null);
-		scene.addSceneObject(totem);
-		totem.getTransform().setPosition(-.3f, 0f, -5.0f);
-		totem.getTransform().rotateByAxis(180.0f, 0f, 1f, 0f);
-		totem.getTransform().setScale(1f, 1f, 1f);
-		totem.setText(gvrContext.getActivity().getResources()
-				.getString(R.string.rotate_totem));
-		totem.getTransform().rotateByAxisWithPivot(
-				DinosaurFactory.STYRACOSAURUS_ANGLE_AROUND_CAMERA - 35.0f, 0f,
-				1f, 0f, 0f, 0f, 0f);
-		totem.setIcon(R.drawable.play);
-	}
+        totem = new Totem(this.gvrContext, this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.totem_tex_diffuse)));
+        totem.setTotemEventListener(null);
+        scene.addSceneObject(totem);
+        totem.getTransform().setPosition(-.3f, 0f, -5.0f);
+        totem.getTransform().rotateByAxis(180.0f, 0f, 1f, 0f);
+        totem.getTransform().setScale(1f, 1f, 1f);
+        totem.setText(gvrContext.getActivity().getResources().getString(R.string.rotate_totem));
+        totem.getTransform().rotateByAxisWithPivot(
+                DinosaurFactory.STYRACOSAURUS_ANGLE_AROUND_CAMERA - 35.0f, 0f, 1f, 0f, 0f, 0f, 0f);
+        totem.setIcon(R.drawable.play);
+    }
 
 	private void createDinoAnimation() {
 		final PlayPauseButton playPause = totem.getIcon();

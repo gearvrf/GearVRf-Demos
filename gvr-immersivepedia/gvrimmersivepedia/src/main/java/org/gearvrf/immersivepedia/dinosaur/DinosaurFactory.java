@@ -117,7 +117,7 @@ public class DinosaurFactory {
 
     private FocusableSceneObject createDinosaurBase(int baseMeshId) {
         GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.raw.base_tex_diffuse));
+        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
         FocusableSceneObject dinosaurBase = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         return dinosaurBase;
     }

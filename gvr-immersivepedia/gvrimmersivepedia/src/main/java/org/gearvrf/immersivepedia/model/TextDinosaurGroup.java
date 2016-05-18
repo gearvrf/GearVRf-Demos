@@ -77,7 +77,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     private void createTotem() {
         Totem totem = new Totem(this.gvrContext,
                 this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
-                        R.raw.totem_tex_diffuse)));
+                        R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);
         totem.setTotemEventListener(this);
