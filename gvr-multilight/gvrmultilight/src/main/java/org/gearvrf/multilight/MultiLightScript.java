@@ -128,11 +128,8 @@ public class MultiLightScript extends GVRScript {
         light.setAmbientIntensity(0.3f * r, 0.3f * g, 0.3f * b, 1);
         light.setDiffuseIntensity(r, g, b, 1);
         light.setSpecularIntensity(r, g, b, 1);
-        q.rotationY((float) Math.PI);
-        light.setDefaultOrientation(q);
         light.setInnerConeAngle(8);
         light.setOuterConeAngle(12);
-        lightNode.setName("RedLight");
         return lightNode;
     }
     
