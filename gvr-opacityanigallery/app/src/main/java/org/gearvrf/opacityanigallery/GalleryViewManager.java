@@ -76,12 +76,12 @@ public class GalleryViewManager extends GVRScript {
 
         GVRSceneObject leftScreen = new GVRSceneObject(mGVRContext, sphereMesh,
                 mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
-                        R.drawable.left_screen_png)));
+                        R.drawable.left_screen)));
         leftScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         leftScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
         GVRSceneObject rightScreen = new GVRSceneObject(mGVRContext,
                 sphereMesh, mGVRContext.loadTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.right_screen_png)));
+                        mGVRContext, R.drawable.right_screen)));
         rightScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         rightScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
@@ -89,11 +89,11 @@ public class GalleryViewManager extends GVRScript {
         mainScene.addSceneObject(rightScreen);
 
         List<GVRTexture> numberTextures = new ArrayList<GVRTexture>();
-        int[] resourceIds = new int[] { R.drawable.photo_1_jpg,
-                R.drawable.photo_2_jpg, R.drawable.photo_3_jpg,
-                R.drawable.photo_4_jpg, R.drawable.photo_5_jpg,
-                R.drawable.photo_6_jpg, R.drawable.photo_7_jpg,
-                R.drawable.photo_8_jpg, R.drawable.photo_9_jpg };
+        int[] resourceIds = new int[] { R.drawable.photo_1,
+                R.drawable.photo_2, R.drawable.photo_3,
+                R.drawable.photo_4, R.drawable.photo_5,
+                R.drawable.photo_6, R.drawable.photo_7,
+                R.drawable.photo_8, R.drawable.photo_9 };
         for (int id : resourceIds) {
             numberTextures.add(mGVRContext.loadTexture(new GVRAndroidResource(
                     mGVRContext, id)));
@@ -102,7 +102,6 @@ public class GalleryViewManager extends GVRScript {
         for (int i = 0, size = numberTextures.size(); i < size; ++i) {
             GVRSceneObject number = new GVRSceneObject(mGVRContext, 2.0f, 1.0f,
                     numberTextures.get(i));
-            number.getRenderData().getMaterial().setOpacity(0.0f);
             number.getTransform().setPosition(0.0f, 0.0f, -5.0f);
             float degree = 360.0f * i / (size + 1);
             number.getTransform().rotateByAxisWithPivot(degree, 0.0f, 1.0f,
@@ -111,8 +110,7 @@ public class GalleryViewManager extends GVRScript {
         }
 
         MediaPlayer mediaPlayer = MediaPlayer.create(mGVRContext.getContext(),
-                R.drawable.tron);
-        // mediaPlayer.start();
+                R.raw.tron);
         GVRVideoSceneObject video = new GVRVideoSceneObject(mGVRContext, 2.0f,
                 1.0f, mediaPlayer, GVRVideoType.MONO);
         video.setName("video");
@@ -203,7 +201,7 @@ public class GalleryViewManager extends GVRScript {
         if (mBoards.get(mSelected) instanceof GVRVideoSceneObject) {
             GVRVideoSceneObject video = (GVRVideoSceneObject) mBoards
                     .get(mSelected);
-            video.getMediaPlayer().stop();
+            video.getMediaPlayer().pause();
         }
 
         if (--mSelected < 0) {
@@ -238,7 +236,7 @@ public class GalleryViewManager extends GVRScript {
         if (mBoards.get(mSelected) instanceof GVRVideoSceneObject) {
             GVRVideoSceneObject video = (GVRVideoSceneObject) mBoards
                     .get(mSelected);
-            video.getMediaPlayer().stop();
+            video.getMediaPlayer().pause();
         }
 
         if (++mSelected >= mBoards.size()) {
