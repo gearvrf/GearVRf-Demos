@@ -139,9 +139,9 @@ public class X3DparserScript extends GVRScript {
         mAnimationEngine = gvrContext.getAnimationEngine();
 
         scene.getMainCameraRig().getLeftCamera()
-        .setBackgroundColor(Color.BLACK);
+        .setBackgroundColor(Color.GRAY);
         scene.getMainCameraRig().getRightCamera()
-        .setBackgroundColor(Color.BLACK);
+        .setBackgroundColor(Color.GRAY);
 
 
 
@@ -229,6 +229,7 @@ public class X3DparserScript extends GVRScript {
           //String filename = "viewpointAnimation01.x3d";
           //String filename = "lighttest1.x3d";
           //String filename = "pointlighttest.x3d";
+          String filename = "conered.x3d";
           //String filename = "pointlightsimple.x3d";
           //String filename = "spotlighttest1.x3d";
           //String filename = "spotlighttest2.x3d";
@@ -246,8 +247,8 @@ public class X3DparserScript extends GVRScript {
           //String filename = "multiviewpoints01.x3d";
           //String filename = "multiviewpoints02.x3d";
           //String filename = "multiviewpoints03.x3d";
-          String filename = "multiviewpoints04.x3d";
-  //        String filename = "touchSensor.x3d";
+          //String filename = "multiviewpoints04.x3d";
+          //String filename = "touchSensor.x3d";
           //String filename = "animation_scale01.x3d";
           //String filename = "animation_center10.x3d";
           //String filename = "teapottorusdirlights.x3d";
