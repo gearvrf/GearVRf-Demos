@@ -229,7 +229,9 @@ public class X3DparserScript extends GVRScript {
           //String filename = "viewpointAnimation01.x3d";
           //String filename = "lighttest1.x3d";
           //String filename = "pointlighttest.x3d";
-          String filename = "conered.x3d";
+          //String filename = "conered.x3d";
+          //String filename = "cylinders.x3d";
+          String filename = "boxesspheres.x3d";
           //String filename = "pointlightsimple.x3d";
           //String filename = "spotlighttest1.x3d";
           //String filename = "spotlighttest2.x3d";
