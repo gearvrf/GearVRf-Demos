@@ -41,9 +41,12 @@ import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 
+import java.util.List;
+
 public class EventsScript extends GVRScript {
     private static final String TAG = EventsScript.class.getSimpleName();
     private static final int KEY_EVENT = 1;
+    private static final int MOTION_EVENT = 2;
 
     private GVRViewSceneObject layoutSceneObject;
     private GVRContext context;
@@ -85,10 +88,13 @@ public class EventsScript extends GVRScript {
             @Override
             public void handleMessage(Message msg) {
                 // dispatch motion event
-                MotionEvent motionEvent = (MotionEvent) msg.obj;
-                frameLayout.dispatchTouchEvent(motionEvent);
-                frameLayout.invalidate();
-                motionEvent.recycle();
+
+                if (msg.what == MOTION_EVENT) {
+                    MotionEvent motionEvent = (MotionEvent) msg.obj;
+                    frameLayout.dispatchTouchEvent(motionEvent);
+                    frameLayout.invalidate();
+                    motionEvent.recycle();
+                }
 
                 if (msg.what == KEY_EVENT) {
                     int keyCode = msg.arg1;
@@ -131,15 +137,28 @@ public class EventsScript extends GVRScript {
 
         @Override
         public void onSensorEvent(SensorEvent event) {
+            List<MotionEvent> motionEvents = event.getCursorController().getMotionEvents();
 
-            final MotionEvent motionEvent = event.getCursorController()
-                    .getMotionEvent();
-            if (motionEvent != null
-                    && motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                pointerCoords.x = savedHitPointX
-                        + ((motionEvent.getX() - savedMotionEventX) * SCALE);
-                pointerCoords.y = savedHitPointY
-                        + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+            for (MotionEvent motionEvent : motionEvents) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    pointerCoords.x = savedHitPointX
+                            + ((motionEvent.getX() - savedMotionEventX) * SCALE);
+                    pointerCoords.y = savedHitPointY
+                            + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+                } else {
+                    float[] hitPoint = event.getHitPoint();
+                    pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
+                    pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
+
+                    if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                        // save the co ordinates on down
+                        savedMotionEventX = motionEvent.getX();
+                        savedMotionEventY = motionEvent.getY();
+
+                        savedHitPointX = pointerCoords.x;
+                        savedHitPointY = pointerCoords.y;
+                    }
+                }
 
                 final MotionEvent clone = MotionEvent.obtain(
                         motionEvent.getDownTime(), motionEvent.getEventTime(),
@@ -147,44 +166,17 @@ public class EventsScript extends GVRScript {
                         pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
                         InputDevice.SOURCE_TOUCHSCREEN, 0);
 
-                Message message = Message.obtain(mainThreadHandler, 0, 0, 0,
+                Message message = Message.obtain(mainThreadHandler, MOTION_EVENT, 0, 0,
                         clone);
                 mainThreadHandler.sendMessage(message);
-            } else {
-                KeyEvent keyEvent = event.getCursorController().getKeyEvent();
+            }
 
-                if (keyEvent == null) {
-                    return;
-                }
-
-                float[] hitPoint = event.getHitPoint();
-                pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
-                pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
-
-                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    if (motionEvent != null) {
-                        // save the co ordinates on down
-                        savedMotionEventX = motionEvent.getX();
-                        savedMotionEventY = motionEvent.getY();
-                    }
-                    savedHitPointX = pointerCoords.x;
-                    savedHitPointY = pointerCoords.y;
-                }
-
-                MotionEvent clone = getMotionEvent(keyEvent.getDownTime(),
-                        keyEvent.getAction());
-
+            List<KeyEvent> keyEvents = event.getCursorController().getKeyEvents();
+            for (KeyEvent keyEvent : keyEvents) {
                 Message message = Message.obtain(mainThreadHandler, KEY_EVENT,
-                        keyEvent.getKeyCode(), 0, clone);
+                        keyEvent.getKeyCode(), 0, null);
                 mainThreadHandler.sendMessage(message);
             }
-        }
-
-        private MotionEvent getMotionEvent(long time, int action) {
-            MotionEvent event = MotionEvent.obtain(time, time, action, 1,
-                    pointerProperties, pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
-                    InputDevice.SOURCE_TOUCHSCREEN, 0);
-            return event;
         }
     };
 
