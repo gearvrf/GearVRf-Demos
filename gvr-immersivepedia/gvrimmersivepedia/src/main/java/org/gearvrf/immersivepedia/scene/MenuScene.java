@@ -26,7 +26,6 @@ import org.gearvrf.GVRTextureParameters.TextureWrapType;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
-import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.MainScript;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.OnClickListener;

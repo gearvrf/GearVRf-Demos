@@ -15,13 +15,7 @@
 
 package org.gearvrf.immersivepedia.model;
 
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.view.Gravity;
-import android.content.res.Resources;
+import java.io.IOException;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -40,7 +34,12 @@ import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
 
-import java.io.IOException;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.view.Gravity;
 
 public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListener, OnGestureListener {
 
@@ -151,7 +150,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     }
 
     private void createDinosaurTitle() {
-    	Resources resources = gvrContext.getActivity().getResources();
+        Resources resources = gvrContext.getActivity().getResources();
         String stringTitle = getGVRContext().getContext().getString(R.string.ankylosaurus_title);
         Bitmap titleBitmap = BitmapFactory.decodeResource(resources, R.drawable.title_background);
         BitmapDrawable background = new BitmapDrawable(resources, titleBitmap);
