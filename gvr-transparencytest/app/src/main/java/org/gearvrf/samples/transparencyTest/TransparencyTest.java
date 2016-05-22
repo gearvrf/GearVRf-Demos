@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
 /* 
  * This test will demonstrate transparency sorting.

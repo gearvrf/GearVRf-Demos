@@ -18,12 +18,12 @@ package org.gearvrf.gvrcockpit;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 
-public class CockpitViewManager extends GVRScript {
+public class CockpitViewManager extends GVRMain {
 
     private GVRContext mGVRContext = null;
     private GVRSceneObject mShipSceneObject = null;

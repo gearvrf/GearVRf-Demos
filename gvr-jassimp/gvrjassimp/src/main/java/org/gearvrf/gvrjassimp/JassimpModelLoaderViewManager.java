@@ -23,7 +23,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -32,7 +32,7 @@ import org.gearvrf.utility.Log;
 
 import android.graphics.Color;
 
-public class JassimpModelLoaderViewManager extends GVRScript {
+public class JassimpModelLoaderViewManager extends GVRMain {
 
     @SuppressWarnings("unused")
     private static final String TAG = Log

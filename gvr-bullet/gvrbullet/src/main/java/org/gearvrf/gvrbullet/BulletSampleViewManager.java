@@ -11,7 +11,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.siprop.bullet.Bullet;
 import org.siprop.bullet.Geometry;
 import org.siprop.bullet.MotionState;
@@ -26,7 +26,7 @@ import org.siprop.bullet.util.Vector3;
 
 import android.graphics.Color;
 
-public class BulletSampleViewManager extends GVRScript {
+public class BulletSampleViewManager extends GVRMain {
 
     private GVRContext mGVRContext = null;
 

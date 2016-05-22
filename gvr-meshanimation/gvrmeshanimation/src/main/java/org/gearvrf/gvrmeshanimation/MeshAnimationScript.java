@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -13,7 +13,7 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 
 import android.util.Log;
 
-public class MeshAnimationScript extends GVRScript {
+public class MeshAnimationScript extends GVRMain {
 
     private GVRContext mGVRContext;
     private GVRModelSceneObject mCharacter;

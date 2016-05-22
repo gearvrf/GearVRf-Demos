@@ -32,7 +32,7 @@ import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.ISensorEvents;
 import org.gearvrf.SensorEvent;
 import org.gearvrf.io.CursorControllerListener;
@@ -43,7 +43,7 @@ import org.gearvrf.scene_objects.view.GVRFrameLayout;
 
 import java.util.List;
 
-public class EventsScript extends GVRScript {
+public class EventsScript extends GVRMain {
     private static final String TAG = EventsScript.class.getSimpleName();
     private static final int KEY_EVENT = 1;
     private static final int MOTION_EVENT = 2;
