@@ -30,7 +30,7 @@ import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.GVRPicker.GVRPickedObject;
@@ -39,7 +39,7 @@ import org.gearvrf.pickandmove.R;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class PickandmoveScript extends GVRScript {
+public class PickandmoveScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 200.0f;
     private static final float OBJECT_POSITION = 5.0f;

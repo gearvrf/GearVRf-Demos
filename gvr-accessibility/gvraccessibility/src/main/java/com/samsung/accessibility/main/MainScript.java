@@ -18,7 +18,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 
@@ -36,7 +36,7 @@ import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 import com.samsung.accessibility.util.AccessibilityManager;
 import com.samsung.accessibility.util.AccessibilityTexture;
 
-public class MainScript extends GVRScript {
+public class MainScript extends GVRMain {
 
     private GVRContext gvrContext;
 

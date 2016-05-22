@@ -1,7 +1,7 @@
 package org.gearvrf.gvrcamera2renderscript;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRExternalTexture;
 import org.gearvrf.GVRScene;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import android.view.Surface;
 
-public class Camera2RenderscriptManager extends GVRScript
+public class Camera2RenderscriptManager extends GVRMain
 {
 	private GVRActivity mActivity;
 	private RenderScript mRS;

@@ -22,7 +22,7 @@ import org.gearvrf.*;
 import org.gearvrf.GVRPicker.GVRPickedObject;
 import org.gearvrf.utility.Log;
 
-public class SampleViewManager extends GVRScript {
+public class SampleViewManager extends GVRMain {
 
     private static final String TAG = "SampleViewManager";
 

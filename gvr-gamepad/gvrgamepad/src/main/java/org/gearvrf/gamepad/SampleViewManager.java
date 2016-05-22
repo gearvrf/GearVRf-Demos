@@ -22,7 +22,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTransform;
 
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-public class SampleViewManager extends GVRScript {
+public class SampleViewManager extends GVRMain {
 
     GVRScene mScene;
     private int colorIndex = 0;

@@ -22,11 +22,11 @@ import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
 import android.util.Log;
 
-public class TestScreenshot3DResultScript extends GVRScript {
+public class TestScreenshot3DResultScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private GVRContext mGVRContext = null;
