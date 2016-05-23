@@ -1,7 +1,6 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
-		<PointLight location="0.0 -3.0 -2.0" color="1.0 0.0 0.0"/>
-		<Transform translation="0 0 -7" rotation="-0 1 0 -0">
+		<Transform translation="-3 3 -10" rotation="-0 1 0 -0">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -14,13 +13,12 @@
 				</IndexedFaceSet>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="sun.jpg"/>
-					<TextureTransform center='-.5 -.5' rotation='0' scale='2 2' translation='0 0'/>
+					<ImageTexture url="texture_rotation_testpattern.jpg"/>
+					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 			</Shape>
 		</Transform>
-		<PointLight radius = "7" on="FALSE"/>
-		<Transform translation="-3 3.5 -6" rotation="-0 1 0 .3">
+		<Transform translation="-3 -7 -10" rotation="-0 1 0 0">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -33,13 +31,12 @@
 				</IndexedFaceSet>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
-					<ImageTexture url="texture_rotation_testpattern.jpg"/>
-					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='.3 .6'/>
+					<ImageTexture url="deedee1.jpg"/>
+					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 			</Shape>
 		</Transform>
-		<PointLight location="0.0 0.0 -3.0" color="0.0 1.0 0.0"/>
-		<Transform translation="3 -3.5 -6" rotation="-0 1 0 -.3">
+		<Transform translation="3 -5 -10" rotation="-0 1 0 0">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -53,10 +50,28 @@
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
 					<ImageTexture url="news_texture_map.jpg"/>
-					<TextureTransform center='-.5 -.5' rotation='.9' scale='1 1' translation='0 0'/>
+					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 			</Shape>
 		</Transform>
-		<PointLight location="4.0 -2.0 -4.0" color="0.0 0.0 1.0"/>
+		<Transform translation="3 3 -10" rotation="-0 1 0 0">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="sun.jpg"/>
+					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+			</Shape>
+		</Transform>
+		<DirectionalLight DEF="DL1" color="1 1 1" direction="0 -.2 -1" intensity=".8">
 	</Scene>
 </X3D>
