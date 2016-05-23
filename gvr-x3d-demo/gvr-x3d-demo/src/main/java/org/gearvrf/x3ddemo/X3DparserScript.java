@@ -51,6 +51,7 @@ import org.gearvrf.animation.keyframe.GVRAnimationChannel;
 import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
 import org.gearvrf.x3d.ViewpointAnimation;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
 //import org.gearvrf.util.GazeController;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
@@ -213,9 +214,7 @@ public class X3DparserScript extends GVRScript {
         Context activityContext = gvrContext.getContext();
         assetManager = activityContext.getAssets();
 
-      x3dObject = new X3Dobject(gvrContext, scene, mAnimations);
-        try {
-          InputStream inputStream = null;
+      GVRModelSceneObject model = new GVRModelSceneObject(gvrContext);
           //String filename = "helloworldtext.x3d";
           //String filename = "texturecoordinatetest.x3d";
           //String filename = "texturecoordinatetestsubset.x3d";
@@ -257,28 +256,16 @@ public class X3DparserScript extends GVRScript {
           //String filename = "teapottorusdirlights.x3d";
           //String filename = "pointlightattenuationtest.x3d";
           try {
-	         ShaderSettings shaderSettings = new ShaderSettings();
-	         if (!X3Dobject.UNIVERSAL_LIGHTS) {
-	            X3DparseLights x3dParseLights = new X3DparseLights(gvrContext, scene);
-	            inputStream = assetManager.open(filename);
-	            Log.d(TAG, "Parse: " + filename);
-	            x3dParseLights.Parse(inputStream, shaderSettings);
-	            inputStream.close();
-	          }
-	          inputStream = assetManager.open(filename);
-	          x3dObject.Parse(inputStream, shaderSettings);
-	          inputStream.close();
-	          // since the Anchor node may direct us to display another X3D file,
-	          // we are not closing the assetManger.
-	          //assetManager.close();
-            }
-            catch (FileNotFoundException e) {
+        	  model = gvrContext.loadModel(filename);
+        	  scene.addSceneObject(model);
+          }
+          catch (FileNotFoundException e) {
             	Log.d(TAG, "ERROR: FileNotFoundException: " + filename);
             }
-            catch (IOException e) {
+          catch (IOException e) {
             	Log.d(TAG, "Error IOException = " + e);
             }
-         } catch (Exception e) {
+          catch (Exception e) {
             e.printStackTrace();
          }
         //GazeController.setupGazeCursor(mGVRContext);
@@ -485,40 +472,23 @@ public class X3DparserScript extends GVRScript {
     				        	}
     				        }
     				        else if (url.endsWith(".x3d")) {
-    				        	// load another x3d file based on the 'url' parameter
-    				        	scene.removeAllSceneObjects();
-    				        	System.out.println("Anchor for loading another X3D file not fully implemented");
-    			        		 GVRAndroidResource gvrAndroidResource = null;
-    			        	     Context activityContext = mGVRContext.getContext();
-    			        	     //assetManager = activityContext.getAssets();
-
-    			        		 try {
-    			        	        ShaderSettings shaderSettings = new ShaderSettings();
-    			        			 
-    						        gvrAndroidResource = new GVRAndroidResource(mGVRContext, url);
-    						        InputStream inputStream = null;
-    						        	
-    						        if (!X3Dobject.UNIVERSAL_LIGHTS) {
-	            						X3DparseLights x3dParseLights = new X3DparseLights(mGVRContext, scene);
-	            						inputStream = assetManager.open(url);
-	            						Log.d(TAG, "Parse: " + url);
-	            						x3dParseLights.Parse(inputStream, shaderSettings);
-	            						inputStream.close();
-	          						}
-	          						inputStream = assetManager.open(url);
-	          						x3dObject.Parse(inputStream, shaderSettings);
-	          						inputStream.close();
-    			        		  }
-    			        		  catch (FileNotFoundException e) {
-    					        		System.out.println("Error Loading new X3D file. File Not Found Exception: " + e);
-    			        		  }
-    			        		  catch (IOException ioException) {
-    					        		System.out.println("Error Loading new X3D file. IOException url " + url);
-    					        		System.out.println(ioException);
-    			        		  }
-    			        		  catch (Exception exception) {
-    					        		System.out.println("Error Loading new X3D file. Exception: " + exception);
-    			        		  }
+	    				        try {
+	    				        	// load another x3d file based on the 'url' parameter
+	    				        	scene.removeAllSceneObjects();
+	    				        	System.out.println("Anchor for loading another X3D file not fully implemented");
+	    			        		GVRSceneObject model = mGVRContext.loadModelFromURL(url);
+	    			        		scene.addSceneObject(model);
+	    			        	}
+			        		  catch (FileNotFoundException e) {
+					        		System.out.println("Error Loading new X3D file. File Not Found Exception: " + e);
+			        		  }
+			        		  catch (IOException ioException) {
+					        		System.out.println("Error Loading new X3D file. IOException url " + url);
+					        		System.out.println(ioException);
+			        		  }
+			        		  catch (Exception exception) {
+					        		System.out.println("Error Loading new X3D file. Exception: " + exception);
+			        		  }
     				        }
     				        else {
     				        	//A web page beginning with 'http://' or 'www.', etc.   
