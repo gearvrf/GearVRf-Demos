@@ -15,14 +15,14 @@
 
 package org.gearvrf.sample.remote_scripting;
 
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import android.view.Gravity;
 import org.gearvrf.script.GVRScriptManager;
 
-public class GearVRScriptingManager extends GVRScript
+public class GearVRScriptingManager extends GVRMain
 {
 
     @Override

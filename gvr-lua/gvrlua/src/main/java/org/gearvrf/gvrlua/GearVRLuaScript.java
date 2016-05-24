@@ -16,9 +16,9 @@
 package org.gearvrf.gvrlua;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
-public class GearVRLuaScript extends GVRScript {
+public class GearVRLuaScript extends GVRMain {
     private static final String TAG = GearVRLuaScript.class.getSimpleName();
 
     @Override

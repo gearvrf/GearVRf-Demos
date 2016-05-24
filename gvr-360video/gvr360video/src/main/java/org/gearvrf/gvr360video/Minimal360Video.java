@@ -25,16 +25,16 @@ import android.media.MediaPlayer;
 import android.content.res.AssetFileDescriptor;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 
-public class Minimal360Video extends GVRScript
+public class Minimal360Video extends GVRMain
 {
     /** Called when the activity is first created. */
     @Override

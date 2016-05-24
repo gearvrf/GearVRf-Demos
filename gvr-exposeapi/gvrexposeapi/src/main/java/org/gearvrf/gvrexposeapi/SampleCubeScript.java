@@ -29,12 +29,12 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
 
 import android.util.Log;
 
-public class SampleCubeScript extends GVRScript {
+public class SampleCubeScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private GVRContext mGVRContext = null;

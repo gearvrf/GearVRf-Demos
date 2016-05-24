@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.script.GVRScriptException;
 import org.gearvrf.script.GVRScriptFile;
 import org.gearvrf.script.GVRScriptManager;

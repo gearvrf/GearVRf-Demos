@@ -16,7 +16,7 @@ import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRSpotLight;
 
 import org.gearvrf.GVRTexture;
@@ -26,7 +26,7 @@ import org.joml.Quaternionf;
 import android.graphics.Color;
 import android.util.Log;
 
-public class ShadowsViewManager extends GVRScript {
+public class ShadowsViewManager extends GVRMain {
 
     private GVRContext mGVRContext = null;
 

@@ -24,7 +24,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
@@ -34,7 +34,7 @@ import org.joml.Quaternionf;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class MultiLightScript extends GVRScript {
+public class MultiLightScript extends GVRMain {
 
     private static final float LIGHT_Z = 100.0f;
     private static final float LIGHT_ROTATE_RADIUS = 100.0f;
