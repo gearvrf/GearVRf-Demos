@@ -30,7 +30,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ISensorEvents;
 import org.gearvrf.SensorEvent;
@@ -39,7 +39,7 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.utility.Log;
 
-public class InputScript extends GVRScript implements CursorControllerListener {
+public class InputScript extends GVRMain implements CursorControllerListener {
     private static final String TAG = InputScript.class.getSimpleName();
 
     private static final String SELECT_TEXT = "Move the cursor till the cube turns red";

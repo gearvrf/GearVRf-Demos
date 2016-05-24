@@ -21,13 +21,13 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
-public class GearVRJavascriptScript extends GVRScript {
+public class GearVRJavascriptScript extends GVRMain {
     private static final String TAG = GearVRJavascriptScript.class.getSimpleName();
     private static final float DEPTH = -1.5f;
 

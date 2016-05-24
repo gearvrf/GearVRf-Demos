@@ -24,9 +24,10 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ZipLoader;
+import org.gearvrf.GVRMain;
+
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
@@ -36,7 +37,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Future;
 
-public class TestScript extends GVRScript {
+public class TestScript extends GVRMain {
 
     private static final String TAG = "TestScript";
     private static final int numberOfBunnies = 20;

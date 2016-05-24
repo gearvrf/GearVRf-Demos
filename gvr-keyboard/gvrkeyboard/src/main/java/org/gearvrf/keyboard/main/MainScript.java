@@ -26,7 +26,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.keyboard.R;
@@ -61,7 +61,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-public class MainScript extends GVRScript implements KeyboardEventListener {
+public class MainScript extends GVRMain implements KeyboardEventListener {
 
     private GVRContext mGVRContext;
     private boolean isFirstTime = true;

@@ -23,7 +23,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -31,7 +31,7 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
 import org.gearvrf.utility.Log;
 
-public class SolarViewManager extends GVRScript {
+public class SolarViewManager extends GVRMain {
 
     @SuppressWarnings("unused")
     private static final String TAG = Log.tag(SolarViewManager.class);
