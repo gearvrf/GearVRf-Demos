@@ -48,7 +48,7 @@ public class GearVRScripting extends GVRActivity
         ipAddress = getWifiIpAddress(this);
         createCameraView();
 
-        setScript(new GearVRScriptingManager(), "gvr.xml");
+        setMain(new GearVRScriptingMain(), "gvr.xml");
     }
 
     @Override
