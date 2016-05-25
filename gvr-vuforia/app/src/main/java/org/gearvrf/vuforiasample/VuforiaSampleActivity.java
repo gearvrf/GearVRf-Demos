@@ -25,7 +25,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
         VuforiaApplicationControl {
 
     private static final String TAG = "gvr-vuforia";
-    private VuforiaSampleScript script;
+    private VuforiaSampleMain main;
 
     private VuforiaApplicationSession vuforiaAppSession;
 
@@ -60,8 +60,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
         vuforiaAppSession.setZPlanes(NEAR_Z_PLANE, FAR_Z_PLANE);
         vuforiaAppSession.initAR(this);
 
-        script = new VuforiaSampleScript();
-        setScript(script, "gvr.xml");
+        main = new VuforiaSampleMain();
+        setMain(main, "gvr.xml");
     }
 
     public static boolean isVuforiaActive() {
@@ -106,7 +106,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     protected void onDestroy() {
         super.onDestroy();
 
-        script = null;
+        main = null;
 
         if (vuforiaState != VUFORIA_INACTIVE) {
             Log.d(TAG, "onDestroy");
@@ -150,7 +150,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
                 Log.e(TAG, "Unable to enable continuous autofocus");
             }
 
-            script.onVuforiaInitialized();
+            main.onVuforiaInitialized();
         } else {
             Log.e(TAG, exception.getString());
         }
@@ -292,8 +292,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
     @Override
     public void onQCARUpdate(State s) {
-        if (script.isInit()) {
-            script.updateObjectPose(s);
+        if (main.isInit()) {
+            main.updateObjectPose(s);
         }
     }
 }

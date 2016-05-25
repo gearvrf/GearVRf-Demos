@@ -29,7 +29,7 @@ import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnClickListener;
 import com.samsung.accessibility.focus.OnFocusListener;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
-import com.samsung.accessibility.main.MainScript;
+import com.samsung.accessibility.main.Main;
 import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.util.AccessibilityTexture;
 
@@ -199,7 +199,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     private void back(final GVRSceneObject[] wholeSceneObjects) {
-        final AccessibilityScene accessibilityScene = MainScript.accessibilityScene;
+        final AccessibilityScene accessibilityScene = Main.accessibilityScene;
         gvrContext.setMainScene(accessibilityScene.getMainApplicationScene());
         createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
@@ -211,29 +211,29 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
         gvrContext.getMainScene().getMainCameraRig()
                 .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-        MainScript.accessibilityScene.getMainCameraRig()
+        Main.accessibilityScene.getMainCameraRig()
                 .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
         createIcon(textures.getBackIcon(), TypeItem.BACK);
-        MainScript.accessibilityScene.show();
+        Main.accessibilityScene.show();
     }
 
     private void invertedColors() {
-        if (MainScript.manager.getInvertedColors().isInverted()) {
-            MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene(),
-                    MainScript.accessibilityScene);
+        if (Main.manager.getInvertedColors().isInverted()) {
+            Main.manager.getInvertedColors().turnOff(Main.accessibilityScene.getMainApplicationScene(),
+                    Main.accessibilityScene);
         } else {
-            MainScript.manager.getInvertedColors().turnOn(MainScript.accessibilityScene.getMainApplicationScene(),
-                    MainScript.accessibilityScene);
+            Main.manager.getInvertedColors().turnOn(Main.accessibilityScene.getMainApplicationScene(),
+                    Main.accessibilityScene);
         }
     }
 
     private void zoom() {
         if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getZoomIn())) {
-            MainScript.manager.getZoom().zoomIn(MainScript.accessibilityScene.getMainApplicationScene(),
-                    MainScript.accessibilityScene);
+            Main.manager.getZoom().zoomIn(Main.accessibilityScene.getMainApplicationScene(),
+                    Main.accessibilityScene);
         } else {
-            MainScript.manager.getZoom().zoomOut(MainScript.accessibilityScene.getMainApplicationScene(),
-                    MainScript.accessibilityScene);
+            Main.manager.getZoom().zoomOut(Main.accessibilityScene.getMainApplicationScene(),
+                    Main.accessibilityScene);
         }
     }
 

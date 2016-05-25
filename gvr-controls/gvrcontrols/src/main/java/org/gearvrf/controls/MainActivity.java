@@ -29,15 +29,15 @@ public class MainActivity extends GVRActivity implements
         VRSamplesTouchPadGesturesDetector.OnTouchPadGestureListener {
 
     private VRSamplesTouchPadGesturesDetector mDetector = null;
-    private MainScript mainScript;
+    private Main main;
     private static final int TAP_INTERVAL = 300;
     private long mLatestTap = 0;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mainScript = new MainScript();
-        setScript(mainScript, "gvr.xml");
+        main = new Main();
+        setMain(main, "gvr.xml");
         mDetector = new VRSamplesTouchPadGesturesDetector(this, this);
     }
 

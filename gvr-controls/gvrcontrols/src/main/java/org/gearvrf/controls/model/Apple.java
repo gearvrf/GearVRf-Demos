@@ -31,7 +31,7 @@ import org.gearvrf.animation.GVRInterpolator;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
 import org.gearvrf.animation.GVRScaleAnimation;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.WormShadow;
 import org.gearvrf.controls.anim.AnimationsTime;
@@ -214,9 +214,9 @@ public class Apple extends GVRSceneObject {
     public boolean checkValidPosition(Vector3D pos) {
 
         Vector3D wormPos = new
-                Vector3D(MainScript.worm.wormParent.getTransform().getPositionX(),
-                        MainScript.worm.wormParent
-                                .getTransform().getPositionY(), MainScript.worm.wormParent
+                Vector3D(Main.worm.wormParent.getTransform().getPositionX(),
+                        Main.worm.wormParent
+                                .getTransform().getPositionY(), Main.worm.wormParent
                                 .getTransform()
                                 .getPositionZ());
         if (Vector3D.distance(pos, wormPos) < MAX_APPLES_DISTANCE)

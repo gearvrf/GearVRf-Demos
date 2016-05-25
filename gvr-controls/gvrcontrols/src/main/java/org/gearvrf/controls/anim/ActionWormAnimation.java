@@ -22,7 +22,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.focus.GamepadTouchImpl;
 import org.gearvrf.controls.focus.TouchAndGestureImpl;
@@ -153,8 +153,8 @@ public class ActionWormAnimation extends GVRSceneObject {
 
             animColorPlaying = true;
 
-            MainScript.worm.resetColor(ColorWorm.lastColor);
-            MainScript.worm.changeColor(ColorWorm.currentColor);
+            Main.worm.resetColor(ColorWorm.lastColor);
+            Main.worm.changeColor(ColorWorm.currentColor);
         }
 
         if (ScaleWorm.scaleAnimIsEnable()) {
@@ -193,7 +193,7 @@ public class ActionWormAnimation extends GVRSceneObject {
     }
 
     private float calculateNewYPosition() {
-        float currentScale = MainScript.worm.getHead().getTransform().getScaleY();
+        float currentScale = Main.worm.getHead().getTransform().getScaleY();
         float position = (((currentScale - MINIMUM_SCALE) / (MAXIMUM_SCALE - MINIMUM_SCALE)) * (MAXIMUM_Y_POSITION - MINIMUM_Y_POSITION))
                 + MINIMUM_Y_POSITION;
         return position;
@@ -221,25 +221,25 @@ public class ActionWormAnimation extends GVRSceneObject {
     private void resetPositionParts() {
 
         GVRRelativeMotionAnimation headAnimation = WormApplyTransformAnims.moveWormPartReset(
-                MainScript.worm.getHead().getParent(), MainScript.worm.getMiddle());
+                Main.worm.getHead().getParent(), Main.worm.getMiddle());
         headAnimation.start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
 
             @Override
             public void finished(GVRAnimation arg0) {
 
-                WormApplyTransformAnims.moveWormPartToClose(getGVRContext(), MainScript.worm
-                        .getHead().getParent(), MainScript.worm.getMiddle());
+                WormApplyTransformAnims.moveWormPartToClose(getGVRContext(), Main.worm
+                        .getHead().getParent(), Main.worm.getMiddle());
             }
         });
 
         GVRRelativeMotionAnimation endAnimation = WormApplyTransformAnims.moveWormPartReset(
-                MainScript.worm.getEnd(), MainScript.worm.getMiddle());
+                Main.worm.getEnd(), Main.worm.getMiddle());
         endAnimation.start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
 
             @Override
             public void finished(GVRAnimation arg0) {
                 WormApplyTransformAnims.moveWormPartToClose(getGVRContext(),
-                        MainScript.worm.getEnd(), MainScript.worm.getMiddle());
+                        Main.worm.getEnd(), Main.worm.getMiddle());
             }
         });
     }

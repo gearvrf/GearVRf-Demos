@@ -24,13 +24,13 @@ import android.view.MotionEvent;
 
 public class SampleActivity extends GVRActivity {
 
-    private SampleViewManager mScript = null;
+    private SampleMain mMain = null;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mScript = new SampleViewManager();
-        setScript(mScript, "gvr.xml");
+        mMain = new SampleMain();
+        setMain(mMain, "gvr.xml");
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SampleActivity extends GVRActivity {
         boolean handled = false;
 
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            handled = mScript.processKeyEvent(event.getKeyCode());
+            handled = mMain.processKeyEvent(event.getKeyCode());
         }
 
         if (handled) {
@@ -63,11 +63,11 @@ public class SampleActivity extends GVRActivity {
             // earliest historical position in the batch
             for (int i = 0; i < historySize; i++) {
                 // Process the event at historical position i
-                mScript.processJoystickInput(event, i);
+                mMain.processJoystickInput(event, i);
             }
 
             // Process the current movement sample in the batch (position -1)
-            handled = mScript.processJoystickInput(event, -1);
+            handled = mMain.processJoystickInput(event, -1);
 
             if (handled) {
                 return true;

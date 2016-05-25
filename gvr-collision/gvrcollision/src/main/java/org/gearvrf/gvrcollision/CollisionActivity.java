@@ -22,14 +22,14 @@ import org.gearvrf.GVRActivity;
 
 public class CollisionActivity extends GVRActivity {
 
-    private CollisionViewManager viewManager;
+    private CollisionMain viewManager;
     private long lastDownTime;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        viewManager = new CollisionViewManager();
-        setScript(viewManager, "gvr.xml");
+        viewManager = new CollisionMain();
+        setMain(viewManager, "gvr.xml");
     }
 
     @Override

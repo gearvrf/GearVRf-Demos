@@ -21,7 +21,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.anim.StarPreviewInfo;
 
@@ -76,7 +76,7 @@ public class RotationGroup extends GVRSceneObject {
             @Override
             public void finished(GVRAnimation arg0) {
                 
-                MainScript.enableAnimationStar();
+                Main.enableAnimationStar();
                 
                 if(angleFactor > 0){
                     

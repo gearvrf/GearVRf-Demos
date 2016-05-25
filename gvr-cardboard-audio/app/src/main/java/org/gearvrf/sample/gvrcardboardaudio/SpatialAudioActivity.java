@@ -32,7 +32,7 @@ public class SpatialAudioActivity extends GVRActivity
 
         cardboardAudioEngine = new CardboardAudioEngine(getAssets(), CardboardAudioEngine.RenderingQuality.HIGH);
 
-        setScript(new SpatialAudioScript(cardboardAudioEngine), "gvr.xml");
+        setMain(new SpatialAudioMain(cardboardAudioEngine), "gvr.xml");
     }
 
     @Override
