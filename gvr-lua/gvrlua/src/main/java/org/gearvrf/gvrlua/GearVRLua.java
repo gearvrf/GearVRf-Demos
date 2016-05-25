@@ -50,7 +50,7 @@ public class GearVRLua extends GVRActivity
             scriptFile = sm.loadScript(
                     new GVRAndroidResource(getGVRContext(), "script.lua"),
                     GVRScriptManager.LANG_LUA);
-            sm.attachScriptFile(script, scriptFile);
+            sm.attachScriptFile(main, scriptFile);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (GVRScriptException e) {
