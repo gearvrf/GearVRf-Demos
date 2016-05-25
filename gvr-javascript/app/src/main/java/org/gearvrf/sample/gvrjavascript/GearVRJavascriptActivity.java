@@ -56,7 +56,7 @@ public class GearVRJavascriptActivity extends GVRActivity
 
         switch (mode) {
         case USE_SINGLE_SCRIPT: {
-            // Attach a script file directly (without using a GVRMainBundle)
+            // Attach a script file directly (without using a GVRScriptBundle)
             GVRScriptFile scriptFile;
             try {
                 scriptFile = sm.loadScript(

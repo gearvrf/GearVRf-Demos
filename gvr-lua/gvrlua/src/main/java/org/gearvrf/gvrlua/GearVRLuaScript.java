@@ -18,8 +18,8 @@ package org.gearvrf.gvrlua;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 
-public class GearVRLuaScript extends GVRMain {
-    private static final String TAG = GearVRLuaScript.class.getSimpleName();
+public class GearVRLuaMain extends GVRMain {
+    private static final String TAG = GearVRLuaMain.class.getSimpleName();
 
     @Override
     public void onInit(GVRContext gvrContext) {
