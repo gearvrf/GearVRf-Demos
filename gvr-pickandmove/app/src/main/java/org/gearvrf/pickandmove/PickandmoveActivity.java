@@ -21,17 +21,17 @@ import android.view.MotionEvent;
 
 public class PickandmoveActivity extends GVRActivity {
 
-    PickandmoveScript script = new PickandmoveScript();
+    PickandmoveMain main = new PickandmoveMain();
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(main, "gvr.xml");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        script.onTouchEvent(event);
+        main.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 }

@@ -27,6 +27,6 @@ public class Minimal360VideoActivity extends GVRActivity
     {
         super.onCreate(savedInstanceState);
 
-        setScript(new Minimal360Video(), "gvr.xml");
+        setMain(new Minimal360Video(), "gvr.xml");
     }
 }

@@ -22,18 +22,18 @@ import android.view.MotionEvent;
 
 public class CubemapActivity extends GVRActivity {
 
-    CubemapScript script = new CubemapScript();
+    CubemapMain main = new CubemapMain();
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(main, "gvr.xml");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            script.onTouch();
+            main.onTouch();
             return true;
         }
         return super.onTouchEvent(event);

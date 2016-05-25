@@ -20,11 +20,11 @@ import android.os.Bundle;
 
 public class TestScreenshot3DResultActivity extends GVRActivity {
 
-    TestScreenshot3DResultScript script = new TestScreenshot3DResultScript();
+    TestScreenshot3DResultMain main = new TestScreenshot3DResultMain();
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(main, "gvr.xml");
     }
 }
