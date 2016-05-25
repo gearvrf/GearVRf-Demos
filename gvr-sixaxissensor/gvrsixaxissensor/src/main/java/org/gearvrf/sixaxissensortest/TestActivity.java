@@ -32,15 +32,15 @@ public class TestActivity extends GVRActivity implements OnGestureListener, OnDo
 
 
     private enum Parameter{A, B};
-    private TestViewManager mViewManager = null;
+    private TestMain mMain = null;
     private GestureDetector mDetector = null;
     private Parameter mParameter = Parameter.A;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mViewManager = new TestViewManager();
-        setScript(mViewManager, "gvr.xml");
+        mMain = new TestMain();
+        setMain(mMain, "gvr.xml");
         mDetector = new GestureDetector(this, this);
         mDetector.setOnDoubleTapListener(this);
     }
@@ -52,7 +52,7 @@ public class TestActivity extends GVRActivity implements OnGestureListener, OnDo
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
-        mViewManager.onDoubleTap();
+        mMain.onDoubleTap();
         return false;
     }
 
@@ -133,11 +133,11 @@ public class TestActivity extends GVRActivity implements OnGestureListener, OnDo
     {
         if (mParameter == Parameter.A)
         {
-            mViewManager.addAValue(1.0f);
+            mMain.addAValue(1.0f);
         }
         else
         {
-            mViewManager.addBValue(1.0f);
+            mMain.addBValue(1.0f);
         }
     }
 
@@ -145,11 +145,11 @@ public class TestActivity extends GVRActivity implements OnGestureListener, OnDo
     {
         if (mParameter == Parameter.A)
         {
-            mViewManager.addAValue(-1.0f);
+            mMain.addAValue(-1.0f);
         }
         else
         {
-            mViewManager.addBValue(-1.0f);
+            mMain.addBValue(-1.0f);
         }
     }
 }

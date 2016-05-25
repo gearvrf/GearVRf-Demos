@@ -19,7 +19,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.anim.AnimationsTime;
 import org.gearvrf.controls.anim.ColorWorm;
@@ -69,9 +69,9 @@ public class ColorsMenu extends MenuWindow {
                         Color color = colorButton.getColor();
                         previewArea.changeColorTo(color);
                         
-                        ColorWorm.lastColor = MainScript.worm.getColor();
+                        ColorWorm.lastColor = Main.worm.getColor();
                         ColorWorm.currentColor = color;  
-                        MainScript.animationColor.showPlayButton();
+                        Main.animationColor.showPlayButton();
                     }
                 });
 

@@ -23,7 +23,7 @@ import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.keyboard.R;
-import org.gearvrf.keyboard.main.MainScript;
+import org.gearvrf.keyboard.main.Main;
 import org.gearvrf.keyboard.model.CharItem;
 import org.gearvrf.keyboard.spinner.Spinner;
 import org.gearvrf.keyboard.util.RenderingOrder;
@@ -47,7 +47,7 @@ public class TextField extends GVRSceneObject {
     protected int currentCharPosition;
     private Spinner spinner;
 
-    public TextField(GVRContext gvrContext, MainScript mainScript) {
+    public TextField(GVRContext gvrContext, Main main) {
         super(gvrContext);
         setName(SceneObjectNames.TEXT_FIELD);
 

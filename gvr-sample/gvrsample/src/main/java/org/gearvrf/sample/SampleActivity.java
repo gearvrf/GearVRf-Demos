@@ -21,21 +21,21 @@ import android.view.MotionEvent;
 
 public class SampleActivity extends GVRActivity {
 
-    SampleCubeScript script = new SampleCubeScript();
+    SampleCubeMain main = new SampleCubeMain();
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(main, "gvr.xml");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
-            script.captureScreen(0, "screenshot_center");
-            script.captureScreen(1, "screenshot_left");
-            script.captureScreen(2, "screenshot_right");
-            script.captureScreen3D("screenshot3d");
+            main.captureScreen(0, "screenshot_center");
+            main.captureScreen(1, "screenshot_left");
+            main.captureScreen(2, "screenshot_right");
+            main.captureScreen3D("screenshot3d");
         }
         return super.onTouchEvent(event);
     }

@@ -37,19 +37,19 @@ public class MainActivity extends GVRActivity implements
     private static final int TAP_INTERVAL = 300;
     private long mLatestButton = 0;
     private long mLatestTap = 0;
-    MainScript mScript = null;
+    Main mMain = null;
     private VRSamplesTouchPadGesturesDetector mDetector = null;
     SpeechRecognizer mSpeechRecognizer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScript = new MainScript();
+        mMain = new Main();
 
         // https://github.com/Samsung/GearVRf/issues/69
-        mScript.setActivity(this);
+        mMain.setActivity(this);
         // mDetector = new VRTouchPadGestureDetector(this);
-        setScript(mScript, "gvr.xml");
+        setMain(mMain, "gvr.xml");
 
         mDetector = new VRSamplesTouchPadGesturesDetector(this, this);
     }
@@ -59,7 +59,7 @@ public class MainActivity extends GVRActivity implements
         Log.e(null, "teste");
         if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
             mLatestButton = System.currentTimeMillis();
-            mScript.onBackPressed();
+            mMain.onBackPressed();
         }
     }
 
@@ -84,7 +84,7 @@ public class MainActivity extends GVRActivity implements
         Log.d(MainActivity.class.getSimpleName(), "onSingleTap");
         if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
             mLatestTap = System.currentTimeMillis();
-            mScript.onSingleTap(e);
+            mMain.onSingleTap(e);
         }
         return false;
     }
@@ -99,7 +99,7 @@ public class MainActivity extends GVRActivity implements
             float velocityY) {
         Log.d(MainActivity.class.getSimpleName(), "onSwipe");
 
-        mScript.spinnerListenerAnimation(swipeDirection, velocityY);
+        mMain.spinnerListenerAnimation(swipeDirection, velocityY);
         return false;
     }
 

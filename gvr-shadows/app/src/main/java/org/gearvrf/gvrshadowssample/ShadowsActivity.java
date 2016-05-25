@@ -9,7 +9,7 @@ public class ShadowsActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setScript(new ShadowsViewManager(), "gvr.xml");
+        setMain(new ShadowsMain(), "gvr.xml");
     }
 
 }

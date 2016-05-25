@@ -26,7 +26,7 @@ import org.gearvrf.GVRTextureParameters.TextureWrapType;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
-import org.gearvrf.immersivepedia.MainScript;
+import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.OnClickListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
@@ -70,7 +70,7 @@ public class MenuScene extends GVRScene {
 
                             @Override
                             public void finished(GVRAnimation arg0) {
-                                MainScript.dinosaurScene.show();
+                                Main.dinosaurScene.show();
                             }
                         });
                     }

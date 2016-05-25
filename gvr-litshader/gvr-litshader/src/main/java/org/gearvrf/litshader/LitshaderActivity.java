@@ -21,17 +21,17 @@ import android.view.MotionEvent;
 
 public class LitshaderActivity extends GVRActivity {
 
-    LitshaderScript script = new LitshaderScript();
+    LitshaderMain main = new LitshaderMain();
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(main, "gvr.xml");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        script.onTouchEvent(event);
+        main.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 }
