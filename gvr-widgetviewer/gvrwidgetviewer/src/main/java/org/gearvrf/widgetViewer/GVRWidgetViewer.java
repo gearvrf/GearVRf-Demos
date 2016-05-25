@@ -34,7 +34,7 @@ public class GVRWidgetViewer extends GVRActivity implements
     private static final int TAP_INTERVAL = 300;
     private long mLatestButton = 0;
     private long mLatestTap = 0;
-    private ViewerScript mScript = null;
+    private ViewerMain mMain = null;
     private VRTouchPadGestureDetector mDetector = null;
     public MyGdxWidget mWidget;
     float mYangle = 0.0f;
@@ -51,17 +51,17 @@ public class GVRWidgetViewer extends GVRActivity implements
                 displaymetrics.heightPixels);
         mDetector = new VRTouchPadGestureDetector(this);
         mWidget = new MyGdxWidget();
-        mScript = new ViewerScript(mPlugin);
-        mPlugin.setCurrentScript(mScript);
-        mWidget.mScript = mScript;
-        setScript(mScript, "gvr.xml");
+        mMain = new ViewerMain(mPlugin);
+        mPlugin.setCurrentScript(mMain);
+        mWidget.mMain = mMain;
+        setMain(mMain, "gvr.xml");
     }
 
     @Override
     public void onBackPressed() {
         if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
             mLatestButton = System.currentTimeMillis();
-            mScript.onButtonDown();
+            mMain.onButtonDown();
         }
     }
 
@@ -78,7 +78,7 @@ public class GVRWidgetViewer extends GVRActivity implements
         mDetector.onTouchEvent(event);
         if (mPlugin.getWidgetView() == null)
             return false;
-        if (mScript.mObjectPointed) {
+        if (mMain.mObjectPointed) {
             float x = 0, dx = 0, y = 0, dy = 0.0f;
             if (event.getAction() == 0) {
                 mMovestart = false;
@@ -92,7 +92,7 @@ public class GVRWidgetViewer extends GVRActivity implements
                 if (event.getAction() == 1) {
                     mMovestart = false;
                     mMoveoffset = 0.0f;
-                    mYangle = mScript.mRotateY;
+                    mYangle = mMain.mRotateY;
                 }
             }
             if (dx > dy && event.getAction() == 2) {
@@ -102,9 +102,9 @@ public class GVRWidgetViewer extends GVRActivity implements
                 if (mMovestart) {
                     mMoveoffset = dx / 2;
                     mMovestart = false;
-                    mScript.mRotateY = (mYangle) % 360;
+                    mMain.mRotateY = (mYangle) % 360;
                 } else {
-                    mScript.mRotateY = (dx / 2 + mYangle - mMoveoffset) % 360;
+                    mMain.mRotateY = (dx / 2 + mYangle - mMoveoffset) % 360;
                 }
             }
         }
@@ -116,7 +116,7 @@ public class GVRWidgetViewer extends GVRActivity implements
         Log.v("", "onSingleTap");
         if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
             mLatestTap = System.currentTimeMillis();
-            mScript.onSingleTap(e);
+            mMain.onSingleTap(e);
         }
         return false;
     }

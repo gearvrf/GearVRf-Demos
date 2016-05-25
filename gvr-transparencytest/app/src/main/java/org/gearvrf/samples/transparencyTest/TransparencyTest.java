@@ -20,7 +20,7 @@ import org.gearvrf.GVRMain;
  */
 public class TransparencyTest extends GVRActivity
 {
-    private TransparencyTestScript mScript;
+    private TransparencyTestMain mMain;
     private long lastDownTime = 0;
     private static final String TAG = "TransparencyTest";
 
@@ -29,8 +29,8 @@ public class TransparencyTest extends GVRActivity
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        mScript = new TransparencyTestScript();
-        setScript(mScript, "gvr.xml");
+        mMain = new TransparencyTestMain();
+        setMain(mMain, "gvr.xml");
     }
     
     @Override
@@ -42,7 +42,7 @@ public class TransparencyTest extends GVRActivity
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             // check if it was a quick tap
             if (event.getEventTime() - lastDownTime < 200) {
-                mScript.toggleFrustumCulling();
+                mMain.toggleFrustumCulling();
             }
         }
 

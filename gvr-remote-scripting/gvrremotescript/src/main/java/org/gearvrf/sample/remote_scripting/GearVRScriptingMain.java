@@ -22,7 +22,7 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import android.view.Gravity;
 import org.gearvrf.script.GVRScriptManager;
 
-public class GearVRScriptingManager extends GVRMain
+public class GearVRScriptingMain extends GVRMain
 {
 
     @Override

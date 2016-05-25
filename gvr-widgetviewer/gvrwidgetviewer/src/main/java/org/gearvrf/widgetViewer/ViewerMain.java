@@ -25,9 +25,9 @@ import android.opengl.GLES20;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class ViewerScript extends GVRMain {
+public class ViewerMain extends GVRMain {
 
-    private static final String TAG = "ViewerScript";
+    private static final String TAG = "ViewerMain";
 
     private GVRWidgetPlugin mPlugin;
     private GVRContext mGVRContext = null; 
@@ -107,7 +107,7 @@ public class ViewerScript extends GVRMain {
     public boolean mLookInside = false;
     public float mZoomLevel = -2.0f;
 
-    ViewerScript(GVRWidgetPlugin plugin) {
+    ViewerMain(GVRWidgetPlugin plugin) {
         mPlugin = plugin;       
     }
     GVRTexture mWidgetTexture = null;

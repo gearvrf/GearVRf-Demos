@@ -15,11 +15,11 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.Gravity;
 
-public class TransparencyTestScript extends GVRMain {
+public class TransparencyTestMain extends GVRMain {
 
     private GVRScene mScene;
     private GVRContext mContext;
-    private static final String TAG = "TransparencyTestScript";
+    private static final String TAG = "TransparencyTestMain";
     
     @Override
     public void onInit(GVRContext gvrContext) {
