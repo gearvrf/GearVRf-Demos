@@ -27,7 +27,7 @@ public class Minimal360PhotoActivity extends GVRActivity
     {
         super.onCreate(savedInstanceState);
 
-        Minimal360PhotoScript script = new Minimal360PhotoScript();
-        setScript(script, "gvr.xml");
+        Minimal360PhotoMain main = new Minimal360PhotoMain();
+        setMain(main, "gvr.xml");
     }
 }

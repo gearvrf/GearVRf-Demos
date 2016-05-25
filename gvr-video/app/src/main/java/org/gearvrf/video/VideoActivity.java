@@ -34,7 +34,7 @@ public class VideoActivity extends GVRActivity implements
         OnTouchPadGestureListener {
     private static final int BUTTON_INTERVAL = 1000;
     private static final int TAP_INTERVAL = 300;
-    private VideoScript mScript = null;
+    private VideoMain mMain = null;
     private VRTouchPadGestureDetector mDetector = null;
     private BroadcastReceiver mBatteryReceiver = null;
     private long mLatestButton = 0;
@@ -43,18 +43,18 @@ public class VideoActivity extends GVRActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScript = new VideoScript(this);
+        mMain = new VideoMain(this);
         mDetector = new VRTouchPadGestureDetector(this);
         mBatteryReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context ctxt, Intent intent) {
                 int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                if (mScript != null) {
-                    mScript.setBatteryLevel(level);
+                if (mMain != null) {
+                    mMain.setBatteryLevel(level);
                 }
             }
         };
-        setScript(mScript, "gvr.xml");
+        setMain(mMain, "gvr.xml");
         registerReceiver(mBatteryReceiver, new IntentFilter(
                 Intent.ACTION_BATTERY_CHANGED));
     }
@@ -62,7 +62,7 @@ public class VideoActivity extends GVRActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        mScript.onPause();
+        mMain.onPause();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class VideoActivity extends GVRActivity implements
     public void onBackPressed() {
         if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
             mLatestButton = System.currentTimeMillis();
-            mScript.onButtonDown();
+            mMain.onButtonDown();
         }
     }
 
@@ -86,7 +86,7 @@ public class VideoActivity extends GVRActivity implements
     public boolean onKeyLongPress(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             mLatestButton = System.currentTimeMillis();
-            mScript.onLongButtonPress();
+            mMain.onLongButtonPress();
         }
         return super.onKeyLongPress(keyCode, event);
     }
@@ -94,7 +94,7 @@ public class VideoActivity extends GVRActivity implements
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         mDetector.onTouchEvent(event);
-        mScript.onTouchEvent(event);
+        mMain.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 
@@ -103,7 +103,7 @@ public class VideoActivity extends GVRActivity implements
         Log.v("", "onSingleTap");
         if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
             mLatestTap = System.currentTimeMillis();
-            mScript.onSingleTap(e);
+            mMain.onSingleTap(e);
         }
         return false;
     }

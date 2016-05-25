@@ -34,7 +34,7 @@ public class VideoActivity extends GVRActivity implements
         OnTouchPadGestureListener {
     private static final int BUTTON_INTERVAL = 1000;
     private static final int TAP_INTERVAL = 300;
-    private VideoScript mScript = null;
+    private VideoMain mScript = null;
     private VRTouchPadGestureDetector mDetector = null;
     private BroadcastReceiver mBatteryReceiver = null;
     private long mLatestButton = 0;
@@ -43,7 +43,7 @@ public class VideoActivity extends GVRActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScript = new VideoScript(this);
+        mScript = new VideoMain(this);
         mDetector = new VRTouchPadGestureDetector(this);
         mBatteryReceiver = new BroadcastReceiver() {
             @Override

@@ -22,7 +22,7 @@ import org.gearvrf.accessibility.GVRAccessiblityObject;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.main.MainScript;
+import com.samsung.accessibility.main.Main;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
@@ -93,8 +93,8 @@ public class AccessibilityScene extends GVRScene {
                     ShortcutMenuItem shortcut = shortcutMenu.removeShortcut(TypeItem.INVERTED_COLORS);
                     if (shortcut != null) {
                         shortcut.resetClick();
-                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene.getMainApplicationScene());
-                        MainScript.manager.getInvertedColors().turnOff(MainScript.accessibilityScene);
+                        Main.manager.getInvertedColors().turnOff(Main.accessibilityScene.getMainApplicationScene());
+                        Main.manager.getInvertedColors().turnOff(Main.accessibilityScene);
                      }
                 }
             }

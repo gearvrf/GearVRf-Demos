@@ -19,7 +19,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.Worm;
 import org.gearvrf.controls.anim.AnimationsTime;
@@ -260,7 +260,7 @@ public class ScaleMenu extends MenuWindow {
         worm.moveWorm(scaleFactor);
         worm.scaleWorm(scaleFactor);
         
-        MainScript.animationColor.showPlayButton();
+        Main.animationColor.showPlayButton();
         return bool;
     }
 

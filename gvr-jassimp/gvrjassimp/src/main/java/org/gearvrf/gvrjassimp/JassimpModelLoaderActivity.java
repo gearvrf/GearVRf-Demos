@@ -22,14 +22,14 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRActivity;
 
 public class JassimpModelLoaderActivity extends GVRActivity {
-    private JassimpModelLoaderViewManager viewManager;
+    private JassimpModelLoaderMain viewManager;
     private long lastDownTime;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        viewManager = new JassimpModelLoaderViewManager();
-        setScript(viewManager, "gvr.xml");
+        viewManager = new JassimpModelLoaderMain();
+        setMain(viewManager, "gvr.xml");
     }
 
     @Override

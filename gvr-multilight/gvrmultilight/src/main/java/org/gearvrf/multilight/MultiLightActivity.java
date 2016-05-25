@@ -21,17 +21,17 @@ import android.view.MotionEvent;
 
 public class MultiLightActivity extends GVRActivity {
 
-    MultiLightScript script = new MultiLightScript();
+    MultiLightMain main = new MultiLightMain();
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(main, "gvr.xml");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        script.onTouchEvent(event);
+        main.onTouchEvent(event);
         return super.onTouchEvent(event);
     }
 }
