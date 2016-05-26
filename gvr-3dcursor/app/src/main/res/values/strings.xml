@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--/* Copyright 2015 Samsung Electronics Co., LTD
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */-->
+
+<resources>
+    <string name="app_name">3DCursor Sample</string>
+
+    <string name="activity_rocket">Zoom in and go through the rocketship</string>
+    <string name="activity_astronaut">Select the astronaut and move it to the left of the rocket</string>
+    <string name="activity_laser_button">Click on the button to change cursor to a Laser Cursor</string>
+    <string name="activity_star">Select the middle star and drag it to to the rocket</string>
+    <string name="activity_cubes_1">Select all 3 boxes at once and move them around</string>
+    <string name="activity_cubes_2">Select the largest box and move it to the button on the left</string>
+    <string name="activity_hand_button">Click on this button to change to 2 hand cursors.  One cursor will be controlled by the gamepad and the other controlled by the air mouse</string>
+    <string name="activity_swords">Grab the swords and swing around!</string>
+    <string name="activity_gears2">Click on this button to change I/O to GearS2 and sphere cursor</string>
+    <string name="activity_space_collection_1">Select the astronaut by double tapping the GearS2 screen</string>
+    <string name="activity_space_collection_2">Drag the astronaut behind the star</string>
+
+    <string name="reset">Reset Scene</string>
+
+    <!--The meshes and textures defined below have to strictly adhere to the following order to be
+    rendered correctly : DEFAULT, BEHIND, OVER, CLICKED-->
+    <string-array name="star_meshes">
+        <item>Star_Normal.obj</item>
+        <item>Star_OnBehind.obj</item>
+        <item>Star_OnCollision.obj</item>
+        <item>Star_OnClick.obj</item>
+    </string-array>
+
+    <string-array name="star_textures">
+        <item>star_defaultcolor.png</item>
+        <item>star_onbehind.png</item>
+        <item>star_oncollision.png</item>
+        <item>star_onclick.png</item>
+    </string-array>
+
+    <string-array name="cube_meshes">
+        <item>cube_default.obj</item>
+        <item>cube_wireframe.obj</item>
+        <item>cube_onintersect.obj</item>
+        <item>cube_onbuttonpress.obj</item>
+    </string-array>
+
+    <string-array name="cube_textures">
+        <item>cube_default_color.png</item>
+        <item>cube2_color.png</item>
+        <item>cube2_color.png</item>
+        <item>cube_default_color.png</item>
+    </string-array>
+
+    <string-array name="setting_meshes">
+        <item>settings_default.obj</item>
+        <item>settings_default.obj</item>
+        <item>settings_oncollision.obj</item>
+        <item>settings_oncollision.obj</item>
+    </string-array>
+
+    <string-array name="setting_textures">
+        <item>settings_default.png</item>
+        <item>settings_default.png</item>
+        <item>settings_oncollision.png</item>
+        <item>settings_oncollision.png</item>
+    </string-array>
+
+
+    <string-array name="button_meshes">
+        <item>button_default.obj</item>
+        <item>button_onbehind.obj</item>
+        <item>button_oncollision.obj</item>
+        <item>button_onclick.obj</item>
+    </string-array>
+
+    <string-array name="button_textures">
+        <item>button_default.png</item>
+        <item>button_onbehind.png</item>
+        <item>button_oncollision.png</item>
+        <item>button_onclick.png</item>
+    </string-array>
+
+    <string-array name="astronaut_meshes">
+        <item>astronaut_default.obj</item>
+        <item>astronaut_onbehind.obj</item>
+        <item>astronaut_oncollision.obj</item>
+        <item>astronaut_onclick.obj</item>
+    </string-array>
+
+    <string-array name="astronaut_textures">
+        <item>astronaut_default.png</item>
+        <item>astronaut_onbehind.png</item>
+        <item>astronaut_oncollision.png</item>
+        <item>astronaut_onclick.png</item>
+    </string-array>
+
+    <string-array name="rocket_ship_meshes">
+        <item>rocket_default.obj</item>
+        <item>rocket_onbehind.obj</item>
+        <item>rocket_oncollision.obj</item>
+        <item>rocket_onclick.obj</item>
+    </string-array>
+
+    <string-array name="rocket_ship_textures">
+        <item>rocket_default.png</item>
+        <item>rocket_onbehind.png</item>
+        <item>rocket_oncollision.png</item>
+        <item>rocket_onclick.png</item>
+    </string-array>
+
+    <string-array name="cloud_1_meshes">
+        <item>cloud01_default.obj</item>
+        <item>cloud01_onbehind.obj</item>
+        <item>cloud01_oncollision.obj</item>
+        <item>cloud01_onclick.obj</item>
+    </string-array>
+
+    <string-array name="cloud_2_meshes">
+        <item>cloud02_default.obj</item>
+        <item>cloud02_onbehind.obj</item>
+        <item>cloud02_oncollision.obj</item>
+        <item>cloud02_onclick.obj</item>
+    </string-array>
+
+    <string-array name="cloud_3_meshes">
+        <item>cloud03_default.obj</item>
+        <item>cloud03_onbehind.obj</item>
+        <item>cloud03_oncollision.obj</item>
+        <item>cloud03_onclick.obj</item>
+    </string-array>
+
+    <string-array name="cloud_textures">
+        <item>cloud_default.png</item>
+        <item>cloud_onbehind.png</item>
+        <item>cloud_oncollision.png</item>
+        <item>cloud_onclick.png</item>
+    </string-array>
+
+    <string-array name="sword_meshes">
+        <item>sword.obj</item>
+        <item>sword.obj</item>
+        <item>sword.obj</item>
+        <item>sword.obj</item>
+    </string-array>
+
+    <string-array name="sword_textures">
+        <item>sword_texture.png</item>
+        <item>sword_texture.png</item>
+        <item>sword_texture.png</item>
+        <item>sword_texture.png</item>
+    </string-array>
+
+</resources>
