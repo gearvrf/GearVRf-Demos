@@ -15,8 +15,7 @@
 
 package org.gearvrf.performance;
 
-import java.io.IOException;
-import java.util.Random;
+import android.util.Log;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
@@ -25,20 +24,24 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.ZipLoader;
 import org.gearvrf.GVRMain;
+
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
 
-import android.util.Log;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.Future;
 
 public class TestMain extends GVRMain {
-
     private static final String TAG = "TestMain";
-
     private static final int numberOfBunnies = 20;
-    private static final String[] textureNames = { "texture1.jpg",
-            "texture2.jpg", "texture3.jpg", "texture4.jpg", "texture5.jpg" };
+    private static final String TEXTURE_FILE_NAME = "textures.zip";
+
     private GVRScene mMainScene = null;
 
     GVRAnimationEngine mAnimationEngine;
@@ -71,55 +74,65 @@ public class TestMain extends GVRMain {
         rightCamera.setBackgroundColorB(0.2f);
         rightCamera.setBackgroundColorA(1.0f);
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
-        for (int i = 0; i < numberOfBunnies; ++i) {
 
-            GVRSceneObject bunny = null;
-            try {
+        try {
+            List<Future<GVRTexture>> textures;
+            textures = ZipLoader.load(gvrContext, TEXTURE_FILE_NAME, new ZipLoader
+                    .ZipEntryProcessor<Future<GVRTexture>>() {
+
+                @Override
+                public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource resource) {
+                    return context.loadFutureTexture(resource);
+                }
+            });
+
+            int numTextures = textures.size();
+            for (int i = 0; i < numberOfBunnies; ++i) {
+
+                GVRSceneObject bunny;
+
                 // we assume that the mesh and the textures are valid
                 bunny = new GVRSceneObject(gvrContext,
-                        gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
-                                "bunny.obj")),
-                        gvrContext.loadTexture(new GVRAndroidResource(
-                                gvrContext, textureNames[i
-                                        % textureNames.length])));
-            } catch (IOException e) {
-                e.printStackTrace();
-                mActivity.finish();
-                Log.e(TAG,
-                        "Mesh or texture were not loaded. Stopping application!");
+                        gvrContext.loadFutureMesh(new GVRAndroidResource(gvrContext,
+                                "bunny.obj")), textures.get(i % numTextures));
+
+                Random random = new Random();
+
+                bunny.getTransform().setPosition(0.0f, 0.0f,
+                        random.nextFloat() * 3.0f + 2.0f);
+                bunny.getTransform().rotateByAxisWithPivot(
+                        random.nextFloat() * 360.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f);
+                bunny.getTransform().rotateByAxisWithPivot(
+                        random.nextFloat() * 360.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+                        0.0f);
+                bunny.getTransform().rotateByAxisWithPivot(
+                        random.nextFloat() * 360.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                        0.0f);
+                bunny.getTransform().translate(0.0f, 0.0f, -10.0f);
+                mainCameraRig.addChildObject(bunny);
+
+                float x = random.nextFloat() - 0.5f;
+                float y = random.nextFloat() - 0.5f;
+                float z = random.nextFloat() - 0.5f;
+                float length = (float) Math.sqrt(x * x + y * y + z * z);
+                x /= length;
+                y /= length;
+                z /= length;
+
+                new GVRRotationByAxisWithPivotAnimation(bunny, //
+                        5.0f + random.nextFloat() * 25.0f, //
+                        360.0f, //
+                        x, y, z, //
+                        0.0f, 0.0f, -10.0f) //
+                        .setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1) //
+                        .start(mAnimationEngine);
             }
-
-            Random random = new Random();
-
-            bunny.getTransform().setPosition(0.0f, 0.0f,
-                    random.nextFloat() * 3.0f + 2.0f);
-            bunny.getTransform().rotateByAxisWithPivot(
-                    random.nextFloat() * 360.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                    0.0f);
-            bunny.getTransform().rotateByAxisWithPivot(
-                    random.nextFloat() * 360.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-                    0.0f);
-            bunny.getTransform().rotateByAxisWithPivot(
-                    random.nextFloat() * 360.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-                    0.0f);
-            bunny.getTransform().translate(0.0f, 0.0f, -10.0f);
-            mainCameraRig.addChildObject(bunny);
-
-            float x = random.nextFloat() - 0.5f;
-            float y = random.nextFloat() - 0.5f;
-            float z = random.nextFloat() - 0.5f;
-            float length = (float) Math.sqrt(x * x + y * y + z * z);
-            x /= length;
-            y /= length;
-            z /= length;
-
-            new GVRRotationByAxisWithPivotAnimation(bunny, //
-                    5.0f + random.nextFloat() * 25.0f, //
-                    360.0f, //
-                    x, y, z, //
-                    0.0f, 0.0f, -10.0f) //
-                    .setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1) //
-                    .start(mAnimationEngine);
+        } catch (IOException e) {
+            e.printStackTrace();
+            mActivity.finish();
+            Log.e(TAG,
+                    "Mesh or texture were not loaded. Stopping application!");
         }
     }
 
