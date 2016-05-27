@@ -32,7 +32,7 @@ import android.view.MotionEvent;
         super.onCreate(savedInstanceState);
         main = new Main();
         touchPadGestureDetector = new VRTouchPadGestureDetector(this);
-        setMain(main, "gvr.xml");
+        setScript(main, "gvr.xml");
     }
 
 	@Override
