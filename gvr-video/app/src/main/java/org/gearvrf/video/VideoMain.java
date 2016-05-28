@@ -37,7 +37,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 
-public class VideoMain extends GVRMain {
+public class VideoMain extends GVRScript {
 
     private static final String TAG = "VideoMain";
 
@@ -275,9 +275,9 @@ public class VideoMain extends GVRMain {
             mScreenR = new GVRSceneObject(gvrContext);
             mScreenL.attachRenderData(renderDataL);
             mScreenR.attachRenderData(renderDataR);
+            mScreenL.getRenderData().setCullTest(false);
+            mScreenR.getRenderData().setCullTest(false);
 
-            mScreenL.getTransform().setPosition(-0.031f, 0.0f, 0.0f);
-            mScreenR.getTransform().setPosition(0.031f, 0.0f, 0.0f);
             mScreenL.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
             mScreenR.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
