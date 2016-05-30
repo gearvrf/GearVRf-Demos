@@ -35,136 +35,168 @@ import org.gearvrf.immersivepedia.util.FPSCounter;
 
 public class DinosaurScene extends GVRScene {
 
-    public static final float CAMERA_Y = 1.6f;
+	public static final float CAMERA_Y = 1.6f;
 
-    GVRScene scene;
+	GVRScene scene;
 
-    private VideoDinosaurGroup videoDinosaur;
-    private GalleryDinosaurGroup galleryDinosaur = null;
-    private GVRContext gvrContext;
-    private TextDinosaurGroup textDinosaur;
+	private VideoDinosaurGroup videoDinosaur;
+	private GalleryDinosaurGroup galleryDinosaur = null;
+	private GVRContext gvrContext;
+	private TextDinosaurGroup textDinosaur;
 
-    public DinosaurScene(GVRContext gvrContext) throws IOException {
-        super(gvrContext);
-        this.gvrContext = gvrContext;
-        DinosaurFactory.getInstance(gvrContext);
-        getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
+	private RotateDinosaurGroup rotateDinosaur;
 
-        createVideoDinosauGroup(); // TRex
-        createTextDinosaurGroup(); // Ankylosaurus
-        createRotateDinosaurGroup(); // Styracosaurus
-        createGalleryDinosaurGroup(); // Apatosaurus
+	public DinosaurScene(GVRContext gvrContext) throws IOException {
+		super(gvrContext);
+		this.gvrContext = gvrContext;
+		DinosaurFactory.getInstance(gvrContext);
+		getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
 
-        addSceneObject(createSkybox()); //
+		createVideoDinosauGroup(); // TRex
+		createTextDinosaurGroup(); // Ankylosaurus
+		createRotateDinosaurGroup(); // Styracosaurus
+		createGalleryDinosaurGroup(); // Apatosaurus
 
-        hide();
-        addSceneObject(createBlueSkybox()); //
-    }
+		addSceneObject(createSkybox()); //
 
-    private void createRotateDinosaurGroup() throws IOException {
-        RotateDinosaurGroup rotateDinosaur = new RotateDinosaurGroup(getGVRContext(), this);
-        addSceneObject(rotateDinosaur);
-    }
+		hide();
+		addSceneObject(createBlueSkybox()); //
+	}
 
-    private void createTextDinosaurGroup() throws IOException {
+	private void createRotateDinosaurGroup() throws IOException {
+		rotateDinosaur = new RotateDinosaurGroup(getGVRContext(), this);
+		addSceneObject(rotateDinosaur);
+	}
 
-        textDinosaur = new TextDinosaurGroup(getGVRContext(), this);
+	private void createTextDinosaurGroup() throws IOException {
 
-        textDinosaur.getTransform().setPositionZ(-DinosaurFactory.ANKYLOSAURUS_DISTANCE);
+		textDinosaur = new TextDinosaurGroup(getGVRContext(), this);
 
-        textDinosaur.getTransform().rotateByAxisWithPivot(
-                DinosaurFactory.ANKYLOSAURUS_ANGLE_AROUND_CAMERA, 0, 1, 0, 0, 0, 0);
+		textDinosaur.getTransform().setPositionZ(
+				-DinosaurFactory.ANKYLOSAURUS_DISTANCE);
 
-        addSceneObject(textDinosaur);
+		textDinosaur.getTransform().rotateByAxisWithPivot(
+				DinosaurFactory.ANKYLOSAURUS_ANGLE_AROUND_CAMERA, 0, 1, 0, 0,
+				0, 0);
 
-    }
+		addSceneObject(textDinosaur);
 
-    private void createVideoDinosauGroup() throws IOException {
+	}
 
-        videoDinosaur = new VideoDinosaurGroup(getGVRContext(), this);
+	private void createVideoDinosauGroup() throws IOException {
 
-        videoDinosaur.getTransform().setPositionZ(-DinosaurFactory.TREX_DISTANCE);
+		videoDinosaur = new VideoDinosaurGroup(getGVRContext(), this);
 
-        videoDinosaur.getTransform().rotateByAxisWithPivot(
-                DinosaurFactory.TREX_ANGLE_AROUND_CAMERA, 0, 1, 0, 0, 0, 0);
+		videoDinosaur.getTransform().setPositionZ(
+				-DinosaurFactory.TREX_DISTANCE);
 
-        addSceneObject(videoDinosaur);
-    }
+		videoDinosaur.getTransform().rotateByAxisWithPivot(
+				DinosaurFactory.TREX_ANGLE_AROUND_CAMERA, 0, 1, 0, 0, 0, 0);
 
-    private void createGalleryDinosaurGroup() throws IOException {
-        galleryDinosaur = new GalleryDinosaurGroup(gvrContext, this);
-        addSceneObject(galleryDinosaur);
-    }
+		addSceneObject(videoDinosaur);
+	}
 
-    public void onStep() {
-        FPSCounter.tick();
-        if (this.videoDinosaur != null) {
-            this.videoDinosaur.onStep();
-        }
-    }
+	private void createGalleryDinosaurGroup() throws IOException {
+		galleryDinosaur = new GalleryDinosaurGroup(gvrContext, this);
+		addSceneObject(galleryDinosaur);
+	}
 
-    public void show() {
-        getGVRContext().setMainScene(this);
-        GazeController.enableGaze();
-        for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
-            }
-        }
-    }
+	public void onStep() {
+		FPSCounter.tick();
+		if (this.videoDinosaur != null) {
+			this.videoDinosaur.onStep();
+		}
+	}
 
-    public void hide() {
-        for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                object.getRenderData().getMaterial().setOpacity(0f);
-            }
-        }
-    }
+	public void show() {
+		getGVRContext().setMainScene(this);
+		GazeController.enableGaze();
+		for (GVRSceneObject object : getWholeSceneObjects()) {
+			if (object.getRenderData() != null
+					&& object.getRenderData().getMaterial() != null) {
+				new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext()
+						.getAnimationEngine());
+			}
+		}
+	}
 
-    private GVRSceneObject createSkybox() {
+	public void hide() {
+		for (GVRSceneObject object : getWholeSceneObjects()) {
+			if (object.getRenderData() != null
+					&& object.getRenderData().getMaterial() != null) {
+				object.getRenderData().getMaterial().setOpacity(0f);
+			}
+		}
+	}
 
-        GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_walls_mesh));
-        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
-        GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
-        skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
-        skybox.getRenderData().setRenderingOrder(0);
+	private GVRSceneObject createSkybox() {
 
-        GVRMesh meshGround = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_ground_mesh));
-        GVRTexture textureGround = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
-        GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(), meshGround, textureGround);
-        skyboxGround.getRenderData().setRenderingOrder(0);
+		GVRMesh mesh = getGVRContext().loadMesh(
+				new GVRAndroidResource(getGVRContext(),
+						R.raw.environment_walls_mesh));
+		GVRTexture texture = getGVRContext().loadTexture(
+				new GVRAndroidResource(gvrContext,
+						R.drawable.environment_walls_tex_diffuse));
+		GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh,
+				texture);
+		skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
+		skybox.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshFx = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
-        GVRTexture textureFx = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
-        GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx, textureFx);
-        skyboxGround.getRenderData().setRenderingOrder(0);
+		GVRMesh meshGround = getGVRContext().loadMesh(
+				new GVRAndroidResource(getGVRContext(),
+						R.raw.environment_ground_mesh));
+		GVRTexture textureGround = getGVRContext().loadTexture(
+				new GVRAndroidResource(gvrContext,
+						R.drawable.environment_ground_tex_diffuse));
+		GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(),
+				meshGround, textureGround);
+		skyboxGround.getRenderData().setRenderingOrder(0);
 
-        skybox.addChildObject(skyboxFx);
-        skybox.addChildObject(skyboxGround);
+		GVRMesh meshFx = getGVRContext().loadMesh(
+				new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
+		GVRTexture textureFx = getGVRContext().loadTexture(
+				new GVRAndroidResource(gvrContext,
+						R.drawable.windows_fx_tex_diffuse));
+		GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx,
+				textureFx);
+		skyboxGround.getRenderData().setRenderingOrder(0);
 
-        return skybox;
-    }
+		skybox.addChildObject(skyboxFx);
+		skybox.addChildObject(skyboxGround);
 
-    private GVRSceneObject createBlueSkybox() {
+		return skybox;
+	}
 
-        GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_mesh));
-        GVRTexture texture = getGVRContext().loadTexture(new
-                GVRAndroidResource(getGVRContext(), R.drawable.dino_skybox_tex_diffuse));
-        GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
-        skybox.getTransform().setScale(1, 1, 1);
-        skybox.getRenderData().setRenderingOrder(0);
-        return skybox;
-    }
+	private GVRSceneObject createBlueSkybox() {
 
-    public void closeObjectsInScene() {
-        if (galleryDinosaur.isOpen()) {
-            galleryDinosaur.closeThis();
-        }
-        if (textDinosaur.isOpen()) {
-            textDinosaur.closeAction();
-        }
-        if (videoDinosaur.isOpen()) {
-            videoDinosaur.closeAction();
-        }
-    }
+		GVRMesh mesh = getGVRContext().loadMesh(
+				new GVRAndroidResource(getGVRContext(), R.raw.skybox_mesh));
+		GVRTexture texture = getGVRContext().loadTexture(
+				new GVRAndroidResource(getGVRContext(),
+						R.drawable.dino_skybox_tex_diffuse));
+		GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh,
+				texture);
+		skybox.getTransform().setScale(1, 1, 1);
+		skybox.getRenderData().setRenderingOrder(0);
+		return skybox;
+	}
+
+	public void closeObjectsInScene() {
+		if (galleryDinosaur.isOpen()) {
+			galleryDinosaur.closeThis();
+		}
+		if (textDinosaur.isOpen()) {
+			textDinosaur.closeAction();
+		}
+		if (videoDinosaur.isOpen()) {
+			videoDinosaur.closeAction();
+		}
+	}
+
+	public void onPause() {
+		if (rotateDinosaur.isPlayed) {
+			rotateDinosaur.pauseAnimation();
+		}
+	}
+
 }

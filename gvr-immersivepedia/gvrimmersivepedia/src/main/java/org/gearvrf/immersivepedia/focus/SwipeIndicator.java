@@ -108,8 +108,6 @@ public class SwipeIndicator extends GVRSceneObject {
             public void finished(GVRAnimation arg0) {
                 new GVROpacityAnimation(swipeIndicator, 1, 0).start(gvrContext.getAnimationEngine());
                 new GVROpacityAnimation(hand, 1, 0).start(gvrContext.getAnimationEngine());
-              //  gvrContext.getMainScene().removeSceneObject(SwipeIndicator.this);
-
             }
         }).start(gvrContext.getAnimationEngine());
 
