@@ -185,10 +185,14 @@ public class DinosaurScene extends GVRScene {
 
         skyboxGround.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshFx = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
-        GVRTexture textureFx = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
-        GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx, textureFx);
-        skyboxGround.getRenderData().setRenderingOrder(0);
+		GVRMesh meshFx = getGVRContext().loadMesh(
+				new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
+		GVRTexture textureFx = getGVRContext().loadTexture(
+				new GVRAndroidResource(gvrContext,
+						R.drawable.windows_fx_tex_diffuse));
+		GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx,
+				textureFx);
+		skyboxGround.getRenderData().setRenderingOrder(0);
 
 		skybox.addChildObject(skyboxFx);
 		skybox.addChildObject(skyboxGround);

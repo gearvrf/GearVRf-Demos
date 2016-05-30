@@ -64,8 +64,8 @@ import android.view.MotionEvent;
 
     @Override
     public final void onPause() {
-        main.onPause();
-        super.onPause();
+	super.onPause();        
+	main.onPause();
     }
 
 }
