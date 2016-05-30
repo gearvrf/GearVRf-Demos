@@ -15,65 +15,60 @@
 
 package org.gearvrf.immersivepedia;
 
-import android.os.Bundle;
-import android.view.MotionEvent;
-
 import org.gearvrf.GVRActivity;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
 
-public class MainActivity extends GVRActivity implements OnTouchPadGestureListener {
+import android.os.Bundle;
+import android.view.MotionEvent;
 
-    private MainScript mainScript;
-    private VRTouchPadGestureDetector touchPadGestureDetector;
+public class MainActivity extends GVRActivity implements
+		OnTouchPadGestureListener {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mainScript = new MainScript();
-        touchPadGestureDetector = new VRTouchPadGestureDetector(this);
-        setScript(mainScript, "gvr_note4.xml");
-    }
+	private MainScript mainScript;
+	private VRTouchPadGestureDetector touchPadGestureDetector;
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        touchPadGestureDetector.onTouchEvent(event);
-        TouchPadInput.input(event);
-        return super.onTouchEvent(event);
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		mainScript = new MainScript();
+		touchPadGestureDetector = new VRTouchPadGestureDetector(this);
+		setScript(mainScript, "gvr_note4.xml");
+	}
 
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		touchPadGestureDetector.onTouchEvent(event);
+		TouchPadInput.input(event);
+		return super.onTouchEvent(event);
+	}
 
-        mainScript.onSingleTapConfirmed();
-        return false;
-    }
+	@Override
+	public boolean onSingleTap(MotionEvent e) {
 
-    @Override
-    public void onLongPress(MotionEvent e) {
+		mainScript.onSingleTapConfirmed();
+		return false;
+	}
 
-    }
+	@Override
+	public void onLongPress(MotionEvent e) {
 
-    @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX,
-            float velocityY) {
-        TouchPadInput.onSwipe(swipeDirection);
-        mainScript.onSwipe();
-        return false;
-    }
+	}
 
-    @Override
-    protected void onResume() {
-    	super.onResume();
-    	mainScript.onResume();
-    }
-    
-    @Override
-    public final void onPause() {
-    	super.onPause();
-    	mainScript.onPause();
-    }
+	@Override
+	public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
+			float velocityX, float velocityY) {
+		TouchPadInput.onSwipe(swipeDirection);
+		mainScript.onSwipe();
+		return false;
+	}
+
+	@Override
+	public final void onPause() {
+		super.onPause();
+		mainScript.onPause();
+	}
 
 }
