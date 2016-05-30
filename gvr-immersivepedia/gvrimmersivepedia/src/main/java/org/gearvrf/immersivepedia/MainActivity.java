@@ -24,6 +24,9 @@ import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
 import android.os.Bundle;
 import android.view.MotionEvent;
 
+public class MainActivity extends GVRActivity implements
+		OnTouchPadGestureListener {
+
     private Main main;
     private VRTouchPadGestureDetector touchPadGestureDetector;
 
