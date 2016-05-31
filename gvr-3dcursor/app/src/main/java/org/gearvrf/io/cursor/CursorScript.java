@@ -67,7 +67,7 @@ public class CursorScript extends GVRScript {
     private static final float SCENE_HEIGHT = 3.0f;
     private static final float SPACE_OBJECT_MARGIN = 30.0f;
     private static final float BUTTON_XORIENTATION = 30.0f;
-    private static final float POINT_CUR_POS_RESET_FACTOR = 0.8f;
+    private static final float OBJECT_CURSOR_RESET_FACTOR = 0.8f;
     private static final float LASER_CURSOR_RESET_FACTOR = 0.4f;
 
     private final String RESET_TEXT;
@@ -104,6 +104,7 @@ public class CursorScript extends GVRScript {
     private static final float FIRST_TEXT_VIEW_ROTATION = 60;
     private static final float CIRCLE_TEXT_ROTATION_OFFSET = 9f;
     private static final String GEARS2_DEVICE_ID = "gearwearable";
+    private static final String GEARVR_DEVICE_ID = "gearvr";
     private static final String CRYSTAL_THEME = "crystal_sphere";
     private static final float SETTINGS_ROTATION_X = 10.0f;
     private static final float SETTINGS_ROTATION_Y = -40.0f;
@@ -673,6 +674,22 @@ public class CursorScript extends GVRScript {
         }
     }
 
+    private void setOffsetPositionFromCursor(Vector3f position, Cursor cursor) {
+        position.set(cursor.getPositionX(),cursor.getPositionY(),cursor.getPositionZ());
+        if(cursor.getCursorType() == CursorType.OBJECT) {
+            position.mul(OBJECT_CURSOR_RESET_FACTOR);
+        } else {
+            position.mul(LASER_CURSOR_RESET_FACTOR);
+        }
+    }
+
+    private void setCursorPosition(Vector3f position, Cursor cursor) {
+        if (cursor.getIoDevice()!= null && !cursor.getIoDevice().getDeviceId().equals
+                (GEARVR_DEVICE_ID)) {
+            cursor.setPosition(position.x, position.y, position.z);
+        }
+    }
+
     private class HandCursorButton extends SpaceObject {
         private List<Cursor> handCursors;
         private boolean currentIoDeviceUsed;
@@ -706,16 +723,8 @@ public class CursorScript extends GVRScript {
             currentIoDevice = currentCursor.getIoDevice();
             currentIoDeviceUsed = false;
             handCursors.clear();
-            rightCursorPosition.set(currentCursor.getPositionX(), currentCursor.getPositionY(),
-                    currentCursor.getPositionZ());
+            setOffsetPositionFromCursor(rightCursorPosition,currentCursor);
             leftCursorPosition.set(rightCursorPosition);
-            if (currentCursor.getCursorType() == CursorType.OBJECT) {
-                leftCursorPosition.mul(POINT_CUR_POS_RESET_FACTOR);
-            } else {
-                leftCursorPosition.mul(LASER_CURSOR_RESET_FACTOR);
-            }
-
-            rightCursorPosition.set(leftCursorPosition);
 
             if (currentCursor.getCursorType() == CursorType.LASER) ;
             {
@@ -767,12 +776,12 @@ public class CursorScript extends GVRScript {
 
         private void setUpLeftCursor(Cursor cursor) {
             cursor.setCursorTheme(leftHandTheme);
-            cursor.setPosition(leftCursorPosition.x, leftCursorPosition.y, leftCursorPosition.z);
+            setCursorPosition(leftCursorPosition, cursor);
         }
 
         private void setUpRightCursor(Cursor cursor) {
             cursor.setCursorTheme(rightHandTheme);
-            cursor.setPosition(rightCursorPosition.x, rightCursorPosition.y, rightCursorPosition.z);
+            setCursorPosition(rightCursorPosition, cursor);
         }
 
         private void enablePointCursors(List<Cursor> cursors) {
@@ -806,15 +815,15 @@ public class CursorScript extends GVRScript {
             }
 
             IoDevice targetIoDevice = currentCursor.getIoDevice();
-            List<Cursor> activeCursors = null;
-            synchronized (cursors) {
-                activeCursors = new ArrayList<Cursor>(cursors);
+            List<Cursor> enabledCursors = cursorManager.getActiveCursors();
+            for(Cursor inactiveCursor:cursorManager.getInactiveCursors()) {
+                if(inactiveCursor.isEnabled()) {
+                    enabledCursors.add(inactiveCursor);
+                }
             }
 
-            for (Cursor cursor : activeCursors) {
-                if (cursor.getCursorType() == CursorType.OBJECT && cursor.getIoDevice() ==
-                        null) {
-
+            for (Cursor cursor : enabledCursors) {
+                if (cursor.getCursorType() == CursorType.OBJECT && cursor.getIoDevice() == null) {
                     otherCursor = cursor;
                 } else if (cursor.getCursorType() == CursorType.LASER) {
                     laserCursor = cursor;
@@ -872,28 +881,25 @@ public class CursorScript extends GVRScript {
     }
 
     private class GearS2Button extends SpaceObject {
+        Vector3f cursorPosition;
         public GearS2Button(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
             super(gvrContext, holder, name, position, scale, rotationX, rotationY,
                     BUTTON_XORIENTATION, 0.0f, 0.0f);
+            cursorPosition = new Vector3f();
         }
 
         @Override
         void handleClickReleased(CursorEvent event) {
-            Cursor currentCursor = event.getCursor();
             Cursor targetCursor = null;
             CursorTheme crystalTheme = null;
-            Vector3f cursorPosition = new Vector3f(currentCursor.getPositionX(), currentCursor
-                    .getPositionY(), currentCursor.getPositionZ());
-
-            cursorPosition.mul(POINT_CUR_POS_RESET_FACTOR);
+            setOffsetPositionFromCursor(cursorPosition, event.getCursor());
 
             for (CursorTheme theme : cursorManager.getCursorThemes()) {
                 if (theme.getId().equals(CRYSTAL_THEME)) {
                     crystalTheme = theme;
                 }
             }
-
 
             List<Cursor> activeCursors = null;
             synchronized (cursors) {
@@ -902,7 +908,7 @@ public class CursorScript extends GVRScript {
 
             for (Cursor cursor : activeCursors) {
                 if (cursor.isEnabled() && cursor.getCursorType() == CursorType.OBJECT &&
-                        targetCursor != null) {
+                        targetCursor == null) {
                     targetCursor = cursor;
                 } else {
                     cursor.setEnable(false);
@@ -920,7 +926,7 @@ public class CursorScript extends GVRScript {
             }
 
             targetCursor.setCursorTheme(crystalTheme);
-            targetCursor.setPosition(cursorPosition.x, cursorPosition.y, cursorPosition.z);
+            setCursorPosition(cursorPosition,targetCursor);
         }
     }
 
