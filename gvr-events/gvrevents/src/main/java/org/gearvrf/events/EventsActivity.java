@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import android.graphics.Color;
@@ -39,7 +39,7 @@ import android.widget.TextView;
 
 public class EventsActivity extends GVRActivity {
     private static final String TAG = EventsActivity.class.getSimpleName();
-    private GVRScript script;
+    private GVRMain main;
     private GVRFrameLayout frameLayout;
     private TextView buttonTextView, keyTextView, listTextView;
     private Button button1, button2;
@@ -82,8 +82,8 @@ public class EventsActivity extends GVRActivity {
         checkBox.setOnClickListener(clickListener);
         buttonPressed = getResources().getString(R.string.buttonPressed);
         listItemClicked = getResources().getString(R.string.listClicked);
-        script = new EventsScript(this, frameLayout, keyTextView);
-        setScript(script, "gvr.xml");
+        main = new EventsMain(this, frameLayout, keyTextView);
+        setMain(main, "gvr.xml");
     }
 
     private OnClickListener clickListener = new OnClickListener() {

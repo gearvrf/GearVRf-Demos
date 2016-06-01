@@ -34,7 +34,7 @@ import org.gearvrf.scene_objects.view.GVRWebView;
 
 public class SceneObjectActivity extends GVRActivity {
     private static final String TAG = "SceneObjectActivity";
-    private SampleViewManager mViewManager;
+    private SampleMain mMain;
     private long lastDownTime = 0;
     private GVRWebView webView;
     private Camera camera;
@@ -47,8 +47,8 @@ public class SceneObjectActivity extends GVRActivity {
         createWebView();
         createCameraView();
 
-        mViewManager = new SampleViewManager(this);
-        setScript(mViewManager, "gvr.xml");
+        mMain = new SampleMain(this);
+        setMain(mMain, "gvr.xml");
     }
 
     private void createWebView() {
@@ -131,7 +131,7 @@ public class SceneObjectActivity extends GVRActivity {
     @Override
     public void onPause() {
         super.onPause();
-        mViewManager.onPause();
+        mMain.onPause();
         if (camera != null) {
             camera.setPreviewCallback(null);
             camera.stopPreview();
@@ -149,8 +149,8 @@ public class SceneObjectActivity extends GVRActivity {
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             // check if it was a quick tap
             if (event.getEventTime() - lastDownTime < 200) {
-                // pass it as a tap to the ViewManager
-                mViewManager.onTap();
+                // pass it as a tap to the Main
+                mMain.onTap();
             }
         }
 

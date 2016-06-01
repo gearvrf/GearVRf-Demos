@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.script.GVRScriptException;
 import org.gearvrf.script.GVRScriptFile;
 import org.gearvrf.script.GVRScriptManager;
@@ -36,8 +36,8 @@ public class GearVRLua extends GVRActivity
         
         // Instantiate your script class
         // Note: you could just use GVRScript if everything is in lua script
-        GVRScript script = new GearVRLuaScript();
-        setScript(script, "gvr.xml");
+        GVRMain main = new GearVRLuaMain();
+        setMain(main, "gvr.xml");
  
         GVRScriptManager sm = getGVRContext().getScriptManager();
 
@@ -50,7 +50,7 @@ public class GearVRLua extends GVRActivity
             scriptFile = sm.loadScript(
                     new GVRAndroidResource(getGVRContext(), "script.lua"),
                     GVRScriptManager.LANG_LUA);
-            sm.attachScriptFile(script, scriptFile);
+            sm.attachScriptFile(main, scriptFile);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (GVRScriptException e) {

@@ -18,7 +18,7 @@ package org.gearvrf.controls.menu.rotation;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.anim.AnimationsTime;
 import org.gearvrf.controls.focus.ControlSceneObject;
@@ -68,7 +68,7 @@ public class RotationMenu extends MenuWindow {
             @Override
             public void selected(ControlSceneObject object) {
                 
-                MainScript.enableAnimationStar();
+                Main.enableAnimationStar();
                 
                 RadioButtonSceneObject button = (RadioButtonSceneObject)object;
                 AnimationsTime.setRotationTime(button.getSecond());

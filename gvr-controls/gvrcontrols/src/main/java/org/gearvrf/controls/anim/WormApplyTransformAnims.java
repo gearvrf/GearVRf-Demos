@@ -19,31 +19,31 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
 import org.gearvrf.animation.GVRScaleAnimation;
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.util.Util;
 
 public class WormApplyTransformAnims {
 
     public static void moveWorm(GVRContext gvrContext, float scaleFactor) {
-        moveWormPart(gvrContext, MainScript.worm.getHead(), scaleFactor);
-        moveWormPart(gvrContext, MainScript.worm.getEnd(), scaleFactor);
+        moveWormPart(gvrContext, Main.worm.getHead(), scaleFactor);
+        moveWormPart(gvrContext, Main.worm.getEnd(), scaleFactor);
     }
 
     public static void resetScaleWorm(float[] scaleFactor) {
 
-        MainScript.worm.getHead().getTransform()
+        Main.worm.getHead().getTransform()
                 .setScale(scaleFactor[0], scaleFactor[0], scaleFactor[0]);
-        MainScript.worm.getMiddle().getTransform()
+        Main.worm.getMiddle().getTransform()
                 .setScale(scaleFactor[1], scaleFactor[1], scaleFactor[1]);
-        MainScript.worm.getEnd().getTransform()
+        Main.worm.getEnd().getTransform()
                 .setScale(scaleFactor[2], scaleFactor[2], scaleFactor[2]);
     }
 
     public static void scaleWorm(GVRContext gvrContext, float scaleFactor) {
 
-        scaleWormPart(gvrContext, MainScript.worm.getHead(), scaleFactor);
-        scaleWormPart(gvrContext, MainScript.worm.getMiddle(), scaleFactor);
-        scaleWormPart(gvrContext, MainScript.worm.getEnd(), scaleFactor);
+        scaleWormPart(gvrContext, Main.worm.getHead(), scaleFactor);
+        scaleWormPart(gvrContext, Main.worm.getMiddle(), scaleFactor);
+        scaleWormPart(gvrContext, Main.worm.getEnd(), scaleFactor);
     }
 
     public static void moveWormPart(GVRContext gvrContext, GVRSceneObject part, float scaleFactor) {

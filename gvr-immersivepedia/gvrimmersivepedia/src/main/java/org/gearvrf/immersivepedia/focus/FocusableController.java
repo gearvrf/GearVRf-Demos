@@ -21,7 +21,7 @@ import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.immersivepedia.GazeController;
-import org.gearvrf.immersivepedia.MainScript;
+import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 
@@ -79,7 +79,7 @@ public final class FocusableController {
 
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
         if (eyePointeeHolders.length == 0 || !isAVisibleObjectBeingSeen(context, eyePointeeHolders)) {
-            MainScript.clickOut();
+            Main.clickOut();
         } else {
             for (GVREyePointeeHolder holder : eyePointeeHolders) {
                 for (FocusableSceneObject object : interactiveObjects) {

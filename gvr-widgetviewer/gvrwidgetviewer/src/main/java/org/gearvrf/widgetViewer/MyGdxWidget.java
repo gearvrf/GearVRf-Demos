@@ -53,7 +53,7 @@ public class MyGdxWidget extends GVRWidget {
     Actor mColorButtonActor;
     Actor mLookInsideButtonActor;
     public float mX, mY, mZ;
-    public ViewerScript mScript;
+    public ViewerMain mMain;
     Button mNextButton;
     Button mPreviousButton;
     Button mColorButton;
@@ -94,7 +94,7 @@ public class MyGdxWidget extends GVRWidget {
                     public void clicked(InputEvent event, float x, float y) {
                         System.out.println("click " + x + ", " + y);
 
-                        mScript.ThumbnailSelected = (mScript.ThumbnailSelected + 1) % 5;
+                        mMain.ThumbnailSelected = (mMain.ThumbnailSelected + 1) % 5;
                         mNextButton.setChecked(false);
                     }
                 });
@@ -105,7 +105,7 @@ public class MyGdxWidget extends GVRWidget {
                 button.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
                         System.out.println("click " + x + ", " + y);
-                        mScript.ThumbnailSelected = (mScript.ThumbnailSelected + 4) % 5;
+                        mMain.ThumbnailSelected = (mMain.ThumbnailSelected + 4) % 5;
                         mPreviousButton.setChecked(false);
                     }
                 });
@@ -121,7 +121,7 @@ public class MyGdxWidget extends GVRWidget {
                 final SelectBox selectBox = new SelectBox(style);
                 selectBox.addListener(new ChangeListener() {
                     public void changed(ChangeEvent event, Actor actor) {
-                        mScript.mTexColor = selectBox.getSelectedIndex() + 1;
+                        mMain.mTexColor = selectBox.getSelectedIndex() + 1;
                     }
                 });
                 selectBox
@@ -197,7 +197,7 @@ public class MyGdxWidget extends GVRWidget {
         button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
 
-                mScript.mLookInside = true;
+                mMain.mLookInside = true;
                 mLookInsideButton.setChecked(false);
                 mLookInsideButton.toggle();
             }
@@ -267,8 +267,8 @@ public class MyGdxWidget extends GVRWidget {
             mX = ((Slider) xSlider).getValue();
             mY = ((Slider) ySlider).getValue();
             mZ = ((Slider) zSlider).getValue();
-            mScript.mZoomLevel = (mX / 100.0f * 2.0f) - 2.0f;
-            mScript.mRotateZ = (360.0f / 100.0f) * mZ;
+            mMain.mZoomLevel = (mX / 100.0f * 2.0f) - 2.0f;
+            mMain.mRotateZ = (360.0f / 100.0f) * mZ;
         }
         if (mCheckBox.isChecked() && mX != 0)
             mCheckBox.setChecked(false);
@@ -276,18 +276,18 @@ public class MyGdxWidget extends GVRWidget {
             ((Slider) xSlider).setValue(0);
             ((Slider) ySlider).setValue(0);
             ((Slider) zSlider).setValue(0);
-            mScript.mResetRotate = true;
+            mMain.mResetRotate = true;
             for (int i = 0; i < 5; i++)
-                mScript.Objects[i].getTransform().setRotationByAxis(0.0f, 0.0f,
+                mMain.Objects[i].getTransform().setRotationByAxis(0.0f, 0.0f,
                         0.0f, 0.0f);
             mResetSlider = false;
         }
-        if (mScript.ThumbnailSelected == 1 || mScript.ThumbnailSelected == 3) {
+        if (mMain.ThumbnailSelected == 1 || mMain.ThumbnailSelected == 3) {
             ((SelectBox) mColorButtonActor).setVisible(true);
 
         } else
             ((SelectBox) mColorButtonActor).setVisible(false);
-        if (mScript.ThumbnailSelected == 3)
+        if (mMain.ThumbnailSelected == 3)
             ((Button) mLookInsideButtonActor).setVisible(true);
         else
             ((Button) mLookInsideButtonActor).setVisible(false);

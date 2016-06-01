@@ -26,15 +26,15 @@ import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
 
 public class MainActivity extends GVRActivity implements OnTouchPadGestureListener {
 
-    private MainScript mainScript;
+    private Main main;
     private VRTouchPadGestureDetector touchPadGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainScript = new MainScript();
+        main = new Main();
         touchPadGestureDetector = new VRTouchPadGestureDetector(this);
-        setScript(mainScript, "gvr.xml");
+        setScript(main, "gvr.xml");
     }
 
     @Override
@@ -47,7 +47,7 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     @Override
     public boolean onSingleTap(MotionEvent e) {
 
-        mainScript.onSingleTapConfirmed();
+        main.onSingleTapConfirmed();
         return false;
     }
 
@@ -60,13 +60,13 @@ public class MainActivity extends GVRActivity implements OnTouchPadGestureListen
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX,
             float velocityY) {
         TouchPadInput.onSwipe(swipeDirection);
-        mainScript.onSwipe();
+        main.onSwipe();
         return false;
     }
 
     @Override
     public final void onPause() {
-        mainScript.onPause();
+        main.onPause();
         super.onPause();
     }
 

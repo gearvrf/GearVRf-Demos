@@ -42,15 +42,15 @@ public class ViewerActivity extends GVRActivity implements
     private static final int TAP_INTERVAL = 300;
     private long mLatestButton = 0;
     private long mLatestTap = 0;
-    private ViewerScript mScript = null;
+    private ViewerMain mMain = null;
     private VRTouchPadGestureDetector mDetector = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mScript = new ViewerScript(this);
+        mMain = new ViewerMain(this);
         mDetector = new VRTouchPadGestureDetector(this);
-        setScript(mScript, "gvr.xml");
+        setMain(mMain, "gvr.xml");
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ViewerActivity extends GVRActivity implements
     public void onBackPressed() {
         if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
             mLatestButton = System.currentTimeMillis();
-            mScript.onButtonDown();
+            mMain.onButtonDown();
         }
     }
 
@@ -109,7 +109,7 @@ public class ViewerActivity extends GVRActivity implements
         Log.v("", "onSingleTap");
         if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
             mLatestTap = System.currentTimeMillis();
-            mScript.onSingleTap(e);
+            mMain.onSingleTap(e);
         }
         return false;
     }

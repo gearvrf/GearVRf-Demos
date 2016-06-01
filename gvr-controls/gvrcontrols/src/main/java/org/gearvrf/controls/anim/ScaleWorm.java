@@ -15,7 +15,7 @@
 
 package org.gearvrf.controls.anim;
 
-import org.gearvrf.controls.MainScript;
+import org.gearvrf.controls.Main;
 import org.gearvrf.controls.Worm;
 
 public class ScaleWorm {
@@ -44,7 +44,7 @@ public class ScaleWorm {
             ScaleWorm.lastSize[1] = mWorm.getMiddle().getTransform().getScaleX();
             ScaleWorm.lastSize[2] = mWorm.getEnd().getTransform().getScaleX();
 
-            MainScript.animWormReset();
+            Main.animWormReset();
         }
     }
 

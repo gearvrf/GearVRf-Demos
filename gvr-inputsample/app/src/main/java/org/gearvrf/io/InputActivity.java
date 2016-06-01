@@ -24,26 +24,26 @@ import org.gearvrf.scene_objects.view.GVRTextView;
 
 public class InputActivity extends GVRActivity {
     private static final String TAG = InputActivity.class.getSimpleName();
-    InputScript script;
+    InputMain main;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
 
-        // create a textview on the main thread for the script
+        // create a textview on the main thread for this
         GVRTextView textView = new GVRTextView(this, 1000, 500);
         textView.setBackgroundColor(Color.BLACK);
         textView.setTextColor(Color.WHITE);
         textView.setTextSize(18);
         textView.setGravity(Gravity.CENTER);
 
-        script = new InputScript(textView);
-        setScript(script, "gvr.xml");
+        main = new InputMain(textView);
+        setMain(main, "gvr.xml");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        script.close();
+        main.close();
     }
 }

@@ -16,7 +16,7 @@
 package org.gearvrf.renderableview;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.scene_objects.view.GVRView;
@@ -29,7 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout.LayoutParams;
 
 public class MainActivity extends GVRActivity {
-    private GVRScript mScript;
+    private GVRMain mMain;
 
     private GVRFrameLayout mFrameLayoutLeft;
     private GVRWebView mWebView;
@@ -41,8 +41,8 @@ public class MainActivity extends GVRActivity {
 
         createView();
 
-        mScript = new MainScript(this);
-        setScript(mScript, "gvr.xml");
+        mMain = new Main(this);
+        setMain(mMain, "gvr.xml");
     }
 
     private void createView() {

@@ -22,13 +22,13 @@ import android.view.KeyEvent;
 
 public class SampleActivity extends GVRActivity {
 
-    private SampleViewManager mScript = null;
+    private SampleMain mMain = null;
     
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mScript = new SampleViewManager();
-        setScript(mScript, "gvr_note4.xml");
+        mMain = new SampleMain();
+        setMain(mMain, "gvr_note4.xml");
     }
     
     @Override
@@ -36,7 +36,7 @@ public class SampleActivity extends GVRActivity {
         boolean handled = false;
 
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            handled = mScript.processKeyEvent(event.getKeyCode());
+            handled = mMain.processKeyEvent(event.getKeyCode());
         }
 
         if (handled) {
