@@ -24,6 +24,7 @@ import org.gearvrf.*;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
+import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.util.FPSCounter;
 
 import android.content.res.AssetFileDescriptor;
@@ -37,7 +38,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 
-public class VideoMain extends GVRScript {
+public class VideoMain extends GVRMain {
 
     private static final String TAG = "VideoMain";
 
@@ -46,7 +47,6 @@ public class VideoMain extends GVRScript {
     private AdditiveShader mAdditiveShader = null;
     private ScreenShader mScreenShader = null;
     private MediaPlayer mMediaPlayer = null;
-    private SurfaceTexture mVideoSurfaceTexture = null;
 
     private int mCinemaNum = 2;
     private GVRSceneObject[] mCinema = new GVRSceneObject[mCinemaNum];
@@ -147,8 +147,7 @@ public class VideoMain extends GVRScript {
         /*
          * Media player with a linked texture.
          */
-        GVRTexture screenTexture = new GVRExternalTexture(gvrContext);
-        mVideoSurfaceTexture = new SurfaceTexture(screenTexture.getId());
+        GVRExternalTexture screenTexture = new GVRExternalTexture(gvrContext);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setLooping(true);
@@ -160,7 +159,6 @@ public class VideoMain extends GVRScript {
                     afd.getStartOffset(), afd.getLength());
             afd.close();
             mMediaPlayer.prepare();
-            mMediaPlayer.setSurface(new Surface(mVideoSurfaceTexture));
 
             /*
              * Head tracker
@@ -271,8 +269,10 @@ public class VideoMain extends GVRScript {
             renderDataR.setMesh(screenMesh);
             renderDataR.setMaterial(material);
 
-            mScreenL = new GVRSceneObject(gvrContext);
-            mScreenR = new GVRSceneObject(gvrContext);
+            mScreenL = new GVRVideoSceneObject(gvrContext, screenMesh, mMediaPlayer,
+                    screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
+            mScreenR = new GVRVideoSceneObject(gvrContext, screenMesh, mMediaPlayer,
+                    screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
             mScreenL.attachRenderData(renderDataL);
             mScreenR.attachRenderData(renderDataR);
             mScreenL.getRenderData().setCullTest(false);
@@ -370,8 +370,10 @@ public class VideoMain extends GVRScript {
             oculus_renderDataR.setMesh(oculus_screenMesh);
             oculus_renderDataR.setMaterial(oculus_material);
 
-            mOculusScreenL = new GVRSceneObject(gvrContext);
-            mOculusScreenR = new GVRSceneObject(gvrContext);
+            mOculusScreenL = new GVRVideoSceneObject(gvrContext, oculus_screenMesh, mMediaPlayer,
+                    screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
+            mOculusScreenR = new GVRVideoSceneObject(gvrContext, oculus_screenMesh, mMediaPlayer,
+                    screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
             mOculusScreenL.attachRenderData(oculus_renderDataL);
             mOculusScreenR.attachRenderData(oculus_renderDataR);
             mOculusScreenL.getRenderData().setCullTest(false);
@@ -679,7 +681,6 @@ public class VideoMain extends GVRScript {
     @Override
     public void onStep() {
         FPSCounter.tick();
-        mVideoSurfaceTexture.updateTexImage();
 
         float step = 0.2f;
 
