@@ -27,6 +27,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
@@ -58,8 +59,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-public class CursorScript extends GVRScript {
-    private static final String TAG = CursorScript.class.getSimpleName();
+public class CursorMain extends GVRMain {
+    private static final String TAG = CursorMain.class.getSimpleName();
 
     private static final float CUBE_WIDTH = 200.0f;
 
@@ -145,8 +146,7 @@ public class CursorScript extends GVRScript {
     private Map<String, Future<GVRMesh>> meshMap;
     private Map<String, Future<GVRTexture>> textureMap;
 
-    public CursorScript(GVRActivity gvrActivity) {
-        //TODO set number
+    public CursorMain(GVRActivity gvrActivity) {
         Resources resources = gvrActivity.getResources();
         LIGHT_BLUE_COLOR = resources.getColor(R.color.LIGHT_BLUE);
         objects = new HashMap<String, SpaceObject>();
@@ -208,13 +208,12 @@ public class CursorScript extends GVRScript {
         mainScene = gvrContext.getNextMainScene();
         meshMap = new HashMap<String, Future<GVRMesh>>();
         textureMap = new HashMap<String, Future<GVRTexture>>();
-
+        addSurroundings(gvrContext, mainScene);
         try {
             ZipLoader.load(gvrContext, MESH_FILE, new ZipLoader
                     .ZipEntryProcessor<Future<GVRMesh>>() {
                 @Override
                 public Future<GVRMesh> getItem(GVRContext context, GVRAndroidResource resource) {
-                    Log.d(TAG, "Mesh name is " + resource.getResourceFilename());
                     Future<GVRMesh> mesh = context.loadFutureMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
                     return mesh;
@@ -228,7 +227,6 @@ public class CursorScript extends GVRScript {
                         @Override
                         public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource
                                 resource) {
-                            Log.d(TAG, "Tex name is " + resource.getResourceFilename());
                             Future<GVRTexture> texture = context.loadFutureTexture(resource);
                             textureMap.put(resource.getResourceFilename(), texture);
                             return texture;
@@ -252,7 +250,6 @@ public class CursorScript extends GVRScript {
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
         mainScene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
 
-        addSurroundings(gvrContext, mainScene);
         List<IoDevice> devices = new ArrayList<IoDevice>();
 
         //_VENDOR_TODO_ register the devices with Cursor Manager here.
@@ -397,7 +394,6 @@ public class CursorScript extends GVRScript {
         cursors = new ArrayList<Cursor>();
         for (Cursor cursor : cursorManager.getActiveCursors()) {
             activationListener.onActivated(cursor);
-            cursor.addCursorEventListener(cursorEventListener);
         }
         cursorManager.addCursorActivationListener(activationListener);
     }
