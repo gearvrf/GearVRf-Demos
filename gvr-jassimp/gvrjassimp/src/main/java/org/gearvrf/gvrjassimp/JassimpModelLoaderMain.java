@@ -24,6 +24,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -40,23 +41,12 @@ public class JassimpModelLoaderMain extends GVRMain {
 
     private GVRAnimationEngine mAnimationEngine;
     private GVRScene mMainScene;
+    private List<GVRAnimation> mAnimations = new ArrayList<GVRAnimation>();
 
     @Override
     public void onInit(GVRContext gvrContext) {
-
         mAnimationEngine = gvrContext.getAnimationEngine();
-
-        mMainScene = gvrContext.getNextMainScene(new Runnable() {
-            @Override
-            public void run() {
-                for (GVRAnimation animation : mAnimations) {
-                    animation.start(mAnimationEngine);
-                }
-                mAnimations = null;
-            }
-        });
-
-        // Apply frustum culling
+        mMainScene = gvrContext.getNextMainScene();
         mMainScene.setFrustumCulling(true);
 
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
@@ -69,7 +59,9 @@ public class JassimpModelLoaderMain extends GVRMain {
             GVRModelSceneObject astroBoyModel = gvrContext.loadModel("astro_boy.dae");
             List<GVRAnimation> animations = astroBoyModel.getAnimations();
             if (animations.size() >= 1) {
-                setup(animations.get(0));
+                GVRAnimation animation = animations.get(0);
+                animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
+                mAnimations.add(animation);
             }
 
             astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
@@ -83,13 +75,11 @@ public class JassimpModelLoaderMain extends GVRMain {
 
         // Model with color
         try {
-            GVRSceneObject benchModel = gvrContext.loadModel("bench.dae");
+            GVRSceneObject benchModel = gvrContext.getAssetLoader().loadModel("bench.dae", GVRResourceVolume.VolumeType.ANDROID_ASSETS, mMainScene);
 
             benchModel.getTransform().setScale(0.66f, 0.66f, 0.66f);
             benchModel.getTransform().setPosition(0.0f, -4.0f, -20.0f);
             benchModel.getTransform().setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
-
-            mMainScene.addSceneObject(benchModel);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
@@ -97,13 +87,15 @@ public class JassimpModelLoaderMain extends GVRMain {
         // Model over network
         String urlBase = "https://raw.githubusercontent.com/gearvrf/GearVRf-Demos/master/gvrjassimpmodelloader/assets/";
         try {
-            GVRSceneObject treesModel = gvrContext.loadModelFromURL(urlBase + "trees/trees9.3ds");
+            GVRSceneObject treesModel = gvrContext.getAssetLoader().loadModel(urlBase + "trees/trees9.3ds", GVRResourceVolume.VolumeType.NETWORK, mMainScene);
             treesModel.getTransform().setPosition(5.0f, 0.0f, 0.0f);
-            mMainScene.addSceneObject(treesModel);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model from URL: %s", e);
         } catch (SecurityException se) {
             Log.e(TAG, "Failed to load a model from URL: %s", se);
+        }
+        for (GVRAnimation animation : mAnimations) {
+            animation.start(mAnimationEngine);
         }
     }
 
@@ -117,10 +109,4 @@ public class JassimpModelLoaderMain extends GVRMain {
         mMainScene.setStatsEnabled(!statsEnabled);
     }
 
-    private List<GVRAnimation> mAnimations = new ArrayList<GVRAnimation>();
-
-    private void setup(GVRAnimation animation) {
-        animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
-        mAnimations.add(animation);
-    }
 }
