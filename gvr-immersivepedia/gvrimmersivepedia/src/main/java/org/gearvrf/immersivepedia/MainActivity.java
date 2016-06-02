@@ -15,59 +15,67 @@
 
 package org.gearvrf.immersivepedia;
 
-import android.os.Bundle;
-import android.view.MotionEvent;
-
 import org.gearvrf.GVRActivity;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
 
-public class MainActivity extends GVRActivity implements OnTouchPadGestureListener {
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 
-    private Main main;
-    private VRTouchPadGestureDetector touchPadGestureDetector;
+public class MainActivity extends GVRActivity implements
+		OnTouchPadGestureListener {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        main = new Main();
-        touchPadGestureDetector = new VRTouchPadGestureDetector(this);
-        setScript(main, "gvr.xml");
-    }
+	private Main main;
+	private VRTouchPadGestureDetector touchPadGestureDetector;
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        touchPadGestureDetector.onTouchEvent(event);
-        TouchPadInput.input(event);
-        return super.onTouchEvent(event);
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		main = new Main();
+		touchPadGestureDetector = new VRTouchPadGestureDetector(this);
+		setScript(main, "gvr.xml");
+	}
 
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		touchPadGestureDetector.onTouchEvent(event);
+		TouchPadInput.input(event);
+		return super.onTouchEvent(event);
+	}
 
-        main.onSingleTapConfirmed();
-        return false;
-    }
+	@Override
+	public boolean onSingleTap(MotionEvent e) {
 
-    @Override
-    public void onLongPress(MotionEvent e) {
+		main.onSingleTapConfirmed();
+		return false;
+	}
 
-    }
+	@Override
+	public void onLongPress(MotionEvent e) {
 
-    @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX,
-            float velocityY) {
-        TouchPadInput.onSwipe(swipeDirection);
-        main.onSwipe();
-        return false;
-    }
+	}
 
-    @Override
-    public final void onPause() {
-        main.onPause();
-        super.onPause();
-    }
+	@Override
+	public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
+			float velocityX, float velocityY) {
+		TouchPadInput.onSwipe(swipeDirection);
+		main.onSwipe();
+		return false;
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+	}
+
+	@Override
+	protected void onPause() {
+		main.onPause();
+		super.onPause();
+
+	}
 
 }
