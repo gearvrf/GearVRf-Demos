@@ -27,16 +27,16 @@ import android.view.MotionEvent;
 public class MainActivity extends GVRActivity implements
 		OnTouchPadGestureListener {
 
-    private Main main;
-    private VRTouchPadGestureDetector touchPadGestureDetector;
+	private Main main;
+	private VRTouchPadGestureDetector touchPadGestureDetector;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        main = new Main();
-        touchPadGestureDetector = new VRTouchPadGestureDetector(this);
-        setScript(main, "gvr.xml");
-    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		main = new Main();
+		touchPadGestureDetector = new VRTouchPadGestureDetector(this);
+		setScript(main, "gvr.xml");
+	}
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -48,27 +48,27 @@ public class MainActivity extends GVRActivity implements
 	@Override
 	public boolean onSingleTap(MotionEvent e) {
 
-        main.onSingleTapConfirmed();
-        return false;
-    }
+		main.onSingleTapConfirmed();
+		return false;
+	}
 
 	@Override
 	public void onLongPress(MotionEvent e) {
 
 	}
 
-    @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX,
-            float velocityY) {
-        TouchPadInput.onSwipe(swipeDirection);
-        main.onSwipe();
-        return false;
-    }
+	@Override
+	public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
+			float velocityX, float velocityY) {
+		TouchPadInput.onSwipe(swipeDirection);
+		main.onSwipe();
+		return false;
+	}
 
-    @Override
-    public final void onPause() {
-	super.onPause();        
-	main.onPause();
-    }
+	@Override
+	protected void onPause() {
+		super.onPause();
+		main.onPause();
+	}
 
 }
