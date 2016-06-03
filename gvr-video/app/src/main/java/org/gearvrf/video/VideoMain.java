@@ -24,6 +24,7 @@ import org.gearvrf.*;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
+import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.util.FPSCounter;
 
 import android.content.res.AssetFileDescriptor;
@@ -46,20 +47,17 @@ public class VideoMain extends GVRMain {
     private AdditiveShader mAdditiveShader = null;
     private ScreenShader mScreenShader = null;
     private MediaPlayer mMediaPlayer = null;
-    private SurfaceTexture mVideoSurfaceTexture = null;
 
     private int mCinemaNum = 2;
     private GVRSceneObject[] mCinema = new GVRSceneObject[mCinemaNum];
 
     private GVRSceneObject mLeftSceneObject = null;
     private GVRSceneObject mRightSceneObject = null;
-    private GVRSceneObject mScreenL = null;
-    private GVRSceneObject mScreenR = null;
+    private GVRSceneObject mScreen = null;
 
     private GVRSceneObject mOculusSceneObject1 = null;
     private GVRSceneObject mOculusSceneObject2 = null;
-    private GVRSceneObject mOculusScreenL = null;
-    private GVRSceneObject mOculusScreenR = null;
+    private GVRSceneObject mOculusScreen = null;
 
     private GVRSceneObject mHeadTracker = null;
     private GVRSceneObject mPlayPauseButton = null;
@@ -147,8 +145,7 @@ public class VideoMain extends GVRMain {
         /*
          * Media player with a linked texture.
          */
-        GVRTexture screenTexture = new GVRExternalTexture(gvrContext);
-        mVideoSurfaceTexture = new SurfaceTexture(screenTexture.getId());
+        GVRExternalTexture screenTexture = new GVRExternalTexture(gvrContext);
 
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setLooping(true);
@@ -160,7 +157,6 @@ public class VideoMain extends GVRMain {
                     afd.getStartOffset(), afd.getLength());
             afd.close();
             mMediaPlayer.prepare();
-            mMediaPlayer.setSurface(new Surface(mVideoSurfaceTexture));
 
             /*
              * Head tracker
@@ -261,28 +257,19 @@ public class VideoMain extends GVRMain {
 
             GVRMesh screenMesh = gvrContext.loadMesh(new GVRAndroidResource(
                     mGVRContext, "theater1/screen.obj"));
-            GVRRenderData renderDataL = new GVRRenderData(gvrContext);
-            GVRRenderData renderDataR = new GVRRenderData(gvrContext);
+            GVRRenderData renderData = new GVRRenderData(gvrContext);
             GVRMaterial material = new GVRMaterial(gvrContext,
                     mScreenShader.getShaderId());
             material.setTexture(ScreenShader.SCREEN_KEY, screenTexture);
-            renderDataL.setMesh(screenMesh);
-            renderDataL.setMaterial(material);
-            renderDataR.setMesh(screenMesh);
-            renderDataR.setMaterial(material);
+            renderData.setMesh(screenMesh);
+            renderData.setMaterial(material);
 
-            mScreenL = new GVRSceneObject(gvrContext);
-            mScreenR = new GVRSceneObject(gvrContext);
-            mScreenL.attachRenderData(renderDataL);
-            mScreenR.attachRenderData(renderDataR);
+            mScreen = new GVRVideoSceneObject(gvrContext, screenMesh, mMediaPlayer,
+                    screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
+            mScreen.attachRenderData(renderData);
+            mScreen.getRenderData().setCullTest(false);
 
-            mScreenL.getTransform().setPosition(-0.031f, 0.0f, 0.0f);
-            mScreenR.getTransform().setPosition(0.031f, 0.0f, 0.0f);
-            mScreenL.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
-            mScreenR.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
-
-            mCinema[0].addChildObject(mScreenL);
-            mCinema[0].addChildObject(mScreenR);
+            mCinema[0].addChildObject(mScreen);
 
             mainScene.addSceneObject(mCinema[0]);
 
@@ -360,29 +347,19 @@ public class VideoMain extends GVRMain {
             GVRMesh oculus_screenMesh = gvrContext
                     .loadMesh(new GVRAndroidResource(mGVRContext,
                             "theater2/screen.obj"));
-            GVRRenderData oculus_renderDataL = new GVRRenderData(gvrContext);
-            GVRRenderData oculus_renderDataR = new GVRRenderData(gvrContext);
+            GVRRenderData oculus_renderData = new GVRRenderData(gvrContext);
             GVRMaterial oculus_material = new GVRMaterial(gvrContext,
                     mScreenShader.getShaderId());
             oculus_material.setTexture(ScreenShader.SCREEN_KEY, screenTexture);
-            oculus_renderDataL.setMesh(oculus_screenMesh);
-            oculus_renderDataL.setMaterial(oculus_material);
-            oculus_renderDataR.setMesh(oculus_screenMesh);
-            oculus_renderDataR.setMaterial(oculus_material);
+            oculus_renderData.setMesh(oculus_screenMesh);
+            oculus_renderData.setMaterial(oculus_material);
 
-            mOculusScreenL = new GVRSceneObject(gvrContext);
-            mOculusScreenR = new GVRSceneObject(gvrContext);
-            mOculusScreenL.attachRenderData(oculus_renderDataL);
-            mOculusScreenR.attachRenderData(oculus_renderDataR);
-            mOculusScreenL.getRenderData().setCullTest(false);
-            mOculusScreenR.getRenderData().setCullTest(false);
+            mOculusScreen = new GVRVideoSceneObject(gvrContext, oculus_screenMesh, mMediaPlayer,
+                    screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
+            mOculusScreen.attachRenderData(oculus_renderData);
+            mOculusScreen.getRenderData().setCullTest(false);
 
-            mOculusScreenL.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
-            mOculusScreenR.getRenderData()
-                    .setRenderMask(GVRRenderMaskBit.Right);
-
-            mCinema[1].addChildObject(mOculusScreenL);
-            mCinema[1].addChildObject(mOculusScreenR);
+            mCinema[1].addChildObject(mOculusScreen);
 
             float pivot_x = -3.353f;
             float pivot_y = 0.401f;
@@ -679,7 +656,6 @@ public class VideoMain extends GVRMain {
     @Override
     public void onStep() {
         FPSCounter.tick();
-        mVideoSurfaceTexture.updateTexImage();
 
         float step = 0.2f;
 
@@ -756,8 +732,7 @@ public class VideoMain extends GVRMain {
             mButtonBoard.getTransform().setScale(scale, scale, 1.0f);
             mButtonBoard.getTransform().setPosition(-0.1f,
                     -0.6f - 0.26f * scale, -8.0f);
-            mScreenL.getTransform().setScale(scale, scale, 1.0f);
-            mScreenR.getTransform().setScale(scale, scale, 1.0f);
+            mScreen.getTransform().setScale(scale, scale, 1.0f);
             mLeftSceneObject.getTransform().setScale(scale, scale, 1.0f);
             mRightSceneObject.getTransform().setScale(scale, scale, 1.0f);
         }
