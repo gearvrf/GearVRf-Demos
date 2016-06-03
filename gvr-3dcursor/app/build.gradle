@@ -42,6 +42,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':3DCursorLibrary')
+    compile project(':GearWearIoDevice')
     //_VENDOR_TODO_ add the device to cube-app here
     //compile project(':IODevices:io_template')
 }
