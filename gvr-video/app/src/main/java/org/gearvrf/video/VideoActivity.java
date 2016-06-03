@@ -32,12 +32,9 @@ import org.gearvrf.util.VRTouchPadGestureDetector.SwipeDirection;
 
 public class VideoActivity extends GVRActivity implements
         OnTouchPadGestureListener {
-    private static final int BUTTON_INTERVAL = 1000;
     private static final int TAP_INTERVAL = 300;
     private VideoMain mMain = null;
     private VRTouchPadGestureDetector mDetector = null;
-    private BroadcastReceiver mBatteryReceiver = null;
-    private long mLatestButton = 0;
     private long mLatestTap = 0;
 
     @Override
@@ -45,50 +42,13 @@ public class VideoActivity extends GVRActivity implements
         super.onCreate(savedInstanceState);
         mMain = new VideoMain(this);
         mDetector = new VRTouchPadGestureDetector(this);
-        mBatteryReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context ctxt, Intent intent) {
-                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-                if (mMain != null) {
-                    mMain.setBatteryLevel(level);
-                }
-            }
-        };
         setMain(mMain, "gvr.xml");
-        registerReceiver(mBatteryReceiver, new IntentFilter(
-                Intent.ACTION_BATTERY_CHANGED));
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mMain.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        try {
-            unregisterReceiver(mBatteryReceiver);
-        } finally {
-            super.onDestroy();
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (System.currentTimeMillis() > mLatestButton + BUTTON_INTERVAL) {
-            mLatestButton = System.currentTimeMillis();
-            mMain.onButtonDown();
-        }
-    }
-
-    @Override
-    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mLatestButton = System.currentTimeMillis();
-            mMain.onLongButtonPress();
-        }
-        return super.onKeyLongPress(keyCode, event);
     }
 
     @Override
@@ -117,20 +77,6 @@ public class VideoActivity extends GVRActivity implements
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
             float velocityX, float velocityY) {
         Log.v("", "onSwipe");
-        return false;
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return false;
-    }
-    
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            onBackPressed();
-            return true;
-        }
         return false;
     }
 }
