@@ -33,9 +33,7 @@ public class VideoMain extends GVRMain {
     private static final String TAG = "VideoMain";
 
     private GVRContext mGVRContext = null;
-    private RadiosityShader mRadiosityShader = null;
-    private AdditiveShader mAdditiveShader = null;
-    private ScreenShader mScreenShader = null;
+
     private MediaPlayer mMediaPlayer = null;
 
     private int mCinemaNum = 2;
@@ -62,7 +60,6 @@ public class VideoMain extends GVRMain {
     private boolean mIsUIHidden = true;
     private boolean mIsTouched = false;
     private boolean mIsSingleTapped = false;
-
     private boolean mIsIMAX = false;
 
     private float mTransitionWeight = 0.0f;
@@ -90,9 +87,9 @@ public class VideoMain extends GVRMain {
             }
         });
 
-        mRadiosityShader = new RadiosityShader(gvrContext);
-        mAdditiveShader = new AdditiveShader(gvrContext);
-        mScreenShader = new ScreenShader(gvrContext);
+        RadiosityShader mRadiosityShader = new RadiosityShader(gvrContext);
+        AdditiveShader mAdditiveShader = new AdditiveShader(gvrContext);
+        ScreenShader mScreenShader = new ScreenShader(gvrContext);
 
         /*
          * Media player with a linked texture.
@@ -325,9 +322,7 @@ public class VideoMain extends GVRMain {
             for (int i = 0; i < mCinema[1].getChildrenCount(); i++)
                 mCinema[1].getChildByIndex(i).getRenderData().setRenderMask(0);
 
-            /*
-             * Buttons
-             */
+
             /*
              * Play button
              */
