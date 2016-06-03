@@ -75,12 +75,13 @@ public class JassimpModelLoaderMain extends GVRMain {
 
         // Model with color
         try {
-            GVRSceneObject benchModel = gvrContext.getAssetLoader().loadModel("bench.dae", GVRResourceVolume.VolumeType.ANDROID_ASSETS, mMainScene);
+            GVRSceneObject benchModel = gvrContext.loadModel("bench.dae");
 
             benchModel.getTransform().setScale(0.66f, 0.66f, 0.66f);
             benchModel.getTransform().setPosition(0.0f, -4.0f, -20.0f);
             benchModel.getTransform().setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
-        } catch (IOException e) {
+            mMainScene.addSceneObject(benchModel);
+            } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
 
