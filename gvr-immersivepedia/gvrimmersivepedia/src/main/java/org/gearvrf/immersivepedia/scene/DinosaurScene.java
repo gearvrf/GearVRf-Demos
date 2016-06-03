@@ -45,6 +45,8 @@ public class DinosaurScene extends GVRScene {
     private GVRContext gvrContext;
     private TextDinosaurGroup textDinosaur;
 
+	private RotateDinosaurGroup rotateDinosaur;
+
     public DinosaurScene(GVRContext gvrContext) throws IOException {
         super(gvrContext);
         this.gvrContext = gvrContext;
@@ -63,7 +65,7 @@ public class DinosaurScene extends GVRScene {
     }
 
     private void createRotateDinosaurGroup() throws IOException {
-        RotateDinosaurGroup rotateDinosaur = new RotateDinosaurGroup(getGVRContext(), this);
+        rotateDinosaur = new RotateDinosaurGroup(getGVRContext(), this);
         addSceneObject(rotateDinosaur);
     }
 
@@ -210,4 +212,11 @@ public class DinosaurScene extends GVRScene {
             videoDinosaur.closeAction();
         }
     }
+
+	public void onPause() {
+		if (rotateDinosaur.isPlayed) {
+			rotateDinosaur.pauseAnimation();
+		}
+
+	}
 }
