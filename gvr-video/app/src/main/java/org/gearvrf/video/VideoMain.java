@@ -39,8 +39,7 @@ public class VideoMain extends GVRMain {
     private int mCinemaNum = 2;
     private GVRSceneObject[] mCinema = new GVRSceneObject[mCinemaNum];
 
-    private GVRSceneObject mLeftSceneObject = null;
-    private GVRSceneObject mRightSceneObject = null;
+    private GVRSceneObject mSceneObject = null;
     private GVRSceneObject mScreen = null;
 
     private GVRSceneObject mOculusSceneObject1 = null;
@@ -136,59 +135,25 @@ public class VideoMain extends GVRMain {
             GVRTexture leftBackgroundLightOnTexture = gvrContext
                     .loadTexture(new GVRAndroidResource(mGVRContext,
                             "theater1/theater_background_left_light_on.jpg"));
-            GVRTexture rightBackgroundLightOffTexture = gvrContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
-                            "theater1/theater_background_right_light_off.jpg"));
-            GVRTexture rightBackgroundLightOnTexture = gvrContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
-                            "theater1/theater_background_right_light_on.jpg"));
-            mLeftSceneObject = new GVRSceneObject(gvrContext, backgroundMesh,
+            mSceneObject = new GVRSceneObject(gvrContext, backgroundMesh,
                     leftBackgroundLightOffTexture);
-            mLeftSceneObject.getRenderData().setRenderMask(
-                    GVRRenderMaskBit.Left);
-            mRightSceneObject = new GVRSceneObject(gvrContext, backgroundMesh,
-                    rightBackgroundLightOffTexture);
-            mRightSceneObject.getRenderData().setRenderMask(
-                    GVRRenderMaskBit.Right);
-            mLeftSceneObject.getTransform().setPosition(-0.031f, 0.0f, 0.0f);
-            mRightSceneObject.getTransform().setPosition(0.031f, 0.0f, 0.0f);
-            mLeftSceneObject.getRenderData().setCullTest(false);
-            mRightSceneObject.getRenderData().setCullTest(false);
+            mSceneObject.getTransform().setPosition(-0.031f, 0.0f, 0.0f);
+            mSceneObject.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
 
-            mCinema[0].addChildObject(mLeftSceneObject);
-            mCinema[0].addChildObject(mRightSceneObject);
+            mCinema[0].addChildObject(mSceneObject);
 
             /*
              * Radiosity settings
              */
-            mLeftSceneObject.getRenderData().getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setShaderType(mRadiosityShader.getShaderId());
-            mLeftSceneObject
-                    .getRenderData()
-                    .getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setTexture(RadiosityShader.TEXTURE_OFF_KEY,
                             leftBackgroundLightOffTexture);
-            mLeftSceneObject
-                    .getRenderData()
-                    .getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setTexture(RadiosityShader.TEXTURE_ON_KEY,
                             leftBackgroundLightOnTexture);
-            mLeftSceneObject.getRenderData().getMaterial()
-                    .setTexture(RadiosityShader.SCREEN_KEY, screenTexture);
-
-            mRightSceneObject.getRenderData().getMaterial()
-                    .setShaderType(mRadiosityShader.getShaderId());
-            mRightSceneObject
-                    .getRenderData()
-                    .getMaterial()
-                    .setTexture(RadiosityShader.TEXTURE_OFF_KEY,
-                            rightBackgroundLightOffTexture);
-            mRightSceneObject
-                    .getRenderData()
-                    .getMaterial()
-                    .setTexture(RadiosityShader.TEXTURE_ON_KEY,
-                            rightBackgroundLightOnTexture);
-            mRightSceneObject.getRenderData().getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setTexture(RadiosityShader.SCREEN_KEY, screenTexture);
 
             /*
@@ -216,7 +181,7 @@ public class VideoMain extends GVRMain {
             mScreen = new GVRVideoSceneObject(gvrContext, screenMesh, mMediaPlayer,
                     screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
             mScreen.attachRenderData(renderData);
-            mScreen.getRenderData().setCullTest(false);
+            mScreen.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
 
             mCinema[0].addChildObject(mScreen);
 
@@ -244,10 +209,10 @@ public class VideoMain extends GVRMain {
                             "theater2/cinema2.png"));
             mOculusSceneObject1 = new GVRSceneObject(gvrContext,
                     backgroundMesh1, BackgroundLightOnTexture);
-            mOculusSceneObject1.getRenderData().setCullTest(false);
+            mOculusSceneObject1.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
             mOculusSceneObject2 = new GVRSceneObject(gvrContext,
                     backgroundMesh2, AdditiveTexture);
-            mOculusSceneObject2.getRenderData().setCullTest(false);
+            mOculusSceneObject2.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
             mOculusSceneObject2.getRenderData().setRenderingOrder(2500);
 
             mCinema[1].addChildObject(mOculusSceneObject1);
@@ -306,7 +271,7 @@ public class VideoMain extends GVRMain {
             mOculusScreen = new GVRVideoSceneObject(gvrContext, oculus_screenMesh, mMediaPlayer,
                     screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);
             mOculusScreen.attachRenderData(oculus_renderData);
-            mOculusScreen.getRenderData().setCullTest(false);
+            mOculusScreen.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
 
             mCinema[1].addChildObject(mOculusScreen);
 
@@ -440,17 +405,11 @@ public class VideoMain extends GVRMain {
                 mCinema[0].getChildByIndex(i).getRenderData().
                         setRenderMask(GVRRenderMaskBit.Left | GVRRenderMaskBit.Right);
 
-            mLeftSceneObject.getRenderData().getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setFloat(RadiosityShader.WEIGHT_KEY, mTransitionWeight);
-            mRightSceneObject.getRenderData().getMaterial()
-                    .setFloat(RadiosityShader.WEIGHT_KEY, mTransitionWeight);
-            mLeftSceneObject.getRenderData().getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setFloat(RadiosityShader.FADE_KEY, mFadeWeight);
-            mRightSceneObject.getRenderData().getMaterial()
-                    .setFloat(RadiosityShader.FADE_KEY, mFadeWeight);
-            mLeftSceneObject.getRenderData().getMaterial()
-                    .setFloat(RadiosityShader.LIGHT_KEY, 2.0f);
-            mRightSceneObject.getRenderData().getMaterial()
+            mSceneObject.getRenderData().getMaterial()
                     .setFloat(RadiosityShader.LIGHT_KEY, 2.0f);
         } else {
             for (int i = 0; i < mCinema[0].getChildrenCount(); i++)
@@ -478,16 +437,13 @@ public class VideoMain extends GVRMain {
             mButtonBoard.getTransform().setPosition(
                     -0.1f, -0.6f - 0.26f * scale, -8.0f);
             mScreen.getTransform().setScale(scale, scale, 1.0f);
-            mLeftSceneObject.getTransform().setScale(scale, scale, 1.0f);
-            mRightSceneObject.getTransform().setScale(scale, scale, 1.0f);
+            mSceneObject.getTransform().setScale(scale, scale, 1.0f);
         }
 
         boolean isTouched = mIsTouched;
         boolean isSingleTapped = mIsSingleTapped;
         mIsTouched = false;
         mIsSingleTapped = false;
-
-        GVREyePointeeHolder[] pickedHolders = null;
 
         boolean isUIHiden = mIsUIHidden;
         boolean isAnythingPointed = false;
@@ -506,12 +462,9 @@ public class VideoMain extends GVRMain {
             mSelectButton.show();
             mButtonBoard.getRenderData().setRenderMask(
                     GVRRenderMaskBit.Left | GVRRenderMaskBit.Right);
-            mSeekbar.setRenderMask(GVRRenderMaskBit.Left
-                    | GVRRenderMaskBit.Right);
+            mSeekbar.setRenderMask(GVRRenderMaskBit.Left | GVRRenderMaskBit.Right);
 
-            if (pickedHolders == null) {
-                pickedHolders = GVRPicker.pickScene(mGVRContext.getMainScene());
-            }
+            GVREyePointeeHolder[] pickedHolders = GVRPicker.pickScene(mGVRContext.getMainScene());
 
             boolean playPausePointed = false;
             boolean frontPointed = false;
