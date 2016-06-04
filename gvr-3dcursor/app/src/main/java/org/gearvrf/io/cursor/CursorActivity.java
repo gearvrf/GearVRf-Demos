@@ -21,18 +21,18 @@ import org.gearvrf.GVRActivity;
 
 public class CursorActivity extends GVRActivity {
     private static final String TAG = CursorActivity.class.getSimpleName();
-    private CursorScript cursorScript;
+    private CursorMain cursorMain;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        cursorScript = new CursorScript(this);
-        setScript(cursorScript, "gvr.xml");
+        cursorMain = new CursorMain(this);
+        setMain(cursorMain, "gvr.xml");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cursorScript.close();
+        cursorMain.close();
     }
 }
