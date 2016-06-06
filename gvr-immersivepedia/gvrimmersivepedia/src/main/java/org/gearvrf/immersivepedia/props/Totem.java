@@ -19,6 +19,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusListener;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
@@ -29,30 +30,35 @@ import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.PlayPauseButton;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.utility.Threads;
 
 public class Totem extends FocusableSceneObject implements FocusListener {
 
     private static final float TEXT_HEIGHT = 2f;
     private static final float TEXT_WIDTH = 5f;
-    private LoadComponent loadComponent = null;
-    private GVRContext gvrContext = null;
+    private LoadComponent loadComponent;
+    private GVRContext gvrContext;
     private TotemEventListener totemEventListener;
     private PlayPauseButton icon;
-    private int streamIDTotem;
+    private volatile int streamIDTotem;
 
     public Totem(GVRContext gvrContext, GVRTexture t) {
         super(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext.getActivity(),
                 R.raw.totem_standup_mesh)), t);
 
         prepareTotem(gvrContext);
+        createLoadComponent();
 
-        this.setOnClickListener(new OnClickListener() {
-
+        setOnClickListener(new OnClickListener() {
             @Override
             public void onClick() {
-                if (loadComponent != null && loadComponent.isLoading()) {
+                if (loadComponent.isLoading()) {
                     loadComponent.finishLoadComponent();
-                    AudioClip.getInstance(getGVRContext().getContext()).pauseSound(streamIDTotem);
+
+                    final int local = streamIDTotem;
+                    if (0 != local) {
+                        AudioClip.getInstance(getGVRContext().getContext()).pauseSound(local);
+                    }
                 }
             }
         });
@@ -71,18 +77,33 @@ public class Totem extends FocusableSceneObject implements FocusListener {
     public void gainedFocus(FocusableSceneObject object) {
         if (this.totemEventListener != null
                 && this.totemEventListener.shouldTotemAppear(this) == true) {
-            createLoadComponent();
-            streamIDTotem = AudioClip.getInstance(getGVRContext().getContext()).playLoop(AudioClip.getUILoadingSoundID(), 1.0f, 1.0f);
+
+            addChildObject(loadComponent);
+            loadComponent.startLoading();
+
+            Threads.spawn(new Runnable() {
+                public void run() {
+                    streamIDTotem = AudioClip.getInstance(getGVRContext().getContext())
+                            .playLoop(AudioClip.getUILoadingSoundID(), 1.0f, 1.0f);
+                }
+            });
         }
     }
 
     @Override
     public void lostFocus(FocusableSceneObject object) {
-        if (this.loadComponent != null) {
-            this.loadComponent.disableListener();
-            this.removeChildObject(this.loadComponent);
-            AudioClip.getInstance(getGVRContext().getContext()).stopSound(streamIDTotem);
-        }
+        loadComponent.disableListener();
+        removeChildObject(loadComponent);
+
+        final int local = streamIDTotem;
+        Threads.spawn(new Runnable() {
+            @Override
+            public void run() {
+                if (0 != local) {
+                    AudioClip.getInstance(getGVRContext().getContext()).stopSound(local);
+                }
+            }
+        });
     }
 
     @Override
@@ -91,22 +112,17 @@ public class Totem extends FocusableSceneObject implements FocusListener {
     }
 
     private void createLoadComponent() {
-
         loadComponent = new LoadComponent(gvrContext, new LoadComponentListener() {
-
             @Override
             public void onFinishLoadComponent() {
                 Totem.this.onFinishLoadComponent();
-
             }
         });
-        this.addChildObject(loadComponent);
 
-        loadComponent.setFloatTexture();
-        loadComponent.getTransform().setPosition(0f, 1f, -0.11f);
-        loadComponent.getTransform().rotateByAxis(180f, 0f, 1f, 0f);
-        loadComponent.getTransform().setScale(1f, 1f, 1f);
-
+        final GVRTransform transform = loadComponent.getTransform();
+        transform.setPosition(0f, 1f, -0.11f);
+        transform.rotateByAxis(180f, 0f, 1f, 0f);
+        transform.setScale(1f, 1f, 1f);
     }
 
     private void onFinishLoadComponent() {
