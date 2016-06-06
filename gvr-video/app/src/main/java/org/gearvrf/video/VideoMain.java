@@ -86,9 +86,9 @@ public class VideoMain extends GVRMain {
             }
         });
 
-        RadiosityShader mRadiosityShader = new RadiosityShader(gvrContext);
-        AdditiveShader mAdditiveShader = new AdditiveShader(gvrContext);
-        ScreenShader mScreenShader = new ScreenShader(gvrContext);
+        RadiosityShader radiosityShader = new RadiosityShader(gvrContext);
+        AdditiveShader additiveShader = new AdditiveShader(gvrContext);
+        ScreenShader screenShader = new ScreenShader(gvrContext);
 
         /*
          * Media player with a linked texture.
@@ -146,7 +146,7 @@ public class VideoMain extends GVRMain {
              * Radiosity settings
              */
             mSceneObject.getRenderData().getMaterial()
-                    .setShaderType(mRadiosityShader.getShaderId());
+                    .setShaderType(radiosityShader.getShaderId());
             mSceneObject.getRenderData().getMaterial()
                     .setTexture(RadiosityShader.TEXTURE_OFF_KEY,
                             leftBackgroundLightOffTexture);
@@ -173,7 +173,7 @@ public class VideoMain extends GVRMain {
                     mGVRContext, "theater1/screen.obj"));
             GVRRenderData renderData = new GVRRenderData(gvrContext);
             GVRMaterial material = new GVRMaterial(gvrContext,
-                    mScreenShader.getShaderId());
+                    screenShader.getShaderId());
             material.setTexture(ScreenShader.SCREEN_KEY, screenTexture);
             renderData.setMesh(screenMesh);
             renderData.setMaterial(material);
@@ -222,7 +222,7 @@ public class VideoMain extends GVRMain {
              * Radiosity settings
              */
             mOculusSceneObject1.getRenderData().getMaterial()
-                    .setShaderType(mRadiosityShader.getShaderId());
+                    .setShaderType(radiosityShader.getShaderId());
             mOculusSceneObject1
                     .getRenderData()
                     .getMaterial()
@@ -237,7 +237,7 @@ public class VideoMain extends GVRMain {
                     .setTexture(RadiosityShader.SCREEN_KEY, screenTexture);
 
             mOculusSceneObject2.getRenderData().getMaterial()
-                    .setShaderType(mAdditiveShader.getShaderId());
+                    .setShaderType(additiveShader.getShaderId());
             mOculusSceneObject2.getRenderData().getMaterial()
                     .setTexture(AdditiveShader.TEXTURE_KEY, AdditiveTexture);
 
@@ -263,7 +263,7 @@ public class VideoMain extends GVRMain {
                             "theater2/screen.obj"));
             GVRRenderData oculus_renderData = new GVRRenderData(gvrContext);
             GVRMaterial oculus_material = new GVRMaterial(gvrContext,
-                    mScreenShader.getShaderId());
+                    screenShader.getShaderId());
             oculus_material.setTexture(ScreenShader.SCREEN_KEY, screenTexture);
             oculus_renderData.setMesh(oculus_screenMesh);
             oculus_renderData.setMaterial(oculus_material);
