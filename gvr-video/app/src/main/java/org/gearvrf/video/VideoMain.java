@@ -603,7 +603,9 @@ public class VideoMain extends GVRMain {
     }
 
     void onPause() {
-        mMediaPlayer.pause();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.pause();
+        }
     }
 
     void onTouchEvent(MotionEvent event) {
