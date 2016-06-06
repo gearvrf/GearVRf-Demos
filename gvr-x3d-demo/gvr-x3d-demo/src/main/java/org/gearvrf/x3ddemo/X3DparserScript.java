@@ -49,7 +49,6 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.keyframe.GVRAnimationBehavior;
 import org.gearvrf.animation.keyframe.GVRAnimationChannel;
 import org.gearvrf.animation.keyframe.GVRKeyFrameAnimation;
-import org.gearvrf.x3d.ViewpointAnimation;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 //import org.gearvrf.util.GazeController;
@@ -92,7 +91,8 @@ public class X3DparserScript extends GVRScript {
     private GVRContext mGVRContext = null;
 
     public GVRAnimationEngine mAnimationEngine;
-    public List<GVRKeyFrameAnimation> mAnimations = new ArrayList<GVRKeyFrameAnimation>();
+    //public List<GVRKeyFrameAnimation> mAnimations = new ArrayList<GVRKeyFrameAnimation>();
+    public List<GVRAnimation> mAnimations = new ArrayList<GVRAnimation>();
 
     // test code for animating viewpoints
     //GVRTransform gvrSceneObjectCameraOwnerTransform = null;
@@ -124,25 +124,35 @@ public class X3DparserScript extends GVRScript {
 
             @Override
             public void run() {
-                for (GVRKeyFrameAnimation animation : mAnimations) {
+            	
+                //for (GVRKeyFrameAnimation animation : mAnimations) {
+                for (GVRAnimation animation : mAnimations) {
+                	
                   boolean sensorFound = false;
+                  /*
 	    		  for (Sensor x3dSensor: x3dObject.sensors) {
-	    			GVRKeyFrameAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
+		    		//GVRKeyFrameAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
+	    			GVRAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
 	    			// if a sensor is pointing to this animation, then don't start this animation
 	    			//    until the sensor is invoked.
 	    			if (gvrKeyFrameAnimationPointedFromSensor == animation) sensorFound = true;
                   }
+                  */
                   if (!sensorFound) animation.start(mAnimationEngine);
+                  
+                	//animation.start(mAnimationEngine);
                 }
             }
         });
 
         mAnimationEngine = gvrContext.getAnimationEngine();
 
+        
         scene.getMainCameraRig().getLeftCamera()
         .setBackgroundColor(Color.BLACK);
         scene.getMainCameraRig().getRightCamera()
         .setBackgroundColor(Color.BLACK);
+        
 
 
 
@@ -154,9 +164,7 @@ public class X3DparserScript extends GVRScript {
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
         headTracker.getRenderData().setRenderingOrder(100000);
-        scene.getMainCameraRig().addChildObject(headTracker);
-
-
+ 
         /*
          * This was test code to check if GVRKeyFrameAnimation worked for
          * the camera transformation.  At the moment it doesn't seem
@@ -214,50 +222,78 @@ public class X3DparserScript extends GVRScript {
         Context activityContext = gvrContext.getContext();
         assetManager = activityContext.getAssets();
 
-      GVRModelSceneObject model = new GVRModelSceneObject(gvrContext);
+        GVRModelSceneObject model = new GVRModelSceneObject(gvrContext);
+	      //String filename = "animation01.x3d";
+	      //String filename = "animation02.x3d";
+	      //String filename = "animation03.x3d";
+	      //String filename = "animation04.x3d";
+	      //String filename = "animation05.x3d";
+	      //String filename = "animation06.x3d";
+	      //String filename = "animation07.x3d";
+	      //String filename = "animation08.x3d";
+	      //String filename = "animation09.x3d";
+          //String filename = "animation_center10.x3d";
+          //String filename = "animation_scale01.x3d";
+          //String filename = "backgroundtexturemap01.x3d";
+          //String filename = "boxesspheres.x3d";
+          //String filename = "conered.x3d";
+          //String filename = "cylinders.x3d";
+          //String filename = "directionallight1.x3d";
+        String filename = "elevationgrid.x3d";
+          //String filename = "exponentcone.x3d";
+          //String filename = "exponentplane.x3d";
           //String filename = "helloworldtext.x3d";
-          //String filename = "texturecoordinatetest.x3d";
-          //String filename = "texturecoordinatetestsubset.x3d";
-         // String filename = "texturecoordinatetestsubset2.x3d";
           //String filename = "inlinedemo01.x3d";
           //String filename = "levelofdetail01.x3d";
           //String filename = "levelofdetail02.x3d";
           //String filename = "levelofdetail03.x3d";
+          //String filename = "navigationinfo.x3d";
+          //String filename = "plane.x3d";
+        	//String filename = "texturecoordinatetest.x3d";
+          //String filename = "texturecoordinatetestsubset.x3d";
+          //String filename = "texturecoordinatetestsubset2.x3d";
           //String filename = "text-lod-demo.x3d";
-          //String filename = "backgroundtexturemap01.x3d";
-          //String filename = "viewpointAnimation01.x3d";
-          //String filename = "lighttest1.x3d";
+      //    String filename = "lighttest1.x3d";
           //String filename = "pointlighttest.x3d";
-          //String filename = "conered.x3d";
-          //String filename = "cylinders.x3d";
-          //String filename = "boxesspheres.x3d";
           //String filename = "pointlightsimple.x3d";
           //String filename = "spotlighttest1.x3d";
-          //String filename = "directionallight1.x3d";
           //String filename = "spotlighttest2.x3d";
-          String filename = "spotlighttest3.x3d";
+          //String filename = "spotlighttest3.x3d";
           //String filename = "spotlighttest4.x3d";
-          //String filename = "animation01.x3d";
-          //String filename = "animation02.x3d";
-          //String filename = "animation03.x3d";
-          //String filename = "animation04.x3d";
-          //String filename = "animation05.x3d";
-          //String filename = "animation06.x3d";
-          //String filename = "animation07.x3d";
-          //String filename = "animation08.x3d";
-          //String filename = "animation09.x3d";
           //String filename = "multiviewpoints01.x3d";
           //String filename = "multiviewpoints02.x3d";
           //String filename = "multiviewpoints03.x3d";
           //String filename = "multiviewpoints04.x3d";
           //String filename = "touchSensor.x3d";
-          //String filename = "animation_scale01.x3d";
-          //String filename = "animation_center10.x3d";
           //String filename = "teapottorusdirlights.x3d";
           //String filename = "pointlightattenuationtest.x3d";
+          //String filename = "viewpointAnimation01.x3d";
           try {
         	  model = gvrContext.loadModel(filename);
         	  scene.addSceneObject(model);
+        	  List<GVRAnimation> animations = model.getAnimations();
+        	  mAnimations = animations;
+
+	    	  GVRCameraRig gvrCameraRig = null;
+	    	  //  Find the root node set by loadModel, and from there, find the Camera rig
+	    	  GVRSceneObject gvrRoot = scene.getSceneObjectByName(x3dObject.X3D_ROOT_NODE);
+	    	  List <GVRSceneObject> gvrRootChildren = gvrRoot.getChildren();
+	  		  for (GVRSceneObject gvrRootChild: gvrRootChildren) {
+	  			  GVRCameraRig gvrRootChildCameraRig = gvrRootChild.getCameraRig();
+		  			if (gvrRootChildCameraRig != null) {
+		  				gvrCameraRig = gvrRootChildCameraRig;
+		  			} 
+	  		  }
+	  		  // GVRscene now has a new camera rig
+	  		  if (gvrCameraRig != null) {
+	        	scene.setMainCameraRig(gvrCameraRig);
+	        	gvrCameraRig.addChildObject(headTracker);
+	  		  }
+	  		  else Log.d(TAG, "Error, finding camera rig in X3D. Contact Samsung GearVR engineering to report this issue");
+
+	  		  // Below already set in GVRScene constructor, and seems ok not to have to reset these.
+	  		  //scene.setFrustumCulling(true);
+	  		  //scene.getEventReceiver().addListener(mSceneEventListener);
           }
           catch (FileNotFoundException e) {
             	Log.d(TAG, "ERROR: FileNotFoundException: " + filename);
@@ -278,23 +314,6 @@ public class X3DparserScript extends GVRScript {
     //@Override
     public void onStep() {
         FPSCounter.tick();
-
-        /*
-         * This was test code to check if GVRKeyFrameAnimation worked for
-         * the camera transformation.  One can set GVRTransform values attached
-         * to the camera, but doesn't look like GVRKeyFrameAnimation
-         * works with the camera.
-         *
-        //float zPosition = gvrSceneObjectCameraOwnerTransform.getPositionZ();
-        //zPosition += .02;
-        //gvrSceneObjectCameraOwnerTransform.setPositionZ(zPosition);
-
-        float xPosition = gvrAnimatedCameraTransform.getPositionX();
-        xPosition += .015;
-        if (xPosition > 3.0f) xPosition = -3.0f;
-        gvrAnimatedCameraTransform.setPositionX(xPosition);
-        */
-        // end test code to animate the camera
 
         currentPickedObject = null;
     	List<GVRPickedObject> gvrPickedObjectList = GVRPicker.findObjects(mGVRContext.getMainScene());
@@ -399,8 +418,10 @@ public class X3DparserScript extends GVRScript {
             boolean interactivityFound = false;
     		for (Sensor x3dSensor: x3dObject.sensors) {
     			// 1) check if this [Touch] sensor initiates an animation
-    			for (GVRKeyFrameAnimation animation : mAnimations) {
-        			GVRKeyFrameAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
+    			//for (GVRKeyFrameAnimation animation : mAnimations) {
+        		//	GVRKeyFrameAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
+        		for (GVRAnimation animation : mAnimations) {
+            		GVRAnimation gvrKeyFrameAnimationPointedFromSensor = x3dSensor.getGVRKeyFrameAnimation();
         			// if a sensor is pointing to this animation, then start this animation
         			if (gvrKeyFrameAnimationPointedFromSensor == animation) {
         				animation.start(mAnimationEngine);

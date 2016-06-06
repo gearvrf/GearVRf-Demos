@@ -2,7 +2,7 @@
     <scene>
 
    
-        <transform DEF="rotateddog" translation="0 0 -8" rotation="0 0 1 .6">
+        <transform translation="0 0 -5" rotation="0 0 1 .6">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -40,6 +40,7 @@
         </transform>
     
         <PointLight location="0 0 -1"  color=".8 .9 1" intensity="1" on="TRUE" radius="300"/>
+        <DirectionalLight color="1 .8 .9" intensity=".6" on="TRUE"/>
 
         <timeSensor DEF="time" cycleInterval="8" loop="true"></timeSensor>
         <PositionInterpolator DEF="move" key="0 0.3 .6 .8 1" keyValue="5 -6 -10  4 2 -6 -5 3 -8  -6 -9 -12  5 -6 -10"></PositionInterpolator>

@@ -1,7 +1,7 @@
 <x3d width='500px' height='400px'>
     <scene>
 
-        <transform DEF="doggie" translation="0 0 -10" rotation="0 1 0 0">
+        <transform DEF="scaleObj" translation="0 -4 -2" rotation="0 1 0 0">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -23,9 +23,11 @@
         <timeSensor DEF="timeb" cycleInterval="12" loop="true"></timeSensor>
         <PositionInterpolator DEF="move" key="0 0.5 1" keyValue=".2 .2 .2  3 3 3  1 1 1"></PositionInterpolator>
         <Route fromNode="timeb" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
-        <Route fromNode="move" fromField ="value_changed" toNode="doggie" toField="set_scale"></Route>
+        <Route fromNode="move" fromField ="value_changed" toNode="scaleObj" toField="set_scale"></Route>
    
-        <PointLight location="0 0 1"  color="1 1 1" intensity="1" on="TRUE" radius="300"/>
+        <PointLight location="0 0 0"  color="1 1 1" intensity="1" on="TRUE" radius="300"/>
+        <PointLight location="3 3 0"  color="1 0 0" intensity="1" on="TRUE" radius="300"/>
+        <PointLight location="-3 -3 0"  color="0 0 1" intensity="1" on="TRUE" radius="300"/>
  
  
  

@@ -72,9 +72,9 @@
 				</Appearance>
 			</Shape>
 		</Transform>
-		<SpotLight location="-5 3 -4" color="1.0 1.0 0.0" direction="1 0 0">
-		<SpotLight location="-1 3 -4" color="1.0 0.0 1.0" direction="-1 0 0">
-		<SpotLight location="-3 5 -4" color="0.0 1.0 1.0" direction="0 -1 0">
-		<SpotLight location="-3 1 -4" color="0.5 0.5 0.5" direction="0 1 0">
+		<SpotLight location="-5 3 -4" color="1.0 1.0 0.0" direction="1 0 0"/>
+		<SpotLight location="-1 3 -4" color="1.0 0.0 1.0" direction="-1 0 0"/>
+		<SpotLight location="-3 5 -4" color="0.0 1.0 1.0" direction="0 -1 0"/>
+		<SpotLight location="-3 1 -4" color="0.5 0.5 0.5" direction="0 1 0"/>
 	</Scene>
 </X3D>

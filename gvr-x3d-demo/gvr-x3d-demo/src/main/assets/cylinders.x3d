@@ -1,6 +1,7 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
 		<PointLight DEF="myLight1" location="0 2 0" color="1 1 1">
+		<DirectionalLight DEF="myLight2" color=".8 .8 .8">
 		
 		<Transform DEF="pattern" translation="3 -1 -8" rotation="-0 1 0 .6">
 			<Shape>

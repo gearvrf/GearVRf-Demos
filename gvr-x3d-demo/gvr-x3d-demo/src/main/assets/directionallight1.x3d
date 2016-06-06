@@ -72,6 +72,6 @@
 				</Appearance>
 			</Shape>
 		</Transform>
-		<DirectionalLight DEF="DL1" color="1 1 1" direction="0 -.2 -1" intensity=".8">
+		<DirectionalLight DEF="DL1" color="1 1 1" direction="0 -.2 -1" intensity=".8"/>
 	</Scene>
 </X3D>

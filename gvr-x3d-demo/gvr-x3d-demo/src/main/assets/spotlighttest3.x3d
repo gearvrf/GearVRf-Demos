@@ -72,8 +72,8 @@
 				</Appearance>
 			</Shape>
 		</Transform>
-		<SpotLight location="-5 3 -4" color="1.0 1.0 1.0" direction="1 0 0" beamWidth=".3" cutOffAngle=".6">
-		<SpotLight location="-3 -3 -4" color="1.0 1.0 1.0" direction="0 0 -1" beamWidth=".5" cutOffAngle=".8">
-		<SpotLight location=" 3 -3 -4" color="1.0 1.0 1.0" direction="0 0 -1" beamWidth=".25" cutOffAngle=".6">
+		<SpotLight location="-5 3 -4" color="1.0 1.0 1.0" direction="1 0 0" beamWidth=".3" cutOffAngle=".6"/>
+		<SpotLight location="-3 -3 -4" color="1.0 1.0 1.0" direction="0 0 -1" beamWidth=".5" cutOffAngle=".8"/>
+		<SpotLight location=" 3 -3 -4" color="1.0 1.0 1.0" direction="0 0 -1" beamWidth=".25" cutOffAngle=".6"/>
 	</Scene>
 </X3D>

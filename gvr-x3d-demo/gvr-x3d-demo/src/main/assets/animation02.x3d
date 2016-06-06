@@ -2,7 +2,7 @@
     <scene>
 
    
-        <transform DEF="ball" translation="0 0 -3.5" rotation="0 1 0 0">
+        <transform DEF="animatedPlane" translation="0 -2 -3.5" rotation="0 1 0 0">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -21,7 +21,7 @@
 	        </shape>
         </transform>
     
-        <transform DEF="notballA" translation="0 0 -5" rotation="0 1 0 0">
+        <transform DEF="alongNegZaxis" translation="0 -2 -5" scale="2 2 2" rotation="0 1 0 0">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -39,7 +39,8 @@
 				</IndexedFaceSet>
 	        </shape>
         </transform>
-        <transform DEF="notballB" translation="0 0 15" rotation="0 1 0 3.14">
+        
+        <transform DEF="alongPosZaxis" translation="0 0 15" rotation="0 1 0 3.14">
 	        <shape>
 				<Appearance>
 					<Material diffuseColor="1 1 1"/>
@@ -58,13 +59,16 @@
 	        </shape>
         </transform>
    
-        <PointLight location="0 0 -1"  color=".8 .9 1" intensity="1" on="TRUE" radius="300"/>
+        <PointLight location="0 -2 -4"  color="1 1 1" intensity="1" on="TRUE" radius="300"/>
+        <DirectionalLight color="1 .25 .25" intensity="1" direction="-1 0 0" on="TRUE"/>
+        <DirectionalLight color=".25 1 .25" intensity="1" direction="1 0 0" on="TRUE"/>
+        <DirectionalLight color=".25 .25 .25" intensity="1" direction="0 0 -1" on="TRUE"/>
+        <DirectionalLight color=".25 .25 1" intensity="1" direction="0 0 1" on="TRUE"/>
 
         <timeSensor DEF="time" cycleInterval="18" loop="true"></timeSensor>
         <OrientationInterpolator DEF="rotate" key="0 0.5 1" keyValue="0 1 0 0   0 1 0 3.14   0 1 0 6.28"></OrientationInterpolator>
-        
         <Route fromNode="time" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
-        <Route fromNode="rotate" fromField ="value_changed" toNode="ball" toField="set_rotation"></Route>
+        <Route fromNode="rotate" fromField ="value_changed" toNode="animatedPlane" toField="set_rotation"></Route>
         
         
     </scene>
