@@ -22,6 +22,8 @@ import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 
+import com.gearvrf.io.gearwear.GearWearableDevice;
+
 import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
@@ -145,6 +147,7 @@ public class CursorMain extends GVRMain {
     private String[] textViewStrings;
     private Map<String, Future<GVRMesh>> meshMap;
     private Map<String, Future<GVRTexture>> textureMap;
+    private GearWearableDevice gearWearableDevice;
 
     public CursorMain(GVRActivity gvrActivity) {
         Resources resources = gvrActivity.getResources();
@@ -259,6 +262,8 @@ public class CursorMain extends GVRMain {
         devices.add(device1);
         devices.add(device2);
         */
+        gearWearableDevice = new GearWearableDevice(gvrContext, GEARS2_DEVICE_ID, "Gear Wearable");
+        devices.add(gearWearableDevice);
 
         cursorManager = new CursorManager(gvrContext, mainScene, devices);
         List<CursorTheme> themes = cursorManager.getCursorThemes();
@@ -650,7 +655,11 @@ public class CursorMain extends GVRMain {
         if (cursorManager != null) {
             cursorManager.close();
         }
-
+        if (gearWearableDevice != null) {
+            gearWearableDevice.close();
+        } else {
+            Log.d(TAG, "close: gearWearableDevice is null");
+        }
         //_VENDOR_TODO_ close the devices here
         //device1.close();
         //device2.close();
@@ -887,9 +896,10 @@ public class CursorMain extends GVRMain {
 
         @Override
         void handleClickReleased(CursorEvent event) {
+            Cursor currentCursor = event.getCursor();
             Cursor targetCursor = null;
             CursorTheme crystalTheme = null;
-            setOffsetPositionFromCursor(cursorPosition, event.getCursor());
+            setOffsetPositionFromCursor(cursorPosition, currentCursor);
 
             for (CursorTheme theme : cursorManager.getCursorThemes()) {
                 if (theme.getId().equals(CRYSTAL_THEME)) {
@@ -897,7 +907,14 @@ public class CursorMain extends GVRMain {
                 }
             }
 
-            List<Cursor> activeCursors = null;
+            if (currentCursor.getIoDevice().equals(gearWearableDevice)) {
+                if(currentCursor.getCursorType() == CursorType.OBJECT) {
+                    currentCursor.setCursorTheme(crystalTheme);
+                }
+                return;
+            }
+
+            List<Cursor> activeCursors;
             synchronized (cursors) {
                 activeCursors = new ArrayList<Cursor>(cursors);
             }
@@ -921,8 +938,16 @@ public class CursorMain extends GVRMain {
                 }
             }
 
+            if (targetCursor.getIoDevice() != gearWearableDevice && targetCursor
+                    .getAvailableIoDevices().contains(gearWearableDevice)) {
+                try {
+                    targetCursor.attachIoDevice(gearWearableDevice);
+                } catch (IOException e) {
+                    Log.e(TAG, "IO Device " + gearWearableDevice.getName() + "cannot be attached");
+                }
+            }
             targetCursor.setCursorTheme(crystalTheme);
-            setCursorPosition(cursorPosition,targetCursor);
+            setCursorPosition(cursorPosition, targetCursor);
         }
     }
 

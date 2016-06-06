@@ -243,6 +243,10 @@
             priority="4"
             productId="42240"
             vendorId="1256"/>
+        <io deviceId="gearwearable"
+            priority="5"
+            productId="9898"
+            vendorId="1256"/>
     </cursor>
     <cursor name="Right Cursor"
             active="yes"
@@ -265,6 +269,10 @@
         <io deviceId="gearvr"
             priority="4"
             productId="42240"
+            vendorId="1256"/>
+        <io deviceId="gearwearable"
+            priority="5"
+            productId="9898"
             vendorId="1256"/>
     </cursor>
 </settings>
