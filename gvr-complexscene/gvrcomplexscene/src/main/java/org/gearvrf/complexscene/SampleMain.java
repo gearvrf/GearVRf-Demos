@@ -15,29 +15,24 @@
 
 package org.gearvrf.complexscene;
 
-import java.io.IOException;
+import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScript.SplashMode;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.debug.GVRConsole;
-import org.gearvrf.utility.Log;
 
-import android.graphics.Color;
+import java.io.IOException;
+import java.util.concurrent.CountDownLatch;
 
 public class SampleMain extends GVRMain {
 
     private GVRContext mGVRContext;
 
-    private GVRConsole console;
-    
-    private ColorShader mColorShader = null;
+    private volatile ColorShader mColorShader;
 
     @Override
     public SplashMode getSplashMode() {
@@ -45,12 +40,23 @@ public class SampleMain extends GVRMain {
     }
 
     @Override
-    public void onInit(GVRContext gvrContext) throws IOException {
+    public void onInit(GVRContext gvrContext) throws Exception {
 
         // save context for possible use in onStep(), even though that's empty
         // in this sample
         mGVRContext = gvrContext;
-        mColorShader = new ColorShader(mGVRContext);
+        //workaround for cases where adding a shader from non-gl thread
+        //doesn't work
+        final CountDownLatch cdl = new CountDownLatch(1);
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                mColorShader = new ColorShader(mGVRContext);
+                cdl.countDown();
+            }
+        };
+        gvrContext.runOnGlThread(r);
+        cdl.await();
 
         // set background color
         GVRScene scene = gvrContext.getMainScene();
