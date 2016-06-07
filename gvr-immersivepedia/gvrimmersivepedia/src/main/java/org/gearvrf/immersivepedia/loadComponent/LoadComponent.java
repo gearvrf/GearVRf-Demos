@@ -25,6 +25,7 @@ import org.gearvrf.immersivepedia.focus.FocusListener;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 import org.gearvrf.immersivepedia.shader.CutoutShader;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
+import org.gearvrf.utility.Threads;
 
 public class LoadComponent extends GVRSceneObject implements FocusListener {
 
@@ -49,15 +50,9 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
         super(gvrContext);
         this.componentListener = componentListener;
         this.gvrContext = gvrContext;
-        this.gvrContext.runOnGlThread(new Runnable() {
 
-            @Override
-            public void run() {
-
-                loadTexture();
-                createLoadComponent();
-            }
-        });
+        loadTexture();
+        createLoadComponent();
     }
 
     private void createLoadComponent() {
@@ -86,6 +81,13 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
         addChildObject(circle);
     }
 
+    public void startLoading() {
+        valueFloatTexture = 0;
+        circleAlpha.getRenderData().getMaterial().setFloat(CutoutShader.CUTOUT, valueFloatTexture);
+
+        setFloatTexture();
+    }
+
     private void loadTexture() {
         circleAlphaTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.loading_two__colors));
@@ -94,32 +96,33 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
         plusTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.plus));
     }
 
-    public void setFloatTexture() {
+    private void setFloatTexture() {
+        if (null == drawFrameListener) {
+            drawFrameListener = new GVRDrawFrameListener() {
+                @Override
+                public void onDrawFrame(float frameTime) {
+                    isLoading = true;
+                    valueFloatTexture += LOADING_SPEED;
 
-        drawFrameListener = new GVRDrawFrameListener() {
-
-            @Override
-            public void onDrawFrame(float frameTime) {
-                isLoading = true;
-                valueFloatTexture += LOADING_SPEED;
-
-                if (valueFloatTexture <= CUTOUT_VALUE) {
-                    circleAlpha.getRenderData().getMaterial()
-                            .setFloat(CutoutShader.CUTOUT, valueFloatTexture);
-
-                } else {
-                    startSoundLoadComponent();
+                    if (valueFloatTexture <= CUTOUT_VALUE) {
+                        circleAlpha.getRenderData().getMaterial()
+                                .setFloat(CutoutShader.CUTOUT, valueFloatTexture);
+                    } else {
+                        Threads.spawn(new Runnable() {
+                            @Override
+                            public void run() {
+                                finishLoadComponent();
+                            }
+                        });
+                    }
                 }
-
-            }
-        };
+            };
+        } else {
+            gvrContext.unregisterDrawFrameListener(drawFrameListener);
+        }
 
         gvrContext.registerDrawFrameListener(drawFrameListener);
 
-    }
-
-    private void startSoundLoadComponent() {
-        finishLoadComponent();
     }
 
     public void finishLoadComponent() {
@@ -146,8 +149,12 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
 
     @Override
     public void lostFocus(FocusableSceneObject object) {
-        finishLoadComponent();
-
+        Threads.spawn(new Runnable() {
+            @Override
+            public void run() {
+                finishLoadComponent();
+            }
+        });
     }
 
     @Override
