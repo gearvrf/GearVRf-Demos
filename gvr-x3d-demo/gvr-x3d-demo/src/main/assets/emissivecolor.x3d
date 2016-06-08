@@ -1,0 +1,45 @@
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+	<Scene>
+
+	    <Transform translation='-3 3 0'>
+	      <Shape>
+	        <Appearance>
+	          <Material emissiveColor='1 0 0'/>
+	        </Appearance>
+	        <Cone/>
+	      </Shape>
+	    </Transform>
+
+	    <Transform translation='3 3 0'>
+	      <Shape>
+	        <Appearance>
+	          <Material emissiveColor='0 1 0'/>
+	        </Appearance>
+	        <Cone/>
+	      </Shape>
+	    </Transform>
+
+	    <Transform translation='-3 -3 0'>
+	      <Shape>
+	        <Appearance>
+	          <Material emissiveColor='0 0 1'/>
+	        </Appearance>
+	        <Cone/>
+	      </Shape>
+	    </Transform>
+
+	    <Transform translation='3 -3 0'>
+	      <Shape>
+	        <Appearance>
+	          <Material emissiveColor='1 1 1'/>
+	        </Appearance>
+	        <Cone/>
+	      </Shape>
+	    </Transform>
+
+
+		<DirectionalLight DEF="myDirLight1" intensity=".1" color="1 1 1"/>
+		<Background skyColor=".5 .5 .5" />
+
+	</Scene>
+</X3D>
