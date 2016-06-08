@@ -1,9 +1,9 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
-		<PointLight location="-5 4 -4" color="1 0 0" radius='3'>
-		<PointLight location="-3 5 -4" color="0 1 0" radius='3'>
-		<PointLight location="-1 4 -4" color="0 0 1" radius='3'>
-		<PointLight location="-3 1 -4" color=".5 .5 .5" radius='3'>
+		<PointLight location="-5 4 -4" color=".5 0 0" radius='3'/>
+		<PointLight location="-3 5 -4" color="0 .5 0" radius='3'/>
+		<PointLight location="-1 4 -4" color="0 0 .5" radius='3'/>
+		<PointLight location="-3 1 -4" color=".25 .25 .25" radius='3'/>
 		<Transform translation="-3 3 -6" rotation="-0 1 0 -0">
 			<Shape>
 				<IndexedFaceSet
@@ -40,15 +40,15 @@
 				</Appearance>
 			</Shape>
 		</Transform>
-		<PointLight location="5 4 -4" color="1 1 0" radius='3'>
-		<PointLight location="3 5 -4" color="0 1 1" radius='3'>
-		<PointLight location="1 4 -4" color="1 0 1" radius='3'>
-		<PointLight location="3 1 -4" color=".5 .5 .5" radius='3'>
+		<!-- PointLight location="5 4 -4" color=".5 .5 0" radius='3'/>
+		<PointLight location="3 5 -4" color="0 .5 .5" radius='3'/>
+		<PointLight location="1 4 -4" color=".5 0 .5" radius='3'/>
+		<PointLight location="3 1 -4" color=".05 .05 .05" radius='3'/ -->
 		
-		<PointLight location="-5 -4 -4" color="1 1 0" radius='3' on='TRUE'>
-		<PointLight location="-3 -5 -4" color="0 1 1" radius='3' on='TRUE'>
-		<PointLight location="-1 -4 -4" color="1 0 1" radius='3' on='TRUE'>
-		<PointLight location="-3 -1 -4" color=".5 .5 .5" radius='3' on='TRUE'>
+		<PointLight location="-5 -4 -4" color=".5 .5 0" radius='3' on='TRUE'/>
+		<PointLight location="-3 -5 -4" color="0 .5 .5" radius='3' on='TRUE'/>
+		<PointLight location="-1 -4 -4" color=".5 0 .5" radius='3' on='TRUE'/>
+		<PointLight location="-3 -1 -4" color=".15 .15 .15" radius='3' on='TRUE'/>
 		<Transform translation="3 -3 -6" rotation="-0 1 0 0">
 			<Shape>
 				<IndexedFaceSet
@@ -85,10 +85,10 @@
 				</Appearance>
 			</Shape>
 		</Transform>
-		<PointLight location="5 -4 -4" color="1 0 0" radius='3' on='TRUE'>
-		<PointLight location="3 -5 -4" color="0 1 0" radius='3' on='TRUE'>
-		<PointLight location="1 -4 -4" color="0 0 1" radius='3' on='TRUE'>
-		<PointLight location="3 -1 -4" color=".5 .5 .5" radius='3' on='TRUE'>
+		<!-- PointLight location="5 -4 -4" color="1 0 0" radius='3' on='TRUE'/>
+		<PointLight location="3 -5 -4" color="0 1 0" radius='3' on='TRUE'/>
+		<PointLight location="1 -4 -4" color="0 0 1" radius='3' on='TRUE'/>
+		<PointLight location="3 -1 -4" color=".5 .5 .5" radius='3' on='TRUE'/ -->
 		
 	</Scene>
 </X3D>

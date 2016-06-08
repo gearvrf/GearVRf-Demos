@@ -239,7 +239,7 @@ public class X3DparserScript extends GVRScript {
           //String filename = "conered.x3d";
           //String filename = "cylinders.x3d";
           //String filename = "directionallight1.x3d";
-        String filename = "elevationgrid.x3d";
+          //String filename = "elevationgrid.x3d";  // NOT IMPLEMENTED
           //String filename = "exponentcone.x3d";
           //String filename = "exponentplane.x3d";
           //String filename = "helloworldtext.x3d";
@@ -249,17 +249,18 @@ public class X3DparserScript extends GVRScript {
           //String filename = "levelofdetail03.x3d";
           //String filename = "navigationinfo.x3d";
           //String filename = "plane.x3d";
-        	//String filename = "texturecoordinatetest.x3d";
+          //String filename = "texturecoordinatetest.x3d";
           //String filename = "texturecoordinatetestsubset.x3d";
           //String filename = "texturecoordinatetestsubset2.x3d";
           //String filename = "text-lod-demo.x3d";
       //    String filename = "lighttest1.x3d";
           //String filename = "pointlighttest.x3d";
           //String filename = "pointlightsimple.x3d";
+          //String filename = "pointlightmultilights.x3d";
           //String filename = "spotlighttest1.x3d";
           //String filename = "spotlighttest2.x3d";
           //String filename = "spotlighttest3.x3d";
-          //String filename = "spotlighttest4.x3d";
+          String filename = "spotlighttest4.x3d";
           //String filename = "multiviewpoints01.x3d";
           //String filename = "multiviewpoints02.x3d";
           //String filename = "multiviewpoints03.x3d";
@@ -274,6 +275,7 @@ public class X3DparserScript extends GVRScript {
         	  List<GVRAnimation> animations = model.getAnimations();
         	  mAnimations = animations;
 
+        	  
 	    	  GVRCameraRig gvrCameraRig = null;
 	    	  //  Find the root node set by loadModel, and from there, find the Camera rig
 	    	  GVRSceneObject gvrRoot = scene.getSceneObjectByName(x3dObject.X3D_ROOT_NODE);
@@ -294,6 +296,8 @@ public class X3DparserScript extends GVRScript {
 	  		  // Below already set in GVRScene constructor, and seems ok not to have to reset these.
 	  		  //scene.setFrustumCulling(true);
 	  		  //scene.getEventReceiver().addListener(mSceneEventListener);
+	  		   
+	  		   
           }
           catch (FileNotFoundException e) {
             	Log.d(TAG, "ERROR: FileNotFoundException: " + filename);
