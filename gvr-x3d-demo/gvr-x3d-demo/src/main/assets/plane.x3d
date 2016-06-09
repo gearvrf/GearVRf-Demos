@@ -20,7 +20,7 @@
 		</Transform>
 
 		<!-- PointLight DEF="myPointLight1" location="0 -4 -7" color="1 1 1"/ -->
-		<DirectionalLight DEF="myDirLight1" direction="0 -.2 -1" color="1 1 1"/>
+		<DirectionalLight DEF="myDirLight1" intensity=".8" direction="0 -.2 -1" color="1 1 1"/>
 		<!-- SpotLight DEF="mySpotLight1" location="0 -4 -6" color="1 1 1"/ -->
 
 	</Scene>
