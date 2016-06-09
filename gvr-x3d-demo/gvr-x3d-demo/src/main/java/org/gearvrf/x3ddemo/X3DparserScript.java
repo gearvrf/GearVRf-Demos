@@ -250,6 +250,7 @@ public class X3DparserScript extends GVRScript {
           //String filename = "levelofdetail03.x3d";
           //String filename = "navigationinfo.x3d";
           //String filename = "plane.x3d";
+          //String filename = "planetexturexform.x3d";
           //String filename = "texturecoordinatetest.x3d";
           //String filename = "texturecoordinatetestsubset.x3d";
           //String filename = "texturecoordinatetestsubset2.x3d";
@@ -271,7 +272,10 @@ public class X3DparserScript extends GVRScript {
           //String filename = "pointlightattenuationtest.x3d";
           //String filename = "usedef01.x3d";
           //String filename = "usedef02.x3d";
-          String filename = "usedef03.x3d";
+          //String filename = "usedef03.x3d";
+          //String filename = "usedef04.x3d";
+          //String filename = "usedef05.x3d";
+          String filename = "usedef06.x3d";
           //String filename = "viewpointAnimation01.x3d";
           try {
         	  model = gvrContext.loadModel(filename);
