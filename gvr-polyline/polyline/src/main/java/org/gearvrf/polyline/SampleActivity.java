@@ -13,26 +13,18 @@
  * limitations under the License.
  */
 
-package org.gearvrf.io.cursor;
-
-import android.os.Bundle;
+package org.gearvrf.polyline;
 
 import org.gearvrf.GVRActivity;
+import android.os.Bundle;
 
-public class CursorActivity extends GVRActivity {
-    private static final String TAG = CursorActivity.class.getSimpleName();
-    private CursorMain cursorMain;
+public class SampleActivity extends GVRActivity {
 
-    @Override
-    protected void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        cursorMain = new CursorMain(this);
-        setMain(cursorMain, "gvr.xml");
-    }
+    SampleScript script = new SampleScript();
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        cursorMain.close();
+    protected void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setScript(script, "gvr.xml");
     }
 }

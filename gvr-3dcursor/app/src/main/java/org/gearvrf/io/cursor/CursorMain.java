@@ -22,11 +22,14 @@ import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
 
+import com.gearvrf.io.gearwear.GearWearableDevice;
+
 import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
@@ -58,8 +61,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
-public class CursorScript extends GVRScript {
-    private static final String TAG = CursorScript.class.getSimpleName();
+public class CursorMain extends GVRMain {
+    private static final String TAG = CursorMain.class.getSimpleName();
 
     private static final float CUBE_WIDTH = 200.0f;
 
@@ -144,9 +147,9 @@ public class CursorScript extends GVRScript {
     private String[] textViewStrings;
     private Map<String, Future<GVRMesh>> meshMap;
     private Map<String, Future<GVRTexture>> textureMap;
+    private GearWearableDevice gearWearableDevice;
 
-    public CursorScript(GVRActivity gvrActivity) {
-        //TODO set number
+    public CursorMain(GVRActivity gvrActivity) {
         Resources resources = gvrActivity.getResources();
         LIGHT_BLUE_COLOR = resources.getColor(R.color.LIGHT_BLUE);
         objects = new HashMap<String, SpaceObject>();
@@ -208,13 +211,12 @@ public class CursorScript extends GVRScript {
         mainScene = gvrContext.getNextMainScene();
         meshMap = new HashMap<String, Future<GVRMesh>>();
         textureMap = new HashMap<String, Future<GVRTexture>>();
-
+        addSurroundings(gvrContext, mainScene);
         try {
             ZipLoader.load(gvrContext, MESH_FILE, new ZipLoader
                     .ZipEntryProcessor<Future<GVRMesh>>() {
                 @Override
                 public Future<GVRMesh> getItem(GVRContext context, GVRAndroidResource resource) {
-                    Log.d(TAG, "Mesh name is " + resource.getResourceFilename());
                     Future<GVRMesh> mesh = context.loadFutureMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
                     return mesh;
@@ -228,7 +230,6 @@ public class CursorScript extends GVRScript {
                         @Override
                         public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource
                                 resource) {
-                            Log.d(TAG, "Tex name is " + resource.getResourceFilename());
                             Future<GVRTexture> texture = context.loadFutureTexture(resource);
                             textureMap.put(resource.getResourceFilename(), texture);
                             return texture;
@@ -252,7 +253,6 @@ public class CursorScript extends GVRScript {
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
         mainScene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
 
-        addSurroundings(gvrContext, mainScene);
         List<IoDevice> devices = new ArrayList<IoDevice>();
 
         //_VENDOR_TODO_ register the devices with Cursor Manager here.
@@ -262,6 +262,8 @@ public class CursorScript extends GVRScript {
         devices.add(device1);
         devices.add(device2);
         */
+        gearWearableDevice = new GearWearableDevice(gvrContext, GEARS2_DEVICE_ID, "Gear Wearable");
+        devices.add(gearWearableDevice);
 
         cursorManager = new CursorManager(gvrContext, mainScene, devices);
         List<CursorTheme> themes = cursorManager.getCursorThemes();
@@ -397,7 +399,6 @@ public class CursorScript extends GVRScript {
         cursors = new ArrayList<Cursor>();
         for (Cursor cursor : cursorManager.getActiveCursors()) {
             activationListener.onActivated(cursor);
-            cursor.addCursorEventListener(cursorEventListener);
         }
         cursorManager.addCursorActivationListener(activationListener);
     }
@@ -654,7 +655,11 @@ public class CursorScript extends GVRScript {
         if (cursorManager != null) {
             cursorManager.close();
         }
-
+        if (gearWearableDevice != null) {
+            gearWearableDevice.close();
+        } else {
+            Log.d(TAG, "close: gearWearableDevice is null");
+        }
         //_VENDOR_TODO_ close the devices here
         //device1.close();
         //device2.close();
@@ -891,9 +896,10 @@ public class CursorScript extends GVRScript {
 
         @Override
         void handleClickReleased(CursorEvent event) {
+            Cursor currentCursor = event.getCursor();
             Cursor targetCursor = null;
             CursorTheme crystalTheme = null;
-            setOffsetPositionFromCursor(cursorPosition, event.getCursor());
+            setOffsetPositionFromCursor(cursorPosition, currentCursor);
 
             for (CursorTheme theme : cursorManager.getCursorThemes()) {
                 if (theme.getId().equals(CRYSTAL_THEME)) {
@@ -901,7 +907,14 @@ public class CursorScript extends GVRScript {
                 }
             }
 
-            List<Cursor> activeCursors = null;
+            if (currentCursor.getIoDevice().equals(gearWearableDevice)) {
+                if(currentCursor.getCursorType() == CursorType.OBJECT) {
+                    currentCursor.setCursorTheme(crystalTheme);
+                }
+                return;
+            }
+
+            List<Cursor> activeCursors;
             synchronized (cursors) {
                 activeCursors = new ArrayList<Cursor>(cursors);
             }
@@ -925,8 +938,16 @@ public class CursorScript extends GVRScript {
                 }
             }
 
+            if (targetCursor.getIoDevice() != gearWearableDevice && targetCursor
+                    .getAvailableIoDevices().contains(gearWearableDevice)) {
+                try {
+                    targetCursor.attachIoDevice(gearWearableDevice);
+                } catch (IOException e) {
+                    Log.e(TAG, "IO Device " + gearWearableDevice.getName() + "cannot be attached");
+                }
+            }
             targetCursor.setCursorTheme(crystalTheme);
-            setCursorPosition(cursorPosition,targetCursor);
+            setCursorPosition(cursorPosition, targetCursor);
         }
     }
 

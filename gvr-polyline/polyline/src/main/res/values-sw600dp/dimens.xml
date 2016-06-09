@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--/* Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +17,9 @@
 
 <resources>
 
-    <string name="app_name">GVR Video 1.3</string>
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
 
 </resources>
