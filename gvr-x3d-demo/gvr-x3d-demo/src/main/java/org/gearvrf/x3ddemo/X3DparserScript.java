@@ -275,7 +275,10 @@ public class X3DparserScript extends GVRScript {
           //String filename = "usedef03.x3d";
           //String filename = "usedef04.x3d";
           //String filename = "usedef05.x3d";
-          String filename = "usedef06.x3d";
+          //String filename = "usedef06.x3d";
+          //String filename = "levelofdetailusedef01.x3d";
+          //String filename = "levelofdetailusedef02.x3d";
+          String filename = "levelofdetailusedef03.x3d";
           //String filename = "viewpointAnimation01.x3d";
           try {
         	  model = gvrContext.loadModel(filename);

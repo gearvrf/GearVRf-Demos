@@ -20,17 +20,18 @@
 		</Transform>
 
 		<Transform DEF="cloneObj" translation="3 -2.5 -.1" rotation="0 1 0 -.2"  scale="1 1 1">
-			<Shape>
+			<Shape USE="shape01"/>
+			<!-- Shape>
 				<Appearance  DEF="appearance2">
 					<ImageTexture url="texture_rotation_testpattern.jpg" />
 					<Material diffuseColor="1 0 0"/>
 				</Appearance>
 				<IndexedFaceSet USE="mainIFS" />
-			</Shape>
+			</Shape  -->
 		</Transform>
 
 		<Transform DEF="mainObj2" translation="-3.5 -7.5 0" rotation="0 1 0 .2"  scale="1 1 1">
-			<Shape>
+			<Shape DEF="shape02">
 				<IndexedFaceSet DEF="secondIFS"
 					coordIndex='0 1 2 -1    0 3 1 -1'
 					texCoordIndex='0 1 2 -1   0 3 1 -1'
@@ -48,13 +49,14 @@
 		</Transform>
 
 		<Transform DEF="cloneObj2" translation="3.5 -7.5 0" rotation="0 1 0 -.2"  scale="1 1 1">
-			<Shape>
+			<Shape USE="shape02"/>
+			<!-- Shape>
 				<Appearance>
 					<Material diffuseColor=".4 .6 1"/>
 					<ImageTexture url="caltrain.png" />
 				</Appearance>
 				<IndexedFaceSet USE="secondIFS"/>
-			</Shape>
+			</Shape  -->
 		</Transform>
 
 		<DirectionalLight DEF="myDirLight1" intensity="1" color="1 1 1"/>
