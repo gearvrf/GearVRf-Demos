@@ -37,6 +37,14 @@ android {
     lintOptions {
         checkReleaseBuilds false
     }
+    
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                    rootProject.name + ".apk")
+        }
+    }
 }
 
 dependencies {
