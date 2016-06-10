@@ -85,17 +85,18 @@ public class Main extends GVRScript {
 		FocusableController.swipeProcess(mGvrContext);
 	}
 
-	public static void clickOut() {
-		if (mGvrContext.getMainScene().equals(Main.dinosaurScene)) {
-			Main.dinosaurScene.closeObjectsInScene();
-		}
-	}
+    public static void clickOut() {
+        if (null != dinosaurScene && mGvrContext.getMainScene().equals(Main.dinosaurScene)) {
+            Main.dinosaurScene.closeObjectsInScene();
+        }
+    }
 
-	public void onPause() {
-		if (null != mediaPlayer) {
-			mediaPlayer.stop();
-		}
-
-		dinosaurScene.onPause();
-	}
+    public void onPause() {
+        if (null != mediaPlayer) {
+            mediaPlayer.stop();
+        }
+        if (null != dinosaurScene) {
+            dinosaurScene.onPause();
+        }
+    }
 }
