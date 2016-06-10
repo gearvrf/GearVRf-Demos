@@ -15,7 +15,7 @@
 
 package org.gearvrf.complexscene;
 
-import java.io.IOException;
+import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -23,15 +23,12 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScript.SplashMode;
-import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRScript;
 import org.gearvrf.debug.GVRConsole;
-import org.gearvrf.utility.Log;
 
-import android.graphics.Color;
+import java.io.IOException;
 
-public class SampleMain extends GVRMain {
+public class SampleMain extends GVRScript {
 
     private GVRContext mGVRContext;
 
