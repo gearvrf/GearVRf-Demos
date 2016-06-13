@@ -29,6 +29,8 @@ import org.gearvrf.scene_objects.GVRConeSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+
+import android.util.Log;
 import android.view.MotionEvent;
 
 public class SampleMain extends GVRMain {
@@ -36,7 +38,7 @@ public class SampleMain extends GVRMain {
     private GVRContext mGVRContext = null;
     private GVRScene scene = null;
     private GVRSwitch mSwitchNode;
-    private int mSelectedIndex = 0;
+    private Integer mSelectedIndex = 0;
     private int mMaxIndex = 0;
     
     @Override
@@ -96,11 +98,15 @@ public class SampleMain extends GVRMain {
     }
 
     public void onTouchEvent(MotionEvent event) {
-        if (++mSelectedIndex > mMaxIndex)
+        if (event.getAction() == MotionEvent.ACTION_UP)
         {
-            mSelectedIndex = 0;
+            if (++mSelectedIndex > mMaxIndex)
+            {
+                mSelectedIndex = 0;
+            }
+            Log.d("Switch", "Switch: Select " + mSelectedIndex.toString());
+            mSwitchNode.setSwitchIndex(mSelectedIndex);
         }
-        mSwitchNode.setSwitchIndex(mSelectedIndex);
     }
     public void onStep() { }
 
