@@ -1,0 +1,38 @@
+<x3d width='500px' height='400px'>
+    <scene>
+		<Background skyColor='0 0 0'/>
+		
+		<Viewpoint DEF="vp1" position='0 0 0'/>
+
+         <transform translation="1.75 .4 -4">
+	        <Shape DEF="text01">
+	          <Text DEF='TextMessage' string='"Marker 1" "(1.75 .4 -4)"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 .5 .5"/>
+	          </Appearance>
+	        </Shape>
+        </transform>
+
+         <transform translation="-1.4 -1 -9" rotation="0 0 1 0">
+	        <Shape DEF="text02">
+	          <Text DEF='TextMessage' string='"Marker 2 " "(-1.4 -1 -9)"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor=".75 1 .25"/>
+	          </Appearance>
+	        </Shape>
+        </transform>
+ 
+         <transform translation="1.75 -2.4 -4">
+	        <Shape USE="text02"/>
+        </transform>
+
+         <!-- transform translation="-1.1 -2.4 -4">
+	        <Shape USE="text01"/>
+        </transform -->
+   	
+    </scene>
+</x3d>

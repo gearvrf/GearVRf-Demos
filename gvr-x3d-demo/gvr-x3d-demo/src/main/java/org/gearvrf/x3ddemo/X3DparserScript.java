@@ -239,7 +239,7 @@ public class X3DparserScript extends GVRScript {
           //String filename = "conered.x3d";
           //String filename = "cylinders.x3d";
           //String filename = "directionallight1.x3d";
-        //String filename = "elevationgrid.x3d";  // NOT IMPLEMENTED
+          String filename = "elevationgrid.x3d";  // NOT IMPLEMENTED
           //String filename = "emissivecolor.x3d";
           //String filename = "exponentcone.x3d";
           //String filename = "exponentplane.x3d";
@@ -276,9 +276,11 @@ public class X3DparserScript extends GVRScript {
           //String filename = "usedef04.x3d";
           //String filename = "usedef05.x3d";
           //String filename = "usedef06.x3d";
+          //String filename = "usedefprimitive01.x3d";
+          //String filename = "usedeftext01.x3d";
           //String filename = "levelofdetailusedef01.x3d";
           //String filename = "levelofdetailusedef02.x3d";
-          String filename = "levelofdetailusedef03.x3d";
+          //String filename = "levelofdetailusedef03.x3d";
           //String filename = "viewpointAnimation01.x3d";
           try {
         	  model = gvrContext.loadModel(filename);

@@ -6,7 +6,7 @@
 <Scene>
 	<Viewpoint description='go tell it' orientation='1 0 0 -0.3' position='4 8 20'/>
 	<DirectionalLight/>
-	<Transform translation='0 -3 -3'>
+	<Transform translation='-3 -3 -3'>
       <Shape>
         <Appearance>
           <Material diffuseColor='1 1 0'/>
@@ -15,7 +15,7 @@
       </Shape>
     </Transform>
 	
-	<Transform translation='-2 -1 -6'>
+	<Transform translation='0 -3 -3'>
       <Shape>
         <Appearance>
           <Material diffuseColor='0 1 1'/>
@@ -31,11 +31,12 @@
 			</Appearance>
 			<ElevationGrid creaseAngle='1.57' 
 				height='9.8 -7.6 0.5 1.0 0.5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 2.5 0.5 0.0 0.0 0.0 0.0 0.0 0.5 0.5 3.0 1.0 0.5 0.0 1.0 0.0 0.0 0.5 2.0 4.5 2.5 1.0 1.5 0.5 1.0 2.5 3.0 4.5 5.5 3.5 3.0 1.0 0.0 0.5 2.0 2.0 2.5 3.5 4.0 2.0 0.5 0.0 0.0 0.0 0.5 1.5 1.0 2.0 3.0 1.5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 2.0 1.5 0.5 0.0 0.0 0.0 0.0 0.0 0.0 0.5 6.7 8.9'
-				solid='false' xDimension='9' zDimension='9'/>
+				solid='false' xDimension='9' zDimension='9'
+				zSpacing='2' xSpacing='3'/>
 		</Shape>
 	</Transform>
 	
-	<Transform translation='2 -1 -6'>
+	<Transform translation='3 -3 -3'>
       <Shape>
         <Appearance>
           <Material diffuseColor='1 0 1'/>
