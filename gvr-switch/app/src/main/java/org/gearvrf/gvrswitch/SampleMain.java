@@ -92,7 +92,7 @@ public class SampleMain extends GVRMain {
         root.addChildObject(sphere);
         root.addChildObject(cylinder);
         root.addChildObject(cone);
-        root.getTransform().setPositionZ(-2.0f);
+        root.getTransform().setPositionZ(-5.0f);
         mSwitchNode = new GVRSwitch(gvrContext);
         root.attachComponent(mSwitchNode);
         scene.addSceneObject(root);
