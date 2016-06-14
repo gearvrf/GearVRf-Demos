@@ -2,6 +2,7 @@ package org.gearvrf.vuforiasample;
 
 import java.util.ArrayList;
 
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,19 +16,19 @@ import com.vuforia.State;
 import com.vuforia.Trackable;
 import com.vuforia.TrackerManager;
 import com.vuforia.Vuforia;
-import com.qualcomm.vuforia.misc.VuforiaApplicationControl;
-import com.qualcomm.vuforia.misc.VuforiaApplicationException;
-import com.qualcomm.vuforia.misc.VuforiaApplicationSession;
+import com.vuforia.samples.SampleApplication.SampleApplicationControl;
+import com.vuforia.samples.SampleApplication.SampleApplicationException;
+import com.vuforia.samples.SampleApplication.SampleApplicationSession;
 
 import org.gearvrf.GVRActivity;
 
 public class VuforiaSampleActivity extends GVRActivity implements
-        VuforiaApplicationControl {
+        SampleApplicationControl {
 
     private static final String TAG = "gvr-vuforia";
     private VuforiaSampleMain main;
 
-    private VuforiaApplicationSession vuforiaAppSession;
+    private SampleApplicationSession vuforiaAppSession;
 
     private static int VUFORIA_INACTIVE = 0;
     private static int VUFORIA_ACTIVE_INITIALIZED = 1;
@@ -56,9 +57,9 @@ public class VuforiaSampleActivity extends GVRActivity implements
         datasetStrings.add("StonesAndChips.xml");
 
         vuforiaState = VUFORIA_INITIALIZING;
-        vuforiaAppSession = new VuforiaApplicationSession(this);
-        vuforiaAppSession.setZPlanes(NEAR_Z_PLANE, FAR_Z_PLANE);
-        vuforiaAppSession.initAR(this);
+        vuforiaAppSession = new SampleApplicationSession(this);
+        //vuforiaAppSession.setZPlanes(NEAR_Z_PLANE, FAR_Z_PLANE);
+        vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         main = new VuforiaSampleMain();
         setMain(main, "gvr.xml");
@@ -82,7 +83,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
             try {
                 vuforiaAppSession.resumeAR();
                 vuforiaState = VUFORIA_ACTIVE_RESUMED;
-            } catch (VuforiaApplicationException e) {
+            } catch (SampleApplicationException e) {
                 Log.e(TAG, e.getString());
             }
         }
@@ -97,7 +98,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
             try {
                 vuforiaAppSession.pauseAR();
                 vuforiaState = VUFORIA_ACTIVE_PAUSED;
-            } catch (VuforiaApplicationException e) {
+            } catch (SampleApplicationException e) {
                 Log.e(TAG, e.getString());
             }
         }
@@ -114,7 +115,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
             try {
                 vuforiaAppSession.stopAR();
                 vuforiaState = VUFORIA_INACTIVE;
-            } catch (VuforiaApplicationException e) {
+            } catch (SampleApplicationException e) {
                 Log.e(TAG, e.getString());
             }
         }
@@ -132,14 +133,14 @@ public class VuforiaSampleActivity extends GVRActivity implements
         vuforiaState = VUFORIA_ACTIVE_INITIALIZED;
     }
 
-    public void onInitARDone(VuforiaApplicationException exception) {
+    public void onInitARDone(SampleApplicationException exception) {
 
         if (exception == null) {
             initApplicationAR();
 
             try {
                 vuforiaAppSession.startAR(CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT);
-            } catch (VuforiaApplicationException e) {
+            } catch (SampleApplicationException e) {
                 Log.e(TAG, e.getString());
             }
 
@@ -291,7 +292,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     }
 
     @Override
-    public void onQCARUpdate(State s) {
+    public void onVuforiaUpdate(State s) {
         if (main.isInit()) {
             main.updateObjectPose(s);
         }

@@ -1,17 +1,19 @@
 /*===============================================================================
+Copyright (c) 2016 PTC Inc. All Rights Reserved.
+
 Copyright (c) 2012-2014 Qualcomm Connected Experiences, Inc. All Rights Reserved.
 
-Vuforia is a trademark of QUALCOMM Incorporated, registered in the United States 
-and other countries. Trademarks of QUALCOMM Incorporated are used with permission.
+Vuforia is a trademark of PTC Inc., registered in the United States and other 
+countries.
 ===============================================================================*/
 
-package com.qualcomm.vuforia.misc;
+package com.vuforia.samples.SampleApplication;
 
 import com.vuforia.State;
 
 
-//  Interface to be implemented by the activity which uses VuforiaApplicationSession
-public interface VuforiaApplicationControl
+//  Interface to be implemented by the activity which uses SampleApplicationSession
+public interface SampleApplicationControl
 {
     
     // To be called to initialize the trackers
@@ -42,10 +44,10 @@ public interface VuforiaApplicationControl
     // This callback is called after the Vuforia initialization is complete,
     // the trackers are initialized, their data loaded and
     // tracking is ready to start
-    void onInitARDone(VuforiaApplicationException e);
+    void onInitARDone(SampleApplicationException e);
     
     
     // This callback is called every cycle
-    void onQCARUpdate(State state);
+    void onVuforiaUpdate(State state);
     
 }
