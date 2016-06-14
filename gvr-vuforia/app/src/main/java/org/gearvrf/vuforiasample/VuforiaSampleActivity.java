@@ -45,9 +45,6 @@ public class VuforiaSampleActivity extends GVRActivity implements
     private ArrayList<String> datasetStrings = new ArrayList<String>();
 
     private boolean extendedTracking = false;
-    
-    private static final float NEAR_Z_PLANE = 10.0f;
-    private static final float FAR_Z_PLANE = 5000.0f;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -58,7 +55,6 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
         vuforiaState = VUFORIA_INITIALIZING;
         vuforiaAppSession = new SampleApplicationSession(this);
-        //vuforiaAppSession.setZPlanes(NEAR_Z_PLANE, FAR_Z_PLANE);
         vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         main = new VuforiaSampleMain();
@@ -74,6 +70,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
         }
     }
 
+    @Override
     protected void onResume() {
         super.onResume();
 
@@ -89,6 +86,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
         }
     }
 
+    @Override
     protected void onPause() {
         super.onPause();
         if (vuforiaState == VUFORIA_ACTIVE_INITIALIZED
@@ -104,9 +102,9 @@ public class VuforiaSampleActivity extends GVRActivity implements
         }
     }
 
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-
         main = null;
 
         if (vuforiaState != VUFORIA_INACTIVE) {
@@ -121,8 +119,10 @@ public class VuforiaSampleActivity extends GVRActivity implements
         }
     }
 
+    @Override
     public void onConfigurationChanged(Configuration config) {
         Log.d(TAG, "onConfigurationChanged");
+        super.onConfigurationChanged(config);
         vuforiaAppSession.onConfigurationChanged();
     }
 
@@ -133,6 +133,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
         vuforiaState = VUFORIA_ACTIVE_INITIALIZED;
     }
 
+    @Override
     public void onInitARDone(SampleApplicationException exception) {
 
         if (exception == null) {
@@ -158,6 +159,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     }
 
     // To be called to initialize the trackers
+    @Override
     public boolean doInitTrackers() {
         // Indicate if the trackers were initialized correctly
         boolean result = true;
@@ -178,6 +180,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     }
 
     // To be called to load the trackers' data
+    @Override
     public boolean doLoadTrackersData() {
         TrackerManager tManager = TrackerManager.getInstance();
         ObjectTracker imageTracker =  (ObjectTracker)tManager
@@ -220,6 +223,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
     // To be called to start tracking with the initialized trackers and their
     // loaded data
+    @Override
     public boolean doStartTrackers() {
         // Indicate if the trackers were started correctly
         boolean result = true;
@@ -234,6 +238,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     }
 
     // To be called to stop the trackers
+    @Override
     public boolean doStopTrackers() {
         // Indicate if the trackers were stopped correctly
         boolean result = true;
@@ -249,6 +254,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     }
 
     // To be called to destroy the trackers' data
+    @Override
     public boolean doUnloadTrackersData() {
         // Indicate if the trackers were unloaded correctly
         boolean result = true;
@@ -275,6 +281,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
     }
 
     // To be called to deinitialize the trackers
+    @Override
     public boolean doDeinitTrackers() {
         // Indicate if the trackers were deinitialized correctly
         boolean result = true;
@@ -294,7 +301,8 @@ public class VuforiaSampleActivity extends GVRActivity implements
     @Override
     public void onVuforiaUpdate(State s) {
         if (main.isInit()) {
-            main.updateObjectPose(s);
+            //main.updateObjectPose(s);
+            // TODO: For now do nothing
         }
     }
 }
