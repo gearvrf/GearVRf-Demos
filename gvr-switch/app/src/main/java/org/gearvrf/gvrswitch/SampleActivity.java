@@ -28,10 +28,4 @@ public class SampleActivity extends GVRActivity {
         super.onCreate(icicle);
         setMain(main, "gvr.xml");
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        main.onTouchEvent(event);
-        return super.onTouchEvent(event);
-    }
 }
