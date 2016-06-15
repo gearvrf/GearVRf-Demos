@@ -58,6 +58,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
         vuforiaAppSession.initAR(this, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         main = new VuforiaSampleMain();
+        main.vuforiaAppSession = vuforiaAppSession;
         setMain(main, "gvr.xml");
     }
 
@@ -138,6 +139,7 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
         if (exception == null) {
             initApplicationAR();
+            main.isReady = true;
 
             try {
                 vuforiaAppSession.startAR(CameraDevice.CAMERA_DIRECTION.CAMERA_DIRECTION_DEFAULT);
@@ -300,9 +302,6 @@ public class VuforiaSampleActivity extends GVRActivity implements
 
     @Override
     public void onVuforiaUpdate(State s) {
-        if (main.isInit()) {
-            //main.updateObjectPose(s);
-            // TODO: For now do nothing
-        }
+        // Update in onStep()
     }
 }

@@ -10,6 +10,7 @@ import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRRenderTexture;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -25,6 +26,7 @@ import com.vuforia.State;
 import com.vuforia.Tool;
 import com.vuforia.Trackable;
 import com.vuforia.TrackableResult;
+import com.vuforia.samples.SampleApplication.SampleApplicationSession;
 
 import android.opengl.Matrix;
 import android.util.Log;
@@ -36,6 +38,8 @@ public class VuforiaSampleMain extends GVRMain {
     private GVRContext gvrContext = null;
     private GVRSceneObject teapot = null;
     private GVRSceneObject passThroughObject = null;
+    private Renderer mRenderer = null;
+    SampleApplicationSession vuforiaAppSession = null;
 
     static final int VUFORIA_CAMERA_WIDTH = 1280;
     static final int VUFORIA_CAMERA_HEIGHT = 720;
@@ -45,11 +49,12 @@ public class VuforiaSampleMain extends GVRMain {
     private GVRScene mainScene;
     
     private float[] vuforiaMVMatrix;
-    private float[] convertedMVMatrix;
-    private float[] gvrMVMatrix;
     private float[] totalMVMatrix;
 
     private boolean teapotVisible = false;
+    boolean isReady = false;
+
+    ModelShader modelShader = null;
     
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -60,15 +65,23 @@ public class VuforiaSampleMain extends GVRMain {
         createTeaPotObject();
 
         vuforiaMVMatrix = new float[16];
-        convertedMVMatrix = new float[16];
-        gvrMVMatrix = new float[16];
         totalMVMatrix = new float[16];
+
+        initRendering();
 
         init = true;
     }
 
+    private void initRendering() {
+        mRenderer = Renderer.getInstance();
+    }
+
     @Override
     public void onStep() {
+        if (!isReady)
+            return;
+
+        updateObjectPose();
     }
 
     @Override
@@ -138,22 +151,25 @@ public class VuforiaSampleMain extends GVRMain {
 
     private void createTeaPotObject() {
         try {
-            teapot = new GVRSceneObject(gvrContext,
-                    gvrContext.loadMesh(new GVRAndroidResource(gvrContext
-                            .getContext(), "teapot.obj")),
-                    gvrContext.loadTexture(new GVRAndroidResource(gvrContext
-                            .getContext(), "teapot_tex1.jpg")));
+            modelShader = new ModelShader(gvrContext);
+            GVRMesh teapotMesh = gvrContext.loadMesh(
+                    new GVRAndroidResource(gvrContext, "teapot.obj"));
+            GVRTexture teapotTexture = gvrContext.loadTexture(
+                    new GVRAndroidResource(gvrContext.getContext(), "teapot_tex1.jpg"));
+            teapot = new GVRSceneObject(gvrContext, teapotMesh);
+
+            GVRMaterial material = new GVRMaterial(gvrContext, modelShader.getShaderId());
+            material.setTexture(ModelShader.TEXTURE_KEY, teapotTexture);
+
+            teapot.getRenderData().setMaterial(material);
+
             teapot.getRenderData().setDepthTest(false);
             teapot.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
+            teapot.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        teapot.getTransform().setPosition(0f, 0f, -0.5f);
     }
-
-    private float[] convertMatrix = { 1f, 0f, 0f, 0f, 0f, -1f, 0f, 0f, 0f, 0f,
-            -1f, 0f, 0f, 0f, 0f, 1f };
 
     private void showTeapot() {
         if (teapotVisible == false) {
@@ -169,7 +185,11 @@ public class VuforiaSampleMain extends GVRMain {
         }
     }
 
-    public void updateObjectPose(State state) {
+    public void updateObjectPose() {
+        State state = mRenderer.begin();
+
+        // TODO: viewport
+
         // did we find any trackables this frame?
         int numDetectedMarkers = state.getNumTrackableResults();
 
@@ -181,29 +201,24 @@ public class VuforiaSampleMain extends GVRMain {
         for (int tIdx = 0; tIdx < numDetectedMarkers; tIdx++) {
             TrackableResult result = state.getTrackableResult(tIdx);
             Trackable trackable = result.getTrackable();
+
             if (trackable.getId() == 1 || trackable.getId() == 2) {
-                Matrix44F modelViewMatrix_Vuforia = Tool
-                        .convertPose2GLMatrix(result.getPose());
+                Matrix44F modelViewMatrix_Vuforia = Tool.convertPose2GLMatrix(result.getPose());
                 vuforiaMVMatrix = modelViewMatrix_Vuforia.getData();
 
-                Matrix.multiplyMM(convertedMVMatrix, 0, convertMatrix, 0,
-                        vuforiaMVMatrix, 0);
+                float scaleFactor = (((ImageTarget) trackable).getSize().getData()[0])/2.0f;
+                Matrix.rotateM(vuforiaMVMatrix, 0, 90, 1, 0, 0);
+                Matrix.scaleM(vuforiaMVMatrix, 0, scaleFactor, scaleFactor, scaleFactor);
 
-                float scaleFactor = ((ImageTarget) trackable).getSize()
-                        .getData()[0];
-                Matrix.rotateM(convertedMVMatrix, 0, 90, 1, 0, 0);
-                Matrix.scaleM(convertedMVMatrix, 0, scaleFactor, scaleFactor,
-                        scaleFactor);
+                Matrix.multiplyMM(totalMVMatrix, 0,
+                        vuforiaAppSession.getProjectionMatrix().getData(), 0, vuforiaMVMatrix, 0);
 
-                gvrMVMatrix = gvrContext.getMainScene().getMainCameraRig()
-                        .getHeadTransform().getModelMatrix();
-
-                Matrix.multiplyMM(totalMVMatrix, 0, gvrMVMatrix, 0,
-                        convertedMVMatrix, 0);
-                teapot.getTransform().setModelMatrix(totalMVMatrix);
-
+                teapot.getRenderData().getMaterial().setMat4(ModelShader.MVP_KEY,
+                        totalMVMatrix[0], totalMVMatrix[1], totalMVMatrix[2], totalMVMatrix[3],
+                        totalMVMatrix[4], totalMVMatrix[5], totalMVMatrix[6], totalMVMatrix[7],
+                        totalMVMatrix[8], totalMVMatrix[9], totalMVMatrix[10], totalMVMatrix[11],
+                        totalMVMatrix[12], totalMVMatrix[13], totalMVMatrix[14], totalMVMatrix[15]);
                 showTeapot();
-                
                 break;
             } else {
                 hideTeapot();
