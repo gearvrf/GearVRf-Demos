@@ -103,11 +103,11 @@ public class VuforiaSampleMain extends GVRMain {
     }
 
     private void createCameraPassThrough() {
-        passThroughObject = new GVRSceneObject(gvrContext, 16.0f / 9.0f, 1.0f);
+        passThroughObject = new GVRSceneObject(gvrContext, 1.0f, 1.0f);
 
-        passThroughObject.getTransform().setPosition(0.0f, 0.0f, -1000.0f);
-        passThroughObject.getTransform().setScaleX(1000f);
-        passThroughObject.getTransform().setScaleY(1000f);
+        passThroughObject.getTransform().setPosition(0.0f, 0.0f, -100.0f);
+        passThroughObject.getTransform().setScaleX(200f);
+        passThroughObject.getTransform().setScaleY(200f);
 
         GVRTexture passThroughTexture;
 
@@ -187,8 +187,6 @@ public class VuforiaSampleMain extends GVRMain {
 
     public void updateObjectPose() {
         State state = mRenderer.begin();
-
-        // TODO: viewport
 
         // did we find any trackables this frame?
         int numDetectedMarkers = state.getNumTrackableResults();
