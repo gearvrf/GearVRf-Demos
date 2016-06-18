@@ -1,14 +1,34 @@
 # GearVRf-Demos
 
 ## How to run these examples
-* make sure you have this repository and [the GearVR framework](https://github.com/Samsung/GearVRf) in a sibling directory 
+* make sure you have [this repository](https://github.com/gearvrf/GearVRf-Demos) and [the GearVR framework](https://github.com/Samsung/GearVRf) in a sibling directory 
 
 ```
 git clone https://github.com/Samsung/GearVRf.git
 git clone https://github.com/gearvrf/GearVRf-Demos.git
 ```
 
+* [download the Oculus_Mobile_SDK](https://developer.oculus.com/downloads/mobile/1.0.3/Oculus_Mobile_SDK/) and move the relevant jar files into `GearVRf/GVRf/Framework/framework/src/main/libs/`
+
+```
+#edit to use your path or make a env variable reference for wherever you unzipped the SDK
+export OVR_MOBILE_SDK=~/ovr_sdk_mobile_1.0.0.1
+
+cd GearVRf/GVRf/Framework/framework/src/main/libs/
+cp $OVR_MOBILE_SDK/VrAppFramework/Libs/Android/AppFramework.jar ./
+cp $OVR_MOBILE_SDK/VrApi/Libs/Android/VrApi.jar ./
+cp $OVR_MOBILE_SDK/VrAppSupport/SystemUtils/Libs/Android/SystemUtils.jar ./
+
+```
+
+
 * make sure you have gradle in your PATH (you can check that your PATH is setup correctly and verify your gradle version by running: `gradle -v` if you get a response, great! if not, [these instructions may help](https://developer.nvidia.com/codeworks-android)
+
+* set up the [Oculus device signature](https://developer.oculus.com/osig/) for your device (it will look like oculussig_xxxxxxxx where xxxxxxxx is the id you get when you run `adb devices`) and copy it into an assets folder each project's `src/main/assets` directory: 
+
+```
+cp ~/Downloads/oculussig_xxxxxxxx ./gvr-cubemap/gvrcubemap/src/main/assets/oculussig_xxxxxxxx
+```
 
 * change to the example you wish to build and invoke the included gradle wrapper file, `./gradlew` 
 
@@ -20,18 +40,23 @@ cd gvr-sample
 * you should now have an apk that you can push to an android device
 
 ```
-adb install ./app/build/outputs/apk/app-debug.apk
+adb install -r ./app/build/outputs/apk/app-debug.apk
 ```
 NOTE: some of these examples use the application name instead of `app` to hold the apk build directory for instance, in gvr-cubemap, you will find the apk in `./gvr-cubemap/gvrcubemap/build/outputs/apk/app-debug.apk`
 
 ```
 cd gvr-cubemap
 ./gradlew assembleDebug
-adb install ./gvrcubemap/build/outputs/apk/app-debug.apk
+adb install -r ./gvrcubemap/build/outputs/apk/app-debug.apk
 ```
 
-* if you want to run the examples without a headset (this is useful for debugging), change the value of `vr_only` to `vr_dual`
-
+* if you want to run without loading into a headset, enable Samsung VR Service developer mode: 
+	- go to Settings > Applications > manage applications > Gear VR Service > Manage Storage
+	- press the VR Service Version 6 times
+	- if you get a message 'You are a developer' you should see a toggle to enable developer mode
+	- if you get a message 'You are not a developer' you probably haven't installed a valid apk with your oculus signature - run the `adb install -r ./gvrcubemap/build/outputs/apk/app-debug.apk` command on at least one project, then the service should discover you
+	 
+	
 ###gvr-complexscene
 A simple sample which can contain as many bunnies as we want to make it complex
 
