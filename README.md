@@ -8,6 +8,8 @@ git clone https://github.com/Samsung/GearVRf.git
 git clone https://github.com/gearvrf/GearVRf-Demos.git
 ```
 
+* if you don't have your computer set up for Android [SDK](https://developer.android.com/studio/index.html) and [NDK](https://developer.android.com/ndk/downloads/index.html) development - the simplest way to get those configured is to use [NVIDIA's Codeworks](https://developer.nvidia.com/codeworks-android) which will automatically configure your `~/.bash_profile`
+
 * [download the Oculus_Mobile_SDK](https://developer.oculus.com/downloads/mobile/1.0.3/Oculus_Mobile_SDK/) and move the relevant jar files into `GearVRf/GVRf/Framework/framework/src/main/libs/`
 
 ```
