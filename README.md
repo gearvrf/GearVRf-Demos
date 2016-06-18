@@ -10,3 +10,4 @@ Demonstrates using a Mouse or Gamepad device with GVRf. The program makes use of
 
 ###gvr-remote-scripting
 The remote scripting sample enables the debug server and sets up a text object with the ipaddress of the phone so we know where to telnet into.
+
