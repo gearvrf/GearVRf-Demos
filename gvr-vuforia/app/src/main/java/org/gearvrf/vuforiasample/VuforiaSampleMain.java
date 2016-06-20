@@ -41,8 +41,8 @@ public class VuforiaSampleMain extends GVRMain {
     private Renderer mRenderer = null;
     SampleApplicationSession vuforiaAppSession = null;
 
-    static final int VUFORIA_CAMERA_WIDTH = 1280;
-    static final int VUFORIA_CAMERA_HEIGHT = 720;
+    static final int VUFORIA_CAMERA_WIDTH = 1024;
+    static final int VUFORIA_CAMERA_HEIGHT = 1024;
     
     private volatile boolean init = false;
 
