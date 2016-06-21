@@ -15,9 +15,6 @@
 
 package org.gearvrf.polyline;
 
-
-import java.util.concurrent.Future;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
@@ -30,6 +27,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
 import android.graphics.Color;
 import android.opengl.GLES20;
@@ -42,24 +40,75 @@ public class SampleScript extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         GVRScene scene = gvrContext.getNextMainScene();
+        scene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 0, 1.0f);
+        scene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 0, 1.0f);
+        float Z = -4;
+        float[] L = { -2.5f, 1, Z, -2.5f, -1, Z, -1.5f, -1, Z };
+        float[] I = { -1, 1, Z, -1, -1, Z };
+        float[] N = { 0, -1, Z, 0, 1, Z, 1, -1, Z, 1, 1, Z };
+        float[] E = { 2.5f, 1, Z, 1.5f, 1, Z, 1.5f, -1, Z,
+                      2.5f, -1, Z, 2.5f, 0, Z, 1.5f, 0, Z,
+                      1.5f, 1, Z, 1.5f, -1, Z};
+		GVRMaterial redMaterial = new GVRMaterial(gvrContext);
+        GVRMaterial blueMaterial = new GVRMaterial(gvrContext);
+        GVRMesh mesh = new GVRMesh(gvrContext);
+        GVRRenderData rd = new GVRRenderData(gvrContext);
 
-
-		float[] vertices1 = {1,1,1, 2,2,2, 3,3,3, 4,4,4, 5,5,5, 6,6,6, 7,7,7, 8,8,8, 9,9,9 };
-		GVRMesh mesh = new GVRMesh(gvrContext);
-		GVRRenderData rd = new GVRRenderData(gvrContext);
-		GVRMaterial material = new GVRMaterial(gvrContext);
-
-		mesh.setVertices(vertices1);
-		material.setColor(Color.WHITE);
+        redMaterial.setDiffuseColor(1, 0, 0, 1);
+        redMaterial.setLineWidth(4.0f);
+        blueMaterial.setDiffuseColor(0, 0, 1, 0.5f);
+        blueMaterial.setLineWidth(8.0f);
+        
+        GVRSceneObject Lobj = new GVRSceneObject(gvrContext);
+        mesh.setVertices(L);
 		rd.setMesh(mesh);
 		rd.setDrawMode(GLES20.GL_LINE_STRIP);
-		material.setFloat("line_width", 1.0f);
-		rd.setMaterial(material);
+		rd.setMaterial(redMaterial);
 		rd.setShaderTemplate(GVRPhongShader.class);
-		GVRSceneObject obj = new GVRSceneObject(gvrContext);
-		obj.getTransform().setPosition(-2.0f, -2.0f, -8.0f);
-		obj.attachRenderData(rd);
-		scene.addSceneObject(obj);
+		Lobj.attachRenderData(rd);
+		scene.addSceneObject(Lobj);
+		
+        GVRSceneObject Iobj = new GVRSceneObject(gvrContext);
+		mesh = new GVRMesh(gvrContext);
+		rd = new GVRRenderData(gvrContext);
+		mesh.setVertices(I);
+        rd.setMesh(mesh);
+        rd.setDrawMode(GLES20.GL_LINES);
+        rd.setMaterial(redMaterial);
+        rd.setShaderTemplate(GVRPhongShader.class);
+        Iobj.attachRenderData(rd);
+        scene.addSceneObject(Iobj);
+
+        GVRSceneObject Nobj = new GVRSceneObject(gvrContext);
+        mesh = new GVRMesh(gvrContext);
+        mesh.setVertices(N);
+        rd = new GVRRenderData(gvrContext);
+        rd.setMesh(mesh);
+        rd.setDrawMode(GLES20.GL_LINE_STRIP);
+        rd.setMaterial(redMaterial);
+        rd.setShaderTemplate(GVRPhongShader.class);
+        Nobj.attachRenderData(rd);
+        scene.addSceneObject(Nobj);
+        
+        GVRSceneObject Eobj = new GVRSceneObject(gvrContext);
+        mesh = new GVRMesh(gvrContext);
+        mesh.setVertices(E);
+        rd = new GVRRenderData(gvrContext);
+        rd.setMesh(mesh);
+        rd.setDrawMode(GLES20.GL_LINES);
+        rd.setMaterial(blueMaterial);
+        rd.setAlphaBlend(true);
+        rd.setShaderTemplate(GVRPhongShader.class);
+        Eobj.attachRenderData(rd);
+        scene.addSceneObject(Eobj);
+        
+        GVRSceneObject sphere = new GVRSphereSceneObject(gvrContext);
+        rd = sphere.getRenderData();
+        rd.setAlphaBlend(true);
+        rd.setShaderTemplate(GVRPhongShader.class);
+        rd.setMaterial(blueMaterial);
+        sphere.getTransform().setPositionZ(Z);
+        scene.addSceneObject(sphere);
      }
 
     @Override
