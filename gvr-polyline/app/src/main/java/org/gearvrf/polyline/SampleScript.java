@@ -49,7 +49,7 @@ public class SampleScript extends GVRMain {
         float[] E = { 2.5f, 1, Z, 1.5f, 1, Z, 1.5f, -1, Z,
                       2.5f, -1, Z, 2.5f, 0, Z, 1.5f, 0, Z,
                       1.5f, 1, Z, 1.5f, -1, Z};
-		GVRMaterial redMaterial = new GVRMaterial(gvrContext);
+    	GVRMaterial redMaterial = new GVRMaterial(gvrContext);
         GVRMaterial blueMaterial = new GVRMaterial(gvrContext);
         GVRMesh mesh = new GVRMesh(gvrContext);
         GVRRenderData rd = new GVRRenderData(gvrContext);
@@ -61,17 +61,17 @@ public class SampleScript extends GVRMain {
         
         GVRSceneObject Lobj = new GVRSceneObject(gvrContext);
         mesh.setVertices(L);
-		rd.setMesh(mesh);
-		rd.setDrawMode(GLES20.GL_LINE_STRIP);
-		rd.setMaterial(redMaterial);
-		rd.setShaderTemplate(GVRPhongShader.class);
-		Lobj.attachRenderData(rd);
-		scene.addSceneObject(Lobj);
-		
+    	rd.setMesh(mesh);
+    	rd.setDrawMode(GLES20.GL_LINE_STRIP);
+    	rd.setMaterial(redMaterial);
+    	rd.setShaderTemplate(GVRPhongShader.class);
+    	Lobj.attachRenderData(rd);
+    	scene.addSceneObject(Lobj);
+
         GVRSceneObject Iobj = new GVRSceneObject(gvrContext);
-		mesh = new GVRMesh(gvrContext);
-		rd = new GVRRenderData(gvrContext);
-		mesh.setVertices(I);
+    	mesh = new GVRMesh(gvrContext);
+    	rd = new GVRRenderData(gvrContext);
+    	mesh.setVertices(I);
         rd.setMesh(mesh);
         rd.setDrawMode(GLES20.GL_LINES);
         rd.setMaterial(redMaterial);
