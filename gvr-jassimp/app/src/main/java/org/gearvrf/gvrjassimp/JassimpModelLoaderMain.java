@@ -56,7 +56,7 @@ public class JassimpModelLoaderMain extends GVRMain {
 
         // Model with texture and animation
         try {
-            GVRModelSceneObject astroBoyModel = gvrContext.loadModel("astro_boy.dae");
+            GVRModelSceneObject astroBoyModel = gvrContext.getAssetLoader().loadModel("astro_boy.dae", mMainScene);
             List<GVRAnimation> animations = astroBoyModel.getAnimations();
             if (animations.size() >= 1) {
                 GVRAnimation animation = animations.get(0);
@@ -67,20 +67,17 @@ public class JassimpModelLoaderMain extends GVRMain {
             astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
             astroBoyModel.getTransform().setScale(3, 3, 3);
             astroBoyModel.getTransform().setPosition(0.0f, -0.4f, -0.5f);
-
-            mMainScene.addSceneObject(astroBoyModel);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
 
         // Model with color
         try {
-            GVRSceneObject benchModel = gvrContext.loadModel("bench.dae");
+            GVRSceneObject benchModel = gvrContext.getAssetLoader().loadModel("bench.dae", mMainScene);
 
             benchModel.getTransform().setScale(0.66f, 0.66f, 0.66f);
             benchModel.getTransform().setPosition(0.0f, -4.0f, -20.0f);
             benchModel.getTransform().setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
-            mMainScene.addSceneObject(benchModel);
             } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
@@ -88,7 +85,7 @@ public class JassimpModelLoaderMain extends GVRMain {
         // Model over network
         String urlBase = "https://raw.githubusercontent.com/gearvrf/GearVRf-Demos/master/gvrjassimpmodelloader/assets/";
         try {
-            GVRSceneObject treesModel = gvrContext.getAssetLoader().loadModel(urlBase + "trees/trees9.3ds", GVRResourceVolume.VolumeType.NETWORK, mMainScene);
+            GVRSceneObject treesModel = gvrContext.getAssetLoader().loadModel(urlBase + "trees/trees9.3ds", mMainScene);
             treesModel.getTransform().setPosition(5.0f, 0.0f, 0.0f);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model from URL: %s", e);
