@@ -19,10 +19,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gearvrf.*;
-import org.gearvrf.GVRPicker.GVRPickedObject;
+import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.utility.Log;
 
 public class SampleMain extends GVRScript {
+    public class PickHandler implements IPickEvents
+    {
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R, PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
+        }
+        public void onExit(GVRSceneObject sceneObj)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", UNPICKED_COLOR_R, UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
+        }
+        public void onNoPick(GVRPicker picker) { }
+        public void onPick(GVRPicker picker) { }
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }      
+    }
 
     private static final String TAG = "SampleMain";
 
@@ -36,11 +50,11 @@ public class SampleMain extends GVRScript {
     private static final float PICKED_COLOR_A = 1.0f;
 
     private GVRContext mGVRContext = null;
-    private ColorShader mColorShader = null;
     private List<GVRSceneObject> mObjects = new ArrayList<GVRSceneObject>();
+    private IPickEvents mPickHandler = new PickHandler();
 
     private GVRActivity mActivity;
-
+    
     SampleMain(GVRActivity activity) {
         mActivity = activity;
     }
@@ -56,55 +70,57 @@ public class SampleMain extends GVRScript {
         mainScene.getMainCameraRig().getRightCamera()
                 .setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mColorShader = new ColorShader(mGVRContext);
+        mainScene.getEventReceiver().addListener(mPickHandler);
+        mainScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, mainScene));
 
         /*
          * Adding Boards
          */
         GVRSceneObject object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(0.0f, 3.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(0.0f, -3.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(-3.0f, 0.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(3.0f, 0.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(3.0f, 3.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(3.0f, -3.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(-3.0f, 3.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachSphereCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorBoard(1.0f, 1.0f);
         object.getTransform().setPosition(-3.0f, -3.0f, -5.0f);
-        attachDefaultEyePointee(object);
+        attachSphereCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
@@ -132,13 +148,13 @@ public class SampleMain extends GVRScript {
         // These 2 are testing by the whole mesh.
         object = getColorMesh(1.0f, mesh);
         object.getTransform().setPosition(0.0f, 0.0f, -2.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorMesh(1.0f, mesh);
         object.getTransform().setPosition(3.0f, 3.0f, -2.0f);
-        attachDefaultEyePointee(object);
+        attachMeshCollider(object);
         mainScene.addSceneObject(object);
         object.getRenderData().setCullTest(false);
         mObjects.add(object);
@@ -146,76 +162,53 @@ public class SampleMain extends GVRScript {
         // These 2 are testing by the bounding box of the mesh.
         object = getColorMesh(2.0f, mesh);
         object.getTransform().setPosition(-5.0f, 0.0f, -2.0f);
-        attachBoundingBoxEyePointee(object);
+        attachBoundsCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
 
         object = getColorMesh(1.0f, mesh);
         object.getTransform().setPosition(0.0f, -5.0f, -2.0f);
-        attachBoundingBoxEyePointee(object);
+        attachBoundsCollider(object);
         mainScene.addSceneObject(object);
         mObjects.add(object);
     }
 
     @Override
     public void onStep() {
-        for (GVRSceneObject object : mObjects) {
-            object.getRenderData()
-                    .getMaterial()
-                    .setVec4(ColorShader.COLOR_KEY, UNPICKED_COLOR_R,
-                            UNPICKED_COLOR_G, UNPICKED_COLOR_B,
-                            UNPICKED_COLOR_A);
-        }
-        for (GVRPickedObject pickedObject : GVRPicker.findObjects(mGVRContext
-                .getMainScene())) {
-            for (GVRSceneObject object : mObjects) {
-                if (pickedObject.getHitObject().equals(object)) {
-                    object.getRenderData()
-                            .getMaterial()
-                            .setVec4(ColorShader.COLOR_KEY, PICKED_COLOR_R,
-                                    PICKED_COLOR_G, PICKED_COLOR_B,
-                                    PICKED_COLOR_A);
-                    break;
-                }
-            }
-        }
     }
 
     private GVRSceneObject getColorBoard(float width, float height) {
-        GVRMaterial material = new GVRMaterial(mGVRContext,
-                mColorShader.getShaderId());
-        material.setVec4(ColorShader.COLOR_KEY, UNPICKED_COLOR_R,
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
+        material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         GVRSceneObject board = new GVRSceneObject(mGVRContext, width, height);
         board.getRenderData().setMaterial(material);
-
+        board.getRenderData().setShaderTemplate(ColorShader.class);
         return board;
     }
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext,
-                mColorShader.getShaderId());
-        material.setVec4(ColorShader.COLOR_KEY, UNPICKED_COLOR_R,
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
+        material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
 
         GVRSceneObject meshObject = null;
         meshObject = new GVRSceneObject(mGVRContext, mesh);
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
-
+        meshObject.getRenderData().setShaderTemplate(ColorShader.class);
         return meshObject;
     }
 
-    private void attachDefaultEyePointee(GVRSceneObject sceneObject) {
-        sceneObject.attachEyePointeeHolder();
+    private void attachMeshCollider(GVRSceneObject sceneObject) {
+        sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, false));
     }
 
-    private void attachBoundingBoxEyePointee(GVRSceneObject sceneObject) {
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(
-                mGVRContext);
-        GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(mGVRContext,
-                sceneObject.getRenderData().getMesh().getBoundingBox());
-        eyePointeeHolder.addPointee(eyePointee);
-        sceneObject.attachEyePointeeHolder(eyePointeeHolder);
+    private void attachSphereCollider(GVRSceneObject sceneObject) {
+        sceneObject.attachComponent(new GVRSphereCollider(mGVRContext));
+    }
+    
+    private void attachBoundsCollider(GVRSceneObject sceneObject) {
+        sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, true));
     }
 }
