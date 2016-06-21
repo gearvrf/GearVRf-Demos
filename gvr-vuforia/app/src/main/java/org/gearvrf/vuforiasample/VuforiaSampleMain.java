@@ -61,6 +61,8 @@ public class VuforiaSampleMain extends GVRMain {
         this.gvrContext = gvrContext;
         mainScene = gvrContext.getMainScene();
         mainScene.getMainCameraRig().setFarClippingDistance(20000);
+        // viewport as per default 1024 x 1024 window size
+        mainScene.getMainCameraRig().setViewport(0, 224, 1024, 576);
 
         createTeaPotObject();
 
@@ -187,6 +189,9 @@ public class VuforiaSampleMain extends GVRMain {
 
     public void updateObjectPose() {
         State state = mRenderer.begin();
+
+        // viewport as per default 1024 x 1024 window size
+        mainScene.getMainCameraRig().setViewport(0, 224, 1024, 576);
 
         // did we find any trackables this frame?
         int numDetectedMarkers = state.getNumTrackableResults();
