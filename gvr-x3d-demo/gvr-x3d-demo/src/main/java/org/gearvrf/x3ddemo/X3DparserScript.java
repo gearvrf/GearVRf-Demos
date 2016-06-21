@@ -1,4 +1,4 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/* Copyright 2016 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -227,7 +227,7 @@ public class X3DparserScript extends GVRScript {
 	      //String filename = "animation02.x3d";
 	      //String filename = "animation03.x3d";
 	      //String filename = "animation04.x3d";
-	      //String filename = "animation05.x3d";
+	      String filename = "animation05.x3d";
 	      //String filename = "animation06.x3d";
 	      //String filename = "animation07.x3d";
 	      //String filename = "animation08.x3d";
@@ -239,7 +239,7 @@ public class X3DparserScript extends GVRScript {
           //String filename = "conered.x3d";
           //String filename = "cylinders.x3d";
           //String filename = "directionallight1.x3d";
-          String filename = "elevationgrid.x3d";  // NOT IMPLEMENTED
+          //String filename = "elevationgrid.x3d";  // NOT IMPLEMENTED
           //String filename = "emissivecolor.x3d";
           //String filename = "exponentcone.x3d";
           //String filename = "exponentplane.x3d";
@@ -278,6 +278,11 @@ public class X3DparserScript extends GVRScript {
           //String filename = "usedef06.x3d";
           //String filename = "usedefprimitive01.x3d";
           //String filename = "usedeftext01.x3d";
+          //String filename = "usedeftransform01.x3d";
+          //String filename = "usedefdirlight.x3d";
+          //String filename = "usedefpointlight.x3d";
+          //String filename = "usedefspotlight.x3d";
+          //String filename = "opacitytest01.x3d";
           //String filename = "levelofdetailusedef01.x3d";
           //String filename = "levelofdetailusedef02.x3d";
           //String filename = "levelofdetailusedef03.x3d";

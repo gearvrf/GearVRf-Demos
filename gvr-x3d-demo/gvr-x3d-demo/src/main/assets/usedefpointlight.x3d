@@ -1,0 +1,50 @@
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+	<Scene>
+	
+		<Transform DEF="obj1" translation="-3 0 -4" rotation="0 1 0 -.3" scale="1 1 1">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1   0 .6 .8'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<ImageTexture url="news_texture_map.jpg" />
+					<Material diffuseColor=".8 .9 1"/>
+				</Appearance>
+			</Shape>
+		</Transform>
+	
+		<Transform DEF="obj2" translation="3 0 -4" rotation="0 1 0 .3" scale="1 1 1">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1   0 .6 .8'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<ImageTexture url="texture_rotation_testpattern.jpg" />
+					<Material diffuseColor=".8 .9 1"/>
+				</Appearance>
+			</Shape>
+		</Transform>
+		
+		<NavigationInfo headlight="false"/>
+
+
+		<PointLight DEF="myPtLight1" location="-5 0 0" color="1 0 0"/>
+		<Transform translation="10 0 0">
+			<!-- PointLight DEF="myPtLight2" location="-5 0 0" color="0 1 0"/ -->
+			<PointLight USE="myPtLight1"/>
+		</Transform>
+
+	</Scene>
+</X3D>
