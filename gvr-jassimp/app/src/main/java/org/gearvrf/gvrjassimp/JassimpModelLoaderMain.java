@@ -23,6 +23,8 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.IAssetEvents;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.animation.GVRAnimation;
@@ -32,6 +34,31 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
 import android.graphics.Color;
+class AssetListener implements IAssetEvents
+{
+    private GVRScene mScene;
+    
+    public AssetListener(GVRScene scene) {
+        mScene = scene;
+    }
+    
+    public void onModelLoaded(GVRContext context, GVRSceneObject model, String modelFile) { }
+    public void onTextureLoaded(GVRContext context, GVRTexture texture, String texFile) {}
+    public void onModelError(GVRContext context, String error, String modelFile) { }
+    public void onTextureError(GVRContext context, String error, String texFile) { }
+    public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
+    {
+        if ((model != null) && (errors == null))
+        {
+            Log.d("gvrjassimp", filePath + " loaded successfully");
+            mScene.addSceneObject(model);
+        }
+        else
+        {
+            Log.e("gvrjassimp", filePath + " did not load " + errors);
+        }
+    }
+}
 
 public class JassimpModelLoaderMain extends GVRMain {
 
@@ -84,8 +111,9 @@ public class JassimpModelLoaderMain extends GVRMain {
 
         // Model over network
         String urlBase = "https://raw.githubusercontent.com/gearvrf/GearVRf-Demos/master/gvrjassimpmodelloader/assets/";
+        AssetListener eventHandler = new AssetListener(mMainScene);
         try {
-            GVRSceneObject treesModel = gvrContext.getAssetLoader().loadModel(urlBase + "trees/trees9.3ds", mMainScene);
+            GVRSceneObject treesModel = gvrContext.getAssetLoader().loadModel(urlBase + "trees/trees9.3ds", eventHandler);
             treesModel.getTransform().setPosition(5.0f, 0.0f, 0.0f);
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model from URL: %s", e);
