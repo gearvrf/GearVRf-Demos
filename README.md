@@ -8,13 +8,24 @@ git clone https://github.com/Samsung/GearVRf.git
 git clone https://github.com/gearvrf/GearVRf-Demos.git
 ```
 
-* if you don't have your computer set up for Android [SDK](https://developer.android.com/studio/index.html) and [NDK](https://developer.android.com/ndk/downloads/index.html) development - the simplest way to get those configured is to use [NVIDIA's Codeworks](https://developer.nvidia.com/codeworks-android) which will automatically configure your `~/.bash_profile`
+* if you don't have your computer set up for Android [SDK](https://developer.android.com/studio/index.html) and [NDK](https://developer.android.com/ndk/downloads/index.html) development - the simplest way to get those configured is to use [NVIDIA's Codeworks](https://developer.nvidia.com/codeworks-android) which will automatically configure your `~/.bash_profile` with several important environment variables. They require a registration (free) to download, but you could also download each of the required tools separately and add the directory paths to `~/.bash_profile` yourself:
+ 
+```
+#update version numbers and paths for your local system
+export ANDROID_HOME="~/mytools/android-sdk-macosx"
+export NDK_ROOT="~/mytools/android-ndk-r11c"
+export NDKROOT=$NDK_ROOT
+export NVPACK_NDK_VERSION="android-ndk-r11c"
+export ANT_HOME="~/mytools/apache-ant-1.8.2"
+export GRADLE_HOME="~/mytools/gradle-2.2.1"
+export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools:$NDK_ROOT:$ANT_HOME/bin:$GRADLE_HOME:$PATH"
+```
 
-* [download the Oculus_Mobile_SDK](https://developer.oculus.com/downloads/mobile/1.0.3/Oculus_Mobile_SDK/) and move the relevant jar files into `GearVRf/GVRf/Framework/framework/src/main/libs/`
+* [download the Oculus_Mobile_SDK](https://developer.oculus.com/downloads/mobile/1.0.0.1/Oculus_Mobile_SDK/) and move the relevant jar files into `GearVRf/GVRf/Framework/framework/src/main/libs/`
 
 ```
-#edit to use your path or make a env variable reference for wherever you unzipped the SDK
-export OVR_MOBILE_SDK=~/ovr_sdk_mobile_1.0.0.1
+#edit to use your PATH or make a env variable reference for wherever you unzipped the SDK
+export OVR_MOBILE_SDK=~/mytools/ovr_sdk_mobile_1.0.0.1
 
 cd GearVRf/GVRf/Framework/framework/src/main/libs/
 cp $OVR_MOBILE_SDK/VrAppFramework/Libs/Android/AppFramework.jar ./
