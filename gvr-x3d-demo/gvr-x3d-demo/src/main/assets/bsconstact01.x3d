@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- written by BS Content Studio (Developer)  1.006 -->
+
+
+<X3D profile="Immersive" version="3.0">
+	<head></head>
+	<Scene>
+		<Background skyColor='0.1 0.1 0.1'>
+		</Background>
+		<WorldInfo>
+		</WorldInfo>
+		<NavigationInfo>
+		</NavigationInfo>
+		<Transform translation='0 2 12.35158'>
+			<Shape>
+				<Appearance>
+					<Material diffuseColor='0.4039216 0.8 0.03137255'>
+					</Material>
+					<ImageTexture url='sun.jpg'>
+					</ImageTexture>
+					<TextureTransform containerField="textureTransform">
+					</TextureTransform>
+				</Appearance>
+				<Cylinder>
+				</Cylinder>
+			</Shape>
+		</Transform>
+		<Viewpoint orientation='-0.5773502 0.5773504 -0.5773502 4.18879' position='-10 -25 0'>
+		</Viewpoint>
+	</Scene>
+</X3D>
