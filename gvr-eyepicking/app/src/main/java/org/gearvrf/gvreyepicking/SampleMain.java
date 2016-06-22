@@ -69,7 +69,6 @@ public class SampleMain extends GVRScript {
                 .setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mainScene.getMainCameraRig().getRightCamera()
                 .setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
-        mColorShader = new ColorShader(mGVRContext);
         mainScene.getEventReceiver().addListener(mPickHandler);
         mainScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, mainScene));
 
