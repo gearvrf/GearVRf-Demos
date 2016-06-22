@@ -25,11 +25,14 @@ import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FocusableController {
 
-    public static ArrayList<FocusableSceneObject> interactiveObjects = new ArrayList<FocusableSceneObject>();
+    public static CopyOnWriteArrayList<FocusableSceneObject> interactiveObjects = new CopyOnWriteArrayList<FocusableSceneObject>();
 
     public static void process(GVRContext context) {
 
@@ -45,6 +48,7 @@ public final class FocusableController {
             GazeController.disableInteractiveCursor();
         } else {
             for (GVREyePointeeHolder holder : eyePointeeHolders) {
+                GVRSceneObject owner = holder.getOwnerObject();
                 for (FocusableSceneObject object : interactiveObjects) {
                     if (holder.getOwnerObject().equals(object)) {
                         object.setFocus(true);
@@ -65,8 +69,9 @@ public final class FocusableController {
 
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
         for (GVREyePointeeHolder holder : eyePointeeHolders) {
+            GVRSceneObject owner = holder.getOwnerObject();
             for (FocusableSceneObject object : interactiveObjects) {
-                if (holder.getOwnerObject().equals(object)) {
+                if (owner.equals(object)) {
                     object.dispatchInGesture(TouchPadInput.getCurrent().swipeDirection);
                     return true;
                 }
@@ -82,8 +87,9 @@ public final class FocusableController {
             Main.clickOut();
         } else {
             for (GVREyePointeeHolder holder : eyePointeeHolders) {
+                GVRSceneObject owner = holder.getOwnerObject();
                 for (FocusableSceneObject object : interactiveObjects) {
-                    if (holder.getOwnerObject().equals(object)) {
+                    if (owner.equals(object)) {
                         object.dispatchInClick();
                         return true;
                     }
