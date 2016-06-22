@@ -38,6 +38,7 @@ public class GearVRScripting extends GVRActivity
     String ipAddress;
     private Camera camera;
     private Handler handler = new Handler();
+    private GearVRScriptingMain main;
 
     /** Called when the activity is first created. */
     @Override
@@ -47,8 +48,8 @@ public class GearVRScripting extends GVRActivity
 
         ipAddress = getWifiIpAddress(this);
         createCameraView();
-
-        setMain(new GearVRScriptingMain(), "gvr.xml");
+        main = new GearVRScriptingMain();
+        setMain(main, "gvr.xml");
     }
 
     @Override
@@ -123,5 +124,11 @@ public class GearVRScripting extends GVRActivity
         return camera;
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        main.stop();
+    }
 
 }
