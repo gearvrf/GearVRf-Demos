@@ -48,7 +48,6 @@ public final class FocusableController {
             GazeController.disableInteractiveCursor();
         } else {
             for (GVREyePointeeHolder holder : eyePointeeHolders) {
-                GVRSceneObject owner = holder.getOwnerObject();
                 for (FocusableSceneObject object : interactiveObjects) {
                     if (holder.getOwnerObject().equals(object)) {
                         object.setFocus(true);
@@ -69,9 +68,8 @@ public final class FocusableController {
 
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
         for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            GVRSceneObject owner = holder.getOwnerObject();
             for (FocusableSceneObject object : interactiveObjects) {
-                if (owner.equals(object)) {
+                if (holder.getOwnerObject().equals(object)) {
                     object.dispatchInGesture(TouchPadInput.getCurrent().swipeDirection);
                     return true;
                 }
@@ -87,9 +85,8 @@ public final class FocusableController {
             Main.clickOut();
         } else {
             for (GVREyePointeeHolder holder : eyePointeeHolders) {
-                GVRSceneObject owner = holder.getOwnerObject();
                 for (FocusableSceneObject object : interactiveObjects) {
-                    if (owner.equals(object)) {
+                    if (holder.getOwnerObject().equals(object)) {
                         object.dispatchInClick();
                         return true;
                     }
