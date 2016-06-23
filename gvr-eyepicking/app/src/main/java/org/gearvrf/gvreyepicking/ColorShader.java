@@ -37,7 +37,7 @@ public class ColorShader extends GVRShaderTemplate
 
     private static final String FRAGMENT_SHADER = "precision mediump float;\n"
             + "uniform vec4 u_color;\n"
-            + " out vec4 gl_FragColor;"
+            + "out vec4 gl_FragColor;\n"
             + "void main() {\n"
             + "  gl_FragColor = u_color;\n"
             + "}\n";
