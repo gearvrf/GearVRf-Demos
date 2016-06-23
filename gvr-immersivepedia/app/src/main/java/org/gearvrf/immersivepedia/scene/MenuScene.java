@@ -58,7 +58,7 @@ public class MenuScene extends GVRScene {
         dinosaurs.getTransform().setPositionZ(-DISTANCE_TO_CAMERA);
         dinosaurs.getTransform().setPositionY(Y_ADJUST);
         dinosaurs.setTexts(getGVRContext().getContext().getString(R.string.dinosaurs), getGVRContext().getContext().getString(R.string.empty));
-
+        dinosaurs.setName("menu_dinosaurs");
         dinosaurs.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -89,6 +89,7 @@ public class MenuScene extends GVRScene {
         birds.getTransform().rotateByAxis(-90.0f, 0f, 1f, 0f);
         birds.setTexts(getGVRContext().getContext().getString(R.string.birds), getGVRContext().getContext().getString(R.string.unavailable));
         birds.setOnClickListener(getUnavailableMenuItemClick());
+        birds.setName("menu_birds");
         addSceneObject(birds);
     }
 
@@ -100,6 +101,7 @@ public class MenuScene extends GVRScene {
         fishes.setTexts(getGVRContext().getContext().getString(R.string.fishes), getGVRContext().getContext().getString(R.string.unavailable));
         fishes.setOnClickListener(getUnavailableMenuItemClick());
         fishes.getTransform().setPositionY(Y_ADJUST);
+        fishes.setName("menu_fishes");
         addSceneObject(fishes);
     }
 
@@ -111,6 +113,7 @@ public class MenuScene extends GVRScene {
         mammals.setTexts(getGVRContext().getContext().getString(R.string.mammals), getGVRContext().getContext().getString(R.string.unavailable));
         mammals.setOnClickListener(getUnavailableMenuItemClick());
         mammals.getTransform().setPositionY(Y_ADJUST);
+        mammals.setName("menu_mammals");
         addSceneObject(mammals);
     }
 

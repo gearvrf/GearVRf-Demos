@@ -67,6 +67,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
         focus.getTransform().setPosition(0f, 3.5f, DinosaurFactory.APATOSAURUS_DISTANCE - 0.01f);
         focus.getTransform().rotateByAxis(-180.0f, 0f, 1f, 0f);
         focus.attachEyePointeeHolder();
+        focus.setName("apatosaurus");
         focus.setOnGestureListener(new OnGestureListener() {
 
             @Override
@@ -128,6 +129,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
 
         totem.getTransform().setPosition(-1f, 0f, -3f);
         totem.setTotemEventListener(gallery);
+        totem.setName("totem_apatosaurus");
         totem.setText(gvrContext.getActivity().getResources().getString(R.string.gallery_totem));
         galleryGroup.addChildObject(totem);
         scene.addSceneObject(galleryGroup);

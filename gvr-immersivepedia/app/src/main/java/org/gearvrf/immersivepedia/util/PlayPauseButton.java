@@ -41,6 +41,7 @@ public class PlayPauseButton extends FocusableSceneObject {
         this.gvrContext = gvrContext;
         loadTexture();
         setTextures();
+        setName("playpause");
     }
 
     private void loadTexture() {
