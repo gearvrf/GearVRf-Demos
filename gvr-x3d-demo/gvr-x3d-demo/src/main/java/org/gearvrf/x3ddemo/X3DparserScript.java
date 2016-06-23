@@ -247,7 +247,7 @@ public class X3DparserScript extends GVRScript
     // String filename = "navigationinfo.x3d";
     // String filename = "plane.x3d";
     // String filename = "planetexturexform.x3d";
-    // String filename = "texturecoordinatetest.x3d";
+     String filename = "texturecoordinatetest.x3d";
     // String filename = "texturecoordinatetestsubset.x3d";
     // String filename = "texturecoordinatetestsubset2.x3d";
     // String filename = "text-lod-demo.x3d";
@@ -277,7 +277,10 @@ public class X3DparserScript extends GVRScript
     //String filename = "usedefTextureCoord1.x3d";
     // String filename = "usedefprimitive01.x3d";
     // String filename = "usedeftext01.x3d";
-       String filename = "usedeftransform01.x3d";
+    //String filename = "usedeftransform01.x3d";
+    //String filename = "usedefTransform02.x3d";
+    //String filename = "usedefTransform03.x3d";
+    //   String filename = "usedefGroup01.x3d";
     // String filename = "usedefdirlight.x3d";
     // String filename = "usedefpointlight.x3d";
     // String filename = "usedefspotlight.x3d";

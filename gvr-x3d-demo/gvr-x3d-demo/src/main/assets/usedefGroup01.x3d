@@ -1,0 +1,58 @@
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+	<Scene>
+
+		<Group DEF="mainObj1">
+			<Transform rotation="0 1 0 .3"  >
+				<Transform rotation="0 1 0 .1"  >
+					<Shape DEF="shape01">
+						<IndexedFaceSet DEF="mainIFS"
+							coordIndex='0 1 2 -1    0 3 1 -1'
+							texCoordIndex='0 1 2 -1   0 3 1 -1'
+							normalIndex='0 0 0 -1   0 0 0 -1'
+						>
+							<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+							<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+							<Normal vector='0 0 1   0 .6 .8'/>
+						</IndexedFaceSet>
+						<Appearance DEF="appearance1">
+							<ImageTexture url="news_texture_map.jpg" />
+							<Material DEF="yellowMaterial" diffuseColor=".25 1 1"/>
+						</Appearance>
+					</Shape>
+				</Transform>
+			</Transform>
+		</Group>
+
+		<Transform DEF="cloneObj1" translation="2 -1.5 -.5" scale="1 1 1">
+			<Group USE="mainObj1"/>
+		</Transform>
+
+		<Group DEF="mainObj2">
+			<Shape>
+				<IndexedFaceSet DEF="secondIFS"
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-3 -2.2 -0.0    3 2.2 -0.0    -3 2.2 0    3 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1   0 .6 .8'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<Material diffuseColor=".5 .5 1"/>
+					<ImageTexture url="plato.jpg" />
+				</Appearance>
+			</Shape>
+		</Group>
+
+		<Transform DEF="cloneObj2" translation="5.4 -1 -1" rotation="0 1 0 -.2"  scale="1 1 1">
+			<Group USE="mainObj2"/>
+		</Transform>
+
+		<DirectionalLight DEF="myDirLight1" intensity="1" color="1 1 1"/>
+		<Background skyColor=".25 .25 .25" />
+		<NavigationInfo headlight="false"/>
+		<Viewpoint position="0 0 10"/>
+		
+	</Scene>
+</X3D>
