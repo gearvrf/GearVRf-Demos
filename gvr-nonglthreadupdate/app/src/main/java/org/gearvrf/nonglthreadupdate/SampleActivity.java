@@ -25,12 +25,12 @@ import android.view.MotionEvent;
 public class SampleActivity extends GVRActivity implements OnGestureListener{
     
     private GestureDetectorCompat detector;
-    private SampleViewManager mScript;
+    private SampleMain mMain;
     
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(mScript = new SampleViewManager(), "gvr.xml");
+        setMain(mMain = new SampleMain(), "gvr.xml");
         detector = new GestureDetectorCompat(this, this);        
     }
     
@@ -75,7 +75,7 @@ public class SampleActivity extends GVRActivity implements OnGestureListener{
     @Override
     public boolean onSingleTapUp(MotionEvent e) {
         // TODO Auto-generated method stub
-        mScript.onTapUp();        
+        mMain.onTapUp();        
         return true;
     }
 }

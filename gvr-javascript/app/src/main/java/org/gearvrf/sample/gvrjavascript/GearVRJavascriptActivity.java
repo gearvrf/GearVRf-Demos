@@ -45,9 +45,9 @@ public class GearVRJavascriptActivity extends GVRActivity
         super.onCreate(savedInstanceState);
         
         // Instantiate your script class
-        // Note: you could just use GVRScript if everything is in lua script
-        GVRScript script = new GearVRJavascriptScript();
-        setScript(script, "gvr.xml");
+        // Note: you could just use GVRMain if everything is in lua script
+        GVRMain main = new GearVRJavascriptMain();
+        setMain(main, "gvr.xml");
  
         GVRScriptManager sm = getGVRContext().getScriptManager();
 
@@ -62,7 +62,7 @@ public class GearVRJavascriptActivity extends GVRActivity
                 scriptFile = sm.loadScript(
                         new GVRAndroidResource(getGVRContext(), "script.js"),
                         GVRScriptManager.LANG_JAVASCRIPT);
-                sm.attachScriptFile(script, scriptFile);
+                sm.attachScriptFile(main, scriptFile);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (GVRScriptException e) {
@@ -77,7 +77,7 @@ public class GearVRJavascriptActivity extends GVRActivity
             try {
                 scriptBundle = sm.loadScriptBundle("script_bundle.json",
                         new GVRResourceVolume(getGVRContext(), GVRResourceVolume.VolumeType.ANDROID_ASSETS));
-                sm.bindScriptBundle(scriptBundle, script, true);
+                sm.bindScriptBundle(scriptBundle, main, true);
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (GVRScriptException e) {

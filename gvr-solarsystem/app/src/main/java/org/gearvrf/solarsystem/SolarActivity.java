@@ -23,14 +23,14 @@ import org.gearvrf.GVRActivity;
 
 public class SolarActivity extends GVRActivity {
 
-    private SolarViewManager viewManager;
+    private SolarMain viewMain;
     private long lastDownTime;
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        viewManager = new SolarViewManager();
-        setScript(viewManager, "gvr.xml");
+        viewMain = new SolarMain();
+        setMain(viewMain, "gvr.xml");
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SolarActivity extends GVRActivity {
 
         if (event.getActionMasked() == MotionEvent.ACTION_UP) {
             if (event.getEventTime() - lastDownTime < 200) {
-                viewManager.onTap();
+                viewMain.onTap();
             }
         }
         return true;
