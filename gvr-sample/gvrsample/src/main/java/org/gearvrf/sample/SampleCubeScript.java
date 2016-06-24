@@ -33,14 +33,14 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshot3DCallback;
 import org.gearvrf.GVRScreenshotCallback;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.utility.Threads;
 
 import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
 
-public class SampleCubeScript extends GVRScript {
+public class SampleCubeScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private GVRContext mGVRContext = null;

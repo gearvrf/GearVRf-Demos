@@ -7,7 +7,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 
@@ -15,7 +15,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.Gravity;
 
-public class TransparencyTestScript extends GVRScript {
+public class TransparencyTestScript extends GVRMain {
 
     private GVRScene mScene;
     private GVRContext mContext;

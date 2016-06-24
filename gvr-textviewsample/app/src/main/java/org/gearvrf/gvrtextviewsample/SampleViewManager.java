@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
 
@@ -27,7 +27,7 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.widget.LinearLayout;
 
-public class SampleViewManager extends GVRScript {
+public class SampleViewManager extends GVRMain {
 
     GVRTextViewSceneObject sceneObject;
     SampleActivity mActivity;

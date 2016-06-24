@@ -13,7 +13,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderTexture;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 
 import com.vuforia.GLTextureData;
@@ -29,7 +29,7 @@ import com.vuforia.TrackableResult;
 import android.opengl.Matrix;
 import android.util.Log;
 
-public class VuforiaSampleScript extends GVRScript {
+public class VuforiaSampleScript extends GVRMain {
 
     private static final String TAG = "gvr-vuforia";
 

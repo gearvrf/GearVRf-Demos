@@ -25,7 +25,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
@@ -33,7 +33,7 @@ import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
 import android.util.Log;
 
-public class CubemapScript extends GVRScript {
+public class CubemapScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private static final float SCALE_FACTOR = 2.0f;

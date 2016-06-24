@@ -26,12 +26,12 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class LitshaderScript extends GVRScript {
+public class LitshaderScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private static final float SCALE_FACTOR = 2.0f;

@@ -23,7 +23,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScript.SplashMode;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.debug.GVRConsole;
@@ -31,7 +31,7 @@ import org.gearvrf.utility.Log;
 
 import android.graphics.Color;
 
-public class SampleViewManager extends GVRScript {
+public class SampleViewManager extends GVRMain {
 
     private GVRContext mGVRContext;
 

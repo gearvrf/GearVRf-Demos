@@ -37,7 +37,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.Surface;
 
-public class VideoScript extends GVRScript {
+public class VideoScript extends GVRMain {
 
     private static final String TAG = "VideoScript";
 
