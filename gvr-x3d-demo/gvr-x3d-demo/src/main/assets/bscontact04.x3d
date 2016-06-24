@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- written by BS Content Studio (Developer)  1.006 -->
+
+
+<X3D profile="Immersive" version="3.0">
+	<head></head>
+	<Scene>
+		<Background skyColor='0.1 0.1 0.1'>
+		</Background>
+		<WorldInfo>
+		</WorldInfo>
+		<NavigationInfo>
+		</NavigationInfo>
+		<Transform DEF="myCylinder" translation='0 0 0'>
+			<Shape>
+				<Appearance>
+					<Material>
+					</Material>
+					<ImageTexture url='"rainbow.jpg"'>
+					</ImageTexture>
+				</Appearance>
+				<Cylinder side='true' solid='false'>
+				</Cylinder>
+			</Shape>
+		</Transform>
+		<Viewpoint>
+		</Viewpoint>
+		<Transform center='0 0 0' translation='3 0 0'>
+			<Shape>
+				<Appearance>
+					<Material>
+					</Material>
+					<ImageTexture url='"news_texture_map.jpg"'>
+					</ImageTexture>
+				</Appearance>
+				<Cone>
+				</Cone>
+			</Shape>
+		</Transform>
+	</Scene>
+</X3D>

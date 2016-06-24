@@ -41,6 +41,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRPicker.GVRPickedObject;
 //import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.animation.GVRAnimation;
@@ -120,6 +121,7 @@ public class X3DparserScript extends GVRScript
   public void onInit(GVRContext gvrContext)
   {
     mGVRContext = gvrContext;
+    //scene = gvrContext.getNextMainScene();
 
     scene = gvrContext.getNextMainScene(new Runnable()
     {
@@ -133,26 +135,26 @@ public class X3DparserScript extends GVRScript
         {
 
           boolean sensorFound = false;
-          /*
-           * for (Sensor x3dSensor: x3dObject.sensors) { //GVRKeyFrameAnimation
-           * gvrKeyFrameAnimationPointedFromSensor =
-           * x3dSensor.getGVRKeyFrameAnimation(); GVRAnimation
-           * gvrKeyFrameAnimationPointedFromSensor =
-           * x3dSensor.getGVRKeyFrameAnimation(); // if a sensor is pointing to
-           * this animation, then don't start this animation // until the sensor
-           * is invoked. if (gvrKeyFrameAnimationPointedFromSensor == animation)
-           * sensorFound = true; }
-           */
+           // for (Sensor x3dSensor: x3dObject.sensors) { //GVRKeyFrameAnimation
+           // gvrKeyFrameAnimationPointedFromSensor =
+           // x3dSensor.getGVRKeyFrameAnimation(); GVRAnimation
+           // gvrKeyFrameAnimationPointedFromSensor =
+           // x3dSensor.getGVRKeyFrameAnimation(); // if a sensor is pointing to
+           // this animation, then don't start this animation // until the sensor
+           // is invoked. if (gvrKeyFrameAnimationPointedFromSensor == animation)
+           // sensorFound = true; }
+
           if (!sensorFound)
             animation.start(mAnimationEngine);
-
-          // animation.start(mAnimationEngine);
         }
+
       }
-    });
+        });
 
     mAnimationEngine = gvrContext.getAnimationEngine();
 
+
+    /*
     scene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
     scene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
 
@@ -164,6 +166,7 @@ public class X3DparserScript extends GVRScript
     headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
     headTracker.getRenderData().setDepthTest(false);
     headTracker.getRenderData().setRenderingOrder(100000);
+    */
 
     /*
      * This was test code to check if GVRKeyFrameAnimation worked for the camera
@@ -214,11 +217,13 @@ public class X3DparserScript extends GVRScript
      * gvrKeyFrameAnimation.prepare(); mAnimations.add(gvrKeyFrameAnimation);
      */
     // end test code
-
-    Context activityContext = gvrContext.getContext();
+    
+    Context activityContext = mGVRContext.getContext();
+    //Context activityContext = gvrContext.getContext();
     assetManager = activityContext.getAssets();
 
-    GVRModelSceneObject model = new GVRModelSceneObject(gvrContext);
+    GVRModelSceneObject model = new GVRModelSceneObject(mGVRContext);
+    //GVRModelSceneObject model = new GVRModelSceneObject(gvrContext);
     // String filename = "animation01.x3d";
     // String filename = "animation02.x3d";
     // String filename = "animation03.x3d";
@@ -232,7 +237,7 @@ public class X3DparserScript extends GVRScript
     // String filename = "animation_scale01.x3d";
     // String filename = "backgroundtexturemap01.x3d";
     // String filename = "boxesspheres.x3d";
-    // String filename = "conered.x3d";
+     String filename = "conered.x3d";
     // String filename = "cylinders.x3d";
     // String filename = "directionallight1.x3d";
     // String filename = "elevationgrid.x3d"; // NOT IMPLEMENTED
@@ -247,7 +252,7 @@ public class X3DparserScript extends GVRScript
     // String filename = "navigationinfo.x3d";
     // String filename = "plane.x3d";
     // String filename = "planetexturexform.x3d";
-     String filename = "texturecoordinatetest.x3d";
+    // String filename = "texturecoordinatetest.x3d";
     // String filename = "texturecoordinatetestsubset.x3d";
     // String filename = "texturecoordinatetestsubset2.x3d";
     // String filename = "text-lod-demo.x3d";
@@ -290,14 +295,23 @@ public class X3DparserScript extends GVRScript
     // String filename = "levelofdetailusedef03.x3d";
     // String filename = "viewpointAnimation01.x3d";
 //  String filename = "bsconstact01.x3d";
-//     String filename = "bsconstact02.x3d";
+//   String filename = "bsconstact02.x3d";
+ //    String filename = "bsconstact04.x3d";
     try
     {
-      model = gvrContext.loadModel(filename);
-      scene.addSceneObject(model);
+      model = gvrContext.getAssetLoader().loadModel(filename, GVRResourceVolume.VolumeType.ANDROID_ASSETS, scene);
       List<GVRAnimation> animations = model.getAnimations();
       mAnimations = animations;
+      
+      //GVRSceneObject gvrRoot = scene
+      //GVRSceneObject gvrRoot = scene
+      //    .getSceneObjectByName(x3dObject.X3D_ROOT_NODE);
+      //GVRCameraRig gvrCameraRig = gvrRoot.getCameraRig();
+      GVRCameraRig gvrCameraRig = model.getCameraRig();
+      scene.setMainCameraRig(gvrCameraRig);
+      //gvrCameraRig.addChildObject(headTracker);
 
+      /*
       GVRCameraRig gvrCameraRig = null;
       // Find the root node set by loadModel, and from there, find the Camera
       // rig
@@ -326,6 +340,7 @@ public class X3DparserScript extends GVRScript
       // reset these.
       // scene.setFrustumCulling(true);
       // scene.getEventReceiver().addListener(mSceneEventListener);
+      */
 
     }
     catch (FileNotFoundException e)
@@ -351,6 +366,7 @@ public class X3DparserScript extends GVRScript
   {
     FPSCounter.tick();
 
+    /*
     currentPickedObject = null;
     List<GVRPickedObject> gvrPickedObjectList = GVRPicker
         .findObjects(mGVRContext.getMainScene());
@@ -393,6 +409,7 @@ public class X3DparserScript extends GVRScript
                                   viewpointAnimation.currentQuaternion.y,
                                   viewpointAnimation.currentQuaternion.z);
     }
+    */
   } // end onStep()
 
   private boolean lastScreenshotLeftFinished = true;
@@ -442,6 +459,7 @@ public class X3DparserScript extends GVRScript
 
   public void PickedObjectActivity(String text, int textChangeMade)
   {
+    /*
     GVRSceneObject gvrSceneObject = scene.getSceneObjectByName("textDisplay");
 
     int count = gvrSceneObject.getChildrenCount();
@@ -472,11 +490,13 @@ public class X3DparserScript extends GVRScript
       else if (textChangeMade == 7)
         textObject.setTextColor(Color.WHITE);
     }
+    */
   }
 
   // called by X3DparserActivity when a single tap is detected
   public void SingleTap()
   {
+    /*
     tappedObject = true;
     if (currentPickedObject != null)
     {
@@ -543,17 +563,7 @@ public class X3DparserScript extends GVRScript
                           endOrientation[1], endOrientation[2]);
                       Quaternionf endQuat = new Quaternionf(axisAngle4f)
                           .normalize();
-                      /*
-                       * // NavigationInfo currently not implemented, // but if
-                       * translationType set to TELEPORT, then use these lines
-                       * of code if ( NavigationInfo.getTransitionType ==
-                       * NavigationInfo.TELEPORT ) {
-                       * cameraTransform.setPosition(endPosition[0],
-                       * endPosition[1], endPosition[2]);
-                       * cameraTransform.setRotation(endQuat.w, endQuat.x,
-                       * endQuat.y, endQuat.z); } else
-                       */
-                      {
+                     {
                         // NavigationInfo transitionType either "LINEAR" or
                         // "ANIMATE"
                         float[] bgnPosition =
@@ -660,6 +670,7 @@ public class X3DparserScript extends GVRScript
       PickedObjectActivity(text, 1);
     }
     // GazeController.enableInteractiveCursor();
+     */
   } // end onSingleTap
 
   public void captureScreen3D(String filename)
