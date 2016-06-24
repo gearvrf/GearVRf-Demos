@@ -25,7 +25,7 @@ import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class ViewerScript extends GVRScript {
+public class ViewerScript extends GVRMain {
 
     private static final String TAG = "ViewerScript";
 

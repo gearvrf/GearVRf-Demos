@@ -16,11 +16,11 @@
 package org.gearvrf.renderableview;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
-public class MainScript extends GVRScript {
+public class MainScript extends GVRMain {
     private final MainActivity mActivity;
 
     private GVRViewSceneObject mLayoutLeftSceneObject;

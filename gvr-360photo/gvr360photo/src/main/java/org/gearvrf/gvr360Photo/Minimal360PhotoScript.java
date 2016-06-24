@@ -20,11 +20,11 @@ import java.util.concurrent.Future;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
-public class Minimal360PhotoScript extends GVRScript {
+public class Minimal360PhotoScript extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {

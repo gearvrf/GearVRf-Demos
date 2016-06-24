@@ -25,7 +25,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRLight;
@@ -34,7 +34,7 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 
 
-public class SpatialAudioScript extends GVRScript
+public class SpatialAudioScript extends GVRMain
 {
     private GVRContext gvrContext;
     private GVRCameraRig cameraRig;

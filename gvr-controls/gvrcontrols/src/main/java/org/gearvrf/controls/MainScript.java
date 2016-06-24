@@ -24,7 +24,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRTextureParameters.TextureFilterType;
@@ -44,7 +44,7 @@ import org.gearvrf.controls.shaders.TileShader;
 import org.gearvrf.controls.util.Constants;
 import org.gearvrf.controls.util.RenderingOrder;
 
-public class MainScript extends GVRScript {
+public class MainScript extends GVRMain {
 
     private GVRContext mGVRContext;
     private GVRScene scene;

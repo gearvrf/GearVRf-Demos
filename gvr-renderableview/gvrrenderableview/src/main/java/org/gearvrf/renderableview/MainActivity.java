@@ -16,7 +16,7 @@
 package org.gearvrf.renderableview;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.scene_objects.view.GVRView;

@@ -12,7 +12,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
@@ -22,7 +22,7 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRTransformAnimation;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
-public class LODTestScript extends GVRScript {
+public class LODTestScript extends GVRMain {
     
     private List<GVRAnimation> animations = new ArrayList<GVRAnimation>();
     private GVRAnimationEngine animationEngine;

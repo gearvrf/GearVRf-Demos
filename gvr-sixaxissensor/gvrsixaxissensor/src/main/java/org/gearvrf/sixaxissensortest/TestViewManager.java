@@ -29,10 +29,10 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.sixaxissensortest.R;
 
-public class TestViewManager extends GVRScript {
+public class TestViewManager extends GVRMain {
 
     private enum State {
         Idle, Ready, Rotating, Pass, Fail

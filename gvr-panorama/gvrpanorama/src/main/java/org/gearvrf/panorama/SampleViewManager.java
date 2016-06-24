@@ -23,10 +23,10 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.utility.Log;
 
-public class SampleViewManager extends GVRScript {
+public class SampleViewManager extends GVRMain {
 
     private static final String TAG = "SampleViewManager";
 

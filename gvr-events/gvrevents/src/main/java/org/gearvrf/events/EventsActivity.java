@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import android.graphics.Color;

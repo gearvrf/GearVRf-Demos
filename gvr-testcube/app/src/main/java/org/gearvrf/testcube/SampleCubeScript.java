@@ -22,14 +22,14 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.testcube.R;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 
 import android.util.Log;
 
-public class SampleCubeScript extends GVRScript {
+public class SampleCubeScript extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private GVRContext mGVRContext = null;

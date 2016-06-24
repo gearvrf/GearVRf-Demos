@@ -26,7 +26,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCameraSceneObject;
 import org.gearvrf.scene_objects.GVRConeSceneObject;
@@ -43,7 +43,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.view.Gravity;
 
-public class SampleViewManager extends GVRScript {
+public class SampleViewManager extends GVRMain {
     private List<GVRSceneObject> objectList = new ArrayList<GVRSceneObject>();
 
     private int currentObject = 0;
