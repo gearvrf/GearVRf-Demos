@@ -1,7 +1,7 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
 		
-		<Transform DEF="pattern" translation="3 -1 -5" rotation="-0 1 0 .6">
+		<!-- Transform DEF="pattern" translation="3 -1 -5" rotation="-0 1 0 .6">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -18,7 +18,7 @@
 					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 			</Shape>
-		</Transform>
+		</Transform -->
 		
 		
 		
@@ -32,17 +32,18 @@
 		</Transform>
 
 		
-		<Transform DEF="myCone2" translation="0 -2 -4" rotation="0 0 1 3.14">
+		<!-- Transform DEF="myCone2" translation="0 -2 -4" rotation="0 0 1 3.14">
 			<Shape>
 				<Cone></Cone>
 				<Appearance>
 					<Material diffuseColor=".8 .2 0"/>
+					<ImageTexture url="deedee1.jpg"/>
 				</Appearance>
 			</Shape>
-		</Transform>
+		</Transform -->
 		
 
-		<Transform DEF="doggie" translation="-3 -2 -5" rotation="-0 1 0 -.6">
+		<!-- Transform DEF="doggie" translation="-3 -2 -5" rotation="-0 1 0 -.6">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -59,11 +60,17 @@
 					<TextureTransform center='-.5 -.5' rotation='0' scale='1 1' translation='0 0'/>
 				</Appearance>
 			</Shape>
-		</Transform>		
+		</Transform -->		
 
-		<PointLight DEF="myPtLight1" location="0 2 0" color="1 1 1"/>
+		<!-- PointLight DEF="myPtLight1" location="0 2 0" color="1 1 1"/ -->
 		<DirectionalLight DEF="myDirLight1" color="1 1 1" intensity=".5"/>
+
+        <!-- timeSensor DEF="time" cycleInterval="8" loop="true"></timeSensor>
+        <PositionInterpolator DEF="move" key="0 0.5 1" keyValue="6 -16 -5  -5 -6 -7  6 -8 -5"></PositionInterpolator>
+        <Route fromNode="time" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
+        <Route fromNode="move" fromField ="value_changed" toNode="myCone2" toField="translation"></Route -->
 		
-		
+		<Background skyColor='0 .25 .75'/>
+				
 	</Scene>
 </X3D>
