@@ -70,6 +70,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
         ankylosaurus.getTransform().setRotationByAxis(-90, 1, 0, 0);
         ankylosaurus.attachEyePointeeHolder();
         ankylosaurus.setOnGestureListener(this);
+        ankylosaurus.setName("ankylosaurus");
         addChildObject(ankylosaurus);
 
     }
@@ -80,6 +81,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);
+        totem.setName("totem_ankylosaurus");
         totem.setTotemEventListener(this);
         scene.addSceneObject(totem);
         totem.getTransform().setPosition(-.3f, 0f, -5.0f);

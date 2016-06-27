@@ -396,6 +396,7 @@ public class VideoMain extends GVRMain {
 
         mTransitionWeight += step * (mTransitionTarget - mTransitionWeight);
         mFadeWeight += 0.01f * (mFadeTarget - mFadeWeight);
+        float weightValue = mTransitionWeight * 0.2f;
 
         if (mCurrentCinema == 0) {
             for (int i = 0; i < mCinema[1].getChildrenCount(); i++)
@@ -406,7 +407,7 @@ public class VideoMain extends GVRMain {
                         setRenderMask(GVRRenderMaskBit.Left | GVRRenderMaskBit.Right);
 
             mSceneObject.getRenderData().getMaterial()
-                    .setFloat(RadiosityShader.WEIGHT_KEY, mTransitionWeight);
+                    .setFloat(RadiosityShader.WEIGHT_KEY, weightValue);
             mSceneObject.getRenderData().getMaterial()
                     .setFloat(RadiosityShader.FADE_KEY, mFadeWeight);
             mSceneObject.getRenderData().getMaterial()
@@ -420,7 +421,7 @@ public class VideoMain extends GVRMain {
                         .setRenderMask(GVRRenderMaskBit.Left | GVRRenderMaskBit.Right);
 
             mOculusSceneObject1.getRenderData().getMaterial()
-                    .setFloat(RadiosityShader.WEIGHT_KEY, mTransitionWeight);
+                    .setFloat(RadiosityShader.WEIGHT_KEY, weightValue);
             mOculusSceneObject1.getRenderData().getMaterial()
                     .setFloat(RadiosityShader.FADE_KEY, mFadeWeight);
             mOculusSceneObject1.getRenderData().getMaterial()

@@ -80,7 +80,7 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
                 .setTexture(CutoutShader.TEXTURE_KEY, circleAlphaTexture);
         circleAlpha.getRenderData().setRenderingOrder(RenderingOrderApplication.LOADING_COMPONENT);
         circleAlpha.getRenderData().getMaterial().setMainTexture(circleAlphaTexture);
-
+        circle.setName("circle");
         addChildObject(circleAlpha);
         addChildObject(plus);
         addChildObject(circle);

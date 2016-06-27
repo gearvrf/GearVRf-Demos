@@ -77,7 +77,7 @@ public class LoadComponentTextBackGround extends GVRSceneObject implements Focus
                 .setTexture(CutoutShader.TEXTURE_KEY, circleAlphaTexture);
         circleAlpha.getRenderData().setRenderingOrder(RenderingOrderApplication.LOADING_COMPONENT);
         circleAlpha.getRenderData().getMaterial().setMainTexture(circleAlphaTexture);
-
+        circle.setName("circle_back");
         addChildObject(circleAlpha);
         addChildObject(plus);
         addChildObject(circle);
