@@ -41,7 +41,7 @@ public class Seekbar extends FocusableSceneObject {
 
         addChildObject(createPlaySide());
         addChildObject(createSeekbarHover());
-
+        setName("seekbar");
         createEyePointee();
     }
 

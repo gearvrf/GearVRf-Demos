@@ -25,11 +25,14 @@ import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FocusableController {
 
-    public static ArrayList<FocusableSceneObject> interactiveObjects = new ArrayList<FocusableSceneObject>();
+    public static CopyOnWriteArrayList<FocusableSceneObject> interactiveObjects = new CopyOnWriteArrayList<FocusableSceneObject>();
 
     public static void process(GVRContext context) {
 

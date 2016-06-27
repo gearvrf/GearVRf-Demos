@@ -85,6 +85,7 @@ public class VideoComponent extends GVRSceneObject {
         focus = new FocusableSceneObject(gvrContext, WIDTH, HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.empty_clickable)));
         focus.attachEyePointeeHolder();
+        focus.setName("video");
         focus.focusListener = new FocusListener() {
 
             @Override
