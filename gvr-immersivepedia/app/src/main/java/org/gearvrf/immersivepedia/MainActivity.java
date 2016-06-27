@@ -78,4 +78,10 @@ public class MainActivity extends GVRActivity implements
 
 	}
 
+        @Override
+        public void onBackPressed() {
+
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+
 }
