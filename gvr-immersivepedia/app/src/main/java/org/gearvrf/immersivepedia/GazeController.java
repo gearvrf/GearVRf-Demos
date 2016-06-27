@@ -74,6 +74,9 @@ public class GazeController {
     }
 
     public static void enableGaze() {
+        if (highlightCursor.getParent() != null) {
+            disableGaze();
+        }
         gvrContext.getMainScene().getMainCameraRig().addChildObject(highlightCursor);
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
     }
