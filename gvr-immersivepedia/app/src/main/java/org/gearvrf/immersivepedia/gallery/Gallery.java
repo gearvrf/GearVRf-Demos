@@ -185,6 +185,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         super(gvrContext, GALLERY_WIDTH, GALLERY_HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable)));
         this.gvrContext = gvrContext;
         this.getRenderData().setRenderingOrder(RenderingOrderApplication.GALLERY);
+        this.setName("gallery");
         this.attachEyePointeeHolder();
         this.focusListener = new FocusListener() {
 
