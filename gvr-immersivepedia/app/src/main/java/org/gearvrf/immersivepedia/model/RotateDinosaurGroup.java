@@ -86,6 +86,7 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 				DinosaurFactory.STYRACOSAURUS_ANGLE_AROUND_CAMERA - 35.0f, 0f,
 				1f, 0f, 0f, 0f, 0f);
 		totem.setIcon(R.drawable.play);
+		totem.setName("totem_styracosaurus");
 	}
 
 	private void createDinoAnimation() {
@@ -158,6 +159,7 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 				0);
 		styrocosaurus.getTransform().setPosition(0, 0, -8);
 		styrocosaurus.setOnGestureListener(this);
+		styrocosaurus.setName("styrocosaurus");
 		addChildObject(styrocosaurus);
 	}
 

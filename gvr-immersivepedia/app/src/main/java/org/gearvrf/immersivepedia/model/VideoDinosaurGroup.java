@@ -65,6 +65,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
         trex.attachEyePointeeHolder();
         trex.setOnGestureListener(this);
         trex.getTransform().setRotationByAxis(-90, 1, 0, 0);
+        trex.setName("trex");
         addChildObject(trex);
 
     }
@@ -75,6 +76,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);
+        totem.setName("totem_trex");
         totem.setTotemEventListener(this);
         scene.addSceneObject(totem);
         totem.getTransform().setPosition(.3f, 0f, -5.0f);
