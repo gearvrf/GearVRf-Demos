@@ -26,6 +26,7 @@ import com.vuforia.State;
 import com.vuforia.Tool;
 import com.vuforia.Trackable;
 import com.vuforia.TrackableResult;
+import com.vuforia.VideoBackgroundTextureInfo;
 import com.vuforia.samples.SampleApplication.SampleApplicationSession;
 
 import android.opengl.Matrix;
@@ -55,6 +56,10 @@ public class VuforiaSampleMain extends GVRMain {
     boolean isReady = false;
 
     ModelShader modelShader = null;
+
+    boolean isPassThroughVisible = false;
+
+    GVRTexture passThroughTexture;
     
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -62,7 +67,7 @@ public class VuforiaSampleMain extends GVRMain {
         mainScene = gvrContext.getMainScene();
         mainScene.getMainCameraRig().setFarClippingDistance(20000);
         // viewport as per default 1024 x 1024 window size
-        mainScene.getMainCameraRig().setViewport(0, 224, 1024, 576);
+        //mainScene.getMainCameraRig().setViewport(0, 224, 1024, 576);
 
         createTeaPotObject();
 
@@ -111,24 +116,8 @@ public class VuforiaSampleMain extends GVRMain {
         passThroughObject.getTransform().setScaleX(200f);
         passThroughObject.getTransform().setScaleY(200f);
 
-        GVRTexture passThroughTexture;
-
         passThroughTexture = new GVRRenderTexture(gvrContext,
                 VUFORIA_CAMERA_WIDTH, VUFORIA_CAMERA_HEIGHT);
-
-        GVRRenderData renderData = passThroughObject.getRenderData();
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        renderData.setMaterial(material);
-        material.setMainTexture(passThroughTexture);
-        material.setShaderType(GVRShaderType.Texture.ID);
-
-        // the following texture coordinate values are determined empirically
-        // and do not match what we expect them to be. but still they work :)
-        float[] texCoords = { 0.0f, 0.0f, 0.0f, 0.70f, 0.62f, 0.0f, 0.62f, 0.7f };
-        GVRMesh mesh = renderData.getMesh();
-        mesh.setTexCoords(texCoords);
-        renderData.setMesh(mesh);
-        renderData.setDepthTest(false);
 
         mTextureUnit = new GLTextureUnit(0);
         GLTextureData textureData = new GLTextureData(passThroughTexture.getId());
@@ -139,13 +128,45 @@ public class VuforiaSampleMain extends GVRMain {
             return;
         }
 
-        mainScene.getMainCameraRig().addChildObject(passThroughObject);
-
         gvrContext.registerDrawFrameListener(new GVRDrawFrameListener() {
             @Override
             public void onDrawFrame(float frameTime) {
                 Renderer.getInstance().begin();
                 Renderer.getInstance().updateVideoBackgroundTexture(mTextureUnit);
+
+                if (!isPassThroughVisible) {
+
+                    VideoBackgroundTextureInfo texInfo = Renderer.getInstance()
+                            .getVideoBackgroundTextureInfo();
+
+                    if ((texInfo.getImageSize().getData()[0] == 0)
+                            || (texInfo.getImageSize().getData()[1] == 0)) {
+                        Renderer.getInstance().end();
+                        return;
+                    }
+
+                    // These calculate a slope for the texture coords
+                    float uRatio = ((float) texInfo.getImageSize().getData()[0] / (float) texInfo
+                            .getTextureSize().getData()[0]);
+                    float vRatio = ((float) texInfo.getImageSize().getData()[1] / (float) texInfo
+                            .getTextureSize().getData()[1]);
+
+                    GVRRenderData renderData = passThroughObject.getRenderData();
+                    GVRMaterial material = new GVRMaterial(gvrContext);
+                    renderData.setMaterial(material);
+                    material.setMainTexture(passThroughTexture);
+                    material.setShaderType(GVRShaderType.Texture.ID);
+
+                    float[] texCoords = { 0.0f, 0.0f, 0.0f, vRatio, uRatio, 0.0f, uRatio, vRatio };
+                    GVRMesh mesh = renderData.getMesh();
+                    mesh.setTexCoords(texCoords);
+                    renderData.setMesh(mesh);
+                    renderData.setDepthTest(false);
+
+                    mainScene.getMainCameraRig().addChildObject(passThroughObject);
+                    isPassThroughVisible = true;
+                }
+
                 Renderer.getInstance().end();
             }
         });
@@ -191,7 +212,7 @@ public class VuforiaSampleMain extends GVRMain {
         State state = mRenderer.begin();
 
         // viewport as per default 1024 x 1024 window size
-        mainScene.getMainCameraRig().setViewport(0, 224, 1024, 576);
+        //mainScene.getMainCameraRig().setViewport(0, 224, 1024, 576);
 
         // did we find any trackables this frame?
         int numDetectedMarkers = state.getNumTrackableResults();
