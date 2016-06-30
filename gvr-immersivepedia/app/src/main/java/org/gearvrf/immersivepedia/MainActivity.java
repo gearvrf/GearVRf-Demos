@@ -73,9 +73,8 @@ public class MainActivity extends GVRActivity implements
 
 	@Override
 	protected void onPause() {
-		main.onPause();
 		super.onPause();
-
+		main.onPause();
 	}
 
     @Override
