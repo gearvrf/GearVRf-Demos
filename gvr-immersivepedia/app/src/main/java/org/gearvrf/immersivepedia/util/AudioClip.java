@@ -25,7 +25,6 @@ import android.media.SoundPool.OnLoadCompleteListener;
 public class AudioClip {
 
     private static AudioClip instance;
-    private boolean plays = false;
     private boolean loaded = false;
     private int priority;
 
@@ -66,13 +65,10 @@ public class AudioClip {
     }
 
     public int playSound(int soundID, float leftVolume, float rightVolume) {
-
         int streamID = 0;
-
         if (loaded) {
             streamID = soundPool.play(soundID, leftVolume, rightVolume, 1, 0, 1f);
             priority = priority++;
-            plays = true;
         }
 
         return streamID;
@@ -83,23 +79,26 @@ public class AudioClip {
         if (loaded) {
             streamID = soundPool.play(soundID, leftVolume, rightVolume, 1, -1, 1f);
             priority = priority++;
-            plays = true;
         }
         return streamID;
     }
 
     public void pauseSound(int streamID) {
-        if (plays) {
-            soundPool.pause(streamID);
-            plays = false;
-        }
+        // If the stream is not playing (e.g. is stopped or was previously paused), calling this function will have no effect.
+        soundPool.pause(streamID);
     }
 
     public void stopSound(int streamID) {
-        if (plays) {
-            soundPool.stop(streamID);
-            plays = false;
-        }
+        // If the stream is not playing, it will have no effect.
+        soundPool.stop(streamID);
+    }
+
+    public void autoPause() {
+        soundPool.autoPause();
+    }
+
+    public void autoResume() {
+        soundPool.autoResume();
     }
 
     private void loadinSounds() {
