@@ -57,6 +57,12 @@
             headModelDepth="DEFAULT"
             headModelHeight="DEFAULT"
             interpupillaryDistance="DEFAULT" />
+
+        <scene-parms
+            viewportX="0"
+            viewportY="224"
+            viewportWidth="1024"
+            viewportHeight="576" />
     </vr-app-settings>
 
 </lens>
