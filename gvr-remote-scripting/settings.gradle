@@ -1,4 +1,3 @@
-include ':framework', ':debugwebserver'
+include ':framework'
 include ':app'
 project(':framework').projectDir = new File('../../GearVRf/GVRf/Framework/framework')
-project(':debugwebserver').projectDir = new File('../../GearVRf/GVRf/Extensions/debugwebserver')
