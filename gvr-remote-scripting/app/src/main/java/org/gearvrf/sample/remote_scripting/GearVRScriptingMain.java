@@ -15,30 +15,34 @@
 
 package org.gearvrf.sample.remote_scripting;
 
-import org.gearvrf.GVRMain;
+import android.view.Gravity;
+
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
-import android.view.Gravity;
 import org.gearvrf.script.GVRScriptManager;
 
-public class GearVRScriptingMain extends GVRMain
-{
+import smcl.samsung.com.debugwebserver.DebugWebServer;
 
+public class GearVRScriptingMain extends GVRMain {
+    private static final String TAG = GearVRScriptingMain.class.getSimpleName();
+    private static final int DEBUG_SERVER_PORT = 5000;
+    DebugWebServer server;
     @Override
     public void onInit(GVRContext gvrContext) {
-        gvrContext.startDebugServer();
         GVRScene scene = gvrContext.getNextMainScene();
 
         // get the ip address
         GearVRScripting activity = (GearVRScripting) gvrContext.getActivity();
         String ipAddress = activity.getIpAddress();
-        String telnetString = "telnet " + ipAddress + " 1645";
+        String debugUrl = "http://" + ipAddress + ":" + DEBUG_SERVER_PORT;
 
         // create text object to tell the user where to connect
-        GVRTextViewSceneObject textViewSceneObject = new GVRTextViewSceneObject(gvrContext, telnetString);
+        GVRTextViewSceneObject textViewSceneObject = new GVRTextViewSceneObject(gvrContext, 2.0f,
+                0.5f, debugUrl);
         textViewSceneObject.setGravity(Gravity.CENTER);
-        textViewSceneObject.setTextSize(8);
+        textViewSceneObject.setTextSize(5);
         textViewSceneObject.getTransform().setPosition(0.0f, 0.0f, -3.0f);
 
         // make sure to set a name so we can reference it when we log in
@@ -55,10 +59,18 @@ public class GearVRScriptingMain extends GVRMain
         scriptManager.addVariable("passthrough", new PassthroughUtils(gvrContext, activity));
         scriptManager.addVariable("filebrowser", new FileBrowserUtils(gvrContext));
         scriptManager.addVariable("source", new SourceUtils(gvrContext));
+
+        server = new DebugWebServer(gvrContext);
+        server.listen(DEBUG_SERVER_PORT);
     }
 
     @Override
     public void onStep() {
     }
 
+    public void stop() {
+        if(server != null) {
+            server.stop();
+        }
+    }
 }
