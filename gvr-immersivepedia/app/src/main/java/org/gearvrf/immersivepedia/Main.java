@@ -99,6 +99,8 @@ public class Main extends GVRScript {
             dinosaurScene.onPause();
         }
         // Pause all active streams.
-        AudioClip.getInstance(mGvrContext.getContext()).autoPause();
+        if (null != mGvrContext) {
+            AudioClip.getInstance(mGvrContext.getContext()).autoPause();
+        }
     }
 }
