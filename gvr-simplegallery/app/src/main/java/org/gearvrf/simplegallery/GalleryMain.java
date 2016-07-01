@@ -26,6 +26,7 @@ import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -36,7 +37,7 @@ import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 
 import android.media.MediaPlayer;
 
-public class GalleryMain extends GVRMain {
+public class GalleryMain extends GVRScript {
 
     private static final float ANIMATION_DURATION = 0.3f;
     private static final float SELECTED_SCALE = 2.0f;
