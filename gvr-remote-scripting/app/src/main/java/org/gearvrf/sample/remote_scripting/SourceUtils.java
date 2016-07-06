@@ -15,15 +15,21 @@
 
 package org.gearvrf.sample.remote_scripting;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRResourceVolume;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.debug.DebugServer;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.script.GVRScriptManager;
 import org.gearvrf.utility.FileNameUtils;
+import org.gearvrf.script.GVRScriptBehavior;
 import org.gearvrf.script.GVRScriptException;
 import org.gearvrf.script.GVRScriptFile;
+import org.gearvrf.IErrorEvents;
+import org.gearvrf.GVRResourceVolume;
 
 public class SourceUtils {
     private GVRContext gvrContext;
@@ -34,42 +40,39 @@ public class SourceUtils {
         mScriptManager = gvrContext.getScriptManager();
     }
 
+    private void logError(String message)
+    {
+        gvrContext.logError(message, this);
+    }
+    
     // from assets directory 
-    public void script(String filename, String language) {
+    public void script(String filename) {
         try {
-            GVRAndroidResource resource = new GVRAndroidResource(gvrContext, filename);
+            GVRResourceVolume.VolumeType volType = GVRResourceVolume.VolumeType.ANDROID_ASSETS;
+            String lowerName = filename.toLowerCase();
+            String language = FileNameUtils.getExtension(filename);
+            
+            if (lowerName.startsWith("sd:"))
+            {
+                volType = GVRResourceVolume.VolumeType.ANDROID_SDCARD;
+                filename = filename.substring(3);
+            }
+            else if (lowerName.startsWith("http"))
+            {
+                volType = GVRResourceVolume.VolumeType.NETWORK;
+            }
+            GVRResourceVolume volume = new GVRResourceVolume(gvrContext, volType);
+            GVRAndroidResource resource = volume.openResource(filename);
             GVRScriptFile script = mScriptManager.loadScript(resource, language);
             script.invoke();
+            String err = script.getLastError();
+            if (err != null) {
+                logError(err);
+            }
         } catch(IOException e) {
-            e.printStackTrace();
+            logError(e.getMessage());
         } catch(GVRScriptException se) {
-            se.printStackTrace();
-        }
-    }
-
-    // from /sdcard directory 
-    public void scriptFromSD(String filename, String language) {
-        try {
-            GVRAndroidResource resource = new GVRAndroidResource(filename);
-            GVRScriptFile script = mScriptManager.loadScript(resource, language);
-            script.invoke();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } catch(GVRScriptException se) {
-            se.printStackTrace();
-        }
-    }
-
-    // from a URL 
-    public void scriptFromURL(URL url, String language) {
-        try {
-            GVRAndroidResource resource = new GVRAndroidResource(gvrContext, url);
-            GVRScriptFile script = mScriptManager.loadScript(resource, language);
-            script.invoke();
-        } catch(IOException e) {
-            e.printStackTrace();
-        } catch(GVRScriptException se) {
-            se.printStackTrace();
+            logError(se.getMessage());
         }
     }
     
@@ -92,7 +95,28 @@ public class SourceUtils {
         }
         catch(IOException e)
         {
-            e.printStackTrace();
+            logError(e.getMessage());
+        }
+    }
+    
+    public void attachScript(String filename, String sceneObjName)
+    {
+        GVRSceneObject sceneObj = gvrContext.getMainScene().getSceneObjectByName(sceneObjName);
+        if (sceneObj == null)
+        {
+            logError("attachScript: scene object not found " + sceneObjName);
+        }
+        try
+        {
+            sceneObj.attachComponent(new GVRScriptBehavior(gvrContext, filename));
+        }
+        catch (IOException e)
+        {
+            logError(e.getMessage());
+        }
+        catch (GVRScriptException se)
+        {
+            logError(se.getMessage());
         }
     }
 
