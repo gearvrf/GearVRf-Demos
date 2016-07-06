@@ -18,10 +18,8 @@ package org.gearvrf.sample.remote_scripting;
 import java.io.IOException;
 import java.net.URL;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.script.GVRScriptManager;
-import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.script.GVRScriptException;
 import org.gearvrf.script.GVRScriptFile;
 
@@ -70,29 +68,6 @@ public class SourceUtils {
             e.printStackTrace();
         } catch(GVRScriptException se) {
             se.printStackTrace();
-        }
-    }
-    
-    public void scriptBundle(String filename)
-    {
-        GVRResourceVolume.VolumeType volType = GVRResourceVolume.VolumeType.ANDROID_ASSETS;
-        String fname = filename.toLowerCase();
-        if (fname.startsWith("sd:"))
-        {
-            volType = GVRResourceVolume.VolumeType.ANDROID_SDCARD;
-        }
-        else if (fname.startsWith("http"))
-        {
-            volType = GVRResourceVolume.VolumeType.NETWORK;
-        }
-        GVRResourceVolume volume = new GVRResourceVolume(gvrContext, volType, filename);
-        try
-        {
-            mScriptManager.loadScriptBundle(filename, volume);
-        }
-        catch(IOException e)
-        {
-            e.printStackTrace();
         }
     }
 
