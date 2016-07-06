@@ -18,18 +18,26 @@ package org.gearvrf.sample.remote_scripting;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.debug.DebugServer;
+import org.gearvrf.IErrorEvents;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import android.view.Gravity;
 import org.gearvrf.script.GVRScriptManager;
 
 public class GearVRScriptingMain extends GVRMain
 {
-
     @Override
     public void onInit(GVRContext gvrContext) {
-        gvrContext.startDebugServer();
+        final DebugServer debug = gvrContext.startDebugServer();
         GVRScene scene = gvrContext.getNextMainScene();
-
+        IErrorEvents errorHandler = new IErrorEvents() 
+        {
+            public void onError(String message, Object source)
+            {
+                debug.logError(message);
+            }
+        };
+        gvrContext.getEventReceiver().addListener(errorHandler);
         // get the ip address
         GearVRScripting activity = (GearVRScripting) gvrContext.getActivity();
         String ipAddress = activity.getIpAddress();
