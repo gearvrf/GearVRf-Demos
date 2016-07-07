@@ -48,7 +48,7 @@ public class MainView extends GVRMain
         {
             if (model != null)
             {
-                mState = 2;
+                mState = 10;
                 model.setEnable(true);
                 if (mCurrentModel != null)
                 {
@@ -56,8 +56,7 @@ public class MainView extends GVRMain
                 }
                 mMainScene.addSceneObject(model);
                 mCurrentModel = (GVRModelSceneObject) model;
-                screenShot(filename);
-            }
+             }
             else
             {
                 mState = 0;
@@ -76,6 +75,7 @@ public class MainView extends GVRMain
     private GVRScene mMainScene;
     private GVRContext mContext;
     private int mCurrentFileIndex;
+    private String mFileName;
     private ArrayList<String> mFileList = new ArrayList<String>();
     private GVRModelSceneObject mCurrentModel;
     private int mState = 0;
@@ -86,7 +86,7 @@ public class MainView extends GVRMain
         mContext = gvrContext;
         mMainScene = gvrContext.getNextMainScene();
         mMainScene.setFrustumCulling(true);
-        mCurrentFileIndex = -1;
+        mCurrentFileIndex = 0;
         mCurrentModel = null;
         getModelList("GearVRF", mFileList);
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
@@ -121,17 +121,7 @@ public class MainView extends GVRMain
     private void getModelList(String directory, ArrayList<String> fileList)
     {
         final String environmentPath = Environment.getExternalStorageDirectory().getPath();
-
-        // Add All the Extensions you want to load
-        ArrayList<String> extensions = new ArrayList<String>();
-        extensions.add(".fbx");
-        extensions.add(".3ds");
-        extensions.add(".dae");
-        extensions.add(".obj");
-        extensions.add(".ma");
-
-        // Reads the List of Files from specified folder having extension specified in extensions.
-        // Please place your models by creating GVRModelViewer2 folder in your internal phone memory
+        String extensions = ".fbx .3des .dae .obj .ma .x3d";
         File dir = new File(environmentPath + "/" + directory);
 
         if (dir.exists() && dir.isDirectory())
@@ -140,18 +130,14 @@ public class MainView extends GVRMain
             for (File f : list)
             {
                 String fileName = f.getName();
+                String ext = "." + FileNameUtils.getExtension(fileName);
                 if (f.isDirectory())
                 {
                     getModelList(directory + "/" + fileName, fileList);
-                    continue;
                 }
-                for (String ext: extensions)
+                else if (extensions.contains(ext))
                 {
-                    if (fileName.endsWith(ext))
-                    {
-                        fileList.add(directory + "/" + fileName);
-                        break;
-                    }
+                    fileList.add(directory + "/" + fileName);
                 }
              }
         }
@@ -163,20 +149,27 @@ public class MainView extends GVRMain
     {
         if (mState == 0)
         {
-            mState = 1;     // 1 = model loading
+            mState = 1;     	// 1 = model loading
             switchModel();
+        }
+        else if (mState >= 2)	// >2 = wait for display
+        {
+        	if (mState == 2)	// 2 = taking screenshot
+        	{
+            	screenShot(mFileName);        		
+        	}
+        	--mState;
         }
     }
     
     void switchModel()
     {
-        if (++mCurrentFileIndex >= mFileList.size())
+        if (mCurrentFileIndex >= mFileList.size())
         {
-            --mCurrentFileIndex;
             return;          
         }
-        String filename = mFileList.get(mCurrentFileIndex);
-        GVRModelSceneObject model = loadModel(filename);
+        mFileName = mFileList.get(mCurrentFileIndex++);
+        GVRModelSceneObject model = loadModel(mFileName);
         if (model == null)
         {
             return;
@@ -187,7 +180,6 @@ public class MainView extends GVRMain
         }
         model.setEnable(true);
         mCurrentModel = model;
-        screenShot(filename);
     }
 
     void screenShot(final String filename)
@@ -215,7 +207,7 @@ public class MainView extends GVRMain
                     fo.write(bytes.toByteArray());
                     fo.close();
                     Log.d(TAG, "Saved screenshot of %s", filename);
-                   mState = 0;
+                    mState = 0;
                 }
                 catch (Exception e)
                 {
