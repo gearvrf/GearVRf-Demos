@@ -11,30 +11,30 @@
 		</WorldInfo>
 		<NavigationInfo>
 		</NavigationInfo>
-		<Transform DEF="myCylinder" translation='0 0 -10'>
-			<Shape>
-				<Appearance>
-					<Material>
-					</Material>
-					<ImageTexture url='rainbow.jpg'>
-					</ImageTexture>
-				</Appearance>
-				<Cylinder side='true' solid='false'>
-				</Cylinder>
-			</Shape>
-		</Transform>
-		<Viewpoint>
+		<Viewpoint position='0 0 0'>
 		</Viewpoint>
-		<Transform center='0 0 0' translation='3 0 -10'>
+		<Transform scale='3 3 3' translation='0 0 -10'>
 			<Shape>
 				<Appearance>
 					<Material>
 					</Material>
-					<ImageTexture url='news_texture_map.jpg'>
+					<ImageTexture url='"sun.jpg"'>
 					</ImageTexture>
 				</Appearance>
 				<Cone>
 				</Cone>
+			</Shape>
+		</Transform>
+		<Transform rotation='0 0 1 1' scale='4 4 4' translation='-6 0 -14'>
+			<Shape>
+				<Appearance>
+					<Material>
+					</Material>
+					<ImageTexture url='"rainbow.jpg"'>
+					</ImageTexture>
+				</Appearance>
+				<Cylinder>
+				</Cylinder>
 			</Shape>
 		</Transform>
 	</Scene>

@@ -6,7 +6,8 @@
 <Scene>
 	<Viewpoint description='go tell it' orientation='1 0 0 -0.3' position='4 8 20'/>
 	<DirectionalLight/>
-	<Transform translation='-3 -3 -3'>
+	<DirectionalLight intensity=".2" direction="0 -1 0"/>
+	<Transform translation='-3 1 -13'>
       <Shape>
         <Appearance>
           <Material diffuseColor='1 1 0'/>
@@ -15,7 +16,7 @@
       </Shape>
     </Transform>
 	
-	<Transform translation='0 -3 -3'>
+	<Transform translation='0 2 -13'>
       <Shape>
         <Appearance>
           <Material diffuseColor='0 1 1'/>
@@ -24,7 +25,7 @@
       </Shape>
     </Transform>
     
-	<Transform>
+	<Transform translation="-5 0 -20">
 		<Shape>
 			<Appearance>
 				<Material diffuseColor='0.4 0.4 0.1'/>
@@ -33,14 +34,22 @@
 				height='9.8 -7.6 0.5 1.0 0.5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 0.0 2.5 0.5 0.0 0.0 0.0 0.0 0.0 0.5 0.5 3.0 1.0 0.5 0.0 1.0 0.0 0.0 0.5 2.0 4.5 2.5 1.0 1.5 0.5 1.0 2.5 3.0 4.5 5.5 3.5 3.0 1.0 0.0 0.5 2.0 2.0 2.5 3.5 4.0 2.0 0.5 0.0 0.0 0.0 0.5 1.5 1.0 2.0 3.0 1.5 0.0 0.0 0.0 0.0 0.0 0.0 0.0 2.0 1.5 0.5 0.0 0.0 0.0 0.0 0.0 0.0 0.5 6.7 8.9'
 				solid='false' xDimension='9' zDimension='9'
 				zSpacing='2' xSpacing='3'/ -->
-			<ElevationGrid creaseAngle='1.57' 
+			<!-- ElevationGrid creaseAngle='1.57' 
 				height='9.8 -7.6 0.5 0.0 0.0 0.0 1.0 0.5 1.0 2.0 3.0 4.0'
 				solid='false' xDimension='3' zDimension='2'
-				zSpacing='2' xSpacing='3'/>
+				zSpacing='2' xSpacing='3'/ -->
+			<ElevationGrid creaseAngle='1.57' 
+				height='0 .1 .2 .3 .4 .5
+						-.6 -.7 -.8 -.9 -1 -1.1
+						1.2 1.3 1.4 1.5 1.6 1.7
+						-1.8 -1.9 -2.0 -2.1 -2.2 -2.3
+						2.4 2.5 2.6 2.7 2.8 2.9'
+				solid='false' xDimension='5' zDimension='4'
+				zSpacing='4' xSpacing='3'/>
 		</Shape>
 	</Transform>
 	
-	<Transform translation='3 -3 -3'>
+	<Transform translation='3 3 -13'>
       <Shape>
         <Appearance>
           <Material diffuseColor='1 0 1'/>
