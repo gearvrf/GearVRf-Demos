@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSceneObject.BoundingVolume;
 import org.gearvrf.GVRScreenshotCallback;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
+import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.utility.Log;
+import org.gearvrf.IAssetEvents;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -38,7 +41,33 @@ import android.os.Environment;
 
 public class MainView extends GVRMain
 {
-
+    class AssetListener implements IAssetEvents
+    {
+        @Override
+        public void onAssetLoaded(GVRContext ctx, GVRSceneObject model, String filename, String errors)
+        {
+            if (model != null)
+            {
+                mState = 2;
+                model.setEnable(true);
+                if (mCurrentModel != null)
+                {
+                    mMainScene.removeSceneObject(mCurrentModel);
+                }
+                mMainScene.addSceneObject(model);
+                mCurrentModel = (GVRModelSceneObject) model;
+                screenShot(filename);
+            }
+            else
+            {
+                mState = 0;
+            }
+        }
+        public void onModelError(GVRContext arg0, String arg1, String arg2) { }
+        public void onModelLoaded(GVRContext arg0, GVRSceneObject arg1, String arg2) { }
+        public void onTextureError(GVRContext arg0, String arg1, String arg2) { }
+        public void onTextureLoaded(GVRContext arg0, GVRTexture arg1, String arg2) { }        
+    }
     @SuppressWarnings("unused")
     private static final String TAG = Log
             .tag(MainActivity.class);
@@ -46,9 +75,10 @@ public class MainView extends GVRMain
     private GVRScene mMainScene;
     private GVRContext mContext;
     private int mCurrentFileIndex;
-    private String[] mFileList;
+    private ArrayList<String> mFileList = new ArrayList<String>();
     private GVRModelSceneObject mCurrentModel;
-    private final String sEnvironmentPath = Environment.getExternalStorageDirectory().getPath();
+    private int mState = 0;
+    private AssetListener mAssetListener;
 
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -57,13 +87,12 @@ public class MainView extends GVRMain
         mMainScene.setFrustumCulling(true);
         mCurrentFileIndex = -1;
         mCurrentModel = null;
-        mFileList = getModelList(sEnvironmentPath + "/GearVRF");
+        getModelList("GearVRF", mFileList);
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
-        mainCameraRig.getLeftCamera().setBackgroundColor(Color.BLACK);
-        mainCameraRig.getRightCamera().setBackgroundColor(Color.BLACK);
+        mainCameraRig.getLeftCamera().setBackgroundColor(Color.WHITE);
+        mainCameraRig.getRightCamera().setBackgroundColor(Color.WHITE);
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
-
-        switchModel();
+        mAssetListener = new AssetListener();
     }
 
     public GVRModelSceneObject loadModel(String filename)
@@ -73,12 +102,13 @@ public class MainView extends GVRMain
         {
             try
             {
-                model = mContext.getAssetLoader().loadModel(filename, GVRResourceVolume.VolumeType.ANDROID_SDCARD, mMainScene);
+                model = mContext.getAssetLoader().loadModel("sd:" + filename, mAssetListener);
                 model.setName(filename);
             }
             catch (IOException e)
             {
                 Log.e(TAG, "Failed to load model: %s", e);
+                mState = 0;
                 return null;
             }
             BoundingVolume bv = model.getBoundingVolume();
@@ -87,13 +117,10 @@ public class MainView extends GVRMain
         return model;
     }
 
-    @Override
-    public void onStep()
+    private void getModelList(String directory, ArrayList<String> fileList)
     {
-    }
+        final String environmentPath = Environment.getExternalStorageDirectory().getPath();
 
-    private String[] getModelList(String directory)
-    {
         // Add All the Extensions you want to load
         ArrayList<String> extensions = new ArrayList<String>();
         extensions.add(".fbx");
@@ -104,34 +131,50 @@ public class MainView extends GVRMain
 
         // Reads the List of Files from specified folder having extension specified in extensions.
         // Please place your models by creating GVRModelViewer2 folder in your internal phone memory
-        File dir = new File(directory);
+        File dir = new File(environmentPath + "/" + directory);
 
         if (dir.exists() && dir.isDirectory())
         {
-            FilterModels filter = new FilterModels(extensions);
-            File list[] = dir.listFiles(filter);
-            String[] names = new String[list.length];
-            for (int i = 0; i < list.length; ++i)
+            File list[] = dir.listFiles();
+            for (File f : list)
             {
-                names[i] = "GearVRF/" + list[i].getName();
-            }
-            return names;
+                String fileName = f.getName();
+                if (f.isDirectory())
+                {
+                    getModelList(directory + "/" + fileName, fileList);
+                    continue;
+                }
+                for (String ext: extensions)
+                {
+                    if (fileName.endsWith(ext))
+                    {
+                        fileList.add(directory + "/" + fileName);
+                        break;
+                    }
+                }
+             }
         }
-        return null;
     }
     
-    void onTap()
+    public void onTap() {}
+    
+    public void onStep()
     {
-        switchModel();
+        if (mState == 0)
+        {
+            mState = 1;     // 1 = model loading
+            switchModel();
+        }
     }
     
     void switchModel()
     {
-        if (++mCurrentFileIndex >= mFileList.length)
+        if (++mCurrentFileIndex >= mFileList.size())
         {
-            mCurrentFileIndex = 0;            
+            --mCurrentFileIndex;
+            return;          
         }
-        String filename = mFileList[mCurrentFileIndex];
+        String filename = mFileList.get(mCurrentFileIndex);
         GVRModelSceneObject model = loadModel(filename);
         if (model == null)
         {
@@ -155,20 +198,28 @@ public class MainView extends GVRMain
             {
                 try
                 {
-                     ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-                    int i = filename.lastIndexOf('.');
                     File sdcard = Environment.getExternalStorageDirectory();
-                    String fname = sdcard.getAbsolutePath() + "/" + filename.substring(0, i) + "_screen.png";
+                    int i = filename.lastIndexOf("/");
+                    String basename = filename;
+                    if (i > 0)
+                    {
+                        basename = filename.substring(i + 1);
+                    }
+                    basename = FileNameUtils.getBaseName(basename);
+                    String fname = sdcard.getAbsolutePath() + "/GearVRF/" + basename + "_screen.png";
                     File f = new File(fname);
                     FileOutputStream fo = new FileOutputStream(f);
                     fo.write(bytes.toByteArray());
                     fo.close();
                     Log.d(TAG, "Saved screenshot of %s", filename);
+                    mState = 0;
                 }
                 catch (Exception e)
                 {
                     Log.d(TAG, "Could not save screenshot of %s", filename);
+                    mState = 0;
                 }
             }   
         };
@@ -176,23 +227,3 @@ public class MainView extends GVRMain
     }
 }
 
-class FilterModels implements FilenameFilter
-{
-    private ArrayList<String> mExtensions;
-    public FilterModels(ArrayList<String> extensions)
-    {
-        mExtensions = extensions;
-    }
-    @Override
-    public boolean accept(File directory, String fileName)
-    {
-        for (String tExtension : mExtensions)
-        {
-            if (fileName.endsWith(tExtension))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-}
