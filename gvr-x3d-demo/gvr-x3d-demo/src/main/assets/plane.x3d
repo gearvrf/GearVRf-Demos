@@ -1,7 +1,7 @@
 <X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
 	<Scene>
 	
-		<Transform DEF="onlyObj" translation="0 -4 -8" rotation="0 .6 .8 -.2"  scale="1 1 1">
+		<Transform DEF="AnObject" translation="0 0 -10" rotation="0 1 0 0"  scale="1 1 1">
 			<Shape>
 				<IndexedFaceSet
 					coordIndex='0 1 2 -1    0 3 1 -1'
@@ -14,14 +14,63 @@
 				</IndexedFaceSet>
 				<Appearance>
 					<ImageTexture url="news_texture_map.jpg" />
-					<Material diffuseColor=".8 .9 1"/>
+					<Material emissiveColor=".8 .9 1"/>
 				</Appearance>
 			</Shape>
 		</Transform>
 
-		<!-- PointLight DEF="myPointLight1" location="0 -4 -7" color="1 1 1"/ -->
-		<DirectionalLight DEF="myDirLight1" intensity=".8" direction="0 -.2 -1" color="1 1 1"/>
-		<!-- SpotLight DEF="mySpotLight1" location="0 -4 -6" color="1 1 1"/ -->
+		<DirectionalLight DEF="myDirLightOn" direction="0 0 -1" color="1 1 1"/>
+		<!-- DirectionalLight direction="0 0 1" color="1 1 1"/ -->
+		<!-- DirectionalLight DEF="myDirLight" on="true"/ -->
+		<!-- Viewpoint position="0 0 -3" orientation="0 0 1 0"/ -->
+		
+		<Viewpoint position="0 0 25" orientation="0 0 1 0"/>
+		
+		<Background skyColor='0 .4 .4'/>
+		
+		<Transform translation="-1.5 -2 -6">
+			<Shape>
+				<Cone/>
+				<Appearance>
+					<Material emissiveColor="1 .25 .25" diffuseColor="1 0 0"/>
+				</Appearance>
+			</Shape>
+		</Transform>
+		    
+     <timeSensor DEF="timeteapot" cycleInterval="13" loop="true"></timeSensor>
+     <OrientationInterpolator DEF="rotateteapot" key="0 0.5 1" keyValue="0 1 0 0   0 1 0 3.14    0 1 0 6.28"></OrientationInterpolator>
+     <Route fromNode="timeteapot" fromField ="fraction_changed" toNode="rotateteapot" toField="set_fraction"></Route>
+     <Route fromNode="rotateteapot" fromField ="value_changed" toNode="AnObject" toField="set_rotation"></Route>
+
+		<Transform translation="1.5 -2 -6">
+			<Shape>
+				<Box/>
+				<Appearance>
+					<Material emissiveColor=".25 1 .25" diffuseColor="0 1 0"/>
+				</Appearance>
+			</Shape>
+		</Transform>
+	
+		<Transform DEF="SunPlane2" translation="0 -6 -12">
+			<Shape>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1   0 .6 .8'/>
+				</IndexedFaceSet>
+				<Appearance>
+					<ImageTexture url="sun.jpg" />
+					<Material/>
+				</Appearance>
+			</Shape>
+		</Transform>
+
+     <Route fromNode="rotateteapot" fromField ="value_changed" toNode="SunPlane2" toField="set_rotation"></Route>
+		
 
 	</Scene>
 </X3D>

@@ -11,7 +11,7 @@
 		</WorldInfo>
 		<NavigationInfo>
 		</NavigationInfo>
-		<Transform translation='0 2 12.35158'>
+		<Transform translation='0 2 -12.35158'>
 			<Shape>
 				<Appearance>
 					<Material diffuseColor='0.4039216 0.8 0.03137255'>
@@ -27,5 +27,6 @@
 		</Transform>
 		<Viewpoint orientation='-0.5773502 0.5773504 -0.5773502 4.18879' position='-10 -25 0'>
 		</Viewpoint>
+        <DirectionalLight direction=".387 0 -.85" color="1 1 1" intensity="1"/>
 	</Scene>
 </X3D>

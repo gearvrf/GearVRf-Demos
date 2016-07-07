@@ -81,6 +81,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import org.gearvrf.x3d.*;
 import org.joml.AxisAngle4f;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -121,7 +122,8 @@ public class X3DparserScript extends GVRScript
   public void onInit(GVRContext gvrContext)
   {
     mGVRContext = gvrContext;
-    //scene = gvrContext.getNextMainScene();
+//    scene = gvrContext.getNextMainScene();
+
 
     scene = gvrContext.getNextMainScene(new Runnable()
     {
@@ -154,9 +156,11 @@ public class X3DparserScript extends GVRScript
     mAnimationEngine = gvrContext.getAnimationEngine();
 
 
-    /*
     scene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
     scene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
+
+    
+    /*
 
     // head-tracking pointer
     GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
@@ -237,10 +241,11 @@ public class X3DparserScript extends GVRScript
     // String filename = "animation_scale01.x3d";
     // String filename = "backgroundtexturemap01.x3d";
     // String filename = "boxesspheres.x3d";
-     String filename = "conered.x3d";
+    // String filename = "conered.x3d";
     // String filename = "cylinders.x3d";
     // String filename = "directionallight1.x3d";
-    // String filename = "elevationgrid.x3d"; // NOT IMPLEMENTED
+    // String filename = "bscontact04.x3d";
+     //String filename = "elevationgrid.x3d";
     // String filename = "emissivecolor.x3d";
     // String filename = "exponentcone.x3d";
     // String filename = "exponentplane.x3d";
@@ -250,7 +255,8 @@ public class X3DparserScript extends GVRScript
     // String filename = "levelofdetail02.x3d";
     // String filename = "levelofdetail03.x3d";
     // String filename = "navigationinfo.x3d";
-    // String filename = "plane.x3d";
+    //String filename = "plane.x3d";
+    String filename = "planemore.x3d";
     // String filename = "planetexturexform.x3d";
     // String filename = "texturecoordinatetest.x3d";
     // String filename = "texturecoordinatetestsubset.x3d";
@@ -269,7 +275,8 @@ public class X3DparserScript extends GVRScript
     // String filename = "multiviewpoints03.x3d";
     // String filename = "multiviewpoints04.x3d";
     // String filename = "touchSensor.x3d";
-    // String filename = "teapottorusdirlights.x3d";
+    //String filename = "teapottorusdirlights.x3d";
+    // String filename = "teapottorus.x3d";
     // String filename = "pointlightattenuationtest.x3d";
     // String filename = "usedef01.x3d";
     // String filename = "usedef02.x3d";
@@ -294,23 +301,56 @@ public class X3DparserScript extends GVRScript
     // String filename = "levelofdetailusedef02.x3d";
     // String filename = "levelofdetailusedef03.x3d";
     // String filename = "viewpointAnimation01.x3d";
-//  String filename = "bsconstact01.x3d";
+  //String filename = "bsconstact01.x3d";
 //   String filename = "bsconstact02.x3d";
  //    String filename = "bsconstact04.x3d";
     try
     {
-      model = gvrContext.getAssetLoader().loadModel(filename, GVRResourceVolume.VolumeType.ANDROID_ASSETS, scene);
+      
+      GVRCameraRig mainCameraRig = scene.getMainCameraRig();
+      GVRTransform mainCameraTransform = mainCameraRig.getTransform();
+      //Matrix4f maincameraTransformTest4f = mainCameraTransform.getLocalModelMatrix4f();
+      Matrix4f matrix4f = mainCameraTransform.getLocalModelMatrix4f();
+      mainCameraTransform.setPosition(0, 0, 20);
+      //Log.e("Camera Rig Pos Test", matrix4f.toString());
+//      scene.setMainCameraRig(mainCameraRig);
+      
+      
+      
+      model = gvrContext.getAssetLoader().loadModel(filename, scene);
       List<GVRAnimation> animations = model.getAnimations();
       mAnimations = animations;
-      
-      //GVRSceneObject gvrRoot = scene
-      //GVRSceneObject gvrRoot = scene
-      //    .getSceneObjectByName(x3dObject.X3D_ROOT_NODE);
-      //GVRCameraRig gvrCameraRig = gvrRoot.getCameraRig();
-      GVRCameraRig gvrCameraRig = model.getCameraRig();
-      scene.setMainCameraRig(gvrCameraRig);
-      //gvrCameraRig.addChildObject(headTracker);
 
+      GVRCameraRig oldrig = scene.getMainCameraRig();
+      GVRTransform newtrans = model.getCameraRig().getTransform();
+      oldrig.getOwnerObject().getTransform().setModelMatrix(newtrans.getLocalModelMatrix4f());
+
+      int backgroundColor = model.getCameraRig().getLeftCamera().getBackgroundColor();
+      oldrig.getLeftCamera().setBackgroundColor(backgroundColor);
+      oldrig.getRightCamera().setBackgroundColor(backgroundColor);
+
+      /*
+      GVRCameraRig gvrModelCameraRig = model.getCameraRig();
+      int backgroundColor = gvrModelCameraRig.getLeftCamera().getBackgroundColor();
+      GVRTransform gvrModelCameraRigTransform = gvrModelCameraRig.getTransform();
+      //Matrix4f maincameraTransformTest4f = gvrModelCameraRigTransform.getLocalModelMatrix4f();
+      matrix4f = gvrModelCameraRigTransform.getLocalModelMatrix4f();
+      
+      mainCameraTransform.setPositionX(gvrModelCameraRigTransform.getPositionX());
+      mainCameraTransform.setPositionY(gvrModelCameraRigTransform.getPositionY());
+      mainCameraTransform.setPositionZ(gvrModelCameraRigTransform.getPositionZ());
+      
+//      scene.setMainCameraRig(gvrCameraRig);
+      //gvrCameraRig.addChildObject(headTracker);
+ //     model.detachCameraRig();
+ //     scene.setMainCameraRig(gvrModelCameraRig);
+      mainCameraRig.getLeftCamera().setBackgroundColor(backgroundColor);
+      mainCameraRig.getRightCamera().setBackgroundColor(backgroundColor);
+
+
+      scene.setMainCameraRig(mainCameraRig);
+      Log.e("Camera Rig Pos Test 2", matrix4f.toString());
+      */
       /*
       GVRCameraRig gvrCameraRig = null;
       // Find the root node set by loadModel, and from there, find the Camera
