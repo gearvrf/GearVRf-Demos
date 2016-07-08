@@ -110,7 +110,7 @@ public class JassimpModelLoaderMain extends GVRMain {
         }
 
         // Model over network
-        String urlBase = "https://raw.githubusercontent.com/gearvrf/GearVRf-Demos/master/gvrjassimpmodelloader/assets/";
+        String urlBase = "https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-jassimp/app/src/main/assets/";
         AssetListener eventHandler = new AssetListener(mMainScene);
         try {
             GVRSceneObject treesModel = gvrContext.getAssetLoader().loadModel(urlBase + "trees/trees9.3ds", eventHandler);
