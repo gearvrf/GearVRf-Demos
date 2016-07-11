@@ -24,6 +24,7 @@ import java.util.ArrayList;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSceneObject.BoundingVolume;
@@ -49,13 +50,19 @@ public class MainView extends GVRMain
             if (model != null)
             {
                 mState = 10;
-                model.setEnable(true);
-                if (mCurrentModel != null)
-                {
-                    mMainScene.removeSceneObject(mCurrentModel);
-                }
-                mMainScene.addSceneObject(model);
+                BoundingVolume bv = model.getBoundingVolume();
+                float sf = 1 / (4.0f * bv.radius);
+                model.getTransform().setScale(sf, sf, sf);
+                bv = model.getBoundingVolume();
+                model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
+                mMainScene.clear();
                 mCurrentModel = (GVRModelSceneObject) model;
+                if (mMainScene.getLightList().length == 0)
+                {
+                	GVRDirectLight headlight = new GVRDirectLight(ctx);
+                	mMainScene.getMainCameraRig().getOwnerObject().attachComponent(headlight);
+                    mMainScene.addSceneObject(model);
+                }
              }
             else
             {
@@ -111,8 +118,6 @@ public class MainView extends GVRMain
                 mState = 0;
                 return null;
             }
-            BoundingVolume bv = model.getBoundingVolume();
-            model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 2 * bv.radius);
         }
         return model;
     }
