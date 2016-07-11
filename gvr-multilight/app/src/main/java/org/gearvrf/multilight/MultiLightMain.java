@@ -101,7 +101,7 @@ public class MultiLightMain extends GVRMain {
     {
          try
          {
-            GVRModelSceneObject model = context.getAssetLoader().loadModel("astro_boy.dae", null);
+            GVRModelSceneObject model = context.getAssetLoader().loadModel("astro_boy.dae");
             model.getTransform().setScale(10, 10, 10);
             model.getTransform().setPositionY(-1);
             return model;
