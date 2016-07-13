@@ -1,14 +1,16 @@
 /*===============================================================================
+Copyright (c) 2016 PTC Inc. All Rights Reserved.
+
 Copyright (c) 2012-2014 Qualcomm Connected Experiences, Inc. All Rights Reserved.
 
-Vuforia is a trademark of QUALCOMM Incorporated, registered in the United States 
-and other countries. Trademarks of QUALCOMM Incorporated are used with permission.
+Vuforia is a trademark of PTC Inc., registered in the United States and other 
+countries.
 ===============================================================================*/
 
-package com.qualcomm.vuforia.misc;
+package com.vuforia.samples.SampleApplication;
 
 // Used to send back to the activity any error during vuforia processes
-public class VuforiaApplicationException extends Exception
+public class SampleApplicationException extends Exception
 {
     
     private static final long serialVersionUID = 2L;
@@ -27,7 +29,7 @@ public class VuforiaApplicationException extends Exception
     private String mString = "";
     
     
-    public VuforiaApplicationException(int code, String description)
+    public SampleApplicationException(int code, String description)
     {
         super(description);
         mCode = code;
