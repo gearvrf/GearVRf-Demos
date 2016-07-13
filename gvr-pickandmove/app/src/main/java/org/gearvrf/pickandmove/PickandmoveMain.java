@@ -203,6 +203,8 @@ public class PickandmoveMain extends GVRMain {
             if (isOnClick) {
             	if (attachedObject != null) {
                 	mScene.getMainCameraRig().removeChildObject(attachedObject);
+                    mScene.addSceneObject(attachedObject);
+
                     mScene.getEventReceiver().addListener(mPickHandler);
                     attachedObject.getRenderData().getMaterial().setColor(
         					LOOKAT_COLOR_MASK_R,
@@ -212,6 +214,8 @@ public class PickandmoveMain extends GVRMain {
             	}
             	else if (mPickedObject != null) {
                     mScene.getEventReceiver().removeListener(mPickHandler);
+                    mScene.removeSceneObject(mPickedObject);
+
                     attachedObject = mPickedObject;
                     mScene.getMainCameraRig().addChildObject(attachedObject);
                     attachedObject.getRenderData().getMaterial().setColor(
