@@ -84,7 +84,7 @@ public class PickandmoveMain extends GVRMain {
         headTracker.getRenderData().setDepthTest(false);
         headTracker.getRenderData().setRenderingOrder(100000);
         mScene.getMainCameraRig().addChildObject(headTracker);
-        mScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, mScene));
+        headTracker.attachComponent(new GVRPicker(gvrContext, mScene));
         mPickHandler = new PickHandler();
         mScene.getEventReceiver().addListener(mPickHandler);
 
@@ -158,16 +158,13 @@ public class PickandmoveMain extends GVRMain {
         cubemapReflectionMaterial.setMainTexture(futureCubemapTexture);
 
         GVRSceneObject sphere = new GVRSceneObject(gvrContext, sphereMesh);
-        GVRSphereCollider collider = new GVRSphereCollider(gvrContext);
-        
-        collider.setRadius(1.0f);
         sphere.getRenderData().setMaterial(cubemapReflectionMaterial);
         sphere.setName("sphere");
         mScene.addSceneObject(sphere);
         mObjects.add(sphere);
-        sphere.getTransform().setPosition(0.0f, OBJECT_POSITION, 0);
+        sphere.getTransform().setPosition(0.0f, 0.0f, -OBJECT_POSITION);
         sphere.getTransform().setScale(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
-        sphere.attachComponent(collider);
+        sphere.attachComponent(new GVRSphereCollider(gvrContext));
 
         for (GVRSceneObject so : mScene.getWholeSceneObjects()) {
             Log.v("", "scene object name : " + so.getName());
@@ -260,3 +257,4 @@ public class PickandmoveMain extends GVRMain {
     }
 
 }
+
