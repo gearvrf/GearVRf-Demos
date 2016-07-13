@@ -78,7 +78,9 @@ public class Main extends GVRScript {
 	}
 
 	public void onSingleTapConfirmed() {
-		FocusableController.clickProcess(mGvrContext);
+		if (null != mGvrContext) {
+			FocusableController.clickProcess(mGvrContext);
+		}
 	}
 
 	public void onSwipe() {
