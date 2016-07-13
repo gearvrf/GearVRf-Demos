@@ -1,8 +1,17 @@
 apply plugin: 'com.android.application'
 
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../../GearVRF/GVRf/Framework/framework/build/outputs/aar'
+        }
+    }
+}
+
 android {
     compileSdkVersion 19
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "org.gearvrf.sample.gvrjavascript"
@@ -32,5 +41,5 @@ android {
 }
 
 dependencies {
-    compile project(':framework')
+    compile(name:'framework-debug', ext:'aar')
 }
