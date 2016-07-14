@@ -1,5 +1,1 @@
-include ':framework'
-include ':widget_plugin'
 include ':app'
-project(':framework').projectDir = new File('../../GearVRf/GVRf/Framework/framework')
-project(':widget_plugin').projectDir = new File('../../GearVRf/GVRf/Extensions/Widget_plugin')
