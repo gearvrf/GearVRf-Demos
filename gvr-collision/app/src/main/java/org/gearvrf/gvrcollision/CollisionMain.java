@@ -36,12 +36,12 @@ public class CollisionMain extends GVRMain {
     @SuppressWarnings("unused")
     private static final String TAG = Log.tag(CollisionMain.class);
 
-    GVRSceneObject venusMeshObject;
-    GVRSceneObject earthMeshObject;
+    private GVRSceneObject venusMeshObject;
+    private GVRSceneObject earthMeshObject;
 
     private GVRAnimationEngine mAnimationEngine;
     private GVRScene mMainScene;
-    boolean statMessageActive = false;
+    private boolean statMessageActive = false;
 
     private GVRSceneObject asyncSceneObject(GVRContext context,
             String textureName) throws IOException {
@@ -100,20 +100,13 @@ public class CollisionMain extends GVRMain {
         earthMeshObject.getTransform().setScale(1.0f, 1.0f, 1.0f);
         earthRotationObject.addChildObject(earthMeshObject);
 
-        GVRSceneObject moonRevolutionObject = new GVRSceneObject(gvrContext);
-        moonRevolutionObject.getTransform().setPosition(4.0f, 0.0f, 0.0f);
-        earthRevolutionObject.addChildObject(moonRevolutionObject);
-        mMainScene.getMainCameraRig().attachToParent(moonRevolutionObject);
-
         counterClockwise(venusRevolutionObject, 400f);
         clockwise(venusRotationObject, 400f);
 
         counterClockwise(earthRevolutionObject, 30f);
         counterClockwise(earthRotationObject, 1.5f);
 
-        clockwise(
-                mMainScene.getMainCameraRig().getTransform(),
-                60f);
+        clockwise(mMainScene.getMainCameraRig().getTransform(), 60f);
     }
 
     @Override
