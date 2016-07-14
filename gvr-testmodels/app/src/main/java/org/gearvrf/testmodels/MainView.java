@@ -18,7 +18,10 @@ package org.gearvrf.testmodels;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+<<<<<<< HEAD
 import java.io.FilenameFilter;
+=======
+>>>>>>> 9348389caeff4ed5b9a3e47e8fa8fcb0cbcb7e20
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -36,6 +39,10 @@ import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.utility.Log;
 import org.gearvrf.IAssetEvents;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9348389caeff4ed5b9a3e47e8fa8fcb0cbcb7e20
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Environment;
@@ -74,6 +81,10 @@ public class MainView extends GVRMain
         public void onTextureError(GVRContext arg0, String arg1, String arg2) { }
         public void onTextureLoaded(GVRContext arg0, GVRTexture arg1, String arg2) { }        
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9348389caeff4ed5b9a3e47e8fa8fcb0cbcb7e20
     @SuppressWarnings("unused")
     private static final String TAG = Log
             .tag(MainActivity.class);
@@ -109,8 +120,13 @@ public class MainView extends GVRMain
         {
             try
             {
+<<<<<<< HEAD
                 model = mContext.getAssetLoader().loadModel("sd:" + filename, mAssetListener);
                 model.setName(filename);
+=======
+               model = mContext.getAssetLoader().loadModel("sd:" + filename, mAssetListener);
+               model.setName(filename);
+>>>>>>> 9348389caeff4ed5b9a3e47e8fa8fcb0cbcb7e20
             }
             catch (IOException e)
             {
@@ -217,10 +233,18 @@ public class MainView extends GVRMain
                 {
                     Log.d(TAG, "Could not save screenshot of %s", filename);
                     mState = 0;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9348389caeff4ed5b9a3e47e8fa8fcb0cbcb7e20
                 }
             }   
         };
         mContext.captureScreenCenter(callback);
     }
+<<<<<<< HEAD
 }
 
+=======
+}
+>>>>>>> 9348389caeff4ed5b9a3e47e8fa8fcb0cbcb7e20
