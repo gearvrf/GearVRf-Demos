@@ -133,7 +133,7 @@ public class MainView extends GVRMain
             for (File f : list)
             {
                 String fileName = f.getName();
-                String ext = "." + FileNameUtils.getExtension(fileName.toLowerCase());
+                String ext = "." + FileNameUtils.getExtension(fileName);
                 if (f.isDirectory())
                 {
                     getModelList(directory + "/" + fileName, fileList);
