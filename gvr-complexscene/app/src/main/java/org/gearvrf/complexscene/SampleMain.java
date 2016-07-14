@@ -25,7 +25,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.debug.GVRConsole;
-
+import org.gearvrf.GVRRenderData;
 import java.io.IOException;
 
 public class SampleMain extends GVRScript {
@@ -56,6 +56,20 @@ public class SampleMain extends GVRScript {
         scene.getMainCameraRig().getRightCamera()
                 .setBackgroundColor(Color.WHITE);
 
+        float NORMAL_CURSOR_SIZE = 0.4f;
+        float CURSOR_Z_POSITION = -9.0f;
+        int CURSOR_RENDER_ORDER = 100000;
+        
+        GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
+                mGVRContext.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE),
+                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                        "cursor_idle.png")));
+        cursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
+        cursor.getRenderData().setRenderingOrder(
+                GVRRenderData.GVRRenderingOrder.OVERLAY);
+        cursor.getRenderData().setDepthTest(false);
+        cursor.getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
+        mGVRContext.getMainScene().getMainCameraRig().addChildObject(cursor);
         
         try {
 

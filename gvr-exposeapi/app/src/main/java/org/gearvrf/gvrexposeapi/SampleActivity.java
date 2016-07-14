@@ -35,7 +35,7 @@ public class SampleActivity extends GVRActivity {
     @Override
     protected void onInitAppSettings(VrAppSettings appSettings) {
         super.onInitAppSettings(appSettings);
-        appSettings.getEyeBufferParms().setMultiSamples(2);
+        appSettings.getEyeBufferParams().setMultiSamples(2);
         VrAppSettings.setShowDebugLog(true);
     }
 }

@@ -39,6 +39,9 @@ public class MenuScene extends GVRScene {
 
     public static final float CAMERA_Y = 1.6f;
 
+    private int totalRenderObject = 0;
+    private int finishCounter = 0;
+
     public MenuScene(GVRContext gvrContext) {
         super(gvrContext);
         createDinosaursMenuItem();
@@ -66,11 +69,17 @@ public class MenuScene extends GVRScene {
                 AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuSelectSoundID(), 1.0f, 1.0f);
                 for (GVRSceneObject object : getWholeSceneObjects()) {
                     if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                        totalRenderObject++;
                         new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
 
                             @Override
                             public void finished(GVRAnimation arg0) {
-                                Main.dinosaurScene.show();
+                                finishCounter++;
+                                if (finishCounter == totalRenderObject) {
+                                    totalRenderObject = 0;
+                                    finishCounter = 0;
+                                    Main.dinosaurScene.show();
+                                }
                             }
                         });
                     }
