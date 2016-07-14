@@ -78,6 +78,7 @@ public class CursorMain extends GVRMain {
         astronaut.getTransform().setPosition(position[0], position[1], position[2]);
         SelectableBehavior selectableBehavior = new SelectableBehavior(cursorManager, true);
         astronaut.attachComponent(selectableBehavior);
+        astronautModel.removeChildObject(astronaut);
         mainScene.addSceneObject(astronaut);
 
         position[0] = -5.0f;
@@ -86,6 +87,7 @@ public class CursorMain extends GVRMain {
         rocket = rocketModel.getChildByIndex(0);
         rocket.getTransform().setPosition(position[0], position[1], position[2]);
         rocket.attachComponent(movableRocketBehavior);
+        rocketModel.removeChildObject(rocket);
         mainScene.addSceneObject(rocket);
 
         position[0] = 2.0f;
