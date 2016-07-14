@@ -77,6 +77,8 @@ public class GearVRScriptingMain extends GVRMain {
         if(server != null) {
             server.stop();
         }
-        gvrContext.stopDebugServer();
+        if (null != gvrContext){
+            gvrContext.stopDebugServer();
+        }
     }
 }
