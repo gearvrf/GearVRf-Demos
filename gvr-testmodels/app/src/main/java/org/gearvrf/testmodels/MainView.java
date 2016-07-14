@@ -109,7 +109,7 @@ public class MainView extends GVRMain
             try
             {
                model = mContext.getAssetLoader().loadModel("sd:" + filename, mAssetListener);
-               model.setName(filename);0
+               model.setName(filename);
             }
             catch (IOException e)
             {
