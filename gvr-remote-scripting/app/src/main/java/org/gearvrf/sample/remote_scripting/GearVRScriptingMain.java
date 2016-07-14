@@ -26,15 +26,21 @@ import org.gearvrf.IErrorEvents;
 
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.script.GVRScriptManager;
+
 import smcl.samsung.com.debugwebserver.DebugWebServer;
 
 public class GearVRScriptingMain extends GVRMain
 {
+    private static final String TAG = GearVRScriptingMain.class.getSimpleName();
+    private static final int DEBUG_SERVER_PORT = 5000;
+    DebugWebServer server;
+    private GVRContext gvrContext;
+    
     @Override
     public void onInit(GVRContext gvrContext) {
         final DebugServer debug = gvrContext.startDebugServer();
         GVRScene scene = gvrContext.getNextMainScene();
-        IErrorEvents errorHandler = new IErrorEvents() 
+        IErrorEvents errorHandler = new IErrorEvents()
         {
             public void onError(String message, Object source)
             {
@@ -73,7 +79,6 @@ public class GearVRScriptingMain extends GVRMain
         gvrContext.startDebugServer();
         server = new DebugWebServer(gvrContext);
         server.listen(DEBUG_SERVER_PORT);
-
     }
 
     @Override
