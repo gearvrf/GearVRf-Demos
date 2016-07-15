@@ -204,8 +204,9 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
         accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
-        gvrContext.getMainScene().getMainCameraRig()
-                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+        GVRSceneObject gazeCursorSceneObject = GazeCursorSceneObject.getInstance(gvrContext);
+        Main.accessibilityScene.getMainCameraRig().removeChildObject(gazeCursorSceneObject);
+        gvrContext.getMainScene().getMainCameraRig().addChildObject(gazeCursorSceneObject);
     }
 
     private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
