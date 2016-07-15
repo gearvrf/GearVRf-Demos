@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+    <!-- Example scene to illustrate X3D nodes and fields (XML elements and attributes) -->
+    <WorldInfo title='Hello world!'/>
+    <Group>
+
+      <Transform  DEF="DownNegativeZaxis" translation='0 0 -5'>
+	     <transform DEF="newsplane" translation="0 0 0">
+		        <shape>
+					<Appearance>
+						<Material diffuseColor="1 1 1"/>
+						<ImageTexture url="news_texture_map.jpg" repeatS="TRUE" repeatT="TRUE"/>
+						<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+					</Appearance>
+					<IndexedFaceSet
+						coordIndex='0 1 2 -1    0 3 1 -1'
+						texCoordIndex='0 1 2 -1   0 3 1 -1'
+						normalIndex='0 0 0 -1   0 0 0 -1'
+					>
+						<Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+						<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+						<Normal vector='0 0 1'/>
+					</IndexedFaceSet>
+		        </shape>
+	      </transform>
+	      <Transform translation='0 -2 1'>
+	        <Shape>
+	          <Text DEF='TextMessage' string='"Looking at" "Negative Z"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="1 1 0"/>
+	          </Appearance>
+	        </Shape>
+	      </Transform>
+      </Transform>
+
+    </Group>
+
+     <transform DEF="DownPositiveZaxis" translation="0 0 5" rotation="0 1 0 3.14">
+     	<transform>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="pinwheel.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+	      <Transform translation='0 -2 1'>
+	        <Shape>
+	          <Text DEF='TextMessage' string='"Positive" "Z axis!"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="0 1 1"/>
+	          </Appearance>
+	        </Shape>
+	      </Transform>
+     </transform>
+
+     <transform DEF="PositiveXaxis" translation="5 0 0" rotation="0 1 0 -1.57">
+     	<transform>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="cube_diffuse.png" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+	      <Transform translation='0 -2 1'>
+	        <Shape>
+	          <Text DEF='TextMessage' string='"Positive" "X axis!"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="0 1 1"/>
+	          </Appearance>
+	        </Shape>
+	      </Transform>
+     </transform>
+
+     <transform DEF="NegativeXaxis" translation="-5 0 0" rotation="0 1 0 1.57">
+     	<transform>
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="polishedwalnut.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-1 -1 0    1 1 0    -1 1 0    1 -1 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+        </transform>
+	      <Transform translation='0 -2 1'>
+	        <Shape>
+	          <Text DEF='TextMessage' string='"Negative" "X axis!"'>
+	            <FontStyle justify='"MIDDLE" "MIDDLE"'/>
+	          </Text>
+	          <Appearance>
+	            <Material diffuseColor="0 1 1"/>
+	          </Appearance>
+	        </Shape>
+	      </Transform>
+     </transform>
+
+
+  </Scene>
+</X3D>
