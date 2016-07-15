@@ -17,9 +17,45 @@
 apply plugin: 'com.android.application'
 apply plugin: XmlValidator
 
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../../GearVRF/GVRf/Framework/framework/build/outputs/aar'
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../../GearVRF/GVRf/Extensions/3DCursor/3DCursorLibrary/build/outputs/aar'
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../../GearVRF/GVRf/Extensions/3DCursor/IODevices/gearwear/GearWearIoDevice/build/outputs/aar'
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../../GearVRF/GVRf/Extensions/3DCursor/IODevices/gearwear/PhoneSide/gearwearlibrary/build/outputs/aar'
+        }
+    }
+}
+
 android {
     compileSdkVersion 19
-    buildToolsVersion "23.0.1"
+    buildToolsVersion '23.0.3'
 
     defaultConfig {
         applicationId "org.gearvrf.io.cursor"
@@ -49,8 +85,10 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':3DCursorLibrary')
-    compile project(':GearWearIoDevice')
+    compile(name:'framework-debug', ext:'aar')
+    compile(name:'3DCursorLibrary-debug', ext:'aar')
+    compile(name:'GearWearIoDevice-debug', ext:'aar')
+    compile(name:'gearwearlibrary-debug', ext:'aar')
     //_VENDOR_TODO_ add the device to cube-app here
     //compile project(':IODevices:io_template')
 }
