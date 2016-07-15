@@ -21,6 +21,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRScript;
 import org.gearvrf.debug.GVRConsole;
 import org.gearvrf.debug.GVRConsole.EyeMode;
 import org.gearvrf.nontlthreadupdate.R;
@@ -29,7 +30,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-public class SampleMain extends GVRMain {
+public class SampleMain extends GVRScript {
 
     private GVRConsole mConsole;
     GVRBitmapTexture mTexture;

@@ -119,11 +119,6 @@ public class SolarMain extends GVRMain {
         earthMeshObject.getTransform().setScale(1.0f, 1.0f, 1.0f);
         earthRotationObject.addChildObject(earthMeshObject);
 
-        GVRSceneObject moonRevolutionObject = new GVRSceneObject(gvrContext);
-        moonRevolutionObject.getTransform().setPosition(4.0f, 0.0f, 0.0f);
-        earthRevolutionObject.addChildObject(moonRevolutionObject);
-        moonRevolutionObject.addChildObject(mMainScene.getMainCameraRig());
-
         GVRSceneObject marsRevolutionObject = new GVRSceneObject(gvrContext);
         marsRevolutionObject.getTransform().setPosition(30.0f, 0.0f, 0.0f);
         solarSystemObject.addChildObject(marsRevolutionObject);
@@ -146,8 +141,6 @@ public class SolarMain extends GVRMain {
 
         counterClockwise(earthRevolutionObject, 600f);
         counterClockwise(earthRotationObject, 1.5f);
-
-        counterClockwise(moonRevolutionObject, 60f);
 
         clockwise(mMainScene.getMainCameraRig().getTransform(), 60f);
 
