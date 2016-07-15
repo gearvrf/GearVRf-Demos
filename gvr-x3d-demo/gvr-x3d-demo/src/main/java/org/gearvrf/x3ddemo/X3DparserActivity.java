@@ -16,21 +16,13 @@
 package org.gearvrf.x3ddemo;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.scene_objects.view.GVRView;
+//import org.gearvrf.scene_objects.view.GVRView;
 import org.gearvrf.scene_objects.view.GVRWebView;
-//import org.gearvrf.util.VRTouchPadGestureDetector;
-//import org.gearvrf.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
-//import org.gearvrf.util.VRTouchPadGestureDetector.SwipeDirection;
-import org.gearvrf.x3ddemo.VRTouchPadGestureDetector.OnTouchPadGestureListener;
-import org.gearvrf.x3ddemo.VRTouchPadGestureDetector.SwipeDirection;
 
 import android.os.Bundle;
-//import android.util.Log;
-import android.view.MotionEvent;
 
-public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureListener {
+public class X3DparserActivity extends GVRActivity {
 
-    private VRTouchPadGestureDetector mVRTouchPadDetector = null;
     X3DparserScript script = new X3DparserScript(this);
     private GVRWebView mWebView;
 
@@ -39,41 +31,9 @@ public class X3DparserActivity extends GVRActivity implements OnTouchPadGestureL
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setScript(script, "gvr_note4.xml");
-        mVRTouchPadDetector = new VRTouchPadGestureDetector(this);
         
-    	mWebView = new GVRWebView( this );
-
+        mWebView = new GVRWebView( this );
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-      mVRTouchPadDetector.onTouchEvent(event);
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            script.captureScreen(0, "screenshot_center");
-            script.captureScreen(1, "screenshot_left");
-            script.captureScreen(2, "screenshot_right");
-            script.captureScreen3D("screenshot3d");
-        }
-        return super.onTouchEvent(event);
-    }
-
-  public boolean onSingleTap(MotionEvent e) {
-
-	script.SingleTap();
-    return false;
-  }
-
-  public void onLongPress(MotionEvent e) {
-    String text = "Long Press " + e.getAction();
-        script.PickedObjectActivity(text, 2);
-  }
-
-  @Override
-  public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX, float velocityY) {
-    String text = "Swipe; direction " + swipeDirection + ", " + e.getAction();
-        script.PickedObjectActivity(text, 3);
-    return false;
-  }
   
   public GVRWebView getWebView() {
       return mWebView;
