@@ -397,9 +397,6 @@ public class CursorMain extends GVRMain {
         mainScene.addSceneObject(settingsText);
 
         cursors = new ArrayList<Cursor>();
-        for (Cursor cursor : cursorManager.getActiveCursors()) {
-            activationListener.onActivated(cursor);
-        }
         cursorManager.addCursorActivationListener(activationListener);
     }
 
@@ -997,6 +994,7 @@ public class CursorMain extends GVRMain {
 
         private GVRSceneObject sceneObject;
         private GVRSceneObject selected;
+        private GVRSceneObject selectedParent;
         private GVRSceneObject cursorSceneObject;
         private Cursor cursor;
 
@@ -1032,6 +1030,7 @@ public class CursorMain extends GVRMain {
             prevCursorPosition.set(cursor.getPositionX(), cursor.getPositionY(), cursor
                     .getPositionZ());
             selected = getSceneObject();
+            selectedParent = selected.getParent();
             if (cursor.getCursorType() == CursorType.OBJECT) {
                 Vector3f position = new Vector3f(cursor.getPositionX(), cursor.getPositionY(),
                         cursor
@@ -1040,6 +1039,7 @@ public class CursorMain extends GVRMain {
                 selected.getTransform().setPosition(-position.x + selected.getTransform()
                         .getPositionX(), -position.y + selected.getTransform()
                         .getPositionY(), -position.z + selected.getTransform().getPositionZ());
+                selectedParent.removeChildObject(selected);
                 cursorSceneObject.addChildObject(selected);
             }
         }
@@ -1082,11 +1082,13 @@ public class CursorMain extends GVRMain {
                 Vector3f position = new Vector3f(cursor.getPositionX(), cursor.getPositionY
                         (), cursor.getPositionZ());
                 cursorSceneObject.removeChildObject(selected);
+                selectedParent.addChildObject(selected);
                 selected.getTransform().setPosition(+position.x + selected.getTransform()
                         .getPositionX(), +position.y + selected.getTransform()
                         .getPositionY(), +position.z + selected.getTransform().getPositionZ());
             }
             selected = null;
+            selectedParent = null;
             // object has been moved, invalidate all other cursors to check for events
             for (Cursor remaining : cursorManager.getActiveCursors()) {
                 if (cursor != remaining) {
