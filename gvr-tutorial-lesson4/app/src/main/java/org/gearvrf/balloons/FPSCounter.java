@@ -13,25 +13,22 @@
  * limitations under the License.
  */
 
+
 package org.gearvrf.balloons;
 
-import org.gearvrf.GVRActivity;
-import android.os.Bundle;
-import android.view.MotionEvent;
+import android.util.Log;
 
-public class MainActivity extends GVRActivity {
+public class FPSCounter {
+    private static int frames = 0;
+    private static long startTimeMillis = 0;
+    private static final long interval = 10000;
 
-    BalloonMain main = new BalloonMain();
-
-    @Override
-    protected void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        setMain(main, "gvr.xml");
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        main.onTouchEvent(event);
-        return super.onTouchEvent(event);
+    public static void tick() {
+        ++frames;
+        if (System.currentTimeMillis() - startTimeMillis >= interval) {
+            Log.v("", "FPS : " + frames / (interval / 1000.0f));
+            frames = 0;
+            startTimeMillis = System.currentTimeMillis();
+        }
     }
 }

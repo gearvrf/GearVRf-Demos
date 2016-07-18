@@ -211,7 +211,8 @@ public class BalloonMain extends GVRMain {
         GVRRenderData rdata = scoreBoard.getRenderData();
         scoreBoard.getTransform().setPosition(-1.2f, 1.2f, -3.0f);
         scoreBoard.setTextColor(Color.YELLOW);
-        rdata.setAlphaBlend(true);
+        //rdata.setAlphaBlend(true);
+        rdata.setAlphaToCoverage(true);
         rdata.setRenderingOrder(GVRRenderingOrder.TRANSPARENT);
         return scoreBoard;
     }
@@ -229,7 +230,8 @@ public class BalloonMain extends GVRMain {
         mtlIndex = mNumParticles++;
         balloon.setName("balloon");
         rdata.setShaderTemplate(GVRPhongShader.class);
-        rdata.setAlphaBlend(true);
+        //rdata.setAlphaBlend(true);
+        rdata.setAlphaToCoverage(true);
         rdata.setMaterial(mMaterials.get(mtlIndex));
         rdata.setRenderingOrder(GVRRenderingOrder.TRANSPARENT);
         collider.setRadius(0.8f);
