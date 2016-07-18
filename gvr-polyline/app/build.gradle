@@ -4,7 +4,7 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../../GearVRF/GVRf/Framework/framework/build/outputs/aar'
+            dirs '../../gearvrf-libs'
         }
     }
 }
