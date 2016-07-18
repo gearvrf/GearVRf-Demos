@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../gearvrf-libs'
+        }
+    }
+}
+
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
@@ -33,6 +42,6 @@ android {
 }
 
 dependencies {
-    compile project(':framework')
+    compile(name:'framework-debug', ext:'aar')
     compile 'com.android.support:support-v4:+'
 }

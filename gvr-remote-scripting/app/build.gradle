@@ -1,7 +1,16 @@
 apply plugin: 'com.android.application'
 
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs '../../gearvrf-libs'
+        }
+    }
+}
+
 android {
-    compileSdkVersion 23
+    compileSdkVersion 19
     buildToolsVersion "23.0.3"
 
     defaultConfig {
@@ -32,6 +41,6 @@ android {
 }
 
 dependencies {
-    compile project(':framework')
-    compile project(':debugwebserver')
+	compile project(':debugwebserver')
+    compile(name:'framework-debug', ext:'aar')
 }
