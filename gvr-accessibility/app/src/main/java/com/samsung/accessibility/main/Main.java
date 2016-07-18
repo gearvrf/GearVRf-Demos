@@ -92,8 +92,7 @@ public class Main extends GVRMain {
         pedestalObject.addChildObject(baseObject);
         pedestalObject.addChildObject(bookObject);
 
-        gvrContext.getNextMainScene().addSceneObject(bookObject);
-        gvrContext.getNextMainScene().addSceneObject(baseObject);
+        gvrContext.getNextMainScene().addSceneObject(pedestalObject);
     }
 
     private GVRSceneObject createSkybox() {
