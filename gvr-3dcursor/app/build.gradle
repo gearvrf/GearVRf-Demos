@@ -21,34 +21,7 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../../GearVRF/GVRf/Framework/framework/build/outputs/aar'
-        }
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs '../../../GearVRF/GVRf/Extensions/3DCursor/3DCursorLibrary/build/outputs/aar'
-        }
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs '../../../GearVRF/GVRf/Extensions/3DCursor/IODevices/gearwear/GearWearIoDevice/build/outputs/aar'
-        }
-    }
-}
-
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs '../../../GearVRF/GVRf/Extensions/3DCursor/IODevices/gearwear/PhoneSide/gearwearlibrary/build/outputs/aar'
+            dirs '../../gearvrf-libs'
         }
     }
 }
