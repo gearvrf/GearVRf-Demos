@@ -41,6 +41,6 @@ android {
 }
 
 dependencies {
-	compile project(':debugwebserver')
+    compile(name:'debugwebserver-debug', ext:'aar')
     compile(name:'framework-debug', ext:'aar')
 }

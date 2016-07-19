@@ -1,3 +1,1 @@
-include ':debugwebserver'
 include ':app'
-project(':debugwebserver').projectDir = new File('../../GearVRf/GVRf/Extensions/debugwebserver')
