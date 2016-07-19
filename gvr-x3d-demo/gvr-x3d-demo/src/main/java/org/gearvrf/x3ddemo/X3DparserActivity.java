@@ -24,18 +24,12 @@ import android.os.Bundle;
 public class X3DparserActivity extends GVRActivity {
 
     X3DparserScript script = new X3DparserScript(this);
-    private GVRWebView mWebView;
 
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setScript(script, "gvr_note4.xml");
-        
-        mWebView = new GVRWebView( this );
     }
-  
-  public GVRWebView getWebView() {
-      return mWebView;
-  }
+ 
 }
