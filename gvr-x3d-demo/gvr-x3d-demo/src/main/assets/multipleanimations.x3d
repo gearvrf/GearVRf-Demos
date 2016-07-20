@@ -1,0 +1,103 @@
+<x3d width='500px' height='400px'>
+    <scene>
+    
+    <Background skyColor='.2 .2 .5'/>
+    <Viewpoint position="0 0 0"/>
+
+        <transform DEF="testpattern" translation="0 -2 -6" rotation="0 1 0 0">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="texture_rotation_testpattern.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+		<transform DEF="myChildObject" translation="0 2 2" rotation="0 1 0 0">
+			<shape>
+					<Appearance>
+						<Material diffuseColor="1 1 1"/>
+						<ImageTexture url="news_texture_map.jpg" repeatS="TRUE" repeatT="TRUE"/>
+						<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+					</Appearance>
+					<IndexedFaceSet
+						coordIndex='0 1 2 -1    0 3 1 -1'
+						texCoordIndex='0 1 2 -1   0 3 1 -1'
+						normalIndex='0 0 0 -1   0 0 0 -1'
+					>
+						<Coordinate point='-1.2 -1.2 -0.0    1.2 1.2 -0.0    -1.2 1.2 0    1.2 -1.2 0' />
+						<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+						<Normal vector='0 0 1'/>
+					</IndexedFaceSet>
+			</shape>
+		</transform>
+		</transform>
+    
+        <timeSensor DEF="timea" cycleInterval="9" loop="true"></timeSensor>
+        <OrientationInterpolator DEF="rotate" key="0 0.5 1" keyValue="0 1 0 -1.47   0 1 0 0    0 1 0 1.47"></OrientationInterpolator>
+        <Route fromNode="timea" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+        <Route fromNode="rotate" fromField ="value_changed" toNode="testpattern" toField="set_rotation"></Route>
+    
+        <timeSensor DEF="timerChildObj" cycleInterval="3" loop="true"></timeSensor>
+        <Route fromNode="timerChildObj" fromField ="fraction_changed" toNode="rotate" toField="set_fraction"></Route>
+        <Route fromNode="rotate" fromField ="value_changed" toNode="myChildObject" toField="set_rotation"></Route>
+
+
+        <transform DEF="ball" translation="-1.5 1 -7" rotation="0 0 1 .6">
+	        <shape>
+				<Appearance>
+					<Material diffuseColor="1 1 1"/>
+					<ImageTexture url="deedee1.jpg" repeatS="TRUE" repeatT="TRUE"/>
+					<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+				</Appearance>
+				<IndexedFaceSet
+					coordIndex='0 1 2 -1    0 3 1 -1'
+					texCoordIndex='0 1 2 -1   0 3 1 -1'
+					normalIndex='0 0 0 -1   0 0 0 -1'
+				>
+					<Coordinate point='-2.2 -2.2 -0.0    2.2 2.2 -0.0    -2.2 2.2 0    2.2 -2.2 0' />
+					<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+					<Normal vector='0 0 1'/>
+				</IndexedFaceSet>
+	        </shape>
+	        <transform DEF="ballChildObject1" translation="-2 0 -2" rotation="0 0 1 .4">
+		        <shape>
+					<Appearance>
+						<Material diffuseColor="1 1 1"/>
+						<ImageTexture url="pinwheel.jpg" repeatS="TRUE" repeatT="TRUE"/>
+						<TextureTransform center='.5 .5' rotation='0' scale='1 1' translation='0 0'/>
+					</Appearance>
+					<IndexedFaceSet
+						coordIndex='0 1 2 -1    0 3 1 -1'
+						texCoordIndex='0 1 2 -1   0 3 1 -1'
+						normalIndex='0 0 0 -1   0 0 0 -1'
+					>
+						<Coordinate point='-2 -2 0    2 2 0    -2 2 0    2 -2 0' />
+						<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+						<Normal vector='0 0 1'/>
+					</IndexedFaceSet>
+		        </shape>
+	        </transform>
+        </transform>
+    
+        <DirectionalLight color=".8 .9 1" intensity=".8" on="TRUE"/>
+
+        <timeSensor DEF="timeb" cycleInterval="7" loop="true"></timeSensor>
+        <PositionInterpolator DEF="move" key="0 0.5 1" keyValue="5 -6 -8  5 2 -10  5 -6 -8"></PositionInterpolator>
+        <Route fromNode="timeb" fromField ="fraction_changed" toNode="move" toField="set_fraction"></Route>
+        <Route fromNode="move" fromField ="value_changed" toNode="ball" toField="translation"></Route>
+ 
+         <PositionInterpolator DEF="ballChildTranslation" key="0 0.5 1" keyValue="-12 6 -4  -12 -2 -12  -12 6 -4"></PositionInterpolator>
+         <Route fromNode="timeb" fromField ="fraction_changed" toNode="ballChildTranslation" toField="set_fraction"></Route>
+         <Route fromNode="ballChildTranslation" fromField ="value_changed" toNode="ballChildObject1" toField="set_translation"></Route>
+
+    </scene>
+</x3d>
