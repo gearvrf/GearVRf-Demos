@@ -25,7 +25,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class ViewerMain extends GVRMain {
+public class ViewerMain extends GVRScript {
 
     private static final String TAG = "ViewerMain";
 
