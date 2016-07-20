@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' profile='Full' version='3.0' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.0.xsd'>
+  <Scene DEF='scene'>
+
+	<NavigationInfo DEF='NavInfoName' headlight="TRUE" type='"WALK" "ANY"' transitionType='"ANIMATE"' transitionTime='1.0' speed="3" avatarSize = "0.1 0.1 1"/>
+	<Viewpoint position="0 0 0"/>
+
+	<Transform DEF="onlyObj" translation="0 -1 -8" scale="1 1 1">
+		<Shape>
+			<IndexedFaceSet
+				coordIndex='0 1 2 -1    0 3 1 -1'
+				texCoordIndex='0 1 2 -1   0 3 1 -1'
+				normalIndex='0 0 0 -1   0 0 0 -1'
+			>
+				<Coordinate point='-2 -2 -0.0    2 2 -0.0    -2 2 0    2 -2 0' />
+				<TextureCoordinate point='0 0   1 1    0 1   1 0'/>
+				<Normal vector='0 0 1   0 .6 .8'/>
+			</IndexedFaceSet>
+			<Appearance>
+				<ImageTexture url="news_texture_map.jpg" />
+				<Material diffuseColor=".8 .9 1"/>
+			</Appearance>
+		</Shape>
+	</Transform>
+
+    <Transform translation='-3 -3 -5'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 0 0'/>
+        </Appearance>
+        <Cone bottomRadius=".25"/>
+      </Shape>
+    </Transform>
+    <Transform translation='0 -4 -5'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='0 1 0'/>
+        </Appearance>
+        <Box/>
+      </Shape>
+    </Transform>
+    <Transform translation='0 3 -5'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 1 0'/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+    </Transform>
+    <Transform translation='3 -3 -5'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='0 0 1'/>
+        </Appearance>
+        <Cone bottomRadius=".25"/>
+      </Shape>
+    </Transform>
+
+
+    <Transform translation='-5 0 0'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 1 0'/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+    </Transform>    
+
+    <Transform translation='5 0 0'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='1 0 1'/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+    </Transform>    
+
+
+    <Transform translation='0 1 5'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='0 1 1'/>
+        </Appearance>
+        <Cone bottomRadius=".5"/>
+      </Shape>
+    </Transform>
+    <Transform DEF="coneBehind" translation='0 -1 5' rotation="1 0 0 3.14">
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='0 .5 .5'/>
+        </Appearance>
+        <Cone bottomRadius=".5"/>
+      </Shape>
+    </Transform>
+
+    <Transform translation='0 -5 0'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='.5 .5 0'/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+    </Transform>
+
+    <Transform translation='0 5 0'>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor='.75 .75 0'/>
+        </Appearance>
+        <Cylinder/>
+      </Shape>
+    </Transform>
+    
+  </Scene>
+</X3D>
