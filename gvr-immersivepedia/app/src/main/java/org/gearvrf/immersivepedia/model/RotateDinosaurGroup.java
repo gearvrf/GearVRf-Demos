@@ -148,6 +148,8 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 
 	private void stopAnimation() {
 		gvrContext.getAnimationEngine().stop(animation);
+        AudioClip.getInstance(getGVRContext().getContext())
+                .pauseSound(streamID);
 		animation = null;
 		isPlayed = false;
 	}
@@ -208,8 +210,8 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 
 	public void pauseAnimation() {
 		stopAnimation();
-		AudioClip.getInstance(getGVRContext().getContext())
-				.pauseSound(streamID);
+        final PlayPauseButton playPause = totem.getIcon();
+        renderTextureButton(PlayPauseButton.PLAY_NORMAL, playPause);
 		Log.e("test","pause: "+streamID);
 	}
 
