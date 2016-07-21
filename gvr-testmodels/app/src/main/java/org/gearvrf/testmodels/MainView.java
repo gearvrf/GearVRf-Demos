@@ -124,7 +124,7 @@ public class MainView extends GVRMain
     private void getModelList(String directory, ArrayList<String> fileList)
     {
         final String environmentPath = Environment.getExternalStorageDirectory().getPath();
-        String extensions = ".fbx .3des .dae .obj .ma .x3d";
+        String extensions = ".fbx .3ds .dae .obj .ma .x3d";
         File dir = new File(environmentPath + "/" + directory);
 
         if (dir.exists() && dir.isDirectory())

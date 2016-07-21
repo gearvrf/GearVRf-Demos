@@ -3,7 +3,7 @@ importPackage(org.gearvrf.scene_objects);
 
 function onInit(context)
 {
-	var scene = context.getNextMainScene();
+	var scene = context.getMainScene();
 	scene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 	scene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -22,8 +22,7 @@ function onInit(context)
 }
     
 
-function makeBalloon(context)
-{
+function makeBalloon(context) {
 	var sphere = new GVRSphereSceneObject(context, true);
 	var rdata = sphere.getRenderData();
 	var mtl = new GVRMaterial(context);
