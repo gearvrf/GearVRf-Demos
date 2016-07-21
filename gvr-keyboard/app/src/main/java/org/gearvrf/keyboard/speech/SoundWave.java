@@ -89,7 +89,6 @@ public class SoundWave extends GVRSceneObject implements RecognitionRmsChangeLis
         box1.getTransform().setPosition(0 - 0.11f * currentColumn, 0 - 0.11f * currentBox, 0);
         boxes[currentBox] = box1;
         currentBox++;
-        context.getMainScene().addSceneObject(box1);
         return box1;
 
     }
