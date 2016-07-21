@@ -148,4 +148,10 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
     public void onSwipeIgnore() {
     }
 
+    public void pauseVideo() {
+        if (null != videoComponent && videoComponent.isPlaying()) {
+            videoComponent.pauseVideo();
+        }
+    }
+
 }

@@ -217,6 +217,8 @@ public class DinosaurScene extends GVRScene {
 		if (rotateDinosaur.isPlayed) {
 			rotateDinosaur.pauseAnimation();
 		}
-
+        if (null != videoDinosaur) {
+            videoDinosaur.pauseVideo();
+        }
 	}
 }
