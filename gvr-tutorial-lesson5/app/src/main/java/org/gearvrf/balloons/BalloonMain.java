@@ -42,8 +42,10 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.TimerTask;
 import java.util.concurrent.Future;
 import java.io.IOException;
+import java.util.Timer;
 import android.media.SoundPool;
 
 public class BalloonMain extends GVRMain {
@@ -77,6 +79,7 @@ public class BalloonMain extends GVRMain {
     private GVRTextViewSceneObject mScoreBoard;
     private boolean     mGameOver = false;
     private Integer     mScore = 0;
+	private Timer		mTimer;
 
     @Override
     public void onInit(GVRContext context)
@@ -151,6 +154,16 @@ public class BalloonMain extends GVRMain {
         mScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(context, mScene));
         mPickHandler = new PickHandler();
         mScene.getEventReceiver().addListener(mPickHandler);
+		/*
+		 * start the game timer
+		 */
+		mTimer = new Timer();
+		TimerTask gameOver = new TimerTask()
+		{
+			public void run() { gameOver(); }
+		};
+		long oneMinute = 60 * 1000;
+		mTimer.schedule(gameOver, oneMinute);
     }
 
     public void gameOver()
