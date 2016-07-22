@@ -15,11 +15,9 @@
 
 package org.gearvrf.x3ddemo;
 
-import org.gearvrf.GVRActivity;
-//import org.gearvrf.scene_objects.view.GVRView;
-import org.gearvrf.scene_objects.view.GVRWebView;
-
 import android.os.Bundle;
+
+import org.gearvrf.GVRActivity;
 
 public class X3DparserActivity extends GVRActivity {
 
@@ -29,7 +27,7 @@ public class X3DparserActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr_note4.xml");
+        setScript(script, "gvr.xml");
     }
  
 }
