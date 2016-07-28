@@ -538,11 +538,13 @@ public class Main extends GVRMain implements KeyboardEventListener {
     }
 
     public void createAnswer() {
-
         answer = new TextField(mGVRContext, this);
         answer.setSpinner(spinner);
+        final GVRSceneObject parent = spinner.getParent();
+        if (null != parent) {
+            parent.removeChildObject(spinner);
+        }
         answer.addChildObject(spinner);
-
     }
 
     public void createQuestion() {
