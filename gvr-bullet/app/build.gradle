@@ -30,5 +30,7 @@ android {
 }
 
 dependencies {
-    compile files('src/main/libs/bulletjniframework.jar');
+    compile(name:'framework-debug', ext:'aar')
+    compile(name: 'google-vr-base', ext: 'aar')
+    compile(name: 'google-vr-common', ext: 'aar')
 }
