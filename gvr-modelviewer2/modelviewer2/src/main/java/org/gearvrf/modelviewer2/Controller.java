@@ -44,6 +44,8 @@ public class Controller {
     // Variables related to Camera
     private ArrayList<CameraPosition> oDefaultCameraPosition;
     private CameraPosition oCurrentPosition;
+    private boolean lookInsideFlag = false;
+    private Vector3f lookInsidePosition = new Vector3f(0, 1.75f, 0);
 
     // Variables related to Model
     private final String sEnvironmentPath = Environment.getExternalStorageDirectory().getPath();
@@ -381,6 +383,9 @@ public class Controller {
     }
 
     public void setCameraPositionByNavigator(GVREyePointeeHolder picked, GVRScene scene, GVRScene room, GVRWidgetSceneObject widget, float original[]) {
+        if(picked == null)
+            picked = oDefaultCameraPosition.get(0).cameraModel.getEyePointeeHolder();
+
         for (int i = 0; i < oDefaultCameraPosition.size(); i++) {
             if (picked.equals(oDefaultCameraPosition.get(i).cameraModel.getEyePointeeHolder())) {
 
@@ -420,7 +425,27 @@ public class Controller {
             }
         }
     }
+
+    public void lookInside(GVRScene scene, boolean flag){
+        if(flag && (currentDisplayedModel != null)){
+            lookInsideFlag = true;
+            scene.getMainCameraRig().getTransform().setPosition(lookInsidePosition.x, lookInsidePosition.y, lookInsidePosition.z);
+        }
+    }
+
+    public void checkLookInside(GVRScene scene){
+        Log.e("", "Check look insdie");
+        if(lookInsideFlag){
+            Vector3f coord = oCurrentPosition.getCameraPosition();
+            Log.e("", "True Check look insdie" + Float.toString(coord.x) + Float.toString(coord.y) + Float.toString(coord.z));
+            scene.getMainCameraRig().getTransform().setPosition(coord.x, coord.y, coord.z);
+            lookInsideFlag = false;
+        }
+    }
     // END Camera Position Feature
+
+    // START Look Inside
+
 
     // START Models Features
 

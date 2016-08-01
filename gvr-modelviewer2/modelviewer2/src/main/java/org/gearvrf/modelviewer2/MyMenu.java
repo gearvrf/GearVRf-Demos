@@ -240,8 +240,24 @@ public class MyMenu extends GVRWidget {
 
         childTable.row();
 
-        // Slider for Zoom
+
         childTable.row();
+
+        // Check Box For Look Inside
+        final CheckBox lookInsideBox = new CheckBox("Look Inside", skin);
+        lookInsideBox.setChecked(false);
+        lookInsideBox.addListener(new ChangeListener() {
+            public void changed(ChangeEvent event, Actor actor) {
+                mManager.lookInside(lookInsideBox.isChecked());
+                lookInsideBox.setChecked(false);
+            }
+        });
+        lookInsideBox.getLabel().setFontScale(mFontScale);
+        lookInsideBox.getCells().get(0).size(80.0f, 80.0f);
+        childTable.add(lookInsideBox);
+
+
+        // Slider for Zoom
         Slider slider = null;
         slider = new Slider(0, 100, 1, false, skin);
         slider.setName("Zoom");
