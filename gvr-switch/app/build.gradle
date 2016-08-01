@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -14,7 +21,6 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.samsung.android.gvr.sample"
         minSdkVersion 19
         targetSdkVersion 19
     }
@@ -29,6 +35,14 @@ android {
     sourceSets.main {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                     rootProject.name + ".apk")
+        }
     }
 }
 

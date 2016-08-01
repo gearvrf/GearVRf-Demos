@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -15,7 +22,6 @@ android {
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.samsung.android.gvr.sample"
         minSdkVersion 19
         targetSdkVersion 19
     }
