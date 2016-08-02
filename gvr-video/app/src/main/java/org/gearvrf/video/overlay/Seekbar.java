@@ -14,7 +14,7 @@
  */
 
 
-package org.gearvrf.video;
+package org.gearvrf.video.overlay;
 
 import android.annotation.SuppressLint;
 import org.gearvrf.GVRContext;
@@ -156,5 +156,6 @@ public class Seekbar extends GVRSceneObject {
         mPointer.getRenderData().setRenderMask(renderMask);
         mCurrentTime.getRenderData().setRenderMask(renderMask);
         mDuration.getRenderData().setRenderMask(renderMask);
+        mGlow.getRenderData().setRenderMask(renderMask);
     }
 }

@@ -13,22 +13,13 @@
  * limitations under the License.
  */
 
+package org.gearvrf.video.focus;
 
-package org.gearvrf.util;
+import org.gearvrf.video.focus.FocusableSceneObject;
 
-import android.util.Log;
+public interface FocusListener {
 
-public class FPSCounter {
-    private static int frames = 0;
-    private static long startTimeMillis = 0;
-    private static final long interval = 10000;
+    public void gainedFocus(FocusableSceneObject object);
 
-    public static void tick() {
-        ++frames;
-        if (System.currentTimeMillis() - startTimeMillis >= interval) {
-            Log.v("", "FPS : " + frames / (interval / 1000.0f));
-            frames = 0;
-            startTimeMillis = System.currentTimeMillis();
-        }
-    }
+    public void lostFocus(FocusableSceneObject object);
 }
