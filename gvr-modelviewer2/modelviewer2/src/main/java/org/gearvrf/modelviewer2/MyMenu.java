@@ -265,7 +265,7 @@ public class MyMenu extends GVRWidget {
         slider.addListener(new ChangeListener() {
             public void changed(ChangeEvent event, Actor actor) {
                 float value = ((Slider) actor).getValue();
-                Log.e("Abhijit", "Value zoom" + ((Slider) actor).getValue());
+                Log.e("Modelviewer", "Value zoom" + ((Slider) actor).getValue());
 
 
                 mManager.zoomCurrentModel(value);

@@ -477,6 +477,7 @@ public class Controller {
         // Add All the Extensions you want to load
         ArrayList<String> extensions = new ArrayList<String>();
         extensions.add("fbx");
+        extensions.add("FBX");
         extensions.add("3ds");
         extensions.add("dae");
         extensions.add("obj");
