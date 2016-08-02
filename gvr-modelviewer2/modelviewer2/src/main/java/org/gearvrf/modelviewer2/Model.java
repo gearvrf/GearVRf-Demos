@@ -64,7 +64,7 @@ public class Model {
     private void loadModel(GVRContext context) {
         try {
             Log.d(TAG, "Absent so loading" + name);
-            model = context.loadModelFromSD(location + name);
+            model = context.loadModelFromSD(location);
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Unable to load model");

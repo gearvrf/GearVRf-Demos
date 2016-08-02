@@ -471,27 +471,31 @@ public class Controller {
         }
     }
 
-    private ArrayList<String> getListOfModels() {
-        ArrayList<String> listOfAllModels = new ArrayList<String>();
+    private ArrayList<File> getListOfModels() {
+        ArrayList<File> listOfAllModels = new ArrayList<File>();
 
         // Add All the Extensions you want to load
         ArrayList<String> extensions = new ArrayList<String>();
-        extensions.add(".fbx");
-        extensions.add(".3ds");
-        extensions.add(".dae");
-        extensions.add(".obj");
-        extensions.add(".ma");
+        extensions.add("fbx");
+        extensions.add("3ds");
+        extensions.add("dae");
+        extensions.add("obj");
+        extensions.add("ma");
 
         // Reads the List of Files from specified folder having extension specified in extensions.
         // Please place your models by creating GVRModelViewer2 folder in your internal phone memory
         CardReader cRObject = new CardReader(sEnvironmentPath + "/GVRModelViewer2", extensions);
         File list[] = cRObject.getModels();
+
         if (list == null)
             return listOfAllModels;
 
         // Adds all the models
         for (File file : list) {
-            listOfAllModels.add(file.getName());
+            Log.e("path", file.getPath());
+
+            listOfAllModels.add(file);
+
         }
 
         return listOfAllModels;
@@ -499,9 +503,9 @@ public class Controller {
 
     void loadModelsList() {
         aModel = new ArrayList<Model>();
-        ArrayList<String> listOfAllModels = getListOfModels();
-        for (String modelName : listOfAllModels) {
-            Model tempModel = new Model(modelName, "GVRModelViewer2/");
+        ArrayList<File> listOfAllModels = getListOfModels();
+        for (File file : listOfAllModels) {
+            Model tempModel = new Model(file.getName(), file.getPath().replaceAll("/storage/emulated/0/", ""));
             aModel.add(tempModel);
         }
     }
@@ -587,7 +591,7 @@ public class Controller {
     // START SkyBox Features
     void loadSDSkyBoxList() {
         ArrayList<String> extensions = new ArrayList<String>();
-        extensions.add(".png");
+        extensions.add("png");
 
         CardReader cRObject = new CardReader(sEnvironmentPath + "/" + sSDSkyBoxDirectory + "/", extensions);
         File list[] = cRObject.getModels();

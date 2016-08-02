@@ -1,8 +1,14 @@
 package org.gearvrf.modelviewer2;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  /* Copyright 2015 Samsung Electronics Co., LTD
@@ -34,9 +40,12 @@ public class CardReader {
         File directory = new File(myDirectory);
 
         if (directory.exists() && directory.isDirectory()) {
-            FilenameFilter filter = new FilterFiles(myExtension);
-            File list[] = directory.listFiles(filter);
+            String extensions[] = new String[myExtension.size()];
+            myExtension.toArray(extensions);
 
+            List<File> listFiles = (List<File>) FileUtils.listFiles(directory, extensions, true);
+            File list[] = new File[listFiles.size()];
+            listFiles.toArray(list);
             return list;
         }
         return null;
