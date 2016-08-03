@@ -17,6 +17,13 @@
 apply plugin: 'com.android.application'
 apply plugin: XmlValidator
 
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
