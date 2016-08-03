@@ -95,13 +95,13 @@ public class MultiplexMovieTheater extends MovieTheater {
     @Override
     public void switchOnLights() {
         background.getRenderData().getMaterial().setMainTexture(
-                getRenderData().getMaterial().getTexture(RadiosityShader.TEXTURE_ON_KEY));
+                background.getRenderData().getMaterial().getTexture(RadiosityShader.TEXTURE_ON_KEY));
     }
 
     @Override
     public void switchOffLights() {
         background.getRenderData().getMaterial().setMainTexture(
-                getRenderData().getMaterial().getTexture(RadiosityShader.TEXTURE_OFF_KEY));
+                background.getRenderData().getMaterial().getTexture(RadiosityShader.TEXTURE_OFF_KEY));
     }
 
     @Override

@@ -166,6 +166,7 @@ public class VideoControl extends GVRSceneObject {
         MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
+            mMovieManager.getCurrentMovieTheater().switchOffLights();
             return true;
         }
         return false;
@@ -175,6 +176,7 @@ public class VideoControl extends GVRSceneObject {
         MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
+            mMovieManager.getCurrentMovieTheater().switchOnLights();
             return true;
         }
         return false;
