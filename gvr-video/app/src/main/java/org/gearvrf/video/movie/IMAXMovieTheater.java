@@ -86,7 +86,7 @@ public class IMAXMovieTheater extends MovieTheater {
             this.addChildObject(background);
             this.addChildObject(additive);
             this.addChildObject(screen);
-            this.getTransform().setPosition(-3.5f, -0.5f, -0.0f);
+            this.getTransform().setPosition(3.353f, -0.401f, 0.000003f);
             this.getTransform().rotateByAxisWithPivot(90.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         } catch (IOException e) {
             e.printStackTrace();

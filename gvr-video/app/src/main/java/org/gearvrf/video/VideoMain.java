@@ -16,18 +16,14 @@
 package org.gearvrf.video;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.video.focus.FocusableController;
 import org.gearvrf.video.movie.MovieManager;
 import org.gearvrf.video.movie.MovieTheater;
 import org.gearvrf.video.overlay.VideoControl;
-
-import java.io.IOException;
 
 public class VideoMain extends GVRMain {
 
@@ -36,10 +32,8 @@ public class VideoMain extends GVRMain {
     private GVRContext mGVRContext = null;
     private GVRActivity mActivity = null;
 
-    private GVRSceneObject mHeadTracker = null;
-
-    private MovieManager movieManager = null;
-    private VideoControl videoControl = null;
+    private MovieManager mMovieManager = null;
+    private VideoControl mVideoControl = null;
 
     private boolean mIsOverlayVisible = false;
 
@@ -54,48 +48,38 @@ public class VideoMain extends GVRMain {
         GVRScene mainScene = gvrContext.getNextMainScene(new Runnable() {
             @Override
             public void run() {
-                movieManager.getMediaPlayer().start();
+                // else need to manually call play
+                if (mVideoControl != null) {
+                    mVideoControl.playVideo();
+                }
             }
         });
 
-        // head tracker
-        try {
-            mHeadTracker = new GVRSceneObject(mGVRContext, mGVRContext.createQuad(0.5f, 0.5f),
-                    mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, "head-tracker.png")));
-            mHeadTracker.getTransform().setPositionZ(-9.0f);
-            mHeadTracker.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-            mHeadTracker.getRenderData().setDepthTest(false);
-            mHeadTracker.getRenderData().setRenderingOrder(100000);
-            mainScene.getMainCameraRig().addChildObject(mHeadTracker);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         // movie manager
-        movieManager = new MovieManager(mGVRContext);
+        mMovieManager = new MovieManager(mGVRContext);
         // add all theaters to main scene
-        GVRSceneObject theaters[] = movieManager.getAllMovieTheater();
+        GVRSceneObject theaters[] = mMovieManager.getAllMovieTheater();
         for (GVRSceneObject theater : theaters) {
             mainScene.addSceneObject(theater);
             // hide all except active one
-            if (theater != movieManager.getCurrentMovieTheater()) {
+            if (theater != mMovieManager.getCurrentMovieTheater()) {
                 ((MovieTheater)theater).hideCinemaTheater();
             }
         }
 
         // video control
-        videoControl = new VideoControl(gvrContext, movieManager);
-        mainScene.addSceneObject(videoControl);
-        videoControl.hide();
+        mVideoControl = new VideoControl(gvrContext, mMovieManager, mainScene);
+        mainScene.addSceneObject(mVideoControl);
+        mVideoControl.hide();
     }
 
     @Override
     public void onStep() {
-        movieManager.getCurrentMovieTheater().setShaderValues();
+        mMovieManager.getCurrentMovieTheater().setShaderValues();
         if (mGVRContext != null) {
             FocusableController.processFocus(mGVRContext);
             if (mIsOverlayVisible) {
-                videoControl.updateOverlayUI(mGVRContext);
+                mVideoControl.updateOverlayUI(mGVRContext);
             }
         }
     }
@@ -104,27 +88,28 @@ public class VideoMain extends GVRMain {
         if (mGVRContext != null) {
             if (mIsOverlayVisible) {
                 // if overlay is visible, check anything pointed
-                if (FocusableController.processClick(mGVRContext) || videoControl.isOverlayPointed(mGVRContext)) {
+                if (FocusableController.processClick(mGVRContext) || mVideoControl.isOverlayPointed(mGVRContext)) {
                 } else {
-                    videoControl.hide();
-                    mHeadTracker.getRenderData().setRenderMask(0);
+                    mVideoControl.hide();
                     mIsOverlayVisible = false;
                 }
             } else {
                 // overlay is not visible, make it visible
-                videoControl.show();
-                mHeadTracker.getRenderData().setRenderMask(GVRRenderData.GVRRenderMaskBit.Left
-                        | GVRRenderData.GVRRenderMaskBit.Right);
+                mVideoControl.show();
                 mIsOverlayVisible = true;
             }
         }
     }
 
     public void onTouch() {
-        videoControl.processTouch(mGVRContext);
+        if (mGVRContext != null && mVideoControl != null) {
+            mVideoControl.processTouch(mGVRContext);
+        }
     }
 
     public void onPause() {
-        movieManager.getMediaPlayer().pause();
+        if (mGVRContext != null && mVideoControl != null) {
+            mVideoControl.pauseVideo();
+        }
     }
 }

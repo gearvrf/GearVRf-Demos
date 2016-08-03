@@ -20,12 +20,13 @@ import android.media.MediaPlayer;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
-import org.gearvrf.GVRSceneObject;
+import org.gearvrf.utility.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class MovieManager {
+
+    private static final String TAG = "MovieManager";
 
     private MediaPlayer mMediaPlayer = null;
 
@@ -45,7 +46,13 @@ public class MovieManager {
             fileDescriptor.close();
             mMediaPlayer.prepare();
         } catch (IOException e) {
+            Log.e(TAG, "Failed to open the media file");
             e.printStackTrace();
+            mMediaPlayer = null;
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "Failed to prepare media player");
+            e.printStackTrace();
+            mMediaPlayer = null;
         }
 
         // cinemas

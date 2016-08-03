@@ -15,10 +15,14 @@
 
 package org.gearvrf.video.overlay;
 
+import android.media.MediaPlayer;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.utility.Log;
 import org.gearvrf.video.focus.OnClickListener;
 import org.gearvrf.video.movie.MovieManager;
 
@@ -26,6 +30,9 @@ import java.io.IOException;
 
 public class VideoControl extends GVRSceneObject {
 
+    private static final String TAG = "VideoControl";
+
+    private GVRSceneObject mHeadTracker = null;
     private GVRSceneObject mButtonBoard = null;
     private Button mPlayButton = null;
     private Button mPauseButton = null;
@@ -36,10 +43,19 @@ public class VideoControl extends GVRSceneObject {
     private Seekbar mSeekbar = null;
     private MovieManager mMovieManager = null;
 
-    public VideoControl(GVRContext context, final MovieManager movieManager) {
+    public VideoControl(GVRContext context, final MovieManager movieManager, GVRScene mainScene) {
         super(context);
         mMovieManager = movieManager;
         try {
+            // head tracker
+            mHeadTracker = new GVRSceneObject(context, context.createQuad(0.5f, 0.5f),
+                    context.loadTexture(new GVRAndroidResource(context, "head-tracker.png")));
+            mHeadTracker.getTransform().setPositionZ(-9.0f);
+            mHeadTracker.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+            mHeadTracker.getRenderData().setDepthTest(false);
+            mHeadTracker.getRenderData().setRenderingOrder(100000);
+            mainScene.getMainCameraRig().addChildObject(mHeadTracker);
+
             // button board
             mButtonBoard = new GVRSceneObject(context, context.createQuad(8.2f, 1.35f),
                     context.loadTexture(new GVRAndroidResource(context, "button/button-board.png")));
@@ -56,13 +72,13 @@ public class VideoControl extends GVRSceneObject {
             mPlayButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick() {
-                    movieManager.getMediaPlayer().start();
-                    mPlayButton.hide();
-                    mPauseButton.show();
+                    if(playVideo()) {
+                        mPlayButton.hide();
+                        mPauseButton.show();
+                    }
                 }
             });
             addChildObject(mPlayButton);
-            mPlayButton.hide();
 
             // pause
             mPauseButton = new Button(context, context.createQuad(0.7f, 0.7f),
@@ -72,9 +88,10 @@ public class VideoControl extends GVRSceneObject {
             mPauseButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick() {
-                    movieManager.getMediaPlayer().pause();
-                    mPauseButton.hide();
-                    mPlayButton.show();
+                    if(pauseVideo()) {
+                        mPauseButton.hide();
+                        mPlayButton.show();
+                    }
                 }
             });
             addChildObject(mPauseButton);
@@ -87,7 +104,9 @@ public class VideoControl extends GVRSceneObject {
             mFrontButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick() {
-                    movieManager.getMediaPlayer().seekTo(movieManager.getMediaPlayer().getCurrentPosition() + 10000);
+                    if (movieManager.getMediaPlayer() != null) {
+                        movieManager.getMediaPlayer().seekTo(movieManager.getMediaPlayer().getCurrentPosition() + 10000);
+                    }
                 }
             });
             addChildObject(mFrontButton);
@@ -100,7 +119,9 @@ public class VideoControl extends GVRSceneObject {
             mBackButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick() {
-                    movieManager.getMediaPlayer().seekTo(movieManager.getMediaPlayer().getCurrentPosition() - 10000);
+                    if (movieManager.getMediaPlayer() != null) {
+                        movieManager.getMediaPlayer().seekTo(movieManager.getMediaPlayer().getCurrentPosition() - 10000);
+                    }
                 }
             });
             addChildObject(mBackButton);
@@ -136,15 +157,40 @@ public class VideoControl extends GVRSceneObject {
             mSeekbar = new Seekbar(context);
             addChildObject(mSeekbar);
         } catch (IOException e) {
+            Log.e(TAG, "Failed to load resource");
             e.printStackTrace();
         }
     }
 
+    public boolean playVideo() {
+        MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
+        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean pauseVideo() {
+        MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+            return true;
+        }
+        return false;
+    }
+
     public void show() {
+        mHeadTracker.getRenderData().setRenderMask(GVRRenderData.GVRRenderMaskBit.Left
+                | GVRRenderData.GVRRenderMaskBit.Right);
         mButtonBoard.getRenderData().setRenderMask(GVRRenderData.GVRRenderMaskBit.Left
                 | GVRRenderData.GVRRenderMaskBit.Right);
-        mPlayButton.show();
-        mPauseButton.show();
+        MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mPauseButton.show();
+        } else {
+            mPlayButton.show();
+        }
         mFrontButton.show();
         mBackButton.show();
         mImaxButton.show();
@@ -154,6 +200,7 @@ public class VideoControl extends GVRSceneObject {
     }
 
     public void hide() {
+        mHeadTracker.getRenderData().setRenderMask(0);
         mButtonBoard.getRenderData().setRenderMask(0);
         mPlayButton.hide();
         mPauseButton.hide();
@@ -171,8 +218,10 @@ public class VideoControl extends GVRSceneObject {
         } else {
             mSeekbar.unglow();
         }
-        mSeekbar.setTime(context, mMovieManager.getMediaPlayer().getCurrentPosition(),
-                mMovieManager.getMediaPlayer().getDuration());
+        if (mMovieManager.getMediaPlayer() != null) {
+            mSeekbar.setTime(context, mMovieManager.getMediaPlayer().getCurrentPosition(),
+                    mMovieManager.getMediaPlayer().getDuration());
+        }
     }
 
     public boolean isOverlayPointed(GVRContext context) {
@@ -181,7 +230,7 @@ public class VideoControl extends GVRSceneObject {
 
     public void processTouch(GVRContext context) {
         Float seekBarRatio = mSeekbar.getRatio(context.getMainScene().getMainCameraRig().getLookAt());
-        if (seekBarRatio != null) {
+        if (seekBarRatio != null && mMovieManager.getMediaPlayer() != null) {
             int current = (int) (mMovieManager.getMediaPlayer().getDuration() * seekBarRatio);
             mMovieManager.getMediaPlayer().seekTo(current);
             mSeekbar.setTime(context, current, mMovieManager.getMediaPlayer().getDuration());

@@ -117,7 +117,7 @@ public class MultiplexMovieTheater extends MovieTheater {
 
     @Override
     public void setShaderValues() {
-        mTransitionWeight += 0.2f * (mTransitionTarget - mTransitionWeight);
+        mTransitionWeight += 0.1f * (mTransitionTarget - mTransitionWeight);
         mFadeWeight += 0.01f * (mFadeTarget - mFadeWeight);
         background.getRenderData().getMaterial()
                 .setFloat(RadiosityShader.WEIGHT_KEY, 0.1f);
