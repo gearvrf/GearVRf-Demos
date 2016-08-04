@@ -55,7 +55,7 @@ public class Main extends GVRMain {
         gvrContext.getMainScene().addSceneObject(mTextSceneObject);
         mTextSceneObject.getTransform().setPosition(0.0f, -2.0f, -2.5f);
 
-        cube.close();
+        cube.releaseNative();
     }
 
     @Override
