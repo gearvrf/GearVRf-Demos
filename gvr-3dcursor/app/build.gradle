@@ -27,7 +27,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion '23.0.3'
 
     defaultConfig {
@@ -62,6 +62,8 @@ dependencies {
     compile(name:'3DCursorLibrary-debug', ext:'aar')
     compile(name:'GearWearIoDevice-debug', ext:'aar')
     compile(name:'gearwearlibrary-debug', ext:'aar')
+    compile(name: 'google-vr-base', ext: 'aar')
+    compile(name: 'google-vr-common', ext: 'aar')
     //_VENDOR_TODO_ add the device to cube-app here
     //compile project(':IODevices:io_template')
 }
