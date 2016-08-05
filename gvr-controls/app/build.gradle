@@ -17,7 +17,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "23.0.3"
 
     defaultConfig {
@@ -50,4 +50,6 @@ dependencies {
     compile(name:'framework-debug', ext:'aar')
     compile 'com.android.support:support-v4:+'
     compile files('src/main/libs/commons-math3-3.6.1.jar')
+    compile(name: 'google-vr-base', ext: 'aar')
+    compile(name: 'google-vr-common', ext: 'aar')
 }
