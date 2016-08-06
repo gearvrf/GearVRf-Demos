@@ -109,8 +109,7 @@ public class X3DparserScript extends GVRScript
     GVRModelSceneObject model = new GVRModelSceneObject(mGVRContext);
     // X3D test files should be in the assets directory.
     // Replace 'filename' to view another .x3d file
-    //String filename = "navigationinfo.x3d";
-    String filename = "sd:GearVRF/x3d/boxmesh.x3d";
+    String filename = "navigationinfo.x3d";
     try
     {
       GVRCameraRig mainCameraRig = scene.getMainCameraRig();
