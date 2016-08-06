@@ -28,8 +28,7 @@ import org.gearvrf.script.GVRScriptManager;
 
 import android.os.Bundle;
 
-public class GearVRJavascriptActivity extends GVRActivity
-{
+public class GearVRJavascriptActivity extends GVRActivity {
     enum DemoMode {
         USE_SINGLE_SCRIPT,
         USE_SCRIPT_BUNDLE,
@@ -38,53 +37,49 @@ public class GearVRJavascriptActivity extends GVRActivity
     // Set the demo mode here
     DemoMode mode = DemoMode.USE_SCRIPT_BUNDLE;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     */
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         // Instantiate your script class
         // Note: you could just use GVRMain if everything is in lua script
-        GVRMain main = new GearVRJavascriptMain();
+        GearVRJavascriptMain main = new GearVRJavascriptMain();
         setMain(main, "gvr.xml");
- 
+
         GVRScriptManager sm = getGVRContext().getScriptManager();
 
         // Add utils for scripts
         sm.addVariable("utils", new ScriptUtils());
 
         switch (mode) {
-        case USE_SINGLE_SCRIPT: {
-            // Attach a script file directly (without using a GVRScriptBundle)
-            GVRScriptFile scriptFile;
-            try {
-                scriptFile = sm.loadScript(
-                        new GVRAndroidResource(getGVRContext(), "script.js"),
-                        GVRScriptManager.LANG_JAVASCRIPT);
-                sm.attachScriptFile(main, scriptFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (GVRScriptException e) {
-                e.printStackTrace();
+            case USE_SINGLE_SCRIPT: {
+                // Attach a script file directly (without using a GVRScriptBundle)
+                GVRScriptFile scriptFile;
+                try {
+                    scriptFile = sm.loadScript(
+                            new GVRAndroidResource(getGVRContext(), "script.js"),
+                            GVRScriptManager.LANG_JAVASCRIPT);
+                    sm.attachScriptFile(main, scriptFile);
+                } catch (IOException | GVRScriptException e) {
+                    e.printStackTrace();
+                }
+                break;
             }
-            break;
-        }
 
-        case USE_SCRIPT_BUNDLE: {
-            // Load a script bundle
-            GVRScriptBundle scriptBundle;
-            try {
-                scriptBundle = sm.loadScriptBundle("script_bundle.json",
-                        new GVRResourceVolume(getGVRContext(), GVRResourceVolume.VolumeType.ANDROID_ASSETS));
-                sm.bindScriptBundle(scriptBundle, main, true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (GVRScriptException e) {
-                e.printStackTrace();
+            case USE_SCRIPT_BUNDLE: {
+                // Load a script bundle
+                GVRScriptBundle scriptBundle;
+                try {
+                    scriptBundle = sm.loadScriptBundle("script_bundle.json",
+                            new GVRResourceVolume(getGVRContext(), GVRResourceVolume.VolumeType.ANDROID_ASSETS));
+                    sm.bindScriptBundle(scriptBundle, main, true);
+                } catch (IOException | GVRScriptException e) {
+                    e.printStackTrace();
+                }
             }
-            break;
-        }
         }
     }
 }
