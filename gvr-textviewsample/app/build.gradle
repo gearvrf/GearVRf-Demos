@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -10,7 +17,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "23.0.3"
 
     defaultConfig {
@@ -41,7 +48,9 @@ android {
 }
 
 dependencies {
-    compile(name:'framework-debug', ext:'aar')
+    compile(name: 'framework-debug', ext: 'aar')
+    compile(name: 'google-vr-base', ext: 'aar')
+    compile(name: 'google-vr-common', ext: 'aar')
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile fileTree(dir: 'src/main/libs', include: ['*.jar'])
 }
