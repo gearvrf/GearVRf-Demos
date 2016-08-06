@@ -1,5 +1,12 @@
 apply plugin: 'com.android.application'
 
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -10,11 +17,10 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 21
     buildToolsVersion "23.0.3"
 
     defaultConfig {
-        applicationId "com.samsung.android.gvr.sample"
         minSdkVersion 19
         targetSdkVersion 19
     }
@@ -49,4 +55,6 @@ dependencies {
     compile(name:'framework-debug', ext:'aar')
     compile 'com.android.support:support-v4:+'
     compile files('src/main/libs/commons-math3-3.6.1.jar')
+    compile(name: 'google-vr-base', ext: 'aar')
+    compile(name: 'google-vr-common', ext: 'aar')
 }
