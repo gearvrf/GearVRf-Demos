@@ -22,7 +22,7 @@
             colorFormat="DEFAULT"
             depthFormat="DEFAULT"
             fov-y="90.0"
-            multiSamples="1"
+            multiSamples="2"
             resolveDepth="false"            
             resolution="DEFAULT"
             textureFilter="DEFAULT"/>
