@@ -29,11 +29,16 @@ import org.gearvrf.GVRAndroidResource;
 //import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVREventReceiver;
 
+import org.gearvrf.GVRMesh;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
+import org.gearvrf.io.GVRControllerType;
+import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -68,7 +73,7 @@ import org.gearvrf.x3d.*;
 public class X3DparserScript extends GVRScript
 {
 
-  private static final String TAG = "X3D Parser Script";
+  private static final String TAG = X3DparserScript.class.getSimpleName();
   private GVRContext mGVRContext = null;
 
   public GVRAnimationEngine mAnimationEngine;
@@ -95,7 +100,8 @@ public class X3DparserScript extends GVRScript
       {
         for (GVRAnimation animation : mAnimations)
         {
-          animation.start(mAnimationEngine);
+          //Not required
+          //animation.start(mAnimationEngine);
         }
       }
     });
@@ -107,7 +113,7 @@ public class X3DparserScript extends GVRScript
     GVRModelSceneObject model = new GVRModelSceneObject(mGVRContext);
     // X3D test files should be in the assets directory.
     // Replace 'filename' to view another .x3d file
-    String filename = "navigationinfo.x3d";
+    String filename = "touchSensor.x3d";
     try
     {
       GVRCameraRig mainCameraRig = scene.getMainCameraRig();
@@ -128,6 +134,15 @@ public class X3DparserScript extends GVRScript
                                          newtrans.getPositionY(),
                                          newtrans.getPositionZ());
 
+      GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
+              new FutureWrapper<GVRMesh>(mGVRContext.createQuad(1.0f, 1.0f)),
+              mGVRContext.loadFutureTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+      cursor.getTransform().setPosition(0.0f, 0.0f, -10.0f);
+      cursor.getRenderData().setDepthTest(false);
+      cursor.getRenderData().setRenderingOrder(100000);
+
+      mainCameraRig.addChildObject(cursor);
+
       // check if a headlight was attached to the model's camera rig
       // during parsing, as specified by the NavigationInfo node.
       // If 4 objects are attached to the camera rig, one must be the
@@ -141,7 +156,6 @@ public class X3DparserScript extends GVRScript
         headLight.setDiffuseIntensity(1, 1, 1, 1);
         mainCameraRig.addChildObject(headlightSceneObject);
       }
-
     }
     catch (FileNotFoundException e)
     {
@@ -154,6 +168,13 @@ public class X3DparserScript extends GVRScript
     catch (Exception e)
     {
       e.printStackTrace();
+    }
+
+    GVRInputManager inputManager = mGVRContext.getInputManager();
+    for (GVRCursorController controller : inputManager.getCursorControllers()) {
+      if (controller.getControllerType() == GVRControllerType.GAZE) {
+        controller.setPosition(0.0f, 0.0f, -10.0f);
+      }
     }
   } // end onInit()
 
