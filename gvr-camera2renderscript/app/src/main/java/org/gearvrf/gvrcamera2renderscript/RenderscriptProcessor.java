@@ -11,8 +11,8 @@ import android.view.Surface;
 
 public class RenderscriptProcessor 
 {
-	private Allocation mInputAllocation;
-	private Allocation mInterAllocation;
+    private Allocation mInputAllocation;
+    private Allocation mInterAllocation;
     private Allocation mOutputAllocation;
 
     private HandlerThread mProcessingThread;
@@ -26,15 +26,14 @@ public class RenderscriptProcessor
     
     public RenderscriptProcessor(RenderScript rs, int width, int height)
     {
-    	String model = Build.MODEL;
-    	Log.d("MODEL",model);
-    	if( model.contains("SM-G920") || model.contains("SM-G925") || model.contains("SM-G928")
-            || model.contains("SM-G93"))
-    	{
-    		mNeedYuvConversion = true;
-    	}
-    	
-    	Type.Builder yuvTypeBuilder = new Type.Builder(rs, Element.U8_4(rs));
+        String model = Build.MODEL;
+        Log.d("MODEL", model);
+        if (model.contains("SM-G920") || model.contains("SM-G925") || model.contains("SM-G928")
+                || model.contains("SM-G93") || model.contains("SM-N9208")) {
+            mNeedYuvConversion = true;
+        }
+
+        Type.Builder yuvTypeBuilder = new Type.Builder(rs, Element.U8_4(rs));
         yuvTypeBuilder.setX(width);
         yuvTypeBuilder.setY(height);
         yuvTypeBuilder.setYuvFormat(ImageFormat.YUV_420_888);
@@ -45,17 +44,15 @@ public class RenderscriptProcessor
         
         if( mNeedYuvConversion )
         {
-        	mInputAllocation = Allocation.createTyped(rs, yuvTypeBuilder.create(),
-                Allocation.USAGE_IO_INPUT | Allocation.USAGE_SCRIPT);
-        	
+            mInputAllocation = Allocation.createTyped(rs, yuvTypeBuilder.create(),
+                    Allocation.USAGE_IO_INPUT | Allocation.USAGE_SCRIPT);
+
             mInterAllocation = Allocation.createTyped(rs, rgbTypeBuilder.create(),
                     Allocation.USAGE_SCRIPT);
-            
+
             mScriptIntrinsic = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs));
-        }
-        else
-        {
-        	mInputAllocation = Allocation.createTyped(rs, rgbTypeBuilder.create(),
+        } else {
+            mInputAllocation = Allocation.createTyped(rs, rgbTypeBuilder.create(),
                     Allocation.USAGE_IO_INPUT | Allocation.USAGE_SCRIPT);
         }
         
@@ -127,14 +124,13 @@ public class RenderscriptProcessor
 
             if( mNeedYuvConversion )
             {
-	            mScriptIntrinsic.setInput(mInputAllocation);
-	            mScriptIntrinsic.forEach(mInterAllocation);
-	            
-	            mScript.forEach_root(mInterAllocation, mOutputAllocation);
+                mScriptIntrinsic.setInput(mInputAllocation);
+                mScriptIntrinsic.forEach(mInterAllocation);
+
+                mScript.forEach_root(mInterAllocation, mOutputAllocation);
             }
-            else
-            {
-            	mScript.forEach_root(mInputAllocation, mOutputAllocation);
+            else {
+                mScript.forEach_root(mInputAllocation, mOutputAllocation);
             }
 
             mOutputAllocation.ioSend();
