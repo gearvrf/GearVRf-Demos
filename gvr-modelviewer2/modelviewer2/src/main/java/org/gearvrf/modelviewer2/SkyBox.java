@@ -60,7 +60,7 @@ public class SkyBox {
         }
         // create a sphere scene object with the specified texture and triangles facing inward (the 'false' argument)
         sphereObject = new GVRSphereSceneObject(gvrContext, false, texture);
-        sphereObject.getTransform().setScale(2000, 2000, 2000);
+        sphereObject.getTransform().setScale(100, 100, 100);
         return sphereObject;
     }
 

@@ -36,6 +36,6 @@ android {
 
 dependencies {
     compile(name: 'framework-debug', ext: 'aar')
-    compile(name: 'widget_plugin-debug', ext: 'aar')
+    compile(name: 'widgetplugin-debug', ext: 'aar')
     compile files('src/main/assets/commons-io-2.5.jar')
 }
