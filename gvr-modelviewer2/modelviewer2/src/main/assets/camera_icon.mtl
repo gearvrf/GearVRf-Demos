@@ -1,4 +1,3 @@
-# MTL written from D:\projects\UX_Source_Art\gvr-modelviewer2\camera\camera_icon.obj
 newmtl camera
 Kd 1 1 1
 Ns 256
@@ -6,4 +5,3 @@ d 1
 illum 2
 Ka 0 0 0
 Ks 0 0 0
-map_Kd D:\projects\UX_Source_Art\gvr-modelviewer2\camera\camera_icon_diffuse.png

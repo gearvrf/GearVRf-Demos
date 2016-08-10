@@ -413,7 +413,7 @@ public class Controller {
                     room.addSceneObject(oCurrentPosition.loadNavigator(context));
                 }
 
-                Log.e(TAG, "Removing navigator " + Integer.toString(i));
+                Log.i(TAG, "Removing navigator " + Integer.toString(i));
                 room.removeSceneObject(oDefaultCameraPosition.get(i).cameraModel);
                 oCurrentPosition = oDefaultCameraPosition.get(i);
 
@@ -434,10 +434,10 @@ public class Controller {
     }
 
     public void checkLookInside(GVRScene scene){
-        Log.e("", "Check look insdie");
+        Log.i("", "Check look insdie");
         if(lookInsideFlag){
             Vector3f coord = oCurrentPosition.getCameraPosition();
-            Log.e("", "True Check look insdie" + Float.toString(coord.x) + Float.toString(coord.y) + Float.toString(coord.z));
+            Log.i("", "True Check look insdie" + Float.toString(coord.x) + Float.toString(coord.y) + Float.toString(coord.z));
             scene.getMainCameraRig().getTransform().setPosition(coord.x, coord.y, coord.z);
             lookInsideFlag = false;
         }
@@ -493,7 +493,7 @@ public class Controller {
 
         // Adds all the models
         for (File file : list) {
-            Log.e("path", file.getPath());
+            Log.i("path", file.getPath());
 
             listOfAllModels.add(file);
 

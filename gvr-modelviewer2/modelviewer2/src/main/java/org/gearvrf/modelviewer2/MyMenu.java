@@ -292,7 +292,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
             flagForSkyBox = false;
         }
 
@@ -303,7 +303,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
             flagForModels = false;
         }
 
@@ -315,7 +315,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
             flagForCustomShader = false;
         }
 
@@ -331,7 +331,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
             flagForAnimation = false;
         }
 
@@ -342,7 +342,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
 
             list.clear();
             tempActor = mStage.getRoot().findActor("DiffuseType");
@@ -351,7 +351,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
 
             list.clear();
             tempActor = mStage.getRoot().findActor("SpecularType");
@@ -360,7 +360,7 @@ public class MyMenu extends GVRWidget {
             for (int i = 0; i < list.size(); i++)
                 tempList[i] = list.get(i);
 
-            ((SelectBox) tempActor).setItems(tempList);
+            ((SelectBox) tempActor).setItems((Object[])tempList);
 
             flagForLights = false;
         }

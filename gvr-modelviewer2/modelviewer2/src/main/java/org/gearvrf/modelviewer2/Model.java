@@ -80,7 +80,7 @@ public class Model {
         // Adding Pointee to Model
         bv = model.getBoundingVolume();
         float originalRadius = bv.radius;
-        Log.e(TAG, "Radius" + Float.toString(originalRadius));
+        Log.i(TAG, "Radius" + Float.toString(originalRadius));
         Vector3f min_corner = bv.minCorner;
         Vector3f max_corner = bv.maxCorner;
 
@@ -96,7 +96,7 @@ public class Model {
 
         // Load Animations
         animation = model.getAnimations();
-        Log.e(TAG, "Animation" + Integer.toString(animation.size()));
+        Log.i(TAG, "Animation" + Integer.toString(animation.size()));
     }
 
     public List<GVRAnimation> getAnimationsList() {
