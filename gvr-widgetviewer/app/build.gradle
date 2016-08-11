@@ -7,23 +7,9 @@ if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs '../../gearvrf-libs'
-        }
-    }
-}
-
 android {
-    compileSdkVersion 21
-    buildToolsVersion '23.0.3'
-
     defaultConfig {
         applicationId "org.gearvrf.GVRWidgetViewer"
-        minSdkVersion 19
-        targetSdkVersion 19
     }
 
     buildTypes {
@@ -48,8 +34,5 @@ android {
 }
 
 dependencies {
-    compile(name:'framework-debug', ext:'aar')
     compile(name:'widgetplugin-debug', ext:'aar')
-    compile(name: 'google-vr-base', ext: 'aar')
-    compile(name: 'google-vr-common', ext: 'aar')
 }
