@@ -80,6 +80,7 @@ public class BalloonMain extends GVRMain {
     private boolean     mGameOver = false;
     private Integer     mScore = 0;
 	private Timer		mTimer;
+    private GVRPicker   mPicker;
 
     @Override
     public void onInit(GVRContext context)
@@ -151,7 +152,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Respond to picking events
          */
-        mScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(context, mScene));
+        mPicker = new GVRPicker(context, mScene);
         mPickHandler = new PickHandler();
         mScene.getEventReceiver().addListener(mPickHandler);
 		/*

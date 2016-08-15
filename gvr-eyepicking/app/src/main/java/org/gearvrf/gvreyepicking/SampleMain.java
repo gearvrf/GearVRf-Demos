@@ -52,6 +52,7 @@ public class SampleMain extends GVRScript {
     private GVRContext mGVRContext = null;
     private List<GVRSceneObject> mObjects = new ArrayList<GVRSceneObject>();
     private IPickEvents mPickHandler = new PickHandler();
+    private GVRPicker mPicker;
 
     private GVRActivity mActivity;
     
@@ -70,7 +71,7 @@ public class SampleMain extends GVRScript {
         mainScene.getMainCameraRig().getRightCamera()
                 .setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mainScene.getEventReceiver().addListener(mPickHandler);
-        mainScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, mainScene));
+        mPicker = new GVRPicker(gvrContext, mainScene);
 
         /*
          * Adding Boards
