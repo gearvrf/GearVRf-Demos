@@ -7,24 +7,7 @@ if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs '../../gearvrf-libs'
-        }
-    }
-}
-
 android {
-    compileSdkVersion 21
-    buildToolsVersion '23.0.3'
-
-    defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 19
-    }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -47,8 +30,5 @@ android {
 }
 
 dependencies {
-    compile(name:'framework-debug', ext:'aar')
     compile 'com.android.support:support-v4:+'
-    compile(name: 'google-vr-base', ext: 'aar')
-    compile(name: 'google-vr-common', ext: 'aar')
 }

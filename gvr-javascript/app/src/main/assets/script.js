@@ -1,5 +1,6 @@
 importPackage(org.gearvrf)
 importPackage(org.gearvrf.scene_objects)
+importPackage(org.gearvrf.script)
 
 function onInit(gvrf) {
   var mainScene = gvrf.getNextMainScene();
@@ -23,7 +24,8 @@ function onInit(gvrf) {
 
   var textSensor = new GVRBaseSensor(gvrf);
   textView.setSensor(textSensor);
-
+  var script = new GVRScriptBehavior(gvrf, "text.js");
+  textView.attachComponent(script);
   mainScene.addSceneObject(textView);
 
   // Animation
