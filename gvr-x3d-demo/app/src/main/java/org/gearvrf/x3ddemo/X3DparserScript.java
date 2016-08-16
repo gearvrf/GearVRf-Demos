@@ -122,18 +122,6 @@ public class X3DparserScript extends GVRScript
       List<GVRAnimation> animations = model.getAnimations();
       mAnimations = animations;
 
-      GVRTransform newtrans = model.getCameraRig().getTransform();
-
-      int backgroundColor = model.getCameraRig().getLeftCamera()
-          .getBackgroundColor();
-      mainCameraRig.getLeftCamera().setBackgroundColor(backgroundColor);
-      mainCameraRig.getRightCamera().setBackgroundColor(backgroundColor);
-
-      GVRTransform mainCameraRigTransform = mainCameraRig.getTransform();
-      mainCameraRigTransform.setPosition(newtrans.getPositionX(),
-                                         newtrans.getPositionY(),
-                                         newtrans.getPositionZ());
-
       GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
               new FutureWrapper<GVRMesh>(mGVRContext.createQuad(1.0f, 1.0f)),
               mGVRContext.loadFutureTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
