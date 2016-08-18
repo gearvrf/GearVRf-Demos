@@ -46,7 +46,7 @@ of stable frame rate and power saving.
         <eye-buffer-parms
             colorFormat="COLOR_8888"
             depthFormat="DEPTH_24"
-            fov-y="90.0"
+            fov-y="DEFAULT"
             multiSamples="0"
             resolutionWidth="512"
             resolutionHeight="512"

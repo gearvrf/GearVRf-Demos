@@ -43,7 +43,7 @@ consideration on frame rate and power consumption. -->
         <eye-buffer-parms
             colorFormat="COLOR_8888_sRGB"
             depthFormat="DEPTH_24_STENCIL_8"
-            fov-y="90.0"
+            fov-y="DEFAULT"
             multiSamples="4"
             resolutionWidth="1024"            
             resolutionHeight="1024"            

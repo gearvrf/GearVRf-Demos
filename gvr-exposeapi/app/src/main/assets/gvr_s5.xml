@@ -17,5 +17,5 @@
 
 
 <lens name="S5">
-    <scene fov-y="95.0" camera-separation-distance="0.062" fbo-width="1024" fbo-height="1024"/>
+    <scene fov-y="DEFAULT" camera-separation-distance="0.062" fbo-width="1024" fbo-height="1024"/>
 </lens>
