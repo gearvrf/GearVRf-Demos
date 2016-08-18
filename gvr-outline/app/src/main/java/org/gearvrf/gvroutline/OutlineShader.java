@@ -37,10 +37,10 @@ public class OutlineShader extends org.gearvrf.GVRShaderTemplate
 
     private static final String FRAGMENT_SHADER =
               "precision mediump float;\n"
-            + "out vec4 gl_FragColor;\n"
+            + "out vec4 outColor;\n"
             + "uniform vec4  u_color;\n"
             + "void main() {\n"
-            + "  gl_FragColor = u_color;\n"
+            + "  outColor = u_color;\n"
             + "}\n";
 
     public OutlineShader(GVRContext gvrcontext)
