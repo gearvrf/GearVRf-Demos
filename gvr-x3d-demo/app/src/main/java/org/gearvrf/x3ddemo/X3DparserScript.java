@@ -52,6 +52,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.gearvrf.x3d.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
  * 
@@ -113,33 +115,45 @@ public class X3DparserScript extends GVRScript
       GVRCameraRig mainCameraRig = scene.getMainCameraRig();
 
       model = gvrContext.getAssetLoader().loadModel(filename, scene);
+      GVRSceneObject x3dCamera = model.getSceneObjectByName("MainCamera");
+      GVRCameraRig x3dCameraRig = x3dCamera.getCameraRig();
+      GVRTransform x3dCameraTrans = x3dCamera.getTransform();
+      Matrix4f x3dCameraMatrix = x3dCameraTrans.getLocalModelMatrix4f();
+      Matrix4f modelMatrix = model.getTransform().getModelMatrix4f();
+      Vector3f modelPos = new Vector3f();
+      Vector3f camPos = new Vector3f();
       List<GVRAnimation> animations = model.getAnimations();
+      int backgroundColor = x3dCameraRig.getLeftCamera().getBackgroundColor();
+
       mAnimations = animations;
-
-      GVRTransform newtrans = model.getCameraRig().getTransform();
-
-      int backgroundColor = model.getCameraRig().getLeftCamera()
-          .getBackgroundColor();
       mainCameraRig.getLeftCamera().setBackgroundColor(backgroundColor);
       mainCameraRig.getRightCamera().setBackgroundColor(backgroundColor);
+      mainCameraRig.setNearClippingDistance(x3dCameraRig.getNearClippingDistance());
+      mainCameraRig.setFarClippingDistance(x3dCameraRig.getFarClippingDistance());
+      mainCameraRig.getTransform().setModelMatrix(x3dCameraMatrix);
 
-      GVRTransform mainCameraRigTransform = mainCameraRig.getTransform();
-      mainCameraRigTransform.setPosition(newtrans.getPositionX(),
-                                         newtrans.getPositionY(),
-                                         newtrans.getPositionZ());
+      // if the x3D camera is on top of the model
+      // reposition the camera
+      modelMatrix.getTranslation(modelPos);
+      x3dCameraMatrix.getTranslation(camPos);
+      if (modelPos.distance(camPos) < 0.001f)
+      {
+        GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
+        float sf = 1 / bv.radius;
+
+        model.getTransform().setScale(sf, sf, sf);
+        Vector3f pos = new Vector3f(-bv.center.x, -bv.center.y, -bv.center.z);
+        pos.mul(sf);
+        model.getTransform().setPosition(pos.x, pos.y, pos.z - 4.0f);
+      }
 
       // check if a headlight was attached to the model's camera rig
       // during parsing, as specified by the NavigationInfo node.
-      // If 4 objects are attached to the camera rig, one must be the
-      // directionalLight. Thus attach a dirLight to the main camera
-      if (model.getCameraRig().getChildrenCount() > 3)
+      GVRSceneObject headLightSceneObject = model.getSceneObjectByName("HeadLight");
+      if (headLightSceneObject != null)
       {
-        GVRSceneObject headlightSceneObject = new GVRSceneObject(gvrContext);
-        headlightSceneObject.setName("headlightSceneObject");
-        GVRDirectLight headLight = new GVRDirectLight(gvrContext);
-        headlightSceneObject.attachLight(headLight);
-        headLight.setDiffuseIntensity(1, 1, 1, 1);
-        mainCameraRig.addChildObject(headlightSceneObject);
+        headLightSceneObject.getParent().removeChildObject(headLightSceneObject);
+        mainCameraRig.addChildObject(headLightSceneObject);
       }
 
     }

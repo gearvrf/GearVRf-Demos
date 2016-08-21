@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
+import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSceneObject.BoundingVolume;
@@ -34,6 +35,7 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.FileNameUtils;
 import org.gearvrf.utility.Log;
 import org.gearvrf.IAssetEvents;
+import org.joml.Vector3f;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -49,19 +51,19 @@ public class MainView extends GVRMain
             if (model != null)
             {
                 mState = 10;
-                BoundingVolume bv = model.getBoundingVolume();
-                float sf = 1 / (4.0f * bv.radius);
-                model.getTransform().setScale(sf, sf, sf);
-                bv = model.getBoundingVolume();
-                model.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z - 1.5f * bv.radius);
+                if (mCurrentModel != null)
+                {
+                    //mMainScene.removeSceneObject(mCurrentModel);
+                }
+                showModel(model);
                 mMainScene.clear();
                 mCurrentModel = (GVRModelSceneObject) model;
-                if (mMainScene.getLightList().length == 0)
+                if (mCurrentModel.getAllComponents(GVRLightBase.getComponentType()).size() == 0)
                 {
                 	GVRDirectLight headlight = new GVRDirectLight(ctx);
                 	mMainScene.getMainCameraRig().getOwnerObject().attachComponent(headlight);
-                    mMainScene.addSceneObject(model);
                 }
+                mMainScene.addSceneObject(model);
              }
             else
             {
@@ -71,7 +73,18 @@ public class MainView extends GVRMain
         public void onModelError(GVRContext arg0, String arg1, String arg2) { }
         public void onModelLoaded(GVRContext arg0, GVRSceneObject arg1, String arg2) { }
         public void onTextureError(GVRContext arg0, String arg1, String arg2) { }
-        public void onTextureLoaded(GVRContext arg0, GVRTexture arg1, String arg2) { }        
+        public void onTextureLoaded(GVRContext arg0, GVRTexture arg1, String arg2) { }
+
+        private void showModel(GVRSceneObject model)
+        {
+            BoundingVolume bv = model.getBoundingVolume();
+            float sf = 1 / bv.radius;
+
+            model.getTransform().setScale(sf, sf, sf);
+            Vector3f pos = new Vector3f(-bv.center.x, -bv.center.y, -bv.center.z);
+            pos.mul(sf);
+            model.getTransform().setPosition(pos.x, pos.y, pos.z - 4.0f);
+        }
     }
 
     private static final String TAG = Log
@@ -98,6 +111,8 @@ public class MainView extends GVRMain
         mainCameraRig.getLeftCamera().setBackgroundColor(Color.WHITE);
         mainCameraRig.getRightCamera().setBackgroundColor(Color.WHITE);
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
+        mainCameraRig.setNearClippingDistance(0.1f);
+        mainCameraRig.setFarClippingDistance(100.0f);
         mAssetListener = new AssetListener();
     }
 
@@ -159,7 +174,8 @@ public class MainView extends GVRMain
         {
         	if (mState == 2)	// 2 = taking screenshot
         	{
-            	screenShot(mFileName);        		
+            	//screenShot(mFileName);
+                mState = 1;
         	}
         	--mState;
         }
@@ -219,6 +235,6 @@ public class MainView extends GVRMain
                 }
             }   
         };
-        mContext.captureScreenCenter(callback);
+       mContext.captureScreenCenter(callback);
     }
 }
