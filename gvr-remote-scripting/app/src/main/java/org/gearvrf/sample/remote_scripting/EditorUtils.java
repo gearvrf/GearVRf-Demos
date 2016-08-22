@@ -34,11 +34,14 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 
 import java.lang.Runnable;
+import java.util.List;
+
 import android.graphics.Point;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.Display;
 import android.view.InputDevice;
@@ -64,7 +67,6 @@ public class EditorUtils {
     private final static PointerProperties[] pointerProperties;
     private final static PointerCoords[] pointerCoordsArray;
     private final static PointerCoords pointerCoords;
-    private static final int KEY_EVENT = 1;
 
     private static final float QUAD_X = 2.0f;
     private static final float QUAD_Y = 1.0f;
@@ -194,12 +196,29 @@ public class EditorUtils {
         private float savedMotionEventX, savedMotionEventY, savedHitPointX, savedHitPointY;
         @Override
         public void onSensorEvent(final SensorEvent event) {
-            final MotionEvent motionEvent = event.getCursorController().getMotionEvent();
-            if (motionEvent != null && motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                pointerCoords.x = savedHitPointX + ((motionEvent.getX() - savedMotionEventX) * SCALE);
-                pointerCoords.y = savedHitPointY + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+            List<MotionEvent> motionEvents = event.getCursorController().getMotionEvents();
+            for (MotionEvent motionEvent : motionEvents) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                    pointerCoords.x = savedHitPointX
+                            + ((motionEvent.getX() - savedMotionEventX) * SCALE);
+                    pointerCoords.y = savedHitPointY
+                            + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+                } else {
+                    float[] hitPoint = event.getHitPoint();
+                    pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
+                    pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
 
-                final MotionEvent clone = MotionEvent.obtain(
+                    if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                        // save the co ordinates on down
+                        savedMotionEventX = motionEvent.getX();
+                        savedMotionEventY = motionEvent.getY();
+
+                        savedHitPointX = pointerCoords.x;
+                        savedHitPointY = pointerCoords.y;
+                    }
+                }
+
+                MotionEvent clone = MotionEvent.obtain(
                         motionEvent.getDownTime(), motionEvent.getEventTime(),
                         motionEvent.getAction(), 1, pointerProperties,
                         pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
@@ -207,41 +226,7 @@ public class EditorUtils {
 
                 Message message = Message.obtain(mainThreadHandler, 0, 0, 0, clone);
                 mainThreadHandler.sendMessage(message);
-
-            } else {
-                KeyEvent keyEvent = event.getCursorController().getKeyEvent();
-
-                if (keyEvent == null) {
-                    return;
-                }
-
-                float[] hitPoint = event.getHitPoint();
-
-                pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
-                pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
-
-                if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    if (motionEvent != null) {
-                        // save the co ordinates on down
-                        savedMotionEventX = motionEvent.getX();
-                        savedMotionEventY = motionEvent.getY();
-                    }
-                    savedHitPointX = pointerCoords.x;
-                    savedHitPointY = pointerCoords.y;
-                }
-
-                MotionEvent clone = getMotionEvent(keyEvent.getDownTime(), keyEvent.getAction());
-
-                Message message = Message.obtain(mainThreadHandler, KEY_EVENT, keyEvent.getKeyCode(), 0, clone);
-                mainThreadHandler.sendMessage(message);
             }
-        }
-
-        private MotionEvent getMotionEvent(long time, int action) {
-            MotionEvent event = MotionEvent.obtain(time, time, action, 1,
-                    pointerProperties, pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
-                    InputDevice.SOURCE_TOUCHSCREEN, 0);
-            return event;
         }
     };
 
