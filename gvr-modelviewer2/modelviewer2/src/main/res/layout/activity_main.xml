@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="211dp"
+        android:layout_height="wrap_content"
+        android:text="Model Name"
+        android:id="@+id/buttonModelName"
+        android:layout_weight="0.08" />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="197dp"
+        android:layout_height="wrap_content"
+        android:text="Model Name"
+        android:id="@+id/button"
+        android:layout_weight="0.08" />
+
+</LinearLayout>
