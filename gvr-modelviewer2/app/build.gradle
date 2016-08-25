@@ -1,25 +1,13 @@
 apply plugin: 'com.android.application'
 
-allprojects {
-    repositories {
-        jcenter()
-        flatDir {
-            dirs '../../gearvrf-libs'
-        }
-    }
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
 android {
-    compileSdkVersion 19
-    buildToolsVersion "23.0.3"
-
-    defaultConfig {
-        //applicationId "com.samsung.android.gvr.sample"
-        applicationId "org.gearvrf.ModelViewer2Activity"
-        minSdkVersion 19
-        targetSdkVersion 19
-    }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -32,10 +20,17 @@ android {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                     rootProject.name + ".apk")
+        }
+    }
 }
 
 dependencies {
-    compile(name: 'framework-debug', ext: 'aar')
     compile(name: 'widgetplugin-debug', ext: 'aar')
     compile files('src/main/assets/commons-io-2.5.jar')
 }
