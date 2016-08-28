@@ -21,7 +21,7 @@ export GRADLE_HOME="~/mytools/gradle-2.2.1"
 export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools:$NDK_ROOT:$ANT_HOME/bin:$GRADLE_HOME:$PATH"
 ```
 
-* [download the Oculus_Mobile_SDK](https://developer.oculus.com/downloads/mobile/1.0.0.1/Oculus_Mobile_SDK/) and move the relevant jar files into `GearVRf/GVRf/Framework/framework/src/main/libs/`
+* [download the Oculus_Mobile_SDK](https://developer3.oculus.com/downloads/mobile/1.0.3/Oculus_Mobile_SDK/) and move the relevant jar files into `GearVRf/GVRf/Framework/framework/src/main/libs/`
 
 ```
 #edit to use your PATH or make a env variable reference for wherever you unzipped the SDK
