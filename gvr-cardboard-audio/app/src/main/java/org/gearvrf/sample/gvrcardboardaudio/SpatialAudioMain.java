@@ -15,45 +15,39 @@
 
 package org.gearvrf.sample.gvrcardboardaudio;
 
-import java.io.IOException;
-import java.util.concurrent.Future;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.vr.sdk.audio.GvrAudioEngine;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRLight;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRLight;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 
-import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
+import java.io.IOException;
 
 
 public class SpatialAudioMain extends GVRMain
 {
-    private GVRContext gvrContext;
     private GVRCameraRig cameraRig;
     private static final String SOUND_FILE = "cube_sound.wav";
-    private CardboardAudioEngine audioEngine;
-    private volatile int soundId = CardboardAudioEngine.INVALID_ID;
+    private GvrAudioEngine audioEngine;
+    private volatile int soundId = GvrAudioEngine.INVALID_ID;
     private float modelX = 0.0f;
     private float modelY = -1.5f;
     private float modelZ = -9.0f;
     private GVRLight light;
     private static final float LIGHT_Z = 100.0f;
 
-    public SpatialAudioMain(CardboardAudioEngine audioEngine) {
+    public SpatialAudioMain(GvrAudioEngine audioEngine) {
         this.audioEngine = audioEngine;
     }
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        this.gvrContext = gvrContext;
         GVRScene scene = gvrContext.getNextMainScene();
         cameraRig = scene.getMainCameraRig();
 
@@ -116,7 +110,7 @@ public class SpatialAudioMain extends GVRMain
 
     private void updateModelPosition() {
         // Update the sound location to match it with the new cube position.
-        if (soundId != CardboardAudioEngine.INVALID_ID) {
+        if (soundId != GvrAudioEngine.INVALID_ID) {
             audioEngine.setSoundObjectPosition(soundId, modelX, modelY, modelZ);
         }
     }
