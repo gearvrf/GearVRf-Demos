@@ -81,7 +81,4 @@ Demonstrates using a Mouse or Gamepad device with GVRf. The program makes use of
 ###gvr-remote-scripting
 The remote scripting sample enables the debug server and sets up a text object with the ipaddress of the phone so we know where to telnet into.
 
-#Build tips
-
-- OCULUS_SIGS_DIRECTORY<br/>
-You can include this property in your global gradle.properties and specify a path where you have stored your Oculus signature files (oculussig_*). All the signature files in the specified directory will be automatically copied to the sample's assets subdirectory and included in the apk.
+[Build tips](https://github.com/gearvrf/GearVRf-Demos/wiki)
