@@ -37,10 +37,12 @@ public class SpinnerItem extends TextFieldItem {
     public void updateText(GVRContext context) {
         if (cacheTestOn) {
 
-            GVRBitmapTexture tex = new GVRBitmapTexture(context, SpinnerItemFactory.getInstance(
-                    getGVRContext()).getBitmap(charItem.getMode(),
-                    charItem.getPosition()));
-            getRenderData().getMaterial().setMainTexture(tex);
+            if (null != charItem) {
+                GVRBitmapTexture tex = new GVRBitmapTexture(context, SpinnerItemFactory.getInstance(
+                        getGVRContext()).getBitmap(charItem.getMode(),
+                        charItem.getPosition()));
+                getRenderData().getMaterial().setMainTexture(tex);
+            }
 
         } else {
             GVRBitmapTexture tex = new GVRBitmapTexture(context, GVRTextBitmapFactory.create(

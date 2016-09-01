@@ -15,14 +15,15 @@
 
 package org.gearvrf.sample.gvrcardboardaudio;
 
-import android.app.Activity;
 import android.os.Bundle;
+
+import com.google.vr.sdk.audio.GvrAudioEngine;
+
 import org.gearvrf.GVRActivity;
-import com.google.vrtoolkit.cardboard.audio.CardboardAudioEngine;
 
 public class SpatialAudioActivity extends GVRActivity
 {
-    private CardboardAudioEngine cardboardAudioEngine;
+    private GvrAudioEngine cardboardAudioEngine;
 
     /** Called when the activity is first created. */
     @Override
@@ -30,7 +31,7 @@ public class SpatialAudioActivity extends GVRActivity
     {
         super.onCreate(savedInstanceState);
 
-        cardboardAudioEngine = new CardboardAudioEngine(getAssets(), CardboardAudioEngine.RenderingQuality.HIGH);
+        cardboardAudioEngine = new GvrAudioEngine(this, GvrAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
 
         setMain(new SpatialAudioMain(cardboardAudioEngine), "gvr.xml");
     }
