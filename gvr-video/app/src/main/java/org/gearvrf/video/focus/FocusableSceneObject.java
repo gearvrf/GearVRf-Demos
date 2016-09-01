@@ -28,17 +28,14 @@ public class FocusableSceneObject extends GVRSceneObject {
 
     public FocusableSceneObject(GVRContext context) {
         super(context);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public FocusableSceneObject(GVRContext context, GVRMesh mesh, GVRTexture texture) {
         super(context, mesh, texture);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public FocusableSceneObject(GVRContext context, float width, float height, GVRTexture texture) {
         super(context, width, height, texture);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public void setFocusListener(FocusListener focusListener) {

@@ -16,45 +16,52 @@
 package org.gearvrf.video.focus;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IPickEvents;
 
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+public final class FocusableController implements IPickEvents {
 
-public final class FocusableController {
-    public static CopyOnWriteArrayList<FocusableSceneObject> interactiveObjects = new CopyOnWriteArrayList<FocusableSceneObject>();
+    private FocusableSceneObject currentFocused = null;
 
-    public static void processFocus(GVRContext context) {
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
-        ArrayList<FocusableSceneObject> needToDisableFocus = new ArrayList<FocusableSceneObject>();
-        for (FocusableSceneObject obj : interactiveObjects) {
-            needToDisableFocus.add(obj);
-        }
-        for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            for (FocusableSceneObject object : interactiveObjects) {
-                if (holder.getOwnerObject().equals(object)) {
-                    object.setFocus(true);
-                    needToDisableFocus.remove(object);
-                }
-            }
-        }
-        for (FocusableSceneObject obj : needToDisableFocus) {
-            obj.setFocus(false);
+    @Override
+    public void onPick(GVRPicker picker) {
+
+    }
+
+    @Override
+    public void onNoPick(GVRPicker picker) {
+
+    }
+
+    @Override
+    public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
+        if (FocusableSceneObject.class.isAssignableFrom(sceneObj.getClass())) {
+            currentFocused = (FocusableSceneObject)sceneObj;
+            currentFocused.setFocus(true);
         }
     }
 
-    public static boolean processClick(GVRContext context) {
-        boolean result = false;
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
-        for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            for (FocusableSceneObject object : interactiveObjects) {
-                if (holder.getOwnerObject().equals(object)) {
-                    object.dispatchInClick();
-                    result = true;
-                }
-            }
+    @Override
+    public void onExit(GVRSceneObject sceneObj) {
+        if (FocusableSceneObject.class.isAssignableFrom(sceneObj.getClass())) {
+            currentFocused = (FocusableSceneObject)sceneObj;
+            currentFocused.setFocus(false);
         }
-        return result;
+        currentFocused = null;
+    }
+
+    @Override
+    public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
+
+    }
+
+    public boolean processClick(GVRContext context)
+    {
+        if (currentFocused != null) {
+            currentFocused.dispatchInClick();
+            return true;
+        }
+        return false;
     }
 }

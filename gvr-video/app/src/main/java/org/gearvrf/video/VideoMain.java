@@ -18,6 +18,7 @@ package org.gearvrf.video;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.video.focus.FocusableController;
@@ -37,6 +38,9 @@ public class VideoMain extends GVRMain {
 
     private boolean mIsOverlayVisible = false;
 
+    private GVRPicker mPicker = null;
+    private FocusableController focusableController = null;
+
     VideoMain(GVRActivity activity) {
         mActivity = activity;
     }
@@ -55,6 +59,9 @@ public class VideoMain extends GVRMain {
             }
         });
 
+        // focusableController
+        focusableController = new FocusableController();
+
         // movie manager
         mMovieManager = new MovieManager(mGVRContext);
         // add all theaters to main scene
@@ -71,13 +78,16 @@ public class VideoMain extends GVRMain {
         mVideoControl = new VideoControl(gvrContext, mMovieManager, mainScene);
         mainScene.addSceneObject(mVideoControl);
         mVideoControl.hide();
+
+        mPicker = new GVRPicker(gvrContext, mainScene);
+        mainScene.getEventReceiver().addListener(focusableController);
     }
 
     @Override
     public void onStep() {
         mMovieManager.getCurrentMovieTheater().setShaderValues();
         if (mGVRContext != null) {
-            FocusableController.processFocus(mGVRContext);
+            //FocusableController.processFocus(mGVRContext);
             if (mIsOverlayVisible) {
                 mVideoControl.updateOverlayUI(mGVRContext);
             }
@@ -88,7 +98,7 @@ public class VideoMain extends GVRMain {
         if (mGVRContext != null) {
             if (mIsOverlayVisible) {
                 // if overlay is visible, check anything pointed
-                if (FocusableController.processClick(mGVRContext) || mVideoControl.isOverlayPointed(mGVRContext)) {
+                if (focusableController.processClick(mGVRContext) || mVideoControl.isOverlayPointed(mGVRContext)) {
                 } else {
                     mVideoControl.hide();
                     mIsOverlayVisible = false;
