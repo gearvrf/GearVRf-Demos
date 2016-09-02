@@ -17,6 +17,6 @@
 
 
 <lens name="S5">
-    <scene fov-y="95.0" camera-separation-distance="0.0" minimum-pixel-density="0.8"/>
+    <scene fov-y="DEFAULT" camera-separation-distance="0.0" minimum-pixel-density="0.8"/>
     <screen width="1920" height="1080" top-margin="0" bottom-margin="0" center-margin="0" side-margin="0"/>
 </lens>
