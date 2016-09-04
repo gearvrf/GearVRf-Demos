@@ -37,7 +37,7 @@
         <eye-buffer-parms
             colorFormat="COLOR_8888"
             depthFormat="DEPTH_24"
-            fov-y="90.0"
+            fov-y="DEFAULT"
             multiSamples="4"
             resolution="DEFAULT"
             textureFilter="TEXTURE_FILTER_ANISO_4"
