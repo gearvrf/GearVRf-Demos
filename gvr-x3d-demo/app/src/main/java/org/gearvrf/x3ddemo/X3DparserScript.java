@@ -19,44 +19,29 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.gearvrf.FutureWrapper;
-import org.gearvrf.GVRActivity;
-//import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
-//import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVREventReceiver;
 
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshot3DCallback;
 import org.gearvrf.GVRScreenshotCallback;
-import org.gearvrf.GVRScript;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.utility.Threads;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.Environment;
 import android.util.Log;
-
-import org.gearvrf.x3d.*;
 
 /**
  * 
@@ -70,20 +55,12 @@ import org.gearvrf.x3d.*;
  *
  */
 
-public class X3DparserScript extends GVRScript
+public class X3DparserScript extends GVRMain
 {
 
   private static final String TAG = X3DparserScript.class.getSimpleName();
   private GVRContext mGVRContext = null;
-
-  public GVRAnimationEngine mAnimationEngine;
-  public List<GVRAnimation> mAnimations = new ArrayList<GVRAnimation>();
-
-  X3Dobject x3dObject = null;
   GVRScene scene = null;
-
-  public GVRSceneObject currentPickedObject = null;
-  public boolean tappedObject = false;
 
   public X3DparserScript(X3DparserActivity activity)
   {
@@ -93,34 +70,19 @@ public class X3DparserScript extends GVRScript
   {
     mGVRContext = gvrContext;
 
-    scene = gvrContext.getNextMainScene(new Runnable()
-    {
-      @Override
-      public void run()
-      {
-        for (GVRAnimation animation : mAnimations)
-        {
-          //Not required
-          //animation.start(mAnimationEngine);
-        }
-      }
-    });
-
-    mAnimationEngine = gvrContext.getAnimationEngine();
+    scene = gvrContext.getNextMainScene();
     scene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
     scene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
 
     GVRModelSceneObject model = new GVRModelSceneObject(mGVRContext);
     // X3D test files should be in the assets directory.
     // Replace 'filename' to view another .x3d file
-    String filename = "touchSensor.x3d";
+    String filename = "cylindersandplanes.x3d";
     try
     {
       GVRCameraRig mainCameraRig = scene.getMainCameraRig();
 
       model = gvrContext.getAssetLoader().loadModel(filename, scene);
-      List<GVRAnimation> animations = model.getAnimations();
-      mAnimations = animations;
 
       GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
               new FutureWrapper<GVRMesh>(mGVRContext.createQuad(1.0f, 1.0f)),
