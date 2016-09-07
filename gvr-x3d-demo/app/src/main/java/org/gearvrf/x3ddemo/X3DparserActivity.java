@@ -21,13 +21,12 @@ import org.gearvrf.GVRActivity;
 
 public class X3DparserActivity extends GVRActivity {
 
-    X3DparserScript script = new X3DparserScript(this);
-
+    X3DparserScript x3dParserScript = new X3DparserScript(this);
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(script, "gvr.xml");
+        setMain(x3dParserScript, "gvr.xml");
     }
  
 }
