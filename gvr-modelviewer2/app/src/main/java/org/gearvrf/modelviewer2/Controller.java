@@ -482,6 +482,7 @@ public class Controller {
         extensions.add("dae");
         extensions.add("obj");
         extensions.add("ma");
+        extensions.add("x3d");
 
         // Reads the List of Files from specified folder having extension specified in extensions.
         // Please place your models by creating GVRModelViewer2 folder in your internal phone memory
