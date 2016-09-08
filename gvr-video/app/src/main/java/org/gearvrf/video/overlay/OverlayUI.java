@@ -28,9 +28,9 @@ import org.gearvrf.video.movie.MovieManager;
 
 import java.io.IOException;
 
-public class VideoControl extends GVRSceneObject {
+public class OverlayUI extends GVRSceneObject {
 
-    private static final String TAG = "VideoControl";
+    private static final String TAG = "OverlayUI";
 
     private GVRSceneObject mHeadTracker = null;
     private GVRSceneObject mButtonBoard = null;
@@ -43,7 +43,7 @@ public class VideoControl extends GVRSceneObject {
     private Seekbar mSeekbar = null;
     private MovieManager mMovieManager = null;
 
-    public VideoControl(GVRContext context, final MovieManager movieManager, GVRScene mainScene) {
+    public OverlayUI(GVRContext context, final MovieManager movieManager, GVRScene mainScene) {
         super(context);
         mMovieManager = movieManager;
         try {

@@ -24,17 +24,15 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.video.focus.FocusableController;
 import org.gearvrf.video.movie.MovieManager;
 import org.gearvrf.video.movie.MovieTheater;
-import org.gearvrf.video.overlay.VideoControl;
+import org.gearvrf.video.overlay.OverlayUI;
 
 public class VideoMain extends GVRMain {
-
-    private static final String TAG = "VideoMain";
 
     private GVRContext mGVRContext = null;
     private GVRActivity mActivity = null;
 
     private MovieManager mMovieManager = null;
-    private VideoControl mVideoControl = null;
+    private OverlayUI mOverlayUI = null;
 
     private boolean mIsOverlayVisible = false;
 
@@ -49,15 +47,7 @@ public class VideoMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene mainScene = gvrContext.getNextMainScene(new Runnable() {
-            @Override
-            public void run() {
-                // else need to manually call play
-                if (mVideoControl != null) {
-                    mVideoControl.playVideo();
-                }
-            }
-        });
+        GVRScene mainScene = gvrContext.getNextMainScene();
 
         // focusableController
         focusableController = new FocusableController();
@@ -75,9 +65,9 @@ public class VideoMain extends GVRMain {
         }
 
         // video control
-        mVideoControl = new VideoControl(gvrContext, mMovieManager, mainScene);
-        mainScene.addSceneObject(mVideoControl);
-        mVideoControl.hide();
+        mOverlayUI = new OverlayUI(gvrContext, mMovieManager, mainScene);
+        mainScene.addSceneObject(mOverlayUI);
+        mOverlayUI.hide();
 
         mPicker = new GVRPicker(gvrContext, mainScene);
         mainScene.getEventReceiver().addListener(focusableController);
@@ -87,39 +77,38 @@ public class VideoMain extends GVRMain {
     public void onStep() {
         mMovieManager.getCurrentMovieTheater().setShaderValues();
         if (mGVRContext != null) {
-            //FocusableController.processFocus(mGVRContext);
             if (mIsOverlayVisible) {
-                mVideoControl.updateOverlayUI(mGVRContext);
+                mOverlayUI.updateOverlayUI(mGVRContext);
             }
         }
     }
 
     public void onTap() {
-        if (mGVRContext != null) {
+        if (mGVRContext != null && mOverlayUI != null) {
             if (mIsOverlayVisible) {
                 // if overlay is visible, check anything pointed
-                if (focusableController.processClick(mGVRContext) || mVideoControl.isOverlayPointed(mGVRContext)) {
+                if (focusableController.processClick(mGVRContext) || mOverlayUI.isOverlayPointed(mGVRContext)) {
                 } else {
-                    mVideoControl.hide();
+                    mOverlayUI.hide();
                     mIsOverlayVisible = false;
                 }
             } else {
                 // overlay is not visible, make it visible
-                mVideoControl.show();
+                mOverlayUI.show();
                 mIsOverlayVisible = true;
             }
         }
     }
 
     public void onTouch() {
-        if (mGVRContext != null && mVideoControl != null) {
-            mVideoControl.processTouch(mGVRContext);
+        if (mGVRContext != null && mOverlayUI != null) {
+            mOverlayUI.processTouch(mGVRContext);
         }
     }
 
     public void onPause() {
-        if (mGVRContext != null && mVideoControl != null) {
-            mVideoControl.pauseVideo();
+        if (mGVRContext != null && mOverlayUI != null) {
+            mOverlayUI.pauseVideo();
         }
     }
 }

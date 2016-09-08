@@ -44,6 +44,13 @@ public class MovieManager {
             mMediaPlayer.setDataSource(fileDescriptor.getFileDescriptor(),
                     fileDescriptor.getStartOffset(), fileDescriptor.getLength());
             fileDescriptor.close();
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    Log.d(TAG, "onPrepared");
+                    mMediaPlayer.start();
+                }
+            });
             mMediaPlayer.prepare();
         } catch (IOException e) {
             Log.e(TAG, "Failed to open the media file");
