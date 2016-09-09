@@ -178,6 +178,16 @@ public class Minimal360VideoActivity extends GVRActivity {
             public boolean canReleaseSurfaceImmediately() {
                 return false;
             }
+
+            @Override
+            public void pause() {
+                player.setPlayWhenReady(false);
+            }
+
+            @Override
+            public void start() {
+                player.setPlayWhenReady(true);
+            }
         };
     }
 
