@@ -1,6 +1,5 @@
 package org.gearvrf.modelviewer2;
 
-
 import android.graphics.Color;
 import android.os.Environment;
 import android.util.Log;
@@ -93,6 +92,12 @@ public class Controller {
     private void loadLights() {
         oLight = new Lights();
         oLight.createLight(context);
+
+        //Add white light source
+        oLight.addAmbient(0.5f, 0.5f, 0.5f, 0.5f);
+        oLight.addDiffuse(0.5f, 0.5f, 0.5f, 0.5f);
+        oLight.addSpecular(0.5f, 0.5f, 0.5f, 0.5f);
+        
         // Add Ambient
         oLight.addAmbient(0.3f, 0.0f, 0.0f, 0.5f);
 
@@ -111,7 +116,6 @@ public class Controller {
         // Add Specular
         oLight.addSpecular(0.0f, 0.0f, 0.5f, 0.5f);
 
-
         // Add Ambient
         oLight.addAmbient(0.0f, 0.3f, 0.0f, 0.5f);
 
@@ -125,7 +129,9 @@ public class Controller {
     public ArrayList<String> getAmbient() {
         ArrayList<String> list = new ArrayList<String>();
         for (Vector4f grbaValue : oLight.getAmbient()) {
-            String sPosition = "R:" + Float.toString(grbaValue.x) + " G:" + Float.toString(grbaValue.y) + " B:" + Float.toString(grbaValue.z) + " A:" + Float.toString(grbaValue.w);
+            String sPosition = "R:" + Float.toString(grbaValue.x) + " G:" + Float.toString
+                    (grbaValue.y) + " B:" + Float.toString(grbaValue.z) + " A:" + Float.toString
+                    (grbaValue.w);
             list.add(sPosition);
         }
         return list;
@@ -134,7 +140,9 @@ public class Controller {
     public ArrayList<String> getDiffuse() {
         ArrayList<String> list = new ArrayList<String>();
         for (Vector4f grbaValue : oLight.getDiffuse()) {
-            String sPosition = "R:" + Float.toString(grbaValue.x) + " G:" + Float.toString(grbaValue.y) + " B:" + Float.toString(grbaValue.z) + " A:" + Float.toString(grbaValue.w);
+            String sPosition = "R:" + Float.toString(grbaValue.x) + " G:" + Float.toString
+                    (grbaValue.y) + " B:" + Float.toString(grbaValue.z) + " A:" + Float.toString
+                    (grbaValue.w);
             list.add(sPosition);
         }
         return list;
@@ -143,7 +151,9 @@ public class Controller {
     public ArrayList<String> getSpecular() {
         ArrayList<String> list = new ArrayList<String>();
         for (Vector4f grbaValue : oLight.getSpecular()) {
-            String sPosition = "R:" + Float.toString(grbaValue.x) + " G:" + Float.toString(grbaValue.y) + " B:" + Float.toString(grbaValue.z) + " A:" + Float.toString(grbaValue.w);
+            String sPosition = "R:" + Float.toString(grbaValue.x) + " G:" + Float.toString
+                    (grbaValue.y) + " B:" + Float.toString(grbaValue.z) + " A:" + Float.toString
+                    (grbaValue.w);
             list.add(sPosition);
         }
         return list;
@@ -178,7 +188,6 @@ public class Controller {
                 } else {
                     r.disableLight();
                 }
-
             }
         }
     }
@@ -202,7 +211,6 @@ public class Controller {
     }
     // END Lights
 
-
     // START Custom Shader Feature
     private void loadCustomShaderList() {
         aSCustomShaderList = new ArrayList<String>();
@@ -221,7 +229,8 @@ public class Controller {
     public void applyCustomShader(int index, GVRScene scene) {
         if (currentDisplayedModel == null)
             return;
-        ArrayList<GVRRenderData> renderDatas = currentDisplayedModel.getModel(context).getAllComponents(GVRRenderData.getComponentType());
+        ArrayList<GVRRenderData> renderDatas = currentDisplayedModel.getModel(context)
+                .getAllComponents(GVRRenderData.getComponentType());
         GVRMaterial outlineMaterial = new GVRMaterial(context);
 
         switch (index) {
@@ -282,14 +291,17 @@ public class Controller {
     // START Banner Feature
     void displayCountInRoom(GVRScene room) {
         if (oBannerCount == null) {
-            oBannerCount = new Banner(context, "Total Models " + String.valueOf(aModel.size()), 10, Color.BLUE, defaultCenterPosition.x - 2, defaultCenterPosition.y + 5, defaultCenterPosition.z);
+            oBannerCount = new Banner(context, "Total Models " + String.valueOf(aModel.size()),
+                    10, Color.BLUE, defaultCenterPosition.x - 2, defaultCenterPosition.y + 5,
+                    defaultCenterPosition.z);
         }
         room.addSceneObject(oBannerCount.getBanner());
     }
 
     void displayLoadingInRoom(GVRScene room) {
         if (oBannerLoading == null) {
-            oBannerLoading = new Banner(context, "Loading", 10, Color.BLUE, defaultCenterPosition.x, defaultCenterPosition.y, defaultCenterPosition.z);
+            oBannerLoading = new Banner(context, "Loading", 10, Color.BLUE, defaultCenterPosition
+                    .x, defaultCenterPosition.y, defaultCenterPosition.z);
         }
         room.addSceneObject(oBannerLoading.getBanner());
     }
@@ -302,36 +314,42 @@ public class Controller {
     }
     // END Banner Feature
 
-
     // START Camera Position Feature
     private void loadCameraPositionList() {
         oDefaultCameraPosition = new ArrayList<CameraPosition>();
 
         int offset = 15;
         // User Position Or Front
-        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x, defaultCenterPosition.y + 5, defaultCenterPosition.z + offset, 0, 0, 0, 0));
+        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x,
+                defaultCenterPosition.y + 5, defaultCenterPosition.z + offset, 0, 0, 0, 0));
 
         // Top
-        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x, defaultCenterPosition.y + offset, defaultCenterPosition.z, -90, 1, 0, 0));
+        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x,
+                defaultCenterPosition.y + offset, defaultCenterPosition.z, -90, 1, 0, 0));
 
         // Bottom
-        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x, defaultCenterPosition.y - offset, defaultCenterPosition.z, 90, 1, 0, 0));
+        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x,
+                defaultCenterPosition.y - offset, defaultCenterPosition.z, 90, 1, 0, 0));
 
         // Back
-        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x, defaultCenterPosition.y + 5, defaultCenterPosition.z - offset, 180, 0, 1, 0));
+        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x,
+                defaultCenterPosition.y + 5, defaultCenterPosition.z - offset, 180, 0, 1, 0));
 
         // Left
-        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x - offset, defaultCenterPosition.y + 5, defaultCenterPosition.z, -90, 0, 1, 0));
+        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x - offset,
+                defaultCenterPosition.y + 5, defaultCenterPosition.z, -90, 0, 1, 0));
 
         // Right
-        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x + offset, defaultCenterPosition.y + 5, defaultCenterPosition.z, 90, 0, 1, 0));
+        oDefaultCameraPosition.add(new CameraPosition(defaultCenterPosition.x + offset,
+                defaultCenterPosition.y + 5, defaultCenterPosition.z, 90, 0, 1, 0));
     }
 
     public ArrayList<String> getCameraPositionList() {
         ArrayList<String> list = new ArrayList<String>();
         for (CameraPosition position : oDefaultCameraPosition) {
             Vector3f coordinate = position.getCameraPosition();
-            String sPosition = "X:" + Float.toString(coordinate.x) + " Y:" + Float.toString(coordinate.y) + " Z:" + Float.toString(coordinate.z);
+            String sPosition = "X:" + Float.toString(coordinate.x) + " Y:" + Float.toString
+                    (coordinate.y) + " Z:" + Float.toString(coordinate.z);
             list.add(sPosition);
         }
         return list;
@@ -347,16 +365,18 @@ public class Controller {
         }
     }
 
-    protected void lookAt(GVRTransform modeltransform, GVRTransform camera, GVRModelSceneObject mCharacter) {
-        Vector3f cameraV = new Vector3f(camera.getPositionX(), camera.getPositionY(), camera.getPositionZ());
+    protected void lookAt(GVRTransform modeltransform, GVRTransform camera, GVRModelSceneObject
+            mCharacter) {
+        Vector3f cameraV = new Vector3f(camera.getPositionX(), camera.getPositionY(), camera
+                .getPositionZ());
 
-        Vector3f modeltransformV = new Vector3f(modeltransform.getPositionX(), modeltransform.getPositionY(), modeltransform.getPositionZ());
+        Vector3f modeltransformV = new Vector3f(modeltransform.getPositionX(), modeltransform
+                .getPositionY(), modeltransform.getPositionZ());
 
         Vector3f delta = cameraV.sub(modeltransformV);
         Vector3f direction = delta.normalize();
 
         Vector3f up;
-
 
         if (Math.abs(direction.x) < 0.00001
                 && Math.abs(direction.z) < 0.00001) {
@@ -378,12 +398,14 @@ public class Controller {
 
         float[] matrix = new float[]{right.x, right.y, right.z, 0.0f, up.x, up.y,
                 up.z, 0.0f, direction.x, direction.y, direction.z, 0.0f,
-                modeltransform.getPositionX(), modeltransform.getPositionY(), modeltransform.getPositionZ(), 0.0f};
+                modeltransform.getPositionX(), modeltransform.getPositionY(), modeltransform
+                .getPositionZ(), 0.0f};
         mCharacter.getTransform().setModelMatrix(matrix);
     }
 
-    public void setCameraPositionByNavigator(GVREyePointeeHolder picked, GVRScene scene, GVRScene room, GVRWidgetSceneObject widget, float original[]) {
-        if(picked == null)
+    public void setCameraPositionByNavigator(GVREyePointeeHolder picked, GVRScene scene, GVRScene
+            room, GVRWidgetSceneObject widget, float original[]) {
+        if (picked == null)
             picked = oDefaultCameraPosition.get(0).cameraModel.getEyePointeeHolder();
 
         for (int i = 0; i < oDefaultCameraPosition.size(); i++) {
@@ -394,7 +416,8 @@ public class Controller {
                 widget.getTransform().setModelMatrix(original);
                 oDefaultCameraPosition.get(i).cameraModel.addChildObject(widget);
                 Vector3f axis = oDefaultCameraPosition.get(i).getRotationAxis();
-                oDefaultCameraPosition.get(i).cameraModel.getTransform().setRotationByAxis(oDefaultCameraPosition.get(i).getCameraAngle(), axis.x, axis.y, axis.z);
+                oDefaultCameraPosition.get(i).cameraModel.getTransform().setRotationByAxis
+                        (oDefaultCameraPosition.get(i).getCameraAngle(), axis.x, axis.y, axis.z);
 
                 float temp[] = widget.getTransform().getModelMatrix();
                 widget.getTransform().setModelMatrix(temp);
@@ -404,10 +427,12 @@ public class Controller {
                 // END Code to Attach Menu According to Camera Position
 
                 Vector3f coordinates = oDefaultCameraPosition.get(i).getCameraPosition();
-                scene.getMainCameraRig().getTransform().setPosition(coordinates.x, coordinates.y, coordinates.z);
+                scene.getMainCameraRig().getTransform().setPosition(coordinates.x, coordinates.y,
+                        coordinates.z);
 
                 axis = oDefaultCameraPosition.get(i).getRotationAxis();
-                scene.getMainCameraRig().getTransform().setRotationByAxis(oDefaultCameraPosition.get(i).getCameraAngle(), axis.x, axis.y, axis.z);
+                scene.getMainCameraRig().getTransform().setRotationByAxis(oDefaultCameraPosition
+                        .get(i).getCameraAngle(), axis.x, axis.y, axis.z);
 
                 if (oCurrentPosition != null) {
                     room.addSceneObject(oCurrentPosition.loadNavigator(context));
@@ -419,25 +444,29 @@ public class Controller {
 
                 for (int j = 0; j < oDefaultCameraPosition.size(); j++) {
                     if (j != i)
-                        lookAt(oDefaultCameraPosition.get(j).cameraModel.getTransform(), scene.getMainCameraRig().getTransform(), oDefaultCameraPosition.get(j).cameraModel);
+                        lookAt(oDefaultCameraPosition.get(j).cameraModel.getTransform(), scene
+                                .getMainCameraRig().getTransform(), oDefaultCameraPosition.get(j)
+                                .cameraModel);
                 }
                 break;
             }
         }
     }
 
-    public void lookInside(GVRScene scene, boolean flag){
-        if(flag && (currentDisplayedModel != null)){
+    public void lookInside(GVRScene scene, boolean flag) {
+        if (flag && (currentDisplayedModel != null)) {
             lookInsideFlag = true;
-            scene.getMainCameraRig().getTransform().setPosition(lookInsidePosition.x, lookInsidePosition.y, lookInsidePosition.z);
+            scene.getMainCameraRig().getTransform().setPosition(lookInsidePosition.x,
+                    lookInsidePosition.y, lookInsidePosition.z);
         }
     }
 
-    public void checkLookInside(GVRScene scene){
+    public void checkLookInside(GVRScene scene) {
         Log.i("", "Check look insdie");
-        if(lookInsideFlag){
+        if (lookInsideFlag) {
             Vector3f coord = oCurrentPosition.getCameraPosition();
-            Log.i("", "True Check look insdie" + Float.toString(coord.x) + Float.toString(coord.y) + Float.toString(coord.z));
+            Log.i("", "True Check look insdie" + Float.toString(coord.x) + Float.toString(coord
+                    .y) + Float.toString(coord.z));
             scene.getMainCameraRig().getTransform().setPosition(coord.x, coord.y, coord.z);
             lookInsideFlag = false;
         }
@@ -445,7 +474,6 @@ public class Controller {
     // END Camera Position Feature
 
     // START Look Inside
-
 
     // START Models Features
 
@@ -464,7 +492,8 @@ public class Controller {
             }
         } else {
             index -= 1;
-            if (currentDisplayedModel != null && currentDisplayedModel.getAnimationsList().size() > 0)
+            if (currentDisplayedModel != null && currentDisplayedModel.getAnimationsList().size()
+                    > 0)
                 currentAnimation = currentDisplayedModel.getAnimationsList().get(index);
             currentAnimation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
             context.getAnimationEngine().start(currentAnimation);
@@ -497,7 +526,6 @@ public class Controller {
             Log.i("path", file.getPath());
 
             listOfAllModels.add(file);
-
         }
 
         return listOfAllModels;
@@ -507,7 +535,8 @@ public class Controller {
         aModel = new ArrayList<Model>();
         ArrayList<File> listOfAllModels = getListOfModels();
         for (File file : listOfAllModels) {
-            Model tempModel = new Model(file.getName(), file.getPath().replaceAll("/storage/emulated/0/", ""));
+            Model tempModel = new Model(file.getName(), file.getPath().replaceAll
+                    ("/storage/emulated/0/", ""));
             aModel.add(tempModel);
         }
     }
@@ -531,7 +560,8 @@ public class Controller {
 
         Log.d(TAG, "Loading Done");
         if (tempModelSO != null) {
-            tempModelSO.getTransform().setPosition(defaultCenterPosition.x, defaultCenterPosition.y, defaultCenterPosition.z);
+            tempModelSO.getTransform().setPosition(defaultCenterPosition.x, defaultCenterPosition
+                    .y, defaultCenterPosition.z);
             room.addSceneObject(tempModelSO);
             room.bindShaders();
             enableDisableLightOnModel(tempModelSO, oLightFlag);
@@ -553,11 +583,12 @@ public class Controller {
             if (holder == currentDisplayedModel.getModel(context).getEyePointeeHolder()) {
                 Log.d(TAG, "Angle mover applied");
                 if (scrollValue > 0)
-                    animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel(context), 0.1f, 35, 0, 1, 0).start(context.getAnimationEngine());
+                    animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
+                            (context), 0.1f, 35, 0, 1, 0).start(context.getAnimationEngine());
                 else
-                    animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel(context), 0.1f, 35, 0, -1, 0).start(context.getAnimationEngine());
+                    animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
+                            (context), 0.1f, 35, 0, -1, 0).start(context.getAnimationEngine());
             }
-
         }
     }
 
@@ -573,7 +604,8 @@ public class Controller {
                     float x = currentDisplayedModel.getModel(context).getTransform().getScaleX();
                     float y = currentDisplayedModel.getModel(context).getTransform().getScaleY();
                     float z = currentDisplayedModel.getModel(context).getTransform().getScaleZ();
-                    currentDisplayedModel.getModel(context).getTransform().setScale(sf * x, sf * y, sf * z);
+                    currentDisplayedModel.getModel(context).getTransform().setScale(sf * x, sf *
+                            y, sf * z);
                 }
             } else {
                 float scaleFactor = units - zTransform;
@@ -582,7 +614,8 @@ public class Controller {
                     float x = currentDisplayedModel.getModel(context).getTransform().getScaleX();
                     float y = currentDisplayedModel.getModel(context).getTransform().getScaleY();
                     float z = currentDisplayedModel.getModel(context).getTransform().getScaleZ();
-                    currentDisplayedModel.getModel(context).getTransform().setScale(sf * x, sf * y, sf * z);
+                    currentDisplayedModel.getModel(context).getTransform().setScale(sf * x, sf *
+                            y, sf * z);
                 }
             }
             currentDisplayedModel.setCurrentZoom(zTransform);
@@ -595,7 +628,8 @@ public class Controller {
         ArrayList<String> extensions = new ArrayList<String>();
         extensions.add("png");
 
-        CardReader cRObject = new CardReader(sEnvironmentPath + "/" + sSDSkyBoxDirectory + "/", extensions);
+        CardReader cRObject = new CardReader(sEnvironmentPath + "/" + sSDSkyBoxDirectory + "/",
+                extensions);
         File list[] = cRObject.getModels();
 
         aOSDSkyBox = new ArrayList<SkyBox>();
@@ -642,18 +676,19 @@ public class Controller {
         if (index < count) {
             current = aODefaultSkyBox.get(index).getSkyBox(context, sDefaultSkyBoxDirectory + "/");
         } else {
-            current = aOSDSkyBox.get(index - count).getSkyBoxFromSD(context, sEnvironmentPath + "/" + sSDSkyBoxDirectory + "/");
+            current = aOSDSkyBox.get(index - count).getSkyBoxFromSD(context, sEnvironmentPath +
+                    "/" + sSDSkyBoxDirectory + "/");
         }
 
         if (current != null) {
             scene.addSceneObject(current);
             currentSkyBox = current;
-            current.getTransform().setPosition(defaultCenterPosition.x, defaultCenterPosition.y, defaultCenterPosition.z);
+            current.getTransform().setPosition(defaultCenterPosition.x, defaultCenterPosition.y,
+                    defaultCenterPosition.z);
         } else {
             Log.d(TAG, "SkyBox is null");
         }
     }
 
     // END SkyBox Features
-
 }
