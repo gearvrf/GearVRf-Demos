@@ -58,3 +58,5 @@ include ':gvr-exposeapi/app'
 include ':gvr-sample/app'
 include ':gvr-eyepicking/app'
 include ':gvr-sceneobjects/app'
+include ':gvr-scene-editor/app'
+
