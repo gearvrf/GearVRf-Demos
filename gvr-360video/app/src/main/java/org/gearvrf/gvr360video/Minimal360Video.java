@@ -29,7 +29,7 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
@@ -46,7 +46,8 @@ public class Minimal360Video extends GVRMain
         scene.getMainCameraRig().getTransform().setPosition( 0.0f, 0.0f, 0.0f );
 
         // create sphere / mesh
-        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, false);
+        GVRMaterial material = new GVRMaterial(gvrContext);
+        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false, material);
         GVRMesh mesh = sphere.getRenderData().getMesh();
 
         // create mediaplayer instance
