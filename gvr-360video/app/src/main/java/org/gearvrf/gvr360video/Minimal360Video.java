@@ -23,19 +23,27 @@ import android.os.Environment;
 import android.net.Uri;
 import android.media.MediaPlayer;
 import android.content.res.AssetFileDescriptor;
+
+import com.google.android.exoplayer.ExoPlayer;
+
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
+import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 
 public class Minimal360Video extends GVRMain
 {
+    Minimal360Video(GVRVideoSceneObjectPlayer<?> player) {
+        mPlayer = player;
+    }
+
     /** Called when the activity is first created. */
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -46,31 +54,11 @@ public class Minimal360Video extends GVRMain
         scene.getMainCameraRig().getTransform().setPosition( 0.0f, 0.0f, 0.0f );
 
         // create sphere / mesh
-        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, false);
+        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false);
         GVRMesh mesh = sphere.getRenderData().getMesh();
 
-        // create mediaplayer instance
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        AssetFileDescriptor afd;
-        try {
-            afd = gvrContext.getContext().getAssets().openFd("videos_s_3.mp4");
-            android.util.Log.d("Minimal360Video", "Assets was found.");
-            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            android.util.Log.d("Minimal360Video", "DataSource was set.");
-            afd.close();
-            mediaPlayer.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-            gvrContext.getActivity().finish();
-            android.util.Log.e("Minimal360Video", "Assets were not loaded. Stopping application!");
-        }
-
-        mediaPlayer.setLooping( true );
-        android.util.Log.d("Minimal360Video", "starting player.");
-        mediaPlayer.start();
-
         // create video scene
-        GVRVideoSceneObject video = new GVRVideoSceneObject( gvrContext, mesh, mediaPlayer, GVRVideoType.MONO );
+        GVRVideoSceneObject video = new GVRVideoSceneObject( gvrContext, mesh, mPlayer, GVRVideoType.MONO );
         video.setName( "video" );
 
         // apply video to scene
@@ -81,4 +69,5 @@ public class Minimal360Video extends GVRMain
     public void onStep() {
     }
 
+    private final GVRVideoSceneObjectPlayer<?> mPlayer;
 }

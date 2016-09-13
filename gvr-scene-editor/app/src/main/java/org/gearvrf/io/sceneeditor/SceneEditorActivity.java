@@ -13,20 +13,33 @@
  * limitations under the License.
  */
 
-package org.gearvrf.x3ddemo;
+package org.gearvrf.io.sceneeditor;
 
 import android.os.Bundle;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.utility.Log;
 
-public class X3DparserActivity extends GVRActivity {
-
-    X3DparserScript x3dParserScript = new X3DparserScript(this);
+public class SceneEditorActivity extends GVRActivity {
+    private static final String TAG = SceneEditorActivity.class.getSimpleName();
+    private SceneEditorMain cursorMain;
 
     @Override
-    protected void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        setMain(x3dParserScript, "gvr.xml");
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
+        cursorMain = new SceneEditorMain();
+        setMain(cursorMain, "gvr.xml");
     }
- 
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        cursorMain.saveState();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        cursorMain.close();
+    }
 }

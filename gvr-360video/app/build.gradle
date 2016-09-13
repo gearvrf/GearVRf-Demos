@@ -28,3 +28,10 @@ android {
         }
     }
 }
+
+repositories {
+    jcenter()
+}
+dependencies {
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
+}
