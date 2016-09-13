@@ -73,7 +73,7 @@
             productId="5678"
             vendorId="1234"/>
         <io deviceId="template_1"
-            priority="1"
+            priority="2"
             productId="5678"
             vendorId="1234"/>
     </cursor>
@@ -87,7 +87,7 @@
             productId="5678"
             vendorId="1234"/>
         <io deviceId="template_2"
-            priority="1"
+            priority="2"
             productId="5678"
             vendorId="1234"/>
     </cursor>-->
