@@ -54,8 +54,7 @@ public class Minimal360Video extends GVRMain
         scene.getMainCameraRig().getTransform().setPosition( 0.0f, 0.0f, 0.0f );
 
         // create sphere / mesh
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false, material);
+        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false);
         GVRMesh mesh = sphere.getRenderData().getMesh();
 
         // create video scene
