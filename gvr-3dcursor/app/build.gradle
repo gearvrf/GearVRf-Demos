@@ -27,6 +27,7 @@ if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
 android {
     defaultConfig {
         applicationId "org.gearvrf.io.cursor"
+        //applicationId = "com.samsung.android.gvr.sample"
     }
 
     buildTypes {
@@ -54,8 +55,9 @@ dependencies {
     compile(name:'3DCursorLibrary-debug', ext:'aar')
     compile(name:'GearWearIoDevice-debug', ext:'aar')
     compile(name:'gearwearlibrary-debug', ext:'aar')
-    //_VENDOR_TODO_ add the device to cube-app here
+    //_VENDOR_TODO_ add the device to gvr-3dcursor here
     //compile project(':IODevices:io_template')
+    //compile project(':IODevices:io_hand_template')
 }
 
 //TODO export plugin to jar

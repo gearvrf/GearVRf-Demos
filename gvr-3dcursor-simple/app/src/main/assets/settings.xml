@@ -61,4 +61,35 @@
             productId="42240"
             vendorId="1256"/>
     </cursor>
+
+    <!--_VENDOR_TODO_ Uncomment for template devices -->
+    <!--<cursor name="Left Cursor"
+            active="yes"
+            position="center"
+            themeId="crystal_sphere"
+            type="object">
+        <io deviceId="left_INDEX"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+        <io deviceId="template_1"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+    </cursor>
+    <cursor name="Right Cursor"
+            active="yes"
+            position="center"
+            themeId="crystal_sphere"
+            type="object">
+        <io deviceId="right_INDEX"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+        <io deviceId="template_2"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+    </cursor>-->
+
 </settings>

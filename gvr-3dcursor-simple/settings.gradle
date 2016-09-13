@@ -14,4 +14,13 @@
  * limitations under the License.
  */
 include 'app'
+//_VENDOR_TODO_ add your device folder here for Android Studio to locate it
+//include ':IODevices:io_template'
+//include ':IODevices:io_hand_template'
+
+//project(':IODevices:io_template').projectDir =
+//        new File("../../GearVRf/GVRf/Extensions/3DCursor/IODevices/io_template")
+//project(':IODevices:io_hand_template').projectDir =
+//        new File("../../GearVRf/GVRf/Extensions/3DCursor/IODevices/io_hand_template")
+
 
