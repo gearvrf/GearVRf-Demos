@@ -44,7 +44,7 @@ public class ColorShader extends GVRShaderTemplate
 
     public ColorShader(GVRContext gvrContext)
     {
-        super("float4 u_color");
+        super("float4 u_color", 300);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }
