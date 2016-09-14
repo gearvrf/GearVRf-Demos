@@ -27,7 +27,6 @@ if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
 android {
     defaultConfig {
         applicationId "org.gearvrf.io.cursor"
-        //applicationId = "com.samsung.android.gvr.sample"
     }
 
     buildTypes {

@@ -268,7 +268,7 @@
     </cursor>
 
     <!--_VENDOR_TODO_ Uncomment for template devices -->
-    <!--<cursor name="Left Cursor"
+    <!--<cursor name="Template Left Cursor"
             active="yes"
             position="center"
             themeId="crystal_sphere"
@@ -282,7 +282,7 @@
             productId="5678"
             vendorId="1234"/>
     </cursor>
-    <cursor name="Right Cursor"
+    <cursor name="Template Right Cursor"
             active="yes"
             position="center"
             themeId="crystal_sphere"
