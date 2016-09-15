@@ -44,6 +44,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile(name:'3DCursorLibrary-debug', ext:'aar')
+    //_VENDOR_TODO_ add the device to gvr-3dcursor-simple here
+    //compile project(':IODevices:io_template')
+    //compile project(':IODevices:io_hand_template')
 }
 
 //TODO export plugin to jar

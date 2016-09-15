@@ -20,7 +20,6 @@ import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
-import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
@@ -33,6 +32,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.io.cursor3d.Cursor;
 import org.gearvrf.io.cursor3d.CursorManager;
+import org.gearvrf.io.cursor3d.IoDevice;
 import org.gearvrf.io.cursor3d.MovableBehavior;
 import org.gearvrf.io.cursor3d.SelectableBehavior;
 import org.gearvrf.io.cursor3d.SelectableBehavior.ObjectState;
@@ -42,7 +42,8 @@ import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This sample can be used with a Laser Cursor as well as an Object Cursor. By default the Object
@@ -63,10 +64,25 @@ public class CursorMain extends GVRMain {
         mainScene = gvrContext.getNextMainScene();
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
         mainScene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
-        cursorManager = new CursorManager(gvrContext, mainScene);
+        List<IoDevice> devices = new ArrayList<IoDevice>();
+
+        //_VENDOR_TODO_ register the devices with Cursor Manager here.
+        /*
+        TemplateDevice device1 = new TemplateDevice(gvrContext, "template_1", "Right controller");
+        TemplateDevice device2 = new TemplateDevice(gvrContext, "template_2", "Left controller");
+        devices.add(device1);
+        devices.add(device2);
+        */
+
+        /*
+        HandTemplateDevice device = new HandTemplateDevice(gvrContext, mainScene);
+        devices.addAll(device.getDeviceList());
+        */
+
+        cursorManager = new CursorManager(gvrContext, mainScene, devices);
         GVRModelSceneObject astronautModel, rocketModel;
 
-        float[] position = new float[]{5.0f, 0.0f, -10.0f};
+        float[] position = new float[]{5.0f, 0.0f, -20.0f};
         try {
             astronautModel = gvrContext.loadModel(ASTRONAUT_MODEL);
             rocketModel = gvrContext.loadModel(ROCKET_MODEL);
@@ -104,7 +120,7 @@ public class CursorMain extends GVRMain {
             @Override
             public void onStateChanged(SelectableBehavior selectableBehavior, ObjectState prev,
                                        ObjectState current, Cursor cursor) {
-                if(current == ObjectState.CLICKED) {
+                if (current == ObjectState.CLICKED) {
                     GVRTransform transform = astronaut.getTransform();
                     transform.setPositionZ(transform.getPositionZ() - 1);
                 }
@@ -122,6 +138,12 @@ public class CursorMain extends GVRMain {
         if (cursorManager != null) {
             cursorManager.close();
         }
+
+        //_VENDOR_TODO_ close the devices here
+        //device.close();
+        //device1.close();
+        //device2.close();
+
     }
 
     private void addCustomMovableCube(GVRContext gvrContext) {
