@@ -35,7 +35,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ZipLoader;
 import org.gearvrf.io.cursor.AssetHolder.AssetObjectTuple;
@@ -262,6 +261,12 @@ public class CursorMain extends GVRMain {
         devices.add(device1);
         devices.add(device2);
         */
+
+        /*
+        HandTemplateDevice device = new HandTemplateDevice(gvrContext, mainScene);
+        devices.addAll(device.getDeviceList());
+        */
+
         gearWearableDevice = new GearWearableDevice(gvrContext, GEARS2_DEVICE_ID, "Gear Wearable");
         devices.add(gearWearableDevice);
 
@@ -658,6 +663,7 @@ public class CursorMain extends GVRMain {
             Log.d(TAG, "close: gearWearableDevice is null");
         }
         //_VENDOR_TODO_ close the devices here
+        //device.close();
         //device1.close();
         //device2.close();
     }

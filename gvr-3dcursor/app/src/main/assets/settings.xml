@@ -199,6 +199,7 @@
                src="poly_sphere_collision"
                type="3D"/>
     </theme>
+
     <cursor name="Center Cursor"
             active="no"
             position="center"
@@ -226,11 +227,6 @@
             position="center"
             themeId="crystal_sphere"
             type="object">
-        <!--_VENDOR_TODO_ add your first device to the settings.xml here-->
-        <!--<io deviceId="template_1"
-            priority="1"
-            productId="5678"
-            vendorId="1234"/>-->
         <io deviceId="mouse"
             priority="2"
             productId="0"
@@ -253,11 +249,6 @@
             position="center"
             themeId="crystal_sphere"
             type="object">
-        <!--_VENDOR_TODO_ add your second device to the settings.xml here -->
-        <!--<io deviceId="template_2"
-            priority="1"
-            productId="5678"
-            vendorId="1234"/>-->
         <io deviceId="mouse"
             priority="2"
             productId="0"
@@ -275,4 +266,34 @@
             productId="9898"
             vendorId="1256"/>
     </cursor>
+
+    <!--_VENDOR_TODO_ Uncomment for template devices -->
+    <!--<cursor name="Template Left Cursor"
+            active="yes"
+            position="center"
+            themeId="crystal_sphere"
+            type="object">
+        <io deviceId="left_INDEX"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+        <io deviceId="template_1"
+            priority="2"
+            productId="5678"
+            vendorId="1234"/>
+    </cursor>
+    <cursor name="Template Right Cursor"
+            active="yes"
+            position="center"
+            themeId="crystal_sphere"
+            type="object">
+        <io deviceId="right_INDEX"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+        <io deviceId="template_2"
+            priority="2"
+            productId="5678"
+            vendorId="1234"/>
+    </cursor>-->
 </settings>
