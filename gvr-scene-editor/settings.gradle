@@ -1,4 +1,5 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2016 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,21 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+include 'app'
 
-package org.gearvrf.x3ddemo;
-
-import android.os.Bundle;
-
-import org.gearvrf.GVRActivity;
-
-public class X3DparserActivity extends GVRActivity {
-
-    X3DparserScript x3dParserScript = new X3DparserScript(this);
-
-    @Override
-    protected void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        setMain(x3dParserScript, "gvr.xml");
-    }
- 
-}
