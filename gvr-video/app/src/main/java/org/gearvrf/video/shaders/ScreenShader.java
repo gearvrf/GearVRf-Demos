@@ -14,7 +14,7 @@
  */
 
 
-package org.gearvrf.video;
+package org.gearvrf.video.shaders;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterialMap;

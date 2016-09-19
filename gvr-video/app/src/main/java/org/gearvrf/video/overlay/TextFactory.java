@@ -14,7 +14,7 @@
  */
 
 
-package org.gearvrf.video;
+package org.gearvrf.video.overlay;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

@@ -16,26 +16,18 @@
 package org.gearvrf.video;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.util.VRTouchPadGestureDetector;
-import org.gearvrf.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
-import org.gearvrf.util.VRTouchPadGestureDetector.SwipeDirection;
 
-public class VideoActivity extends GVRActivity implements
-        OnTouchPadGestureListener {
-    private static final int TAP_INTERVAL = 300;
+public class VideoActivity extends GVRActivity {
     private VideoMain mMain = null;
-    private VRTouchPadGestureDetector mDetector = null;
-    private long mLatestTap = 0;
+    private long lastDownTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMain = new VideoMain(this);
-        mDetector = new VRTouchPadGestureDetector(this);
         setMain(mMain, "gvr.xml");
     }
 
@@ -47,30 +39,17 @@ public class VideoActivity extends GVRActivity implements
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mDetector.onTouchEvent(event);
-        mMain.onTouchEvent(event);
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
-        Log.v("", "onSingleTap");
-        if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-            mLatestTap = System.currentTimeMillis();
-            mMain.onSingleTap(e);
+        super.onTouchEvent(event);
+        mMain.onTouch();
+        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
+            lastDownTime = event.getDownTime();
         }
-        return false;
-    }
 
-    @Override
-    public void onLongPress(MotionEvent e) {
-        Log.v("", "onLongPress");
-    }
-
-    @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-            float velocityX, float velocityY) {
-        Log.v("", "onSwipe");
-        return false;
+        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+            if (event.getEventTime() - lastDownTime < 200) {
+                mMain.onTap();
+            }
+        }
+        return true;
     }
 }

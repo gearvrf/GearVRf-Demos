@@ -13,30 +13,40 @@
  * limitations under the License.
  */
 
-package org.gearvrf.video;
+package org.gearvrf.video.overlay;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.video.focus.FocusListener;
+import org.gearvrf.video.focus.FocusableSceneObject;
 
-public class Button extends GVRSceneObject {
+public class Button extends FocusableSceneObject {
 
     public Button(GVRContext gvrContext, GVRMesh mesh, GVRTexture active, GVRTexture inactive) {
         super(gvrContext, mesh, inactive);
-        getRenderData().getMaterial().setTexture("active_texture", active);
-        getRenderData().getMaterial().setTexture("inactive_texture", inactive);
-        getRenderData().setRenderingOrder(
-                GVRRenderData.GVRRenderingOrder.TRANSPARENT + 1);
-        getRenderData().setOffset(true);
-        getRenderData().setOffsetFactor(-1.0f);
-        getRenderData().setOffsetUnits(-1.0f);
-        GVREyePointeeHolder holder = new GVREyePointeeHolder(gvrContext);
-        holder.addPointee(new GVRMeshEyePointee(gvrContext, getRenderData().getMesh()));
-        attachEyePointeeHolder(holder);
+        this.getRenderData().getMaterial().setTexture("active_texture", active);
+        this.getRenderData().getMaterial().setTexture("inactive_texture", inactive);
+        this.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT + 1);
+        this.getRenderData().setOffset(true);
+        this.getRenderData().setOffsetFactor(-1.0f);
+        this.getRenderData().setOffsetUnits(-1.0f);
+        this.attachEyePointeeHolder();
+
+        super.setFocusListener(new FocusListener() {
+            @Override
+            public void gainedFocus(FocusableSceneObject object) {
+                getRenderData().getMaterial().setMainTexture(
+                        getRenderData().getMaterial().getTexture("active_texture"));
+            }
+
+            @Override
+            public void lostFocus(FocusableSceneObject object) {
+                getRenderData().getMaterial().setMainTexture(
+                        getRenderData().getMaterial().getTexture("inactive_texture"));
+            }
+        });
     }
 
     public void setPosition(float x, float y, float z) {
@@ -52,15 +62,5 @@ public class Button extends GVRSceneObject {
     public void hide() {
         getRenderData().setRenderMask(0);
         getEyePointeeHolder().setEnable(false);
-    }
-
-    public void activate() {
-        getRenderData().getMaterial().setMainTexture(
-                getRenderData().getMaterial().getTexture("active_texture"));
-    }
-
-    public void inactivate() {
-        getRenderData().getMaterial().setMainTexture(
-                getRenderData().getMaterial().getTexture("inactive_texture"));
     }
 }
