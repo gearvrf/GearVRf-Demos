@@ -17,6 +17,8 @@
 apply plugin: 'com.android.application'
 apply plugin: XmlValidator
 
+System.setProperty("appName", "gvr-3dcursor-simple")
+
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }

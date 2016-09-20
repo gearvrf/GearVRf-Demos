@@ -11,9 +11,26 @@ android {
     compileSdkVersion 21
     buildToolsVersion "23.0.3"
 
+    buildTypes {
+        debug {
+            resValue 'string', 'app_name', System.getProperty("appName")
+        }
+        release {
+            resValue 'string', 'app_name', System.getProperty("appName")
+        }
+    }
+
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 19
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(
+                    output.outputFile.parent,
+                    System.getProperty("appName") + ".apk")
+        }
     }
 }
 

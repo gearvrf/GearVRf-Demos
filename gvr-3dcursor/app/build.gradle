@@ -17,6 +17,8 @@
 apply plugin: 'com.android.application'
 apply plugin: XmlValidator
 
+System.setProperty("appName", "gvr-3dcursor")
+
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }
@@ -38,14 +40,6 @@ android {
 
     lintOptions {
         checkReleaseBuilds false
-    }
-    
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    rootProject.name + ".apk")
-        }
     }
 }
 

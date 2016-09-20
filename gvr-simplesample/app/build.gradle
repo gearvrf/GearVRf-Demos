@@ -1,5 +1,7 @@
 apply plugin: 'com.android.application'
 
+System.setProperty("appName", "gvr-simplesample")
+
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }
@@ -18,13 +20,5 @@ android {
     sourceSets.main {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
-    }
-
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    rootProject.name + ".apk")
-        }
     }
 }
