@@ -14,7 +14,4 @@
  */-->
 
 <resources>
-
-    <string name="app_name">GVRSample for non-GL threading issue</string>
-
 </resources>
