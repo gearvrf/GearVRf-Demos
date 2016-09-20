@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-System.setProperty("appName", "gvr-complexscene")
+System.setProperty("appName", "gvr-collision")
 
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
