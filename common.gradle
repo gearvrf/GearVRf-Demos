@@ -60,7 +60,7 @@ dependencies {
         } else {
             throw new GradleException('No backend aar available!')
         }
+        compile(name: 'google-vr-base', ext: 'aar')
+        compile(name: 'google-vr-common', ext: 'aar')
     }
-    compile(name: 'google-vr-base', ext: 'aar')
-    compile(name: 'google-vr-common', ext: 'aar')
 }
