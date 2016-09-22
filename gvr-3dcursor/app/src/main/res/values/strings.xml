@@ -15,8 +15,6 @@
  */-->
 
 <resources>
-    <string name="app_name">3DCursor Sample</string>
-
     <string name="activity_rocket">Zoom in and go through the rocketship</string>
     <string name="activity_astronaut">Select the astronaut and move it to the left of the rocket</string>
     <string name="activity_laser_button">Click on the button to change cursor to a Laser Cursor</string>
