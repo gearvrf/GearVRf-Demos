@@ -45,7 +45,7 @@ public class OutlineShader extends org.gearvrf.GVRShaderTemplate
 
     public OutlineShader(GVRContext gvrcontext)
     {
-        super("float4 u_color; float u_thickness");
+        super("float4 u_color; float u_thickness", 300);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }
