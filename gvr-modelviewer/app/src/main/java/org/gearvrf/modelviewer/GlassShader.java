@@ -37,7 +37,7 @@ public class GlassShader {
     private static final String VERTEX_SHADER = "" //
             + "attribute vec4 a_position;\n"
             + "attribute vec3 a_normal;\n" //
-            + "attribute vec2 a_tex_coord;\n"
+            + "attribute vec2 a_texcoord;\n"
             + "uniform mat4 u_mvp;\n" //
             + "uniform vec3 u_eye;\n"
             + "uniform vec3 u_light;\n" //
@@ -51,7 +51,7 @@ public class GlassShader {
             + "  view  = u_eye - a_position.xyz;\n"
             + "  light = u_light - a_position.xyz;\n"
             + "  p = a_position.xyz;\n" //
-            + "  coord = a_tex_coord;\n"
+            + "  coord = a_texcoord;\n"
             + "  gl_Position = u_mvp * a_position;\n" //
             + "}\n";
 

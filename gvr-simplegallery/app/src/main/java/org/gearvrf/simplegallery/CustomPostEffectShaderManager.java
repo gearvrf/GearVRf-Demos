@@ -25,10 +25,10 @@ public class CustomPostEffectShaderManager {
 
     private final String VERTEX_SHADER = "" //
             + "attribute vec4 a_position;\n"
-            + "attribute vec4 a_tex_coord;\n" //
+            + "attribute vec2 a_texcoord;\n" //
             + "varying vec2 v_tex_coord;\n"
             + "void main() {\n" //
-            + "  v_tex_coord = a_tex_coord.xy;\n"
+            + "  v_tex_coord = a_texcoord.xy;\n"
             + "  gl_Position = a_position;\n" //
             + "}\n";
 

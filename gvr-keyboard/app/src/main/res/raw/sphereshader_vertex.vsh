@@ -1,6 +1,6 @@
 attribute vec4 a_position;
 attribute vec3 a_normal;
-attribute vec2 a_tex_coord;
+attribute vec2 a_texcoord;
 uniform mat4 u_mvp;
 uniform vec3 eye;
 uniform vec3 u_light;
@@ -19,7 +19,7 @@ void main() {
     normal = a_normal;
 	view  = eye - pos.xyz;
 	light = u_light;
-	coord = a_tex_coord;
+	coord = a_texcoord;
 	n = normalize(normal);
 	v = normalize(view);
     l = normalize(light);

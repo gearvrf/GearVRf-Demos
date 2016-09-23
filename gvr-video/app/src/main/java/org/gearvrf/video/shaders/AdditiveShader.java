@@ -30,11 +30,11 @@ public class AdditiveShader {
     private static final String VERTEX_SHADER = "" //
             + "precision highp float;\n"
             + "attribute vec4 a_position;\n" //
-            + "attribute vec2 a_tex_coord;\n"
+            + "attribute vec2 a_texcoord;\n"
             + "uniform mat4 u_mvp;\n" //
             + "varying vec2 coord;\n"
             + "void main() {\n" //
-            + "  coord = a_tex_coord;\n"
+            + "  coord = a_texcoord;\n"
             + "  gl_Position = u_mvp * a_position;\n" //
             + "}\n";
 
