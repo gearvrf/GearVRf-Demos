@@ -4,14 +4,14 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../gearvrf-libs'
+            dirs '../../../gearvrf-libs'
         }
     }
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "com.samsung.android.gvr.sample"
@@ -34,4 +34,5 @@ android {
 
 dependencies {
     compile(name:'framework-debug', ext:'aar')
+    compile(name:'backend_oculus-debug', ext:'aar')
 }
