@@ -1,4 +1,3 @@
-include ':gvrmobileiodevice'
 /*
  * Copyright 2016 Samsung Electronics Co., LTD
  *
@@ -15,7 +14,4 @@ include ':gvrmobileiodevice'
  * limitations under the License.
  */
 include 'app'
-include ':IODevices:gvrmobileiodevice'
-project(':IODevices:gvrmobileiodevice').projectDir =
-        new File("../../GearVRf/GVRf/Extensions/3DCursor/IODevices/gvrmobileiodevice")
 

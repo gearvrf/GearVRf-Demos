@@ -44,8 +44,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile(name:'3DCursorLibrary-debug', ext:'aar')
-    //compile project(path: ':gvrmobileiodevice')
-    compile project(path: ':IODevices:gvrmobileiodevice')
+    compile(name:'gvrmobileiodevice-debug', ext:'aar')
+
+//    compile project(path: ':gvrmobileiodevice')
 }
 
 //TODO export plugin to jar

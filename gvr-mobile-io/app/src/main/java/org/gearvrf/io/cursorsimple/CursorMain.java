@@ -18,7 +18,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-import com.example.gvrmobileiodevice.ClientWrite;
 import com.example.gvrmobileiodevice.GVRMobileIoDevice;
 
 import org.gearvrf.GVRAndroidResource;
