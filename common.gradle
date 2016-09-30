@@ -48,19 +48,20 @@ preBuild {}.dependsOn copyOculusSignature
 
 dependencies {
     compile(name: 'framework-debug', ext: 'aar')
-    if (rootProject.hasProperty("no_oculus")) {
-        if (file('../../gearvrf-libs/backend-debug.aar').exists()) {
-            compile(name: 'backend-debug', ext: 'aar')
-        } else {
-            throw new GradleException('No backend aar available!')
-        }
+
+    if (rootProject.hasProperty("only_daydream")) {
+        compile(name: 'backend_daydream-debug', ext: 'aar')
+        compile(name: 'google-vr-base', ext: 'aar')
+        compile(name: 'google-vr-common', ext: 'aar')
     } else {
-        if (file('../../gearvrf-libs/backend_oculus-debug.aar').exists()) {
+        if (rootProject.hasProperty("no_oculus")) {
+            compile(name: 'backend-debug', ext: 'aar')
+        } else { //default oculus+daydream
             compile(name: 'backend_oculus-debug', ext: 'aar')
-        } else {
-            throw new GradleException('No backend aar available!')
+
+            compile(name: 'backend_daydream-debug', ext: 'aar')
+            compile(name: 'google-vr-base', ext: 'aar')
+            compile(name: 'google-vr-common', ext: 'aar')
         }
     }
-    compile(name: 'google-vr-base', ext: 'aar')
-    compile(name: 'google-vr-common', ext: 'aar')
 }
