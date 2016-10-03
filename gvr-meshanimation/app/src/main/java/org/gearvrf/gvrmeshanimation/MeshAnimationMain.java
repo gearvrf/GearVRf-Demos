@@ -1,32 +1,20 @@
 package org.gearvrf.gvrmeshanimation;
 
-import java.io.IOException;
+import android.util.Log;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
-import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVRAnimationEngine;
-import org.gearvrf.animation.GVRRepeatMode;
+import org.gearvrf.GVRScene;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 
-import android.util.Log;
+import java.io.IOException;
 
 public class MeshAnimationMain extends GVRMain {
 
-    private GVRContext mGVRContext;
-    private GVRModelSceneObject mCharacter;
-
-    private final String mModelPath = "TRex_NoGround.fbx";
-
     private GVRActivity mActivity;
-
-    private static final String TAG = "MeshAnimationSample";
-
-    private GVRAnimationEngine mAnimationEngine;
-    GVRAnimation mAssimpAnimation = null;
-    
+    private GVRModelSceneObject mCharacter;
 
     public MeshAnimationMain(GVRActivity activity) {
         mActivity = activity;
@@ -34,15 +22,7 @@ public class MeshAnimationMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        mGVRContext = gvrContext;
-        mAnimationEngine = gvrContext.getAnimationEngine();
-
-        GVRScene mainScene = gvrContext.getNextMainScene(new Runnable() {
-            @Override
-            public void run() {
-                mAssimpAnimation.start(mAnimationEngine);
-            }
-        });
+        final GVRScene nextMainScene = gvrContext.getNextMainScene();
 
         try {
             mCharacter = gvrContext.loadModel(mModelPath);
@@ -51,10 +31,9 @@ public class MeshAnimationMain extends GVRMain {
             mCharacter.getTransform().setRotationByAxis(40.0f, 0.0f, 1.0f, 0.0f);
             mCharacter.getTransform().setScale(1.5f, 1.5f, 1.5f);
 
-            mainScene.addSceneObject(mCharacter);
-
-            mAssimpAnimation = mCharacter.getAnimations().get(0);
-            mAssimpAnimation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
+            nextMainScene.addSceneObject(mCharacter);
+            final GVRAnimator animator = (GVRAnimator)mCharacter.getComponent(GVRAnimator.getComponentType());
+            animator.start();
         } catch (IOException e) {
             e.printStackTrace();
             mActivity.finish();
@@ -63,7 +42,6 @@ public class MeshAnimationMain extends GVRMain {
         }
     }
 
-    @Override
-    public void onStep() {
-    }
+    private static final String mModelPath = "TRex_NoGround.fbx";
+    private static final String TAG = "MeshAnimationSample";
 }

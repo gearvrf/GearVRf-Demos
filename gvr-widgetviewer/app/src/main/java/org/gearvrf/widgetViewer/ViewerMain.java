@@ -25,7 +25,7 @@ import android.opengl.GLES20;
 import android.util.Log;
 import android.view.MotionEvent;
 
-public class ViewerMain extends GVRScript {
+public class ViewerMain extends GVRMain {
 
     private static final String TAG = "ViewerMain";
 
@@ -699,15 +699,21 @@ public class ViewerMain extends GVRScript {
             headTracker.getRenderData().setDepthTest(false);
             headTracker.getRenderData().setRenderingOrder(100000);
             mainScene.getMainCameraRig().addChildObject(headTracker);
+
+            gvrContext.registerDrawFrameListener(new GVRDrawFrameListener() {
+                @Override
+                public void onDrawFrame(float frameTime) {
+                    updateState();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();           
             Log.e(TAG, "Assets were not loaded. Stopping application!");
+            gvrContext.getActivity().finish();
         }    
     }
 
-    @Override
-    public void onStep() {
-        FPSCounter.tick();
+    private void updateState() {
         boolean isButtonDown = mIsButtonDown;
         boolean isSingleTapped = mIsSingleTapped;
         mIsButtonDown = false;

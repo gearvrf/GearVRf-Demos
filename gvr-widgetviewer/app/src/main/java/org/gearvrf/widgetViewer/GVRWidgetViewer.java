@@ -52,9 +52,9 @@ public class GVRWidgetViewer extends GVRActivity implements
         mDetector = new VRTouchPadGestureDetector(this);
         mWidget = new MyGdxWidget();
         mMain = new ViewerMain(mPlugin);
-        mPlugin.setCurrentScript(mMain);
+        mPlugin.setMain(mMain);
         mWidget.mMain = mMain;
-        setScript(mMain, "gvr.xml");
+        setMain(mMain, "gvr.xml");
     }
 
     @Override

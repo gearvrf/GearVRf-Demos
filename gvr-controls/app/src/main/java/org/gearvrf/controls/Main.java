@@ -82,15 +82,8 @@ public class Main extends GVRMain {
 
         scene = gvrContext.getMainScene();
 
-        gvrContext.getMainScene().getMainCameraRig().getRightCamera()
-                .setBackgroundColor(Color.GREEN);
-        gvrContext.getMainScene().getMainCameraRig().getLeftCamera()
-                .setBackgroundColor(Color.GREEN);
-
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
-        mainCameraRig.getRightCamera().setBackgroundColor(Color.GREEN);
-        mainCameraRig.getLeftCamera().setBackgroundColor(Color.RED);
         mainCameraRig.getTransform().setPositionY(0);
         createSkybox();
         createClouds();

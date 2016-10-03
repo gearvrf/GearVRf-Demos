@@ -15,161 +15,143 @@
 
 package org.gearvrf.sample;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.util.Log;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshEyePointee;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPicker.GVRPickedObject;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshot3DCallback;
 import org.gearvrf.GVRScreenshotCallback;
-import org.gearvrf.GVRMain;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.IPickEvents;
 import org.gearvrf.utility.Threads;
 
-import android.graphics.Bitmap;
-import android.os.Environment;
-import android.util.Log;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class SampleCubeMain extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
-    private GVRContext mGVRContext = null;
-    private GVRSceneObject mFrontFace = null;
-    private GVRSceneObject mFrontFace2 = null;
-    private GVRSceneObject mFrontFace3 = null;
+    private GVRSceneObject mFrontFace;
+    private GVRSceneObject mFrontFace2;
+    private GVRSceneObject mFrontFace3;
+    @SuppressWarnings("unused")
+    private GVRPicker mPicker;
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        mGVRContext = gvrContext;
+        final GVRScene scene = gvrContext.getNextMainScene();
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        mPicker = new GVRPicker(gvrContext, scene);
+        final GVRMesh mesh = gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH);
+        final GVRTexture frontTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.front));
 
-        FutureWrapper<GVRMesh> futureMesh = new FutureWrapper<GVRMesh>(
-                gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
-
-        mFrontFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.front)));
+        mFrontFace = new GVRSceneObject(gvrContext, mesh,frontTexture);
         mFrontFace.setName("front");
         scene.addSceneObject(mFrontFace);
         mFrontFace.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f);
 
-        mFrontFace2 = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.front)));
+        mFrontFace2 = new GVRSceneObject(gvrContext, mesh, frontTexture);
         mFrontFace2.setName("front2");
         scene.addSceneObject(mFrontFace2);
-        mFrontFace2.getTransform().setPosition(0.0f, 0.0f,
-                -CUBE_WIDTH * 0.5f * 2.0f);
+        mFrontFace2.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f * 2.0f);
 
-        mFrontFace3 = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.front)));
+        mFrontFace3 = new GVRSceneObject(gvrContext, mesh, frontTexture);
         mFrontFace3.setName("front3");
         scene.addSceneObject(mFrontFace3);
-        mFrontFace3.getTransform().setPosition(0.0f, 0.0f,
-                -CUBE_WIDTH * 0.5f * 3.0f);
+        mFrontFace3.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f * 3.0f);
 
-        GVRSceneObject backFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.back)));
+        mFrontFace.getRenderData().setDepthTest(false);
+        mFrontFace2.getRenderData().setDepthTest(false);
+        mFrontFace3.getRenderData().setDepthTest(false);
+
+        GVRSceneObject backFace = new GVRSceneObject(gvrContext, mesh,
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.back)));
         backFace.setName("back");
         scene.addSceneObject(backFace);
         backFace.getTransform().setPosition(0.0f, 0.0f, CUBE_WIDTH * 0.5f);
         backFace.getTransform().rotateByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
-        GVRSceneObject leftFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.left)));
+        GVRSceneObject leftFace = new GVRSceneObject(gvrContext, mesh,
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.left)));
         leftFace.setName("left");
         scene.addSceneObject(leftFace);
         leftFace.getTransform().setPosition(-CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         leftFace.getTransform().rotateByAxis(90.0f, 0.0f, 1.0f, 0.0f);
-
         leftFace.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
 
-        GVRSceneObject rightFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.right)));
+        GVRSceneObject rightFace = new GVRSceneObject(gvrContext, mesh,
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.right)));
         rightFace.setName("right");
         scene.addSceneObject(rightFace);
         rightFace.getTransform().setPosition(CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         rightFace.getTransform().rotateByAxis(-90.0f, 0.0f, 1.0f, 0.0f);
-
         rightFace.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
-        GVRSceneObject topFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.top)));
+        GVRSceneObject topFace = new GVRSceneObject(gvrContext, mesh,
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.top)));
         topFace.setName("top");
         scene.addSceneObject(topFace);
         topFace.getTransform().setPosition(0.0f, CUBE_WIDTH * 0.5f, 0.0f);
         topFace.getTransform().rotateByAxis(90.0f, 1.0f, 0.0f, 0.0f);
 
-        GVRSceneObject bottomFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.bottom)));
+        GVRSceneObject bottomFace = new GVRSceneObject(gvrContext, mesh,
+                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bottom)));
         bottomFace.setName("bottom");
         scene.addSceneObject(bottomFace);
         bottomFace.getTransform().setPosition(0.0f, -CUBE_WIDTH * 0.5f, 0.0f);
         bottomFace.getTransform().rotateByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
 
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(
-                gvrContext);
-        GVRMeshEyePointee meshEyePointee = new GVRMeshEyePointee(gvrContext,
-                mFrontFace.getRenderData().getMesh());
-        eyePointeeHolder.addPointee(meshEyePointee);
-        mFrontFace.attachEyePointeeHolder(eyePointeeHolder);
+        mFrontFace.attachComponent(new GVRMeshCollider(gvrContext, false));
+        mFrontFace2.attachComponent(new GVRMeshCollider(gvrContext, false));
+        mFrontFace3.attachComponent(new GVRMeshCollider(gvrContext, false));
 
-        GVREyePointeeHolder eyePointeeHolder2 = new GVREyePointeeHolder(
-                gvrContext);
-        GVRMeshEyePointee meshEyePointee2 = new GVRMeshEyePointee(gvrContext,
-                mFrontFace2.getRenderData().getMesh());
-        eyePointeeHolder2.addPointee(meshEyePointee2);
-        mFrontFace2.attachEyePointeeHolder(eyePointeeHolder2);
+        scene.getEventReceiver().addListener(new IPickEvents() {
+            @Override
+            public void onPick(GVRPicker picker) {
+                final GVRPickedObject[] picked = picker.getPicked();
 
-        GVREyePointeeHolder eyePointeeHolder3 = new GVREyePointeeHolder(
-                gvrContext);
-        GVRMesh boundingBox = mFrontFace3.getRenderData().getMesh()
-                .getBoundingBox();
-        GVRMeshEyePointee meshEyePointee3 = new GVRMeshEyePointee(gvrContext,
-                boundingBox);
-        eyePointeeHolder3.addPointee(meshEyePointee3);
-        mFrontFace3.attachEyePointeeHolder(eyePointeeHolder3);
+                final GVRRenderData furthest = picked[picked.length - 1].getHitObject().getRenderData();
+                furthest.getMaterial().setOpacity(1.0f);
+                furthest.setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
-        for (GVRSceneObject so : scene.getWholeSceneObjects()) {
-            Log.v("", "scene object name : " + so.getName());
-        }
-    }
-
-    @Override
-    public void onStep() {
-        FPSCounter.tick();
-        mFrontFace.getRenderData().getMaterial().setOpacity(1.0f);
-        mFrontFace2.getRenderData().getMaterial().setOpacity(1.0f);
-        mFrontFace3.getRenderData().getMaterial().setOpacity(1.0f);
-        for (GVRPickedObject pickedObject : GVRPicker.findObjects(mGVRContext
-                .getMainScene())) {
-            if (pickedObject.getHitObject().equals(mFrontFace)) {
-                mFrontFace.getRenderData().getMaterial().setOpacity(0.5f);
+                for (int i = 0; i < picked.length - 1; ++i) {
+                    final GVRRenderData renderData = picked[i].getHitObject().getRenderData();
+                    renderData.getMaterial().setOpacity(0.5f);
+                    renderData.setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+                }
             }
-            if (pickedObject.getHitObject().equals(mFrontFace2)) {
-                mFrontFace2.getRenderData().getMaterial().setOpacity(0.5f);
+            @Override
+            public void onNoPick(GVRPicker picker) {
+                mFrontFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+                mFrontFace.getRenderData().getMaterial().setOpacity(1.0f);
             }
-            if (pickedObject.getHitObject().equals(mFrontFace3)) {
-                mFrontFace3.getRenderData().getMaterial().setOpacity(0.5f);
+
+            @Override
+            public void onExit(GVRSceneObject sceneObj) {
+                sceneObj.getRenderData().getMaterial().setOpacity(0.5f);
+                sceneObj.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
             }
-        }
+
+            @Override
+            public void onEnter(GVRSceneObject sceneObj, GVRPickedObject collision) {
+            }
+            @Override
+            public void onInside(GVRSceneObject sceneObj, GVRPickedObject collision) {
+            }
+        });
     }
 
     private boolean lastScreenshotLeftFinished = true;
@@ -182,27 +164,27 @@ public class SampleCubeMain extends GVRMain {
         Threads.spawn(new Runnable() {
             public void run() {
                 switch (mode) {
-                case 0:
-                    if (lastScreenshotCenterFinished) {
-                        mGVRContext.captureScreenCenter(newScreenshotCallback(
-                                filename, 0));
-                        lastScreenshotCenterFinished = false;
-                    }
-                    break;
-                case 1:
-                    if (lastScreenshotLeftFinished) {
-                        mGVRContext.captureScreenLeft(newScreenshotCallback(
-                                filename, 1));
-                        lastScreenshotLeftFinished = false;
-                    }
-                    break;
-                case 2:
-                    if (lastScreenshotRightFinished) {
-                        mGVRContext.captureScreenRight(newScreenshotCallback(
-                                filename, 2));
-                        lastScreenshotRightFinished = false;
-                    }
-                    break;
+                    case 0:
+                        if (lastScreenshotCenterFinished) {
+                            getGVRContext().captureScreenCenter(newScreenshotCallback(
+                                    filename, 0));
+                            lastScreenshotCenterFinished = false;
+                        }
+                        break;
+                    case 1:
+                        if (lastScreenshotLeftFinished) {
+                            getGVRContext().captureScreenLeft(newScreenshotCallback(
+                                    filename, 1));
+                            lastScreenshotLeftFinished = false;
+                        }
+                        break;
+                    case 2:
+                        if (lastScreenshotRightFinished) {
+                            getGVRContext().captureScreenRight(newScreenshotCallback(
+                                    filename, 2));
+                            lastScreenshotRightFinished = false;
+                        }
+                        break;
                 }
             }
         });
@@ -210,13 +192,13 @@ public class SampleCubeMain extends GVRMain {
 
     public void captureScreen3D(String filename) {
         if (lastScreenshot3DFinished) {
-            mGVRContext.captureScreen3D(newScreenshot3DCallback(filename));
+            getGVRContext().captureScreen3D(newScreenshot3DCallback(filename));
             lastScreenshot3DFinished = false;
         }
     }
 
     private GVRScreenshotCallback newScreenshotCallback(final String filename,
-            final int mode) {
+                                                        final int mode) {
         return new GVRScreenshotCallback() {
 
             @Override
@@ -224,7 +206,7 @@ public class SampleCubeMain extends GVRMain {
                 if (bitmap != null) {
                     File file = new File(
                             Environment.getExternalStorageDirectory(), filename
-                                    + ".png");
+                            + ".png");
                     FileOutputStream outputStream = null;
                     try {
                         outputStream = new FileOutputStream(file);
@@ -240,20 +222,20 @@ public class SampleCubeMain extends GVRMain {
                         }
                     }
                 } else {
-                    Log.e("SampleActivity", "Returned Bitmap is null");
+                    Log.e(TAG, "Returned Bitmap is null");
                 }
 
                 // enable next screenshot
                 switch (mode) {
-                case 0:
-                    lastScreenshotCenterFinished = true;
-                    break;
-                case 1:
-                    lastScreenshotLeftFinished = true;
-                    break;
-                case 2:
-                    lastScreenshotRightFinished = true;
-                    break;
+                    case 0:
+                        lastScreenshotCenterFinished = true;
+                        break;
+                    case 1:
+                        lastScreenshotLeftFinished = true;
+                        break;
+                    case 2:
+                        lastScreenshotRightFinished = true;
+                        break;
                 }
             }
         };
@@ -265,7 +247,7 @@ public class SampleCubeMain extends GVRMain {
 
             @Override
             public void onScreenCaptured(Bitmap[] bitmapArray) {
-                Log.d("SampleActivity", "Length of bitmapList: "
+                Log.d(TAG, "Length of bitmapList: "
                         + bitmapArray.length);
                 if (bitmapArray.length > 0) {
                     for (int i = 0; i < bitmapArray.length; i++) {
@@ -289,7 +271,7 @@ public class SampleCubeMain extends GVRMain {
                         }
                     }
                 } else {
-                    Log.e("SampleActivity", "Returned Bitmap List is empty");
+                    Log.e(TAG, "Returned Bitmap List is empty");
                 }
 
                 // enable next screenshot
@@ -297,4 +279,6 @@ public class SampleCubeMain extends GVRMain {
             }
         };
     }
+
+    private final static String TAG = "SampleCubeMain";
 }
