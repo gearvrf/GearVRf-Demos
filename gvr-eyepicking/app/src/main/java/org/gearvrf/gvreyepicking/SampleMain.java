@@ -14,15 +14,26 @@
  */
 package org.gearvrf.gvreyepicking;
 
+import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMaterial.GVRShaderType;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
+import org.gearvrf.IPickEvents;
+import org.gearvrf.utility.Log;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.gearvrf.*;
-import org.gearvrf.GVRMaterial.GVRShaderType;
-import org.gearvrf.utility.Log;
-
-public class SampleMain extends GVRScript {
+public class SampleMain extends GVRMain {
     public class PickHandler implements IPickEvents
     {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)

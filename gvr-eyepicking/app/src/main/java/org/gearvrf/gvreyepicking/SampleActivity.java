@@ -21,10 +21,9 @@ import android.os.Bundle;
 import org.gearvrf.GVRActivity;
 
 public class SampleActivity extends GVRActivity {
-	
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setScript(new SampleMain(this), "gvr.xml");
+        setMain(new SampleMain(this), "gvr.xml");
     }
 }

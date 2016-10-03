@@ -19,25 +19,22 @@ import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
-import org.gearvrf.debug.GVRConsole;
-import org.gearvrf.GVRRenderData;
+
 import java.io.IOException;
 
-public class SampleMain extends GVRScript {
+public class SampleMain extends GVRMain {
 
     private GVRContext mGVRContext;
-
-    private GVRConsole console;
-    
-    private ColorShader mColorShader = null;
+    private ColorShader mColorShader;
 
     @Override
-    public SplashMode getSplashMode() {
+    public GVRMain.SplashMode getSplashMode() {
         return SplashMode.NONE;
     }
 
@@ -90,12 +87,9 @@ public class SampleMain extends GVRScript {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
-
     }
 
     public boolean processKeyEvent(int keyCode) {
-
         return false;
     }
 
