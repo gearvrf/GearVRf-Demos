@@ -37,7 +37,7 @@ public class DiffuseShader2 {
             + "#version 300 es\n"
             + "in vec4 a_position;\n"
             + "in vec3 a_normal;\n" //
-            + "in vec2 a_tex_coord;\n"
+            + "in vec2 a_texcoord;\n"
             + "uniform mat4 u_mvp;\n" //
             + "uniform vec4 u_mat1;\n"
             + "uniform vec4 u_mat2;\n" //
@@ -61,7 +61,7 @@ public class DiffuseShader2 {
             + "  n = normalize(nrm.xyz);\n"
             + "  v = normalize(u_eye-pos.xyz);\n"
             + "  l = normalize(u_light-pos.xyz);\n"
-            + "  coord = a_tex_coord;\n"
+            + "  coord = a_texcoord;\n"
             + "  gl_Position = u_mvp*a_position;\n" //
             + "}\n";
 

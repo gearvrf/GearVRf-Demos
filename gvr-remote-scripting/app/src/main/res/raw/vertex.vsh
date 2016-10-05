@@ -13,9 +13,9 @@
 // limitations under the License.
 
 attribute vec4 a_position;
-attribute vec4 a_tex_coord;
+attribute vec2 a_texcoord;
 varying vec2 v_tex_coord;
 void main() {
-  v_tex_coord = a_tex_coord.xy;
+  v_tex_coord = a_texcoord.xy;
   gl_Position = a_position;
 }

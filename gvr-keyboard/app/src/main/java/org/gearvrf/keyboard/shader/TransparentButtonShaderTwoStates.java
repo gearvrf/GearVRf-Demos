@@ -37,12 +37,12 @@ public class TransparentButtonShaderTwoStates  extends TransparentButtonShaderBa
     private static final String VERTEX_SHADER = "" //
             + "attribute vec4 a_position;\n"
             + "attribute vec3 a_normal;\n" //
-            + "attribute vec2 a_tex_coord;\n"
+            + "attribute vec2 a_texcoord;\n"
             + "uniform mat4 u_mvp;\n" //
             + "varying vec3 normal;\n"
             + "varying vec2 coord;\n" //
             + "void main() {\n"
-            + "  coord = a_tex_coord;\n"
+            + "  coord = a_texcoord;\n"
             + "  gl_Position = u_mvp * a_position;\n" //
             + "}\n";
 
