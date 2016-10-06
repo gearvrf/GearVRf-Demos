@@ -32,6 +32,12 @@ android {
                     System.getProperty("appName") + ".apk")
         }
     }
+
+    // ignore the x86 and arm-v8 files from the google vr libraries
+    packagingOptions {
+        exclude 'lib/x86/libgvrbase.so'
+        exclude 'lib/arm64-v8a/libgvrbase.so'
+    }
 }
 
 task copyOculusSignature(type: Copy) {
@@ -53,15 +59,16 @@ dependencies {
         compile(name: 'backend_daydream-debug', ext: 'aar')
         compile(name: 'google-vr-base', ext: 'aar')
         compile(name: 'google-vr-common', ext: 'aar')
+        compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     } else {
         if (rootProject.hasProperty("no_oculus")) {
             compile(name: 'backend-debug', ext: 'aar')
         } else { //default oculus+daydream
             compile(name: 'backend_oculus-debug', ext: 'aar')
-
             compile(name: 'backend_daydream-debug', ext: 'aar')
             compile(name: 'google-vr-base', ext: 'aar')
             compile(name: 'google-vr-common', ext: 'aar')
+            compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
         }
     }
 }
