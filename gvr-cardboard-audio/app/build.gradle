@@ -34,6 +34,12 @@ android {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
+
+    // ignore the x86 and arm-v8 files from the google audio libraries
+    packagingOptions {
+        exclude 'lib/x86/libvraudio_engine.so'
+        exclude 'lib/arm64-v8a/libvraudio_engine.so'
+    }
 }
 
 dependencies {
