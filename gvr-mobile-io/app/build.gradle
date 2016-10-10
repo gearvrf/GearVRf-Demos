@@ -26,7 +26,7 @@ if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
 
 android {
     defaultConfig {
-        applicationId "org.gearvrf.io.cursorsimple"
+        applicationId "org.gearvrf.mobileio.cursorsimple"
     }
 
     buildTypes {
