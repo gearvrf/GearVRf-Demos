@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.mobileio.cursorsimple;
+package org.gearvrf.mobileio.mobileiocursor;
 
 import android.os.Bundle;
 

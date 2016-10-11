@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gearvrf.mobileio.cursorsimple;
+package org.gearvrf.mobileio.mobileiocursor;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
