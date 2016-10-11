@@ -16,6 +16,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.physics.GVRWorld;
 
 import java.io.IOException;
 
@@ -80,7 +81,7 @@ public class BulletSampleMain extends GVRMain {
          */
         addSphere(scene, 1.0f, 1.5f, 40.0f, -10.0f, BALL_MASS);
 
-        scene.setPhysicsEnabled(true);
+        scene.getRoot().attachComponent(new GVRWorld(gvrContext));
     }
 
     public void touchEvent() {
@@ -137,9 +138,10 @@ public class BulletSampleMain extends GVRMain {
             meshObject.attachCollider(meshCollider);
 
             // Physics body
-            meshObject.setPhysicsEnabled(true);
+            GVRRigidBody body = new GVRRigidBody(mGVRContext);
 
-            GVRRigidBody body = meshObject.getRigidBody();
+            meshObject.attachComponent(body);
+
 
             body.setRestitution(0.5f);
             body.setFriction(1.0f);
@@ -165,9 +167,9 @@ public class BulletSampleMain extends GVRMain {
         cubeObject.attachCollider(boxCollider);
 
         // Physics body
-        cubeObject.setPhysicsEnabled(true);
+        GVRRigidBody body = new GVRRigidBody(mGVRContext);
 
-        GVRRigidBody body = cubeObject.getRigidBody();
+        cubeObject.attachComponent(body);
 
         body.setMass(mass);
         body.setRestitution(0.5f);
@@ -193,9 +195,9 @@ public class BulletSampleMain extends GVRMain {
         sphereObject.attachCollider(sphereCollider);
 
         // Physics body
-        sphereObject.setPhysicsEnabled(true);
+        mSphereRigidBody = new GVRRigidBody(mGVRContext);
 
-        mSphereRigidBody = sphereObject.getRigidBody();
+        sphereObject.attachComponent(mSphereRigidBody);
 
         mSphereRigidBody.setMass(mass);
         mSphereRigidBody.setRestitution(1.5f);
