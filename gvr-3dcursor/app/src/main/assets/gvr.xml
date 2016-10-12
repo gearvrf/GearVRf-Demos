@@ -29,6 +29,7 @@
         showLoadingIcon="true"
         useProtectedFramebuffer="false"
         useGazeCursorController="true"
+        useAndroidWearTouchpad="true"
         useSrgbFramebuffer="false" >
 
         <mono-mode-parms
