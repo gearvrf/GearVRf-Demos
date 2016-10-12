@@ -23,6 +23,7 @@
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
         useProtectedFramebuffer="false"
+        useAndroidWearTouchpad="true"
         useSrgbFramebuffer="false" >
 
         <mono-mode-parms
