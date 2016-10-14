@@ -7,19 +7,18 @@ import java.util.concurrent.Future;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRHybridObject;
+import org.gearvrf.GVRLodGroup;
+import org.gearvrf.GVRLodRange;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRPositionAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.animation.GVRTransformAnimation;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
 public class LODTestMain extends GVRMain {
@@ -46,23 +45,30 @@ public class LODTestMain extends GVRMain {
         Future<GVRTexture> greenFutureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.green));
         Future<GVRTexture> blueFutureTexture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.blue));
 
+        GVRSphereSceneObject root = new GVRSphereSceneObject(gvrContext);
+        root.attachComponent(new GVRLodGroup(gvrContext));
+
         GVRSphereSceneObject sphereHighDensity = new GVRSphereSceneObject(gvrContext);
+        sphereHighDensity.setName("sphereHighDensity");
         setupObject(gvrContext, sphereHighDensity, redFutureTexture);
-        sphereHighDensity.setLODRange(0.0f, 5.0f);
-        scene.addSceneObject(sphereHighDensity);
+        sphereHighDensity.attachComponent(new GVRLodRange(gvrContext, 0f, 5f));
+        root.addChildObject(sphereHighDensity);
         
         GVRSphereSceneObject sphereMediumDensity = new GVRSphereSceneObject(gvrContext, 9, 9,
                 true, new GVRMaterial(gvrContext));
-        setupObject(gvrContext, sphereMediumDensity, greenFutureTexture); 
-        sphereMediumDensity.setLODRange(5.0f, 9.0f);
-        scene.addSceneObject(sphereMediumDensity);
+        sphereMediumDensity.setName("sphereMediumDensity");
+        setupObject(gvrContext, sphereMediumDensity, greenFutureTexture);
+        sphereMediumDensity.attachComponent(new GVRLodRange(gvrContext, 5f, 9f));
+        root.addChildObject(sphereMediumDensity);
         
         GVRSphereSceneObject sphereLowDensity = new GVRSphereSceneObject(gvrContext, 6, 6,
                 true, new GVRMaterial(gvrContext));
-        setupObject(gvrContext, sphereLowDensity, blueFutureTexture);   
-        sphereLowDensity.setLODRange(9.0f, Float.MAX_VALUE);
-        scene.addSceneObject(sphereLowDensity);
-        
+        sphereLowDensity.setName("sphereLowDensity");
+        setupObject(gvrContext, sphereLowDensity, blueFutureTexture);
+        sphereLowDensity.attachComponent(new GVRLodRange(gvrContext, 9f, Float.MAX_VALUE));
+        root.addChildObject(sphereLowDensity);
+
+        scene.addSceneObject(root);
     }
     
     private void setupObject(GVRContext gvrContext, GVRSceneObject object, Future<GVRTexture> futureTexture) {
