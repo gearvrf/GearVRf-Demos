@@ -21,6 +21,8 @@ import org.gearvrf.GVRSpotLight;
 
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.joml.Quaternionf;
 
 import android.graphics.Color;
@@ -42,60 +44,25 @@ public class ShadowsMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws Throwable {
         mGVRContext = gvrContext;
 
-         GVRScene scene = mGVRContext.getNextMainScene();
-//        mAnimationEngine = gvrContext.getAnimationEngine();
-//
-//        GVRScene scene = gvrContext.getNextMainScene(new Runnable() {
-//            @Override
-//            public void run() {
-//                mAssimpAnimation.start(mAnimationEngine);
-//            }
-//        });
-
+        GVRScene scene = mGVRContext.getNextMainScene();
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getLeftCamera().setBackgroundColor(Color.BLACK);
         mainCameraRig.getRightCamera().setBackgroundColor(Color.BLACK);
-
         mainCameraRig.getTransform().setPosition(0.0f, 6.0f, 8.0f);
 
-                                                     
-        GVRSceneObject light1= createLight(gvrContext);
-        
-        /*
-         * Create the ground. A simple textured quad. In bullet it will be a
-         * plane shape with 0 mass
-         */        
+        GVRSceneObject light1 = createLight(gvrContext);
         GVRSceneObject groundScene = createBackdrop(gvrContext);
         groundScene.getTransform().setRotationByAxis(-80.0f, 1.0f, 0.0f, 0.0f);
         groundScene.getTransform().setPosition(0.0f, 0.0f, 0.0f);
         scene.addSceneObject(groundScene);
 
-         addSphere(scene, 1.0f, 0, 1.0f, -1.0f);
-        //
-        // addSphere(scene, 1.0f, -2, 1.0f, -2.0f);
-        // addSphere(scene, 1.0f, -2, 1.0f, 2.0f);
-        // addSphere(scene, 1.0f, 2, 1.0f, -2.0f);
-        // addSphere(scene, 1.0f, 2, 1.0f, 2.0f);
-        //
-    //     addSphere(scene, 1.0f, -2, 2.0f, -2.0f);
-        // addSphere(scene, 1.0f, -2, 2.0f, 2.0f);
-        // addSphere(scene, 1.0f, 2, 2.0f, -2.0f);
-        // addSphere(scene, 1.0f, 2, 2.0f, 2.0f);
-    //    //
+        addSphere(scene, 1.0f, 0, 1.0f, -1.0f);
         addSphere(scene, 1.0f, -4, 2.0f, -2.0f);
-        // addSphere(scene, 1.0f, -6, 2.0f, -6.0f);
-        // addSphere(scene, 1.0f, -8, 2.0f, -8.0f);
-        //
-         addCube(scene, 2, 6f, 2, -3.0f);
-        setupShader(scene,cubeObject.getRenderData() );
+        addCube(scene, 2, 6f, 2, -3.0f);
         stormtrooper = addStormtrooper(scene, 0, 2.6f, -2.0f);
-        
         light1.getTransform().setRotationByAxis(-35, 1, 0, 0);
-         light1.getTransform().setPosition(4.0f, 7, 10);
-      
-         GVRSceneObject light2 = createPointLight(gvrContext, 0, 1, 0, 5.0f);
-      //   scene.addSceneObject(light2);
-         scene.addSceneObject(light1);
+        light1.getTransform().setPosition(4.0f, 7, 10);
+        scene.addSceneObject(light1);
         rotateObject = light1;
 
     }
@@ -122,8 +89,7 @@ public class ShadowsMain extends GVRMain {
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
         GVRPointLight light = new GVRPointLight(context);
-        Quaternionf q = new Quaternionf();
-        
+
         lightNode.attachLight(light);         
         lightNode.getTransform().setPosition(0, y, 3);
         light.setAmbientIntensity(0.3f * r, 0.3f * g, 0.3f * b, 1);
@@ -136,30 +102,28 @@ public class ShadowsMain extends GVRMain {
     private GVRSceneObject createLight(GVRContext context)
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
-        GVRDirectLight light = new GVRDirectLight(context);
-      
-        // GVRSpotLight light= new GVRSpotLight(context);
-        Quaternionf q = new Quaternionf();
+        GVRSpotLight light = new GVRSpotLight(context);
+
         light.setCastShadow(true);
         lightNode.attachLight(light);         
-       // lightNode.getTransform().setPosition(-0.4f, 0, 3);
+        lightNode.getTransform().rotateByAxis(-45.0f, 1, 0, 0);
         light.setAmbientIntensity(0.3f * 1, 0.3f * 1, 0, 1);
         light.setDiffuseIntensity(0, 1, 1, 1);
         light.setSpecularIntensity(0, 1,1, 1);
-    //    light.setInnerConeAngle(8);
-    //    light.setOuterConeAngle(12);
-    //    lightNode.setName("RedLight");
+        light.setInnerConeAngle(30);
+        light.setOuterConeAngle(40);
         return lightNode;
     }
+
     long lasttime = System.currentTimeMillis();;
     int countFrame;
     int framerate;
     private float theta =0.0f;
     @Override
     public void onStep() {
-        
+
         theta -= 0.01;
-       
+
         if(theta <= -8.0f)
             theta = 0.0f;
         double sine = Math.cos(theta);
@@ -185,30 +149,22 @@ public class ShadowsMain extends GVRMain {
         }
         return object;
     }
-    private GVRMaterial createCustomMaterial(GVRContext context) throws Exception
-    {
-        Future<GVRTexture> texture = context.loadFutureTexture(new GVRAndroidResource(context, "cube.jpg"));
-        GVRMaterial litMaterial = new GVRMaterial(context);
+
+
+    private void addCube(GVRScene scene, float size, float x, float y, float z) throws IOException {
+        Future<GVRTexture> tex = mGVRContext.loadFutureTexture(new GVRAndroidResource(mGVRContext, "cube.jpg"));
+        GVRMaterial litMaterial = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+
         litMaterial.setVec4("diffuseColor", 1.0f, 1.0f, 1.0f, 1.0f);
         litMaterial.setVec4("ambientColor", 0.5f, 0.5f, 0.5f, 0.0f);
         litMaterial.setVec4("specularColor", 1.0f, 1.0f, 1.0f, 1.0f);
         litMaterial.setVec4("emissiveColor", 0.0f, 0.0f, 0.0f, 0.0f);
         litMaterial.setFloat("specularExponent", 10.0f);
-        litMaterial.setTexture("diffuseTexture", texture);
-        return litMaterial;
-    }
-    private void setupShader(GVRScene scene, GVRRenderData rdata) throws Exception
-    {
-        GVRContext context = scene.getGVRContext();
-        GVRMaterial litMaterial = createCustomMaterial(context);
-        
-        rdata.setMaterial(litMaterial);
-        rdata.setShaderTemplate(GVRPhongShader.class);
-    }
-    private void addCube(GVRScene scene, float size, float x, float y, float z) {
-        cubeObject = meshWithTexture("cube.obj", "cube.jpg");
+        litMaterial.setTexture("diffuseTexture", tex);
+        cubeObject = new GVRCubeSceneObject(mGVRContext, true, litMaterial);
         cubeObject.getTransform().setPosition(x, y, z);
         cubeObject.getTransform().setScale(size, size, size);
+        cubeObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cubeObject.setName("cube");
         scene.addSceneObject(cubeObject);
     }
@@ -216,14 +172,10 @@ public class ShadowsMain extends GVRMain {
     private void addSphere(GVRScene scene, float radius, float x, float y,
             float z) throws IOException {
 
-        GVRSceneObject sphereObject  = meshWithTexture("sphere.obj",
-                "sphere.jpg");
-       
         Future<GVRTexture> tex = mGVRContext.loadFutureTexture(new GVRAndroidResource(mGVRContext, "sphere.jpg"));
-        
-        GVRRenderData rdata = sphereObject.getRenderData();
-        GVRMaterial material = new GVRMaterial(mGVRContext);
-        
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRSceneObject sphereObject = new GVRSphereSceneObject(mGVRContext, true, material);
+
         material.setVec4("diffuse_color", 0.8f, 0.8f, 0.8f, 1.0f);
         material.setVec4("ambient_color", 0.3f, 0.3f, 0.3f, 1.0f);
         material.setVec4("specular_color", 1.0f, 1.0f, 1.0f, 1.0f);
@@ -231,10 +183,6 @@ public class ShadowsMain extends GVRMain {
         material.setFloat("specular_exponent", 10.0f);
         material.setTexture("diffuseTexture", tex);
         sphereObject.setName("sphere");
-   
-        rdata.setMaterial(material);
-        rdata.enableLight();
-
         sphereObject.getTransform().setPosition(x, y, z);
         sphereObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(sphereObject);
@@ -247,7 +195,7 @@ public class ShadowsMain extends GVRMain {
         object.getTransform().setScale(1.5f, 1.5f, 1.5f);
         object.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
         GVRRenderData rdata = object.getRenderData();
-        GVRMaterial material = new GVRMaterial(mGVRContext);
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         
         material.setVec4("diffuse_color", 0.8f, 0.8f, 0.8f, 1.0f);
         material.setVec4("ambient_color", 0.3f, 0.3f, 0.3f, 1.0f);
@@ -255,11 +203,9 @@ public class ShadowsMain extends GVRMain {
         material.setVec4("emissive_color", 0.0f, 0.0f, 0.0f, 0.0f);
         material.setFloat("specular_exponent", 10.0f);
         material.setTexture("diffuseTexture", tex);
-       
         rdata.setMaterial(material);
         object.getRenderData().setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(object);
-    
         return object;
     }
 
