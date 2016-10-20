@@ -45,7 +45,7 @@ public class SampleMain extends GVRScript {
 
         GVRScene scene = gvrContext.getNextMainScene();
         mConsole = new GVRConsole(gvrContext, EyeMode.BOTH_EYES, gvrContext.getNextMainScene());
-        mConsole.setTextSize(mConsole.getTextSize() * 3);
+
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getLeftCamera()
