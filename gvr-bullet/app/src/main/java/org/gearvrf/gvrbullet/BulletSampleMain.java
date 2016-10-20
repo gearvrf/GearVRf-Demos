@@ -23,7 +23,7 @@ import java.io.IOException;
 
 public class BulletSampleMain extends GVRMain {
 
-   public class CollisionHandler implements ICollisionEvents {
+    public class CollisionHandler implements ICollisionEvents {
         private GVRTexture blueObject;
 
         CollisionHandler() {
@@ -57,6 +57,7 @@ public class BulletSampleMain extends GVRMain {
     private GVRContext mGVRContext = null;
     private GVRRigidBody mSphereRigidBody = null;
     private CollisionHandler mCollisionHandler;
+    private GVRScene mScene = null;
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
@@ -111,11 +112,49 @@ public class BulletSampleMain extends GVRMain {
         addSphere(scene, 1.0f, 1.5f, 40.0f, -10.0f, BALL_MASS);
 
         scene.getRoot().attachComponent(new GVRWorld(gvrContext));
+
+        mScene = scene;
     }
 
+    long randomActions = -1;
+
     public void touchEvent() {
-        mSphereRigidBody.applyCentralForce(-20.0f, 500.0f, 0.0f);
-        mSphereRigidBody.applyTorque(5.0f, 0.5f, 0.0f);
+        if (randomActions < 0) {
+            /*
+            0 - Enable/disable world simulation
+            1 - Enable/disable body simulation
+            2 - Add/Remove scene object
+            3 - apply force on the ball
+             */
+            randomActions = System.currentTimeMillis() % 4;
+        }
+
+        if (randomActions == 0) {
+            if (mSphereRigidBody.getWorld().isEnabled()) {
+                mSphereRigidBody.getWorld().disable();
+            } else {
+                mSphereRigidBody.getWorld().enable();
+                randomActions = -1;
+            }
+        } else if (randomActions == 1) {
+            if (mSphereRigidBody.isEnabled()) {
+                mSphereRigidBody.disable();
+            } else {
+                mSphereRigidBody.enable();
+                randomActions = -1;
+            }
+        } else if (randomActions == 2) {
+            if (mSphereRigidBody.getWorld() != null) {
+                mScene.removeSceneObject(mSphereRigidBody.getOwnerObject());
+            } else {
+                mScene.addSceneObject(mSphereRigidBody.getOwnerObject());
+                randomActions = -1;
+            }
+        } else {
+            mSphereRigidBody.applyCentralForce(-20.0f, 900.0f, 0.0f);
+            mSphereRigidBody.applyTorque(5.0f, 0.5f, 0.0f);
+            randomActions = -1;
+        }
     }
 
     @Override
@@ -169,12 +208,11 @@ public class BulletSampleMain extends GVRMain {
             // Physics body
             GVRRigidBody body = new GVRRigidBody(mGVRContext);
 
-            meshObject.attachComponent(body);
-
-
             body.setRestitution(0.5f);
             body.setFriction(1.0f);
-            //meshObject.getEventReceiver().addListener(mCollisionHandler);
+
+            meshObject.attachComponent(body);
+
             scene.addSceneObject(meshObject);
         } catch (IOException exception) {
             Log.d("gvrf", exception.toString());
@@ -198,12 +236,12 @@ public class BulletSampleMain extends GVRMain {
         // Physics body
         GVRRigidBody body = new GVRRigidBody(mGVRContext);
 
-        cubeObject.attachComponent(body);
-
         body.setMass(mass);
         body.setRestitution(0.5f);
         body.setFriction(1.0f);
-        //cubeObject.getEventReceiver().addListener(mCollisionHandler);
+
+        cubeObject.attachComponent(body);
+
         scene.addSceneObject(cubeObject);
     }
 
@@ -226,12 +264,13 @@ public class BulletSampleMain extends GVRMain {
         // Physics body
         mSphereRigidBody = new GVRRigidBody(mGVRContext);
 
-        sphereObject.attachComponent(mSphereRigidBody);
-
         mSphereRigidBody.setMass(mass);
         mSphereRigidBody.setRestitution(1.5f);
         mSphereRigidBody.setFriction(0.5f);
         sphereObject.getEventReceiver().addListener(mCollisionHandler);
+
+        sphereObject.attachComponent(mSphereRigidBody);
+
         scene.addSceneObject(sphereObject);
     }
 
