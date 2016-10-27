@@ -54,12 +54,12 @@ public class MainActivity extends GVRActivity {
         View.inflate(this, R.layout.activity_main, mFrameLayoutLeft);
 
         mWebView = new GVRWebView(this);
-        mWebView.loadUrl("http://www.gearvrf.org");
+        mWebView.loadUrl("https://resources.samsungdevelopers.com/Gear_VR/020_GearVR_Framework_Project");
         mWebView.setLayoutParams(new FrameLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         mTextView = new GVRTextView(this);
-        mTextView.setText("Android's Rederable Views");
+        mTextView.setText("Android's Renderable Views");
         mTextView.setTextColor(Color.WHITE);
     }
 
