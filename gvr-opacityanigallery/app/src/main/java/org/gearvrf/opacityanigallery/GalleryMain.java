@@ -15,17 +15,15 @@
 
 package org.gearvrf.opacityanigallery;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPostEffect;
-import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
@@ -36,14 +34,14 @@ import org.gearvrf.animation.GVRScaleAnimation;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 
-import android.media.MediaPlayer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GalleryMain extends GVRScript {
 
     private static final float ANIMATION_DURATION = 0.3f;
     private static final float SELECTED_SCALE = 2.0f;
 
-    private GVRContext mGVRContext = null;
     private List<GVRSceneObject> mBoards = new ArrayList<GVRSceneObject>();
     private GVRSceneObject mBoardParent;
     private int mSelected = 0;
@@ -58,36 +56,19 @@ public class GalleryMain extends GVRScript {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        mGVRContext = gvrContext;
-
         mAnimationEngine = gvrContext.getAnimationEngine();
 
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = gvrContext.getNextMainScene();
 
-        mainScene.getMainCameraRig().getLeftCamera()
-                .setBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);
-        mainScene.getMainCameraRig().getRightCamera()
-                .setBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);
+        GVRMesh sphereMesh = gvrContext.loadMesh(new GVRAndroidResource(
+                gvrContext, R.raw.sphere_mesh));
 
-        mainScene.getMainCameraRig().getTransform()
-                .setPosition(0.0f, 0.0f, 0.0f);
-
-        GVRMesh sphereMesh = mGVRContext.loadMesh(new GVRAndroidResource(
-                mGVRContext, R.raw.sphere_mesh));
-
-        GVRSceneObject leftScreen = new GVRSceneObject(mGVRContext, sphereMesh,
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+        GVRSceneObject background = new GVRSceneObject(gvrContext, sphereMesh,
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.left_screen)));
-        leftScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
-        leftScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
-        GVRSceneObject rightScreen = new GVRSceneObject(mGVRContext,
-                sphereMesh, mGVRContext.loadTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.right_screen)));
-        rightScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
-        rightScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
-
-        mainScene.addSceneObject(leftScreen);
-        mainScene.addSceneObject(rightScreen);
+        background.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+        background.getTransform().setScale(10.0f, 10.0f, 10.0f);
+        mainScene.addSceneObject(background);
 
         List<GVRTexture> numberTextures = new ArrayList<GVRTexture>();
         int[] resourceIds = new int[] { R.drawable.photo_1,
@@ -96,12 +77,12 @@ public class GalleryMain extends GVRScript {
                 R.drawable.photo_6, R.drawable.photo_7,
                 R.drawable.photo_8, R.drawable.photo_9 };
         for (int id : resourceIds) {
-            numberTextures.add(mGVRContext.loadTexture(new GVRAndroidResource(
-                    mGVRContext, id)));
+            numberTextures.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
+                    gvrContext, id)));
         }
 
         for (int i = 0, size = numberTextures.size(); i < size; ++i) {
-            GVRSceneObject number = new GVRSceneObject(mGVRContext, 2.0f, 1.0f,
+            GVRSceneObject number = new GVRSceneObject(gvrContext, 2.0f, 1.0f,
                     numberTextures.get(i));
             number.getTransform().setPosition(0.0f, 0.0f, -5.0f);
             float degree = 360.0f * i / (size + 1);
@@ -110,9 +91,8 @@ public class GalleryMain extends GVRScript {
             mBoards.add(number);
         }
 
-        MediaPlayer mediaPlayer = MediaPlayer.create(mGVRContext.getContext(),
-                R.raw.tron);
-        GVRVideoSceneObject video = new GVRVideoSceneObject(mGVRContext, 2.0f,
+        MediaPlayer mediaPlayer = MediaPlayer.create(gvrContext.getContext(), R.raw.tron);
+        GVRVideoSceneObject video = new GVRVideoSceneObject(gvrContext, 2.0f,
                 1.0f, mediaPlayer, GVRVideoType.MONO);
         video.setName("video");
         video.getRenderData().getMaterial().setOpacity(0.0f);
@@ -123,7 +103,7 @@ public class GalleryMain extends GVRScript {
                 0.0f, 0.0f, 0.0f);
         mBoards.add(video);
 
-        mBoardParent = new GVRSceneObject(mGVRContext);
+        mBoardParent = new GVRSceneObject(gvrContext);
 
         for (GVRSceneObject board : mBoards) {
             mBoardParent.addChildObject(board);
@@ -138,20 +118,18 @@ public class GalleryMain extends GVRScript {
                 .setScale(SELECTED_SCALE, SELECTED_SCALE, 0.0f);
 
         CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(
-                mGVRContext);
-        GVRPostEffect postEffect = new GVRPostEffect(mGVRContext,
-                shaderManager.getShaderId());
+                gvrContext);
+        GVRPostEffect postEffect = new GVRPostEffect(gvrContext, shaderManager.getShaderId());
         postEffect.setVec3("ratio_r", 0.393f, 0.769f, 0.189f);
         postEffect.setVec3("ratio_g", 0.349f, 0.686f, 0.168f);
         postEffect.setVec3("ratio_b", 0.272f, 0.534f, 0.131f);
         mainScene.getMainCameraRig().getLeftCamera().addPostEffect(postEffect);
         mainScene.getMainCameraRig().getRightCamera().addPostEffect(postEffect);
-
     }
 
     @Override
     public void onStep() {
-        float lookAtY = mGVRContext.getMainScene().getMainCameraRig()
+        float lookAtY = getGVRContext().getMainScene().getMainCameraRig()
                 .getLookAt()[1];
 
         if (mRotationAnimation != null && mRotationAnimation.isFinished()) {
