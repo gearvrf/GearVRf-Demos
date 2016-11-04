@@ -20,32 +20,10 @@ import org.gearvrf.GVRMain;
  */
 public class TransparencyTest extends GVRActivity
 {
-    private TransparencyTestMain mMain;
-    private long lastDownTime = 0;
-    private static final String TAG = "TransparencyTest";
-
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        mMain = new TransparencyTestMain();
-        setMain(mMain, "gvr.xml");
-    }
-    
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event.getActionMasked() == MotionEvent.ACTION_DOWN) {
-            lastDownTime = event.getDownTime();
-        }
-
-        if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-            // check if it was a quick tap
-            if (event.getEventTime() - lastDownTime < 200) {
-                mMain.toggleFrustumCulling();
-            }
-        }
-
-        return true;
+        setMain(new TransparencyTestMain(), "gvr.xml");
     }
 }
