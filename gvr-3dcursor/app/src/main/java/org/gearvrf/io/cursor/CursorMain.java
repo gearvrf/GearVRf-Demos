@@ -403,6 +403,11 @@ public class CursorMain extends GVRMain {
 
         cursors = new ArrayList<Cursor>();
         cursorManager.addCursorActivationListener(activationListener);
+
+        // register all active cursors
+        for(Cursor cursor : cursorManager.getActiveCursors()){
+            activationListener.onActivated(cursor);
+        }
     }
 
     private void createTextViewSceneObject(int index) {
