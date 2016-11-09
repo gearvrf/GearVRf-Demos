@@ -1,246 +1,238 @@
 package org.gearvrf.gvrsimlephysics.main;
 
-import android.util.Log;
+import android.graphics.Color;
+import android.view.Gravity;
 
-import org.gearvrf.FutureWrapper;
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.gvrsimlephysics.R;
-import org.gearvrf.gvrsimlephysics.entity.Ball;
 import org.gearvrf.gvrsimlephysics.entity.Countdown;
 import org.gearvrf.gvrsimlephysics.util.MathUtils;
 import org.gearvrf.gvrsimlephysics.util.VRTouchPadGestureDetector;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
-import org.gearvrf.physics.ICollisionEvents;
+import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
 
-import static org.gearvrf.gvrsimlephysics.entity.CollisionFilter.CYLINDER_ID;
-import static org.gearvrf.gvrsimlephysics.entity.CollisionFilter.GROUND_ID;
-import static org.gearvrf.gvrsimlephysics.entity.CollisionFilter.INVISIBLE_GROUND_ID;
+public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisitor {
 
-public class MainScript extends GVRMain {
-
-    private GVRContext gvrContext = null;
-    private GVRScene scene;
-    private GVRCameraRig mainCameraRig;
-    private static final float CUBE_MASS = 0.3f;
-
+    private final int MAX_BALLS = 40;
+    private int SCORE_OFFSET = -50;
+    private GVRScene mScene;
+    private GVRCameraRig mCamera;
+    private int mTimeTicker = 0;
+    private int mScore = 0;
+    private int mNumBalls = 0;
+    private int mNumCylinders = 0;
+    private GVRTextViewSceneObject mScoreLabel;
+    private GVRTextViewSceneObject mBallsLabel;
+    private GVRTextViewSceneObject mEndGameLabel;
+    private Countdown mCountDown;
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
-        this.gvrContext = gvrContext;
-        scene = this.gvrContext.getNextMainScene();
-        scene.addSceneObject(createLight(getGVRContext()));
+        mScene = gvrContext.getNextMainScene();
+        mCamera = mScene.getMainCameraRig();
 
-        mainCameraRig = scene.getMainCameraRig();
-        mainCameraRig.getLeftCamera().setBackgroundColor(245f, 244f, 214f, 255f);
-        mainCameraRig.getRightCamera().setBackgroundColor(245f, 244f, 214f, 255f);
-        mainCameraRig.getTransform().setPosition(0.0f, 6.0f, 20f);
+        initCamera(gvrContext, mCamera);
 
-        addInvisibleGround();
-        addGroundMesh();
-        addCylinderGroup();
-        addGaze();
-        addTimer();
+        initScene(gvrContext, mScene);
 
-        scene.getRoot().attachComponent(new GVRWorld(gvrContext));
-        scene.getEventReceiver().addListener(this);
+        initLabels(gvrContext, mScene);
+
+        addPhysicsWorld(gvrContext, mScene);
+
+        mScene.getEventReceiver().addListener(this);
     }
 
-    private void addInvisibleGround() {
+    private static void initCamera(GVRContext context, GVRCameraRig camera) {
+        float intensity = 1.0f;
+        camera.getLeftCamera().setBackgroundColor(1.0f * intensity, 0.956f * intensity, 0.84f * intensity, 1f);
+        camera.getRightCamera().setBackgroundColor(1.0f * intensity, 0.956f * intensity, 0.84f * intensity, 1f);
+        camera.getTransform().setPosition(0.0f, 6.0f, 20f);
 
-        GVRMesh mesh = gvrContext.createQuad(300.0f, 300.0f);
-        Future<GVRTexture> texture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.black));
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        GVRSceneObject groundObject = new GVRSceneObject(gvrContext, mesh);
-        groundObject.getRenderData().setMaterial(material);
-        groundObject.getRenderData().getMaterial().setTexture("diffuseTexture", texture);
-        groundObject.getTransform().setPosition(0.0f, -4f, 0.0f);
-        groundObject.getTransform().setRotationByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
-        groundObject.getEventReceiver().addListener(new ICollisionEvents() {
-            @Override
-            public void onEnter(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
+        addGaze(context, camera);
+    }
 
-                if (gvrSceneObject.getName().equals("cylinder")) {
+    private void initScene(GVRContext context, GVRScene scene) {
+        addLights(context, scene);
+        addGround(context, scene);
+        addCylinderGroup(context, scene);
+    }
 
-                    gvrSceneObject.setEnable(false);
-                    GVRRigidBody rigidBody = (GVRRigidBody) gvrSceneObject.getComponent(GVRRigidBody.getComponentType());
-                    rigidBody.getCollisionType().colideNotWith(INVISIBLE_GROUND_ID);
-                    gvrSceneObject.setEnable(true);
-                    scene.removeSceneObject(gvrSceneObject);
-                    Log.d("douglas", "removi");
+    private static void addGaze(GVRContext context, GVRCameraRig camera) {
+        camera.addChildObject(MainHelper.createGaze(context, 0.0f, 0.0f, -1.0f));
+    }
+
+    private void addTimer(GVRContext context, GVRScene scene) {
+        GVRTextViewSceneObject label = MainHelper.createLabel(context, 6f, 9f, -5f);
+        mCountDown = new Countdown(label);
+
+        scene.addSceneObject(label);
+
+        mCountDown.start(context);
+    }
+
+    private void initLabels(GVRContext context, GVRScene scene) {
+        mEndGameLabel = null;
+        mScoreLabel = MainHelper.createLabel(context, 0f, 9f, -5f);
+        mBallsLabel = MainHelper.createLabel(context, -6f, 9f, -5f);
+
+        mScoreLabel.setText("Score: 0");
+        mBallsLabel.setText("Balls: " + MAX_BALLS );
+
+        scene.addSceneObject(mScoreLabel);
+        scene.addSceneObject(mBallsLabel);
+
+        addTimer(context, scene);
+    }
+
+    private static void addPhysicsWorld(GVRContext context, GVRScene scene) {
+        scene.getRoot().attachComponent(new GVRWorld(context, MainHelper.collisionMatrix));
+    }
+
+    private static void addLights(GVRContext context, GVRScene scene) {
+        GVRSceneObject centerLight = MainHelper.createDirectLight(context, 0.0f, 10.0f, 2.0f);
+        GVRSceneObject leftPointLight = MainHelper.createPointLight(context, -10.0f, 5.0f, 20.0f);
+        GVRSceneObject rightPointLight = MainHelper.createPointLight(context, 10.0f, 5.0f, 20.0f);
+
+        centerLight.getTransform().rotateByAxis(-90, 1, 0, 0);
+
+        scene.addSceneObject(centerLight);
+        scene.addSceneObject(leftPointLight);
+        scene.addSceneObject(rightPointLight);
+    }
+
+    private static void addGround(GVRContext context, GVRScene scene) {
+        scene.addSceneObject(MainHelper.createGround(context, 0.0f, 0.0f, 0.0f));
+    }
+
+    private void addCylinderGroup(GVRContext context, GVRScene scene) {
+        final int[] CYLINDER_COLORS = {R.drawable.black, R.drawable.brown,
+                R.drawable.green, R.drawable.grey, R.drawable.orange, R.drawable.pink,
+                R.drawable.red, R.drawable.yellow, R.drawable.light_blue, R.drawable.light_green,
+                R.drawable.dark_blue, R.drawable.cy};
+
+        final int SQUARE_SIZE = 3;
+        float offset = 0;
+        try {
+            for (int y = 0; y < SQUARE_SIZE; y++) {
+                for (int x = 0; x < SQUARE_SIZE - y; x++) {
+                    for (int z = 0; z < SQUARE_SIZE; z++) {
+                        addCylinder(context, scene, (x - (SQUARE_SIZE / 2.0f)) * 2.5f + 1.5f + offset,
+                                1f + (y * 1.2f), (z + (SQUARE_SIZE / 2.0f)) * 2.5f - 5f,
+                                CYLINDER_COLORS[mNumCylinders++ % CYLINDER_COLORS.length]);
+                    }
                 }
+                offset += 1.25f;
             }
-
-            @Override
-            public void onExit(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
-
-            }
-        });
-
-        //set phong Shader
-        groundObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
-
-
-        // Collider
-        GVRMeshCollider meshCollider = new GVRMeshCollider(gvrContext, mesh);
-        groundObject.attachCollider(meshCollider);
-
-        // Physics body
-        GVRRigidBody body = new GVRRigidBody(gvrContext);
-        body.setRestitution(0.5f);
-        body.setFriction(1.0f);
-        body.setCollisionType(INVISIBLE_GROUND_ID);
-        groundObject.attachComponent(body);
-        scene.addSceneObject(groundObject);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
-
-    private void addCylinderGroup() throws IOException {
-
-        scene.addSceneObject(createCylinder(7f, .5f, 1.0f, CUBE_MASS, R.drawable.black));
-        scene.addSceneObject(createCylinder(5f, .5f, 1.0f, CUBE_MASS, R.drawable.brown));
-        scene.addSceneObject(createCylinder(3f, .5f, 1.0f, CUBE_MASS, R.drawable.green));
-        scene.addSceneObject(createCylinder(7f, 1.8f, 1.0f, CUBE_MASS, R.drawable.grey));
-        scene.addSceneObject(createCylinder(4f, .5f, 2.5f, CUBE_MASS, R.drawable.orange));
-        scene.addSceneObject(createCylinder(-3f, .5f, 2.5f, CUBE_MASS, R.drawable.pink));
-        scene.addSceneObject(createCylinder(0.5f, .5f, 2f, CUBE_MASS, R.drawable.red));
-        scene.addSceneObject(createCylinder(2.5f, .5f, 3.5f, CUBE_MASS, R.drawable.yellow));
-        scene.addSceneObject(createCylinder(2.5f, 1.8f, 3.3f, CUBE_MASS, R.drawable.light_blue));
-        scene.addSceneObject(createCylinder(3.0f, .5f, 5.5f, CUBE_MASS, R.drawable.light_green));
-        scene.addSceneObject(createCylinder(-5f, 5f, -1.5f, CUBE_MASS, R.drawable.dark_blue));
-        scene.addSceneObject(createCylinder(5.5f, 15f, 7f, CUBE_MASS, R.drawable.cy));
-    }
-
-    private Ball createBall(float x, float y, float z) throws IOException {
-        Ball ball = new Ball(gvrContext, new GVRAndroidResource(gvrContext, "ball.fbx"),
-                new GVRAndroidResource(gvrContext, R.drawable.orange));
-        ball.getTransform().setPosition(x, y, z);
-        scene.addSceneObject(ball);
-        return ball;
-
-    }
-
-    private GVRSceneObject createCylinder(float x, float y, float z, float mass, int drawable) throws IOException {
-        GVRSceneObject cubeObject = new GVRSceneObject(gvrContext, new GVRAndroidResource(gvrContext, "cylinder.fbx"),
-                new GVRAndroidResource(gvrContext, drawable));
-        cubeObject.getTransform().setPosition(x, y, z);
-        cubeObject.getTransform().setRotationByAxis(90.0f, 1.0f, 0.0f, 0.0f);
-
-
-        // Collider
-        GVRMeshCollider meshCollider = new GVRMeshCollider(gvrContext, cubeObject.getRenderData().getMesh());
-        cubeObject.attachCollider(meshCollider);
-
-        // Physics body
-        GVRRigidBody body = new GVRRigidBody(gvrContext);
-        body.setMass(mass);
-        body.setCollisionType(CYLINDER_ID);
-        body.setRestitution(0.5f);
-        body.setFriction(5.0f);
-        cubeObject.attachComponent(body);
-
-        return cubeObject;
-    }
-
-    private GVRSceneObject createLight(GVRContext context) {
-        GVRSceneObject lightNode = new GVRSceneObject(context);
-        GVRDirectLight light = new GVRDirectLight(context);
-        light.setCastShadow(true);
-        light.setAmbientIntensity(0.3f * 1, 0.3f * 1, 0, 1);
-        light.setDiffuseIntensity(1, .9f, .8f, 1);
-        light.setSpecularIntensity(1, .9f, .8f, 1);
-        lightNode.getTransform().setPosition(0, 9f, 1);
-        lightNode.getTransform().setRotationByAxis(-90, 1, 0, 0);
-        lightNode.attachLight(light);
-        return lightNode;
-    }
-
-
-    private void addGaze() {
-
-        GVRSceneObject gaze = new GVRSceneObject(gvrContext,
-                new FutureWrapper<GVRMesh>(gvrContext.createQuad(0.1f, 0.1f)),
-                gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.gaze)));
-
-        gaze.getTransform().setPosition(0.0f, 0.0f, -1f);
-        gaze.getRenderData().setDepthTest(false);
-        gaze.getRenderData().setRenderingOrder(100000);
-        scene.getMainCameraRig().addChildObject(gaze);
-
-    }
-
-    private void addTimer() {
-
-        GVRMesh mesh = getGVRContext().createQuad(10f, 10f);
-        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.light_blue));
-        Countdown countdownObject = new Countdown(gvrContext, mesh);
-        scene.addSceneObject(countdownObject);
-    }
-
-    private void addGroundMesh() {
-
-        GVRMesh mesh = gvrContext.createQuad(30.0f, 30.0f);
-        Future<GVRTexture> texture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.drawable.orange));
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        GVRSceneObject groundObject = new GVRSceneObject(gvrContext, mesh);
-        groundObject.getRenderData().setMaterial(material);
-        groundObject.getRenderData().getMaterial().setTexture("diffuseTexture", texture);
-        groundObject.getTransform().setPosition(0.0f, 0f, 0.0f);
-        groundObject.getTransform().setRotationByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
-
-        //set phong Shader
-        groundObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
-
-
-        // Collider
-        GVRMeshCollider meshCollider = new GVRMeshCollider(gvrContext, mesh);
-        groundObject.attachCollider(meshCollider);
-
-        // Physics body
-        GVRRigidBody body = new GVRRigidBody(gvrContext);
-        body.setRestitution(0.5f);
-        body.setCollisionType(GROUND_ID);
-        body.setFriction(1.0f);
-        groundObject.attachComponent(body);
-        scene.addSceneObject(groundObject);
+    private static void addCylinder(GVRContext context, GVRScene scene, float x, float y, float z,
+                                    int drawable) throws IOException {
+        scene.addSceneObject(MainHelper.createCylinder(context, x, y, z, drawable));
     }
 
     public void onSwipe(VRTouchPadGestureDetector.SwipeDirection swipeDirection, float velocityX) {
 
-        if (swipeDirection == VRTouchPadGestureDetector.SwipeDirection.Forward) {
-            try {
+        if (swipeDirection != VRTouchPadGestureDetector.SwipeDirection.Forward
+                || gameStopped()) {
+            return;
+        }
 
-                int force = MathUtils.calculateForce(velocityX);
-                float[] vector = MathUtils.calculateRotation(mainCameraRig.getHeadTransform()
-                        .getRotationPitch(), mainCameraRig.getHeadTransform().getRotationYaw());
-                Ball ball = createBall(mainCameraRig.getTransform().getPositionX(),
-                        mainCameraRig.getTransform().getPositionY(), mainCameraRig.getTransform().getPositionZ());
-                ball.setPhysic();
-                ball.getRigidBody().applyCentralForce(vector[0] * force, vector[1] * force, vector[2] * force);
+        int normal = MathUtils.calculateForce(velocityX);
+        float[] forward = MathUtils.calculateRotation(mCamera.getHeadTransform()
+                .getRotationPitch(), mCamera.getHeadTransform().getRotationYaw());
+        float[] force = {normal * forward[0], normal * forward[1], normal * forward[2]};
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            GVRSceneObject ball = MainHelper.createBall(getGVRContext(),
+                    5 * forward[0] + mCamera.getTransform().getPositionX(),
+                    5 * forward[1] + mCamera.getTransform().getPositionY(),
+                    5 * forward[2] + mCamera.getTransform().getPositionZ(), force);
+
+            mScene.addSceneObject(ball);
+            mNumBalls++;
+
+            mBallsLabel.setText("Balls: " + (MAX_BALLS - mNumBalls));
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 
     @Override
     public void onStep() {
+        if (gameFinished()) return;
+
+        mTimeTicker = mTimeTicker++ % 120;
+        if (mTimeTicker != 0) {
+            return;
+        }
+
+        if (gameStopped()) {
+            // Score
+            SCORE_OFFSET = -1;
+            mScene.getRoot().forAllComponents(this, GVRRigidBody.getComponentType());
+
+            // Show finished message.
+            if (mScore == mNumCylinders) {
+                mEndGameLabel = new GVRTextViewSceneObject(getGVRContext(),
+                        18, 4f, "Congratulations, you won!");
+            } else if (mCountDown.isFinished()){
+
+                mEndGameLabel = new GVRTextViewSceneObject(getGVRContext(),
+                        18, 4f, "Time out! Try again.");
+            } else {
+                mEndGameLabel = new GVRTextViewSceneObject(getGVRContext(),
+                        18, 4f, "No shots left! Try again.");
+            }
+
+            mEndGameLabel.setTextSize(10);
+            mEndGameLabel.setBackgroundColor(Color.DKGRAY);
+            mEndGameLabel.setTextColor(Color.WHITE);
+            mEndGameLabel.setGravity(Gravity.CENTER);
+            mEndGameLabel.getTransform().setPosition(0f, 9f, -4f);
+
+            mScene.addSceneObject(mEndGameLabel);
+        } else {
+            // Score
+            mScene.getRoot().forAllComponents(this, GVRRigidBody.getComponentType());
+        }
 
     }
 
+    @Override
+    public boolean visit(GVRComponent gvrComponent) {
+        if (gvrComponent.getTransform().getPositionY() < SCORE_OFFSET) {
+            mScene.removeSceneObject(gvrComponent.getOwnerObject());
+            doScore((GVRRigidBody) gvrComponent);
+        }
+
+        return false;
+    }
+
+    private void doScore(GVRRigidBody body) {
+        if (body.getCollisionGroup() != MainHelper.COLLISION_GROUP_CYLINDER) {
+            return;
+        }
+
+        mScore ++;
+        mScoreLabel.setText("Score: " + mScore);
+    }
+
+    private boolean gameFinished() {
+        return mEndGameLabel != null;
+    }
+
+    private boolean gameStopped() {
+        return  mNumBalls == MAX_BALLS || mCountDown.isFinished() || mScore == mNumCylinders;
+    }
 }
