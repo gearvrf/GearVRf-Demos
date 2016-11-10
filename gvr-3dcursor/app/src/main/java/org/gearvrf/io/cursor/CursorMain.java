@@ -571,7 +571,9 @@ public class CursorMain extends GVRMain {
         public void onEvent(CursorEvent event) {
             GVRSceneObject sceneObject = event.getObject();
             SpaceObject spaceObject = objects.get(sceneObject.getName());
-            spaceObject.handleCursorEvent(event);
+            if(spaceObject != null) {
+                spaceObject.handleCursorEvent(event);
+            }
         }
     };
 
