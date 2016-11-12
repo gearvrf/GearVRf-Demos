@@ -1,0 +1,29 @@
+apply plugin: 'com.android.application'
+
+System.setProperty("appName", "gvr-leap")
+
+if (file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+} else if (file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile(name: 'gvrf-leap-motion-debug', ext: 'aar')
+}
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] // no auto generation of Android.mk
+        jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+}
