@@ -37,6 +37,9 @@ android {
     packagingOptions {
         exclude 'lib/x86/libgvrbase.so'
         exclude 'lib/arm64-v8a/libgvrbase.so'
+        if (!rootProject.hasProperty("ARM64")) {
+            exclude 'lib/arm64-v8a/*.so'
+        }
     }
 }
 
