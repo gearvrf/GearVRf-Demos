@@ -1,0 +1,7 @@
+new File(".").eachDirMatch(~"gvr-*.*") {
+    def name = ':' + it.name
+    def path = '' + it.name + '/app'
+
+    include name
+    project(name).projectDir=new File(path)
+}
