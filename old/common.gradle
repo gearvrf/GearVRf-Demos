@@ -2,7 +2,7 @@ allprojects {
     repositories {
         jcenter()
         flatDir {
-            dirs '../../gearvrf-libs', '../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
+            dirs '../../../gearvrf-libs', '../../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
         }
     }
 }
@@ -37,9 +37,6 @@ android {
     packagingOptions {
         exclude 'lib/x86/libgvrbase.so'
         exclude 'lib/arm64-v8a/libgvrbase.so'
-        if (!rootProject.hasProperty("ARM64")) {
-            exclude 'lib/arm64-v8a/*.so'
-        }
     }
 }
 
