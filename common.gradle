@@ -4,6 +4,9 @@ allprojects {
         flatDir {
             dirs '../../gearvrf-libs', '../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
         }
+        maven {
+            url "http://docs.gearvrf.org:8081/artifactory/libs-release-local"
+        }
     }
 }
 
@@ -55,11 +58,29 @@ task copyOculusSignature(type: Copy) {
 
 preBuild {}.dependsOn copyOculusSignature
 
+if(!rootProject.hasProperty("useLocalDependencies")) {
+    rootProject.ext.useLocalDependencies=false;
+} else {
+    if(rootProject.property("useLocalDependencies").equals("true")) {
+        rootProject.ext.useLocalDependencies=true
+    } else {
+        rootProject.ext.useLocalDependencies=false
+    }
+}
+
 dependencies {
-    compile(name: 'framework-debug', ext: 'aar')
+    if(rootProject.useLocalDependencies) {
+        compile(name: 'framework-debug', ext: 'aar')
+    } else {
+        compile 'org.gearvrf:framework:3.1.0'
+    }
 
     if (rootProject.hasProperty("only_daydream")) {
-        compile(name: 'backend_daydream-debug', ext: 'aar')
+        if(rootProject.useLocalDependencies) {
+            compile(name: 'backend_daydream-debug', ext: 'aar')
+        } else {
+            compile 'org.gearvrf:backend_daydream:3.1.0'
+        }
         compile(name: 'google-vr-base', ext: 'aar')
         compile(name: 'google-vr-common', ext: 'aar')
         compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
@@ -67,8 +88,13 @@ dependencies {
         if (rootProject.hasProperty("no_oculus")) {
             compile(name: 'backend-debug', ext: 'aar')
         } else { //default oculus+daydream
-            compile(name: 'backend_oculus-debug', ext: 'aar')
-            compile(name: 'backend_daydream-debug', ext: 'aar')
+            if(rootProject.useLocalDependencies) {
+                compile(name: 'backend_daydream-debug', ext: 'aar')
+                compile(name: 'backend_oculus-debug', ext: 'aar')
+            } else {
+                compile 'org.gearvrf:backend_daydream:3.1.0'
+                compile 'org.gearvrf:backend_oculus:3.1.0'
+            }
             compile(name: 'google-vr-base', ext: 'aar')
             compile(name: 'google-vr-common', ext: 'aar')
             compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'

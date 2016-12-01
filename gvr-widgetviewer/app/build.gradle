@@ -28,5 +28,9 @@ android {
 }
 
 dependencies {
-    compile(name:'widgetplugin-debug', ext:'aar')
+    if(rootProject.useLocalDependencies) {
+        compile(name: 'widgetplugin-debug', ext: 'aar')
+    } else {
+        compile 'org.gearvrf:widgetplugin:3.1.0'
+    }
 }
