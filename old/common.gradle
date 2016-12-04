@@ -1,6 +1,9 @@
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
         flatDir {
             dirs '../../../gearvrf-libs', '../../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
         }
@@ -37,6 +40,9 @@ android {
     packagingOptions {
         exclude 'lib/x86/libgvrbase.so'
         exclude 'lib/arm64-v8a/libgvrbase.so'
+        if (!rootProject.hasProperty("ARM64")) {
+            exclude 'lib/arm64-v8a/*.so'
+        }
     }
 }
 
@@ -52,7 +58,10 @@ task copyOculusSignature(type: Copy) {
 
 preBuild {}.dependsOn copyOculusSignature
 
+project.ext.jomlVersion = "1.9.1-SNAPSHOT"
+
 dependencies {
+    compile "org.joml:joml-android:${jomlVersion}"
     compile(name: 'framework-debug', ext: 'aar')
 
     if (rootProject.hasProperty("only_daydream")) {
