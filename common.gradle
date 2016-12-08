@@ -4,9 +4,6 @@ allprojects {
         flatDir {
             dirs '../../gearvrf-libs', '../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
         }
-        maven {
-            url "http://docs.gearvrf.org:8081/artifactory/libs-release-local"
-        }
     }
 }
 
