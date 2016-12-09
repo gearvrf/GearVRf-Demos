@@ -68,7 +68,7 @@ useLocalDependencies=true
 if(!rootProject.hasProperty("useLocalDependencies")) {
     rootProject.ext.useLocalDependencies=false;
 } else {
-    if(rootProject.property("useLocalDependencies").equals("true")) {
+    if(useLocalDependencies=="true") {
         rootProject.ext.useLocalDependencies=true
     } else {
         rootProject.ext.useLocalDependencies=false
