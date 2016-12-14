@@ -98,6 +98,9 @@ A nice demo that shows input from both the gamepad and touchpad to control a cha
 ###gvr-cubemap
 A simple example to show how to load in a cubemap and use it for the background as well as a reflection on an object.
 
+###gvr-daydream
+This is a sample app that demonstrates using GVRf to create a daydream app.
+
 ###gvr-events
 An example showing how to display Android Views inside VR and route events to those views.
 

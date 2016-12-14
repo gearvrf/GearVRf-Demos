@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+System.setProperty("appName", "gvr-daydream")
+
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+dependencies {
+    compile 'com.google.vr:sdk-controller:1.10.0'
+}
+
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] // no auto generation of Android.mk
+        jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+}
