@@ -25,6 +25,6 @@ public class GalleryActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setMain(new GalleryMain(), "gvr.xml");
+        setMain(new GalleryMain());
     }
 }

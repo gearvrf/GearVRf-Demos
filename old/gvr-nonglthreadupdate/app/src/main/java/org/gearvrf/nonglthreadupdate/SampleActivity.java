@@ -30,7 +30,7 @@ public class SampleActivity extends GVRActivity implements OnGestureListener{
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setMain(mMain = new SampleMain(), "gvr.xml");
+        setMain(mMain = new SampleMain());
         detector = new GestureDetectorCompat(this, this);        
     }
     
