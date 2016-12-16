@@ -12,7 +12,7 @@ public class Camera2RenderscriptActivity extends GVRActivity
         super.onCreate(icicle);
 
         mManger = new Camera2RenderscriptManager(this);
-        setMain(mManger, "gvr.xml");
+        setMain(mManger);
     }
 	
     @Override
