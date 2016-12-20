@@ -4,6 +4,9 @@ allprojects {
         maven {
             url "https://oss.sonatype.org/content/repositories/snapshots/"
         }
+        maven {
+            url "http://google.bintray.com/googlevr"
+        }
         flatDir {
             dirs '../../../gearvrf-libs', '../../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
         }
@@ -11,7 +14,7 @@ allprojects {
 }
 
 android {
-    compileSdkVersion 21
+    compileSdkVersion 24
     buildToolsVersion "25.0.0"
 
     buildTypes {
@@ -38,8 +41,8 @@ android {
 
     // ignore the x86 and arm-v8 files from the google vr libraries
     packagingOptions {
-        exclude 'lib/x86/libgvrbase.so'
-        exclude 'lib/arm64-v8a/libgvrbase.so'
+        exclude 'lib/x86/libgvr.so'
+        exclude 'lib/arm64-v8a/libgvr.so'
         if (!rootProject.hasProperty("ARM64")) {
             exclude 'lib/arm64-v8a/*.so'
         }
@@ -85,8 +88,7 @@ dependencies {
         } else {
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
         }
-        compile(name: 'google-vr-base', ext: 'aar')
-        compile(name: 'google-vr-common', ext: 'aar')
+        compile 'com.google.vr:sdk-base:1.10.0'
         compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
     } else {
         if (rootProject.hasProperty("no_oculus")) {
@@ -99,8 +101,7 @@ dependencies {
                 compile "org.gearvrf:backend_daydream:$gearvrfVersion"
                 compile "org.gearvrf:backend_oculus:$gearvrfVersion"
             }
-            compile(name: 'google-vr-base', ext: 'aar')
-            compile(name: 'google-vr-common', ext: 'aar')
+            compile 'com.google.vr:sdk-base:1.10.0'
             compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
         }
     }
