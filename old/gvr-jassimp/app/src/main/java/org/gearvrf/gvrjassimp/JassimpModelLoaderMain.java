@@ -128,13 +128,12 @@ public class JassimpModelLoaderMain extends GVRMain {
             {
                 Log.d("gvrjassimp", filePath + " loaded successfully");
                 mScene.addSceneObject(model);
-                closeSplashScreen();
             }
             else
             {
                 Log.e("gvrjassimp", filePath + " did not load " + errors);
-                getGVRContext().getActivity().finish();
             }
+            closeSplashScreen();
         }
     }
 
