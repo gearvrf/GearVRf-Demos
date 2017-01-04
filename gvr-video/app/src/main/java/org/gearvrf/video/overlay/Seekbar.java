@@ -116,7 +116,7 @@ public class Seekbar extends GVRSceneObject {
     }
 
     @SuppressLint("DefaultLocale")
-    public void setTime(GVRContext gvrContext, int current, int duration) {
+    public void setTime(GVRContext gvrContext, long current, long duration) {
         float ratio = (float) current / (float) duration;
         float left = -WIDTH * 0.5f;
         float center = ratio * WIDTH + left;
