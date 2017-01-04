@@ -2,7 +2,7 @@
     name: "Javascript Demo",
     binding: [
     {
-		target: "@GVRScript",
+		target: "@GVRMain",
 		script: "script.js",
 		language: "js"
     },
