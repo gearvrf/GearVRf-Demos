@@ -15,8 +15,6 @@
 
 package org.gearvrf.video.movie;
 
-import android.media.MediaPlayer;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
@@ -26,6 +24,7 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
+import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 import org.gearvrf.video.shaders.RadiosityShader;
 
 import java.io.IOException;
@@ -41,7 +40,7 @@ public class MultiplexMovieTheater extends MovieTheater {
     private float mFadeWeight = 0.0f;
     private float mFadeTarget = 1.0f;
 
-    public MultiplexMovieTheater(GVRContext context, MediaPlayer player,
+    public MultiplexMovieTheater(GVRContext context, GVRVideoSceneObjectPlayer player,
                                  GVRExternalTexture screenTexture) {
         super(context);
         try {
