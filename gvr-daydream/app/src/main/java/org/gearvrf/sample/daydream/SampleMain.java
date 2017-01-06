@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
@@ -188,10 +189,11 @@ public class SampleMain extends GVRMain {
         mainScene.addSceneObject(object);
 
         pivot = new GVRSceneObject(gvrContext);
+        GVRAssetLoader assetLoader = gvrContext.getAssetLoader();
 
         try {
             sphere = new GVRSceneObject(gvrContext, gvrContext.loadFutureMesh(new
-                    GVRAndroidResource(gvrContext, "sphere.obj")), gvrContext
+                    GVRAndroidResource(gvrContext, "sphere.obj")), assetLoader
                     .loadFutureTexture(new GVRAndroidResource(gvrContext, "texture.png")));
             sphere.getTransform().setPosition(0.0f, 0.0f, DEPTH);
             sphere.getRenderData().setDepthTest(false);
@@ -203,8 +205,7 @@ public class SampleMain extends GVRMain {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Future<GVRTexture> futureTexture = gvrContext.loadFutureTexture(new
+        Future<GVRTexture> futureTexture = assetLoader.loadFutureTexture(new
                 GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRSphereSceneObject skyBox = new GVRSphereSceneObject(gvrContext, false, material);
