@@ -15,7 +15,6 @@
 
 package org.gearvrf.gvr360video;
 
-import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaCodec;
 import android.media.MediaPlayer;
@@ -30,13 +29,11 @@ import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
 import com.google.android.exoplayer.upstream.AssetDataSource;
-import com.google.android.exoplayer.upstream.DataSpec;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
-import org.gearvrf.utility.Log;
 
 import java.io.IOException;
 
