@@ -36,7 +36,7 @@ public class SampleMain extends GVRMain {
         // in this sample
         mGVRContext = gvrContext;
 
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
 
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();

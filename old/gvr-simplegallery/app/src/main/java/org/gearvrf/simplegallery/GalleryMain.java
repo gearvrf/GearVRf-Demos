@@ -60,7 +60,7 @@ public class GalleryMain extends GVRMain {
 
         mAnimationEngine = gvrContext.getAnimationEngine();
 
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().getLeftCamera()
                 .setBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);

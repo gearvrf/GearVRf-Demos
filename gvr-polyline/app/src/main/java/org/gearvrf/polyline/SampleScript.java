@@ -39,7 +39,7 @@ public class SampleScript extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
         scene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 0, 1.0f);
         scene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 0, 1.0f);
         float Z = -4;
@@ -110,9 +110,4 @@ public class SampleScript extends GVRMain {
         sphere.getTransform().setPositionZ(Z);
         scene.addSceneObject(sphere);
      }
-
-    @Override
-    public void onStep() {
-    }
-
 }

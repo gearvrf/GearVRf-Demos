@@ -1,46 +1,28 @@
 package org.gearvrf.gvrshadowssample;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
+import android.graphics.Color;
+import android.view.MotionEvent;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-
 import org.gearvrf.GVRLightBase;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.GVRSpotLight;
-
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.Environment;
-import android.util.Log;
-import android.view.MotionEvent;
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class ShadowsMain extends GVRMain {
 
@@ -53,7 +35,7 @@ public class ShadowsMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws Throwable {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
 
         mainCameraRig.getLeftCamera().setBackgroundColor(Color.BLACK);

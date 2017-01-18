@@ -52,7 +52,7 @@ public class SampleCubeMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        final GVRScene scene = gvrContext.getNextMainScene();
+        final GVRScene scene = gvrContext.getMainScene();
 
         mPicker = new GVRPicker(gvrContext, scene);
         final GVRMesh mesh = gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH);

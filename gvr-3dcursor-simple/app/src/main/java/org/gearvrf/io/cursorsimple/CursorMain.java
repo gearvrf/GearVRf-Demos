@@ -61,7 +61,7 @@ public class CursorMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
         mainScene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
         List<IoDevice> devices = new ArrayList<IoDevice>();

@@ -15,24 +15,21 @@
 
 package org.gearvrf.gvrexposeapi;
 
-import java.util.concurrent.Future;
-
 import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
+import org.gearvrf.GVRTexture;
 
-
-import android.util.Log;
+import java.util.concurrent.Future;
 
 public class SampleCubeMain extends GVRMain {
 
@@ -46,7 +43,7 @@ public class SampleCubeMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
         
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
 
         FutureWrapper<GVRMesh> futureMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));

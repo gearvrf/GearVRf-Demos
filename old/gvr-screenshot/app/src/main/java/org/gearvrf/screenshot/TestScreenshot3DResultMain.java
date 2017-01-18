@@ -15,16 +15,15 @@
 
 package org.gearvrf.screenshot;
 
+import android.util.Log;
+
+import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.screenshot.R;
-import org.gearvrf.FutureWrapper;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-
-import android.util.Log;
 
 public class TestScreenshot3DResultMain extends GVRMain {
 
@@ -35,7 +34,7 @@ public class TestScreenshot3DResultMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
 
         FutureWrapper<GVRMesh> futureMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));

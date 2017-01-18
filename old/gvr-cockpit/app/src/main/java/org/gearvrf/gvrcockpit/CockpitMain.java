@@ -33,7 +33,7 @@ public class CockpitMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
 
         mGVRContext = gvrContext;
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().getTransform()
                 .setPosition(0.0f, 6.0f, 1.0f);
@@ -55,10 +55,6 @@ public class CockpitMain extends GVRMain {
         mainScene.addSceneObject(mShipSceneObject);
         mainScene.addSceneObject(mSpaceSceneObject);
 
-    }
-
-    @Override
-    public void onStep() {
     }
 
 }

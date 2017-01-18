@@ -48,7 +48,7 @@ public class SpatialAudioMain extends GVRMain
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
         cameraRig = scene.getMainCameraRig();
 
         // setup light

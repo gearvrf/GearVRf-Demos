@@ -56,7 +56,7 @@ public class SampleMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) throws IOException {
 
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
 
         // load texture asynchronously
         Future<GVRTexture> futureTexture = gvrContext
@@ -192,9 +192,5 @@ public class SampleMain extends GVRMain {
                 GVRRenderData.GVRRenderMaskBit.Left
                         | GVRRenderData.GVRRenderMaskBit.Right);
 
-    }
-
-    @Override
-    public void onStep() {
     }
 }

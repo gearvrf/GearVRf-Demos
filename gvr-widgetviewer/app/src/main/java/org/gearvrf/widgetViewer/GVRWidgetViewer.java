@@ -54,7 +54,7 @@ public class GVRWidgetViewer extends GVRActivity implements
         mMain = new ViewerMain(mPlugin);
         mPlugin.setMain(mMain);
         mWidget.mMain = mMain;
-        setMain(mMain, "gvr.xml");
+        setMain(mMain);
     }
 
     @Override

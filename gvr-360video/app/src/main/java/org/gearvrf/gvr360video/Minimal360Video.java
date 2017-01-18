@@ -33,7 +33,7 @@ public class Minimal360Video extends GVRMain
     /** Called when the activity is first created. */
     @Override
     public void onInit(GVRContext gvrContext) {
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
 
         // create sphere / mesh
         GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false);

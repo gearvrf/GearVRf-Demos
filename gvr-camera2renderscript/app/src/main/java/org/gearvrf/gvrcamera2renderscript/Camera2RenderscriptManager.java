@@ -33,33 +33,13 @@ public class Camera2RenderscriptManager extends GVRMain {
     }
 
     @Override
+    public SplashMode getSplashMode() {
+        return SplashMode.MANUAL;
+    }
+
+    @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
-        GVRScene mainScene = gvrContext.getNextMainScene(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    mCameraHelper = new Camera2Helper(mActivity, 0);
-                    Size previewSize = mCameraHelper.setPreferredSize(1920, 1080);
-
-                    mSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-                    Surface surface = new Surface(mSurfaceTexture);
-
-                    mEffectTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
-                    Surface effectSurface = new Surface(mEffectTexture);
-
-                    mProcessor = new RenderscriptProcessor(mRS, previewSize.getWidth(), previewSize.getHeight());
-                    mProcessor.setOutputSurface(effectSurface);
-                    mSurfaceInterim = mProcessor.getInputSurface();
-
-                    Surface[] surface_array = {surface, mSurfaceInterim};
-                    List<Surface> surfaces = Arrays.asList(surface_array);
-                    mCameraHelper.startCapture(surfaces);
-                } catch (CameraAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        GVRScene mainScene = gvrContext.getMainScene();
 
         GVRExternalTexture passThroughTexture = new GVRExternalTexture(gvrContext);
         mSurfaceTexture = new SurfaceTexture(passThroughTexture.getId());
@@ -86,6 +66,30 @@ public class Camera2RenderscriptManager extends GVRMain {
                 mEffectTexture.updateTexImage();
             }
         });
+
+        try {
+            mCameraHelper = new Camera2Helper(mActivity, 0);
+            Size previewSize = mCameraHelper.setPreferredSize(1920, 1080);
+
+            mSurfaceTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
+            Surface surface = new Surface(mSurfaceTexture);
+
+            mEffectTexture.setDefaultBufferSize(previewSize.getWidth(), previewSize.getHeight());
+            Surface effectSurface = new Surface(mEffectTexture);
+
+            mProcessor = new RenderscriptProcessor(mRS, previewSize.getWidth(), previewSize.getHeight());
+            mProcessor.setOutputSurface(effectSurface);
+            mSurfaceInterim = mProcessor.getInputSurface();
+
+            Surface[] surface_array = {surface, mSurfaceInterim};
+            List<Surface> surfaces = Arrays.asList(surface_array);
+            mCameraHelper.startCapture(surfaces);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+            gvrContext.getActivity().finish();
+        }
+
+        closeSplashScreen();
     }
 
     public void onPause() {

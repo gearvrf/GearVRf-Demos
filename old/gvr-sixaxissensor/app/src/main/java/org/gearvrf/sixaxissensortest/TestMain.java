@@ -63,7 +63,7 @@ public class TestMain extends GVRMain {
         mGVRContext = gvrContext;
         mGyroscope = new Gyroscope(mGVRContext.getContext());
 
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().setCameraRigType(
                 GVRCameraRig.GVRCameraRigType.YawOnly.ID);

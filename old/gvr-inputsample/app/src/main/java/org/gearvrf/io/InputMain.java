@@ -73,7 +73,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
         random = new Random();
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
         shaderManager = new CustomShaderManager(gvrContext);
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f,
                 1.0f, 1.0f, 1.0f);
