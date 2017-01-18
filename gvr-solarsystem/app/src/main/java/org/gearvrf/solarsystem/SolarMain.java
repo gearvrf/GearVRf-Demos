@@ -65,21 +65,7 @@ public class SolarMain extends GVRMain {
         newRig.attachRightCamera(rightCamera);
         newRig.attachCenterCamera(centerCamera);
 
-        mMainScene = gvrContext.getNextMainScene(new Runnable() {
-            @Override
-            public void run() {
-                for (GVRAnimation animation : mAnimations) {
-                    animation.start(mAnimationEngine);
-                }
-                mAnimations = null;
-                gvrContext.runOnGlThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mMainScene.setMainCameraRig(newRig);
-                    }
-                });
-            }
-        });
+        mMainScene = gvrContext.getMainScene();
 
         GVRSceneObject solarSystemObject = new GVRSceneObject(gvrContext);
         mMainScene.addSceneObject(solarSystemObject);
@@ -157,10 +143,23 @@ public class SolarMain extends GVRMain {
 
         counterClockwise(marsRevolutionObject, 1200f);
         counterClockwise(marsRotationObject, 200f);
+
+        closeSplashScreen();
+        for (GVRAnimation animation : mAnimations) {
+            animation.start(mAnimationEngine);
+        }
+        mAnimations = null;
+        gvrContext.runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                mMainScene.setMainCameraRig(newRig);
+            }
+        });
     }
 
     @Override
-    public void onStep() {
+    public SplashMode getSplashMode() {
+        return SplashMode.MANUAL;
     }
 
     void onTap() {

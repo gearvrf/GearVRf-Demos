@@ -15,9 +15,9 @@
 
 package org.gearvrf.balloons;
 
-import org.gearvrf.GVRActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
+
+import org.gearvrf.GVRActivity;
 
 public class BalloonActivity extends GVRActivity {
 
@@ -27,11 +27,5 @@ public class BalloonActivity extends GVRActivity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setMain(main);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        main.onTouchEvent(event);
-        return super.onTouchEvent(event);
     }
 }

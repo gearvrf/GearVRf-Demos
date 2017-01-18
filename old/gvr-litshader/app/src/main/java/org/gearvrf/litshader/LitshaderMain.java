@@ -46,7 +46,7 @@ public class LitshaderMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
 
         FutureWrapper<GVRMesh> futureMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));

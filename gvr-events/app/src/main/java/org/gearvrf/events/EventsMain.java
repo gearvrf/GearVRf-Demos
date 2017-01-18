@@ -111,7 +111,7 @@ public class EventsMain extends GVRMain {
 
         layoutSceneObject = new GVRViewSceneObject(gvrContext, frameLayout,
                 context.createQuad(QUAD_X, QUAD_Y));
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
         mainScene.addSceneObject(layoutSceneObject);
 
         layoutSceneObject.getTransform().setPosition(0.0f, 0.0f, DEPTH);

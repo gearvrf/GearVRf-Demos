@@ -17,21 +17,15 @@ package org.gearvrf.sample.gvrjavascript;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.IScriptEvents;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.script.GVRScriptBundle;
-import org.gearvrf.script.GVRScriptException;
-import org.gearvrf.script.GVRScriptManager;
-
-import java.io.IOException;
 
 public class GearVRJavascriptMain extends GVRMain {
     private static final String TAG = GearVRJavascriptMain.class.getSimpleName();
@@ -48,7 +42,7 @@ public class GearVRJavascriptMain extends GVRMain {
         gvrContext.startDebugServer();        
 
         context = gvrContext;
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
 
         // shader for cursor
         shaderManager = new CustomShaderManager(gvrContext);
@@ -59,11 +53,6 @@ public class GearVRJavascriptMain extends GVRMain {
         for (GVRCursorController cursor : inputManager.getCursorControllers()) {
             listener.onCursorControllerAdded(cursor);
         }
-    }
-
-    @Override
-    public void onStep() {
-        // The onStep function in script.js will be invoked
     }
 
     private CursorControllerListener listener = new CursorControllerListener() {

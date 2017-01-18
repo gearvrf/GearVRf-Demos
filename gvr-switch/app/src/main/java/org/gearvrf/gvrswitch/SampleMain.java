@@ -15,23 +15,22 @@
 
 package org.gearvrf.gvrswitch;
 
+import android.util.Log;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRSwitch;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRConeSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-
-import android.util.Log;
-import android.view.MotionEvent;
 
 public class SampleMain extends GVRMain {
 
@@ -46,7 +45,7 @@ public class SampleMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        scene = mGVRContext.getNextMainScene();
+        scene = mGVRContext.getMainScene();
 
         /*
          * Add a head tracking pointer to the scene

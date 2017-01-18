@@ -22,10 +22,10 @@ public class MeshAnimationMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        final GVRScene nextMainScene = gvrContext.getNextMainScene();
+        final GVRScene nextMainScene = gvrContext.getMainScene();
 
         try {
-            mCharacter = gvrContext.loadModel(mModelPath);
+            mCharacter = gvrContext.getAssetLoader().loadModel(mModelPath);
             mCharacter.getTransform().setPosition(0.0f, -10.0f, -10.0f);
             mCharacter.getTransform().setRotationByAxis(90.0f, 1.0f, 0.0f, 0.0f);
             mCharacter.getTransform().setRotationByAxis(40.0f, 0.0f, 1.0f, 0.0f);

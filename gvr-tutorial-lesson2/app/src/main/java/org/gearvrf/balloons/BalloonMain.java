@@ -15,21 +15,20 @@
 
 package org.gearvrf.balloons;
 
-import org.gearvrf.FutureWrapper;
+import android.view.MotionEvent;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPhongShader;
-import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import android.view.MotionEvent;
 
 import java.util.concurrent.Future;
 
@@ -41,7 +40,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getNextMainScene();
+        mScene = context.getMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -98,10 +97,6 @@ public class BalloonMain extends GVRMain {
     @Override
     public void onStep() {
         FPSCounter.tick();
-    }
-
-    public void onTouchEvent(MotionEvent event)
-    {
     }
 
 }

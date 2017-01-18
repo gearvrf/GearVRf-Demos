@@ -207,7 +207,7 @@ public class CursorMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
         meshMap = new HashMap<String, Future<GVRMesh>>();
         textureMap = new HashMap<String, Future<GVRTexture>>();
         addSurroundings(gvrContext, mainScene);

@@ -15,15 +15,27 @@
 
 package org.gearvrf.modelviewer;
 
-import java.io.IOException;
-import java.util.List;
-
-import org.gearvrf.*;
-import org.gearvrf.GVRPicker.GVRPickedObject;
-import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
-
 import android.util.Log;
 import android.view.MotionEvent;
+
+import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVREyePointeeHolder;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshEyePointee;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRPicker.GVRPickedObject;
+import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
+
+import java.io.IOException;
+import java.util.List;
 
 public class ViewerMain extends GVRMain {
 
@@ -113,7 +125,7 @@ public class ViewerMain extends GVRMain {
         mPhongShader2 = new PhongShader2(mGVRContext);
         mPhongShader3 = new PhongShader3(mGVRContext);
 
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().getLeftCamera()
                 .setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);

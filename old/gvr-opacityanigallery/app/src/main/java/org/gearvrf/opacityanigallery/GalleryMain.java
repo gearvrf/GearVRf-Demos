@@ -59,7 +59,7 @@ public class GalleryMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mAnimationEngine = gvrContext.getAnimationEngine();
 
-        GVRScene mainScene = gvrContext.getNextMainScene();
+        GVRScene mainScene = gvrContext.getMainScene();
 
         GVRMesh sphereMesh = gvrContext.loadMesh(new GVRAndroidResource(
                 gvrContext, R.raw.sphere_mesh));

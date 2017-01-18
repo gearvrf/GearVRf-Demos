@@ -42,8 +42,8 @@ public class SampleMain extends GVRMain {
         // save context for possible use in onStep(), even though that's empty
         // in this sample
 
-        GVRScene scene = gvrContext.getNextMainScene();
-        mConsole = new GVRConsole(gvrContext, EyeMode.BOTH_EYES, gvrContext.getNextMainScene());
+        GVRScene scene = gvrContext.getMainScene();
+        mConsole = new GVRConsole(gvrContext, EyeMode.BOTH_EYES, gvrContext.getMainScene());
 
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
@@ -71,11 +71,7 @@ public class SampleMain extends GVRMain {
     }
     
     int counter = 0;
-    
-    @Override
-    public void onStep() {
-    }
-    
+
     public void onTapUp(){
         counter++;
         mConsole.clear();

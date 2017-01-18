@@ -57,14 +57,14 @@ public class Main extends GVRMain {
         manager = new AccessibilityManager(gvrContext);
         final ShortcutMenu shortcutMenu = createShortcut();
 
-        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getNextMainScene(), shortcutMenu);
+        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
 
         createPedestalObject();
         createDinossaur();
 
-        gvrContext.getNextMainScene().addSceneObject(shortcutMenu);
-        gvrContext.getNextMainScene().getMainCameraRig().addChildObject(cursor);
-        gvrContext.getNextMainScene().addSceneObject(createSkybox());
+        gvrContext.getMainScene().addSceneObject(shortcutMenu);
+        gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
+        gvrContext.getMainScene().addSceneObject(createSkybox());
     }
 
     private ShortcutMenu createShortcut() {
@@ -93,7 +93,7 @@ public class Main extends GVRMain {
         pedestalObject.addChildObject(baseObject);
         pedestalObject.addChildObject(bookObject);
 
-        gvrContext.getNextMainScene().addSceneObject(pedestalObject);
+        gvrContext.getMainScene().addSceneObject(pedestalObject);
     }
 
     private GVRSceneObject createSkybox() {
@@ -133,7 +133,7 @@ public class Main extends GVRMain {
         trex.getTransform().rotateByAxis(-90, 1, 0, 0);
         trex.getTransform().rotateByAxis(90, 0, 1, 0);
         activeTalkBack();
-        gvrContext.getNextMainScene().addSceneObject(trex);
+        gvrContext.getMainScene().addSceneObject(trex);
     }
 
     @Override
@@ -172,12 +172,10 @@ public class Main extends GVRMain {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void inFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
             }
 
             @Override

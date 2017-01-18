@@ -67,7 +67,7 @@ public class CubemapMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
         scene.setStatsEnabled(true);
         scene.setFrustumCulling(true);
 

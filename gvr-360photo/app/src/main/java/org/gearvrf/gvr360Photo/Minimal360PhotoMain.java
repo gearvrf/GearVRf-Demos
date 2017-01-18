@@ -15,38 +15,26 @@
 
 package org.gearvrf.gvr360Photo;
 
-import java.util.concurrent.Future;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRMaterial;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+
+import java.util.concurrent.Future;
 
 public class Minimal360PhotoMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-
         // get a handle to the scene
-        GVRScene scene = gvrContext.getNextMainScene();
-
-        GVRSphereSceneObject sphereObject = null;
-
+        GVRScene scene = gvrContext.getMainScene();
         // load texture
-        Future<GVRTexture> texture = gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.raw.photosphere));
-
-        // create a sphere scene object with the specified texture and triangles facing inward (the 'false' argument) 
-        sphereObject = new GVRSphereSceneObject(gvrContext, 72, 144, false, texture);
-
+        Future<GVRTexture> texture = gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext, R.raw.photosphere));
+        // create a sphere scene object with the specified texture and triangles facing inward (the 'false' argument)
+        GVRSphereSceneObject sphereObject = new GVRSphereSceneObject(gvrContext, 72, 144, false, texture);
         // add the scene object to the scene graph
         scene.addSceneObject(sphereObject);
     }
-
-    @Override
-    public void onStep() {
-    }
-
 }
