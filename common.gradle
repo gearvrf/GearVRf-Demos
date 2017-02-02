@@ -8,7 +8,7 @@ allprojects {
             url "http://google.bintray.com/googlevr"
         }
         flatDir {
-            dirs '../../gearvrf-libs', '../../../GearVRf/GVRf/Framework/framework/build/outputs/aar'
+            dirs '../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
@@ -24,6 +24,7 @@ android {
             resValue 'string', 'app_name', System.getProperty("appName")
         }
         release {
+            signingConfig signingConfigs.debug
             resValue 'string', 'app_name', System.getProperty("appName")
         }
     }
@@ -86,18 +87,23 @@ project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 if(rootProject.useLocalDependencies) {
     dependencies {
         compile "org.joml:joml-android:${jomlVersion}"
-        compile(name: 'framework-debug', ext: 'aar')
+        debugCompile(name: 'framework-debug', ext: 'aar')
+        releaseCompile(name: 'framework-release', ext: 'aar')
 
         if (rootProject.hasProperty("only_daydream")) {
-            compile(name: 'backend_daydream-debug', ext: 'aar')
+            debugCompile(name: 'backend_daydream-debug', ext: 'aar')
+            releaseCompile(name: 'backend_daydream-release', ext: 'aar')
             compile 'com.google.vr:sdk-base:1.10.0'
             compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
         } else {
             if (rootProject.hasProperty("no_oculus")) {
-                compile(name: 'backend-debug', ext: 'aar')
+                debugCompile(name: 'backend-debug', ext: 'aar')
+                releaseCompile(name: 'backend-release', ext: 'aar')
             } else { //default oculus+daydream
-                compile(name: 'backend_daydream-debug', ext: 'aar')
-                compile(name: 'backend_oculus-debug', ext: 'aar')
+                debugCompile(name: 'backend_daydream-debug', ext: 'aar')
+                releaseCompile(name: 'backend_daydream-release', ext: 'aar')
+                debugCompile(name: 'backend_oculus-debug', ext: 'aar')
+                releaseCompile(name: 'backend_oculus-release', ext: 'aar')
                 compile 'com.google.vr:sdk-base:1.10.0'
                 compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
             }
