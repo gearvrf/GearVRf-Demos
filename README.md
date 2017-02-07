@@ -1,68 +1,25 @@
 # GearVRf-Demos
 
-## How to run these examples
-* make sure you have [this repository](https://github.com/gearvrf/GearVRf-Demos) and [the GearVR framework](https://github.com/Samsung/GearVRf) in a sibling directory 
+###The easieast and fastest way to experience our demos is to use the release_v3.1 branch.###
 
-```
-git clone https://github.com/Samsung/GearVRf.git -b release_v3.1
-git clone https://github.com/gearvrf/GearVRf-Demos.git -b release_v3.1
-```
+####Getting the source code####
 
-* if you don't have your computer set up for Android [SDK](https://developer.android.com/studio/index.html) and [NDK](https://developer.android.com/ndk/downloads/index.html) development - the simplest way to get those configured is to use [NVIDIA's Codeworks](https://developer.nvidia.com/codeworks-android) which will automatically configure your `~/.bash_profile` with several important environment variables. They require a registration (free) to download, but you could also download each of the required tools separately and add the directory paths to `~/.bash_profile` yourself:
- 
-```
-#update version numbers and paths for your local system
-export ANDROID_HOME="~/mytools/android-sdk-macosx"
-export NDK_ROOT="~/mytools/android-ndk-r11c"
-export NDKROOT=$NDK_ROOT
-export NVPACK_NDK_VERSION="android-ndk-r11c"
-export ANT_HOME="~/mytools/apache-ant-1.8.2"
-export GRADLE_HOME="~/mytools/gradle-2.2.1"
-export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools:$NDK_ROOT:$ANT_HOME/bin:$GRADLE_HOME:$PATH"
-```
+There are two options:
+- Clone the 3.1 branch: ``git clone -b release_v3.1 git@github.com:gearvrf/GearVRf-Demos.git``
+- Download a zip archive: open https://github.com/gearvrf/GearVRf-Demos/tree/release_v3.1 and then select "Download ZIP"
 
-* [download the Oculus_Mobile_SDK](https://developer3.oculus.com/downloads/mobile/1.0.4/Oculus_Mobile_SDK/) and put the SDK folder at the same directory level as your GearVRf directory.
+Building and running:
+- In Android Studio select File->New->Import Project and choose the GearVRf-Demos folder. Android Studio lets you browse the code and install and execute any of the demos.
+- To build and install all of the demos from the command line execute ``gradlew installDebug`` in the GearVRf-Demos folder. To uninstall the demos execute ``gradlew uninstallDebug``.
+- To install a specific demo then execute, for example, ``gradlew gvr-simplesample:installDebug``
 
-```
-#edit to use your PATH or make a env variable reference for wherever you unzipped the SDK
-export OVR_MOBILE_SDK=~/mytools/ovr_sdk_mobile_1.0.4
+Note 1: The demos will need an Oculus signature you can download from https://developer.oculus.com/osig/. In gradle.properties you can define an OCULUS_SIGS_DIRECTORY property and point it to the directory where you stored your Oculus signatures. The build automatically will include them for you in the apks. Otherwise you will be responsible for copying the signature files to the demo "assets" directory.
 
-```
-
-
-* make sure you have gradle in your PATH (you can check that your PATH is setup correctly and verify your gradle version by running: `gradle -v` if you get a response, great! if not, [these instructions may help](https://developer.nvidia.com/codeworks-android)
-
-* set up the [Oculus device signature](https://developer.oculus.com/osig/) for your device (it will look like oculussig_xxxxxxxx where xxxxxxxx is the id you get when you run `adb devices`) and copy it into an assets folder each project's `src/main/assets` directory: 
-
-```
-cp ~/Downloads/oculussig_xxxxxxxx ./gvr-cubemap/gvrcubemap/src/main/assets/oculussig_xxxxxxxx
-```
-
-* change to the example you wish to build and invoke the included gradle wrapper file, `./gradlew` 
-
-```
-cd gvr-sample
-./gradlew assembleDebug
-```
-
-* you should now have an apk that you can push to an android device
-
-```
-adb install -r ./app/build/outputs/apk/app-debug.apk
-```
-NOTE: some of these examples use the application name instead of `app` to hold the apk build directory for instance, in gvr-cubemap, you will find the apk in `./gvr-cubemap/gvrcubemap/build/outputs/apk/app-debug.apk`
-
-```
-cd gvr-cubemap
-./gradlew assembleDebug
-adb install -r ./gvrcubemap/build/outputs/apk/app-debug.apk
-```
-
-* if you want to run without loading into a headset, enable Samsung VR Service developer mode: 
+Note 2: If you want to run without loading into a headset, enable Samsung VR Service developer mode: 
 	- go to Settings > Applications > manage applications > Gear VR Service > Manage Storage
 	- press the VR Service Version 6 times
 	- if you get a message 'You are a developer' you should see a toggle to enable developer mode
-	- if you get a message 'You are not a developer' you probably haven't installed a valid apk with your oculus signature - run the `adb install -r ./gvrcubemap/build/outputs/apk/app-debug.apk` command on at least one project, then the service should discover you
+	- if you get a message 'You are not a developer' you probably haven't installed a valid apk with your oculus signature - install any of demos and try again
 	 
 	
 ###gvr-360photo
