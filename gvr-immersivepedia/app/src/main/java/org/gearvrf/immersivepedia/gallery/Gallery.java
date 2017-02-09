@@ -116,7 +116,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
         scrollbar = new GVRSceneObject(gvrContext, Gallery.GALLERY_SCROLLBAR_WIDTH,
                 height,
-                this.gvrContext.loadTexture(new GVRAndroidResource(this.gvrContext,
+                this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(this.gvrContext,
                         R.drawable.scrollbar)));
         scrollbar.getTransform().setPositionX(GALLERY_SCROLLBAR_X_POSITION);
         scrollbar.getTransform().setPositionY(GALLERY_SCROLLBAR_Y_INITIAL_POSITION);
@@ -182,7 +182,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
     }
 
     public Gallery(GVRContext gvrContext) {
-        super(gvrContext, GALLERY_WIDTH, GALLERY_HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable)));
+        super(gvrContext, GALLERY_WIDTH, GALLERY_HEIGHT, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable)));
         this.gvrContext = gvrContext;
         this.getRenderData().setRenderingOrder(RenderingOrderApplication.GALLERY);
         this.setName("gallery");
@@ -532,11 +532,11 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
     private void createArrows() {
         this.leftArrow = new GalleryArrow(this.gvrContext, GALLERY_ARROW_WIDTH,
-                GALLERY_ARROW_HEIGHT, this.gvrContext.loadTexture(new GVRAndroidResource(
+                GALLERY_ARROW_HEIGHT, this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         this.gvrContext, R.drawable.arrowleft)));
 
         this.rightArrow = new GalleryArrow(this.gvrContext, GALLERY_ARROW_WIDTH,
-                GALLERY_ARROW_HEIGHT, this.gvrContext.loadTexture(new GVRAndroidResource(
+                GALLERY_ARROW_HEIGHT, this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         this.gvrContext, R.drawable.arrowright)));
 
         this.addChildObject(this.leftArrow);

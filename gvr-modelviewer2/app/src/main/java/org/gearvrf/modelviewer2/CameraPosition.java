@@ -39,7 +39,7 @@ public class CameraPosition {
             return cameraModel;
 
         try {
-            cameraModel = context.loadModel("camera_icon.obj");
+            cameraModel = context.getAssetLoader().loadModel("camera_icon.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }

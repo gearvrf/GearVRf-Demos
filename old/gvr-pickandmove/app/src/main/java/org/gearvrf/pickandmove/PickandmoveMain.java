@@ -79,7 +79,7 @@ public class PickandmoveMain extends GVRMain {
         // head-tracking pointer
         GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
                 new FutureWrapper<GVRMesh>(gvrContext.createQuad(0.1f, 0.1f)),
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.headtrackingpointer)));
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
@@ -91,8 +91,8 @@ public class PickandmoveMain extends GVRMain {
         FutureWrapper<GVRMesh> futureQuadMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
 
-        Future<GVRTexture> futureCubemapTexture = gvrContext
-                .loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext,
+        GVRTexture futureCubemapTexture = gvrContext
+                .getAssetLoader().loadCubemapTexture(new GVRAndroidResource(mGVRContext,
                         R.raw.beach));
 
         GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,

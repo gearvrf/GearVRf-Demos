@@ -139,13 +139,13 @@ public class MenuScene extends GVRScene {
     private GVRSceneObject createSkybox() {
 
         GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_walls_mesh));
-        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_walls_tex_diffuse));
+        GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshGround = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_ground_mesh));
-        GVRTexture textureGround = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_ground_tex_diffuse));
+        GVRTexture textureGround = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(), meshGround, textureGround);
         skyboxGround.getRenderData().setRenderingOrder(0);
 
@@ -160,7 +160,7 @@ public class MenuScene extends GVRScene {
         textureParameters.setWrapSType(TextureWrapType.GL_REPEAT);
         textureParameters.setWrapTType(TextureWrapType.GL_REPEAT);
 
-        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.starfield_tex_diffuse),
+        GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.starfield_tex_diffuse),
                 textureParameters);
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().setScale(1, 1, 1);

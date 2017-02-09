@@ -46,9 +46,9 @@ public class ExceptionFeedback extends GVRSceneObject {
         GVRAndroidResource mResourceRing = new GVRAndroidResource(context,
                 R.drawable.exception_ring);
 
-        blurObject = new GVRSceneObject(context, 2.8f, 2.8f, context.loadTexture(mResourceGlow));
-        iconObject = new GVRSceneObject(context, 0.1f, 0.1f, context.loadTexture(mResourceIcon));
-        ringObject = new GVRSceneObject(context, 1.4f, 1.4f, context.loadTexture(mResourceRing));
+        blurObject = new GVRSceneObject(context, 2.8f, 2.8f, context.getAssetLoader().loadTexture(mResourceGlow));
+        iconObject = new GVRSceneObject(context, 0.1f, 0.1f, context.getAssetLoader().loadTexture(mResourceIcon));
+        ringObject = new GVRSceneObject(context, 1.4f, 1.4f, context.getAssetLoader().loadTexture(mResourceRing));
 
         this.addChildObject(blurObject);
         this.addChildObject(iconObject);
@@ -91,7 +91,6 @@ public class ExceptionFeedback extends GVRSceneObject {
     }
 
     private void hide() {
-
         AnimateScale(1.3f);
         AnimateOpacity(0);
     }

@@ -21,7 +21,8 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScript;
+
+import org.gearvrf.GVRTexture;
 import org.gearvrf.debug.GVRConsole;
 import org.gearvrf.debug.GVRConsole.EyeMode;
 import org.gearvrf.nontlthreadupdate.R;
@@ -30,11 +31,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-public class SampleMain extends GVRScript {
+public class SampleMain extends GVRMain {
 
     private GVRConsole mConsole;
     GVRBitmapTexture mTexture;
-    
+    GVRTexture texture;
     private Bitmap[] bitmap = new Bitmap[3];
     
     @Override
@@ -60,8 +61,10 @@ public class SampleMain extends GVRScript {
 
         // create a scene object (this constructor creates a rectangular scene
         // object that uses the standard 'unlit' shader)
+         texture = new GVRTexture(gvrContext);
+        texture.setImage(mTexture);
         GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, 4.0f, 2.0f,
-                mTexture);
+                texture);
 
         // set the scene object position
         sceneObject.getTransform().setPosition(0.0f, 0.0f, -3.0f);
@@ -82,7 +85,7 @@ public class SampleMain extends GVRScript {
         mConsole.clear();
         counter %= 3;
         mConsole.writeLine("TextureNumber Number %d", counter);
-        mTexture.update(bitmap[counter]);
+        mTexture.setBitmap(bitmap[counter]);
     }
 
 }

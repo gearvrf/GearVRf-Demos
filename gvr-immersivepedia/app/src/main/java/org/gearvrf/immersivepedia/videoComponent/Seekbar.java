@@ -48,7 +48,7 @@ public class Seekbar extends FocusableSceneObject {
     private GVRSceneObject createSeekbarHover() {
 
         seekbarHover = new FocusableSceneObject(gvrContext, gvrContext.createQuad(WIDTH, HEIGHT),
-                gvrContext.loadTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         gvrContext.getActivity(), R.drawable.timelime_hover_mask)));
         seekbarHover.getTransform().setPositionZ(.1f);
 
@@ -70,7 +70,7 @@ public class Seekbar extends FocusableSceneObject {
     }
 
     private GVRSceneObject createPlaySide() {
-        playedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f, HEIGHT / 2), gvrContext.loadTexture(new GVRAndroidResource(
+        playedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f, HEIGHT / 2), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext.getActivity(), R.drawable.timeline_watched)));
 
         playedSide.getRenderData().setRenderingOrder(GVRRenderingOrder.TRANSPARENT + 2);

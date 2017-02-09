@@ -24,7 +24,7 @@ import com.samsung.accessibility.R;
 public class GazeCursorSceneObject extends GVRSceneObject {
 
     private static final float NEAR_CLIPPING_OFFSET = 0.00001f;
-    private static final float NORMAL_CURSOR_SIZE = 0.0028f;
+    private static final float NORMAL_CURSOR_SIZE = 0.0228f;
     private static final int CURSOR_RENDER_ORDER = 100000;
 
     private GVRSceneObject rightCursor;
@@ -50,19 +50,21 @@ public class GazeCursorSceneObject extends GVRSceneObject {
         rightCursor.attachRenderData(createRenderData(gvrContext));
         rightCursor.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
         rightCursor.getTransform().setPosition(xRightCursor, 0, zRightCursor);
+        rightCursor.setName("right");
         addChildObject(rightCursor);
 
         leftCursor = new GVRSceneObject(gvrContext);
         leftCursor.attachRenderData(createRenderData(gvrContext));
         leftCursor.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
-        leftCursor.getTransform().setPosition(xLeftCursor, 0, zLeftCursor);
+        leftCursor.getTransform().setPosition(xLeftCursor, 0,  zLeftCursor);
+        leftCursor.setName("left");
         addChildObject(leftCursor);
     }
 
     private GVRRenderData createRenderData(GVRContext gvrContext) {
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRMesh mesh = gvrContext.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE);
-        material.setMainTexture(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.head_tracker)));
+        material.setMainTexture(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.head_tracker)));
         GVRRenderData renderData = new GVRRenderData(gvrContext);
         renderData.setMaterial(material);
         renderData.setMesh(mesh);

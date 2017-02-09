@@ -76,13 +76,13 @@ public class TestMain extends GVRMain {
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
 
         try {
-            List<Future<GVRTexture>> textures;
+            List<GVRTexture> textures;
             textures = ZipLoader.load(gvrContext, TEXTURE_FILE_NAME, new ZipLoader
-                    .ZipEntryProcessor<Future<GVRTexture>>() {
+                    .ZipEntryProcessor<GVRTexture>() {
 
                 @Override
-                public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource resource) {
-                    return context.loadFutureTexture(resource);
+                public GVRTexture getItem(GVRContext context, GVRAndroidResource resource) {
+                    return context.getAssetLoader().loadTexture(resource);
                 }
             });
 

@@ -14,30 +14,51 @@
  */
 
 
-package org.gearvrf.opacityanigallery;
+package org.gearvrf.simplegallery;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomPostEffectShaderId;
-import org.gearvrf.GVRPostEffectMap;
-import org.gearvrf.GVRPostEffectShaderManager;
-import org.gearvrf.opacityanigallery.R;
 
-public class CustomPostEffectShaderManager {
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 
-    private final GVRCustomPostEffectShaderId mShaderId;
-    private GVRPostEffectMap mCustomShader;
+public class CustomPostEffectShaderManager extends GVRShader {
+
+    private final String VERTEX_SHADER = "" //
+            + "in vec3 a_position;\n"
+            + "in vec2 a_texcoord;\n" //
+            + "out vec2 v_tex_coord;\n"
+            + "void main() {\n" //
+            + "  v_tex_coord = a_texcoord.xy;\n"
+            + "  gl_Position = vec4(a_position,1.0);\n" //
+            + "}\n";
+
+    private final String FRAGMENT_SHADER = "" //
+            + "precision mediump float;\n"
+            + "uniform sampler2D u_texture;\n"
+            +  "layout (std140) uniform Material_ubo{ \n"
+            + "vec3 u_ratio_r;\n"
+            + "vec3 u_ratio_g;\n"
+            + "vec3 u_ratio_b; };\n"
+            + "in vec2 v_tex_coord;\n"
+            + "out vec4 outColor;\n"
+            + "void main() {\n"
+            + "  vec4 tex = texture(u_texture, v_tex_coord);\n"
+            + "  float r = tex.r * u_ratio_r.r + tex.g * u_ratio_r.g + tex.b * u_ratio_r.b;\n"
+            + "  float g = tex.r * u_ratio_g.r + tex.g * u_ratio_g.g + tex.b * u_ratio_g.b;\n"
+            + "  float b = tex.r * u_ratio_b.r + tex.g * u_ratio_b.g + tex.b * u_ratio_b.b;\n"
+            + "  vec3 color = vec3(r, g, b);\n"
+            + "  outColor = vec4(color, tex.a);\n" //
+            + "}\n";
 
     public CustomPostEffectShaderManager(GVRContext gvrContext) {
-        final GVRPostEffectShaderManager shaderManager = gvrContext
-                .getPostEffectShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec3Key("u_ratio_r", "ratio_r");
-        mCustomShader.addUniformVec3Key("u_ratio_g", "ratio_g");
-        mCustomShader.addUniformVec3Key("u_ratio_b", "ratio_b");
-    }
 
-    public GVRCustomPostEffectShaderId getShaderId() {
-        return mShaderId;
+        super("float3 u_ratio_r; float3 u_ratio_g, float3 u_ratio_b", "sampler2D u_texture", "float3 a_position , float2 a_texcoord ", 300);
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
+    }
+    protected void setMaterialDefaults(GVRShaderData material) {
+        material.setVec3("u_ratio_r", 0.393f, 0.769f, 0.189f);
+        material.setVec3("u_ratio_g", 0.349f, 0.686f, 0.168f);
+        material.setVec3("u_ratio_b", 0.272f, 0.534f, 0.131f);
     }
 }

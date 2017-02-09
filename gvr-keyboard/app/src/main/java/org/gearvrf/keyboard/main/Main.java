@@ -104,10 +104,11 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         GVRSceneObject floor = new GVRSceneObject(mGVRContext,
                 mGVRContext.createQuad(120.0f, 120.0f),
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.floor)));
+                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.floor)));
 
         floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
         floor.getTransform().setPositionY(-10.0f);
+
         gvrContext.getMainScene().addSceneObject(floor);
         floor.getRenderData().setRenderingOrder(0);
 
@@ -133,6 +134,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         GVRCameraRig cameraObject = gvrContext.getMainScene()
                 .getMainCameraRig();
+        int i = 0;
         for (GVRSceneObject spherePack : flagListCostructor.listFlag) {
             rotateObject(spherePack, cameraObject.getTransform());
 
@@ -239,7 +241,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.skybox_esphere));
-        GVRTexture spaceTexture = mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+        GVRTexture spaceTexture = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                 R.drawable.skybox));
 
         GVRSceneObject mSpaceSceneObject = new GVRSceneObject(mGVRContext, spaceMesh, spaceTexture);
@@ -250,8 +252,8 @@ public class Main extends GVRMain implements KeyboardEventListener {
     private void addCursorPosition() {
 
         GVRSceneObject headTracker = new GVRSceneObject(mGVRContext,
-                mGVRContext.createQuad(0.5f, 0.5f), mGVRContext.loadTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.head_tracker)));
+                mGVRContext.createQuad(0.5f, 0.5f), mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
+                mGVRContext, R.drawable.head_tracker)));
 
         headTracker.getTransform().setPositionZ(-9.0f);
         headTracker.getRenderData().setRenderingOrder(
@@ -263,7 +265,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
     }
 
     private void rotateObject(GVRSceneObject spherePack,
-            GVRTransform cameraObject) {
+                              GVRTransform cameraObject) {
         spherePack.getTransform().rotateByAxis(
                 Util.getZRotationAngle(spherePack, cameraObject), 0, 0, 1);
         spherePack.getTransform().rotateByAxis(
@@ -275,7 +277,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
     @Override
     public void onStep() {
 
-        mMic.onUpdate();
+       mMic.onUpdate();
         flagListCostructor.updateSpheresMaterial();
 
         if (dashboard != null && lastSelectedSphereFlag != null) {
@@ -301,6 +303,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
                 answer.spinnerUpdate();
         }
+
     }
 
     private void interactWithVisibleObjects() {
@@ -402,7 +405,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
             answer.getTransform().setPosition(positionX, 0.87f, Constants.CAMERA_DISTANCE);
 
             float[] keyboardPosition = Util.calculatePointBetweenTwoObjects(mGVRContext
-                    .getMainScene().getMainCameraRig().getTransform(),
+                            .getMainScene().getMainCameraRig().getTransform(),
                     lastSelectedSphereFlag.getInitialPositionVector(),
                     Constants.SPHERE_SELECTION_DISTANCE);
 
@@ -515,6 +518,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
     }
 
     private void createAndAttachAllEyePointee() {
+
         for (GVRSceneObject object : mGVRContext.getMainScene()
                 .getWholeSceneObjects()) {
             if (object instanceof SphereFlag) {

@@ -37,7 +37,7 @@ public class SceneItem extends FocusableSceneObject {
         super(gvrContext, mesh, texture);
 
         final GVRSceneObject onFocusSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
-                R.raw.edge_box_normal)), gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
+                R.raw.edge_box_normal)), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
         onFocusSceneObject.getTransform().setPositionZ(-.1f);
         onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
 

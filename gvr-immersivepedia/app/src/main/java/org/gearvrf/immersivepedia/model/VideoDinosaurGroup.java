@@ -72,7 +72,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
 
     private void createTotem() {
         Totem totem = new Totem(this.gvrContext,
-                this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+                this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);

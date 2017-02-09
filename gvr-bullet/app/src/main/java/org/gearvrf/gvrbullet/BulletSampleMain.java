@@ -28,7 +28,7 @@ public class BulletSampleMain extends GVRMain {
 
         CollisionHandler() {
             try {
-                blueObject = mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, "sphereblue.jpg"));
+                blueObject = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "sphereblue.jpg"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -170,7 +170,7 @@ public class BulletSampleMain extends GVRMain {
         GVRSceneObject object = null;
         try {
             object = new GVRSceneObject(mGVRContext, futureMesh,
-                    mGVRContext.loadFutureTexture(new GVRAndroidResource(
+                    mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                             mGVRContext, texture)));
             // TODO: Create mesh collider to ground and add GVRCollision component
         } catch (IOException e) {
@@ -195,7 +195,7 @@ public class BulletSampleMain extends GVRMain {
         try {
             GVRMesh mesh = mGVRContext.createQuad(100.0f, 100.0f);
             GVRTexture texture =
-                    mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
+                    mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
             GVRSceneObject meshObject = new GVRSceneObject(mGVRContext, mesh, texture);
 
             meshObject.getTransform().setPosition(x, y, z);

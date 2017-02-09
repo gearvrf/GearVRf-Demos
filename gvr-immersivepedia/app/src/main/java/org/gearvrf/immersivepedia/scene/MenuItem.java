@@ -24,6 +24,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusListener;
@@ -73,7 +74,7 @@ public class MenuItem extends FocusableSceneObject {
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(new GVRMaterial(gvrContext));
         getRenderData().setMesh(gvrContext.createQuad(WIDTH, HEIGHT));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable));
         getRenderData().getMaterial().setMainTexture(texture);
 
         frontObj = createSceneObject(frontIdleRes, frontHoverRes);
@@ -146,11 +147,11 @@ public class MenuItem extends FocusableSceneObject {
     public GVRSceneObject createSceneObject(int idleImageRes, int hoverImageRes) {
         GVRSceneObject obj = new GVRSceneObject(getGVRContext());
 
-        GVRTexture idle = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), idleImageRes));
-        GVRTexture hover = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
+        GVRTexture idle = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), idleImageRes));
+        GVRTexture hover = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
 
         obj.attachRenderData(new GVRRenderData(getGVRContext()));
-        obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new MenuImageShader(getGVRContext()).getShaderId()));
+        obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(MenuImageShader.class)));
         obj.getRenderData().setMesh(getGVRContext().createQuad(CHILD_WIDTH, CHILD_HEIGHT));
         obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE1_TEXTURE, idle);
         obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE2_TEXTURE, hover);
@@ -169,7 +170,7 @@ public class MenuItem extends FocusableSceneObject {
 
     private void createTextBackground() {
         GVRMesh mesh = getGVRContext().createQuad(TEXT_WIDTH, TEXT_HEIGHT);
-        textBackground = new GVRSceneObject(getGVRContext(), mesh, getGVRContext().loadTexture(
+        textBackground = new GVRSceneObject(getGVRContext(), mesh, getGVRContext().getAssetLoader().loadTexture(
                 new GVRAndroidResource(getGVRContext(), R.drawable.text_bg)));
 
         textBackground.getTransform().setPosition(0, TEXT_BACKGROUND_Y, TEXT_BACKGROUND_Z);

@@ -52,9 +52,9 @@ public class GVRWidgetViewer extends GVRActivity implements
         mDetector = new VRTouchPadGestureDetector(this);
         mWidget = new MyGdxWidget();
         mMain = new ViewerMain(mPlugin);
-        mPlugin.setCurrentScript(mMain);
+        mPlugin.setMain(mMain);
         mWidget.mMain = mMain;
-        setScript(mMain, "gvr.xml");
+        setMain(mMain);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class GVRWidgetViewer extends GVRActivity implements
 
     @Override
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-            float velocityX, float velocityY) {
+                           float velocityX, float velocityY) {
         return false;
     }
 

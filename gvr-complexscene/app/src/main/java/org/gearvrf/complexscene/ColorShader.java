@@ -1,12 +1,12 @@
 package org.gearvrf.complexscene;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
 
 public class ColorShader {
-
+/*
     public static final String COLOR_KEY = "color";
 
     private static final String VERTEX_SHADER = "attribute vec4 a_position;\n"
@@ -21,7 +21,7 @@ public class ColorShader {
             + "  gl_FragColor = u_color;\n" //
             + "}\n";
 
-    private GVRCustomMaterialShaderId mShaderId;
+  //  private GVRCustomMaterialShaderId mShaderId;
     private GVRMaterialMap mCustomShader = null;
 
     public ColorShader(GVRContext gvrContext) {
@@ -34,5 +34,5 @@ public class ColorShader {
 
     public GVRCustomMaterialShaderId getShaderId() {
         return mShaderId;
-    }
+    }*/
 }

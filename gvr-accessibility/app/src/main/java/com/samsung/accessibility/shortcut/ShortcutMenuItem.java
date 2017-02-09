@@ -58,7 +58,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     private void createRenderData() {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.circle_menu));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
         textures = AccessibilityTexture.getInstance(gvrContext);
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRRenderData renderData = new GVRRenderData(gvrContext);

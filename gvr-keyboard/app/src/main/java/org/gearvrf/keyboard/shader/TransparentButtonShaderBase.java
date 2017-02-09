@@ -15,10 +15,10 @@
 
 package org.gearvrf.keyboard.shader;
 
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRMaterialShaderId;
 
-
+/*
 public class TransparentButtonShaderBase {
     
     protected GVRCustomMaterialShaderId mShaderId;
@@ -29,4 +29,4 @@ public class TransparentButtonShaderBase {
     }
 
   
-}
+}*/

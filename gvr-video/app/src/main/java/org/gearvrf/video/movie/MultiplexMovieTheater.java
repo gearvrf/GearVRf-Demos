@@ -20,10 +20,12 @@ import android.media.MediaPlayer;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.video.shaders.RadiosityShader;
@@ -48,16 +50,17 @@ public class MultiplexMovieTheater extends MovieTheater {
             // background
             GVRMesh backgroundMesh = context.loadMesh(
                     new GVRAndroidResource(context, "multiplex/theater_background.obj"));
-            GVRTexture backgroundLightOffTexture = context.loadTexture(
+            GVRTexture backgroundLightOffTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "multiplex/theater_background_light_off.jpg"));
-            GVRTexture backgroundLightOnTexture = context.loadTexture(
+            GVRTexture backgroundLightOnTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "multiplex/theater_background_light_on.jpg"));
             background = new GVRSceneObject(context, backgroundMesh, backgroundLightOffTexture);
             background.setName("background");
             background.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
             // radiosity
             RadiosityShader radiosityShader = new RadiosityShader(context);
-            background.getRenderData().getMaterial().setShaderType(radiosityShader.getShaderId());
+           // background.getRenderData().getMaterial().set(radiosityShader.getShaderId());
+            background.getRenderData().setMaterial(new GVRMaterial(context, new GVRShaderId(RadiosityShader.class)));
             background.getRenderData().getMaterial().setTexture(
                     RadiosityShader.TEXTURE_OFF_KEY, backgroundLightOffTexture);
             background.getRenderData().getMaterial().setTexture(

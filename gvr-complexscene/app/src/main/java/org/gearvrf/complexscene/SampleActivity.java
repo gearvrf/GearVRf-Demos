@@ -23,14 +23,14 @@ import android.view.KeyEvent;
 public class SampleActivity extends GVRActivity {
 
     private SampleMain mMain = null;
-    
+
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mMain = new SampleMain();
-        setScript(mMain, "gvr_note4.xml");
+        setMain(mMain, "gvr.xml");
     }
-    
+
     @Override
     public boolean dispatchKeyEvent(android.view.KeyEvent event) {
         boolean handled = false;
@@ -45,5 +45,5 @@ public class SampleActivity extends GVRActivity {
             return super.dispatchKeyEvent(event);
         }
     }
-    
+
 }

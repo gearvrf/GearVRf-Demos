@@ -107,7 +107,7 @@ public class TextField extends GVRSceneObject {
         GVRSceneObject space = new GVRSceneObject(TextField.this.getGVRContext(),
                 Util.convertPixelToVRFloatValue(40),
                 Util.convertPixelToVRFloatValue(5),
-                TextField.this.getGVRContext().loadTexture(
+                TextField.this.getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(TextField.this.getGVRContext(),
                                 R.drawable.key_space_active)));
 
@@ -145,14 +145,14 @@ public class TextField extends GVRSceneObject {
 
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
                 .getMainScene());
-       
+
         for (GVREyePointeeHolder eph : eyePointeeHolders) {
 
             for (int i = 0; i < mListFieldItems.size(); i++) {
 
                 if (eph.getOwnerObject().hashCode() == mListFieldItems.get(i)
                         .getEyePointeeHolder().getOwnerObject().hashCode()) {
-                    
+
                     currentCharPosition = i;
                     return mListFieldItems.get(i);
 
@@ -196,6 +196,8 @@ public class TextField extends GVRSceneObject {
                     character.attachEyePointeeHolder();
                     mListFieldItems.add(position, character);
                     addChildObject(character);
+                  //  getGVRContext().getMainScene().bindShaders();
+
                 }
             }
         });
@@ -216,12 +218,12 @@ public class TextField extends GVRSceneObject {
 
         spinner.getSpinnerRoulette().onStep();
 
-  
+
         if (!mListFieldItems.isEmpty()) {
 
             currentCharSelected = getObjectInHitArea();
-           
-            
+
+
             if (currentCharSelected != null) {
 
                 tryShowSpinner(spinner);
@@ -251,11 +253,11 @@ public class TextField extends GVRSceneObject {
     }
 
     private synchronized void tryShowSpinner(Spinner spinner) {
-       
+
         if (!spinner.isActive() && !spinner.isShuttingDown()) {
 
             spinner.on(currentCharSelected.getCharItem().getPosition(), currentCharSelected
-                    .getCharItem().getMode(),
+                            .getCharItem().getMode(),
                     currentCharPosition);
 
             setPositionSpinner(currentCharSelected, spinner);

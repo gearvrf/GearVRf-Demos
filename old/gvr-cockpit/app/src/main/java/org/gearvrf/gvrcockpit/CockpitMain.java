@@ -43,11 +43,11 @@ public class CockpitMain extends GVRMain {
         GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.gvrf_space_mesh));
 
-        GVRTexture shipTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        GVRTexture shipTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 mGVRContext, R.drawable.gvrf_ship));
         mShipSceneObject = new GVRSceneObject(gvrContext, shipMesh, shipTexture);
         GVRTexture spaceTexture = gvrContext
-                .loadTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.gvrf_space));
         mSpaceSceneObject = new GVRSceneObject(gvrContext, spaceMesh,
                 spaceTexture);

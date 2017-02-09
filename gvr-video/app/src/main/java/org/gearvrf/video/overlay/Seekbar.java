@@ -17,10 +17,14 @@
 package org.gearvrf.video.overlay;
 
 import android.annotation.SuppressLint;
+
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
+
+import java.io.FileNotFoundException;
 
 public class Seekbar extends GVRSceneObject {
     private static final float WIDTH = 8.0f;
@@ -34,12 +38,12 @@ public class Seekbar extends GVRSceneObject {
     private GVRSceneObject mCurrentTime = null;
     private GVRSceneObject mDuration = null;
 
-    public Seekbar(GVRContext gvrContext) {
+    public Seekbar(GVRContext gvrContext) throws FileNotFoundException {
         super(gvrContext);
         getTransform().setPosition(-0.1f, Y, -DEPTH);
 
         mPlayedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(
-                1.0f, 0.1f), gvrContext.loadTexture("seekbar/dark-gray.png"));
+                1.0f, 0.1f), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource("seekbar/dark-gray.png")));
         mPlayedSide.getRenderData().setRenderingOrder(
                 GVRRenderingOrder.TRANSPARENT + 2);
         mPlayedSide.getRenderData().setOffset(true);
@@ -47,7 +51,7 @@ public class Seekbar extends GVRSceneObject {
         mPlayedSide.getRenderData().setOffsetUnits(-2.0f);
 
         mLeftSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f,
-                0.1f), gvrContext.loadTexture("seekbar/light-gray.png"));
+                0.1f), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource("seekbar/light-gray.png")));
         mLeftSide.getRenderData().setRenderingOrder(
                 GVRRenderingOrder.TRANSPARENT + 2);
         mLeftSide.getRenderData().setOffset(true);
@@ -55,7 +59,7 @@ public class Seekbar extends GVRSceneObject {
         mLeftSide.getRenderData().setOffsetUnits(-2.0f);
 
         mPointer = new GVRSceneObject(gvrContext, gvrContext.createQuad(0.08f,
-                0.3f), gvrContext.loadTexture("seekbar/dark-gray-circle.png"));
+                0.3f), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource("seekbar/dark-gray-circle.png")));
         mPointer.getRenderData().setRenderingOrder(
                 GVRRenderingOrder.TRANSPARENT + 3);
         mPointer.getRenderData().setOffset(true);
@@ -64,7 +68,7 @@ public class Seekbar extends GVRSceneObject {
 
         mGlow = new GVRSceneObject(gvrContext,
                 gvrContext.createQuad(8.8f, 0.5f),
-                gvrContext.loadTexture("seekbar/seekbar-glow.png"));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource("seekbar/seekbar-glow.png")));
         mGlow.getRenderData().setRenderingOrder(
                 GVRRenderingOrder.TRANSPARENT + 1);
         mGlow.getRenderData().setOffset(true);

@@ -14,9 +14,11 @@ import java.util.List;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessiblityObject;
 
@@ -51,19 +53,19 @@ public class AccessibilityScene extends GVRScene {
 
     private GVRSceneObject createSkybox() {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshGround = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
-        GVRTexture textureGround = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
+        GVRTexture textureGround = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(gvrContext, meshGround, textureGround);
         skyboxGround.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshFx = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
-        GVRTexture textureFx = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
+        GVRTexture textureFx = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(gvrContext, meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
         skybox.addChildObject(skyboxFx);
@@ -78,7 +80,7 @@ public class AccessibilityScene extends GVRScene {
         float scale = 0.03f;
         GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.accessibility_item));
         final SceneItem invertedColors = new SceneItem(getGVRContext(), mesh, getGVRContext()
-                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.inverted_colors)));
+                .getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.inverted_colors)));
         invertedColors.getTransform().setPosition(positionX, positionY, positionZ);
         invertedColors.getTransform().setScale(scale, scale, scale);
         invertedColors.attachEyePointeeHolder();
@@ -101,8 +103,8 @@ public class AccessibilityScene extends GVRScene {
         });
         this.addSceneObject(invertedColors);
 
-        final SceneItem zoom = new SceneItem(getGVRContext(), mesh, getGVRContext()
-                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.zoom)));
+        final SceneItem zoom = new SceneItem(getGVRContext(), mesh, getGVRContext().
+                getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.zoom)));
         zoom.getTransform().setPosition(positionX, positionY, positionZ);
         zoom.getTransform().setScale(scale, scale, scale);
         zoom.attachEyePointeeHolder();
@@ -121,7 +123,7 @@ public class AccessibilityScene extends GVRScene {
         });
         this.addSceneObject(zoom);
 
-        final SceneItem talkBack = new SceneItem(getGVRContext(), mesh, getGVRContext()
+        final SceneItem talkBack = new SceneItem(getGVRContext(), mesh, getGVRContext().getAssetLoader()
                 .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.talk_back)));
         talkBack.getTransform().setPosition(positionX, positionY, positionZ);
         talkBack.getTransform().setScale(scale, scale, scale);
@@ -143,8 +145,8 @@ public class AccessibilityScene extends GVRScene {
 
         this.addSceneObject(talkBack);
 
-        final SceneItem speech = new SceneItem(getGVRContext(), mesh, getGVRContext()
-                .loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.speech)));
+        final SceneItem speech = new SceneItem(getGVRContext(), mesh, getGVRContext().
+                getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.speech)));
         speech.getTransform().setPosition(positionX, positionY, positionZ);
         speech.getTransform().setScale(scale, scale, scale);
         speech.attachEyePointeeHolder();
@@ -180,9 +182,9 @@ public class AccessibilityScene extends GVRScene {
 
     private void applyShader(AccessibilitySceneShader shader, GVRSceneObject object) {
         if (object != null && object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-            object.getRenderData().getMaterial().setShaderType(shader.getShaderId());
-            object.getRenderData().getMaterial().setTexture(AccessibilitySceneShader.TEXTURE_KEY,
-                    object.getRenderData().getMaterial().getMainTexture());
+            GVRTexture texture = object.getRenderData().getMaterial().getMainTexture();
+            object.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(AccessibilitySceneShader.class)));
+            object.getRenderData().getMaterial().setTexture(AccessibilitySceneShader.TEXTURE_KEY,texture);
             object.getRenderData().getMaterial().setFloat(AccessibilitySceneShader.BLUR_INTENSITY, 1);
         }
     }

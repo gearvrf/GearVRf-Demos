@@ -54,12 +54,14 @@ public class Main extends GVRMain {
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
+        //gvrContext.getNextMainScene().setFrustumCulling(false);
         ShortcutMenu shortcutMenu = createShortcut();
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getNextMainScene(), shortcutMenu);
 
         createPedestalObject();
         createDinossaur();
 
+        cursor.setName("cursor");
         gvrContext.getNextMainScene().addSceneObject(shortcutMenu);
         gvrContext.getNextMainScene().getMainCameraRig().addChildObject(cursor);
         gvrContext.getNextMainScene().addSceneObject(createSkybox());
@@ -76,8 +78,8 @@ public class Main extends GVRMain {
     private void createPedestalObject() {
         GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
         GVRMesh bookMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
-        GVRTexture bookTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
+        GVRTexture bookTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
+        GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
 
         FocusableSceneObject baseObject = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         bookObject = new FocusableSceneObject(gvrContext, bookMesh, bookTexture);
@@ -97,23 +99,27 @@ public class Main extends GVRMain {
 
     private GVRSceneObject createSkybox() {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
+
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshGround = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
-        GVRTexture textureGround = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
+        GVRTexture textureGround = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(gvrContext, meshGround, textureGround);
+
         skyboxGround.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshFx = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
-        GVRTexture textureFx = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
+        GVRTexture textureFx = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(gvrContext, meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
+
         skybox.addChildObject(skyboxFx);
         skybox.addChildObject(skyboxGround);
+
         return skybox;
     }
 
@@ -126,7 +132,7 @@ public class Main extends GVRMain {
                 .getRecommendedSettingsWith(additionalSettings);
 
         GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
+        GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
         trex = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         trex.getTransform().setPosition(0, -1.6f, -7f);
         trex.getTransform().rotateByAxis(-90, 1, 0, 0);

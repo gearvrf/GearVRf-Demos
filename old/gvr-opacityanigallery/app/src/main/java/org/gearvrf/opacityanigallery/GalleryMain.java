@@ -19,12 +19,15 @@ import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPostEffect;
+
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -33,11 +36,12 @@ import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
 import org.gearvrf.animation.GVRScaleAnimation;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
+import org.gearvrf.simplegallery.CustomPostEffectShaderManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GalleryMain extends GVRScript {
+public class GalleryMain extends GVRMain {
 
     private static final float ANIMATION_DURATION = 0.3f;
     private static final float SELECTED_SCALE = 2.0f;
@@ -116,15 +120,11 @@ public class GalleryMain extends GVRScript {
 
         mBoards.get(mSelected).getTransform()
                 .setScale(SELECTED_SCALE, SELECTED_SCALE, 0.0f);
+        GVRShaderId shaderId = gvrContext.getMaterialShaderManager().getShaderType(CustomPostEffectShaderManager.class);
+        GVRShaderData shaderData = new GVRShaderData(gvrContext, shaderId );
+        mainScene.getMainCameraRig().getLeftCamera().addPostEffect(shaderData);
+        mainScene.getMainCameraRig().getRightCamera().addPostEffect(shaderData);
 
-        CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(
-                gvrContext);
-        GVRPostEffect postEffect = new GVRPostEffect(gvrContext, shaderManager.getShaderId());
-        postEffect.setVec3("ratio_r", 0.393f, 0.769f, 0.189f);
-        postEffect.setVec3("ratio_g", 0.349f, 0.686f, 0.168f);
-        postEffect.setVec3("ratio_b", 0.272f, 0.534f, 0.131f);
-        mainScene.getMainCameraRig().getLeftCamera().addPostEffect(postEffect);
-        mainScene.getMainCameraRig().getRightCamera().addPostEffect(postEffect);
     }
 
     @Override

@@ -18,7 +18,9 @@ package org.gearvrf.immersivepedia.loadComponent;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusListener;
@@ -74,8 +76,7 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
         circle.getRenderData().setRenderingOrder(RenderingOrderApplication.LOADING_COMPONENT);
         circle.focusListener = this;
 
-        circleAlpha.getRenderData().getMaterial()
-                .setShaderType(new CutoutShader(gvrContext).getShaderId());
+        circleAlpha.getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(CutoutShader.class)));
         circleAlpha.getRenderData().getMaterial()
                 .setTexture(CutoutShader.TEXTURE_KEY, circleAlphaTexture);
         circleAlpha.getRenderData().getMaterial()
@@ -89,11 +90,11 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
     }
 
     private void loadTexture() {
-        circleAlphaTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        circleAlphaTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.loading_two__colors));
-        circleTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        circleTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.loading));
-        plusTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.plus));
+        plusTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.plus));
     }
 
     public void setFloatTexture() {

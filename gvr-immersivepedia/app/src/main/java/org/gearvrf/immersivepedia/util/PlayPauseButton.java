@@ -45,10 +45,10 @@ public class PlayPauseButton extends FocusableSceneObject {
     }
 
     private void loadTexture() {
-        pauseHover = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.pause_hover));
-        playHover = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.play_hover));
-        pauseNormal = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.pause));
-        playNormal = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.play));
+        pauseHover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.pause_hover));
+        playHover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.play_hover));
+        pauseNormal = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.pause));
+        playNormal = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.play));
     }
 
     private void setTextures() {

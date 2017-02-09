@@ -107,7 +107,7 @@ public class SolarMain extends GVRMain {
         solarSystemObject.addChildObject(venusRevolutionObject);
 
         GVRSceneObject venusRotationObject = new GVRSceneObject(gvrContext);
-        venusRevolutionObject.addChildObject(venusRotationObject);
+       venusRevolutionObject.addChildObject(venusRotationObject);
 
         GVRSceneObject venusMeshObject = asyncSceneObject(gvrContext, "venusmap.jpg");
         venusMeshObject.getTransform().setScale(0.8f, 0.8f, 0.8f);

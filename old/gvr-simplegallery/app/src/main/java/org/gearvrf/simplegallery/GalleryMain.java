@@ -15,18 +15,17 @@
 
 package org.gearvrf.simplegallery;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScript;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -35,9 +34,10 @@ import org.gearvrf.animation.GVRScaleAnimation;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 
-import android.media.MediaPlayer;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GalleryMain extends GVRScript {
+public class GalleryMain extends GVRMain {
 
     private static final float ANIMATION_DURATION = 0.3f;
     private static final float SELECTED_SCALE = 2.0f;
@@ -75,13 +75,13 @@ public class GalleryMain extends GVRScript {
                 mGVRContext, R.raw.sphere_mesh));
 
         GVRSceneObject leftScreen = new GVRSceneObject(mGVRContext, sphereMesh,
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.left_screen)));
         leftScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         leftScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
         GVRSceneObject rightScreen = new GVRSceneObject(mGVRContext,
-                sphereMesh, mGVRContext.loadTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.right_screen)));
+                sphereMesh, mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
+                mGVRContext, R.drawable.right_screen)));
         rightScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         rightScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
@@ -94,7 +94,7 @@ public class GalleryMain extends GVRScript {
                 R.drawable.photo_5, R.drawable.photo_6, R.drawable.photo_7,
                 R.drawable.photo_8, R.drawable.photo_9 };
         for (int id : resourceIds) {
-            numberTextures.add(mGVRContext.loadTexture(new GVRAndroidResource(
+            numberTextures.add(mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                     mGVRContext, id)));
         }
 
@@ -136,13 +136,10 @@ public class GalleryMain extends GVRScript {
 
         CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(
                 mGVRContext);
-        GVRPostEffect postEffect = new GVRPostEffect(mGVRContext,
-                shaderManager.getShaderId());
-        postEffect.setVec3("ratio_r", 0.393f, 0.769f, 0.189f);
-        postEffect.setVec3("ratio_g", 0.349f, 0.686f, 0.168f);
-        postEffect.setVec3("ratio_b", 0.272f, 0.534f, 0.131f);
-        mainScene.getMainCameraRig().getLeftCamera().addPostEffect(postEffect);
-        mainScene.getMainCameraRig().getRightCamera().addPostEffect(postEffect);
+        GVRShaderId shaderId = gvrContext.getMaterialShaderManager().getShaderType(CustomPostEffectShaderManager.class);
+        GVRShaderData shaderData = new GVRShaderData(gvrContext, shaderId );
+        mainScene.getMainCameraRig().getLeftCamera().addPostEffect(shaderData);
+        mainScene.getMainCameraRig().getRightCamera().addPostEffect(shaderData);
 
     }
 

@@ -20,23 +20,41 @@ import android.graphics.Color;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScript;
+//import org.gearvrf.GVRScript;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.utility.Log;
 
-public class SampleMain extends GVRScript {
+import java.io.IOException;
+
+public class SampleMain extends GVRMain {
 
     private GVRContext mGVRContext;
-
+/*
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public SplashMode getSplashMode() {
+        return SplashMode.NONE;
+    }
+*/
+private GVRSceneObject asyncSceneObject(GVRContext context,
+                                        String textureName) throws IOException {
+    return new GVRSceneObject(context, //
+            new GVRAndroidResource(context, "sphere.obj"), //
+            new GVRAndroidResource(context, textureName));
+}
+    @Override
+    public void onInit(GVRContext gvrContext) throws IOException {
 
         // save context for possible use in onStep(), even though that's empty
         // in this sample
         mGVRContext = gvrContext;
 
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
 
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
@@ -45,21 +63,37 @@ public class SampleMain extends GVRScript {
         mainCameraRig.getRightCamera()
                 .setBackgroundColor(Color.WHITE);
 
-        // load texture
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(
+       // load texture
+  /*    GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 mGVRContext, R.drawable.gearvr_logo));
 
-        // create a scene object (this constructor creates a rectangular scene
-        // object that uses the standard 'unlit' shader)
-        GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, 4.0f, 2.0f,
+        GVRSceneObject sceneObject = new GVRSceneObject(gvrContext, 1.0f, 1.0f,
                 texture);
 
-        // set the scene object position
-        sceneObject.getTransform().setPosition(0.0f, 0.0f, -3.0f);
+        sceneObject.getTransform().setPosition(0.0f, 0.0f, -1.0f);
 
-        // add the scene object to the scene graph
         scene.addSceneObject(sceneObject);
+*/
+ /*           GVRSceneObject benchModel = gvrContext.getAssetLoader().loadModel("cube_diffuse_pointlight.fbx", scene);
 
+            benchModel.getTransform().setScale(8.66f, 8.66f, 8.66f);
+            benchModel.getTransform().setPosition(0.0f, -0.1f, -0.2f);
+           benchModel.getTransform().setRotationByAxis(180.0f, 1.0f, 0.0f, 0.0f);
+        scene.addSceneObject(benchModel);
+*/
+      /*     GVRTexture tex = gvrContext.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(gvrContext, R.raw.lycksele3));
+        GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
+        material.setMainTexture(tex);
+        GVRSphereSceneObject environment = new GVRSphereSceneObject(gvrContext, 18, 36, false, material, 4, 4);
+        environment.getTransform().setScale(20.0f, 20.0f, 20.0f);
+
+       // environment.setName("environment");
+        scene.addSceneObject(environment);
+*/
+      GVRSceneObject sunMeshObject = asyncSceneObject(gvrContext, "sunmap.astc");
+       // sunMeshObject.getTransform().setScale(10.0f, 10.0f, 10.0f);
+        sunMeshObject.getTransform().setPosition(0,0,-3.0f);
+      scene.addSceneObject(sunMeshObject);
     }
 
     @Override

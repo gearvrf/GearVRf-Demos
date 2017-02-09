@@ -114,7 +114,7 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
     }
 
     public PhotoView(GVRContext gvrContext, int photo) {
-        this(gvrContext, WIDTH, HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        this(gvrContext, WIDTH, HEIGHT, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 photo)));
         this.gvrContext = gvrContext;
         this.photoId = photo;
@@ -220,7 +220,7 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
         if (this.photoId == resource)
             return;
         this.getRenderData().getMaterial()
-                .setMainTexture(gvrContext.loadTexture(new GVRAndroidResource(this.gvrContext,
+                .setMainTexture(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(this.gvrContext,
                         resource)));
         this.photoId = resource;
     }

@@ -57,7 +57,7 @@ public class Loader {
             } else {
                 textureResource = new GVRAndroidResource(context, textureId);
             }
-            GVRTexture texture = context.loadTexture(textureResource);
+            GVRTexture texture = context.getAssetLoader().loadTexture(textureResource);
 
             return new FocusableSceneObject(context, mesh, texture);
         } catch (FileNotFoundException e) {

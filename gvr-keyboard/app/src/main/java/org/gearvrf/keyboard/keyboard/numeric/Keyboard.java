@@ -185,7 +185,6 @@ public class Keyboard extends GVRSceneObject {
         }
 
         isEnabled = true;
-
         getGVRContext().getMainScene().addSceneObject(this);
 
         for (KeyboardLine item : keyboard.getListKeyboardLine()) {

@@ -128,7 +128,7 @@ public class Totem extends FocusableSceneObject implements FocusListener {
 
     public void setIcon(int iconPath) {
         icon = new PlayPauseButton(gvrContext, .3f, .3f,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, iconPath)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, iconPath)));
         icon.getTransform().setPosition(0f, 1f, -0.11f);
         icon.getTransform().rotateByAxis(-180, 0, 1, 0);
         icon.attachEyePointeeHolder();

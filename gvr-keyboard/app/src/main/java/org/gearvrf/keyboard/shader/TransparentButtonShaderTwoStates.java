@@ -16,10 +16,10 @@
 package org.gearvrf.keyboard.shader;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
-
+/*
 public class TransparentButtonShaderTwoStates  extends TransparentButtonShaderBase{
 
     public static final String TEXTURE_KEY = "texture";
@@ -106,4 +106,4 @@ public class TransparentButtonShaderTwoStates  extends TransparentButtonShaderBa
     public GVRCustomMaterialShaderId getShaderId() {
         return mShaderId;
     }
-}
+}*/

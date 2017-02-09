@@ -53,7 +53,7 @@ public class MicGroupIcons extends GVRSceneObject {
                     mIcon.getRenderData()
                             .getMaterial()
                             .setMainTexture(
-                                    MicGroupIcons.this.getGVRContext().loadTexture(
+                                    MicGroupIcons.this.getGVRContext().getAssetLoader().loadTexture(
                                             new GVRAndroidResource(MicGroupIcons.this
                                                     .getGVRContext(), res)));
                 }

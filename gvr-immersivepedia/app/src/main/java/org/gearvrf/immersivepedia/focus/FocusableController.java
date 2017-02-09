@@ -114,7 +114,7 @@ public final class FocusableController {
     private static boolean hasEmptyTexture(GVRContext gvrContext, GVRSceneObject object) {
         return object.getRenderData().getMaterial().getMainTexture() != null
                 && object.getRenderData().getMaterial().getMainTexture()
-                        .equals(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
+                        .equals(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
     }
 
 }

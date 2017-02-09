@@ -52,40 +52,60 @@ public class CubemapMain extends GVRMain {
     //    (method C)
     // 4: surrounding cylinder using GVRCylinderSceneObject
     // 5: surrounding cube using six GVRSceneOjbects (quads)
-    private int mEnvironmentType = 2;
+    private int mEnvironmentType = 1;
 
     // Type of object for the reflective object
     // 0: reflective sphere using GVRSphereSceneObject
     // 1: reflective sphere using OBJ model
     private static final int mReflectiveType = 0;
-    private Future<GVRTexture> mFutureCubemapTexture;
+//    private Future<GVRTexture> mFutureCubemapTexture;
+    private GVRTexture mFutureCubemapTexture;
     private GVRMaterial mCubemapMaterial;
     private GVRMaterial mCompressedCubemapMaterial;
-    private ArrayList<Future<GVRTexture>> mFutureTextureList;
-
+ //   private ArrayList<Future<GVRTexture>> mFutureTextureList;
+ private ArrayList<GVRTexture> mFutureTextureList;
+    @Override
+    public SplashMode getSplashMode() {
+        return SplashMode.NONE;
+    }
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
         scene.setStatsEnabled(true);
         scene.setFrustumCulling(true);
 
         // Uncompressed cubemap texture
-        mFutureCubemapTexture = gvrContext.loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext, R.raw.beach));
+      //  mFutureCubemapTexture = gvrContext.loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext, R.raw.beach));
+        mFutureCubemapTexture = gvrContext.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(mGVRContext, R.raw.beach));
         mCubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
         mCubemapMaterial.setMainTexture(mFutureCubemapTexture);
 
         // Compressed cubemap texture
-        final Future<GVRTexture> futureCompressedCubemapTexture = gvrContext.loadFutureCompressedCubemapTexture(new GVRAndroidResource(mGVRContext,
+       // final Future<GVRTexture> futureCompressedCubemapTexture = gvrContext.loadFutureCompressedCubemapTexture(new GVRAndroidResource(mGVRContext,
+       //         R.raw.museum));
+        final GVRTexture futureCompressedCubemapTexture = gvrContext.getAssetLoader().loadCompressedCubemapTexture(new GVRAndroidResource(mGVRContext,
                 R.raw.museum));
         mCompressedCubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
         mCompressedCubemapMaterial.setMainTexture(futureCompressedCubemapTexture);
 
         // List of textures (one per face)
-        mFutureTextureList = new ArrayList<Future<GVRTexture>>(6);
-        mFutureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(gvrContext,
+        mFutureTextureList = new ArrayList<GVRTexture>(6);
+        mFutureTextureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.back)));
+        mFutureTextureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.right)));
+        mFutureTextureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.front)));
+        mFutureTextureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.left)));
+        mFutureTextureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.top)));
+        mFutureTextureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                R.drawable.bottom)));
+
+/*                .loadFutureTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.back)));
         mFutureTextureList.add(gvrContext
                 .loadFutureTexture(new GVRAndroidResource(gvrContext,
@@ -102,7 +122,7 @@ public class CubemapMain extends GVRMain {
         mFutureTextureList.add(gvrContext
                 .loadFutureTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.bottom)));
-
+*/
         applyCubemap(scene);
     }
 
@@ -249,7 +269,7 @@ public class CubemapMain extends GVRMain {
 
         if (sphere != null) {
             sphere.setName("sphere");
-//            scene.addSceneObject(sphere);
+         //   scene.addSceneObject(sphere);
             sphere.getTransform().setScale(SCALE_FACTOR, SCALE_FACTOR,
                     SCALE_FACTOR);
             sphere.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.25f);

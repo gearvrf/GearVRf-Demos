@@ -74,14 +74,14 @@ public class SphereStaticList {
             float eX = mat[0] * x + mat[1] * y + mat[2] * z + mat[3] * 1;
             float eY = mat[4] * x + mat[5] * y + mat[6] * z + mat[7] * 1;
             float eZ = mat[8] * x + mat[9] * y + mat[10] * z + mat[11] * 1;
-            sphereFlag
+            sphereFlag.getChildByIndex(0)
                     .getRenderData()
                     .getMaterial()
                     .setVec3(SphereShader.LIGHT_KEY,
                             lX - sphereFlag.getTransform().getPositionX(),
                             lY - sphereFlag.getTransform().getPositionY(),
                             lZ - sphereFlag.getTransform().getPositionZ());
-            sphereFlag.getRenderData().getMaterial()
+            sphereFlag.getChildByIndex(0).getRenderData().getMaterial()
                     .setVec3(SphereShader.EYE_KEY, eX, eY, eZ);
 
         }
@@ -96,6 +96,7 @@ public class SphereStaticList {
         for (int i = 0; i < spheres.length(); i++) {
             int type = spheres.getResourceId(i, -1);
             TypedArray sphere = res.obtainTypedArray(type);
+
             SphereFlag objectSphere = new SphereFlag(gvrContext, sphere);
             Vector3D parentPosition = objectSphere.getInitialPositionVector();
 

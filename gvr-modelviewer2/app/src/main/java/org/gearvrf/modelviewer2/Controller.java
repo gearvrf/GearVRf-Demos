@@ -175,7 +175,6 @@ public class Controller {
         oLight.getLightScene().getTransform().setPosition(0, 10, 0);
         oLight.getLightScene().getTransform().rotateByAxis(-90, 1, 0, 0);
         scene.addSceneObject(oLight.getLightScene());
-        scene.bindShaders();
     }
 
     public void enableDisableLightOnModel(GVRSceneObject model, boolean flag) {
@@ -240,7 +239,6 @@ public class Controller {
                     renderDatas.get(i).setShaderTemplate(GVRPhongShader.class);
                     renderDatas.get(i).setCullFace(GVRRenderPass.GVRCullFaceEnum.Back);
                     renderDatas.get(i).setDrawMode(4);
-                    scene.bindShaders();
                     enableDisableLightOnModel(currentDisplayedModel.getModel(context), false);
                 }
                 break;
@@ -256,35 +254,34 @@ public class Controller {
                 outlineMaterial.setFloat(OutlineShader.THICKNESS_KEY, 2.0f);
                 for (GVRRenderData rdata : renderDatas) {
                     rdata.setMaterial(outlineMaterial);
-                    rdata.setShaderTemplate(OutlineShader.class);
+
                     rdata.setCullFace(GVRRenderPass.GVRCullFaceEnum.Front);
                     rdata.setDrawMode(4);
                 }
                 break;
             case 3:
                 for (GVRRenderData rdata : renderDatas) {
-                    rdata.setShaderTemplate(GVRPhongShader.class);
+
                     rdata.setDrawMode(1);
                 }
 
                 break;
             case 4:
                 for (GVRRenderData rdata : renderDatas) {
-                    rdata.setShaderTemplate(GVRPhongShader.class);
+
                     rdata.setDrawMode(3);
                 }
 
                 break;
             case 5:
                 for (GVRRenderData rdata : renderDatas) {
-                    rdata.setShaderTemplate(GVRPhongShader.class);
+
                     rdata.setDrawMode(0);
                 }
 
                 break;
         }
 
-        scene.bindShaders();
     }
     // END Custom Shader Feature
 
@@ -563,7 +560,7 @@ public class Controller {
             tempModelSO.getTransform().setPosition(defaultCenterPosition.x, defaultCenterPosition
                     .y, defaultCenterPosition.z);
             room.addSceneObject(tempModelSO);
-            room.bindShaders();
+
             enableDisableLightOnModel(tempModelSO, oLightFlag);
 
             removeLoadingInRoom(room);
