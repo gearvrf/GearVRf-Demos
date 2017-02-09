@@ -54,8 +54,6 @@ public class Main extends GVRMain {
                 mActivity.getTextView(), 2.0f, 1.0f);
         gvrContext.getMainScene().addSceneObject(mTextSceneObject);
         mTextSceneObject.getTransform().setPosition(0.0f, -2.0f, -2.5f);
-
-        cube.releaseNative();
     }
 
     @Override
