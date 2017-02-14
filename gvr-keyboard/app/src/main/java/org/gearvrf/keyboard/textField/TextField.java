@@ -107,7 +107,7 @@ public class TextField extends GVRSceneObject {
         GVRSceneObject space = new GVRSceneObject(TextField.this.getGVRContext(),
                 Util.convertPixelToVRFloatValue(40),
                 Util.convertPixelToVRFloatValue(5),
-                TextField.this.getGVRContext().loadTexture(
+                TextField.this.getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(TextField.this.getGVRContext(),
                                 R.drawable.key_space_active)));
 

@@ -128,11 +128,11 @@ public class SphereFlag extends GVRSceneObject {
         GVRMaterial material = new GVRMaterial(gvrContext);
         material.setShaderType(new SphereShader(gvrContext).getShaderId());
         material.setTexture(SphereShader.TEXTURE_KEY,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, mTexture)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, mTexture)));
         material.setFloat("blur", 0);
         material.setFloat(SphereShader.ANIM_TEXTURE, 0.0f);
         material.setTexture(SphereShader.SECUNDARY_TEXTURE_KEY,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, mResultTexture)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, mResultTexture)));
         material.setVec3(SphereShader.TRANSITION_COLOR, 1, 1, 1);
         material.setVec3(SphereShader.EYE_KEY, 0, 0, 0);
 
@@ -321,7 +321,7 @@ public class SphereFlag extends GVRSceneObject {
                             0.675f, 0.443f);
                     getRenderData().getMaterial().setTexture(
                             SphereShader.SECUNDARY_TEXTURE_KEY,
-                            getGVRContext().loadTexture(
+                            getGVRContext().getAssetLoader().loadTexture(
                                     new GVRAndroidResource(getGVRContext(), R.drawable.check)));
                 } else {
 
@@ -330,7 +330,7 @@ public class SphereFlag extends GVRSceneObject {
                     getRenderData().getMaterial().setVec3(SphereShader.TRANSITION_COLOR, 1, 0, 0);
                     getRenderData().getMaterial().setTexture(
                             SphereShader.SECUNDARY_TEXTURE_KEY,
-                            getGVRContext().loadTexture(
+                            getGVRContext().getAssetLoader().loadTexture(
                                     new GVRAndroidResource(getGVRContext(), R.drawable.error)));
                 }
             }

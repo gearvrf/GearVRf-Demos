@@ -82,7 +82,7 @@ public class SoundWave extends GVRSceneObject implements RecognitionRmsChangeLis
                 context,
                 0.1f,
                 0.1f,
-                context.loadTexture(new GVRAndroidResource(context, R.drawable.soundwave_wave_block)));
+                context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.soundwave_wave_block)));
         box1.getRenderData().getMaterial().setColor(color);
         box1.getRenderData().getMaterial().setOpacity(1);
         box1.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD_SOUND_WAVE);

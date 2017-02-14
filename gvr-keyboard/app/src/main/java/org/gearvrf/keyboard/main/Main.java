@@ -104,7 +104,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         GVRSceneObject floor = new GVRSceneObject(mGVRContext,
                 mGVRContext.createQuad(120.0f, 120.0f),
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.floor)));
+                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.floor)));
 
         floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
         floor.getTransform().setPositionY(-10.0f);
@@ -239,7 +239,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.skybox_esphere));
-        GVRTexture spaceTexture = mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+        GVRTexture spaceTexture = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                 R.drawable.skybox));
 
         GVRSceneObject mSpaceSceneObject = new GVRSceneObject(mGVRContext, spaceMesh, spaceTexture);
@@ -250,7 +250,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
     private void addCursorPosition() {
 
         GVRSceneObject headTracker = new GVRSceneObject(mGVRContext,
-                mGVRContext.createQuad(0.5f, 0.5f), mGVRContext.loadTexture(new GVRAndroidResource(
+                mGVRContext.createQuad(0.5f, 0.5f), mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.head_tracker)));
 
         headTracker.getTransform().setPositionZ(-9.0f);
