@@ -72,7 +72,7 @@ public class SpinnerSkeleton extends GVRSceneObject {
         object.getRenderData()
                 .getMaterial()
                 .setMainTexture(
-                        gvrContext.loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
+                        gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
                                 resourceTextureID)));
         return object;
 
