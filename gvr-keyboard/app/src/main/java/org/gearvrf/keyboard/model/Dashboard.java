@@ -61,7 +61,7 @@ public class Dashboard extends GVRSceneObject {
 
     public Dashboard(GVRContext gvrContext, int gVRAndroidResourceTexture) {
 
-        super(gvrContext, HIGHT, WIDTH, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        super(gvrContext, HIGHT, WIDTH, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 gVRAndroidResourceTexture)));
         setName(SceneObjectNames.DASHBOARD);
 
