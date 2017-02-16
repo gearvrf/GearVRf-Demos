@@ -16,14 +16,17 @@
 package org.gearvrf.immersivepedia;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.immersivepedia.focus.FocusableController;
+import org.gearvrf.immersivepedia.focus.PickHandler;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
+import org.gearvrf.immersivepedia.focus.FocusableController;
 
 import android.media.MediaPlayer;
 
@@ -34,6 +37,7 @@ public class Main extends GVRMain {
     private MenuScene menuScene;
     public static DinosaurScene dinosaurScene;
     private static MediaPlayer mediaPlayer;
+    private PickHandler mPickHandler;
 
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
@@ -59,6 +63,14 @@ public class Main extends GVRMain {
                 GazeController.enableGaze();
             }
         });
+
+        // Picking Events
+        mPickHandler = new PickHandler();
+        menuScene.getEventReceiver().addListener(mPickHandler);
+        menuScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, menuScene));
+
+        //dinosaurScene.getEventReceiver().addListener(mPickHandler);
+        //dinosaurScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, dinosaurScene));
     }
 
     @Override
@@ -70,7 +82,7 @@ public class Main extends GVRMain {
     public void onStep() {
 
         TouchPadInput.process();
-        FocusableController.process(mGvrContext);
+        FocusableController.process(mGvrContext, mPickHandler);
         FPSCounter.tick();
 
         if (mGvrContext.getMainScene().equals(dinosaurScene)) {
@@ -80,7 +92,7 @@ public class Main extends GVRMain {
 
     public void onSingleTapConfirmed() {
         if (null != mGvrContext) {
-            FocusableController.clickProcess(mGvrContext);
+            FocusableController.clickProcess(mGvrContext, mPickHandler);
         }
     }
 
@@ -107,7 +119,7 @@ public class Main extends GVRMain {
         }
     }
 
-    @Override
+    //@Override
     public boolean onBackPress() {
         final GVRScene mainScene = getGVRContext().getMainScene();
         if (dinosaurScene == mainScene) {
