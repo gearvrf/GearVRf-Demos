@@ -63,7 +63,7 @@ public class Cloud extends GVRSceneObject {
 
     private void createRendereData(GVRContext gvrContext, GVRMesh mesh) {
 
-        GVRTexture cloudTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture cloudTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 originalTexture));
 
         GVRMaterial material = new GVRMaterial(gvrContext);

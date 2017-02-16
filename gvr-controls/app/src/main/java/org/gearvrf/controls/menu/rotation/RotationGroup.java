@@ -51,7 +51,7 @@ public class RotationGroup extends GVRSceneObject {
         GVRAndroidResource baseTextRes = new GVRAndroidResource(getGVRContext(),
                 R.drawable.direction_rotation);
 
-        base = new GVRSceneObject(getGVRContext(), 1, 1, getGVRContext().loadTexture(baseTextRes));
+        base = new GVRSceneObject(getGVRContext(), 1, 1, getGVRContext().getAssetLoader().loadTexture(baseTextRes));
 
         base.getTransform().rotateByAxis(90, 0, 0, 1);
         base.getTransform().rotateByAxis(-90, 1, 0, 0);

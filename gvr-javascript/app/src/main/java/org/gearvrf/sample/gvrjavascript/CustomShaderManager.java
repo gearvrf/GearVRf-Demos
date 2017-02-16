@@ -15,24 +15,35 @@
 
 package org.gearvrf.sample.gvrjavascript;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.utility.TextFile;
 
-class CustomShaderManager {
-    private final GVRCustomMaterialShaderId shaderId;
+public class CustomShaderManager extends GVRShader{
+    //private final GVRCustomMaterialShaderId shaderId;
     static final String COLOR_KEY = "color";
 
-    CustomShaderManager(GVRContext gvrContext) {
+    public CustomShaderManager(GVRContext gvrContext) {
+        /*
         final GVRMaterialShaderManager shaderManager = gvrContext
                 .getMaterialShaderManager();
         shaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
         GVRMaterialMap customShader = shaderManager.getShaderMap(shaderId);
-        customShader.addUniformVec4Key("u_color", COLOR_KEY);
+        customShader.addUniformVec4Key("u_color", COLOR_KEY);*/
+        super("float4 u_color", "sampler2D temp", "float4 a_position");
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.vertex));
     }
 
-    GVRCustomMaterialShaderId getShaderId() {
-        return shaderId;
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setVec4("u_color", 1, 1, 1, 1);
     }
 }

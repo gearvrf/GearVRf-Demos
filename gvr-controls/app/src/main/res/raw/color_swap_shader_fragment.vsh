@@ -1,17 +1,21 @@
 precision mediump float;
-varying vec2  coord;
+in vec2  coord;
 uniform sampler2D grayScaleTexture;
 uniform sampler2D detailsTexture;
-uniform vec4 color;
-uniform float opacity;
 
+layout (std140) uniform Material_ubo
+{
+ vec4 color;
+ float opacity;
+};
+out vec4 outColor;
 void main() {
 	
 	vec4 colorGrayScale;
 	vec4 colorDetails;
 	
-    colorGrayScale = texture2D(grayScaleTexture, coord);
-    colorDetails = texture2D(detailsTexture, coord);
+    colorGrayScale = texture(grayScaleTexture, coord);
+    colorDetails = texture(detailsTexture, coord);
     
     vec4 colorResult = colorGrayScale * color; 
 
@@ -21,5 +25,5 @@ void main() {
         
 	}
     		
-	gl_FragColor = colorResult * opacity;
+	outColor = colorResult * opacity;
 }

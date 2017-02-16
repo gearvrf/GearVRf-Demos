@@ -48,7 +48,7 @@ public class Minimal360Video extends GVRMain
     @Override
     public void onInit(GVRContext gvrContext) {
 
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
 
         // set up camerarig position (default)
         scene.getMainCameraRig().getTransform().setPosition( 0.0f, 0.0f, 0.0f );

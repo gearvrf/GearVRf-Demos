@@ -14,27 +14,48 @@
  */
 
 
+
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomPostEffectShaderId;
-import org.gearvrf.GVRPostEffectMap;
+
 import org.gearvrf.GVRPostEffectShaderManager;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderId;
 
-public class CustomPostEffectShaderManager {
+public class CustomPostEffectShaderManager extends GVRShader {
 
-    private final GVRCustomPostEffectShaderId mShaderId;
-    private GVRPostEffectMap mCustomShader;
+    private  GVRShaderId mShaderId;
+
+    private static final String VERTEX_SHADER =
+            "in vec3 a_position;\n" +
+                    "in vec2 a_texcoord;\n" +
+                    "out vec2 v_tex_coord;\n" +
+                    "void main() {\n" +
+                    "  v_tex_coord = a_texcoord.xy;\n" +
+                    "  gl_Position = vec4(a_position,1.0);\n" +
+                    "}\n";
+    private static final String FRAGMENT_SHADER =
+            "precision mediump float;\n" +
+                    "uniform sampler2D u_texture;\n" +
+                    "layout (std140) uniform Material_ubo{\n" +
+                    "    float u_gamma;\n" +
+                    "};\n" +
+                    "in vec2 v_tex_coord;\n" +
+                    "out vec4 outColor;\n" +
+                    "void main() {\n" +
+                    "  vec4 tex = texture(u_texture, v_tex_coord);\n" +
+                    "  vec3 color = pow(tex.rgb, vec3(1.0/u_gamma));\n" +
+                    "  outColor = vec4(color, tex.a);\n" +
+                    "}\n";
 
     public CustomPostEffectShaderManager(GVRContext gvrContext) {
-        final GVRPostEffectShaderManager shaderManager = gvrContext
-                .getPostEffectShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformFloatKey("u_gamma", "u_gamma");
+        super("float u_gamma", "", "", 300);
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
     }
 
-    public GVRCustomPostEffectShaderId getShaderId() {
+    public GVRShaderId getShaderId() {
         return mShaderId;
     }
 }

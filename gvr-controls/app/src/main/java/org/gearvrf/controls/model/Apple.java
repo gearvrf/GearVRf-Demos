@@ -96,9 +96,9 @@ public class Apple extends GVRSceneObject {
     }
 
     public void setAppleShaderParameters(GVRContext gvrContext) {
-        GVRTexture grayScaleTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture grayScaleTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.apple_diffuse));
-        GVRTexture detailsTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture detailsTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.apple_details));
 
         this.getRenderData().getMaterial().setOpacity(0);

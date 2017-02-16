@@ -19,6 +19,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -42,7 +43,7 @@ public class MenuCloseButton extends ControlSceneObject {
         GVRMesh sMesh = getGVRContext().createQuad(0.4f, 0.4f);
 
         attachRenderData(new GVRRenderData(gvrContext));
-        getRenderData().setMaterial(new GVRMaterial(gvrContext, new ButtonShader(gvrContext).getShaderId()));
+        getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(ButtonShader.class)));
         getRenderData().setMesh(sMesh);
         createTextures(gvrContext);
 
@@ -54,10 +55,10 @@ public class MenuCloseButton extends ControlSceneObject {
 
     private void createTextures(GVRContext gvrContext) {
         
-        GVRTexture empty = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
-        GVRTexture idle = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close));
-        GVRTexture hover = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_hover));
-        GVRTexture selected = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_pressed));
+        GVRTexture empty = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
+        GVRTexture idle = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close));
+        GVRTexture hover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_hover));
+        GVRTexture selected = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_pressed));
         
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE, empty);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, idle);

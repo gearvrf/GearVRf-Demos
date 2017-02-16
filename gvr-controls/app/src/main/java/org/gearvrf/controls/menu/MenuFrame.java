@@ -54,7 +54,7 @@ public class MenuFrame extends GVRSceneObject {
         pivot.getTransform().setPosition(0, PIVOT_OFFSET_Y,FRAME_POSITION_Z);
         
         GVRMesh mesh = getGVRContext().createQuad(3.57f, 0.01f);
-        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(this.getGVRContext(), R.drawable.background_frame));
+        GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(this.getGVRContext(), R.drawable.background_frame));
 
         mMenuFrame = new GVRSceneObject(getGVRContext(), mesh, texture);
         mMenuFrame.getRenderData().getMaterial().setOpacity(0);

@@ -15,13 +15,18 @@
 
 package org.gearvrf.controls.shaders;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.controls.R;
+import org.gearvrf.utility.TextFile;
 
-public class ButtonShader {
+public class ButtonShader extends GVRShader{
 
     public static final String STATE1_BACKGROUND_TEXTURE = "state1Background";
     public static final String STATE1_TEXT_TEXTURE = "state1Text";
@@ -31,15 +36,15 @@ public class ButtonShader {
     public static final String STATE3_TEXT_TEXTURE = "state3Text";
     public static final String TEXTURE_SWITCH = "textureSwitch";
 
-    private GVRCustomMaterialShaderId mShaderId;
+    private GVRShaderId mShaderId;
     private GVRMaterialMap mCustomShader = null;
 
     public ButtonShader(GVRContext gvrContext) {
+        /*
         final GVRMaterialShaderManager shaderManager = gvrContext
                 .getMaterialShaderManager();
         mShaderId = shaderManager.addShader(R.raw.buttonshader_vertex,
                 R.raw.buttonshader_fragment);
-
         mCustomShader = shaderManager.getShaderMap(mShaderId);
         mCustomShader.addTextureKey(STATE1_BACKGROUND_TEXTURE, STATE1_BACKGROUND_TEXTURE);
         mCustomShader.addTextureKey(STATE1_TEXT_TEXTURE, STATE1_TEXT_TEXTURE);
@@ -48,11 +53,16 @@ public class ButtonShader {
         mCustomShader.addTextureKey(STATE3_BACKGROUND_TEXTURE, STATE3_BACKGROUND_TEXTURE);
         mCustomShader.addTextureKey(STATE3_TEXT_TEXTURE, STATE3_TEXT_TEXTURE);
         mCustomShader.addUniformFloatKey(TEXTURE_SWITCH, TEXTURE_SWITCH);
-        mCustomShader.addUniformFloatKey("opacity", "opacity");
+        mCustomShader.addUniformFloatKey("opacity", "opacity");*/
+
+        super("float textureSwitch float opacity", "sampler2D state1Background sampler2D state1Text sampler2D state2Background sampler2D state2Text sampler2D state3Background sampler2D state3Text", "float3 a_position, float3 a_normal, float2 a_texcoord",300);
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.buttonshader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.buttonshader_vertex));
 
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
+    public GVRShaderId getShaderId() {
         return mShaderId;
     }
 }

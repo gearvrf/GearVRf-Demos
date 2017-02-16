@@ -16,12 +16,14 @@
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRPostEffect;
+
 import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRShaderData;
+
 import java.lang.Runnable;
 
 public class DisplayUtils {
-    GVRPostEffect postEffect;
+    GVRShaderData postEffect;
     GVRContext gvrContext;
 
     public DisplayUtils(GVRContext context) {
@@ -31,7 +33,8 @@ public class DisplayUtils {
     public void addGammaCorrection() {
         // add a custom post effect for dynamically adjusting gamma
         CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(gvrContext);
-        postEffect = new GVRPostEffect(gvrContext, shaderManager.getShaderId());
+        postEffect = new GVRShaderData(gvrContext, shaderManager.getShaderId());
+
         postEffect.setFloat("u_gamma", 2.2f);
         GVRCameraRig rig = gvrContext.getMainScene().getMainCameraRig();
         rig.getLeftCamera().addPostEffect(postEffect);

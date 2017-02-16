@@ -52,7 +52,7 @@ public class SampleMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) throws IOException {
-        mScene = gvrContext.getNextMainScene();
+        mScene = gvrContext.getMainScene();
 
         // set background color
         GVRCameraRig mainCameraRig = mScene.getMainCameraRig();

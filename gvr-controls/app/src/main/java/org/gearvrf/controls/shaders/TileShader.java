@@ -1,4 +1,3 @@
-
 /* Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,34 +15,43 @@
 
 package org.gearvrf.controls.shaders;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.controls.R;
+import org.gearvrf.utility.TextFile;
 
-public class TileShader {
+public class TileShader extends GVRShader{
 
     public static final String TEXTURE_KEY = "texture";
     public static final String TILE_COUNT = "tile";
 
-    private GVRCustomMaterialShaderId mShaderId;
+    private GVRShaderId mShaderId;
     private GVRMaterialMap mCustomShader = null;
 
     public TileShader(GVRContext gvrContext) {
+        /*
         final GVRMaterialShaderManager shaderManager = gvrContext
                 .getMaterialShaderManager();
         mShaderId = shaderManager.addShader(R.raw.tileshader_vertex,
                 R.raw.tileshader_fragment);
-
         mCustomShader = shaderManager.getShaderMap(mShaderId);
         mCustomShader.addTextureKey(TEXTURE_KEY, TEXTURE_KEY);
         mCustomShader.addUniformFloatKey(TILE_COUNT,
-                TILE_COUNT);
+                TILE_COUNT);*/
 
+        super("float tile", "sampler2D texture", "float3 a_position",300);
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.tileshader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.tileshader_vertex));
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
+    /*public GVRCustomMaterialShaderId getShaderId() {
         return mShaderId;
-    }
+    }*/
 }

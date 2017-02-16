@@ -39,7 +39,7 @@ public class GearVRScriptingMain extends GVRMain
     @Override
     public void onInit(GVRContext gvrContext) {
         final DebugServer debug = gvrContext.startDebugServer();
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
         IErrorEvents errorHandler = new IErrorEvents()
         {
             public void onError(String message, Object source)

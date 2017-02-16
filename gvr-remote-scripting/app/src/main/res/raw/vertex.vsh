@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-attribute vec4 a_position;
-attribute vec2 a_texcoord;
-varying vec2 v_tex_coord;
+in vec3 a_position;
+in vec2 a_texcoord;
+out vec2 v_tex_coord;
 void main() {
   v_tex_coord = a_texcoord.xy;
-  gl_Position = a_position;
+  gl_Position = vec4(a_position,1.0);
 }
