@@ -33,6 +33,8 @@ import org.gearvrf.keyboard.model.Dashboard;
 import org.gearvrf.keyboard.model.KeyboardCharItem;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 
+import java.util.List;
+
 /**
  * @author Douglas and SIDIA VR TEAM
  */
@@ -236,9 +238,10 @@ public class Keyboard extends GVRSceneObject {
 
     private void changeTexture() {
 
-        GVREyePointeeHolder[] holders = GVRPicker.pickScene(getGVRContext().getMainScene());
+        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(getGVRContext()
+                .getMainScene());
 
-        if (holders.length <= 1) {
+        if (pickedObjects.size() <= 1) {
 
             if (currentSelection != null) {
                 setNormalMaterial(currentSelection);
@@ -247,15 +250,15 @@ public class Keyboard extends GVRSceneObject {
             currentSelection = null;
         }
 
-        for (GVREyePointeeHolder eph : GVRPicker.pickScene(getGVRContext().getMainScene())) {
+        for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
 
-            if (eph.getOwnerObject().hashCode() == Dashboard.currentDashboardHashCode) {
+            if (pickedObject.getHitObject().hashCode() == Dashboard.currentDashboardHashCode) {
                 continue;
             }
 
             for (GVRSceneObject object : keyboard.getObjects()) {
 
-                if (eph.getOwnerObject().equals(object)) {
+                if (pickedObject.getHitObject().equals(object)) {
 
                     setHoverMaterial(object);
 
