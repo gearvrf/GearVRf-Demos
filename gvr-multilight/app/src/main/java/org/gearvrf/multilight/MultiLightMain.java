@@ -141,7 +141,7 @@ public class MultiLightMain extends GVRMain {
      */
     private GVRSceneObject createBackdrop(GVRContext context)
     {
-        GVRTexture tex = context.loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.gearvrflogo));
+        GVRTexture tex = context.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.gearvrflogo));
         GVRSceneObject backdrop = new GVRSceneObject(context, 10.0f, 4.0f, tex);
         GVRRenderData rdata = backdrop.getRenderData();
         GVRMaterial material = new GVRMaterial(context);

@@ -50,7 +50,7 @@ public class SampleMain extends GVRMain {
         /*
          * Add a head tracking pointer to the scene
          */
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.headtrackingpointer));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.headtrackingpointer));
         GVRSceneObject headTracker = new GVRSceneObject(gvrContext, gvrContext.createQuad(0.1f, 0.1f), texture);
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
