@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
@@ -66,7 +67,8 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
                 gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
         focus.getTransform().setPosition(0f, 3.5f, DinosaurFactory.APATOSAURUS_DISTANCE - 0.01f);
         focus.getTransform().rotateByAxis(-180.0f, 0f, 1f, 0f);
-        focus.attachEyePointeeHolder();
+        focus.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+
         focus.setName("apatosaurus");
         focus.setOnGestureListener(new OnGestureListener() {
 

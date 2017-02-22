@@ -19,6 +19,7 @@ import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.immersivepedia.GazeController;
@@ -84,7 +85,7 @@ public class VideoComponent extends GVRSceneObject {
         video = new GVRVideoSceneObject(gvrContext, WIDTH, HEIGHT, mediaPlayer, GVRVideoType.MONO);
         focus = new FocusableSceneObject(gvrContext, WIDTH, HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.empty_clickable)));
-        focus.attachEyePointeeHolder();
+        focus.attachCollider(new GVRMeshCollider(gvrContext, false));
         focus.setName("video");
         focus.focusListener = new FocusListener() {
 

@@ -38,6 +38,7 @@ public class Main extends GVRMain {
     public static DinosaurScene dinosaurScene;
     private static MediaPlayer mediaPlayer;
     private PickHandler mPickHandler;
+    private GVRPicker mPicker;
 
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
@@ -59,18 +60,14 @@ public class Main extends GVRMain {
         gvrContext.runOnGlThreadPostRender(64, new Runnable() {
             @Override
             public void run() {
-                gvrContext.setMainScene(menuScene);
+                setMainScene(menuScene);
                 GazeController.enableGaze();
             }
         });
 
-        // Picking Events
+        // Set up to handle picking events
         mPickHandler = new PickHandler();
-        menuScene.getEventReceiver().addListener(mPickHandler);
-        menuScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, menuScene));
-
-        //dinosaurScene.getEventReceiver().addListener(mPickHandler);
-        //dinosaurScene.getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, dinosaurScene));
+        mPicker = new GVRPicker(gvrContext, menuScene);
     }
 
     @Override
@@ -82,7 +79,7 @@ public class Main extends GVRMain {
     public void onStep() {
 
         TouchPadInput.process();
-        FocusableController.process(mGvrContext, mPickHandler);
+        //FocusableController.process(mGvrContext, mPickHandler);
         FPSCounter.tick();
 
         if (mGvrContext.getMainScene().equals(dinosaurScene)) {
@@ -97,7 +94,7 @@ public class Main extends GVRMain {
     }
 
     public void onSwipe() {
-        FocusableController.swipeProcess(mGvrContext);
+        FocusableController.swipeProcess(mGvrContext, mPickHandler);
     }
 
     public static void clickOut() {
@@ -119,12 +116,23 @@ public class Main extends GVRMain {
         }
     }
 
+    public void setMainScene(GVRScene newScene)
+    {
+        GVRScene oldScene = getGVRContext().getMainScene();
+        oldScene.getEventReceiver().removeListener(mPickHandler);
+        oldScene.getMainCameraRig().getHeadTransformObject().detachComponent(GVRPicker.getComponentType());
+        newScene.getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(mGvrContext, newScene);
+        newScene.getMainCameraRig().getHeadTransformObject().attachComponent(mPicker);
+        getGVRContext().setMainScene(newScene);
+    }
+
     //@Override
     public boolean onBackPress() {
         final GVRScene mainScene = getGVRContext().getMainScene();
         if (dinosaurScene == mainScene) {
             menuScene = new MenuScene(getGVRContext());
-            getGVRContext().setMainScene(menuScene);
+            setMainScene(menuScene);
             GazeController.enableGaze();
             return true;
         }
