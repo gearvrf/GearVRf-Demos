@@ -1,6 +1,6 @@
 # Blender v2.76 (sub 0) OBJ File: ''
 # www.blender.org
-mtllib storm.mtl
+mtllib stormstrooper.mtl
 o Stormtrooper.002
 v -0.544744 2.718269 -0.216881
 v -0.461653 2.697798 -0.246883
@@ -11205,7 +11205,7 @@ vn 0.355600 -0.192600 -0.914600
 vn 0.204800 -0.341500 -0.917300
 vn 0.000300 -0.395400 -0.918500
 vn -0.204800 -0.341700 -0.917200
-usemtl Stormtrooper.002
+usemtl stormstrooper_material
 s 1
 f 1/1/1 2/2/2 3/3/3
 f 2/2/2 1/1/1 4/4/4
