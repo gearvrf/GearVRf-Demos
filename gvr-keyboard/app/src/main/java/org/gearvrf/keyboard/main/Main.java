@@ -22,6 +22,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
@@ -60,6 +61,7 @@ import org.gearvrf.keyboard.util.Util;
 import org.gearvrf.keyboard.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
 import org.gearvrf.utility.Log;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -263,12 +265,21 @@ public class Main extends GVRMain implements KeyboardEventListener {
         mGVRContext.getMainScene().getMainCameraRig()
                 .getTransform().setPosition(-0f, Util.applyRatioAt(1.70), 0f);
 
-        GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+/*        GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.skybox_esphere));
         GVRTexture spaceTexture = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                 R.drawable.skybox));
+*/
+//        GVRSceneObject mSpaceSceneObject = new GVRSceneObject(mGVRContext, spaceMesh, spaceTexture);
+        GVRSceneObject mSpaceSceneObject = null;
+        try {
+            mSpaceSceneObject = mGVRContext.getAssetLoader().loadModel(new GVRAndroidResource(mGVRContext, R.raw.skybox_esphere), GVRImportSettings.getRecommendedSettings(), false, mGVRContext.getMainScene());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        GVRSceneObject mSpaceSceneObject = new GVRSceneObject(mGVRContext, spaceMesh, spaceTexture);
+        GVRRenderData renderData = new GVRRenderData(mGVRContext);
+        mSpaceSceneObject.attachRenderData(renderData);
         mGVRContext.getMainScene().addSceneObject(mSpaceSceneObject);
         mSpaceSceneObject.getRenderData().setRenderingOrder(0);
     }
