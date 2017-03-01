@@ -22,10 +22,8 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusListener;
@@ -35,11 +33,10 @@ import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.MathUtils;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
-import org.gearvrf.utility.Log;
 
 public class MenuItem extends FocusableSceneObject {
-    
-    
+
+
     private static final float difGroupTextY = -0f;
     private static final float difTextToBackground = -0.03f;
 
@@ -59,9 +56,9 @@ public class MenuItem extends FocusableSceneObject {
     private final float CHILD_WIDTH = 8f;
     private final int IDLE_STATE = 0;
     private final int HOVER_STATE = 1;
-    
+
     private final float SCALE_BIGER_OFFSET = .05f;
-   // private final float SCALE_SMALLER = 1f;
+    // private final float SCALE_SMALLER = 1f;
 
     private GVRSceneObject frontObj;
     private GVRSceneObject backgroundObj;
@@ -89,13 +86,8 @@ public class MenuItem extends FocusableSceneObject {
         backgroundObj = createSceneObject(backgroundIdleRes, backgroundHoverRes);
         backgroundObj.getRenderData().setRenderingOrder(RenderingOrderApplication.BACKGROUND_IMAGE);
 
-        //attachEyePointeeHolder();
+        attachEyePointeeHolder();
 
-        GVRSphereCollider collider = new GVRSphereCollider(gvrContext);
-        collider.setRadius(0.8f);
-
-        attachComponent(collider);
-        Log.d("Abhi","Radius" + collider.getRadius());
         createFocusListener();
     }
 
@@ -108,16 +100,17 @@ public class MenuItem extends FocusableSceneObject {
                 backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
                 hideText();
                 scaleSmaller();
+
             }
 
             private void scaleBiger() {
                 frontObj.getTransform().setScale(scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET);
-                
+
             }
 
             @Override
             public void inFocus(FocusableSceneObject object) {
-               
+
             }
 
             @Override
@@ -127,12 +120,12 @@ public class MenuItem extends FocusableSceneObject {
                 backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
                 showText();
                 scaleBiger();
-              
+
             }
 
             private void scaleSmaller() {
                 frontObj.getTransform().setScale(scale, scale, scale);
-                
+
             }
         };
     }

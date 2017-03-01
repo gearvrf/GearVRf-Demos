@@ -20,7 +20,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.IPickEvents;
 import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
@@ -35,7 +34,7 @@ public final class FocusableController {
 
     public static CopyOnWriteArrayList<FocusableSceneObject> interactiveObjects = new CopyOnWriteArrayList<FocusableSceneObject>();
 
-    /*public static void process(GVRContext context) {
+    public static void process(GVRContext context) {
 
         GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
 
@@ -63,33 +62,6 @@ public final class FocusableController {
             obj.setFocus(false);
         }
 
-    }*/
-
-
-
-    public static void process(GVRContext context, PickHandler mPickHandler) {
-
-        //GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
-
-        ArrayList<FocusableSceneObject> needToDisableFocus = new ArrayList<FocusableSceneObject>();
-
-        for (FocusableSceneObject obj : interactiveObjects) {
-            needToDisableFocus.add(obj);
-        }
-
-        if (mPickHandler.PickedObject == null) {
-            GazeController.disableInteractiveCursor();
-        } else {
-            FocusableSceneObject object = (FocusableSceneObject) mPickHandler.PickedObject;
-            object.setFocus(true);
-            object.dispatchInFocus();
-            needToDisableFocus.remove(object);
-        }
-
-        for (FocusableSceneObject obj : needToDisableFocus) {
-            obj.setFocus(true);
-        }
-
     }
 
     public static boolean swipeProcess(GVRContext context) {
@@ -106,34 +78,31 @@ public final class FocusableController {
         return false;
     }
 
-    public static boolean clickProcess(GVRContext context, PickHandler mPickHandler) {
+    public static boolean clickProcess(GVRContext context) {
 
-        //GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
-        //if (eyePointeeHolders.length == 0 || !isAVisibleObjectBeingSeen(context, eyePointeeHolders)) {
-        if (mPickHandler.PickedObject == null || !isAVisibleObjectBeingSeen(context, mPickHandler.PickedObject)) {
+        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
+        if (eyePointeeHolders.length == 0 || !isAVisibleObjectBeingSeen(context, eyePointeeHolders)) {
             Main.clickOut();
         } else {
-            //for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            //    for (FocusableSceneObject object : interactiveObjects) {
-            //        if (holder.getOwnerObject().equals(object)) {
-                        FocusableSceneObject object = (FocusableSceneObject) mPickHandler.PickedObject;
+            for (GVREyePointeeHolder holder : eyePointeeHolders) {
+                for (FocusableSceneObject object : interactiveObjects) {
+                    if (holder.getOwnerObject().equals(object)) {
                         object.dispatchInClick();
                         return true;
-            //        }
-            //    }
-            //}
+                    }
+                }
+            }
         }
         return false;
     }
 
-    //private static boolean isAVisibleObjectBeingSeen(GVRContext gvrContext, GVREyePointeeHolder[] eyePointeeHolders) {
-    private static boolean isAVisibleObjectBeingSeen(GVRContext gvrContext, GVRSceneObject object) {
-        //for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            //GVRSceneObject object = holder.getOwnerObject();
+    private static boolean isAVisibleObjectBeingSeen(GVRContext gvrContext, GVREyePointeeHolder[] eyePointeeHolders) {
+        for (GVREyePointeeHolder holder : eyePointeeHolders) {
+            GVRSceneObject object = holder.getOwnerObject();
             if (isVisible(object) && !hasEmptyTexture(gvrContext, object)) {
                 return true;
             }
-        //}
+        }
         return false;
     }
 
@@ -145,7 +114,7 @@ public final class FocusableController {
     private static boolean hasEmptyTexture(GVRContext gvrContext, GVRSceneObject object) {
         return object.getRenderData().getMaterial().getMainTexture() != null
                 && object.getRenderData().getMaterial().getMainTexture()
-                        .equals(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
+                .equals(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
     }
 
 }
