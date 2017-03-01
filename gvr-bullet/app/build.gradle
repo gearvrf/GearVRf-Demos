@@ -27,6 +27,6 @@ dependencies {
     if(rootProject.useLocalDependencies) {
         compile(name: 'gvrf-physics-debug', ext: 'aar')
     } else {
-        compile 'org.gearvrf:gvrf-physics:3.1.0'
+        compile 'org.gearvrf:gvrf-physics:3.1.1'
     }
 }

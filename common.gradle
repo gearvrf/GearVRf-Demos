@@ -69,14 +69,14 @@ dependencies {
     if(rootProject.useLocalDependencies) {
         compile(name: 'framework-debug', ext: 'aar')
     } else {
-        compile 'org.gearvrf:framework:3.1.0'
+        compile 'org.gearvrf:framework:3.1.1'
     }
 
     if (rootProject.hasProperty("only_daydream")) {
         if(rootProject.useLocalDependencies) {
             compile(name: 'backend_daydream-debug', ext: 'aar')
         } else {
-            compile 'org.gearvrf:backend_daydream:3.1.0'
+            compile 'org.gearvrf:backend_daydream:3.1.1'
         }
         compile(name: 'google-vr-base', ext: 'aar')
         compile(name: 'google-vr-common', ext: 'aar')
@@ -89,8 +89,8 @@ dependencies {
                 compile(name: 'backend_daydream-debug', ext: 'aar')
                 compile(name: 'backend_oculus-debug', ext: 'aar')
             } else {
-                compile 'org.gearvrf:backend_daydream:3.1.0'
-                compile 'org.gearvrf:backend_oculus:3.1.0'
+                compile 'org.gearvrf:backend_daydream:3.1.1'
+                compile 'org.gearvrf:backend_oculus:3.1.1'
             }
             compile(name: 'google-vr-base', ext: 'aar')
             compile(name: 'google-vr-common', ext: 'aar')
