@@ -15,18 +15,16 @@
 package org.gearvrf.rendertotexture;
 
 import android.os.Bundle;
-import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPerspectiveCamera;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSceneRenderTexture;
 import org.gearvrf.GVRSpotLight;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -51,17 +49,22 @@ public final class RenderToTextureActivity extends GVRActivity {
             final GVRSceneObject cube = addCube();
             final GVRScene scene = createRenderToTextureScene();
 
-            gvrContext.startRenderingToTexture(scene, 512, 512, new GVRContext.RenderToTextureListener() {
+            gvrContext.runOnGlThread(new Runnable() {
                 @Override
-                public void onReady(GVRTexture texture) {
-                    cube.getRenderData().getMaterial().setTexture("diffuseTexture", texture);
-
-                    //to prevent rendering untextured cube for few frames at the start
-                    gvrContext.runOnGlThread(new Runnable() {
+                public void run() {
+                    mSceneRenderTexture = new GVRSceneRenderTexture(gvrContext, scene, 512, 512, new Runnable() {
                         @Override
                         public void run() {
-                            gvrContext.getMainScene().bindShaders();
-                            closeSplashScreen();
+                            cube.getRenderData().getMaterial().setTexture("diffuseTexture", mSceneRenderTexture);
+
+                            //to prevent rendering untextured cube for few frames at the start
+                            gvrContext.runOnGlThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    gvrContext.getMainScene().bindShaders();
+                                    closeSplashScreen();
+                                }
+                            });
                         }
                     });
                 }
@@ -135,6 +138,7 @@ public final class RenderToTextureActivity extends GVRActivity {
             return SplashMode.MANUAL;
         }
 
+        private volatile GVRSceneRenderTexture mSceneRenderTexture;
         private GVRTransform mCubeTransform;
         private static final String TAG = "RenderToTextureMain";
     }
