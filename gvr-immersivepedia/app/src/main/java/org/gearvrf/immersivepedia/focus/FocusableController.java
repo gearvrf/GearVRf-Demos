@@ -20,7 +20,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.IPickEvents;
 import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
@@ -32,7 +31,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FocusableController {
-
+    
     public static boolean swipeProcess(GVRContext context, PickHandler mPickHandler)
     {
         if (mPickHandler == null)
@@ -78,7 +77,7 @@ public final class FocusableController {
     private static boolean hasEmptyTexture(GVRContext gvrContext, GVRSceneObject object) {
         return object.getRenderData().getMaterial().getMainTexture() != null
                 && object.getRenderData().getMaterial().getMainTexture()
-                        .equals(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
+                .equals(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
     }
 
 }
