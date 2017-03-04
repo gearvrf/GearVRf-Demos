@@ -169,7 +169,7 @@ public class ViewerMain extends GVRMain {
             mSelectionActive = true;
         }
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            mPlugin.setPickedObject(pickInfo.getHitObject(), pickInfo.getHitLocation());
+            mPlugin.setPickedObject(pickInfo);
             PickedObject = pickInfo.getHitObject();
         }
     }
