@@ -23,12 +23,11 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshEyePointee;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
@@ -36,7 +35,9 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSharedTexture;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.IPickEvents;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 import org.gearvrf.widgetplugin.GVRWidgetSceneObject;
 import org.gearvrf.widgetplugin.GVRWidgetSceneObjectMeshInfo;
@@ -106,6 +107,9 @@ public class ViewerMain extends GVRMain {
     private boolean mIsButtonDown = false;
     private boolean mIsSingleTapped = false;
 
+    private PickHandler mPickHandler = new PickHandler();
+    private GVRPicker mPicker;
+
     public GVRSceneObject[] Objects = new GVRSceneObject[THUMBNAIL_NUM];
     public float mRotateX = 0.0f;
     public float mRotateY = 0.0f;
@@ -131,6 +135,45 @@ public class ViewerMain extends GVRMain {
     GVRTexture mWidgetTexture = null;
     GVRMaterial mWidgetMaterial;
     GVRMaterial mWidgetMaterial2;
+
+
+    public class PickHandler implements IPickEvents
+    {
+        public GVRSceneObject PickedObject = null;
+
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+        public void onExit(GVRSceneObject sceneObj) { }
+        public void onNoPick(GVRPicker picker) {
+            mObjectPointed = false;
+            mSelectionActive = false;
+            mButtonPointed = false;
+            mButton2Pointed = false;
+        }
+        public void onPick(GVRPicker picker) {
+            GVRPicker.GVRPickedObject picked = picker.getPicked()[0];
+            GVRSceneObject PickedObject = picked.hitObject;
+
+            mObjectPointed = true;
+            if (mWidgetButtonObject.equals(PickedObject)) {
+                   mObjectPointed = false;
+                   mButtonPointed = true;
+                   mButton2Pointed = false;
+            } else if (mWdgetButtonObject2.equals(PickedObject)) {
+                   mObjectPointed = false;
+                   mButton2Pointed = true;
+                   mButtonPointed = false;
+            } else {
+                   mButtonPointed = false;
+                   mButton2Pointed = false;
+            }
+            mSelectionActive = true;
+        }
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            mPlugin.setPickedObject(pickInfo);
+            PickedObject = pickInfo.getHitObject();
+        }
+    }
+
 
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -555,15 +598,7 @@ public class ViewerMain extends GVRMain {
             mWdgetButtonObject2.getRenderData().setRenderingOrder(100000 - 1);
             mainScene.addSceneObject(mWidgetButtonObject);
 
-            GVREyePointeeHolder eyePointeeHolder2 = new GVREyePointeeHolder(gvrContext);
-            GVRMeshEyePointee eyePointee2 = new GVRMeshEyePointee(gvrContext, button_pick_mesh);
-            eyePointeeHolder2.addPointee(eyePointee2);
-            mWidgetButtonObject.attachEyePointeeHolder(eyePointeeHolder2);
-
-            GVREyePointeeHolder eyePointeeHolder3 = new GVREyePointeeHolder(gvrContext);
-            GVRMeshEyePointee eyePointee3 = new GVRMeshEyePointee(gvrContext, widgetbutton2_mesh);
-            eyePointeeHolder3.addPointee(eyePointee3);
-            mWdgetButtonObject2.attachEyePointeeHolder(eyePointeeHolder3);
+            mWidgetButtonObject.attachComponent(new GVRMeshCollider(mGVRContext, false));
 
             for (int i = 0; i < THUMBNAIL_NUM; i++) {
                 ThumbnailObject[i] = new GVRSceneObject(mGVRContext);
@@ -589,13 +624,12 @@ public class ViewerMain extends GVRMain {
                         ThumbnailTargetPosition[i][2]);
                 mainScene.addSceneObject(ThumbnailObject[i]);
 
-                GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(gvrContext);
-                GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(gvrContext, picks_mesh);
-                eyePointeeHolder.addPointee(eyePointee);
-                ThumbnailObject[i].attachEyePointeeHolder(eyePointeeHolder);
+                GVRSphereCollider sphereCollider = new GVRSphereCollider(gvrContext);
+                sphereCollider.setRadius(0.5f);
+                ThumbnailObject[i].attachComponent(sphereCollider);
             }
 
-            GVRTexture m360 = mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, "env.jpg"));
+            GVRTexture m360 = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "env.jpg"));
             GVRMesh sphere = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext, "sphere.obj"));
 
             GVRSceneObject env_object = new GVRSceneObject(mGVRContext, sphere, m360);
@@ -621,6 +655,9 @@ public class ViewerMain extends GVRMain {
             Log.e(TAG, "Assets were not loaded. Stopping application!");
             gvrContext.getActivity().finish();
         }
+
+        mainScene.getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(gvrContext, mainScene);
     }
 
     private void updateState() {
@@ -1000,39 +1037,6 @@ public class ViewerMain extends GVRMain {
                 light[1], light[2]);
         mReflectionMaterial.setVec3(ReflectionShader.EYE_KEY, eye[0], eye[1],
                 eye[2]);
-
-        GVREyePointeeHolder pickedHolders[] = GVRPicker.pickScene(mGVRContext
-                .getMainScene());
-        if (pickedHolders.length > 0) {
-            GVRSceneObject pickedObject = pickedHolders[0].getOwnerObject();
-            mPlugin.setPickedObject(pickedObject);
-            for (int i = 0; i < THUMBNAIL_NUM; ++i) {
-                if (ThumbnailObject[i].equals(pickedObject)) {
-                    mObjectPointed = true;
-                }
-            }
-            if (mWidgetButtonObject.equals(pickedObject)) {
-                mObjectPointed = false;
-                mButtonPointed = true;
-                mButton2Pointed = false;
-            } else if (mWdgetButtonObject2.equals(pickedObject)) {
-                mObjectPointed = false;
-
-                mButton2Pointed = true;
-                mButtonPointed = false;
-            } else {
-
-                mButtonPointed = false;
-                mButton2Pointed = false;
-            }
-            // }
-            mSelectionActive = true;
-        } else {
-            mObjectPointed = false;
-            mSelectionActive = false;
-            mButtonPointed = false;
-            mButton2Pointed = false;
-        }
 
         if (isSingleTapped || true) {
 
