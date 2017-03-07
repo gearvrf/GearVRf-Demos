@@ -16,9 +16,11 @@
 package org.gearvrf.immersivepedia;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.immersivepedia.focus.FocusableController;
+import org.gearvrf.immersivepedia.focus.PickHandler;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
@@ -86,7 +88,7 @@ public class Main extends GVRMain {
 
     public void onSingleTapConfirmed() {
         if (null != mGvrContext) {
-            FocusableController.clickProcess(mGvrContext);
+            FocusableController.clickProcess(mGvrContext, mPickHandler);
         }
     }
 
