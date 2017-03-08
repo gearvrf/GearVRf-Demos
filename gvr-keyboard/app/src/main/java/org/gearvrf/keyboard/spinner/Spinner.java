@@ -123,25 +123,6 @@ public class Spinner extends GVRSceneObject {
         }
     }
 
-    public boolean isHitArea() {
-        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(getGVRContext()
-                .getMainScene());
-
-        if (pickedObjects.size() > 0) {
-
-            for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
-
-                if (pickedObject.getHitObject().hashCode() == spinnerSkeleton.getSpinnerBox()
-                        .getCollider().hashCode()) {
-
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
     public void move(TextFieldItem currentChar) {
 
         float x = currentChar.getTransform().getPositionX();

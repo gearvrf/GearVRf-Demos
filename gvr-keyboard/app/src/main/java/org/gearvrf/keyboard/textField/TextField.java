@@ -213,7 +213,7 @@ public class TextField extends GVRSceneObject {
         mListFieldItems.clear();
     }
 
-    public void spinnerUpdate() {
+    public void spinnerUpdate(Main.PickHandler pickHandler) {
 
         spinner.getSpinnerRoulette().onStep();
 
@@ -229,7 +229,7 @@ public class TextField extends GVRSceneObject {
 
             }
 
-            if (spinner.isHitArea()) {
+            if (pickHandler.wasSpinnerHit()) {
                 tryHideSpinner();
             }
         }

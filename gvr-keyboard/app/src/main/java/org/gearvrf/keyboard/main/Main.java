@@ -34,6 +34,7 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.IPickEvents;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.keyboard.model.KeyboardEventListener;
+import org.gearvrf.keyboard.keyboard.model.KeyboardItemBase;
 import org.gearvrf.keyboard.keyboard.numeric.Keyboard;
 import org.gearvrf.keyboard.keyboard.numeric.Keyboard.KeyboardType;
 import org.gearvrf.keyboard.mic.Mic;
@@ -68,21 +69,132 @@ import java.util.Vector;
 
 public class Main extends GVRMain implements KeyboardEventListener {
 
+    /**
+     * Search a hierarchy for the first occurence of SphereFlag
+     * and set it as the current selection,
+     * move it to the hit position and play a sound.
+     */
+    class SphereVisitor implements GVRSceneObject.SceneVisitor
+    {
+        private float[] mHitPos;
+
+        public SphereVisitor(float[] hitPos)
+        {
+            mHitPos = hitPos;
+        }
+
+        public boolean visit(GVRSceneObject sceneObj)
+        {
+            if (sceneObj instanceof SphereFlag)
+            {
+                lastSelectedSphereFlag = (SphereFlag) sceneObj;
+                if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE)
+                {
+                    Log.e("PICK", "picked SphereFlag");
+                    moveObject(sceneObj, mHitPos);
+                    if (mDisableSnapSound == false)
+                    {
+                        mDisableSnapSound = true;
+                        AudioClip.getInstance(mGVRContext.getContext()).playSound(
+                                AudioClip.getSnapSoundID(), 1.0f, 1.0f);
+                    }
+                }
+                return false;
+            }
+            return true;
+        }
+    };
+
+    /**
+     * Processes pick events, handles selection hilighting
+     */
     public class PickHandler implements IPickEvents
     {
         public GVRSceneObject   PickedObject = null;
+        private Keyboard        mKeyboard;
+        private Spinner         mSpinner;
+        private int             mSpinnerHashCode;
 
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
-        public void onExit(GVRSceneObject sceneObj) { }
+        public boolean wasSpinnerHit()
+        {
+            if (PickedObject != null)
+            {
+                return (PickedObject.hashCode() == mSpinnerHashCode);
+            }
+            return false;
+        }
+
+        public PickHandler(Keyboard keyboard, Spinner spinner)
+        {
+            mKeyboard = keyboard;
+            mSpinner = spinner;
+            mSpinnerHashCode = mSpinner.getSpinnerSkeleton().getSpinnerBox().getCollider().hashCode();
+        }
+
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if (sceneObj.hashCode() == Dashboard.currentDashboardHashCode)
+            {
+                Log.e("PICK", "picked Dashboard");
+                return;
+            }
+            PickedObject = sceneObj;
+            if (sceneObj.hashCode() == mSpinnerHashCode)
+            {
+                Log.e("PICK", "picked SpinnerBox");
+                return;
+            }
+            if (sceneObj instanceof KeyboardItemBase)
+            {
+                mKeyboard.setHoverMaterial(sceneObj);
+            }
+            if (mKeyboard.isEnabled())
+            {
+                return;
+            }
+            if ((lastSelectedSphereFlag != null) && (lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING))
+            {
+                return;
+            }
+            SphereVisitor visitor = new SphereVisitor(pickInfo.getHitLocation());
+            sceneObj.forAllDescendants(visitor);
+        }
+
+        public void onExit(GVRSceneObject sceneObj)
+        {
+            if (sceneObj.hashCode() == mSpinnerHashCode)
+            {
+                Log.e("PICK", "deselect SpinnerBox");
+                return;
+            }
+            Log.e("PICK", "deselect " + sceneObj.getClass().getSimpleName());
+            if (sceneObj instanceof KeyboardItemBase)
+            {
+                mKeyboard.setNormalMaterial(sceneObj);
+            }
+            if ((sceneObj instanceof SphereFlag) &&
+                 sceneObj.equals(lastSelectedSphereFlag))
+            {
+                if (((SphereFlag) sceneObj).answerState == SphereStaticList.MOVEABLE)
+                {
+                    Log.e("PICK", "deselect SphereFlag");
+                    restoreObjectToItsDefaultPosition(sceneObj);
+                    lastSelectedSphereFlag = null;
+                }
+            }
+        }
+
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
         public void onNoPick(GVRPicker picker)
         {
+            if (PickedObject != null)
+            {
+                Log.e("PICK", "nopick " + PickedObject.getClass().getSimpleName());
+            }
             PickedObject = null;
         }
         public void onPick(GVRPicker picker)
         {
-            GVRPicker.GVRPickedObject picked = picker.getPicked()[0];
-            PickedObject = picked.hitObject;
         }
     }
 
@@ -173,7 +285,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
             gvrContext.getMainScene().addSceneObject(spherePack);
         }
 
-        mPickHandler = new PickHandler();
+        mPickHandler = new PickHandler(keyboard, spinner);
         gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
         gvrContext.getMainScene().getMainCameraRig().getOwnerObject().attachComponent(new GVRPicker(gvrContext, gvrContext.getMainScene()));
 
@@ -320,84 +432,26 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         }
 
-        if (!keyboard.isEnabled()) {
-
-            interactWithVisibleObjects();
-        } else {
-
-            keyboard.update();
-            if (spinner != null)
-
-                answer.spinnerUpdate();
+        if (keyboard.isEnabled() && (spinner != null)) {
+                answer.spinnerUpdate(mPickHandler);
         }
     }
 
-    private void interactWithVisibleObjects() {
-        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(mGVRContext
-                .getMainScene());
-
-        if (lastSelectedSphereFlag != null
-                && lastSelectedSphereFlag.answerState == SphereStaticList.ANSWERING) {
-            lastSelectedSphereFlag.moveToCursor();
-        }
-
-        if (pickedObjects.size() == 0) {
-            for (GVRSceneObject object : mGVRContext.getMainScene()
-                    .getWholeSceneObjects()) {
-                if (object instanceof SphereFlag && object.equals(lastSelectedSphereFlag)) {
-                    if (((SphereFlag) object).answerState == SphereStaticList.MOVEABLE) {
-                        restoreObjectToItsDefaultPosition(object);
-                        this.mDisableSnapSound = false;
-                        lastSelectedSphereFlag = null;
-                    }
-                }
-            }
-        } else {
-            for (GVRPicker.GVRPickedObject eph : pickedObjects) {
-                for (GVRSceneObject object : mGVRContext.getMainScene()
-                        .getWholeSceneObjects()) {
-
-                    if (dashboard.hashCode() == object.hashCode()) {
-                        continue;
-                    }
-
-                    if (eph.getHitObject().equals(object)
-                            && (lastSelectedSphereFlag == null || lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING)) {
-                        // TODO: Fix (SphereFlag) object.getChildByIndex(0) this
-                        // object can be any object .... not only a Sphere.
-
-                        if (object.getChildrenCount() > 0) {
-                            lastSelectedSphereFlag = (SphereFlag) object.getChildByIndex(0);
-                            if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE) {
-
-                                moveObject(object, eph.getHitLocation());
-
-                                if (this.mDisableSnapSound == false) {
-                                    this.mDisableSnapSound = true;
-                                    AudioClip.getInstance(mGVRContext.getContext()).playSound(
-                                            AudioClip.getSnapSoundID(), 1.0f, 1.0f);
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 
     private void restoreObjectToItsDefaultPosition(GVRSceneObject object) {
         ((SphereFlag) object).stopFloatingSphere();
         ((SphereFlag) object).unspotSphere();
         ((SphereFlag) object).unsnapSphere(1.2f);
+        mDisableSnapSound = false;
     }
 
     private void moveObject(GVRSceneObject object, float [] hit) {
-        ((SphereFlag) object.getChildByIndex(0))
-                .stopFloatingSphere();
-        ((SphereFlag) (object.getChildByIndex(0))).snapSphere(hit);
-        ((SphereFlag) (object.getChildByIndex(0))).spotSphere();
+        SphereFlag sphereFlag = (SphereFlag) object;
+        sphereFlag.stopFloatingSphere();
+        sphereFlag.snapSphere(hit);
+        sphereFlag.spotSphere();
     }
+
 
     public void onBackPressed() {
 

@@ -230,62 +230,8 @@ public class Keyboard extends GVRSceneObject {
         tapKeyboard();
     }
 
-    public void update() {
-        changeTexture();
-    }
 
     boolean test = true;
-
-    private void changeTexture() {
-
-        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(getGVRContext()
-                .getMainScene());
-
-        if (pickedObjects.size() <= 1) {
-
-            if (currentSelection != null) {
-                setNormalMaterial(currentSelection);
-            }
-
-            currentSelection = null;
-        }
-
-        for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
-
-            if (pickedObject.getHitObject().hashCode() == Dashboard.currentDashboardHashCode) {
-                continue;
-            }
-
-            for (GVRSceneObject object : keyboard.getObjects()) {
-
-                if (pickedObject.getHitObject().equals(object)) {
-
-                    setHoverMaterial(object);
-
-                    if (object.equals(currentSelection)) {
-                        setHoverMaterial(object);
-                    } else {
-
-                        if (currentSelection != null) {
-                            setNormalMaterial(currentSelection);
-                        }
-
-                        currentSelection = object;
-                    }
-
-                    break;
-
-                } else {
-
-                    if (currentSelection != null) {
-                        setNormalMaterial(currentSelection);
-                    }
-
-                    currentSelection = null;
-                }
-            }
-        }
-    }
 
     public void shiftKeys() {
         switch (shift) {
