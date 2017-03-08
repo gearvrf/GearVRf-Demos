@@ -56,7 +56,7 @@ public class SampleCubeMain extends GVRMain {
 
         mPicker = new GVRPicker(gvrContext, scene);
         final GVRMesh mesh = gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH);
-        final GVRTexture frontTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.front));
+        final GVRTexture frontTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.front));
 
         mFrontFace = new GVRSceneObject(gvrContext, mesh,frontTexture);
         mFrontFace.setName("front");
@@ -78,14 +78,14 @@ public class SampleCubeMain extends GVRMain {
         mFrontFace3.getRenderData().setDepthTest(false);
 
         GVRSceneObject backFace = new GVRSceneObject(gvrContext, mesh,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.back)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.back)));
         backFace.setName("back");
         scene.addSceneObject(backFace);
         backFace.getTransform().setPosition(0.0f, 0.0f, CUBE_WIDTH * 0.5f);
         backFace.getTransform().rotateByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
         GVRSceneObject leftFace = new GVRSceneObject(gvrContext, mesh,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.left)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.left)));
         leftFace.setName("left");
         scene.addSceneObject(leftFace);
         leftFace.getTransform().setPosition(-CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
@@ -93,7 +93,7 @@ public class SampleCubeMain extends GVRMain {
         leftFace.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
 
         GVRSceneObject rightFace = new GVRSceneObject(gvrContext, mesh,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.right)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.right)));
         rightFace.setName("right");
         scene.addSceneObject(rightFace);
         rightFace.getTransform().setPosition(CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
@@ -101,14 +101,14 @@ public class SampleCubeMain extends GVRMain {
         rightFace.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
         GVRSceneObject topFace = new GVRSceneObject(gvrContext, mesh,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.top)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.top)));
         topFace.setName("top");
         scene.addSceneObject(topFace);
         topFace.getTransform().setPosition(0.0f, CUBE_WIDTH * 0.5f, 0.0f);
         topFace.getTransform().rotateByAxis(90.0f, 1.0f, 0.0f, 0.0f);
 
         GVRSceneObject bottomFace = new GVRSceneObject(gvrContext, mesh,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bottom)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bottom)));
         bottomFace.setName("bottom");
         scene.addSceneObject(bottomFace);
         bottomFace.getTransform().setPosition(0.0f, -CUBE_WIDTH * 0.5f, 0.0f);

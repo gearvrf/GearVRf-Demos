@@ -22,17 +22,41 @@ import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.IPickEvents;
+import org.gearvrf.utility.Log;
 
 import java.util.concurrent.Future;
 
 public class SampleCubeMain extends GVRMain {
 
+    public class PickHandler implements IPickEvents
+    {
+        public GVRSceneObject PickedObject = null;
+
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+        public void onExit(GVRSceneObject sceneObj) { }
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+        public void onNoPick(GVRPicker picker)
+        {
+            PickedObject = null;
+        }
+        public void onPick(GVRPicker picker)
+        {
+            GVRPicker.GVRPickedObject picked = picker.getPicked()[0];
+            PickedObject = picked.hitObject;
+        }
+    }
+
+    private PickHandler mPickHandler;
+    private GVRPicker mPicker;
     private static final float CUBE_WIDTH = 20.0f;
     private GVRContext mGVRContext = null;
     private GVRSceneObject mFrontFace = null;
@@ -117,28 +141,10 @@ public class SampleCubeMain extends GVRMain {
         bottomFace.getTransform().setPosition(0.0f, -CUBE_WIDTH * 0.5f, 0.0f);
         bottomFace.getTransform().rotateByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
 
-        GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(
-                gvrContext);
-        GVRMeshEyePointee meshEyePointee = new GVRMeshEyePointee(gvrContext,
-                mFrontFace.getRenderData().getMesh());
-        eyePointeeHolder.addPointee(meshEyePointee);
-        mFrontFace.attachEyePointeeHolder(eyePointeeHolder);
+        mFrontFace.attachComponent(new GVRMeshCollider(gvrContext, mFrontFace.getRenderData().getMesh()));
+        mFrontFace2.attachComponent(new GVRMeshCollider(gvrContext, mFrontFace2.getRenderData().getMesh()));
+        mFrontFace3.attachComponent(new GVRMeshCollider(gvrContext, mFrontFace3.getRenderData().getMesh()));
 
-        GVREyePointeeHolder eyePointeeHolder2 = new GVREyePointeeHolder(
-                gvrContext);
-        GVRMeshEyePointee meshEyePointee2 = new GVRMeshEyePointee(gvrContext,
-                mFrontFace2.getRenderData().getMesh());
-        eyePointeeHolder2.addPointee(meshEyePointee2);
-        mFrontFace2.attachEyePointeeHolder(eyePointeeHolder2);
-
-        GVREyePointeeHolder eyePointeeHolder3 = new GVREyePointeeHolder(
-                gvrContext);
-        GVRMesh boundingBox = mFrontFace3.getRenderData().getMesh()
-                .getBoundingBox();
-        GVRMeshEyePointee meshEyePointee3 = new GVRMeshEyePointee(gvrContext,
-                boundingBox);
-        eyePointeeHolder3.addPointee(meshEyePointee3);
-        mFrontFace3.attachEyePointeeHolder(eyePointeeHolder3);
         // reflective object
         Future<GVRMesh> futureSphereMesh = gvrContext
                 .loadFutureMesh(new GVRAndroidResource(mGVRContext,
@@ -156,6 +162,13 @@ public class SampleCubeMain extends GVRMain {
         sphere.getTransform()
                 .setScale(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
         sphere.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.25f);
+
+        /*
+         * Respond to picking events
+         */
+        mPicker = new GVRPicker(gvrContext, scene);
+        mPickHandler = new PickHandler();
+        scene.getEventReceiver().addListener(mPickHandler);
     }
 
     @Override
@@ -164,20 +177,16 @@ public class SampleCubeMain extends GVRMain {
         mFrontFace.getRenderData().getMaterial().setOpacity(1.0f);
         mFrontFace2.getRenderData().getMaterial().setOpacity(1.0f);
         mFrontFace3.getRenderData().getMaterial().setOpacity(1.0f);
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker
-                .pickScene(mGVRContext.getMainScene());
-        for (GVREyePointeeHolder eyePointeeHolder : eyePointeeHolders) {
-            if (eyePointeeHolder.getOwnerObject().equals(mFrontFace)) {
-                mFrontFace.getRenderData().getMaterial().setOpacity(0.5f);
-            }
-            if (eyePointeeHolder.getOwnerObject().equals(mFrontFace2)) {
-                mFrontFace2.getRenderData().getMaterial().setOpacity(0.5f);
-            }
-            if (eyePointeeHolder.getOwnerObject().equals(mFrontFace3)) {
-                mFrontFace3.getRenderData().getMaterial().setOpacity(0.5f);
-            }
+        if (mPickHandler.PickedObject.equals(mFrontFace)) {
+            mFrontFace.getRenderData().getMaterial().setOpacity(0.5f);
         }
-    }
+        if (mPickHandler.PickedObject.equals(mFrontFace2)) {
+            mFrontFace2.getRenderData().getMaterial().setOpacity(0.5f);
+        }
+        if (mPickHandler.PickedObject.equals(mFrontFace3)) {
+            mFrontFace3.getRenderData().getMaterial().setOpacity(0.5f);
+        }
 
+    }
 
 }

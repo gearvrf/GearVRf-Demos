@@ -15,196 +15,157 @@
 
 package org.gearvrf.immersivepedia.scene;
 
-import android.graphics.Color;
-import android.view.Gravity;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTextureParameters;
+import org.gearvrf.GVRTextureParameters.TextureWrapType;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVROnFinish;
+import org.gearvrf.animation.GVROpacityAnimation;
+import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
-import org.gearvrf.immersivepedia.focus.FocusListener;
-import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
-import org.gearvrf.immersivepedia.shader.MenuImageShader;
+import org.gearvrf.immersivepedia.focus.OnClickListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
-import org.gearvrf.immersivepedia.util.MathUtils;
-import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
-import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 
-public class MenuItem extends FocusableSceneObject {
+public class MenuScene extends GVRScene {
 
+    public static final float DISTANCE_TO_CAMERA = 6.0f;
 
-    private static final float difGroupTextY = -0f;
-    private static final float difTextToBackground = -0.03f;
+    private static final float Y_ADJUST = 2f;
 
-    private final float SUB_TEXT_Y = -1.08f + (difTextToBackground+difGroupTextY);
-    private final float MAIN_TEXT_Y = -0.86f + (difTextToBackground+difGroupTextY);
-    private final float FRONT_IMAGE_Z_OFFSET = 2.2f;
-    private final float FRONT_IMAGE_Y = -.18f;
-    private final float FRONT_IMAGE_X = +0.0f;
-    private final float TEXT_BACKGROUND_Z = FRONT_IMAGE_Z_OFFSET + 0.1f;
-    private final float TEXT_BACKGROUND_Y = -1f+(difGroupTextY) ;
-    private final float TEXT_HEIGHT = 0.41f;
-    private final float TEXT_WIDTH = 1.31f;
+    public static final float CAMERA_Y = 1.6f;
 
-    private final float WIDTH = 4.6f;
-    private final float HEIGHT = 2.8f;
-    private final float CHILD_HEIGHT = 6f;
-    private final float CHILD_WIDTH = 8f;
-    private final int IDLE_STATE = 0;
-    private final int HOVER_STATE = 1;
+    private int totalRenderObject = 0;
+    private int finishCounter = 0;
 
-    private final float SCALE_BIGER_OFFSET = .05f;
-    // private final float SCALE_SMALLER = 1f;
-
-    private GVRSceneObject frontObj;
-    private GVRSceneObject backgroundObj;
-    private GVRTextViewSceneObject mainText;
-    private GVRSceneObject textBackground;
-    private GVRTextViewSceneObject subText;
-    float scale ;
-
-    public MenuItem(GVRContext gvrContext, int frontIdleRes, int frontHoverRes, int backgroundIdleRes, int backgroundHoverRes) {
+    public MenuScene(GVRContext gvrContext) {
         super(gvrContext);
+        createDinosaursMenuItem();
+        createBirdsMenuItem();
+        createFishesMenuItem();
+        createMammalsMenuItem();
+        addSceneObject(createSkybox()); //
 
-        attachRenderData(new GVRRenderData(gvrContext));
-        getRenderData().setMaterial(new GVRMaterial(gvrContext));
-        getRenderData().setMesh(gvrContext.createQuad(WIDTH, HEIGHT));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable));
-        getRenderData().getMaterial().setMainTexture(texture);
+        addSceneObject(createBlueSkybox()); //
 
-        frontObj = createSceneObject(frontIdleRes, frontHoverRes);
-        frontObj.getTransform().setPositionZ(FRONT_IMAGE_Z_OFFSET);
-        frontObj.getTransform().setPositionY(FRONT_IMAGE_Y);
-        frontObj.getTransform().setPositionX(FRONT_IMAGE_X);
-        frontObj.getRenderData().setRenderingOrder(RenderingOrderApplication.MAIN_IMAGE);
-        scale = (MenuScene.DISTANCE_TO_CAMERA - FRONT_IMAGE_Z_OFFSET) / MenuScene.DISTANCE_TO_CAMERA;
-        frontObj.getTransform().setScale(scale, scale, scale);
-        backgroundObj = createSceneObject(backgroundIdleRes, backgroundHoverRes);
-        backgroundObj.getRenderData().setRenderingOrder(RenderingOrderApplication.BACKGROUND_IMAGE);
-
-        attachEyePointeeHolder();
-
-        createFocusListener();
+        getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
     }
 
-    private void createFocusListener() {
-        focusListener = new FocusListener() {
+    private void createDinosaursMenuItem() {
+        MenuItem dinosaurs = new MenuItem(getGVRContext(), R.drawable.dinosaurs_front_idle, R.drawable.dinosaurs_front_hover,
+                R.drawable.dinosaurs_back_idle, R.drawable.dinosaurs_back_hover);
+        dinosaurs.getTransform().setPositionZ(-DISTANCE_TO_CAMERA);
+        dinosaurs.getTransform().setPositionY(Y_ADJUST);
+        dinosaurs.setTexts(getGVRContext().getContext().getString(R.string.dinosaurs), getGVRContext().getContext().getString(R.string.empty));
+        dinosaurs.setName("menu_dinosaurs");
+        dinosaurs.setOnClickListener(new OnClickListener() {
 
             @Override
-            public void lostFocus(FocusableSceneObject object) {
-                frontObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
-                backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
-                hideText();
-                scaleSmaller();
+            public void onClick() {
+                AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuSelectSoundID(), 1.0f, 1.0f);
+                for (GVRSceneObject object : getWholeSceneObjects()) {
+                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
+                        totalRenderObject++;
+                        new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
 
+                            @Override
+                            public void finished(GVRAnimation arg0) {
+                                finishCounter++;
+                                if (finishCounter == totalRenderObject) {
+                                    totalRenderObject = 0;
+                                    finishCounter = 0;
+                                    Main.dinosaurScene.show();
+                                }
+                            }
+                        });
+                    }
+                }
             }
+        });
 
-            private void scaleBiger() {
-                frontObj.getTransform().setScale(scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET);
+        addSceneObject(dinosaurs);
+    }
 
-            }
+    private void createBirdsMenuItem() {
+        MenuItem birds = new MenuItem(getGVRContext(), R.drawable.birds_front_idle, R.drawable.birds_front_hover,
+                R.drawable.birds_back_idle, R.drawable.birds_back_hover);
+        birds.getTransform().setPositionX(DISTANCE_TO_CAMERA);
+        birds.getTransform().setPositionY(Y_ADJUST);
+        birds.getTransform().rotateByAxis(-90.0f, 0f, 1f, 0f);
+        birds.setTexts(getGVRContext().getContext().getString(R.string.birds), getGVRContext().getContext().getString(R.string.unavailable));
+        birds.setOnClickListener(getUnavailableMenuItemClick());
+        birds.setName("menu_birds");
+        addSceneObject(birds);
+    }
+
+    private void createFishesMenuItem() {
+        MenuItem fishes = new MenuItem(getGVRContext(), R.drawable.fishes_front_idle, R.drawable.fishes_front_hover,
+                R.drawable.fishes_back_idle, R.drawable.fishes_back_hover);
+        fishes.getTransform().setPositionZ(DISTANCE_TO_CAMERA);
+        fishes.getTransform().rotateByAxis(180.0f, 0f, 1f, 0f);
+        fishes.setTexts(getGVRContext().getContext().getString(R.string.fishes), getGVRContext().getContext().getString(R.string.unavailable));
+        fishes.setOnClickListener(getUnavailableMenuItemClick());
+        fishes.getTransform().setPositionY(Y_ADJUST);
+        fishes.setName("menu_fishes");
+        addSceneObject(fishes);
+    }
+
+    private void createMammalsMenuItem() {
+        MenuItem mammals = new MenuItem(getGVRContext(), R.drawable.mammals_front_idle, R.drawable.mammals_front_hover,
+                R.drawable.mammals_back_idle, R.drawable.mammals_back_hover);
+        mammals.getTransform().setPositionX(-DISTANCE_TO_CAMERA);
+        mammals.getTransform().rotateByAxis(90.0f, 0f, 1f, 0f);
+        mammals.setTexts(getGVRContext().getContext().getString(R.string.mammals), getGVRContext().getContext().getString(R.string.unavailable));
+        mammals.setOnClickListener(getUnavailableMenuItemClick());
+        mammals.getTransform().setPositionY(Y_ADJUST);
+        mammals.setName("menu_mammals");
+        addSceneObject(mammals);
+    }
+
+    private OnClickListener getUnavailableMenuItemClick() {
+        return new OnClickListener() {
 
             @Override
-            public void inFocus(FocusableSceneObject object) {
-
-            }
-
-            @Override
-            public void gainedFocus(FocusableSceneObject object) {
-                AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuHoverSoundID(), 1.0f, 1.0f);
-                frontObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
-                backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
-                showText();
-                scaleBiger();
-
-            }
-
-            private void scaleSmaller() {
-                frontObj.getTransform().setScale(scale, scale, scale);
-
+            public void onClick() {
+                AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuSelectWrongSoundID(), 1.0f, 1.0f);
             }
         };
     }
 
-    protected void hideText() {
-        textBackground.getRenderData().getMaterial().setOpacity(0);
-        mainText.getRenderData().getMaterial().setOpacity(0);
-        subText.getRenderData().getMaterial().setOpacity(0);
+    private GVRSceneObject createSkybox() {
 
+        GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_walls_mesh));
+        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_walls_tex_diffuse));
+        GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
+        skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
+        skybox.getRenderData().setRenderingOrder(0);
+
+        GVRMesh meshGround = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_ground_mesh));
+        GVRTexture textureGround = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_ground_tex_diffuse));
+        GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(), meshGround, textureGround);
+        skyboxGround.getRenderData().setRenderingOrder(0);
+
+        skybox.addChildObject(skyboxGround);
+        return skybox;
     }
 
-    protected void showText() {
-        textBackground.getRenderData().getMaterial().setOpacity(1);
-        mainText.getRenderData().getMaterial().setOpacity(1);
-        subText.getRenderData().getMaterial().setOpacity(1);
-    }
+    private GVRSceneObject createBlueSkybox() {
 
-    public GVRSceneObject createSceneObject(int idleImageRes, int hoverImageRes) {
-        GVRSceneObject obj = new GVRSceneObject(getGVRContext());
+        GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_mesh));
+        GVRTextureParameters textureParameters = new GVRTextureParameters(getGVRContext());
+        textureParameters.setWrapSType(TextureWrapType.GL_REPEAT);
+        textureParameters.setWrapTType(TextureWrapType.GL_REPEAT);
 
-        GVRTexture idle = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), idleImageRes));
-        GVRTexture hover = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
-
-        obj.attachRenderData(new GVRRenderData(getGVRContext()));
-        obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new MenuImageShader(getGVRContext()).getShaderId()));
-        obj.getRenderData().setMesh(getGVRContext().createQuad(CHILD_WIDTH, CHILD_HEIGHT));
-        obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE1_TEXTURE, idle);
-        obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE2_TEXTURE, hover);
-        obj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
-
-        addChildObject(obj);
-
-        return obj;
-    }
-
-    public void setTexts(String text, String subText) {
-        createTextBackground();
-        createMainText(text);
-        createSubText(subText);
-    }
-
-    private void createTextBackground() {
-        GVRMesh mesh = getGVRContext().createQuad(TEXT_WIDTH, TEXT_HEIGHT);
-        textBackground = new GVRSceneObject(getGVRContext(), mesh, getGVRContext().loadTexture(
-                new GVRAndroidResource(getGVRContext(), R.drawable.text_bg)));
-
-        textBackground.getTransform().setPosition(0, TEXT_BACKGROUND_Y, TEXT_BACKGROUND_Z);
-        textBackground.getRenderData().setRenderingOrder(RenderingOrderApplication.IMAGE_TEXT_BACKGROUND);
-        textBackground.getRenderData().getMaterial().setOpacity(0);
-
-        addChildObject(textBackground);
-    }
-
-    private void createMainText(String text) {
-        mainText = new GVRTextViewSceneObject(getGVRContext(), TEXT_WIDTH, TEXT_HEIGHT / 2, text);
-
-        mainText.setTextColor(Color.WHITE);
-        mainText.setTextSize(5);
-        mainText.setGravity(Gravity.CENTER);
-
-        mainText.getTransform().setPosition(0, MAIN_TEXT_Y, TEXT_BACKGROUND_Z + 0.01f);
-        mainText.getRenderData().setRenderingOrder(RenderingOrderApplication.IMAGE_TEXT);
-        mainText.getRenderData().getMaterial().setOpacity(0);
-
-        addChildObject(mainText);
-    }
-
-    public void createSubText(String text) {
-        subText = new GVRTextViewSceneObject(getGVRContext(), TEXT_WIDTH, TEXT_HEIGHT / 2, text);
-
-        subText.setTextColor(Color.WHITE);
-        subText.setTextSize(3);
-        subText.setGravity(Gravity.CENTER);
-
-        subText.getTransform().setPosition(0, SUB_TEXT_Y, TEXT_BACKGROUND_Z + 0.01f);
-        subText.getRenderData().setRenderingOrder(RenderingOrderApplication.IMAGE_TEXT);
-        subText.getRenderData().getMaterial().setOpacity(0);
-
-        addChildObject(subText);
+        GVRTexture texture = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.starfield_tex_diffuse),
+                textureParameters);
+        GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
+        skybox.getTransform().setScale(1, 1, 1);
+        skybox.getRenderData().setRenderingOrder(0);
+        return skybox;
     }
 
 }
