@@ -192,7 +192,7 @@ public class DinosaurScene extends GVRScene {
     private GVRSceneObject createBlueSkybox() {
 
         GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_mesh));
-        GVRTexture texture = getGVRContext().loadTexture(new
+        GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new
                 GVRAndroidResource(getGVRContext(), R.drawable.dino_skybox_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().setScale(1, 1, 1);

@@ -32,6 +32,7 @@ public class FocusableSceneObject extends GVRSceneObject {
     public boolean showInteractiveCursor = true;
     private OnClickListener onClickListener;
     private OnGestureListener onGestureListener;
+    public float[] hitLocation;
 
     public FocusableSceneObject(GVRContext gvrContext) {
         super(gvrContext);

@@ -31,7 +31,32 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FocusableController {
-    
+
+    public static CopyOnWriteArrayList<FocusableSceneObject> interactiveObjects = new CopyOnWriteArrayList<FocusableSceneObject>();
+
+    public static void process(GVRSceneObject sceneObject) {
+
+        ArrayList<FocusableSceneObject> needToDisableFocus = new ArrayList<FocusableSceneObject>();
+
+        for (FocusableSceneObject obj : interactiveObjects) {
+            needToDisableFocus.add(obj);
+        }
+
+        if (sceneObject == null) {
+            GazeController.disableInteractiveCursor();
+        } else {
+            FocusableSceneObject object = (FocusableSceneObject) sceneObject;
+            object.setFocus(true);
+            object.dispatchInFocus();
+            needToDisableFocus.remove(object);
+        }
+
+        for (FocusableSceneObject obj : needToDisableFocus) {
+            obj.setFocus(false);
+        }
+
+    }
+
     public static boolean swipeProcess(GVRContext context, PickHandler mPickHandler)
     {
         if (mPickHandler == null)
@@ -54,9 +79,11 @@ public final class FocusableController {
         {
             return false;
         }
-        if (mPickHandler.PickedObject != null &&
-            isAVisibleObjectBeingSeen(context, mPickHandler.PickedObject))
-        {
+
+        if (mPickHandler.PickedObject == null || !isAVisibleObjectBeingSeen(context, mPickHandler.PickedObject)) {
+            Main.clickOut();
+        }
+        else{
             FocusableSceneObject object = (FocusableSceneObject) mPickHandler.PickedObject;
             object.dispatchInClick();
             return true;
@@ -64,7 +91,6 @@ public final class FocusableController {
         return false;
     }
 
-    //private static boolean isAVisibleObjectBeingSeen(GVRContext gvrContext, GVREyePointeeHolder[] eyePointeeHolders) {
     private static boolean isAVisibleObjectBeingSeen(GVRContext gvrContext, GVRSceneObject object) {
         return (isVisible(object) && !hasEmptyTexture(gvrContext, object));
     }
@@ -77,7 +103,7 @@ public final class FocusableController {
     private static boolean hasEmptyTexture(GVRContext gvrContext, GVRSceneObject object) {
         return object.getRenderData().getMaterial().getMainTexture() != null
                 && object.getRenderData().getMaterial().getMainTexture()
-                .equals(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
+                .equals(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
     }
 
 }

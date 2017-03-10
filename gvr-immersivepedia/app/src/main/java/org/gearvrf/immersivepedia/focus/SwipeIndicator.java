@@ -43,7 +43,7 @@ public class SwipeIndicator extends GVRSceneObject {
 
         this.dino = dino;
         swipeIndicator = new GVRSceneObject(gvrContext, .6f, .1f,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.swipe_trace)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.swipe_trace)));
 
         hand = new GVRSceneObject(gvrContext, gvrContext.createQuad(.2f, .3f), gvrContext.loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.swipe_hand)));

@@ -64,7 +64,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
     private void createFocus() {
 
         focus = new FocusableSceneObject(gvrContext, gvrContext.createQuad(15f, 9f),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
         focus.getTransform().setPosition(0f, 3.5f, DinosaurFactory.APATOSAURUS_DISTANCE - 0.01f);
         focus.getTransform().rotateByAxis(-180.0f, 0f, 1f, 0f);
         focus.attachCollider(new GVRMeshCollider(getGVRContext(), false));
@@ -126,7 +126,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
     private void createTotem() {
 
         Totem totem = new Totem(getGVRContext(),
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(),
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(),
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(-1f, 0f, -3f);

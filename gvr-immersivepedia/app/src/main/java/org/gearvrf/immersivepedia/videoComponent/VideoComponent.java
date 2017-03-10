@@ -65,7 +65,7 @@ public class VideoComponent extends GVRSceneObject {
     }
 
     private void createSeekbar() {
-        seekbar = new Seekbar(gvrContext, Seekbar.WIDTH, 0.05f, gvrContext.loadTexture(new GVRAndroidResource(
+        seekbar = new Seekbar(gvrContext, Seekbar.WIDTH, 0.05f, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.timeline_towatch)));
         seekbar.getTransform().setPosition(0.0f, -1.5f, video.getTransform().getPositionZ() + 0.1f);
         addChildObject(seekbar);
@@ -73,7 +73,7 @@ public class VideoComponent extends GVRSceneObject {
 
     private void createButtonBoard() {
         buttonBoard = new ButtonBoard(gvrContext, 1.7f, .4f,
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
                         R.drawable.empty)), this);
         buttonBoard.getTransform().setPosition(0f, 0f, video.getTransform().getPositionZ() + 0.1f);
         addChildObject(buttonBoard);
@@ -83,7 +83,7 @@ public class VideoComponent extends GVRSceneObject {
 
         mediaPlayer = MediaPlayer.create(gvrContext.getContext(), R.raw.dinos_videos_wip);
         video = new GVRVideoSceneObject(gvrContext, WIDTH, HEIGHT, mediaPlayer, GVRVideoType.MONO);
-        focus = new FocusableSceneObject(gvrContext, WIDTH, HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        focus = new FocusableSceneObject(gvrContext, WIDTH, HEIGHT, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.empty_clickable)));
         focus.attachCollider(new GVRMeshCollider(gvrContext, false));
         focus.setName("video");
@@ -217,7 +217,8 @@ public class VideoComponent extends GVRSceneObject {
 
     public void forwardOrRewindVideo() {
 
-        float x = seekbar.getEyePointeeHolder().getHit()[0];
+        //float x = seekbar.getEyePointeeHolder().getHit()[0];
+        float x = seekbar.hitLocation[0];
         float posX = Seekbar.WIDTH / 2 + x;
         int current = (int) (mediaPlayer.getDuration() * posX / Seekbar.WIDTH);
         mediaPlayer.seekTo(current);

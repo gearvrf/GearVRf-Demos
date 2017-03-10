@@ -75,7 +75,7 @@ public class MenuItem extends FocusableSceneObject {
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(new GVRMaterial(gvrContext));
         getRenderData().setMesh(gvrContext.createQuad(WIDTH, HEIGHT));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty_clickable));
         getRenderData().getMaterial().setMainTexture(texture);
 
         frontObj = createSceneObject(frontIdleRes, frontHoverRes);
@@ -91,7 +91,6 @@ public class MenuItem extends FocusableSceneObject {
         GVRMeshCollider collider = new GVRMeshCollider(gvrContext, false);
 
         attachComponent(collider);
-        //Log.d("Abhi","Radius" + collider.getRadius());
         createFocusListener();
     }
 
@@ -152,8 +151,8 @@ public class MenuItem extends FocusableSceneObject {
     public GVRSceneObject createSceneObject(int idleImageRes, int hoverImageRes) {
         GVRSceneObject obj = new GVRSceneObject(getGVRContext());
 
-        GVRTexture idle = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), idleImageRes));
-        GVRTexture hover = getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
+        GVRTexture idle = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), idleImageRes));
+        GVRTexture hover = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
 
         obj.attachRenderData(new GVRRenderData(getGVRContext()));
         obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new MenuImageShader(getGVRContext()).getShaderId()));

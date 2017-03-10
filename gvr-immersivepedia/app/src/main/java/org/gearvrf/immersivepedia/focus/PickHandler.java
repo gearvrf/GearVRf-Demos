@@ -20,10 +20,13 @@ public class PickHandler implements IPickEvents
             Log.v("PICKER", sceneObj.getName() + " onEnter");
             fo.setFocus(true);
             fo.dispatchInFocus();
+            fo.hitLocation = pickInfo.getHitLocation();
         }
     }
 
-    public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+    public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+        FocusableController.process(sceneObj);
+    }
     public void onPick(GVRPicker picker) { }
 
     public void onExit(GVRSceneObject sceneObj)
@@ -31,7 +34,7 @@ public class PickHandler implements IPickEvents
         FocusableSceneObject fo = (FocusableSceneObject) PickedObject;
         if (fo != null)
         {
-            Log.v("PICKER", sceneObj.getName() + " onExit");
+            Log.v("PICKER", fo.getName() + " onExit");
             fo.setFocus(false);
         }
     }
@@ -45,7 +48,7 @@ public class PickHandler implements IPickEvents
         }
         PickedObject = null;
         GazeController.disableInteractiveCursor();
-        Main.clickOut();
+        //Main.clickOut();
     }
 
 
