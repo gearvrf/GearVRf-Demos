@@ -107,7 +107,6 @@ public class DinosaurScene extends GVRScene {
     }
 
     public void show() {
-        getGVRContext().setMainScene(this);
         GazeController.enableGaze();
         for (GVRSceneObject object : getWholeSceneObjects()) {
             if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
