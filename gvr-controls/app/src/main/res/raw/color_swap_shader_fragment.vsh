@@ -5,8 +5,8 @@ uniform sampler2D detailsTexture;
 
 layout (std140) uniform Material_ubo
 {
- vec4 color;
- float opacity;
+ vec4 u_color;
+ float u_opacity;
 };
 out vec4 outColor;
 void main() {
@@ -17,7 +17,7 @@ void main() {
     colorGrayScale = texture(grayScaleTexture, coord);
     colorDetails = texture(detailsTexture, coord);
     
-    vec4 colorResult = colorGrayScale * color; 
+    vec4 colorResult = colorGrayScale * u_color;
 
 	if(colorDetails.a != 0.0){
 	
@@ -25,5 +25,6 @@ void main() {
         
 	}
     		
-	outColor = colorResult * opacity;
+	outColor = colorResult * u_opacity;
+	//outColor = vec4(1,0,0,1);
 }

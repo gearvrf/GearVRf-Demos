@@ -114,7 +114,7 @@ public class MainActivity extends GVRActivity implements
 
     @Override
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX,
-            float velocityY) {
+                           float velocityY) {
         TouchPadInput.onSwipe(swipeDirection);
 
         return false;
@@ -122,7 +122,7 @@ public class MainActivity extends GVRActivity implements
 
     @Override
     public void onSwiping(MotionEvent e, MotionEvent e2, float velocityX, float velocityY,
-            SwipeDirection swipeDirection) {
+                          SwipeDirection swipeDirection) {
     }
 
     @Override

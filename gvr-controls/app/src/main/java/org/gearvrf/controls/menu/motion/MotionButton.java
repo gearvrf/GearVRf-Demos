@@ -48,36 +48,36 @@ public class MotionButton extends MenuControlSceneObject {
     private final int SELECTED_STATE = 2;
 
     private boolean select = false;
-   
+
     private  int WIDTH = 0;
     private  int HEIGHT = 0;
-    
+
     private float quadWidth = .91f;
     private float quadHeigth = .22f;
-  
+
     private String title;
     private Motion motion;
-    
+
     public MotionButton(GVRContext gvrContext, String title, Motion motion) {
         super(gvrContext);
-        
+
         this.motion = motion;
         this.title = title;
-        
+
         GVRMesh sMesh = getGVRContext().createQuad(quadWidth, quadHeigth);
-        
+
         WIDTH = (int)(100.0f * quadWidth);
         HEIGHT = (int) (100.0f * quadHeigth);
-   
+
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(ButtonShader.class)));
         getRenderData().setMesh(sMesh);
-        
+
         createTextures();
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT);
-        
+
         attachEyePointeeHolder();
     }
 
@@ -86,40 +86,41 @@ public class MotionButton extends MenuControlSceneObject {
     }
 
     private void createTextures() {
-       
+
         Text text = new Text(title, Align.LEFT, 3.5f, Color.parseColor("#ffffff"), Color.parseColor("#00000000"), 45);
         String font = "fonts/samsung-if-bold.ttf";
-        
-        GVRBitmapTexture bitmapIddle = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
+        Bitmap bmap = create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font);
+        GVRBitmapTexture bitmapIddle = new GVRBitmapTexture(getGVRContext());
+        bitmapIddle.setFileName("bitmapidle");
+        bitmapIddle.setBitmap(bmap);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
-        GVRTexture tex = new GVRTexture(getGVRContext());
-        tex.setImage(bitmapIddle);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex);
+        GVRTexture tex1 = new GVRTexture(getGVRContext());
+        tex1.setImage(bitmapIddle);
+        getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex1);
 
         text.textSize = 4.3f;
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
+        bmap = create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font);
+        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
+        bitmapHover.setFileName("bitmapHover");
+        bitmapHover.setBitmap(bmap);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
-        GVRTexture tex1 = new GVRTexture(getGVRContext());
-        tex1.setImage(bitmapHover);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex1);
+        GVRTexture tex2 = new GVRTexture(getGVRContext());
+        tex2.setImage(bitmapHover);
+        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex2);
 
         text.textColor = 0xfff8DF35;
-
-        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-        GVRTexture tex2 = new GVRTexture(getGVRContext());
-        tex2.setImage(bitmapSelected);
-
+        bmap = create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font);
+        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
+        bitmapSelected.setFileName("bitmapselected");
+        bitmapSelected.setBitmap(bmap);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex2);
+        GVRTexture tex3 = new GVRTexture(getGVRContext());
+        tex3.setImage(bitmapSelected);
+        getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex3);
     }
 
     @Override
@@ -147,17 +148,17 @@ public class MotionButton extends MenuControlSceneObject {
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         select = false;
     }
-    
+
     public void select(){
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, SELECTED_STATE);
         select = true;
     }
-    
+
     public static Bitmap create(Context context, int width, int height, Text text, String font) {
-        
+
         Resources res = context.getResources();
         float scale = res.getDisplayMetrics().density;
-        
+
         Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), font);
 
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -170,12 +171,12 @@ public class MotionButton extends MenuControlSceneObject {
         paint.setStyle(Style.FILL);
         paint.setTextSize(text.textSize * scale);
         paint.setColor(text.textColor);
-        
+
         Rect rectText = new Rect();
         paint.getTextBounds(text.text, 0, text.text.length(), rectText);
 
         canvas.drawColor(text.backgroundColor);
-            
+
         canvas.drawText(text.text, 0, height / 1.5f, paint);
 
         return bitmap;

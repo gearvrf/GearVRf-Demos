@@ -36,33 +36,12 @@ public class ButtonShader extends GVRShader{
     public static final String STATE3_TEXT_TEXTURE = "state3Text";
     public static final String TEXTURE_SWITCH = "textureSwitch";
 
-    private GVRShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
 
     public ButtonShader(GVRContext gvrContext) {
-        /*
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.buttonshader_vertex,
-                R.raw.buttonshader_fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey(STATE1_BACKGROUND_TEXTURE, STATE1_BACKGROUND_TEXTURE);
-        mCustomShader.addTextureKey(STATE1_TEXT_TEXTURE, STATE1_TEXT_TEXTURE);
-        mCustomShader.addTextureKey(STATE2_BACKGROUND_TEXTURE, STATE2_BACKGROUND_TEXTURE);
-        mCustomShader.addTextureKey(STATE2_TEXT_TEXTURE, STATE2_TEXT_TEXTURE);
-        mCustomShader.addTextureKey(STATE3_BACKGROUND_TEXTURE, STATE3_BACKGROUND_TEXTURE);
-        mCustomShader.addTextureKey(STATE3_TEXT_TEXTURE, STATE3_TEXT_TEXTURE);
-        mCustomShader.addUniformFloatKey(TEXTURE_SWITCH, TEXTURE_SWITCH);
-        mCustomShader.addUniformFloatKey("opacity", "opacity");*/
-
-        super("float textureSwitch float opacity", "sampler2D state1Background sampler2D state1Text sampler2D state2Background sampler2D state2Text sampler2D state3Background sampler2D state3Text", "float3 a_position, float3 a_normal, float2 a_texcoord",300);
+        super("float textureSwitch float u_opacity", "sampler2D state1Background sampler2D state1Text sampler2D state2Background sampler2D state2Text sampler2D state3Background sampler2D state3Text", "float3 a_position, float3 a_normal, float2 a_texcoord",300);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.buttonshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.buttonshader_vertex));
 
-    }
-
-    public GVRShaderId getShaderId() {
-        return mShaderId;
     }
 }

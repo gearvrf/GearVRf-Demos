@@ -32,7 +32,7 @@ import org.gearvrf.controls.menu.RadioGrupoSceneObject;
 import org.gearvrf.controls.util.ColorControls.Color;
 
 public class ColorsMenu extends MenuWindow {
-    
+
     private final float PREVIEW_POSITION_X = -.92f;
     private final float PREVIEW_POSITION_Y = -0.72f;
     private final float PREVIEW_POSITION_Z = 0.2f;
@@ -48,10 +48,10 @@ public class ColorsMenu extends MenuWindow {
     public ColorsMenu(GVRContext gvrContext) {
         super(gvrContext);
 
-        createPreviewBox(); 
+        createPreviewBox();
 
         attachGrid();
-        
+
         attachRadioGroup();
     }
 
@@ -61,16 +61,16 @@ public class ColorsMenu extends MenuWindow {
 
         mGrid = new GridSceneObjects(getGVRContext(), parse.getList(), R.array.colors_grid,
                 new ItemSelectedListener() {
-            
+
                     @Override
                     public void selected(ControlSceneObject object) {
 
                         ColorsButton colorButton = (ColorsButton) object;
                         Color color = colorButton.getColor();
                         previewArea.changeColorTo(color);
-                        
+
                         ColorWorm.lastColor = Main.worm.getColor();
-                        ColorWorm.currentColor = color;  
+                        ColorWorm.currentColor = color;
                         Main.animationColor.showPlayButton();
                     }
                 });
@@ -86,32 +86,32 @@ public class ColorsMenu extends MenuWindow {
 
         previewArea.getTransform().setPosition(PREVIEW_POSITION_X, PREVIEW_POSITION_Y,
                 PREVIEW_POSITION_Z);
-        
+
         previewArea.getRenderData().getMaterial().setOpacity(0);
 
         addChildObject(previewArea);
     }
-    
+
     private void attachRadioGroup() {
 
         radioGroup =  new RadioGrupoSceneObject(getGVRContext(), new ItemSelectedListener() {
-            
+
             @Override
             public void selected(ControlSceneObject object) {
-                
+
                 RadioButtonSceneObject button = (RadioButtonSceneObject)object;
                 AnimationsTime.setChangeColorTime(button.getSecond());
             }
         }, 0.2f, 0.5f, 5);
-        
+
         radioGroup.getTransform().setPosition(-1.37f, -1.24f, PREVIEW_POSITION_Z);
-        
+
         addChildObject(radioGroup);
     }
 
     @Override
     public void show() {
-        
+
         radioGroup.show();
 
         removeChildObject(mGrid);
@@ -128,7 +128,7 @@ public class ColorsMenu extends MenuWindow {
 
     @Override
     public void hide() {
-        
+
         radioGroup.hide();
 
         removeChildObject(mGrid);

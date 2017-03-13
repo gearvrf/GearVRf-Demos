@@ -15,7 +15,7 @@ layout (std140) uniform Transform_ubo{
  #endif
      mat4 u_model;
      mat4 u_view_i;
-     vec4 u_right;
+     float u_right;
 };
 out vec2 coord;
 

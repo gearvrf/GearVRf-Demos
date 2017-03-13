@@ -19,7 +19,6 @@ import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRColorShader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
@@ -84,17 +83,10 @@ public class Main extends GVRMain {
 
         scene = gvrContext.getMainScene();
 
-        gvrContext.getMainScene().getMainCameraRig().getRightCamera()
-                .setBackgroundColor(Color.GREEN);
-        gvrContext.getMainScene().getMainCameraRig().getLeftCamera()
-                .setBackgroundColor(Color.GREEN);
-
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
-        mainCameraRig.getRightCamera().setBackgroundColor(Color.GREEN);
-        mainCameraRig.getLeftCamera().setBackgroundColor(Color.RED);
         mainCameraRig.getTransform().setPositionY(0);
-        createSkybox();
+       /* createSkybox();
         createClouds();
         createGround();
         createGazeCursor();
@@ -103,60 +95,62 @@ public class Main extends GVRMain {
         createSurroundings();
         createWorm();
         createFence();
-        createMenu();
+       */ createMenu();
+
+
         createGamepad3D();
 
-        for (int i = 0; i < Constants.NUMBER_OF_APPLES; i++) {
+        /*for (int i = 0; i < Constants.NUMBER_OF_APPLES; i++) {
             createApple();
         }
 
         createTouchPad3D();
-        
+
         createStar();
-        enableAnimationWorm();
+        enableAnimationWorm();*/
     }
-    
+
     public static void animWormReset(){
         animationColor.resetAnimationState();
     }
-    
+
     public static void animationColor(org.gearvrf.controls.util.ColorControls.Color color){
-        
+
         ColorWorm.lastColor = worm.getColor();
         ColorWorm.currentColor = color;
         animationColor.showPlayButton();
     }
-    
+
     public static void enableAnimationStar(){
         starBox.showPlayButton();
     }
-    
+
     public void createStar(){
-        
+
         GVRSceneObject object = new GVRSceneObject(mGVRContext);
-        
+
         starBox = new StarBoxSceneObject(mGVRContext);
-        
+
         starBox.getTransform().setPosition(0, .4f, 8.5f);
         starBox.getTransform().rotateByAxisWithPivot(125, 0, 1, 0, 0, 0, 0);
-        
+
         object.addChildObject(starBox);
 
         scene.addSceneObject(object);
     }
-    
+
     public void enableAnimationWorm(){
-        
+
         GVRSceneObject wormParent = worm.getWormParentation();
-            
+
         animationColor = new ActionWormAnimation(mGVRContext);
-       
+
         GVRSceneObject object = new GVRSceneObject(mGVRContext);
         object.addChildObject(animationColor);
-    
+
         wormParent.addChildObject(object);
     }
-    
+
     @Override
     public SplashMode getSplashMode() {
         return SplashMode.NONE;
@@ -214,15 +208,15 @@ public class Main extends GVRMain {
         GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.ground_512), parameters);
 
-        ground = new GVRSceneObject(mGVRContext, mesh, texture,new GVRShaderId(TileShader.class));
-
+        ground = new GVRSceneObject(mGVRContext, mesh, texture,
+                new GVRShaderId(TileShader.class));
         ground.getTransform().setPositionY(GROUND_Y_POSITION);
         ground.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         ground.getTransform().setRotationByAxis(-45, 0, 0, 1);
         ground.getTransform().setRotationByAxis(-90, 1, 0, 0);
         ground.getRenderData().setRenderingOrder(RenderingOrder.GROUND);
 
-        ground.getRenderData().getMaterial().setFloat(TileShader.TILE_COUNT, GROUND_TILES);
+       // ground.getRenderData().getMaterial().setFloat(TileShader.TILE_COUNT, GROUND_TILES);
         ground.getRenderData().getMaterial().setTexture(TileShader.TEXTURE_KEY, texture);
         scene.addSceneObject(ground);
     }
@@ -311,13 +305,14 @@ public class Main extends GVRMain {
 
     @Override
     public void onStep() {
-
+/*
         worm.chainMove(mGVRContext);
 
         GamepadInput.process();
         TouchPadInput.process();
 
-        touchpad.updateIndicator();
+        if(touchpad != null)
+            touchpad.updateIndicator();
 
         worm.interactWithDPad();
         worm.animateWormByTouchPad();
@@ -327,7 +322,7 @@ public class Main extends GVRMain {
             gamepadObject.inputControl();
         }
         worm.checkWormEatingApple(mGVRContext);
-
+*/
     }
 
     private void createMenu() {

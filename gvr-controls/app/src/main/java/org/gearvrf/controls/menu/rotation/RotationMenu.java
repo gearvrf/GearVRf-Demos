@@ -60,24 +60,24 @@ public class RotationMenu extends MenuWindow {
         rotationGroup.getTransform().setPositionZ(0.6f);
         rotationGroup.getTransform().setPositionY(GROUP_Y_POSITION);
     }
-    
+
     private void attachRadioGroup() {
 
         radioGroup =  new RadioGrupoSceneObject(getGVRContext(), new ItemSelectedListener() {
-            
+
             @Override
             public void selected(ControlSceneObject object) {
-                
+
                 Main.enableAnimationStar();
-                
+
                 RadioButtonSceneObject button = (RadioButtonSceneObject)object;
                 AnimationsTime.setRotationTime(button.getSecond());
             }
-            
+
         }, 0.2f, 0.5f, 1);
-        
+
         radioGroup.getTransform().setPosition(-.5f, -1.24f, 0f);
-        
+
         addChildObject(radioGroup);
     }
 
@@ -100,7 +100,7 @@ public class RotationMenu extends MenuWindow {
 
     private void addLeftTouchListener(GVRContext gvrContext) {
         leftButton.setTouchAndGesturelistener(new TouchAndGestureImpl() {
-            
+
             @Override
             public void pressed() {
                 super.pressed();
@@ -198,9 +198,9 @@ public class RotationMenu extends MenuWindow {
 
     @Override
     protected void show() {
-        
+
         radioGroup.show();
-        
+
         removeChildObject(rotationGroup);
         addChildObject(rotationGroup);
 
@@ -213,9 +213,9 @@ public class RotationMenu extends MenuWindow {
 
     @Override
     protected void hide() {
-        
+
         radioGroup.hide();
-        
+
         removeChildObject(rotationGroup);
         removeChildObject(leftButton);
         removeChildObject(rightButton);

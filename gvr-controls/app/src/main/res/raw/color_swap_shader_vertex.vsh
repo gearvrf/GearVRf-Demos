@@ -1,5 +1,4 @@
-in vec4 a_position;
-in vec3 a_normal;
+in vec3 a_position;
 in vec2 a_texcoord;
 layout (std140) uniform Transform_ubo{
  #ifdef HAS_MULTIVIEW
@@ -15,7 +14,7 @@ layout (std140) uniform Transform_ubo{
  #endif
      mat4 u_model;
      mat4 u_view_i;
-     vec4 u_right;
+     float u_right;
 };
 out vec2 coord;
 

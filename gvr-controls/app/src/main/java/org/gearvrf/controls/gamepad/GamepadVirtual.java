@@ -27,6 +27,7 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.util.RenderingOrder;
+import org.gearvrf.utility.Log;
 
 import java.util.HashMap;
 
@@ -46,11 +47,12 @@ public class GamepadVirtual extends GVRSceneObject {
         GVRMesh gamepadMesh = gvrContext.loadMesh(new GVRAndroidResource(
                 gvrContext, R.raw.gamepad_dev));
 
+        //Log.e("Texture:","in gamepad constructor");
         gamepadTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
-
                 gvrContext, R.drawable.gamepad_diffuse));
 
         GVRSceneObject sceneObject = new GVRSceneObject(getGVRContext(), gamepadMesh, gamepadTexture);
+        sceneObject.setName("gamepad");
         addChildObject(sceneObject);
 
         sceneObject.getRenderData().setRenderingOrder(RenderingOrder.ORDER_RENDERING_GAMEPAD);

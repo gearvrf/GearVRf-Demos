@@ -49,17 +49,17 @@ public class MenuCloseButton extends ControlSceneObject {
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT + 1);
-        
+
         attachEyePointeeHolder();
     }
 
     private void createTextures(GVRContext gvrContext) {
-        
+
         GVRTexture empty = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
         GVRTexture idle = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close));
         GVRTexture hover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_hover));
         GVRTexture selected = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_pressed));
-        
+
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE, empty);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, idle);
 
@@ -83,39 +83,39 @@ public class MenuCloseButton extends ControlSceneObject {
     @Override
     protected void singleTap() {
         super.singleTap();
-        
+
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, SELECTED_STATE);
-        
+
     }
 
     public void unselect() {
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
     }
-    
+
     private void stop(){
-        
+
         if(opacityShow != null){
             getGVRContext().getAnimationEngine().stop(opacityShow);
         }
-        
+
         if(opacityHide != null){
             getGVRContext().getAnimationEngine().stop(opacityHide);
         }
     }
-    
+
     public void show(){
-    
+
         stop();
-        
+
         opacityShow = new GVROpacityAnimation(this, 1f, 1);
         opacityShow.setRepeatMode(GVRRepeatMode.ONCE);
         opacityShow.start(getGVRContext().getAnimationEngine());
     }
-    
+
     public void hide(){
-        
+
         stop();
-        
+
         opacityHide = new GVROpacityAnimation(this, 0.3f, 0);
         opacityHide.setRepeatMode(GVRRepeatMode.ONCE);
         opacityHide.start(getGVRContext().getAnimationEngine());

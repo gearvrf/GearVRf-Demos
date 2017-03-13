@@ -46,50 +46,50 @@ class MenuHeaderItem extends ControlSceneObject {
     private final int IDLE_STATE = 0;
     private final int HOVER_STATE = 1;
     private final int SELECTED_STATE = 2;
-    
+
     private static final String TEXT_FONT_TYPE = "fonts/samsung-f-bik.ttf";
-    
+
     private  int WIDTH = 0;
     private  int HEIGHT = 0;
-    
+
     private float quadWidth = .85f;
     private float quadHeigth = 0.245f;
-    
+
     private boolean isSelected = false;
     private headerType type;
-    
+
     private ItemSelectedListener onTapListener;
-    
+
     public enum headerType {
         MOTION, COLOR, SCALE, ROTATION
     }
 
     public MenuHeaderItem(GVRContext gvrContext, String title, headerType type, ItemSelectedListener onTapListener) {
         super(gvrContext);
-        
+
         this.onTapListener = onTapListener;
         this.type = type;
-        
+
         GVRMesh sMesh = getGVRContext().createQuad(quadWidth, quadHeigth);
-        
+
         WIDTH = (int)(100.0f * quadWidth);
         HEIGHT = (int) (100.0f * quadHeigth);
-        
+
         attachRenderData(new GVRRenderData(gvrContext));
-        getRenderData().setMaterial(new GVRMaterial(gvrContext,new GVRShaderId(ButtonShader.class) ));
+        getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(ButtonShader.class)));
         getRenderData().setMesh(sMesh);
-        
+
         createTextures(gvrContext, title);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
-        
+
         attachEyePointeeHolder();
     }
-    
+
     private void createTextures(GVRContext gvrContext, String title) {
-        
+
         Text text = new Text(title, Align.CENTER, 2.8f, Color.parseColor("#4b4b4b"), Color.parseColor("#ffffff"), 255);
-        
+
         GVRBitmapTexture bitmapIddle = new GVRBitmapTexture(getGVRContext(), createText(text, false));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
@@ -99,13 +99,14 @@ class MenuHeaderItem extends ControlSceneObject {
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex1);
 
         text.textColor = 0xffff6f54;
-        
+
         GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext(), createText(text, false));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty)));
         GVRTexture tex2 = new GVRTexture(gvrContext);
         tex2.setImage(bitmapHover);
+
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex2);
 
         GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext(), createText(text, true));
@@ -114,23 +115,24 @@ class MenuHeaderItem extends ControlSceneObject {
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty)));
         GVRTexture tex3 = new GVRTexture(gvrContext);
         tex3.setImage(bitmapSelected);
+
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex3);
-        
+
         getRenderData().setRenderingOrder(RenderingOrder.MENU_HEADER_TEXT);
     }
-    
+
     public Bitmap createText(Text text, boolean showBottomLine){
-        
+
         if(showBottomLine){
             return create(getGVRContext().getContext(), WIDTH, HEIGHT, text, TEXT_FONT_TYPE);
         } else {
             return GVRTextBitmapFactory.create(getGVRContext().getContext(), WIDTH, HEIGHT, text, TEXT_FONT_TYPE);
         }
     }
-    
+
     @Override
     public void gainedFocus() {
-        
+
         if(!isSelected){
             getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, HOVER_STATE);
         }
@@ -138,7 +140,7 @@ class MenuHeaderItem extends ControlSceneObject {
 
     @Override
     public void lostFocus() {
-        
+
         if(!isSelected){
             getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         }
@@ -156,13 +158,13 @@ class MenuHeaderItem extends ControlSceneObject {
     }
 
     public void select(){
-        
+
         if(!isSelected){
             getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, SELECTED_STATE);
             setSelected(true);
         }
     }
-    
+
     public boolean isSelected() {
         return isSelected;
     }
@@ -170,24 +172,24 @@ class MenuHeaderItem extends ControlSceneObject {
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
     }
-    
+
     public void unselect() {
         isSelected = false;
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
     }
-    
+
     public headerType getHeaderType() {
         return type;
     }
-    
-  public static Bitmap create(Context context, int width, int height, Text text, String font) {
-        
+
+    public static Bitmap create(Context context, int width, int height, Text text, String font) {
+
         Typeface myTypeface = Typeface.createFromAsset(context.getAssets(), font);
-        
+
         Resources res = context.getResources();
         float scale = res.getDisplayMetrics().density;
-        
+
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(bitmap);
@@ -205,19 +207,19 @@ class MenuHeaderItem extends ControlSceneObject {
         paint.getTextBounds(text.text, 0, text.text.length(), rectText);
 
         canvas.drawColor(text.backgroundColor);
-        
+
         if(text.align == Align.CENTER){
             canvas.drawText(text.text, width / 2 - rectText.exactCenterX(), height / 2 - rectText.exactCenterY(), paint);
         } else if(text.align == Align.LEFT){
             canvas.drawText(text.text, 0, height / 2 - rectText.exactCenterY(), paint);
         }
-        
+
         Paint bottomLine = new Paint();
         bottomLine.setStrokeWidth(3.5f);
         bottomLine.setColor(0xffff6f54);
         bottomLine.setStyle(Paint.Style.STROKE);
         bottomLine.setStrokeJoin(Paint.Join.ROUND);
-        
+
         float x1 = 0;
         float x2 = width;
 
@@ -225,7 +227,7 @@ class MenuHeaderItem extends ControlSceneObject {
         float y2 = y1;
 
         canvas.drawLine(x1, y1, x2, y2, bottomLine);
-        
+
         return bitmap;
     }
 }

@@ -12,7 +12,7 @@ uniform sampler2D state3Text;
 layout (std140) uniform Material_ubo
 {
  float textureSwitch;
- float opacity;
+ float u_opacity;
 };
 out vec4 outColor;
 void main() {
@@ -33,5 +33,5 @@ void main() {
 	}
 		
 	outColor = background + text;
-	outColor.a = outColor.a * opacity;
+	outColor.a = outColor.a * u_opacity;
 }

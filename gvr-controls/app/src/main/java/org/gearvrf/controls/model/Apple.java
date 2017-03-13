@@ -25,6 +25,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRInterpolator;
@@ -85,8 +86,7 @@ public class Apple extends GVRSceneObject {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
                 R.raw.apple));
 
-        ColorSwapShader shader = new ColorSwapShader(gvrContext);
-        GVRMaterial material = new GVRMaterial(gvrContext, shader.getShaderId());
+        GVRMaterial material = new GVRMaterial(gvrContext, new GVRShaderId(ColorSwapShader.class));
         GVRRenderData renderData = new GVRRenderData(gvrContext);
         renderData.setMesh(mesh);
         renderData.setMaterial(material);
@@ -215,10 +215,10 @@ public class Apple extends GVRSceneObject {
 
         Vector3D wormPos = new
                 Vector3D(Main.worm.wormParent.getTransform().getPositionX(),
-                        Main.worm.wormParent
-                                .getTransform().getPositionY(), Main.worm.wormParent
-                                .getTransform()
-                                .getPositionZ());
+                Main.worm.wormParent
+                        .getTransform().getPositionY(), Main.worm.wormParent
+                .getTransform()
+                .getPositionZ());
         if (Vector3D.distance(pos, wormPos) < MAX_APPLES_DISTANCE)
             return false;
         for (Apple a : appleList) {
@@ -227,7 +227,7 @@ public class Apple extends GVRSceneObject {
                 continue;
             Vector3D iteratedApple = new
                     Vector3D(a.getTransform().getPositionX(), 0, a.getTransform()
-                            .getPositionZ());
+                    .getPositionZ());
             float distance = (float) Vector3D.distance(pos, iteratedApple);
 
             if (distance < MAX_APPLES_DISTANCE) {

@@ -32,7 +32,7 @@ public abstract class ControlSceneObject extends GVRSceneObject {
         super(gvrContext);
         ControlSceneObjectBehavior.interactiveObjects.add(this);
     }
-    
+
 
     public ControlSceneObject(GVRContext gvrContext, float f, float g, GVRTexture t) {
         super(gvrContext, f, g, t);
