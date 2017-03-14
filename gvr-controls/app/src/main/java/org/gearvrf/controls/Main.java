@@ -86,7 +86,8 @@ public class Main extends GVRMain {
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getTransform().setPositionY(0);
-       /* createSkybox();
+        /*
+        createSkybox();
         createClouds();
         createGround();
         createGazeCursor();
@@ -95,19 +96,20 @@ public class Main extends GVRMain {
         createSurroundings();
         createWorm();
         createFence();
-       */ createMenu();
-
-
+        */
+        createMenu();
         createGamepad3D();
 
-        /*for (int i = 0; i < Constants.NUMBER_OF_APPLES; i++) {
+        /*
+        for (int i = 0; i < Constants.NUMBER_OF_APPLES; i++) {
             createApple();
         }
 
         createTouchPad3D();
 
         createStar();
-        enableAnimationWorm();*/
+        enableAnimationWorm();
+        */
     }
 
     public static void animWormReset(){
@@ -133,7 +135,7 @@ public class Main extends GVRMain {
 
         starBox.getTransform().setPosition(0, .4f, 8.5f);
         starBox.getTransform().rotateByAxisWithPivot(125, 0, 1, 0, 0, 0, 0);
-
+        starBox.setName("star");
         object.addChildObject(starBox);
 
         scene.addSceneObject(object);
@@ -159,6 +161,7 @@ public class Main extends GVRMain {
     private void createApple() {
 
         apple = new Apple(mGVRContext);
+        apple.setName("apple");
         mGVRContext.getMainScene().addSceneObject(apple);
         apple.setAppleRandomPosition(mGVRContext);
         apple.getTransform().setPositionY(Constants.APPLE_INICIAL_YPOS);
@@ -171,6 +174,7 @@ public class Main extends GVRMain {
         touchpad.getTransform().setPositionY(0.6f);
         touchpad.getTransform().setScale(0.6f, 0.6f, 0.6f);
         touchpad.getTransform().rotateByAxisWithPivot(90 + 45, 0, 1, 0, 0, 0, 0);
+        touchpad.setName("touchpad");
         mGVRContext.getMainScene().addSceneObject(touchpad);
     }
 
@@ -185,6 +189,7 @@ public class Main extends GVRMain {
         fence.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         fence.getRenderData().setCullFace(GVRCullFaceEnum.None);
         fence.getRenderData().setRenderingOrder(RenderingOrder.FENCE);
+        fence.setName("fence");
         scene.addSceneObject(fence);
     }
 
@@ -192,6 +197,7 @@ public class Main extends GVRMain {
 
         worm = new Worm(mGVRContext);
         worm.enableShadow();
+        worm.setName("worm");
         scene.addSceneObject(worm);
     }
 
@@ -218,6 +224,7 @@ public class Main extends GVRMain {
 
        // ground.getRenderData().getMaterial().setFloat(TileShader.TILE_COUNT, GROUND_TILES);
         ground.getRenderData().getMaterial().setTexture(TileShader.TEXTURE_KEY, texture);
+        ground.setName("ground");
         scene.addSceneObject(ground);
     }
 
@@ -231,12 +238,14 @@ public class Main extends GVRMain {
         skybox = new GVRSceneObject(mGVRContext, mesh, texture);
         skybox.getTransform().setScale(SKYBOX_SIZE, SKYBOX_SIZE, SKYBOX_SIZE);
         skybox.getRenderData().setRenderingOrder(RenderingOrder.SKYBOX);
+        skybox.setName("skybox");
         scene.addSceneObject(skybox);
     }
 
     private void createClouds() {
 
         clouds = new Clouds(mGVRContext, CLOUDS_DISTANCE, NUMBER_OF_CLOUDS);
+        clouds.setName("clouds");
     }
 
     private void createSurroundings() {
@@ -286,6 +295,7 @@ public class Main extends GVRMain {
         surroundings.getTransform().setPositionY(SCENE_Y);
         surroundings.getRenderData().setCullFace(GVRCullFaceEnum.None);
         scene.addSceneObject(surroundings);
+        surroundings.setName("surroundings");
         // ground.addChildObject(surroundings);
         surroundings.getRenderData().setRenderingOrder(RenderingOrder.WOOD);
     }
@@ -300,6 +310,7 @@ public class Main extends GVRMain {
         sun.getTransform().setPositionY(SUN_Y_POSITION);
         sun.getTransform().rotateByAxisWithPivot(SUN_ANGLE_POSITION, 1, 0, 0, 0, 0, 0);
         sun.getRenderData().setRenderingOrder(RenderingOrder.SUN);
+        sun.setName("sun");
         scene.addSceneObject(sun);
     }
 
@@ -328,6 +339,7 @@ public class Main extends GVRMain {
     private void createMenu() {
 
         menu = new MenuBox(mGVRContext);
+        menu.setName("menu");
         scene.addSceneObject(menu);
     }
 
@@ -338,9 +350,10 @@ public class Main extends GVRMain {
     private void createGamepad3D() {
         gamepadObject = new GamepadObject(mGVRContext);
 
+        gamepadObject.getTransform().rotateByAxis(225, 0, 1, 0);
         gamepadObject.getTransform().setPosition(0, 1.f, -8.5f);
-        gamepadObject.getTransform().rotateByAxisWithPivot(225, 0, 1, 0, 0, 0, 0);
-
+        //gamepadObject.getTransform().rotateByAxisWithPivot(225, 0, 1, 0, 0, 0, 0);
+        gamepadObject.setName("gamepad");
         scene.addSceneObject(gamepadObject);
     }
 }
