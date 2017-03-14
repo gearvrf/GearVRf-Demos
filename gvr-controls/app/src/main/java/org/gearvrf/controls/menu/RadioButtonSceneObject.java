@@ -90,21 +90,21 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
                 Color.parseColor("#00000000"), 45);
         String font = "fonts/samsung-if-bold.ttf";
 
-        GVRBitmapTexture bitmapIddle = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
+        GVRBitmapTexture bitmapIdle = new GVRBitmapTexture(getGVRContext());
+        bitmapIdle.setFileName("radio_idle");
+        bitmapIdle.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex1 = new GVRTexture(getGVRContext());
-        tex1.setImage(bitmapIddle);
+        tex1.setImage(bitmapIdle);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex1);
 
         text.textSize = 4;
         text.textColor = 0xfff8DF35;
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
+        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
+        bitmapHover.setFileName("radio_hover");
+        bitmapHover.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex2 = new GVRTexture(getGVRContext());
@@ -114,9 +114,9 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
         text.textColor = Color.parseColor("#000000");
         text.backgroundColor = 0xfff8DF35;
 
-        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
+        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
+        bitmapSelected.setFileName("radio_selected");
+        bitmapSelected.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex3 = new GVRTexture(getGVRContext());

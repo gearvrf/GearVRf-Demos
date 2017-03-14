@@ -27,6 +27,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -86,41 +87,40 @@ public class MotionButton extends MenuControlSceneObject {
     }
 
     private void createTextures() {
-
+        GVRAssetLoader importer = getGVRContext().getAssetLoader();
         Text text = new Text(title, Align.LEFT, 3.5f, Color.parseColor("#ffffff"), Color.parseColor("#00000000"), 45);
         String font = "fonts/samsung-if-bold.ttf";
-        Bitmap bmap = create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font);
-        GVRBitmapTexture bitmapIddle = new GVRBitmapTexture(getGVRContext());
-        bitmapIddle.setFileName("bitmapidle");
-        bitmapIddle.setBitmap(bmap);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
-                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+        GVRMaterial material = getRenderData().getMaterial();
+        GVRBitmapTexture bitmapIdle = new GVRBitmapTexture(getGVRContext());
+
+        bitmapIdle.setFileName("motion_idle");
+        bitmapIdle.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
+        material.setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
+                            importer.loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex1 = new GVRTexture(getGVRContext());
-        tex1.setImage(bitmapIddle);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex1);
+        tex1.setImage(bitmapIdle);
+        material.setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex1);
 
         text.textSize = 4.3f;
 
-        bmap = create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font);
         GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
-        bitmapHover.setFileName("bitmapHover");
-        bitmapHover.setBitmap(bmap);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
-                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+        bitmapHover.setFileName("motion_hover");
+        bitmapHover.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
+        material.setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
+                            importer.loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex2 = new GVRTexture(getGVRContext());
         tex2.setImage(bitmapHover);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex2);
+        material.setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex2);
 
         text.textColor = 0xfff8DF35;
-        bmap = create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font);
         GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
-        bitmapSelected.setFileName("bitmapselected");
-        bitmapSelected.setBitmap(bmap);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
-                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+        bitmapSelected.setFileName("motion_selected");
+        bitmapSelected.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
+        material.setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
+                            importer.loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex3 = new GVRTexture(getGVRContext());
         tex3.setImage(bitmapSelected);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex3);
+        material.setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex3);
     }
 
     @Override

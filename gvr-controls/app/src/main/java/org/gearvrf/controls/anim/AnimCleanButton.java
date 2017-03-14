@@ -30,6 +30,7 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -82,40 +83,38 @@ public class AnimCleanButton extends MenuControlSceneObject {
     }
 
     private void createTextures() {
-
-        Text text = new Text(title, Align.CENTER, 3f, Color.parseColor("#000000"),
-                Color.parseColor("#ffffff"), 45);
+        GVRAssetLoader importer = getGVRContext().getAssetLoader();
+        Text text = new Text(title, Align.CENTER, 3f, Color.parseColor("#000000"), Color.parseColor("#ffffff"), 45);
         String font = "fonts/samsung-if-bold.ttf";
+        GVRMaterial material = getRenderData().getMaterial();
+        GVRBitmapTexture bitmapIdle = new GVRBitmapTexture(getGVRContext());
 
-        GVRBitmapTexture bitmapIddle = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
-                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+        bitmapIdle.setFileName("anim_idle");
+        bitmapIdle.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
+        material.setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
+                            importer.loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex = new GVRTexture(getGVRContext());
-        tex.setImage(bitmapIddle);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex);
-
+        tex.setImage(bitmapIdle);
+        material.setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex);
         text.textSize = 3.3f;
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
-                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
+        bitmapHover.setFileName("anim_hover");
+        bitmapHover.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
+        material.setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
+                            importer.loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex1 = new GVRTexture(getGVRContext());
         tex1.setImage(bitmapHover);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex1);
+        material.setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex1);
 
-        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext(),
-                create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
-
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
-                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
+        bitmapSelected.setFileName("anim_selected");
+        bitmapSelected.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
+        material.setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
+                            importer.loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         GVRTexture tex2 = new GVRTexture(getGVRContext());
         tex2.setImage(bitmapSelected);
-
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex2);
+        material.setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex2);
     }
 
     @Override
