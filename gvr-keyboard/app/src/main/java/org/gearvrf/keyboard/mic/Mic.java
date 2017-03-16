@@ -27,9 +27,9 @@ import org.gearvrf.keyboard.main.MainActivity;
 import org.gearvrf.keyboard.mic.model.MicItem;
 import org.gearvrf.keyboard.textField.TextField;
 import org.gearvrf.keyboard.util.SceneObjectNames;
+import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Mic extends GVRSceneObject implements RecognitionListener {
 
@@ -175,41 +175,30 @@ public class Mic extends GVRSceneObject implements RecognitionListener {
         }
     }
 
-    public void onUpdate() {
+    public void onUpdate(GVRSceneObject sceneObject) {
 
         if (mMicHitGroupArea != null) {
-            verifyEyePointee();
+            verifyEyePointee(sceneObject);
         }
     }
 
-    private void verifyEyePointee() {
-        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(this.getGVRContext()
-                .getMainScene());
-
-        if (pickedObjects.size() == 0) {
-            tryChangeSeeMe(false);
-        } else {
-            handleEyePointeeListNew(pickedObjects);
-        }
+    private void verifyEyePointee(GVRSceneObject sceneObject) {
+        handleEyePointeeListNew(sceneObject);
     }
 
-    private void handleEyePointeeListNew(List<GVRPicker.GVRPickedObject> pickedObjects) {
+    private void handleEyePointeeListNew(GVRSceneObject sceneObject) {
 
         // https://github.com/Samsung/GearVRf/issues/102
         if (mMicHitGroupArea != null && mMicHitGroupArea.mHitArea != null) {
+            boolean seeMeNow = false;
 
-            for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
+            if (mMicHitGroupArea.mHitArea.hashCode() == sceneObject.hashCode()) {
+                tryChangeSeeMe(true);
+                seeMeNow = true;
+            }
 
-                boolean seeMeNow = false;
-
-                if (mMicHitGroupArea.mHitArea == pickedObject.getHitObject()) {
-                    tryChangeSeeMe(true);
-                    seeMeNow = true;
-                }
-
-                if (!seeMeNow) {
-                    tryChangeSeeMe(false);
-                }
+            if (!seeMeNow) {
+                tryChangeSeeMe(false);
             }
         }
     }

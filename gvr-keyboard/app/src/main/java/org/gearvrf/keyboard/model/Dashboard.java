@@ -23,8 +23,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 
-import java.util.List;
-
 public class Dashboard extends GVRSceneObject {
 
     public static int currentDashboardHashCode;
@@ -75,6 +73,7 @@ public class Dashboard extends GVRSceneObject {
         originalRotationZ = getTransform().getRotationZ();
         originalRotationW = getTransform().getRotationW();
 
+        //attachEyePointeeHolder();
         attachComponent(new GVRSphereCollider(gvrContext));
     }
 
@@ -89,7 +88,7 @@ public class Dashboard extends GVRSceneObject {
         resetRotation();
     }
 
-    public void onUpdate() {
+    public void onUpdate(GVRSceneObject sceneObject) {
 
         distanceToAnchorPoint = Math.abs(getTransform().getPositionY() - Y_ANCHOR_POINT);
         if (distanceToAnchorPoint <= Y_ANCHOR_POINT_THRESHOLD) {
@@ -101,14 +100,8 @@ public class Dashboard extends GVRSceneObject {
         lastY = lookAt[1];
 
         onFocus = false;
-
-        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(getGVRContext()
-                .getMainScene());
-
-        for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
-            if (pickedObject.getHitObject().hashCode() == hashCode()) {
-                onFocus = true;
-            }
+        if (sceneObject.hashCode() == hashCode()) {
+            onFocus = true;
         }
     }
 

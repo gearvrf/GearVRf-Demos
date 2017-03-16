@@ -33,8 +33,6 @@ import org.gearvrf.keyboard.model.Dashboard;
 import org.gearvrf.keyboard.model.KeyboardCharItem;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 
-import java.util.List;
-
 /**
  * @author Douglas and SIDIA VR TEAM
  */
@@ -230,8 +228,48 @@ public class Keyboard extends GVRSceneObject {
         tapKeyboard();
     }
 
+    public void update(GVRSceneObject sceneObject) {
+        changeTexture(sceneObject);
+    }
 
     boolean test = true;
+
+    private void changeTexture(GVRSceneObject sceneObject) {
+
+        if (currentSelection != null) {
+            setNormalMaterial(currentSelection);
+        }
+
+        currentSelection = null;
+
+        if (sceneObject.hashCode() == Dashboard.currentDashboardHashCode) {
+            return;
+        }
+
+        if (sceneObject instanceof KeyboardItemBase) {
+
+            setHoverMaterial(sceneObject);
+
+            if (sceneObject.equals(currentSelection)) {
+                setHoverMaterial(sceneObject);
+            } else {
+
+                if (currentSelection != null) {
+                    setNormalMaterial(currentSelection);
+                }
+
+                currentSelection = sceneObject;
+            }
+
+        } else {
+
+            if (currentSelection != null) {
+                setNormalMaterial(currentSelection);
+            }
+
+            currentSelection = null;
+        }
+    }
 
     public void shiftKeys() {
         switch (shift) {
