@@ -1,6 +1,6 @@
 # This file uses centimeters as units for non-parametric coordinates.
 
-mtllib skybox_esphere.mtl
+mtllib skybox_esphere_m.mtl
 v 8.361606 -55.509918 -2.716850
 v 7.112807 -55.509918 -5.167757
 v 5.167757 -55.509918 -7.112807
@@ -1205,7 +1205,7 @@ vn -0.169981 -0.985443 0.003122
 vn -0.000000 1.000000 0.000000
 vn -0.000000 -1.000000 0.000000
 g pSphere3
-usemtl initialShadingGroup
+usemtl skybox_esphere_material
 f 1/1/1 21/22/2 2/2/3
 f 2/2/3 21/22/2 22/23/4
 f 2/2/3 22/23/4 3/3/5

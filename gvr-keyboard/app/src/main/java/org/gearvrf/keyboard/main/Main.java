@@ -27,8 +27,10 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.IPickEvents;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.keyboard.model.KeyboardEventListener;
 import org.gearvrf.keyboard.keyboard.numeric.Keyboard;
@@ -81,9 +83,65 @@ public class Main extends GVRMain implements KeyboardEventListener {
     private boolean mDisableSnapSound = false;
     private Dashboard dashboard;
     private Spinner spinner;
+    private PickHandler mPickHandler = new PickHandler();
+    private GVRPicker mPicker;
 
     public void setActivity(MainActivity mainActivity) {
         mMainActivity = mainActivity;
+    }
+
+    public class PickHandler implements IPickEvents
+    {
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if (!keyboard.isEnabled()) {
+
+                interactWithVisibleObjects(sceneObj, pickInfo.getHitLocation());
+            } else {
+
+                keyboard.update(sceneObj);
+                if (spinner != null)
+
+                    answer.spinnerUpdate(sceneObj);
+            }
+
+            mMic.onUpdate(sceneObj);
+        }
+        public void onExit(GVRSceneObject sceneObj){}
+        public void onNoPick(GVRPicker picker) {
+            for (GVRSceneObject object : mGVRContext.getMainScene()
+                    .getWholeSceneObjects()) {
+                if (object instanceof SphereFlag && object.equals(lastSelectedSphereFlag)) {
+                    if (((SphereFlag) object).answerState == SphereStaticList.MOVEABLE) {
+                        restoreObjectToItsDefaultPosition(object);
+                        //this.mDisableSnapSound = false;
+                        lastSelectedSphereFlag = null;
+                    }
+                }
+            }
+
+
+        }
+        public void onPick(GVRPicker picker) {
+
+            GVRPicker.GVRPickedObject[] picked = picker.getPicked();
+            GVRSceneObject sceneObject = picked[0].getHitObject();
+            if (dashboard != null && lastSelectedSphereFlag != null) {
+                dashboard.onUpdate(sceneObject);
+                if (dashboard.onFocus) {
+                    heightSync();
+                }
+            }
+
+            if (sceneObject instanceof SphereFlag && sceneObject.equals(lastSelectedSphereFlag)) {
+                if (((SphereFlag) sceneObject).answerState == SphereStaticList.MOVEABLE) {
+                    restoreObjectToItsDefaultPosition(sceneObject);
+                    //this.mDisableSnapSound = false;
+                    lastSelectedSphereFlag = null;
+                }
+            }
+        }
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
     }
 
     @Override
@@ -148,6 +206,10 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
             gvrContext.getMainScene().addSceneObject(spherePack);
         }
+
+        gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
+        createAndAttachAllEyePointee();
 
     }
 
@@ -240,7 +302,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
         GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.skybox_esphere));
         GVRTexture spaceTexture = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
-                R.drawable.skybox));
+                R.raw.skybox));
 
         GVRSceneObject mSpaceSceneObject = new GVRSceneObject(mGVRContext, spaceMesh, spaceTexture);
         mGVRContext.getMainScene().addSceneObject(mSpaceSceneObject);
@@ -251,7 +313,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
         GVRSceneObject headTracker = new GVRSceneObject(mGVRContext,
                 mGVRContext.createQuad(0.5f, 0.5f), mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.head_tracker)));
+                mGVRContext, R.drawable.head_tracker)));
 
         headTracker.getTransform().setPositionZ(-9.0f);
         headTracker.getRenderData().setRenderingOrder(
@@ -263,7 +325,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
     }
 
     private void rotateObject(GVRSceneObject spherePack,
-            GVRTransform cameraObject) {
+                              GVRTransform cameraObject) {
         spherePack.getTransform().rotateByAxis(
                 Util.getZRotationAngle(spherePack, cameraObject), 0, 0, 1);
         spherePack.getTransform().rotateByAxis(
@@ -274,81 +336,31 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
     @Override
     public void onStep() {
-
-        mMic.onUpdate();
         flagListCostructor.updateSpheresMaterial();
-
-        if (dashboard != null && lastSelectedSphereFlag != null) {
-            dashboard.onUpdate();
-            if (dashboard.onFocus) {
-                heightSync();
-            }
-        }
-
-        if (isFirstTime) {
-            createAndAttachAllEyePointee();
-            isFirstTime = false;
-
-        }
-
-        if (!keyboard.isEnabled()) {
-
-            interactWithVisibleObjects();
-        } else {
-
-            keyboard.update();
-            if (spinner != null)
-
-                answer.spinnerUpdate();
-        }
     }
 
-    private void interactWithVisibleObjects() {
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker
-                .pickScene(mGVRContext.getMainScene());
-
+    private void interactWithVisibleObjects(GVRSceneObject sceneObject, float [] hitLocation) {
         if (lastSelectedSphereFlag != null
                 && lastSelectedSphereFlag.answerState == SphereStaticList.ANSWERING) {
             lastSelectedSphereFlag.moveToCursor();
         }
 
-        if (eyePointeeHolders.length == 0) {
-            for (GVRSceneObject object : mGVRContext.getMainScene()
-                    .getWholeSceneObjects()) {
-                if (object instanceof SphereFlag && object.equals(lastSelectedSphereFlag)) {
-                    if (((SphereFlag) object).answerState == SphereStaticList.MOVEABLE) {
-                        restoreObjectToItsDefaultPosition(object);
-                        this.mDisableSnapSound = false;
-                        lastSelectedSphereFlag = null;
-                    }
-                }
-            }
-        } else {
-            for (GVREyePointeeHolder eph : eyePointeeHolders) {
-                for (GVRSceneObject object : mGVRContext.getMainScene()
-                        .getWholeSceneObjects()) {
+        if (dashboard.hashCode() == sceneObject.hashCode()) {
+            return;
+        }
 
-                    if (dashboard.hashCode() == object.hashCode()) {
-                        continue;
-                    }
+        if ((lastSelectedSphereFlag == null || lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING)) {
+            // TODO: Fix (SphereFlag) object.getChildByIndex(0) this
+            // object can be any object .... not only a Sphere.
+            if (sceneObject.getChildrenCount() > 0) {
+                lastSelectedSphereFlag = (SphereFlag) sceneObject.getChildByIndex(0);
+                if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE) {
+                    moveObject(sceneObject, hitLocation);
 
-                    if (eph.getOwnerObject().equals(object)
-                            && (lastSelectedSphereFlag == null || lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING)) {
-                        // TODO: Fix (SphereFlag) object.getChildByIndex(0) this
-                        // object can be any object .... not only a Sphere.
-                        if (object.getChildrenCount() > 0) {
-                            lastSelectedSphereFlag = (SphereFlag) object.getChildByIndex(0);
-                            if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE) {
-                                moveObject(object);
-
-                                if (this.mDisableSnapSound == false) {
-                                    this.mDisableSnapSound = true;
-                                    AudioClip.getInstance(mGVRContext.getContext()).playSound(
-                                            AudioClip.getSnapSoundID(), 1.0f, 1.0f);
-                                }
-                                break;
-                            }
-                        }
+                    if (this.mDisableSnapSound == false) {
+                        this.mDisableSnapSound = true;
+                        AudioClip.getInstance(mGVRContext.getContext()).playSound(
+                                AudioClip.getSnapSoundID(), 1.0f, 1.0f);
                     }
                 }
             }
@@ -361,10 +373,10 @@ public class Main extends GVRMain implements KeyboardEventListener {
         ((SphereFlag) object).unsnapSphere(1.2f);
     }
 
-    private void moveObject(GVRSceneObject object) {
+    private void moveObject(GVRSceneObject object, float [] hitLocation) {
         ((SphereFlag) object.getChildByIndex(0))
                 .stopFloatingSphere();
-        ((SphereFlag) (object.getChildByIndex(0))).snapSphere();
+        ((SphereFlag) (object.getChildByIndex(0))).snapSphere(hitLocation);
         ((SphereFlag) (object.getChildByIndex(0))).spotSphere();
     }
 
@@ -402,7 +414,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
             answer.getTransform().setPosition(positionX, 0.87f, Constants.CAMERA_DISTANCE);
 
             float[] keyboardPosition = Util.calculatePointBetweenTwoObjects(mGVRContext
-                    .getMainScene().getMainCameraRig().getTransform(),
+                            .getMainScene().getMainCameraRig().getTransform(),
                     lastSelectedSphereFlag.getInitialPositionVector(),
                     Constants.SPHERE_SELECTION_DISTANCE);
 
@@ -527,7 +539,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
     }
 
     private void attachDefaultEyePointee(GVRSceneObject sceneObject) {
-        sceneObject.attachEyePointeeHolder();
+        sceneObject.attachComponent(new GVRSphereCollider(getGVRContext()));
     }
 
     public void spinnerListenerAnimation(SwipeDirection swipeDirection, float velocityY) {

@@ -1,5 +1,5 @@
 # This file uses centimeters as units for non-parametric coordinates.
-mtllib sphere.mtl
+mtllib mars.mtl
 v 0.149680 -0.993674 -0.048634
 v 0.127325 -0.993674 -0.092507
 v 0.092507 -0.993674 -0.127325
@@ -1203,7 +1203,7 @@ vn 0.162626 0.985442 0.049557
 vn 0.169981 0.985442 -0.003123
 vn -0.000000 -1.000000 -0.000000
 vn -0.000000 1.000000 0.000000
-usemtl sphere_material
+usemtl mars_material
 f 1/1/1 2/2/2 21/22/3
 f 21/22/3 2/2/2 22/23/4
 f 2/2/2 3/3/5 22/23/4

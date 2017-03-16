@@ -179,11 +179,12 @@ public class BulletSampleMain extends GVRMain {
         return object;
     }
 
-    private GVRSceneObject meshWithTexture(String mesh, String texture) {
+    private GVRSceneObject meshWithTexture(String meshFileName, String texture) {
         GVRSceneObject object = null;
-        try {
+        try
+        {
             object = new GVRSceneObject(mGVRContext, new GVRAndroidResource(
-                    mGVRContext, mesh), new GVRAndroidResource(mGVRContext,
+                    mGVRContext, meshFileName), new GVRAndroidResource(mGVRContext,
                     texture));
         } catch (IOException e) {
             e.printStackTrace();
@@ -195,7 +196,7 @@ public class BulletSampleMain extends GVRMain {
         try {
             GVRMesh mesh = mGVRContext.createQuad(100.0f, 100.0f);
             GVRTexture texture =
-                    mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
+                    mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
             GVRSceneObject meshObject = new GVRSceneObject(mGVRContext, mesh, texture);
 
             meshObject.getTransform().setPosition(x, y, z);
@@ -223,9 +224,18 @@ public class BulletSampleMain extends GVRMain {
      * Function to add a cube of unit size with mass at the specified position
      * in Bullet physics world and scene graph.
      */
-    private void addCube(GVRScene scene, float x, float y, float z, float mass) {
-
-        GVRSceneObject cubeObject = meshWithTexture("cube.obj", "cube.jpg");
+    private void addCube(GVRScene scene, float x, float y, float z, float mass)
+    {
+        GVRSceneObject cubeObject;
+        try
+        {
+            cubeObject = mGVRContext.getAssetLoader().loadModel("cube.obj", scene);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+            return;
+        }
         cubeObject.getTransform().setPosition(x, y, z);
 
         // Collider
@@ -241,8 +251,6 @@ public class BulletSampleMain extends GVRMain {
         body.setFriction(1.0f);
 
         cubeObject.attachComponent(body);
-
-        scene.addSceneObject(cubeObject);
     }
 
     /*
@@ -251,9 +259,16 @@ public class BulletSampleMain extends GVRMain {
      */
     private void addSphere(GVRScene scene, float radius, float x, float y,
                            float z, float mass) {
-
-        GVRSceneObject sphereObject = meshWithTexture("sphere.obj",
-                "sphere.jpg");
+        GVRSceneObject sphereObject;
+        try
+        {
+            sphereObject = mGVRContext.getAssetLoader().loadModel("sphere.obj", scene);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+            return;
+        }
         sphereObject.getTransform().setPosition(x, y, z);
 
         // Collider
@@ -270,8 +285,6 @@ public class BulletSampleMain extends GVRMain {
         sphereObject.getEventReceiver().addListener(mCollisionHandler);
 
         sphereObject.attachComponent(mSphereRigidBody);
-
-        scene.addSceneObject(sphereObject);
     }
 
 }
