@@ -93,8 +93,7 @@ if(rootProject.useLocalDependencies) {
         if (rootProject.hasProperty("only_daydream")) {
             debugCompile(name: 'backend_daydream-debug', ext: 'aar')
             releaseCompile(name: 'backend_daydream-release', ext: 'aar')
-            compile 'com.google.vr:sdk-base:1.10.0'
-            compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+            compile 'com.google.vr:sdk-base:1.30.0'
         } else {
             if (rootProject.hasProperty("no_oculus")) {
                 debugCompile(name: 'backend-debug', ext: 'aar')
@@ -104,8 +103,7 @@ if(rootProject.useLocalDependencies) {
                 releaseCompile(name: 'backend_daydream-release', ext: 'aar')
                 debugCompile(name: 'backend_oculus-debug', ext: 'aar')
                 releaseCompile(name: 'backend_oculus-release', ext: 'aar')
-                compile 'com.google.vr:sdk-base:1.10.0'
-                compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+                compile 'com.google.vr:sdk-base:1.30.0'
             }
         }
     }
@@ -116,16 +114,14 @@ if(rootProject.useLocalDependencies) {
 
         if (rootProject.hasProperty("only_daydream")) {
             compile project (':backend_daydream')
-            compile 'com.google.vr:sdk-base:1.10.0'
-            compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+            compile 'com.google.vr:sdk-base:1.30.0'
         } else {
             if (rootProject.hasProperty("no_oculus")) {
                 compile project (':backend')
             } else { //default oculus+daydream
                 compile project (':backend_oculus')
                 compile project (':backend_daydream')
-                compile 'com.google.vr:sdk-base:1.10.0'
-                compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+                compile 'com.google.vr:sdk-base:1.30.0'
             }
         }
     }
@@ -136,13 +132,11 @@ if(rootProject.useLocalDependencies) {
 
         if (rootProject.hasProperty("only_daydream")) {
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
-            compile 'com.google.vr:sdk-base:1.10.0'
-            compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+            compile 'com.google.vr:sdk-base:1.30.0'
         } else { //default oculus+daydream
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
             compile "org.gearvrf:backend_oculus:$gearvrfVersion"
-            compile 'com.google.vr:sdk-base:1.10.0'
-            compile 'com.google.protobuf.nano:protobuf-javanano:3.0.0-alpha-7'
+            compile 'com.google.vr:sdk-base:1.30.0'
         }
     }
 }
