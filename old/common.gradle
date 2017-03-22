@@ -42,10 +42,10 @@ android {
         }
     }
 
-    // ignore the x86 and arm-v8 files from the google vr libraries
+    // ignore the x86 files from the google vr libraries
     packagingOptions {
+        exclude 'lib/x86/libgvr.so'
         if (!rootProject.hasProperty("ARM64")) {
-            exclude 'lib/x86/libgvr.so'
             exclude 'lib/arm64-v8a/*.so'
         } else {
             exclude 'lib/armeabi-v7a/*.so'
@@ -100,11 +100,9 @@ if(rootProject.useLocalDependencies) {
                 debugCompile(name: 'backend-debug', ext: 'aar')
                 releaseCompile(name: 'backend-release', ext: 'aar')
             } else { //default oculus+daydream
-                if (!rootProject.hasProperty("ARM64")) {
-                    debugCompile(name: 'backend_daydream-debug', ext: 'aar')
-                    releaseCompile(name: 'backend_daydream-release', ext: 'aar')
-                    compile 'com.google.vr:sdk-base:1.30.0'
-                }
+                debugCompile(name: 'backend_daydream-debug', ext: 'aar')
+                releaseCompile(name: 'backend_daydream-release', ext: 'aar')
+                compile 'com.google.vr:sdk-base:1.30.0'
                 debugCompile(name: 'backend_oculus-debug', ext: 'aar')
                 releaseCompile(name: 'backend_oculus-release', ext: 'aar')
             }
@@ -122,11 +120,9 @@ if(rootProject.useLocalDependencies) {
             if (rootProject.hasProperty("no_oculus")) {
                 compile project (':backend')
             } else { //default oculus+daydream
-                compile project (':backend_oculus')
-                if (!rootProject.hasProperty("ARM64")) {
-                    compile project (':backend_daydream')
-                    compile 'com.google.vr:sdk-base:1.30.0'
-                }
+                compile project(':backend_oculus')
+                compile project(':backend_daydream')
+                compile 'com.google.vr:sdk-base:1.30.0'
             }
         }
     }
@@ -139,10 +135,8 @@ if(rootProject.useLocalDependencies) {
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
             compile 'com.google.vr:sdk-base:1.30.0'
         } else { //default oculus+daydream
-            if (!rootProject.hasProperty("ARM64")) {
-                compile "org.gearvrf:backend_daydream:$gearvrfVersion"
-                compile 'com.google.vr:sdk-base:1.30.0'
-            }
+            compile "org.gearvrf:backend_daydream:$gearvrfVersion"
+            compile 'com.google.vr:sdk-base:1.30.0'
             compile "org.gearvrf:backend_oculus:$gearvrfVersion"
         }
     }
