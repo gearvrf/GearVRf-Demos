@@ -3,9 +3,7 @@ importPackage(org.gearvrf);
 var scene = gvrf.getMainScene();
 
 var trex_url = new java.net.URL("https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-meshanimation/app/src/main/assets/TRex_NoGround.fbx");
-var trex = gvrf.loadModelFromURL(trex_url);
-scene.addSceneObject(trex);
-scene.bindShaders();
+var trex = gvrf.getAssetLoader().loadModel(trex_url, scene);
 
 trex.getTransform().setPosition(0.0, -10.0, -10.0);
 trex.getTransform().setRotationByAxis(90.0, 1.0, 0.0, 0.0);

@@ -10,6 +10,10 @@ else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
 }
 
 android {
+    defaultConfig {
+        applicationId "org.gearvrf.sample.gvrlua"
+    }
+
     buildTypes {
         release {
             minifyEnabled false

@@ -7,7 +7,7 @@ var scene = gvrf.getMainScene();
 // space background
 var space_url = new java.net.URL("https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-remote-scripting/app/src/main/assets/space.jpg");
 var space_resource = new GVRAndroidResource(gvrf, space_url);
-var space_texture = gvrf.loadFutureTexture(space_resource);
+var space_texture = gvrf.getAssetLoader().loadTexture(space_resource);
 var space_photosphere = new GVRSphereSceneObject(gvrf, false, space_texture);
 space_photosphere.getTransform().setScale(20, 20, 20);
 space_photosphere.setName("space_photosphere");
@@ -15,19 +15,14 @@ scene.addSceneObject(space_photosphere);
 
 // space platform
 var platform_url = new java.net.URL("https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-remote-scripting/app/src/main/assets/platform.fbx");
-var platform = gvrf.loadModelFromURL(platform_url);
+var platform = gvrf.getAssetLoader().loadModel(platform_url, scene);
 platform.getTransform().setPosition(0, -2, -10);
 platform.setName("platform");
-scene.addSceneObject(platform);
 
 // space trex
 var trex_url = new java.net.URL("https://github.com/gearvrf/GearVRf-Demos/raw/master/gvr-meshanimation/app/src/main/assets/TRex_NoGround.fbx");
-var trex = gvrf.loadModelFromURL(trex_url);
+var trex = gvrf.getAssetLoader().loadModel(trex_url, scene);
 trex.setName("trex");
-scene.addSceneObject(trex);
-
-// done adding objects, bind shaders
-scene.bindShaders();
 
 // place trex
 trex.getTransform().setPosition(0.0, -2.0, -10.0);

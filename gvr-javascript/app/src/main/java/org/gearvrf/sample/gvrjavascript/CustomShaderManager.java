@@ -27,7 +27,7 @@ import org.gearvrf.utility.TextFile;
 
 public class CustomShaderManager extends GVRShader{
     //private final GVRCustomMaterialShaderId shaderId;
-    static final String COLOR_KEY = "color";
+    static final String COLOR_KEY = "u_color";
 
     public CustomShaderManager(GVRContext gvrContext) {
         /*
@@ -36,7 +36,7 @@ public class CustomShaderManager extends GVRShader{
         shaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
         GVRMaterialMap customShader = shaderManager.getShaderMap(shaderId);
         customShader.addUniformVec4Key("u_color", COLOR_KEY);*/
-        super("float4 u_color", "sampler2D temp", "float4 a_position");
+        super("float4 u_color", "", "float4 a_position", 300);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.vertex));
