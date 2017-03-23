@@ -1,13 +1,12 @@
 precision mediump float;
 in vec2  coord;
 
-uniform sampler2D state1Background;
 uniform sampler2D state1Text;
-uniform sampler2D state2Background;
 uniform sampler2D state2Text;
-uniform sampler2D state3Background;
 uniform sampler2D state3Text;
-
+uniform sampler2D state1Background;
+uniform sampler2D state2Background;
+uniform sampler2D state3Background;
 
 layout (std140) uniform Material_ubo
 {

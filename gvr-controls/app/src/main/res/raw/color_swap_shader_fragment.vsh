@@ -26,5 +26,4 @@ void main() {
 	}
     		
 	outColor = colorResult * u_opacity;
-	//outColor = vec4(1,0,0,1);
 }

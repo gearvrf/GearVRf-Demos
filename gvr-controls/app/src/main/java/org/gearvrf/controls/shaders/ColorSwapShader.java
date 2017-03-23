@@ -42,6 +42,6 @@ public class ColorSwapShader extends GVRShader{
     }
     protected void setMaterialDefaults(GVRShaderData material) {
         material.setFloat("u_opacity", 1.0f);
-        material.setVec3("u_color", 1.0f, 1.0f, 1.0f);
+        material.setVec4("u_color", 1.0f, 1.0f, 1.0f, 1.0f);
     }
 }

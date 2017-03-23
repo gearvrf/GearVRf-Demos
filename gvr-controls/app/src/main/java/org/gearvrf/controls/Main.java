@@ -86,7 +86,6 @@ public class Main extends GVRMain {
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getTransform().setPositionY(0);
-        /*
         createSkybox();
         createClouds();
         createGround();
@@ -96,11 +95,8 @@ public class Main extends GVRMain {
         createSurroundings();
         createWorm();
         createFence();
-        */
         createMenu();
         createGamepad3D();
-
-        /*
         for (int i = 0; i < Constants.NUMBER_OF_APPLES; i++) {
             createApple();
         }
@@ -109,7 +105,6 @@ public class Main extends GVRMain {
 
         createStar();
         enableAnimationWorm();
-        */
     }
 
     public static void animWormReset(){
@@ -316,7 +311,6 @@ public class Main extends GVRMain {
 
     @Override
     public void onStep() {
-/*
         worm.chainMove(mGVRContext);
 
         GamepadInput.process();
@@ -333,7 +327,6 @@ public class Main extends GVRMain {
             gamepadObject.inputControl();
         }
         worm.checkWormEatingApple(mGVRContext);
-*/
     }
 
     private void createMenu() {
@@ -350,9 +343,8 @@ public class Main extends GVRMain {
     private void createGamepad3D() {
         gamepadObject = new GamepadObject(mGVRContext);
 
-        gamepadObject.getTransform().rotateByAxis(225, 0, 1, 0);
         gamepadObject.getTransform().setPosition(0, 1.f, -8.5f);
-        //gamepadObject.getTransform().rotateByAxisWithPivot(225, 0, 1, 0, 0, 0, 0);
+        gamepadObject.getTransform().rotateByAxisWithPivot(225, 0, 1, 0, 0, 0, 0);
         gamepadObject.setName("gamepad");
         scene.addSceneObject(gamepadObject);
     }
