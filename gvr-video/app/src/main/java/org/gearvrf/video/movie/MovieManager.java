@@ -16,9 +16,8 @@
 package org.gearvrf.video.movie;
 
 import android.content.res.AssetFileDescriptor;
-import android.media.MediaPlayer;
-
 import android.media.MediaCodec;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.Surface;
 
@@ -28,21 +27,16 @@ import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.MediaCodecSelector;
 import com.google.android.exoplayer.MediaCodecVideoTrackRenderer;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
-import com.google.android.exoplayer.upstream.AssetDataSource;
-import com.google.android.exoplayer.upstream.DataSource;
-import com.google.android.exoplayer.upstream.DataSpec;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
-import com.google.android.exoplayer.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
+import org.gearvrf.GVRVersion;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 import org.gearvrf.utility.Log;
-import org.gearvrf.video.VideoActivity;
-import org.mozilla.javascript.Context;
 
 import java.io.IOException;
 
@@ -134,7 +128,7 @@ public class MovieManager {
     private GVRVideoSceneObjectPlayer<ExoPlayer> makeExoPlayer(GVRActivity context) {
         final ExoPlayer player = ExoPlayer.Factory.newInstance(2);
 
-        final AssetDataSource dataSource = new AssetDataSource(context);
+        final DefaultUriDataSource dataSource = new DefaultUriDataSource(context, "GVRf " + GVRVersion.CURRENT);
         final ExtractorSampleSource sampleSource = new ExtractorSampleSource(Uri.parse("asset:///tron.mp4"),
                 dataSource, new DefaultAllocator(64 * 1024), 64 * 1024 * 256);
 
