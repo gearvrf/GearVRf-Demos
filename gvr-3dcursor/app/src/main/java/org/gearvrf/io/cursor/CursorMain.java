@@ -36,6 +36,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.ZipLoader;
 import org.gearvrf.io.cursor.AssetHolder.AssetObjectTuple;
 import org.gearvrf.io.cursor3d.Cursor;
@@ -49,6 +50,7 @@ import org.gearvrf.io.cursor3d.IoDevice;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.utility.Log;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -207,7 +209,7 @@ public class CursorMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
-        mainScene = gvrContext.getNextMainScene();
+        mainScene = gvrContext.getMainScene();
         meshMap = new HashMap<String, Future<GVRMesh>>();
         textureMap = new HashMap<String, Future<GVRTexture>>();
         addSurroundings(gvrContext, mainScene);
@@ -569,10 +571,13 @@ public class CursorMain extends GVRMain {
 
         @Override
         public void onEvent(CursorEvent event) {
+
             GVRSceneObject sceneObject = event.getObject();
-            SpaceObject spaceObject = objects.get(sceneObject.getName());
-            if(spaceObject != null) {
-                spaceObject.handleCursorEvent(event);
+            if(sceneObject != null) {
+                SpaceObject spaceObject = objects.get(sceneObject.getName());
+                if (spaceObject != null) {
+                    spaceObject.handleCursorEvent(event);
+                }
             }
         }
     };
@@ -1010,6 +1015,8 @@ public class CursorMain extends GVRMain {
         private GVRSceneObject selectedParent;
         private GVRSceneObject cursorSceneObject;
         private Cursor cursor;
+        private final Matrix4f cursorModelMatrix = new Matrix4f();
+        private final Matrix4f selectedModelMatrix = new Matrix4f();
 
         public MovableObject(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
@@ -1033,6 +1040,7 @@ public class CursorMain extends GVRMain {
 
         @Override
         void handleClickEvent(CursorEvent event) {
+
             if (selected != null && cursor != event.getCursor()) {
                 // We have a selected object but not the correct cursor
                 return;
@@ -1045,13 +1053,11 @@ public class CursorMain extends GVRMain {
             selected = getSceneObject();
             selectedParent = selected.getParent();
             if (cursor.getCursorType() == CursorType.OBJECT) {
-                Vector3f position = new Vector3f(cursor.getPositionX(), cursor.getPositionY(),
-                        cursor
-                                .getPositionZ());
-
-                selected.getTransform().setPosition(-position.x + selected.getTransform()
-                        .getPositionX(), -position.y + selected.getTransform()
-                        .getPositionY(), -position.z + selected.getTransform().getPositionZ());
+                GVRTransform selectedTransform = selected.getTransform();
+                cursorModelMatrix.set(cursorSceneObject.getTransform().getModelMatrix());
+                cursorModelMatrix.invert();
+                selectedModelMatrix.set(selectedTransform.getModelMatrix());
+                selectedTransform.setModelMatrix(cursorModelMatrix.mul(selectedModelMatrix));
                 selectedParent.removeChildObject(selected);
                 cursorSceneObject.addChildObject(selected);
             }
@@ -1059,6 +1065,7 @@ public class CursorMain extends GVRMain {
 
         @Override
         void handleDragEvent(CursorEvent event) {
+
             if (cursor.getCursorType() == CursorType.LASER && cursor == event.getCursor()) {
                 Cursor cursor = event.getCursor();
                 Vector3f cursorPosition = new Vector3f(cursor.getPositionX(), cursor.getPositionY
@@ -1070,6 +1077,7 @@ public class CursorMain extends GVRMain {
 
         @Override
         void handleCursorLeave(CursorEvent event) {
+
             if (event.isActive() && cursor == event.getCursor()) {
                 if (cursor.getCursorType() == CursorType.LASER) {
                     Vector3f cursorPosition = new Vector3f(cursor.getPositionX(), cursor
@@ -1092,13 +1100,12 @@ public class CursorMain extends GVRMain {
             }
 
             if (selected != null && cursor.getCursorType() == CursorType.OBJECT) {
-                Vector3f position = new Vector3f(cursor.getPositionX(), cursor.getPositionY
-                        (), cursor.getPositionZ());
+                GVRTransform selectedTransform = selected.getTransform();
+                cursorModelMatrix.set(cursorSceneObject.getTransform().getModelMatrix());
                 cursorSceneObject.removeChildObject(selected);
                 selectedParent.addChildObject(selected);
-                selected.getTransform().setPosition(+position.x + selected.getTransform()
-                        .getPositionX(), +position.y + selected.getTransform()
-                        .getPositionY(), +position.z + selected.getTransform().getPositionZ());
+                selectedModelMatrix.set(selectedTransform.getModelMatrix());
+                selectedTransform.setModelMatrix(cursorModelMatrix.mul(selectedModelMatrix));
             }
             selected = null;
             selectedParent = null;

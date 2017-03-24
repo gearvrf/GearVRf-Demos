@@ -26,3 +26,9 @@ android {
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
 }
+repositories {
+    jcenter()
+}
+dependencies {
+    compile 'com.google.android.exoplayer:exoplayer:r1.5.10'
+}

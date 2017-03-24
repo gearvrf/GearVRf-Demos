@@ -1,5 +1,5 @@
 function onInit(gvrf)
-  local mainScene = gvrf:getNextMainScene()
+  local mainScene = gvrf:getMainScene()
 
   -- 3D model
   local model = gvrf:loadModel("astro_boy.dae")

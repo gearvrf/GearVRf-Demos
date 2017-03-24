@@ -15,14 +15,7 @@
 
 package org.gearvrf.sample.sceneobjects;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
-import android.hardware.Camera;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.PreviewCallback;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -37,18 +30,15 @@ public class SceneObjectActivity extends GVRActivity {
     private SampleMain mMain;
     private long lastDownTime = 0;
     private GVRWebView webView;
-    private Camera camera;
 
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         createWebView();
-        createCameraView();
 
         mMain = new SampleMain(this);
-        setMain(mMain, "gvr.xml");
+        setMain(mMain);
     }
 
     private void createWebView() {
@@ -68,76 +58,14 @@ public class SceneObjectActivity extends GVRActivity {
         });
     }
 
-    private boolean checkCameraHardware(Context context) {
-        return context.getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA);
-    }
-
-    private long prevTime = 0;
-    private PreviewCallback previewCallback = new PreviewCallback() {
-
-        @Override
-        /**
-         * The byte data comes from the android camera in the yuv format. so we
-         * need to convert it to rgba format.
-         */
-        public void onPreviewFrame(byte[] data, Camera camera) {
-            long currentTime = System.currentTimeMillis();
-            Log.d(TAG,
-                    "Preview Frame rate "
-                            + Math.round(1000 / (currentTime - prevTime)));
-            prevTime = currentTime;
-            camera.addCallbackBuffer(previewCallbackBuffer);
-        }
-    };
-
-    private byte[] previewCallbackBuffer = null;
-    private void createCameraView() {
-
-        if (!checkCameraHardware(this)) {
-            android.util.Log.d(TAG, "Camera hardware not available.");
-            return;
-        }
-
-        camera = null;
-
-        try {
-            camera = Camera.open();
-            if (camera != null) {
-                Parameters params = camera.getParameters();
-
-                int bufferSize = params.getPreviewSize().height
-                        * params.getPreviewSize().width
-                        * ImageFormat
-                                .getBitsPerPixel(params.getPreviewFormat()) / 8;
-                previewCallbackBuffer = new byte[bufferSize];
-                camera.addCallbackBuffer(previewCallbackBuffer);
-                camera.setPreviewCallbackWithBuffer(previewCallback);
-                camera.startPreview();
-            }
-        } catch (Exception exception) {
-            android.util.Log.d(TAG, "Camera not available or is in use");
-        }
-    }
-
     GVRView getWebView() {
         return webView;
-    }
-
-    Camera getCamera() {
-        return camera;
     }
 
     @Override
     public void onPause() {
         super.onPause();
         mMain.onPause();
-        if (camera != null) {
-            camera.setPreviewCallback(null);
-            camera.stopPreview();
-            camera.release();
-            camera = null;
-        }
     }
 
     @Override

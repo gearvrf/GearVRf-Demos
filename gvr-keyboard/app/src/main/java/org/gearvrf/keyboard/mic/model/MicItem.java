@@ -27,7 +27,7 @@ public class MicItem extends GVRSceneObject {
 
     public MicItem(GVRContext gvrContext, int gVRAndroidResourceTexture) {
 
-        super(gvrContext, HIGHT, WIDTH, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        super(gvrContext, HIGHT, WIDTH, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 gVRAndroidResourceTexture)));
         setName(SceneObjectNames.MIC_ITEM);
 

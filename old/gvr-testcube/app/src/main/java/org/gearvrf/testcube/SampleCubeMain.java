@@ -15,19 +15,18 @@
 
 package org.gearvrf.testcube;
 
-import java.util.ArrayList;
-import java.util.concurrent.Future;
+import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.testcube.R;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 
-import android.util.Log;
+import java.util.ArrayList;
+import java.util.concurrent.Future;
 
 public class SampleCubeMain extends GVRMain {
 
@@ -38,7 +37,7 @@ public class SampleCubeMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
 
         ArrayList<Future<GVRTexture>> futureTextureList = new ArrayList<Future<GVRTexture>>(
                 6);

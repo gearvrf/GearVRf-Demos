@@ -54,16 +54,7 @@ public class CollisionMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws IOException {
         mAnimationEngine = gvrContext.getAnimationEngine();
 
-        mMainScene = gvrContext.getNextMainScene(new Runnable() {
-
-            @Override
-            public void run() {
-                for (GVRAnimation animation : mAnimations) {
-                    animation.start(mAnimationEngine);
-                }
-                mAnimations = null;
-            }
-        });
+        mMainScene = gvrContext.getMainScene();
 
         mMainScene.setFrustumCulling(true);
 
@@ -107,6 +98,17 @@ public class CollisionMain extends GVRMain {
         counterClockwise(earthRotationObject, 1.5f);
 
         clockwise(mMainScene.getMainCameraRig().getTransform(), 60f);
+
+        closeSplashScreen();
+        for (GVRAnimation animation : mAnimations) {
+            animation.start(mAnimationEngine);
+        }
+        mAnimations = null;
+    }
+
+    @Override
+    public SplashMode getSplashMode() {
+        return SplashMode.MANUAL;
     }
 
     @Override

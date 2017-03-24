@@ -74,7 +74,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getNextMainScene();
+        mScene = context.getMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -83,7 +83,7 @@ public class BalloonMain extends GVRMain {
          */
         GVRSceneObject headTracker = new GVRSceneObject(context,
                 context.createQuad(0.1f, 0.1f),
-                context.loadTexture(new GVRAndroidResource(context, R.drawable.headtrackingpointer)));
+                context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.headtrackingpointer)));
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
         headTracker.getRenderData().setRenderingOrder(100000);

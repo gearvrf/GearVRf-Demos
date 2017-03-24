@@ -54,7 +54,7 @@ public class OutlineMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
-        GVRScene outlineScene = gvrContext.getNextMainScene();
+        GVRScene outlineScene = gvrContext.getMainScene();
         
         try {
           EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);

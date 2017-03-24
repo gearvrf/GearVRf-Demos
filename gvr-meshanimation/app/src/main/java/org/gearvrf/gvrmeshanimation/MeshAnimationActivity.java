@@ -10,6 +10,6 @@ public class MeshAnimationActivity extends GVRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setMain(new MeshAnimationMain(this), "gvr.xml");
+        setMain(new MeshAnimationMain(this));
     }
 }

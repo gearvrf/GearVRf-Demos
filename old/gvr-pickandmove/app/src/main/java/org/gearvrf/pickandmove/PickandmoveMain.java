@@ -15,29 +15,26 @@
 
 package org.gearvrf.pickandmove;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+import android.util.Log;
+import android.view.MotionEvent;
 
 import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.GVRPicker.GVRPickedObject;
 import org.gearvrf.IPickEvents;
-import org.gearvrf.pickandmove.R;
 
-import android.util.Log;
-import android.view.MotionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Future;
 
 public class PickandmoveMain extends GVRMain {
 
@@ -74,7 +71,7 @@ public class PickandmoveMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        mScene = mGVRContext.getNextMainScene();
+        mScene = mGVRContext.getMainScene();
 
         // head-tracking pointer
         GVRSceneObject headTracker = new GVRSceneObject(gvrContext,

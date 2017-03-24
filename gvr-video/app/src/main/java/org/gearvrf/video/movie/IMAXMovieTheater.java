@@ -15,8 +15,6 @@
 
 package org.gearvrf.video.movie;
 
-import android.media.MediaPlayer;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
@@ -26,12 +24,14 @@ import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
+import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 import org.gearvrf.video.shaders.AdditiveShader;
 import org.gearvrf.video.shaders.RadiosityShader;
 
 import java.io.IOException;
 
 public class IMAXMovieTheater extends MovieTheater {
+
 
     GVRSceneObject background = null;
     GVRSceneObject additive = null;
@@ -40,7 +40,7 @@ public class IMAXMovieTheater extends MovieTheater {
     private float mFadeWeight = 0.0f;
     private float mFadeTarget = 1.0f;
 
-    public IMAXMovieTheater(GVRContext context, MediaPlayer player,
+    public IMAXMovieTheater(GVRContext context, GVRVideoSceneObjectPlayer player,
                             GVRExternalTexture screenTexture) {
         super(context);
         try {

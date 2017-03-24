@@ -15,22 +15,21 @@
 
 package org.gearvrf.nonglthreadupdate;
 
-import org.gearvrf.GVRBitmapTexture;
-import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScript;
-import org.gearvrf.debug.GVRConsole;
-import org.gearvrf.debug.GVRConsole.EyeMode;
-import org.gearvrf.nontlthreadupdate.R;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
-public class SampleMain extends GVRScript {
+import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.debug.GVRConsole;
+import org.gearvrf.debug.GVRConsole.EyeMode;
+import org.gearvrf.nontlthreadupdate.R;
+
+public class SampleMain extends GVRMain {
 
     private GVRConsole mConsole;
     GVRBitmapTexture mTexture;
@@ -43,8 +42,8 @@ public class SampleMain extends GVRScript {
         // save context for possible use in onStep(), even though that's empty
         // in this sample
 
-        GVRScene scene = gvrContext.getNextMainScene();
-        mConsole = new GVRConsole(gvrContext, EyeMode.BOTH_EYES, gvrContext.getNextMainScene());
+        GVRScene scene = gvrContext.getMainScene();
+        mConsole = new GVRConsole(gvrContext, EyeMode.BOTH_EYES, gvrContext.getMainScene());
 
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
@@ -72,11 +71,7 @@ public class SampleMain extends GVRScript {
     }
     
     int counter = 0;
-    
-    @Override
-    public void onStep() {
-    }
-    
+
     public void onTapUp(){
         counter++;
         mConsole.clear();

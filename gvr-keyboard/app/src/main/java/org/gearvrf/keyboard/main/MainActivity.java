@@ -49,7 +49,7 @@ public class MainActivity extends GVRActivity implements
         // https://github.com/Samsung/GearVRf/issues/69
         mMain.setActivity(this);
         // mDetector = new VRTouchPadGestureDetector(this);
-        setMain(mMain, "gvr.xml");
+        setMain(mMain);
 
         mDetector = new VRSamplesTouchPadGesturesDetector(this, this);
     }

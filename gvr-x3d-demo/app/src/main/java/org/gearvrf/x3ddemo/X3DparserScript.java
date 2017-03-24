@@ -70,7 +70,7 @@ public class X3DparserScript extends GVRMain
   {
     mGVRContext = gvrContext;
 
-    scene = gvrContext.getNextMainScene();
+    scene = gvrContext.getMainScene();
     scene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
     scene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
 

@@ -29,7 +29,7 @@ public class JassimpModelLoaderActivity extends GVRActivity {
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         viewManager = new JassimpModelLoaderMain();
-        setMain(viewManager, "gvr.xml");
+        setMain(viewManager);
     }
 
     @Override

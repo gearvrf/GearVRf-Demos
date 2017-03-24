@@ -26,7 +26,7 @@ public class BalloonActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setMain(main, "gvr.xml");
+        setMain(main);
     }
 
     @Override

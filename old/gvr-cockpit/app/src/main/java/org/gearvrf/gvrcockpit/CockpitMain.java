@@ -33,7 +33,7 @@ public class CockpitMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
 
         mGVRContext = gvrContext;
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().getTransform()
                 .setPosition(0.0f, 6.0f, 1.0f);
@@ -43,10 +43,10 @@ public class CockpitMain extends GVRMain {
         GVRMesh spaceMesh = mGVRContext.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.gvrf_space_mesh));
 
-        GVRTexture shipTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        GVRTexture shipTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 mGVRContext, R.drawable.gvrf_ship));
         mShipSceneObject = new GVRSceneObject(gvrContext, shipMesh, shipTexture);
-        GVRTexture spaceTexture = gvrContext
+        GVRTexture spaceTexture = gvrContext.getAssetLoader()
                 .loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.gvrf_space));
         mSpaceSceneObject = new GVRSceneObject(gvrContext, spaceMesh,
@@ -55,10 +55,6 @@ public class CockpitMain extends GVRMain {
         mainScene.addSceneObject(mShipSceneObject);
         mainScene.addSceneObject(mSpaceSceneObject);
 
-    }
-
-    @Override
-    public void onStep() {
     }
 
 }

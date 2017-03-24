@@ -48,10 +48,10 @@ public class ModelViewer2Activity extends GVRActivity implements
 
         //SkyBox List
         mManager = new ModelViewer2Manager(this, mPlugin);
-        mPlugin.setCurrentScript(mManager);
+        mPlugin.setMain(mManager);
         mWidget.mManager = mManager;
 
-        setScript(mManager, "gvr.xml");
+        setMain(mManager, "gvr.xml");
     }
 
     @Override

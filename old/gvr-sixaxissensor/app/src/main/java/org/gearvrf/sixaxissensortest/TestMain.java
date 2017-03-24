@@ -32,6 +32,8 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.sixaxissensortest.R;
 
+import java.io.IOException;
+
 public class TestMain extends GVRMain {
 
     private enum State {
@@ -58,18 +60,18 @@ public class TestMain extends GVRMain {
     }
 
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext) throws IOException {
 
         mGVRContext = gvrContext;
         mGyroscope = new Gyroscope(mGVRContext.getContext());
 
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().setCameraRigType(
                 GVRCameraRig.GVRCameraRigType.YawOnly.ID);
 
         GVRMesh cylinderMesh = mGVRContext.loadMesh(new GVRAndroidResource(
-                mGVRContext, R.raw.cylinder_obj));
+                mGVRContext, "cylinder.obj"));
         Bitmap cylinderBitmap = BitmapFactory.decodeResource(mGVRContext
                 .getContext().getResources(), R.drawable.cylinder2);
         GVRSceneObject cylinder = new GVRSceneObject(mGVRContext, cylinderMesh,

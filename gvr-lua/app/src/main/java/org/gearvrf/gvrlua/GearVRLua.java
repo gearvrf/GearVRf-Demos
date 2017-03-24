@@ -37,7 +37,7 @@ public class GearVRLua extends GVRActivity
         // Instantiate your script class
         // Note: you could just use GVRScript if everything is in lua script
         GVRMain main = new GearVRLuaMain();
-        setMain(main, "gvr.xml");
+        setMain(main);
  
         GVRScriptManager sm = getGVRContext().getScriptManager();
 
