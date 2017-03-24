@@ -14,5 +14,5 @@ void main() {
 	}
 		
 	gl_FragColor = texture;
-	gl_FragColor.a = gl_FragColor.a * opacity;
+	//gl_FragColor.a = gl_FragColor.a * 1;
 }
