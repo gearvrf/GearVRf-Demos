@@ -202,7 +202,6 @@ public class Controller {
                 enableDisableLightOnModel(currentDisplayedModel.getModel(context), true);
             }
         } else {
-            //oLight.setDefaultLight();
             oLightFlag = false;
 
             if (currentDisplayedModel != null) {
@@ -589,7 +588,6 @@ public class Controller {
         GVRAnimation animation = null;
 
         if (currentDisplayedModel.getModel(context).getCollider() == holder) {
-            //if (holder == currentDisplayedModel.getModel(context).getEyePointeeHolder()) {
                 Log.d(TAG, "Angle mover applied");
                 if (scrollValue > 0)
                     animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
@@ -597,7 +595,6 @@ public class Controller {
                 else
                     animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
                             (context), 0.1f, 35, 0, -1, 0).start(context.getAnimationEngine());
-            //}
         }
     }
 

@@ -48,7 +48,6 @@ public class PickHandler implements IPickEvents
         }
         PickedObject = null;
         GazeController.disableInteractiveCursor();
-        //Main.clickOut();
     }
 
 

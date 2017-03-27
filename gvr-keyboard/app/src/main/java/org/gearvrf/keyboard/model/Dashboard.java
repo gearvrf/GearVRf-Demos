@@ -73,7 +73,6 @@ public class Dashboard extends GVRSceneObject {
         originalRotationZ = getTransform().getRotationZ();
         originalRotationW = getTransform().getRotationW();
 
-        //attachEyePointeeHolder();
         attachComponent(new GVRSphereCollider(gvrContext));
     }
 
