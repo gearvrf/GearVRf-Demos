@@ -92,55 +92,70 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
     public class PickHandler implements IPickEvents
     {
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        public void onEnter(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
         {
-            if (!keyboard.isEnabled()) {
-
-                interactWithVisibleObjects(sceneObj, pickInfo.getHitLocation());
-            } else {
-
-                keyboard.update(sceneObj);
+            if (keyboard.isEnabled())
+            {
+                keyboard.update(sceneObject);
                 if (spinner != null)
-
-                    answer.spinnerUpdate(sceneObj);
-            }
-
-            mMic.onUpdate(sceneObj);
-        }
-        public void onExit(GVRSceneObject sceneObj){}
-        public void onNoPick(GVRPicker picker) {
-            for (GVRSceneObject object : mGVRContext.getMainScene()
-                    .getWholeSceneObjects()) {
-                if (object instanceof SphereFlag && object.equals(lastSelectedSphereFlag)) {
-                    if (((SphereFlag) object).answerState == SphereStaticList.MOVEABLE) {
-                        restoreObjectToItsDefaultPosition(object);
-                        //this.mDisableSnapSound = false;
-                        lastSelectedSphereFlag = null;
-                    }
+                {
+                    answer.spinnerUpdate(sceneObject);
                 }
+                mMic.onUpdate(sceneObject);
             }
-
-
         }
-        public void onPick(GVRPicker picker) {
 
-            GVRPicker.GVRPickedObject[] picked = picker.getPicked();
-            GVRSceneObject sceneObject = picked[0].getHitObject();
-            if (dashboard != null && lastSelectedSphereFlag != null) {
-                dashboard.onUpdate(sceneObject);
-                if (dashboard.onFocus) {
-                    heightSync();
+        public void onExit(GVRSceneObject sceneObj) { }
+
+        public void onNoPick(GVRPicker picker)
+        {
+            if (lastSelectedSphereFlag != null)
+            {
+                if (lastSelectedSphereFlag.answerState == SphereStaticList.ANSWERING)
+                {
+                    lastSelectedSphereFlag.moveToCursor();
                 }
-            }
-
-            if (sceneObject instanceof SphereFlag && sceneObject.equals(lastSelectedSphereFlag)) {
-                if (((SphereFlag) sceneObject).answerState == SphereStaticList.MOVEABLE) {
-                    restoreObjectToItsDefaultPosition(sceneObject);
+                else if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE)
+                {
+                    restoreObjectToItsDefaultPosition(lastSelectedSphereFlag);
                     //this.mDisableSnapSound = false;
                     lastSelectedSphereFlag = null;
                 }
             }
         }
+
+        public void onPick(GVRPicker picker)
+        {
+            GVRPicker.GVRPickedObject[] picked = picker.getPicked();
+            GVRSceneObject sceneObject = picked[0].getHitObject();
+
+            if (!keyboard.isEnabled() &&
+                (dashboard.hashCode() != sceneObject.hashCode()))
+            {
+                interactWithVisibleObjects(sceneObject, picked[0].getHitLocation());
+            }
+            if (lastSelectedSphereFlag != null)
+            {
+                if (dashboard != null)
+                {
+                    dashboard.onUpdate(sceneObject);
+                    if (dashboard.onFocus)
+                    {
+                        heightSync();
+                    }
+                }
+                if (sceneObject.equals(lastSelectedSphereFlag))
+                {
+                    if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE)
+                    {
+                        restoreObjectToItsDefaultPosition(sceneObject);
+                        //this.mDisableSnapSound = false;
+                        lastSelectedSphereFlag = null;
+                    }
+                }
+            }
+        }
+
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
     }
 
@@ -345,9 +360,6 @@ public class Main extends GVRMain implements KeyboardEventListener {
             lastSelectedSphereFlag.moveToCursor();
         }
 
-        if (dashboard.hashCode() == sceneObject.hashCode()) {
-            return;
-        }
 
         if ((lastSelectedSphereFlag == null || lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING)) {
             // TODO: Fix (SphereFlag) object.getChildByIndex(0) this
