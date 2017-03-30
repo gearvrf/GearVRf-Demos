@@ -11,6 +11,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
@@ -20,6 +21,7 @@ import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.physics.ICollisionEvents;
 
 import java.io.IOException;
+import java.util.List;
 
 public class BulletSampleMain extends GVRMain {
 
@@ -28,16 +30,17 @@ public class BulletSampleMain extends GVRMain {
 
         CollisionHandler() {
             try {
-                blueObject = mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext, "sphereblue.jpg"));
+                blueObject = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "sphereblue.jpg"));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         private void swapTextures(GVRSceneObject sceneObj0) {
-            GVRTexture tmp = sceneObj0.getRenderData().getMaterial().getMainTexture();
+            List<GVRRenderData> rdatas = sceneObj0.getAllComponents(GVRRenderData.getComponentType());
+            GVRTexture tmp = rdatas.get(0).getMaterial().getTexture("diffuseTexture");
 
-            sceneObj0.getRenderData().getMaterial().setMainTexture(blueObject);
+            rdatas.get(0).getMaterial().setTexture("diffuseTexture", blueObject);
 
             blueObject = tmp;
         }

@@ -60,7 +60,6 @@ public class MenuItem extends FocusableSceneObject {
     private final int HOVER_STATE = 1;
 
     private final float SCALE_BIGER_OFFSET = .05f;
-    // private final float SCALE_SMALLER = 1f;
 
     private GVRSceneObject frontObj;
     private GVRSceneObject backgroundObj;
