@@ -118,7 +118,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
                 else if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE)
                 {
                     restoreObjectToItsDefaultPosition(lastSelectedSphereFlag);
-                    //this.mDisableSnapSound = false;
+                    mDisableSnapSound = false;
                     lastSelectedSphereFlag = null;
                 }
             }
@@ -149,7 +149,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
                     if (lastSelectedSphereFlag.answerState == SphereStaticList.MOVEABLE)
                     {
                         restoreObjectToItsDefaultPosition(sceneObject);
-                        //this.mDisableSnapSound = false;
+                        mDisableSnapSound = false;
                         lastSelectedSphereFlag = null;
                     }
                 }
