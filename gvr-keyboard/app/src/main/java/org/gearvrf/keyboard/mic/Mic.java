@@ -27,6 +27,7 @@ import org.gearvrf.keyboard.main.MainActivity;
 import org.gearvrf.keyboard.mic.model.MicItem;
 import org.gearvrf.keyboard.textField.TextField;
 import org.gearvrf.keyboard.util.SceneObjectNames;
+import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
 
@@ -189,7 +190,6 @@ public class Mic extends GVRSceneObject implements RecognitionListener {
 
         // https://github.com/Samsung/GearVRf/issues/102
         if (mMicHitGroupArea != null && mMicHitGroupArea.mHitArea != null) {
-
             boolean seeMeNow = false;
 
             if (mMicHitGroupArea.mHitArea.hashCode() == sceneObject.hashCode()) {

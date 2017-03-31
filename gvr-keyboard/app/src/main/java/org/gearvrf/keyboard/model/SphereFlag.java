@@ -40,6 +40,7 @@ import org.gearvrf.keyboard.shader.SphereShader;
 import org.gearvrf.keyboard.util.Constants;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 import org.gearvrf.keyboard.util.Util;
+import org.gearvrf.utility.Log;
 
 public class SphereFlag extends GVRSceneObject {
 
@@ -74,11 +75,11 @@ public class SphereFlag extends GVRSceneObject {
         initSphere(sphere);
 
         GVRMaterial material = getMaterial();
-
+        
         GVRRenderData renderData = getRenderData(material);
 
         attachRenderData(renderData);
-
+        
         updateMaterial();
     }
 
@@ -115,7 +116,7 @@ public class SphereFlag extends GVRSceneObject {
         float y = 0;
         float z = 0;
 
-
+       
         this.getRenderData().getMaterial().setVec3(SphereShader.LIGHT_KEY,
                 lX - this.getTransform().getPositionX(),
                 lY - this.getTransform().getPositionY(),
@@ -268,14 +269,16 @@ public class SphereFlag extends GVRSceneObject {
         }
     }
 
-    public void snapSphere(float [] hitLocation) {
+    public void snapSphere(float[] hit) {
         if (isUnsnappingSphere) {
             gvrContext.getAnimationEngine().stop(snapAnimation);
             isUnsnappingSphere = false;
         }
-        snapAnimation = new GVRRelativeMotionAnimation(this, 1.2f, hitLocation[0]
+
+        if(hit != null)
+        snapAnimation = new GVRRelativeMotionAnimation(this, 1.2f, hit[0]
                 - getTransform().getPositionX(),
-                hitLocation[1] - getTransform().getPositionY(), 0f).start(gvrContext.getAnimationEngine());
+                hit[1] - getTransform().getPositionY(), 0f).start(gvrContext.getAnimationEngine());
 
     }
 
@@ -421,7 +424,7 @@ public class SphereFlag extends GVRSceneObject {
                 float duration = 0.71f;
                 unsnapSphere(duration);
                 GVRCameraRig cameraObject = getGVRContext().getMainScene().getMainCameraRig()
-                        ;
+                ;
                 float distance = Constants.SPHERE_SELECTION_DISTANCE;
                 float[] newPosition = Util.calculatePointBetweenTwoObjects(
                         cameraObject.getTransform(),
@@ -440,11 +443,11 @@ public class SphereFlag extends GVRSceneObject {
                         .setInterpolator(new InterpolatorExpoEaseInOut())
                         .start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
 
-                    @Override
-                    public void finished(GVRAnimation arg0) {
-                        SphereFlag.this.moveTogetherDashboard = true;
-                    }
-                });
+                            @Override
+                            public void finished(GVRAnimation arg0) {
+                                SphereFlag.this.moveTogetherDashboard = true;
+                            }
+                        });
             }
         }, 0.5f);
     }
@@ -478,7 +481,7 @@ public class SphereFlag extends GVRSceneObject {
                 newPosition[1] - getParent().getTransform().getPositionY(),
                 newPosition[2] - getParent().getTransform().getPositionZ())
                 .setInterpolator(new InterpolatorExpoEaseInOut()).start(
-                getGVRContext().getAnimationEngine());
+                        getGVRContext().getAnimationEngine());
     }
 
     public String getQuestion() {

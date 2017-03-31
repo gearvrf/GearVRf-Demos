@@ -142,24 +142,19 @@ public class TextField extends GVRSceneObject {
         }
     }
 
-    protected TextFieldItem getObjectInHitArea() {
+    protected TextFieldItem getObjectInHitArea(GVRSceneObject sceneObject) {
 
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
-                .getMainScene());
+        for (int i = 0; i < mListFieldItems.size(); i++) {
 
-        for (GVREyePointeeHolder eph : eyePointeeHolders) {
+            if (sceneObject.hashCode() == mListFieldItems.get(i)
+                    .getCollider().getOwnerObject().hashCode()) {
 
-            for (int i = 0; i < mListFieldItems.size(); i++) {
+                currentCharPosition = i;
+                return mListFieldItems.get(i);
 
-                if (eph.getOwnerObject().hashCode() == mListFieldItems.get(i)
-                        .getEyePointeeHolder().getOwnerObject().hashCode()) {
-
-                    currentCharPosition = i;
-                    return mListFieldItems.get(i);
-
-                }
             }
         }
+
         return null;
     }
 
@@ -194,7 +189,6 @@ public class TextField extends GVRSceneObject {
                     character.setText(getGVRContext(), charItem);
                     character.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD - 30);
                     character.getTransform().setPosition(position * TEXT_WIDTH, 0, 0);
-                    //character.attachEyePointeeHolder();
                     character.attachComponent(new GVRSphereCollider(getGVRContext()));
                     mListFieldItems.add(position, character);
                     addChildObject(character);
@@ -221,7 +215,7 @@ public class TextField extends GVRSceneObject {
 
         if (!mListFieldItems.isEmpty()) {
 
-            currentCharSelected = getObjectInHitArea();
+            currentCharSelected = getObjectInHitArea(sceneObject);
 
 
             if (currentCharSelected != null) {
