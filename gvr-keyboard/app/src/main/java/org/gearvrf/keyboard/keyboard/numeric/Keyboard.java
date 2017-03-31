@@ -261,6 +261,8 @@ public class Keyboard extends GVRSceneObject {
                 currentSelection = sceneObject;
             }
 
+            return;
+
         } else {
 
             if (currentSelection != null) {
