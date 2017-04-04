@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
@@ -63,10 +64,11 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
     private void createFocus() {
 
         focus = new FocusableSceneObject(gvrContext, gvrContext.createQuad(15f, 9f),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty)));
         focus.getTransform().setPosition(0f, 3.5f, DinosaurFactory.APATOSAURUS_DISTANCE - 0.01f);
         focus.getTransform().rotateByAxis(-180.0f, 0f, 1f, 0f);
-        focus.attachEyePointeeHolder();
+        focus.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+
         focus.setName("apatosaurus");
         focus.setOnGestureListener(new OnGestureListener() {
 
@@ -124,7 +126,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
     private void createTotem() {
 
         Totem totem = new Totem(getGVRContext(),
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(),
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(),
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(-1f, 0f, -3f);

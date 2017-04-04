@@ -22,6 +22,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.utility.Log;
 
 public class FocusableSceneObject extends GVRSceneObject {
 
@@ -31,21 +32,18 @@ public class FocusableSceneObject extends GVRSceneObject {
     public boolean showInteractiveCursor = true;
     private OnClickListener onClickListener;
     private OnGestureListener onGestureListener;
-    private int focusCount = 0;
+    public float[] hitLocation;
 
     public FocusableSceneObject(GVRContext gvrContext) {
         super(gvrContext);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public FocusableSceneObject(GVRContext gvrContext, GVRMesh gvrMesh, GVRTexture gvrTexture) {
         super(gvrContext, gvrMesh, gvrTexture);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public FocusableSceneObject(GVRContext gvrContext, float width, float height, GVRTexture t) {
         super(gvrContext, width, height, t);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public void dispatchGainedFocus() {
@@ -60,7 +58,6 @@ public class FocusableSceneObject extends GVRSceneObject {
     public void dispatchLostFocus() {
         if (this.focusListener != null) {
             focusListener.lostFocus(this);
-            focusCount = 0;
         }
         if (showInteractiveCursor) {
             GazeController.disableInteractiveCursor();
@@ -68,7 +65,7 @@ public class FocusableSceneObject extends GVRSceneObject {
     }
 
     public void setFocus(boolean state) {
-        if (state == true && focus == false && focusCount > 1) {
+        if (state == true && focus == false) {
             focus = true;
             this.dispatchGainedFocus();
             return;
@@ -83,10 +80,7 @@ public class FocusableSceneObject extends GVRSceneObject {
 
     public void dispatchInFocus() {
         if (this.focusListener != null) {
-            if (focusCount > 1)
-                this.focusListener.inFocus(this);
-            if (focusCount <= 2)
-                focusCount++;
+            this.focusListener.inFocus(this);
         }
         if (showInteractiveCursor) {
             GazeController.enableInteractiveCursor();

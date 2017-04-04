@@ -59,10 +59,10 @@ public class SampleMain extends GVRMain {
                     "cylinder.obj"));
 
             leftScreen = new GVRSceneObject(gvrContext, mesh,
-                    gvrContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                    gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "sample_20140509_l.png")));
             rightScreen = new GVRSceneObject(gvrContext, mesh,
-                    gvrContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                    gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "sample_20140509_r.png")));
         } catch (IOException e) {
             e.printStackTrace();
