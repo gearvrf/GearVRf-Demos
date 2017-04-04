@@ -29,6 +29,7 @@ import org.gearvrf.keyboard.textField.TextField;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Mic extends GVRSceneObject implements RecognitionListener {
 
@@ -182,27 +183,26 @@ public class Mic extends GVRSceneObject implements RecognitionListener {
     }
 
     private void verifyEyePointee() {
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
+        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(this.getGVRContext()
                 .getMainScene());
 
-        if (eyePointeeHolders.length == 0) {
+        if (pickedObjects.size() == 0) {
             tryChangeSeeMe(false);
         } else {
-            handleEyePointeeListNew(eyePointeeHolders);
+            handleEyePointeeListNew(pickedObjects);
         }
     }
 
-    private void handleEyePointeeListNew(GVREyePointeeHolder[] eyePointeeHolders) {
+    private void handleEyePointeeListNew(List<GVRPicker.GVRPickedObject> pickedObjects) {
 
         // https://github.com/Samsung/GearVRf/issues/102
         if (mMicHitGroupArea != null && mMicHitGroupArea.mHitArea != null) {
 
-            for (GVREyePointeeHolder gVREyePointeeHolder : eyePointeeHolders) {
+            for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
 
                 boolean seeMeNow = false;
 
-                if (mMicHitGroupArea.mHitArea.hashCode() == gVREyePointeeHolder.getOwnerObject().hashCode()) {
+                if (mMicHitGroupArea.mHitArea == pickedObject.getHitObject()) {
                     tryChangeSeeMe(true);
                     seeMeNow = true;
                 }

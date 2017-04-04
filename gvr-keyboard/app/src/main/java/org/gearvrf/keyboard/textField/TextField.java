@@ -22,6 +22,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.main.Main;
 import org.gearvrf.keyboard.model.CharItem;
@@ -143,15 +144,15 @@ public class TextField extends GVRSceneObject {
 
     protected TextFieldItem getObjectInHitArea() {
 
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
+        List<GVRPicker.GVRPickedObject> pickedObjects = GVRPicker.findObjects(this.getGVRContext()
                 .getMainScene());
        
-        for (GVREyePointeeHolder eph : eyePointeeHolders) {
+        for (GVRPicker.GVRPickedObject eph : pickedObjects) {
 
             for (int i = 0; i < mListFieldItems.size(); i++) {
 
-                if (eph.getOwnerObject().hashCode() == mListFieldItems.get(i)
-                        .getEyePointeeHolder().getOwnerObject().hashCode()) {
+                if (eph.getHitObject().hashCode() == mListFieldItems.get(i)
+                        .getCollider().getOwnerObject().hashCode()) {
                     
                     currentCharPosition = i;
                     return mListFieldItems.get(i);
@@ -193,7 +194,7 @@ public class TextField extends GVRSceneObject {
                     character.setText(getGVRContext(), charItem);
                     character.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD - 30);
                     character.getTransform().setPosition(position * TEXT_WIDTH, 0, 0);
-                    character.attachEyePointeeHolder();
+                    character.attachComponent(new GVRSphereCollider(getGVRContext()));
                     mListFieldItems.add(position, character);
                     addChildObject(character);
                 }
@@ -212,7 +213,7 @@ public class TextField extends GVRSceneObject {
         mListFieldItems.clear();
     }
 
-    public void spinnerUpdate() {
+    public void spinnerUpdate(Main.PickHandler pickHandler) {
 
         spinner.getSpinnerRoulette().onStep();
 
@@ -228,7 +229,7 @@ public class TextField extends GVRSceneObject {
 
             }
 
-            if (spinner.isHitArea()) {
+            if (pickHandler.wasSpinnerHit()) {
                 tryHideSpinner();
             }
         }

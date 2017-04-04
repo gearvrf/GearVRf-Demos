@@ -30,6 +30,8 @@ import org.gearvrf.keyboard.model.CharList;
 import org.gearvrf.keyboard.textField.TextFieldItem;
 import org.gearvrf.keyboard.util.Util;
 
+import java.util.List;
+
 public class Spinner extends GVRSceneObject {
 
     private static final float Z_DISTANCE = 3 * 0.15f;
@@ -119,26 +121,6 @@ public class Spinner extends GVRSceneObject {
                     this.getGVRContext().getAnimationEngine());
             active = true;
         }
-    }
-
-    public boolean isHitArea() {
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
-                .getMainScene());
-
-        if (eyePointeeHolders.length > 0) {
-
-            for (GVREyePointeeHolder eyePointeeHolder : eyePointeeHolders) {
-
-                if (eyePointeeHolder.hashCode() == spinnerSkeleton.getSpinnerBox()
-                        .getEyePointeeHolder().hashCode()) {
-
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     public void move(TextFieldItem currentChar) {

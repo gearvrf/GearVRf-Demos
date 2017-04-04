@@ -210,7 +210,7 @@ public class ShadowsMain extends GVRMain {
 
     private GVRSceneObject addStormtrooper(GVRScene scene, float x, float y, float z) throws IOException
     {
-        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj");
+        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj", scene);
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
         GVRRenderData rdata = rdatas.get(0);
         GVRSceneObject stormTrooper = rdata.getOwnerObject();
@@ -219,7 +219,6 @@ public class ShadowsMain extends GVRMain {
         stormTrooper.getTransform().setPosition(x, y, z);
         stormTrooper.getTransform().setScale(1.5f, 1.5f, 1.5f);
         stormTrooper.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
-        rdata.setMaterial(createCustomMaterial(mGVRContext, "stormstrooper.jpg"));
         scene.addSceneObject(stormTrooper);
         return stormTrooper;
     }

@@ -47,9 +47,9 @@ public class MultiplexMovieTheater extends MovieTheater {
             // background
             GVRMesh backgroundMesh = context.loadMesh(
                     new GVRAndroidResource(context, "multiplex/theater_background.obj"));
-            GVRTexture backgroundLightOffTexture = context.loadTexture(
+            GVRTexture backgroundLightOffTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "multiplex/theater_background_light_off.jpg"));
-            GVRTexture backgroundLightOnTexture = context.loadTexture(
+            GVRTexture backgroundLightOnTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "multiplex/theater_background_light_on.jpg"));
             background = new GVRSceneObject(context, backgroundMesh, backgroundLightOffTexture);
             background.setName("background");
