@@ -20,6 +20,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 
 public class Dashboard extends GVRSceneObject {
@@ -72,7 +73,7 @@ public class Dashboard extends GVRSceneObject {
         originalRotationZ = getTransform().getRotationZ();
         originalRotationW = getTransform().getRotationW();
 
-        attachEyePointeeHolder();
+        attachComponent(new GVRSphereCollider(gvrContext));
     }
 
     public void resetRotation() {
@@ -86,25 +87,20 @@ public class Dashboard extends GVRSceneObject {
         resetRotation();
     }
 
-    public void onUpdate() {
+    public void onUpdate(GVRSceneObject sceneObject) {
 
         distanceToAnchorPoint = Math.abs(getTransform().getPositionY() - Y_ANCHOR_POINT);
         if (distanceToAnchorPoint <= Y_ANCHOR_POINT_THRESHOLD) {
             this.heightSyncLocked = true;
         }
 
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(getGVRContext()
-                .getMainScene());
-
         float[] lookAt = getGVRContext().getMainScene().getMainCameraRig().getLookAt();
         deltaY = lookAt[1] - lastY;
         lastY = lookAt[1];
 
         onFocus = false;
-        for (GVREyePointeeHolder eph : eyePointeeHolders) {
-            if (eph.getOwnerObject().hashCode() == hashCode()) {
-                onFocus = true;
-            }
+        if (sceneObject.hashCode() == hashCode()) {
+            onFocus = true;
         }
     }
 

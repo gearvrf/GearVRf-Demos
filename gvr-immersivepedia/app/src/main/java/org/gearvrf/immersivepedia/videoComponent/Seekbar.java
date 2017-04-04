@@ -17,6 +17,7 @@ package org.gearvrf.immersivepedia.videoComponent;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -42,21 +43,21 @@ public class Seekbar extends FocusableSceneObject {
         addChildObject(createPlaySide());
         addChildObject(createSeekbarHover());
         setName("seekbar");
-        createEyePointee();
+        createCollider();
     }
 
     private GVRSceneObject createSeekbarHover() {
 
         seekbarHover = new FocusableSceneObject(gvrContext, gvrContext.createQuad(WIDTH, HEIGHT),
-                gvrContext.loadTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         gvrContext.getActivity(), R.drawable.timelime_hover_mask)));
         seekbarHover.getTransform().setPositionZ(.1f);
 
         return seekbarHover;
     }
 
-    private void createEyePointee() {
-        attachEyePointeeHolder();
+    private void createCollider() {
+        attachCollider(new GVRMeshCollider(gvrContext, false));
         seekbarHover.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -70,7 +71,7 @@ public class Seekbar extends FocusableSceneObject {
     }
 
     private GVRSceneObject createPlaySide() {
-        playedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f, HEIGHT / 2), gvrContext.loadTexture(new GVRAndroidResource(
+        playedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f, HEIGHT / 2), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext.getActivity(), R.drawable.timeline_watched)));
 
         playedSide.getRenderData().setRenderingOrder(GVRRenderingOrder.TRANSPARENT + 2);
@@ -92,14 +93,14 @@ public class Seekbar extends FocusableSceneObject {
     }
 
     public void turnOffGUISeekbar() {
-        seekbarHover.detachEyePointeeHolder();
+        seekbarHover.detachCollider();
         new GVROpacityAnimation(this, .1f, 0).start(gvrContext.getAnimationEngine());
         new GVROpacityAnimation(seekbarHover, .1f, 0).start(gvrContext.getAnimationEngine());
         new GVROpacityAnimation(playedSide, .1f, 0).start(gvrContext.getAnimationEngine());
     }
 
     public void turnOnGUISeekbar() {
-        seekbarHover.attachEyePointeeHolder();
+        seekbarHover.attachCollider(new GVRMeshCollider(gvrContext, false));
         new GVROpacityAnimation(this, .1f, 1).start(gvrContext.getAnimationEngine());
         new GVROpacityAnimation(seekbarHover, .1f, 1).start(gvrContext.getAnimationEngine());
         new GVROpacityAnimation(playedSide, .1f, 1).start(gvrContext.getAnimationEngine());

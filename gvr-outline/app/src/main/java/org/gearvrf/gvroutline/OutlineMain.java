@@ -86,7 +86,7 @@ public class OutlineMain extends GVRMain {
           // Create Additional Pass
           // ----------------------------------------------------------------
           // load texture
-          GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(
+          GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                   mGVRContext, mDiffuseTexturePath));
 
           GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.Texture.ID);

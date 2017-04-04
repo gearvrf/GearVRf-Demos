@@ -17,10 +17,15 @@
 package org.gearvrf.video.overlay;
 
 import android.annotation.SuppressLint;
+
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.utility.Log;
+
+import java.io.IOException;
 
 public class Seekbar extends GVRSceneObject {
     private static final float WIDTH = 8.0f;
@@ -36,67 +41,72 @@ public class Seekbar extends GVRSceneObject {
 
     public Seekbar(GVRContext gvrContext) {
         super(gvrContext);
-        getTransform().setPosition(-0.1f, Y, -DEPTH);
+        try {
+            getTransform().setPosition(-0.1f, Y, -DEPTH);
 
-        mPlayedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(
-                1.0f, 0.1f), gvrContext.loadTexture("seekbar/dark-gray.png"));
-        mPlayedSide.getRenderData().setRenderingOrder(
-                GVRRenderingOrder.TRANSPARENT + 2);
-        mPlayedSide.getRenderData().setOffset(true);
-        mPlayedSide.getRenderData().setOffsetFactor(-2.0f);
-        mPlayedSide.getRenderData().setOffsetUnits(-2.0f);
+            mPlayedSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(
+                    1.0f, 0.1f), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "seekbar/dark-gray.png")));
+            mPlayedSide.getRenderData().setRenderingOrder(
+                    GVRRenderingOrder.TRANSPARENT + 2);
+            mPlayedSide.getRenderData().setOffset(true);
+            mPlayedSide.getRenderData().setOffsetFactor(-2.0f);
+            mPlayedSide.getRenderData().setOffsetUnits(-2.0f);
 
-        mLeftSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f,
-                0.1f), gvrContext.loadTexture("seekbar/light-gray.png"));
-        mLeftSide.getRenderData().setRenderingOrder(
-                GVRRenderingOrder.TRANSPARENT + 2);
-        mLeftSide.getRenderData().setOffset(true);
-        mLeftSide.getRenderData().setOffsetFactor(-2.0f);
-        mLeftSide.getRenderData().setOffsetUnits(-2.0f);
+            mLeftSide = new GVRSceneObject(gvrContext, gvrContext.createQuad(1.0f,
+                    0.1f), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "seekbar/light-gray.png")));
+            mLeftSide.getRenderData().setRenderingOrder(
+                    GVRRenderingOrder.TRANSPARENT + 2);
+            mLeftSide.getRenderData().setOffset(true);
+            mLeftSide.getRenderData().setOffsetFactor(-2.0f);
+            mLeftSide.getRenderData().setOffsetUnits(-2.0f);
 
-        mPointer = new GVRSceneObject(gvrContext, gvrContext.createQuad(0.08f,
-                0.3f), gvrContext.loadTexture("seekbar/dark-gray-circle.png"));
-        mPointer.getRenderData().setRenderingOrder(
-                GVRRenderingOrder.TRANSPARENT + 3);
-        mPointer.getRenderData().setOffset(true);
-        mPointer.getRenderData().setOffsetFactor(-3.0f);
-        mPointer.getRenderData().setOffsetUnits(-3.0f);
+            mPointer = new GVRSceneObject(gvrContext, gvrContext.createQuad(0.08f,
+                    0.3f), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "seekbar/dark-gray-circle.png")));
+            mPointer.getRenderData().setRenderingOrder(
+                    GVRRenderingOrder.TRANSPARENT + 3);
+            mPointer.getRenderData().setOffset(true);
+            mPointer.getRenderData().setOffsetFactor(-3.0f);
+            mPointer.getRenderData().setOffsetUnits(-3.0f);
 
-        mGlow = new GVRSceneObject(gvrContext,
-                gvrContext.createQuad(8.8f, 0.5f),
-                gvrContext.loadTexture("seekbar/seekbar-glow.png"));
-        mGlow.getRenderData().setRenderingOrder(
-                GVRRenderingOrder.TRANSPARENT + 1);
-        mGlow.getRenderData().setOffset(true);
-        mGlow.getRenderData().setOffsetFactor(-1.0f);
-        mGlow.getRenderData().setOffsetUnits(-1.0f);
+            mGlow = new GVRSceneObject(gvrContext,
+                    gvrContext.createQuad(8.8f, 0.5f),
+                    gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, "seekbar/seekbar-glow.png")));
+            mGlow.getRenderData().setRenderingOrder(
+                    GVRRenderingOrder.TRANSPARENT + 1);
+            mGlow.getRenderData().setOffset(true);
+            mGlow.getRenderData().setOffsetFactor(-1.0f);
+            mGlow.getRenderData().setOffsetUnits(-1.0f);
 
-        mCurrentTime = new GVRSceneObject(gvrContext, gvrContext.createQuad(
-                2.4f, 0.3f), TextFactory.create(gvrContext, "1111"));
-        mCurrentTime.getTransform().setPosition(-3.2f, -0.3f, 0.0f);
-        mCurrentTime.getRenderData().setRenderingOrder(
-                GVRRenderingOrder.TRANSPARENT + 2);
-        mCurrentTime.getRenderData().setOffset(true);
-        mCurrentTime.getRenderData().setOffsetFactor(-2.0f);
-        mCurrentTime.getRenderData().setOffsetUnits(-2.0f);
+            mCurrentTime = new GVRSceneObject(gvrContext, gvrContext.createQuad(
+                    2.4f, 0.3f), TextFactory.create(gvrContext, "1111"));
+            mCurrentTime.getTransform().setPosition(-3.2f, -0.3f, 0.0f);
+            mCurrentTime.getRenderData().setRenderingOrder(
+                    GVRRenderingOrder.TRANSPARENT + 2);
+            mCurrentTime.getRenderData().setOffset(true);
+            mCurrentTime.getRenderData().setOffsetFactor(-2.0f);
+            mCurrentTime.getRenderData().setOffsetUnits(-2.0f);
 
-        mDuration = new GVRSceneObject(gvrContext, gvrContext.createQuad(2.4f,
-                0.3f), TextFactory.create(gvrContext, "2222"));
-        mDuration.getTransform().setPosition(3.2f, -0.3f, 0.0f);
-        mDuration.getRenderData().setRenderingOrder(
-                GVRRenderingOrder.TRANSPARENT + 2);
-        mDuration.getRenderData().setOffset(true);
-        mDuration.getRenderData().setOffsetFactor(-2.0f);
-        mDuration.getRenderData().setOffsetUnits(-2.0f);
+            mDuration = new GVRSceneObject(gvrContext, gvrContext.createQuad(2.4f,
+                    0.3f), TextFactory.create(gvrContext, "2222"));
+            mDuration.getTransform().setPosition(3.2f, -0.3f, 0.0f);
+            mDuration.getRenderData().setRenderingOrder(
+                    GVRRenderingOrder.TRANSPARENT + 2);
+            mDuration.getRenderData().setOffset(true);
+            mDuration.getRenderData().setOffsetFactor(-2.0f);
+            mDuration.getRenderData().setOffsetUnits(-2.0f);
 
-        addChildObject(mPlayedSide);
-        addChildObject(mLeftSide);
-        addChildObject(mPointer);
-        addChildObject(mGlow);
-        addChildObject(mCurrentTime);
-        addChildObject(mDuration);
-        // glow is hidden at first
-        mGlow.getRenderData().setRenderMask(0);
+            addChildObject(mPlayedSide);
+            addChildObject(mLeftSide);
+            addChildObject(mPointer);
+            addChildObject(mGlow);
+            addChildObject(mCurrentTime);
+            addChildObject(mDuration);
+            // glow is hidden at first
+            mGlow.getRenderData().setRenderMask(0);
+        } catch (IOException e) {
+            Log.e("Video", "Failed to load resource");
+            e.printStackTrace();
+        }
     }
 
     public Float getRatio(float[] lookAt) {

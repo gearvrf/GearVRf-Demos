@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
@@ -201,7 +202,6 @@ public class Controller {
                 enableDisableLightOnModel(currentDisplayedModel.getModel(context), true);
             }
         } else {
-            //oLight.setDefaultLight();
             oLightFlag = false;
 
             if (currentDisplayedModel != null) {
@@ -403,53 +403,61 @@ public class Controller {
         mCharacter.getTransform().setModelMatrix(matrix);
     }
 
-    public void setCameraPositionByNavigator(GVREyePointeeHolder picked, GVRScene scene, GVRScene
+    public void setCameraPositionByNavigator(GVRCollider picked, GVRScene scene, GVRScene
             room, GVRWidgetSceneObject widget, float original[]) {
-        if (picked == null)
-            picked = oDefaultCameraPosition.get(0).cameraModel.getEyePointeeHolder();
-
-        for (int i = 0; i < oDefaultCameraPosition.size(); i++) {
-            if (picked.equals(oDefaultCameraPosition.get(i).cameraModel.getEyePointeeHolder())) {
-
-                // START Code to Attach Menu According to Camera Position
-                scene.removeSceneObject(widget);
-                widget.getTransform().setModelMatrix(original);
-                oDefaultCameraPosition.get(i).cameraModel.addChildObject(widget);
-                Vector3f axis = oDefaultCameraPosition.get(i).getRotationAxis();
-                oDefaultCameraPosition.get(i).cameraModel.getTransform().setRotationByAxis
-                        (oDefaultCameraPosition.get(i).getCameraAngle(), axis.x, axis.y, axis.z);
-
-                float temp[] = widget.getTransform().getModelMatrix();
-                widget.getTransform().setModelMatrix(temp);
-                oDefaultCameraPosition.get(i).cameraModel.removeChildObject(widget);
-                scene.addSceneObject(widget);
-
-                // END Code to Attach Menu According to Camera Position
-
-                Vector3f coordinates = oDefaultCameraPosition.get(i).getCameraPosition();
-                scene.getMainCameraRig().getTransform().setPosition(coordinates.x, coordinates.y,
-                        coordinates.z);
-
-                axis = oDefaultCameraPosition.get(i).getRotationAxis();
-                scene.getMainCameraRig().getTransform().setRotationByAxis(oDefaultCameraPosition
-                        .get(i).getCameraAngle(), axis.x, axis.y, axis.z);
-
-                if (oCurrentPosition != null) {
-                    room.addSceneObject(oCurrentPosition.loadNavigator(context));
+        CameraPosition campos = null;
+        int camIndex = 0;
+        if (picked != null) {
+            for (camIndex = 0; camIndex < oDefaultCameraPosition.size(); camIndex++) {
+                CameraPosition cp = oDefaultCameraPosition.get(camIndex);
+                if (picked.equals(cp.cameraModel.getCollider()))
+                {
+                    campos = cp;
+                    break;
                 }
-
-                Log.i(TAG, "Removing navigator " + Integer.toString(i));
-                room.removeSceneObject(oDefaultCameraPosition.get(i).cameraModel);
-                oCurrentPosition = oDefaultCameraPosition.get(i);
-
-                for (int j = 0; j < oDefaultCameraPosition.size(); j++) {
-                    if (j != i)
-                        lookAt(oDefaultCameraPosition.get(j).cameraModel.getTransform(), scene
-                                .getMainCameraRig().getTransform(), oDefaultCameraPosition.get(j)
-                                .cameraModel);
-                }
-                break;
             }
+            if (campos == null) {
+                return;
+            }
+        }
+        else {
+            campos = oDefaultCameraPosition.get(0);
+        }
+
+        // START Code to Attach Menu According to Camera Position
+        scene.removeSceneObject(widget);
+        widget.getTransform().setModelMatrix(original);
+        campos.cameraModel.addChildObject(widget);
+        Vector3f axis = campos.getRotationAxis();
+        campos.cameraModel.getTransform().setRotationByAxis(campos.getCameraAngle(), axis.x, axis.y, axis.z);
+
+        float temp[] = widget.getTransform().getModelMatrix();
+        widget.getTransform().setModelMatrix(temp);
+        campos.cameraModel.removeChildObject(widget);
+        scene.addSceneObject(widget);
+
+        // END Code to Attach Menu According to Camera Position
+
+        Vector3f coordinates = campos.getCameraPosition();
+        scene.getMainCameraRig().getTransform().setPosition(coordinates.x, coordinates.y,
+                coordinates.z);
+
+        axis = campos.getRotationAxis();
+        scene.getMainCameraRig().getTransform().setRotationByAxis(campos.getCameraAngle(), axis.x, axis.y, axis.z);
+
+        if (oCurrentPosition != null) {
+            room.addSceneObject(oCurrentPosition.loadNavigator(context));
+        }
+
+        Log.i(TAG, "Removing navigator " + Integer.toString(camIndex));
+        room.removeSceneObject(campos.cameraModel);
+        oCurrentPosition = campos;
+
+        for (int j = 0; j < oDefaultCameraPosition.size(); j++) {
+            if (j != camIndex)
+                lookAt(oDefaultCameraPosition.get(j).cameraModel.getTransform(), scene
+                        .getMainCameraRig().getTransform(), oDefaultCameraPosition.get(j)
+                        .cameraModel);
         }
     }
 
@@ -576,11 +584,10 @@ public class Controller {
         removeLoadingInRoom(room);
     }
 
-    void onScrollOverModel(GVREyePointeeHolder holder, float scrollValue) {
+    void onScrollOverModel(GVRCollider holder, float scrollValue) {
         GVRAnimation animation = null;
 
-        if (currentDisplayedModel != null) {
-            if (holder == currentDisplayedModel.getModel(context).getEyePointeeHolder()) {
+        if (currentDisplayedModel.getModel(context).getCollider() == holder) {
                 Log.d(TAG, "Angle mover applied");
                 if (scrollValue > 0)
                     animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
@@ -588,7 +595,6 @@ public class Controller {
                 else
                     animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
                             (context), 0.1f, 35, 0, -1, 0).start(context.getAnimationEngine());
-            }
         }
     }
 

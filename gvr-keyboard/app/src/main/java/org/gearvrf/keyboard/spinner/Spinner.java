@@ -121,23 +121,10 @@ public class Spinner extends GVRSceneObject {
         }
     }
 
-    public boolean isHitArea() {
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
-                .getMainScene());
-
-        if (eyePointeeHolders.length > 0) {
-
-            for (GVREyePointeeHolder eyePointeeHolder : eyePointeeHolders) {
-
-                if (eyePointeeHolder.hashCode() == spinnerSkeleton.getSpinnerBox()
-                        .getEyePointeeHolder().hashCode()) {
-
-                    return false;
-                }
-            }
+    public boolean isHitArea(GVRSceneObject sceneObject) {
+        if (sceneObject.getCollider().hashCode() == spinnerSkeleton.getSpinnerBox().getCollider().hashCode()) {
+            return false;
         }
-
         return true;
     }
 

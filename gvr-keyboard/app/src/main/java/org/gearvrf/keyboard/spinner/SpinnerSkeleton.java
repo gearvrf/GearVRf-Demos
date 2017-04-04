@@ -21,6 +21,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.util.RenderingOrder;
 import org.gearvrf.keyboard.util.SceneObjectNames;
@@ -47,7 +48,7 @@ public class SpinnerSkeleton extends GVRSceneObject {
         spinnerBox.getRenderData().setRenderingOrder(RenderingOrder.SPINNER_BOX);
         spinnerShadow.getRenderData().setRenderingOrder(RenderingOrder.SPINNER_SHADOW);
 
-        spinnerBox.attachEyePointeeHolder();
+        spinnerBox.attachComponent(new GVRSphereCollider(getGVRContext()));
         addChildObject(spinnerBox);
         addChildObject(spinnerShadow);
 

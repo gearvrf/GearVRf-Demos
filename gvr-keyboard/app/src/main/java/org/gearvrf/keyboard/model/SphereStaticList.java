@@ -39,15 +39,6 @@ public class SphereStaticList {
         getSpheres(gvrContext, R.array.spheres);
     }
 
-    public void changeLockStateAllSpheresEyePointee(final boolean lock) {
-        for (GVRSceneObject sphereFlag : listFlag) {
-            if (sphereFlag != null && sphereFlag.getParent() != null
-                    && sphereFlag.getEyePointeeHolder() != null) {
-                sphereFlag.getEyePointeeHolder().setEnable(lock);
-            }
-        }
-    }
-
     public void updateSpheresMaterial() {
 
         for (GVRSceneObject sphereFlag : listFlag) {

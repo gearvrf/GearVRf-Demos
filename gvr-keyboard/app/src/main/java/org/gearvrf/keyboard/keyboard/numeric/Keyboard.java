@@ -228,59 +228,46 @@ public class Keyboard extends GVRSceneObject {
         tapKeyboard();
     }
 
-    public void update() {
-        changeTexture();
+    public void update(GVRSceneObject sceneObject) {
+        changeTexture(sceneObject);
     }
 
     boolean test = true;
 
-    private void changeTexture() {
+    private void changeTexture(GVRSceneObject sceneObject) {
 
-        GVREyePointeeHolder[] holders = GVRPicker.pickScene(getGVRContext().getMainScene());
+        if (currentSelection != null) {
+            setNormalMaterial(currentSelection);
+        }
 
-        if (holders.length <= 1) {
+        currentSelection = null;
+
+        if (sceneObject.hashCode() == Dashboard.currentDashboardHashCode) {
+            return;
+        }
+
+        if (sceneObject instanceof KeyboardItemBase) {
+
+            setHoverMaterial(sceneObject);
+
+            if (sceneObject.equals(currentSelection)) {
+                setHoverMaterial(sceneObject);
+            } else {
+
+                if (currentSelection != null) {
+                    setNormalMaterial(currentSelection);
+                }
+
+                currentSelection = sceneObject;
+            }
+
+        } else {
 
             if (currentSelection != null) {
                 setNormalMaterial(currentSelection);
             }
 
             currentSelection = null;
-        }
-
-        for (GVREyePointeeHolder eph : GVRPicker.pickScene(getGVRContext().getMainScene())) {
-
-            if (eph.getOwnerObject().hashCode() == Dashboard.currentDashboardHashCode) {
-                continue;
-            }
-
-            for (GVRSceneObject object : keyboard.getObjects()) {
-
-                if (eph.getOwnerObject().equals(object)) {
-
-                    setHoverMaterial(object);
-
-                    if (object.equals(currentSelection)) {
-                        setHoverMaterial(object);
-                    } else {
-
-                        if (currentSelection != null) {
-                            setNormalMaterial(currentSelection);
-                        }
-
-                        currentSelection = object;
-                    }
-
-                    break;
-
-                } else {
-
-                    if (currentSelection != null) {
-                        setNormalMaterial(currentSelection);
-                    }
-
-                    currentSelection = null;
-                }
-            }
         }
     }
 

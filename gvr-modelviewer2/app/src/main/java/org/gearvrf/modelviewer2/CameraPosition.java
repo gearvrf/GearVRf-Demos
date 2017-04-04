@@ -2,8 +2,10 @@ package org.gearvrf.modelviewer2;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.util.BoundingBoxCreator;
 import org.joml.Vector3f;
@@ -39,7 +41,7 @@ public class CameraPosition {
             return cameraModel;
 
         try {
-            cameraModel = context.loadModel("camera_icon.obj");
+            cameraModel = context.getAssetLoader().loadModel("camera_icon.obj");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -50,10 +52,8 @@ public class CameraPosition {
     }
 
     private void attachEyePointee(GVRContext context) {
-        GVRSceneObject.BoundingVolume bv = cameraModel.getBoundingVolume();
-        BoundingBoxCreator boundingBox = new BoundingBoxCreator(context, bv);
-        GVREyePointeeHolder playPauseHolder = new GVREyePointeeHolder(context);
-        playPauseHolder.addPointee(new GVRMeshEyePointee(context, boundingBox.getMesh()));
-        cameraModel.attachEyePointeeHolder(playPauseHolder);
+        GVRSphereCollider sphereCollider = new GVRSphereCollider(context);
+        sphereCollider.setRadius(0.5f);
+        cameraModel.attachComponent(sphereCollider);
     }
 }

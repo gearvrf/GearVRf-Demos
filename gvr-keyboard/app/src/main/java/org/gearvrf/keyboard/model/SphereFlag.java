@@ -40,6 +40,7 @@ import org.gearvrf.keyboard.shader.SphereShader;
 import org.gearvrf.keyboard.util.Constants;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 import org.gearvrf.keyboard.util.Util;
+import org.gearvrf.utility.Log;
 
 public class SphereFlag extends GVRSceneObject {
 
@@ -268,12 +269,13 @@ public class SphereFlag extends GVRSceneObject {
         }
     }
 
-    public void snapSphere() {
+    public void snapSphere(float[] hit) {
         if (isUnsnappingSphere) {
             gvrContext.getAnimationEngine().stop(snapAnimation);
             isUnsnappingSphere = false;
         }
-        float[] hit = getParent().getEyePointeeHolder().getHit();
+
+        if(hit != null)
         snapAnimation = new GVRRelativeMotionAnimation(this, 1.2f, hit[0]
                 - getTransform().getPositionX(),
                 hit[1] - getTransform().getPositionY(), 0f).start(gvrContext.getAnimationEngine());

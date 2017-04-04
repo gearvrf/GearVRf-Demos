@@ -22,6 +22,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.main.Main;
 import org.gearvrf.keyboard.model.CharItem;
@@ -141,24 +142,19 @@ public class TextField extends GVRSceneObject {
         }
     }
 
-    protected TextFieldItem getObjectInHitArea() {
+    protected TextFieldItem getObjectInHitArea(GVRSceneObject sceneObject) {
 
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
-                .getMainScene());
-       
-        for (GVREyePointeeHolder eph : eyePointeeHolders) {
+        for (int i = 0; i < mListFieldItems.size(); i++) {
 
-            for (int i = 0; i < mListFieldItems.size(); i++) {
+            if (sceneObject.hashCode() == mListFieldItems.get(i)
+                    .getCollider().getOwnerObject().hashCode()) {
 
-                if (eph.getOwnerObject().hashCode() == mListFieldItems.get(i)
-                        .getEyePointeeHolder().getOwnerObject().hashCode()) {
-                    
-                    currentCharPosition = i;
-                    return mListFieldItems.get(i);
+                currentCharPosition = i;
+                return mListFieldItems.get(i);
 
-                }
             }
         }
+
         return null;
     }
 
@@ -193,7 +189,7 @@ public class TextField extends GVRSceneObject {
                     character.setText(getGVRContext(), charItem);
                     character.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD - 30);
                     character.getTransform().setPosition(position * TEXT_WIDTH, 0, 0);
-                    character.attachEyePointeeHolder();
+                    character.attachComponent(new GVRSphereCollider(getGVRContext()));
                     mListFieldItems.add(position, character);
                     addChildObject(character);
                 }
@@ -212,23 +208,23 @@ public class TextField extends GVRSceneObject {
         mListFieldItems.clear();
     }
 
-    public void spinnerUpdate() {
+    public void spinnerUpdate(GVRSceneObject sceneObject) {
 
         spinner.getSpinnerRoulette().onStep();
 
-  
+
         if (!mListFieldItems.isEmpty()) {
 
-            currentCharSelected = getObjectInHitArea();
-           
-            
+            currentCharSelected = getObjectInHitArea(sceneObject);
+
+
             if (currentCharSelected != null) {
 
                 tryShowSpinner(spinner);
 
             }
 
-            if (spinner.isHitArea()) {
+            if (spinner.isHitArea(sceneObject)) {
                 tryHideSpinner();
             }
         }
@@ -251,11 +247,11 @@ public class TextField extends GVRSceneObject {
     }
 
     private synchronized void tryShowSpinner(Spinner spinner) {
-       
+
         if (!spinner.isActive() && !spinner.isShuttingDown()) {
 
             spinner.on(currentCharSelected.getCharItem().getPosition(), currentCharSelected
-                    .getCharItem().getMode(),
+                            .getCharItem().getMode(),
                     currentCharPosition);
 
             setPositionSpinner(currentCharSelected, spinner);
