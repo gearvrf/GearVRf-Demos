@@ -19,6 +19,7 @@ import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
@@ -114,12 +115,13 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
     }
 
     public PhotoView(GVRContext gvrContext, int photo) {
-        this(gvrContext, WIDTH, HEIGHT, gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        this(gvrContext, WIDTH, HEIGHT, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 photo)));
         this.gvrContext = gvrContext;
         this.photoId = photo;
 
-        attachEyePointeeHolder();
+        this.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+
         this.focusListener = this;
 
     }

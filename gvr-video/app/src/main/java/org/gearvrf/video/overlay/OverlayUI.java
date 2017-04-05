@@ -47,7 +47,7 @@ public class OverlayUI extends GVRSceneObject {
         try {
             // head tracker
             mHeadTracker = new GVRSceneObject(context, context.createQuad(0.5f, 0.5f),
-                    context.loadTexture(new GVRAndroidResource(context, "head-tracker.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "head-tracker.png")));
             mHeadTracker.getTransform().setPositionZ(-9.0f);
             mHeadTracker.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
             mHeadTracker.getRenderData().setDepthTest(false);
@@ -56,7 +56,7 @@ public class OverlayUI extends GVRSceneObject {
 
             // button board
             mButtonBoard = new GVRSceneObject(context, context.createQuad(8.2f, 1.35f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/button-board.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/button-board.png")));
             mButtonBoard.getTransform().setPosition(-0.1f, -0.6f, -8.0f);
             mButtonBoard.getRenderData().setRenderingOrder(
                     GVRRenderData.GVRRenderingOrder.TRANSPARENT);
@@ -64,8 +64,8 @@ public class OverlayUI extends GVRSceneObject {
 
             // play
             mPlayButton = new Button(context, context.createQuad(0.7f, 0.7f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/play-active.png")),
-                    context.loadTexture(new GVRAndroidResource(context, "button/play-inactive.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/play-active.png")),
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/play-inactive.png")));
             mPlayButton.setPosition(0.0f, -0.8f, -8.0f);
             mPlayButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -80,8 +80,8 @@ public class OverlayUI extends GVRSceneObject {
 
             // pause
             mPauseButton = new Button(context, context.createQuad(0.7f, 0.7f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/pause-active.png")),
-                    context.loadTexture(new GVRAndroidResource(context, "button/pause-inactive.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/pause-active.png")),
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/pause-inactive.png")));
             mPauseButton.setPosition(0.0f, -0.8f, -8.0f);
             mPauseButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -96,8 +96,8 @@ public class OverlayUI extends GVRSceneObject {
 
             // next
             mFrontButton = new Button(context, context.createQuad(0.7f, 0.7f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/front-active.png")),
-                    context.loadTexture(new GVRAndroidResource(context, "button/front-inactive.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/front-active.png")),
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/front-inactive.png")));
             mFrontButton.setPosition(1.2f, -0.8f, -8.0f);
             mFrontButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -111,8 +111,8 @@ public class OverlayUI extends GVRSceneObject {
 
             // prev
             mBackButton = new Button(context, context.createQuad(0.7f, 0.7f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/back-active.png")),
-                    context.loadTexture(new GVRAndroidResource(context, "button/back-inactive.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/back-active.png")),
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/back-inactive.png")));
             mBackButton.setPosition(-1.2f, -0.8f, -8.0f);
             mBackButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -126,8 +126,8 @@ public class OverlayUI extends GVRSceneObject {
 
             // imax
             mImaxButton = new Button(context, context.createQuad(0.9f, 0.35f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/imaxselect.png")),
-                    context.loadTexture(new GVRAndroidResource(context, "button/imaxoutline.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/imaxselect.png")),
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/imaxoutline.png")));
             mImaxButton.setPosition(2.5f, -0.9f, -7.5f);
             mImaxButton.setOnClickListener(new OnClickListener() {
                 @Override
@@ -139,8 +139,8 @@ public class OverlayUI extends GVRSceneObject {
 
             // select
             mSelectButton = new Button(context, context.createQuad(0.9f, 0.35f),
-                    context.loadTexture(new GVRAndroidResource(context, "button/selectionselect.png")),
-                    context.loadTexture(new GVRAndroidResource(context, "button/selectionoutline.png")));
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/selectionselect.png")),
+                    context.getAssetLoader().loadTexture(new GVRAndroidResource(context, "button/selectionoutline.png")));
             mSelectButton.setPosition(-2.5f, -0.9f, -7.5f);
             mSelectButton.setOnClickListener(new OnClickListener() {
                 @Override

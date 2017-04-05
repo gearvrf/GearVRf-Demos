@@ -21,17 +21,16 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPicker.GVRPickedObject;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 
 import java.io.IOException;
@@ -134,7 +133,7 @@ public class ViewerMain extends GVRMain {
 
         try {
             GVRTexture env_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext, "env.jpg"));
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "env.jpg"));
             mReflectionMaterial = new GVRMaterial(mGVRContext,
                     mReflectionShader.getShaderId());
             mReflectionMaterial.setVec4(ReflectionShader.COLOR_KEY, 1.0f, 1.0f,
@@ -161,7 +160,7 @@ public class ViewerMain extends GVRMain {
             mGlassMaterial.setTexture(GlassShader.TEXTURE_KEY, env_tex);
 
             GVRTexture board_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "watch/board.jpg"));
             mDiffuseMaterial = new GVRMaterial(mGVRContext,
                     mDiffuseShader.getShaderId());
@@ -179,7 +178,7 @@ public class ViewerMain extends GVRMain {
 
             // car
             GVRTexture car_body_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/body.jpg"));
             mCarBodyMaterial = new GVRMaterial(mGVRContext,
                     mPhongShader3.getShaderId());
@@ -202,7 +201,7 @@ public class ViewerMain extends GVRMain {
             mCarGlassMaterial.setTexture(GlassShader2.TEXTURE_KEY, env_tex);
 
             GVRTexture default_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/default.png"));
             mCarTireMaterial = new GVRMaterial(mGVRContext,
                     mDiffuseShader2.getShaderId());
@@ -212,7 +211,7 @@ public class ViewerMain extends GVRMain {
                     .setTexture(DiffuseShader2.TEXTURE_KEY, default_tex);
 
             GVRTexture back_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/back.jpg"));
             mCarBackMaterial = new GVRMaterial(mGVRContext,
                     mDiffuseShader2.getShaderId());
@@ -221,7 +220,7 @@ public class ViewerMain extends GVRMain {
             mCarBackMaterial.setTexture(DiffuseShader2.TEXTURE_KEY, back_tex);
 
             GVRTexture grill_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/grill.jpg"));
             mCarGrillMaterial = new GVRMaterial(mGVRContext,
                     mDiffuseShader2.getShaderId());
@@ -245,7 +244,7 @@ public class ViewerMain extends GVRMain {
 
             // robot
             GVRTexture robot_head_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "robot/head.jpg"));
             mRobotHeadMaterial = new GVRMaterial(mGVRContext,
                     mPhongShader3.getShaderId());
@@ -277,7 +276,7 @@ public class ViewerMain extends GVRMain {
 
             // leaf
             GVRTexture leaf_box_tex = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "leaf/box.jpg"));
             mLeafBoxMaterial = new GVRMaterial(mGVRContext,
                     mPhongShader3.getShaderId());
@@ -512,19 +511,19 @@ public class ViewerMain extends GVRMain {
             // thumbnails
 
             ThumbnailTextures[0] = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "leaf/leaf.jpg"));
             ThumbnailTextures[1] = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "jar/jar.png"));
             ThumbnailTextures[2] = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "watch/watch.png"));
             ThumbnailTextures[3] = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/car.png"));
             ThumbnailTextures[4] = mGVRContext
-                    .loadTexture(new GVRAndroidResource(mGVRContext,
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "robot/robot.jpg"));
 
             ThumbnailTargetPosition[0][0] = -2.2f;
@@ -587,15 +586,10 @@ public class ViewerMain extends GVRMain {
                         ThumbnailTargetPosition[i][2]);
                 mainScene.addSceneObject(ThumbnailObject[i]);
 
-                GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(
-                        gvrContext);
-                GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(
-                        gvrContext, picks_mesh);
-                eyePointeeHolder.addPointee(eyePointee);
-                ThumbnailObject[i].attachEyePointeeHolder(eyePointeeHolder);
+                ThumbnailObject[i].attachComponent(new GVRSphereCollider(mGVRContext));
             }
 
-            GVRTexture m360 = mGVRContext.loadTexture(new GVRAndroidResource(
+            GVRTexture m360 = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                     mGVRContext, "env.jpg"));
             GVRMesh sphere = mGVRContext.loadMesh(new GVRAndroidResource(
                     mGVRContext, "sphere.obj"));
@@ -607,7 +601,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
                     gvrContext.createQuad(0.1f, 0.1f),
-                    gvrContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                    gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "Headtracking_pointer.png")));
             headTracker.getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
             headTracker.getRenderData().setDepthTest(false);

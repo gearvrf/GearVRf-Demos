@@ -74,12 +74,12 @@ public class GalleryMain extends GVRMain {
                 mGVRContext, R.raw.sphere_mesh));
 
         GVRSceneObject leftScreen = new GVRSceneObject(mGVRContext, sphereMesh,
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.left_screen)));
         leftScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         leftScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
         GVRSceneObject rightScreen = new GVRSceneObject(mGVRContext,
-                sphereMesh, mGVRContext.loadTexture(new GVRAndroidResource(
+                sphereMesh, mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.right_screen)));
         rightScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         rightScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
@@ -93,7 +93,7 @@ public class GalleryMain extends GVRMain {
                 R.drawable.photo_5, R.drawable.photo_6, R.drawable.photo_7,
                 R.drawable.photo_8, R.drawable.photo_9 };
         for (int id : resourceIds) {
-            numberTextures.add(mGVRContext.loadTexture(new GVRAndroidResource(
+            numberTextures.add(mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                     mGVRContext, id)));
         }
 
