@@ -11,7 +11,7 @@ public class HorzBlurShader  extends GVRShaderTemplate
 
     public  HorzBlurShader(GVRContext context)
     {
-        super("float u_resolution", 300);
+        super("float u_resolution");
         fragTemplate = TextFile.readTextFile(context.getContext(), R.raw.gaussianblurhorz);
         vtxTemplate = TextFile.readTextFile(context.getContext(), R.raw.pos_tex);
 

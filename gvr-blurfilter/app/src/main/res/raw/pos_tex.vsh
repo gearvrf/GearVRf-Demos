@@ -1,8 +1,8 @@
 
-in vec3 a_position;
-in vec2 a_texcoord;
+attribute vec3 a_position;
+attribute vec2 a_texcoord;
 
-out vec2 vTextureCoord;
+varying vec2 vTextureCoord;
 
 void main()
 {
