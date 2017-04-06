@@ -58,7 +58,6 @@ public class Seekbar extends FocusableSceneObject {
 
     private void createCollider() {
         attachCollider(new GVRMeshCollider(gvrContext, false));
-        //attachCollider(new GVRMeshCollider(getRenderData().getMesh()));
         seekbarHover.setOnClickListener(new OnClickListener() {
 
             @Override

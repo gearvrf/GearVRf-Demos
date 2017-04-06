@@ -122,7 +122,7 @@ public class Spinner extends GVRSceneObject {
     }
 
     public boolean isHitArea(GVRSceneObject sceneObject) {
-        if (sceneObject.hashCode() == spinnerSkeleton.getSpinnerBox().getCollider().hashCode()) {
+        if (sceneObject.getCollider().hashCode() == spinnerSkeleton.getSpinnerBox().getCollider().hashCode()) {
             return false;
         }
         return true;

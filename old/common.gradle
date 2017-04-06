@@ -87,6 +87,7 @@ project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 
 if(rootProject.useLocalDependencies) {
     dependencies {
+        compile 'com.google.code.gson:gson:2.7'
         compile "org.joml:joml-android:${jomlVersion}"
         debugCompile(name: 'framework-debug', ext: 'aar')
         releaseCompile(name: 'framework-release', ext: 'aar')
@@ -110,6 +111,7 @@ if(rootProject.useLocalDependencies) {
     }
 } else if(rootProject.hasProperty("buildGvrfAndDemos")) {
     dependencies {
+        compile 'com.google.code.gson:gson:2.7'
         compile "org.joml:joml-android:${jomlVersion}"
         compile project (':framework')
 
@@ -128,6 +130,7 @@ if(rootProject.useLocalDependencies) {
     }
 } else {
     dependencies {
+        compile 'com.google.code.gson:gson:2.7'
         compile "org.joml:joml-android:${jomlVersion}"
         compile "org.gearvrf:framework:$gearvrfVersion"
 

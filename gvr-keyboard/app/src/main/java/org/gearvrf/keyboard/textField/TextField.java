@@ -147,7 +147,7 @@ public class TextField extends GVRSceneObject {
         for (int i = 0; i < mListFieldItems.size(); i++) {
 
             if (sceneObject.hashCode() == mListFieldItems.get(i)
-                    .getCollider().hashCode()) {
+                    .getCollider().getOwnerObject().hashCode()) {
 
                 currentCharPosition = i;
                 return mListFieldItems.get(i);

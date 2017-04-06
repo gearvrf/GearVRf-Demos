@@ -216,8 +216,6 @@ public class VideoComponent extends GVRSceneObject {
     }
 
     public void forwardOrRewindVideo() {
-
-        //float x = seekbar.getEyePointeeHolder().getHit()[0];
         float x = seekbar.hitLocation[0];
         float posX = Seekbar.WIDTH / 2 + x;
         int current = (int) (mediaPlayer.getDuration() * posX / Seekbar.WIDTH);

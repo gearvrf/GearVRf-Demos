@@ -78,7 +78,6 @@ public class Main extends GVRMain {
     public void onStep() {
 
         TouchPadInput.process();
-        //FocusableController.process(mGvrContext, mPickHandler);
         FPSCounter.tick();
 
         if (mGvrContext.getMainScene().equals(dinosaurScene)) {
