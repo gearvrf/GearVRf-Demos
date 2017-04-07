@@ -21,10 +21,12 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderTemplate;
 
 import java.io.IOException;
 
@@ -79,7 +81,7 @@ public class SampleMain extends GVRMain {
                     GVRSceneObject sceneObject = getColorMesh(1.0f, mesh);
                     sceneObject.getTransform().setPosition(1.0f*x, 1.0f*y, -5.0f);
                     sceneObject.getTransform().setScale(0.5f, 0.5f, 1.0f);
-                    scene.addSceneObject(sceneObject); 
+                    scene.addSceneObject(sceneObject);
                 }
 
             }
@@ -99,14 +101,21 @@ public class SampleMain extends GVRMain {
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
         GVRMaterial material = new GVRMaterial(mGVRContext,
-                mColorShader.getShaderId());
+                GVRMaterial.GVRShaderType.BeingGenerated.ID);
         material.setVec4(ColorShader.COLOR_KEY, 1.0f,
                 0.0f, 1.0f, 1.0f);
 
-        GVRSceneObject meshObject = null;
-        meshObject = new GVRSceneObject(mGVRContext, mesh);
+        GVRRenderData renderData = new GVRRenderData(mGVRContext);
+        renderData.setMaterial(material);
+        renderData.setMesh(mesh);
+        GVRSceneObject meshObject = new GVRSceneObject(mGVRContext);
+        meshObject.attachRenderData(renderData);
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
+
+        GVRMaterialShaderManager shaderManager = mGVRContext.getMaterialShaderManager();
+        GVRShaderTemplate shaderTemplate = shaderManager.retrieveShaderTemplate(ColorShader.class);
+        shaderTemplate.bindShader(mGVRContext, meshObject.getRenderData(), getGVRContext().getMainScene());
 
         return meshObject;
     }

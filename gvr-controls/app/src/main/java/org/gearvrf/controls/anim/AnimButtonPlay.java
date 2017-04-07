@@ -18,6 +18,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.focus.ControlSceneObject;
+import org.gearvrf.controls.input.Button;
 import org.gearvrf.controls.shaders.ButtonShader;
 import org.gearvrf.controls.util.RenderingOrder;
 
@@ -34,8 +35,9 @@ public class AnimButtonPlay extends ControlSceneObject {
 
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(
-                new GVRMaterial(gvrContext, new ButtonShader(gvrContext).getShaderId()));
+                new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
         getRenderData().setMesh(sMesh);
+        getRenderData().setShaderTemplate(ButtonShader.class);
         createTextures(gvrContext);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);

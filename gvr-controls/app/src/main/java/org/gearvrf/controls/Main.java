@@ -20,6 +20,7 @@ import android.graphics.Color;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRScene;
@@ -202,11 +203,13 @@ public class Main extends GVRMain {
         parameters.setMagFilterType(TextureFilterType.GL_LINEAR);
 
         GVRMesh mesh = mGVRContext.createQuad(GROUND_SIZE, GROUND_SIZE);
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.ground_512), parameters);
 
-        ground = new GVRSceneObject(mGVRContext, mesh, texture,
-                new TileShader(mGVRContext).getShaderId());
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        ground = new GVRSceneObject(mGVRContext, mesh, texture);
+        ground.getRenderData().setMaterial(material);
+        ground.getRenderData().setShaderTemplate(TileShader.class);
         ground.getTransform().setPositionY(GROUND_Y_POSITION);
         ground.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         ground.getTransform().setRotationByAxis(-45, 0, 0, 1);

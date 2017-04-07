@@ -68,9 +68,9 @@ public class MotionButton extends MenuControlSceneObject {
         HEIGHT = (int) (100.0f * quadHeigth);
    
         attachRenderData(new GVRRenderData(gvrContext));
-        getRenderData().setMaterial(new GVRMaterial(gvrContext, new ButtonShader(gvrContext).getShaderId()));
+        getRenderData().setMaterial(new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
         getRenderData().setMesh(sMesh);
-        
+        getRenderData().setShaderTemplate(ButtonShader.class);
         createTextures();
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);

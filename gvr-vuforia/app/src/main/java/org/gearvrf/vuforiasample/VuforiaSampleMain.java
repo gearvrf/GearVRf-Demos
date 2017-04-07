@@ -175,15 +175,15 @@ public class VuforiaSampleMain extends GVRMain {
             modelShader = new ModelShader(gvrContext);
             GVRMesh teapotMesh = gvrContext.loadMesh(
                     new GVRAndroidResource(gvrContext, "teapot.obj"));
-            GVRTexture teapotTexture = gvrContext.loadTexture(
+            GVRTexture teapotTexture = gvrContext.getAssetLoader().loadTexture(
                     new GVRAndroidResource(gvrContext.getContext(), "teapot_tex1.jpg"));
             teapot = new GVRSceneObject(gvrContext, teapotMesh);
 
-            GVRMaterial material = new GVRMaterial(gvrContext, modelShader.getShaderId());
+            GVRMaterial material = new GVRMaterial(gvrContext, GVRShaderType.BeingGenerated.ID);
             material.setTexture(ModelShader.TEXTURE_KEY, teapotTexture);
 
             teapot.getRenderData().setMaterial(material);
-
+            teapot.getRenderData().setShaderTemplate(ModelShader.class);
             teapot.getRenderData().setDepthTest(false);
             teapot.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
             teapot.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);

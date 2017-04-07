@@ -15,13 +15,14 @@
 
 package org.gearvrf.keyboard.shader;
 
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.keyboard.R;
+import android.content.Context;
 
-public class SphereShader {
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.keyboard.R;
+import org.gearvrf.utility.TextFile;
+
+public class SphereShader extends GVRShaderTemplate{
 
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
@@ -32,27 +33,12 @@ public class SphereShader {
     public static final String BLUR_INTENSITY = "blur";
     public static final String HDRI_TEXTURE_KEY = "hdri_texture";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public SphereShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.sphereshader_vertex, R.raw.sphereshader_fragment);
-
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec3Key(LIGHT_KEY, LIGHT_KEY);
-        mCustomShader.addUniformVec3Key(TRANSITION_COLOR, TRANSITION_COLOR);
-        mCustomShader.addUniformVec3Key(EYE_KEY, EYE_KEY);
-        mCustomShader.addTextureKey("texture", TEXTURE_KEY);
-        mCustomShader.addTextureKey(SECUNDARY_TEXTURE_KEY, SECUNDARY_TEXTURE_KEY);
-        mCustomShader.addUniformFloatKey(ANIM_TEXTURE, ANIM_TEXTURE);
-        mCustomShader.addUniformFloatKey(BLUR_INTENSITY, BLUR_INTENSITY);
-        mCustomShader.addTextureKey("hdri_texture", HDRI_TEXTURE_KEY);
+        super("float3 u_eye, float3 u_light, float3 trans_color, float animTexture, float blur, float u_radius, sampler2D texture_t sampler2D second_texture sampler2D HDRI_texture");
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.sphereshader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.sphereshader_vertex));
 
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
-    }
 }

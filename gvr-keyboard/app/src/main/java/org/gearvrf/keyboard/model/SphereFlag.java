@@ -77,7 +77,7 @@ public class SphereFlag extends GVRSceneObject {
         GVRMaterial material = getMaterial();
         
         GVRRenderData renderData = getRenderData(material);
-
+        renderData.setShaderTemplate(SphereShader.class);
         attachRenderData(renderData);
         
         updateMaterial();
@@ -126,8 +126,8 @@ public class SphereFlag extends GVRSceneObject {
     }
 
     private GVRMaterial getMaterial() {
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        material.setShaderType(new SphereShader(gvrContext).getShaderId());
+        GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        //material.setShaderType(new SphereShader(gvrContext).getShaderId());
         material.setTexture(SphereShader.TEXTURE_KEY,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, mTexture)));
         material.setFloat("blur", 0);
@@ -138,7 +138,7 @@ public class SphereFlag extends GVRSceneObject {
         material.setVec3(SphereShader.EYE_KEY, 0, 0, 0);
 
         // Light config
-        GVRTexture hdriTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture hdriTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.hdri_reflex));
         material.setTexture(SphereShader.HDRI_TEXTURE_KEY, hdriTexture);
 

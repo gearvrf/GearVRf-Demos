@@ -29,9 +29,8 @@ public class KeyboardSoftItem extends KeyboardItemBase {
         setName(SceneObjectNames.KEYBOARD_ITEM);
 
         this.keyboardCharItem = mCharItem;
-        
-        TransparentButtonShaderThreeStates dif = new TransparentButtonShaderThreeStates(gvrContext);
-        createTextures(dif);
+
+        createTextures();
 
         configureTextures();
     }

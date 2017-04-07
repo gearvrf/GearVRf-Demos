@@ -26,7 +26,6 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.keyboard.model.KeyboardCharItem;
-import org.gearvrf.keyboard.shader.TransparentButtonShaderBase;
 import org.gearvrf.keyboard.shader.TransparentButtonShaderThreeStates;
 import org.gearvrf.keyboard.util.GVRTextBitmapFactory;
 import org.gearvrf.keyboard.util.RenderingOrder;
@@ -55,7 +54,7 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
         return styleItem.getSizeQuadWidth() + styleItem.getSpace();
     }
 
-    public void createTextures(TransparentButtonShaderBase dif) {
+    public void createTextures() {
 
         GVRRenderData renderData = new GVRRenderData(getGVRContext());
 
@@ -63,10 +62,10 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
                 Util.convertPixelToVRFloatValue(styleItem.getSizeQuadWidth()),
                 Util.convertPixelToVRFloatValue(styleItem.getSizeQuadHeight()));
 
-        GVRMaterial mat = new GVRMaterial(getGVRContext(), dif.getShaderId());
+        GVRMaterial mat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.BeingGenerated.ID);
         renderData.setMesh(mesh);
         renderData.setMaterial(mat);
-
+        renderData.setShaderTemplate(TransparentButtonShaderThreeStates.class);
         attachRenderData(renderData);
 
         getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD);
