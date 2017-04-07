@@ -127,7 +127,6 @@ public class SphereFlag extends GVRSceneObject {
 
     private GVRMaterial getMaterial() {
         GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        //material.setShaderType(new SphereShader(gvrContext).getShaderId());
         material.setTexture(SphereShader.TEXTURE_KEY,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, mTexture)));
         material.setFloat("blur", 0);

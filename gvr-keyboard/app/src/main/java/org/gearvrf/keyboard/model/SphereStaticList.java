@@ -39,7 +39,6 @@ public class SphereStaticList {
         getSpheres(gvrContext, R.array.spheres);
     }
 
-
     public void updateSpheresMaterial() {
 
         for (GVRSceneObject sphereFlag : listFlag) {

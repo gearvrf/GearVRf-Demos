@@ -74,7 +74,7 @@ public class SampleMain extends GVRMain {
 
             GVRMesh mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
                     "bunny.obj"));
-            
+
             final int OBJECTS_CNT = 5;
             for (int x=-OBJECTS_CNT; x<=OBJECTS_CNT; ++x) {
                 for (int y=-OBJECTS_CNT; y<=OBJECTS_CNT; ++y) {
