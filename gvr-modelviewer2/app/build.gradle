@@ -25,7 +25,7 @@ android {
 }
 
 dependencies {
-    if(rootProject.useLocalDependencies || rootProject.buildGvrfAndDemos) {
+    if(rootProject.useLocalDependencies || (rootProject.hasProperty("buildGvrfAndDemos") && rootProject.buildGvrfAndDemos)) {
         compile(name: 'widgetplugin-debug', ext: 'aar')
     } else {
         compile "org.gearvrf:widgetplugin:$gearvrfVersion"
