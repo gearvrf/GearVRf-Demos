@@ -5,8 +5,8 @@
 #### Getting the source code ####
 
 There are two options:
-- Clone the 3.1 branch: ``git clone -b release_v3.1 git@github.com:gearvrf/GearVRf-Demos.git``
-- Download a zip archive: open https://github.com/gearvrf/GearVRf-Demos/tree/release_v3.1 and then select "Download ZIP"
+- Clone the 3.2 branch: ``git clone -b release_v3.2 git@github.com:gearvrf/GearVRf-Demos.git``
+- Download a zip archive: open https://github.com/gearvrf/GearVRf-Demos/tree/release_v3.2 and then select "Download ZIP"
 
 Building and running:
 - In Android Studio select File->New->Import Project and choose the GearVRf-Demos folder. Android Studio lets you browse the code and install and execute any of the demos.
