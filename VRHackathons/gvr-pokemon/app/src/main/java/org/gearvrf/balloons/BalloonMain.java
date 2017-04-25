@@ -19,7 +19,6 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
-import android.provider.MediaStore;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -136,9 +135,8 @@ public class BalloonMain extends GVRMain {
         }        /*
          * Set the background color
          */
-        mScene = context.getNextMainScene();
-        mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
-        mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
+        mScene = context.getMainScene();
+        mScene.setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
         /*
          * Set the camera passthrough
@@ -302,10 +300,6 @@ public class BalloonMain extends GVRMain {
         scoreBoard.setBackgroundColor(Color.TRANSPARENT);
 
         return scoreBoard;
-    }
-
-    @Override
-    public void onStep() {
     }
 
     public void onTouchEvent(MotionEvent event)
