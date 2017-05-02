@@ -26,6 +26,9 @@ public class MainActivity extends GVRActivity {
             quad.getTransform().setPosition(0, 0, -3);
 
             gvrContext.getMainScene().addSceneObject(quad);
+            
+            //Set background colour to white
+            gvrContext.getMainScene().setBackgroundColor(255, 255, 255, 0);            
         }
 
         @Override
