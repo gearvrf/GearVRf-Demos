@@ -82,49 +82,52 @@ if(!rootProject.hasProperty("useLocalDependencies")) {
     }
 }
 
-ext.gearvrfVersion='3.1.2-SNAPSHOT'
+ext.gearvrfVersion='3.2.1-SNAPSHOT'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 
 if(rootProject.useLocalDependencies) {
     dependencies {
         compile 'com.google.code.gson:gson:2.7'
         compile "org.joml:joml-android:${jomlVersion}"
-        debugCompile(name: 'framework-debug', ext: 'aar')
-        releaseCompile(name: 'framework-release', ext: 'aar')
+
+        if (findProject(':framework')) {
+            compile project(':framework')
+        } else {
+            debugCompile(name: 'framework-debug', ext: 'aar')
+            releaseCompile(name: 'framework-release', ext: 'aar')
+        }
 
         if (rootProject.hasProperty("only_daydream")) {
-            debugCompile(name: 'backend_daydream-debug', ext: 'aar')
-            releaseCompile(name: 'backend_daydream-release', ext: 'aar')
-            compile 'com.google.vr:sdk-base:1.30.0'
-        } else {
-            if (rootProject.hasProperty("no_oculus")) {
-                debugCompile(name: 'backend-debug', ext: 'aar')
-                releaseCompile(name: 'backend-release', ext: 'aar')
-            } else { //default oculus+daydream
+            if (findProject(':backend_daydream')) {
+                compile project(':backend_daydream')
+            } else {
                 debugCompile(name: 'backend_daydream-debug', ext: 'aar')
                 releaseCompile(name: 'backend_daydream-release', ext: 'aar')
-                compile 'com.google.vr:sdk-base:1.30.0'
-                debugCompile(name: 'backend_oculus-debug', ext: 'aar')
-                releaseCompile(name: 'backend_oculus-release', ext: 'aar')
             }
-        }
-    }
-} else if(rootProject.hasProperty("buildGvrfAndDemos")) {
-    dependencies {
-        compile 'com.google.code.gson:gson:2.7'
-        compile "org.joml:joml-android:${jomlVersion}"
-        compile project (':framework')
-
-        if (rootProject.hasProperty("only_daydream")) {
-            compile project (':backend_daydream')
             compile 'com.google.vr:sdk-base:1.30.0'
         } else {
             if (rootProject.hasProperty("no_oculus")) {
-                compile project (':backend')
+                if (findProject(':backend')) {
+                    compile project(':backend')
+                } else {
+                    debugCompile(name: 'backend-debug', ext: 'aar')
+                    releaseCompile(name: 'backend-release', ext: 'aar')
+                }
             } else { //default oculus+daydream
-                compile project(':backend_oculus')
-                compile project(':backend_daydream')
+                if (findProject(':backend_daydream')) {
+                    compile project(':backend_daydream')
+                } else {
+                    debugCompile(name: 'backend_daydream-debug', ext: 'aar')
+                    releaseCompile(name: 'backend_daydream-release', ext: 'aar')
+                }
                 compile 'com.google.vr:sdk-base:1.30.0'
+
+                if (findProject(':backend_oculus')) {
+                    compile project(':backend_oculus')
+                } else {
+                    debugCompile(name: 'backend_oculus-debug', ext: 'aar')
+                    releaseCompile(name: 'backend_oculus-release', ext: 'aar')
+                }
             }
         }
     }
@@ -144,4 +147,3 @@ if(rootProject.useLocalDependencies) {
         }
     }
 }
-

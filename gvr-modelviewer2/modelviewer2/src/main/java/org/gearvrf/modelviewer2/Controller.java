@@ -585,15 +585,13 @@ public class Controller {
     }
 
     void onScrollOverModel(GVRCollider holder, float scrollValue) {
-        GVRAnimation animation = null;
-
-        if (currentDisplayedModel.getModel(context).getCollider() == holder) {
+        if (null != currentDisplayedModel && currentDisplayedModel.getModel(context).getCollider() == holder) {
                 Log.d(TAG, "Angle mover applied");
                 if (scrollValue > 0)
-                    animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
+                    new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
                             (context), 0.1f, 35, 0, 1, 0).start(context.getAnimationEngine());
                 else
-                    animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
+                    new GVRRotationByAxisAnimation(currentDisplayedModel.getModel
                             (context), 0.1f, 35, 0, -1, 0).start(context.getAnimationEngine());
         }
     }
