@@ -15,29 +15,27 @@
 
 package org.gearvrf.immersivepedia.shader;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.immersivepedia.R;
+import org.gearvrf.utility.TextFile;
 
-public class CutoutShader {
+public class CutoutShader extends GVRShaderTemplate{
 
     public static final String TEXTURE_KEY = "texture";
     public static final String CUTOUT = "cutout";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public CutoutShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext.getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.cutout_vertex, R.raw.cutout_fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("texture", TEXTURE_KEY);
-        mCustomShader.addUniformFloatKey("cutout", CUTOUT);
+        super("float cutout, sampler2D texture");
+
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.cutout_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.cutout_vertex));
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
-    }
 }

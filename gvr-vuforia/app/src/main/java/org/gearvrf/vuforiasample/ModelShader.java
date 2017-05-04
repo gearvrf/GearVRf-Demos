@@ -16,14 +16,12 @@
 package org.gearvrf.vuforiasample;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShaderTemplate;
 
-public class ModelShader {
+public class ModelShader extends GVRShaderTemplate{
 
-    public static final String TEXTURE_KEY = "texture";
-    public static final String MVP_KEY = "mvp_c";
+    public static final String TEXTURE_KEY = "texSampler2D";
+    public static final String MVP_KEY = "modelViewProjectionMatrix";
 
     private static final String VERTEX_SHADER = "" //
             + "attribute vec4 a_position;\n"
@@ -45,19 +43,10 @@ public class ModelShader {
             + "  gl_FragColor = texture2D(texSampler2D, v_tex_coord);\n"
             + "}\n";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public ModelShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("texSampler2D", TEXTURE_KEY);
-        mCustomShader.addUniformMat4Key("modelViewProjectionMatrix", MVP_KEY);
+        super("mat4 modelViewProjectionMatrix, sampler2D texSampler2D");
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
-    }
 }

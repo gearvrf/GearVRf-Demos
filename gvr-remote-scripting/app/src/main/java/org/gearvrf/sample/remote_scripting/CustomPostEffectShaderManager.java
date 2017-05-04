@@ -17,24 +17,15 @@
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomPostEffectShaderId;
-import org.gearvrf.GVRPostEffectMap;
-import org.gearvrf.GVRPostEffectShaderManager;
+import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.utility.TextFile;
 
-public class CustomPostEffectShaderManager {
-
-    private final GVRCustomPostEffectShaderId mShaderId;
-    private GVRPostEffectMap mCustomShader;
+public class CustomPostEffectShaderManager extends GVRShaderTemplate{
 
     public CustomPostEffectShaderManager(GVRContext gvrContext) {
-        final GVRPostEffectShaderManager shaderManager = gvrContext
-                .getPostEffectShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformFloatKey("u_gamma", "u_gamma");
+        super("float u_gamma");
+        setSegment("VertexTemplate", TextFile.readTextFile(gvrContext.getContext(), R.raw.vertex));
+        setSegment("FragmentTemplate", TextFile.readTextFile(gvrContext.getContext(), R.raw.fragment));
     }
 
-    public GVRCustomPostEffectShaderId getShaderId() {
-        return mShaderId;
-    }
 }

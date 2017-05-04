@@ -324,7 +324,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
 
     private void interactWithVisibleObjects(GVRPicker.GVRPickedObject picked) {
         if ((lastSelectedSphereFlag != null) &&
-            (lastSelectedSphereFlag.answerState == SphereStaticList.ANSWERING))
+                (lastSelectedSphereFlag.answerState == SphereStaticList.ANSWERING))
         {
             lastSelectedSphereFlag.moveToCursor();
         }
@@ -332,7 +332,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
         {
             GVRSceneObject sceneObject = picked.getHitObject();
             if ((lastSelectedSphereFlag == null ||
-                 lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING))
+                    lastSelectedSphereFlag.answerState != SphereStaticList.ANSWERING))
             {
                 // TODO: Fix (SphereFlag) object.getChildByIndex(0) this
                 // object can be any object .... not only a Sphere.

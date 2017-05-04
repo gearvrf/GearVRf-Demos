@@ -15,24 +15,19 @@
 
 package org.gearvrf.sample.gvrjavascript;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.utility.TextFile;
 
-class CustomShaderManager {
-    private final GVRCustomMaterialShaderId shaderId;
-    static final String COLOR_KEY = "color";
+public class CustomShaderManager extends GVRShaderTemplate{
+    static final String COLOR_KEY = "u_color";
 
-    CustomShaderManager(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        shaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
-        GVRMaterialMap customShader = shaderManager.getShaderMap(shaderId);
-        customShader.addUniformVec4Key("u_color", COLOR_KEY);
-    }
-
-    GVRCustomMaterialShaderId getShaderId() {
-        return shaderId;
+    public CustomShaderManager(GVRContext gvrContext) {
+        super("float4 u_color, sampler2D temp");
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.vertex));
     }
 }

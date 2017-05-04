@@ -17,11 +17,9 @@
 package org.gearvrf.simplegallery;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRPostEffectMap;
-import org.gearvrf.GVRPostEffectShaderManager;
-import org.gearvrf.GVRCustomPostEffectShaderId;
+import org.gearvrf.GVRShaderTemplate;
 
-public class CustomPostEffectShaderManager {
+public class CustomPostEffectShaderManager extends GVRShaderTemplate{
 
     private final String VERTEX_SHADER = "" //
             + "attribute vec4 a_position;\n"
@@ -48,20 +46,10 @@ public class CustomPostEffectShaderManager {
             + "  gl_FragColor = vec4(color, tex.a);\n" //
             + "}\n";
 
-    private GVRCustomPostEffectShaderId mShaderId;
-    private GVRPostEffectMap mCustomShader;
-
     public CustomPostEffectShaderManager(GVRContext gvrContext) {
-        final GVRPostEffectShaderManager shaderManager = gvrContext
-                .getPostEffectShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec3Key("u_ratio_r", "ratio_r");
-        mCustomShader.addUniformVec3Key("u_ratio_g", "ratio_g");
-        mCustomShader.addUniformVec3Key("u_ratio_b", "ratio_b");
+        super("float3 u_ratio_r, float3 u_ratio_g, float3 u_ratio_b");
+        setSegment("VertexTemplate", VERTEX_SHADER);
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
     }
 
-    public GVRCustomPostEffectShaderId getShaderId() {
-        return mShaderId;
-    }
 }

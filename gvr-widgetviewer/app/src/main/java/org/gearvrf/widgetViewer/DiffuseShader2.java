@@ -20,13 +20,14 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRCustomMaterialShaderId;
+import org.gearvrf.GVRShaderTemplate;
 
-public class DiffuseShader2 {
+public class DiffuseShader2 extends GVRShaderTemplate {
 
-    public static final String COLOR_KEY = "color";
-    public static final String LIGHT_KEY = "light";
-    public static final String EYE_KEY = "eye";
-    public static final String TEXTURE_KEY = "texture";
+    public static final String COLOR_KEY = "u_color";
+    public static final String LIGHT_KEY = "u_light";
+    public static final String EYE_KEY = "u_eye";
+    public static final String TEXTURE_KEY = "intexture";
 
     public static final String MAT1_KEY = "u_mat1";
     public static final String MAT2_KEY = "u_mat2";
@@ -34,7 +35,7 @@ public class DiffuseShader2 {
     public static final String MAT4_KEY = "u_mat4";
 
     private static final String VERTEX_SHADER = "" //
-            + "#version 300 es\n"
+            //+ "#version 300 es\n"
             + "in vec4 a_position;\n"
             + "in vec3 a_normal;\n" //
             + "in vec2 a_texcoord;\n"
@@ -66,7 +67,7 @@ public class DiffuseShader2 {
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
-            + "#version 300 es\n"
+            //+ "#version 300 es\n"
             + "precision mediump float;\n"
             + "uniform vec4  u_color;\n" //
             + "in vec2  coord;\n"
@@ -87,26 +88,9 @@ public class DiffuseShader2 {
             + "  FragColor = vec4( color );\n" //
             + "}\n";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public DiffuseShader2(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec4Key("u_color", COLOR_KEY);
-        mCustomShader.addUniformVec3Key("u_light", LIGHT_KEY);
-        mCustomShader.addUniformVec3Key("u_eye", EYE_KEY);
-        mCustomShader.addTextureKey("intexture", TEXTURE_KEY);
-
-        mCustomShader.addUniformVec4Key("u_mat1", MAT1_KEY);
-        mCustomShader.addUniformVec4Key("u_mat2", MAT2_KEY);
-        mCustomShader.addUniformVec4Key("u_mat3", MAT3_KEY);
-        mCustomShader.addUniformVec4Key("u_mat4", MAT4_KEY);
-    }
-
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
+        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D intexture", 300);
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
     }
 }

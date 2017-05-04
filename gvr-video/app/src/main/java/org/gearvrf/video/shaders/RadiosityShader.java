@@ -17,18 +17,16 @@
 package org.gearvrf.video.shaders;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.GVRCustomMaterialShaderId;
+import org.gearvrf.GVRShaderTemplate;
 
-public class RadiosityShader {
+public class RadiosityShader extends GVRShaderTemplate{
 
-    public static final String TEXTURE_OFF_KEY = "texture_off";
-    public static final String TEXTURE_ON_KEY = "texture_on";
-    public static final String SCREEN_KEY = "screen";
-    public static final String WEIGHT_KEY = "weight";
-    public static final String FADE_KEY = "fade";
-    public static final String LIGHT_KEY = "light";
+    public static final String TEXTURE_OFF_KEY = "u_texture_off";
+    public static final String TEXTURE_ON_KEY = "u_texture_on";
+    public static final String SCREEN_KEY = "u_screen";
+    public static final String WEIGHT_KEY = "u_weight";
+    public static final String FADE_KEY = "u_fade";
+    public static final String LIGHT_KEY = "u_lightness";
 
     private static final String VERTEX_SHADER = "" //
             + "#extension GL_OES_EGL_image_external : require\n"
@@ -75,23 +73,11 @@ public class RadiosityShader {
             + "  gl_FragColor = vec4( u_fade*(color1*(1.0-u_weight)+color2*u_weight), alpha);\n"
             + "}\n";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public RadiosityShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("u_texture_off", TEXTURE_OFF_KEY);
-        mCustomShader.addTextureKey("u_texture_on", TEXTURE_ON_KEY);
-        mCustomShader.addTextureKey("u_screen", SCREEN_KEY);
-        mCustomShader.addUniformFloatKey("u_weight", WEIGHT_KEY);
-        mCustomShader.addUniformFloatKey("u_fade", FADE_KEY);
-        mCustomShader.addUniformFloatKey("u_lightness", LIGHT_KEY);
+        super("float u_weight, float u_fade, float u_lightness, samplerExternalOES u_screen sampler2D u_texture_off");
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
-    }
+
 }

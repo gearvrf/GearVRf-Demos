@@ -17,27 +17,15 @@
 package org.gearvrf.opacityanigallery;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomPostEffectShaderId;
-import org.gearvrf.GVRPostEffectMap;
-import org.gearvrf.GVRPostEffectShaderManager;
-import org.gearvrf.opacityanigallery.R;
+import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.utility.TextFile;
 
-public class CustomPostEffectShaderManager {
-
-    private final GVRCustomPostEffectShaderId mShaderId;
-    private GVRPostEffectMap mCustomShader;
+public class CustomPostEffectShaderManager extends GVRShaderTemplate{
 
     public CustomPostEffectShaderManager(GVRContext gvrContext) {
-        final GVRPostEffectShaderManager shaderManager = gvrContext
-                .getPostEffectShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec3Key("u_ratio_r", "ratio_r");
-        mCustomShader.addUniformVec3Key("u_ratio_g", "ratio_g");
-        mCustomShader.addUniformVec3Key("u_ratio_b", "ratio_b");
+        super("float3 u_ratio_r, float3 u_ratio_g, float3 u_ratio_b");
+        setSegment("VertexTemplate", TextFile.readTextFile(gvrContext.getContext(), R.raw.vertex));
+        setSegment("FragmentTemplate", TextFile.readTextFile(gvrContext.getContext(), R.raw.fragment));
     }
 
-    public GVRCustomPostEffectShaderId getShaderId() {
-        return mShaderId;
-    }
 }

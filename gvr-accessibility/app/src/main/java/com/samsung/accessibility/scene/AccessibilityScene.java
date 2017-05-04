@@ -14,9 +14,12 @@ import java.util.List;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessiblityObject;
 
@@ -180,10 +183,14 @@ public class AccessibilityScene extends GVRScene {
 
     private void applyShader(AccessibilitySceneShader shader, GVRSceneObject object) {
         if (object != null && object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-            object.getRenderData().getMaterial().setShaderType(shader.getShaderId());
+            GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+            object.getRenderData().setMaterial(material);
             object.getRenderData().getMaterial().setTexture(AccessibilitySceneShader.TEXTURE_KEY,
                     object.getRenderData().getMaterial().getMainTexture());
             object.getRenderData().getMaterial().setFloat(AccessibilitySceneShader.BLUR_INTENSITY, 1);
+            GVRMaterialShaderManager shaderManager = gvrContext.getMaterialShaderManager();
+            GVRShaderTemplate shaderTemplate = shaderManager.retrieveShaderTemplate(AccessibilitySceneShader.class);
+            shaderTemplate.bindShader(getGVRContext(), object.getRenderData(), gvrContext.getMainScene());
         }
     }
 
