@@ -18,6 +18,7 @@ package org.gearvrf.opacityanigallery;
 import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
@@ -62,12 +63,11 @@ public class GalleryMain extends GVRMain {
         mAnimationEngine = gvrContext.getAnimationEngine();
 
         GVRScene mainScene = gvrContext.getMainScene();
-
-        GVRMesh sphereMesh = gvrContext.loadMesh(new GVRAndroidResource(
-                gvrContext, R.raw.sphere_mesh));
+        GVRAssetLoader loader = gvrContext.getAssetLoader();
+        GVRMesh sphereMesh = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.sphere_mesh));
 
         GVRSceneObject background = new GVRSceneObject(gvrContext, sphereMesh,
-                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                loader.loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.left_screen)));
         background.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         background.getTransform().setScale(10.0f, 10.0f, 10.0f);
@@ -80,8 +80,7 @@ public class GalleryMain extends GVRMain {
                 R.drawable.photo_6, R.drawable.photo_7,
                 R.drawable.photo_8, R.drawable.photo_9 };
         for (int id : resourceIds) {
-            numberTextures.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
-                    gvrContext, id)));
+            numberTextures.add(loader.loadTexture(new GVRAndroidResource(gvrContext, id)));
         }
 
         for (int i = 0, size = numberTextures.size(); i < size; ++i) {
