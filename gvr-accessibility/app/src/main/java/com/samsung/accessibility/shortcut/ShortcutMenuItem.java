@@ -17,6 +17,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilitySpeech;
 import org.gearvrf.accessibility.GVRAccessibilitySpeechListener;
@@ -51,7 +52,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         super(gvrContext);
         this.gvrContext = gvrContext;
         createRenderData();
-        attachEyePointeeHolder();
+        attachComponent(new GVRSphereCollider(gvrContext));
         getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
         focusAndUnFocus();
         clickEvent();

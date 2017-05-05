@@ -37,14 +37,14 @@ public class CursorSceneItem extends FocusableSceneObject {
     public CursorSceneItem(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
         selectMaskSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.edge_menu)),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_menu)));
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_menu)));
         selectMaskSceneObject.getTransform().setPosition(0, 23f, -.000001f);
         selectMaskSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
         selectMaskSceneObject.getTransform().rotateByAxis(180, 0, 1, 0);
         addChildObject(selectMaskSceneObject);
 
         final GVRSceneObject onFocusSceneObject = new GVRSceneObject(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
-                R.raw.edge_box)), gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
+                R.raw.edge_box)), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
         onFocusSceneObject.getTransform().setPositionZ(-.1f);
         onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
 
@@ -86,7 +86,6 @@ public class CursorSceneItem extends FocusableSceneObject {
         if (!isAnimating) {
             isAnimating = true;
             if (isActive) {
-                float[] hit = getEyePointeeHolder().getHit();
                 new GVRRelativeMotionAnimation(this, duration, newPosition[0] - initialPosition[0], newPosition[1] - initialPosition[1],
                         newPosition[2] - initialPosition[2]).start(getGVRContext().getAnimationEngine())
                         .setInterpolator(InterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {

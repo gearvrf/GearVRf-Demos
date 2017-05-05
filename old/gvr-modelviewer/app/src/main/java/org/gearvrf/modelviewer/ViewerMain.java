@@ -158,7 +158,7 @@ public class ViewerMain extends GVRMain {
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mGlassMaterial.setVec4(GlassShader.COLOR_KEY, 1.0f, 1.0f, 1.0f,
                     1.0f);
-            mGlassMaterial.setFloat(MetalOnlyShader.RADIUS_KEY, 10.0f);
+            mGlassMaterial.setFloat(GlassShader.RADIUS_KEY, 10.0f);
             mGlassMaterial.setTexture(GlassShader.TEXTURE_KEY, env_tex);
 
             GVRTexture board_tex = mGVRContext
