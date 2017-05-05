@@ -28,13 +28,13 @@
  * limitations under the License.
  */
 
+
 package org.gearvrf.simplesample;
 
 import android.os.Bundle;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
