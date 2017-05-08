@@ -1,0 +1,9 @@
+{ 
+	"textures": 
+		[
+			 {
+			 "texture":"https://raw.githubusercontent.com/SRIB-GRAPHICS/GearVRf-Demos/load-url-model-sample/remote-url-model-load-assets/astro_boy.JPG"
+			 }
+		],
+	"model":"https://raw.githubusercontent.com/SRIB-GRAPHICS/GearVRf-Demos/load-url-model-sample/remote-url-model-load-assets/astro_boy.dae"
+}
