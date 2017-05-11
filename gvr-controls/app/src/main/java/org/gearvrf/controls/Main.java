@@ -321,7 +321,7 @@ public class Main extends GVRMain {
             gamepadObject.inputControl();
         }
         worm.checkWormEatingApple(mGVRContext);
-
+        scene.bindShaders();
     }
 
     private void createMenu() {
