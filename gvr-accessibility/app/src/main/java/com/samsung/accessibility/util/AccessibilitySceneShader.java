@@ -28,7 +28,7 @@ public class AccessibilitySceneShader extends GVRShaderTemplate{
     public static final String BLUR_INTENSITY = "blur";
 
     public AccessibilitySceneShader(GVRContext gvrContext) {
-        super("float blur, sampler2D texture", 300);
+        super("float blur, sampler2D texture", 100);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.scene_shader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.scene_shader_vertex));

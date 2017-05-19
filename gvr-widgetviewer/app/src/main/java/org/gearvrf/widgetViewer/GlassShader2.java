@@ -36,7 +36,7 @@ public class GlassShader2 extends GVRShaderTemplate {
     public static final String MAT4_KEY = "u_mat4";
 
     private static final String VERTEX_SHADER = "" //
-            + "#version 300 es\n"
+          //  + "#version 300 es\n"
             + "in vec4 a_position;\n"
             + "in vec3 a_normal;\n" //
             + "in vec2 a_texcoord;\n"
@@ -70,7 +70,7 @@ public class GlassShader2 extends GVRShaderTemplate {
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
-            + "#version 300 es\n"
+        //    + "#version 300 es\n"
             + "precision mediump float;\n"
             + "in vec2  coord;\n"
             + "uniform vec4  u_color;\n"
@@ -114,8 +114,7 @@ public class GlassShader2 extends GVRShaderTemplate {
     private GVRMaterialMap mCustomShader = null;
 
     public GlassShader2(GVRContext gvrContext) {
-
-        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D intexture");
+        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D intexture", 300);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }

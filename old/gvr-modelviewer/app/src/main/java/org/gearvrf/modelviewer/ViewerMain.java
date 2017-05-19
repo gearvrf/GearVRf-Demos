@@ -149,26 +149,34 @@ public class ViewerMain extends GVRMain {
             // watch
             mMetalMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mMetalMaterial.setVec4(MetalOnlyShader.COLOR_KEY, 1.7f, 1.4f, 1.0f, 1.0f);
+
+            mMetalMaterial.setVec4(MetalOnlyShader.COLOR_KEY, 1.7f, 1.4f, 1.0f,
+                    1.0f);
             mMetalMaterial.setFloat(MetalOnlyShader.RADIUS_KEY, 10.0f);
             mMetalMaterial.setTexture(MetalOnlyShader.TEXTURE_KEY, env_tex);
 
             mGlassMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mGlassMaterial.setVec4(GlassShader.COLOR_KEY, 1.0f, 1.0f, 1.0f, 1.0f);
-            mGlassMaterial.setFloat(MetalOnlyShader.RADIUS_KEY, 10.0f);
+
+            mGlassMaterial.setVec4(GlassShader.COLOR_KEY, 1.0f, 1.0f, 1.0f,
+                    1.0f);
+            mGlassMaterial.setFloat(GlassShader.RADIUS_KEY, 10.0f);
             mGlassMaterial.setTexture(GlassShader.TEXTURE_KEY, env_tex);
 
             GVRTexture board_tex = loader.loadTexture(new GVRAndroidResource(mGVRContext, "watch/board.jpg"));
             mDiffuseMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mDiffuseMaterial.setVec4(DiffuseShader.COLOR_KEY, 1.0f, 1.0f, 1.0f, 1.0f);
+
+            mDiffuseMaterial.setVec4(DiffuseShader.COLOR_KEY, 1.0f, 1.0f, 1.0f,
+                    1.0f);
             mDiffuseMaterial.setTexture(DiffuseShader.TEXTURE_KEY, board_tex);
 
             // jar
             mPhongMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mPhongMaterial.setVec4(PhongShader.COLOR_KEY, 1.2f, 1.2f, 1.3f, 1.0f);
+
+            mPhongMaterial.setVec4(PhongShader.COLOR_KEY, 1.2f, 1.2f, 1.3f,
+                    1.0f);
             mPhongMaterial.setFloat(PhongShader.RADIUS_KEY, 10.0f);
             mPhongMaterial.setTexture(PhongShader.TEXTURE_KEY, env_tex);
 
@@ -182,26 +190,36 @@ public class ViewerMain extends GVRMain {
 
             mCarWheelMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mCarWheelMaterial.setVec4(MetalShader2.COLOR_KEY, 1.2f, 1.2f, 1.2f, 1.0f);
+            mCarWheelMaterial.setVec4(MetalShader2.COLOR_KEY, 1.2f, 1.2f, 1.2f,
+                    1.0f);
             mCarWheelMaterial.setFloat(MetalShader2.RADIUS_KEY, 10.0f);
             mCarWheelMaterial.setTexture(MetalShader2.TEXTURE_KEY, env_tex);
 
             mCarGlassMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mCarGlassMaterial.setVec4(GlassShader2.COLOR_KEY, 1.0f, 1.0f, 1.0f, 1.0f);
+
+            mCarGlassMaterial.setVec4(GlassShader2.COLOR_KEY, 1.0f, 1.0f, 1.0f,
+                    1.0f);
             mCarGlassMaterial.setFloat(GlassShader2.RADIUS_KEY, 10.0f);
             mCarGlassMaterial.setTexture(GlassShader2.TEXTURE_KEY, env_tex);
 
             GVRTexture default_tex = loader.loadTexture(new GVRAndroidResource(mGVRContext, "car/default.png"));
             mCarTireMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mCarTireMaterial.setVec4(DiffuseShader2.COLOR_KEY, 0.1f, 0.1f, 0.1f, 1.0f);
-            mCarTireMaterial.setTexture(DiffuseShader2.TEXTURE_KEY, default_tex);
 
-            GVRTexture back_tex = loader.loadTexture(new GVRAndroidResource(mGVRContext, "car/back.jpg"));
+            mCarTireMaterial.setVec4(DiffuseShader2.COLOR_KEY, 0.1f, 0.1f,
+                    0.1f, 1.0f);
+            mCarTireMaterial
+                    .setTexture(DiffuseShader2.TEXTURE_KEY, default_tex);
+
+            GVRTexture back_tex = mGVRContext
+                    .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
+                            "car/back.jpg"));
             mCarBackMaterial = new GVRMaterial(mGVRContext,
                     GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            mCarBackMaterial.setVec4(DiffuseShader2.COLOR_KEY, 1.0f, 1.0f, 1.0f, 1.0f);
+            mCarBackMaterial.setVec4(DiffuseShader2.COLOR_KEY, 1.0f, 1.0f,
+                    1.0f, 1.0f);
+
             mCarBackMaterial.setTexture(DiffuseShader2.TEXTURE_KEY, back_tex);
 
             GVRTexture grill_tex = loader.loadTexture(new GVRAndroidResource(mGVRContext, "car/grill.jpg"));
