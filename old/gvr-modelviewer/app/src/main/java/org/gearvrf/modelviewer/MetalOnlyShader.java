@@ -20,13 +20,14 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRCustomMaterialShaderId;
+import org.gearvrf.GVRShaderTemplate;
 
-public class MetalOnlyShader {
+public class MetalOnlyShader extends GVRShaderTemplate{
 
-    public static final String COLOR_KEY = "color";
-    public static final String LIGHT_KEY = "light";
-    public static final String EYE_KEY = "eye";
-    public static final String RADIUS_KEY = "radius";
+    public static final String COLOR_KEY = "u_color";
+    public static final String LIGHT_KEY = "u_light";
+    public static final String EYE_KEY = "u_eye";
+    public static final String RADIUS_KEY = "u_radius";
     public static final String TEXTURE_KEY = "texture";
 
     public static final String MAT1_KEY = "u_mat1";
@@ -91,24 +92,11 @@ public class MetalOnlyShader {
             + "  gl_FragColor = vec4( color, 1.0 );\n" //
             + "}\n";
 
-
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public MetalOnlyShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec4Key("u_color", COLOR_KEY);
-        mCustomShader.addUniformVec3Key("u_light", LIGHT_KEY);
-        mCustomShader.addUniformVec3Key("u_eye", EYE_KEY);
-        mCustomShader.addUniformFloatKey("u_radius", RADIUS_KEY);
-        mCustomShader.addTextureKey("texture", TEXTURE_KEY);
 
-    }
+        super("float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D texture");
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
     }
 }

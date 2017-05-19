@@ -19,9 +19,11 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
@@ -70,10 +72,13 @@ public class GearVRJavascriptMain extends GVRMain {
             if (controller.getControllerType() == GVRControllerType.GAZE) {
                 GVRSceneObject cursor = new GVRSphereSceneObject(context);
                 GVRRenderData cursorRenderData = cursor.getRenderData();
-                GVRMaterial material = cursorRenderData.getMaterial();
-                material.setShaderType(shaderManager.getShaderId());
+                GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
                 material.setVec4(CustomShaderManager.COLOR_KEY, 1.0f, 0.0f,
                         0.0f, 0.5f);
+
+                cursorRenderData.setMaterial(material);
+                cursorRenderData.setShaderTemplate(CustomShaderManager.class);
+
                 mainScene.addSceneObject(cursor);
                 cursor.getRenderData().setDepthTest(false);
                 cursor.getRenderData().setRenderingOrder(100000);

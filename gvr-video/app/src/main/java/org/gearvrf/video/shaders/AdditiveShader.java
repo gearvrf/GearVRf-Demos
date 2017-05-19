@@ -17,11 +17,9 @@
 package org.gearvrf.video.shaders;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.GVRCustomMaterialShaderId;
+import org.gearvrf.GVRShaderTemplate;
 
-public class AdditiveShader {
+public class AdditiveShader extends GVRShaderTemplate{
 
     public static final String TEXTURE_KEY = "texture";
     public static final String WEIGHT_KEY = "weight";
@@ -52,20 +50,10 @@ public class AdditiveShader {
             + "  gl_FragColor = vec4( u_fade*color, alpha );\n" //
             + "}\n";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public AdditiveShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("texture", TEXTURE_KEY);
-        mCustomShader.addUniformFloatKey("u_weight", WEIGHT_KEY);
-        mCustomShader.addUniformFloatKey("u_fade", FADE_KEY);
+        super("float u_weight, float u_fade, sampler2D texture");
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
-    }
 }

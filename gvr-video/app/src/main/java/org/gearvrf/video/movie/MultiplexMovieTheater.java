@@ -18,6 +18,7 @@ package org.gearvrf.video.movie;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
@@ -55,8 +56,9 @@ public class MultiplexMovieTheater extends MovieTheater {
             background.setName("background");
             background.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
             // radiosity
-            RadiosityShader radiosityShader = new RadiosityShader(context);
-            background.getRenderData().getMaterial().setShaderType(radiosityShader.getShaderId());
+            GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+            background.getRenderData().setMaterial(material);
+            background.getRenderData().setShaderTemplate(RadiosityShader.class);
             background.getRenderData().getMaterial().setTexture(
                     RadiosityShader.TEXTURE_OFF_KEY, backgroundLightOffTexture);
             background.getRenderData().getMaterial().setTexture(

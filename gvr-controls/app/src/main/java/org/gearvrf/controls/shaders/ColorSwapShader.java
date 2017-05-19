@@ -16,35 +16,24 @@
 
 package org.gearvrf.controls.shaders;
 
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.controls.R;
+import android.content.Context;
 
-public class ColorSwapShader {
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.controls.R;
+import org.gearvrf.utility.TextFile;
+
+public class ColorSwapShader extends GVRShaderTemplate{
 
     public static final String TEXTURE_GRAYSCALE = "grayScaleTexture";
     public static final String TEXTURE_DETAILS = "detailsTexture";
     public static final String COLOR = "color";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public ColorSwapShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.color_swap_shader_vertex,
-                R.raw.color_swap_shader_fragment);
-
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey(TEXTURE_GRAYSCALE, TEXTURE_GRAYSCALE);
-        mCustomShader.addTextureKey(TEXTURE_DETAILS, TEXTURE_DETAILS);
-        mCustomShader.addUniformVec4Key(COLOR, COLOR);
-        mCustomShader.addUniformFloatKey("opacity", "opacity");
+        super("float opacity, float4 color, sampler2D grayScaleTexture sampler2D detailsTexture");
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.color_swap_shader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.color_swap_shader_vertex));
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
-    }
 }

@@ -16,11 +16,9 @@
 package org.gearvrf.keyboard.shader;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShaderTemplate;
 
-public class TransparentButtonShaderThreeStates extends TransparentButtonShaderBase {
+public class TransparentButtonShaderThreeStates extends GVRShaderTemplate {
 
     public static final String TEXTURE_KEY = "texture";
     public static final String TEXTURE_HOVER_KEY = "textureHover";
@@ -95,31 +93,9 @@ public class TransparentButtonShaderThreeStates extends TransparentButtonShaderB
             + "  gl_FragColor = vec4(color);\n" //
             + "}\n";
 
-   // private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public TransparentButtonShaderThreeStates(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("texture", TEXTURE_KEY);
-        
-        mCustomShader.addTextureKey("textureHover", TEXTURE_HOVER_KEY);
-        mCustomShader.addTextureKey("textHoverTexture", TEXTURE_TEXT_HOVER_KEY);
-        
-        mCustomShader.addTextureKey("textUpperTexture", TEXTURE_TEXT_UPPER_KEY);
-        mCustomShader.addTextureKey("textHoverUpperTexture", TEXTURE_TEXT_HOVER_UPPER_KEY);
-        
-        mCustomShader.addTextureKey(TEXTURE_TEXT_SPECIAL_KEY, TEXTURE_TEXT_SPECIAL_KEY);
-        mCustomShader.addTextureKey(TEXTURE_TEXT_HOVER_SPECIAL_KEY, TEXTURE_TEXT_HOVER_SPECIAL_KEY);
-        
-        mCustomShader.addTextureKey("textTexture", TEXTURE_TEXT_KEY);
-        mCustomShader.addUniformFloatKey("opacity", OPACITY);
-        mCustomShader.addUniformFloatKey("textureSwitch", TEXTURE_SWITCH);
-    }
-
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
+        super("float opacity, float textureSwitch, sampler2D texture, sampler2D textureHover, sampler2D textTexture, sampler2D textHoverTexture, sampler2D textUpperTexture, sampler2D textHoverUpperTexture, sampler2D textSpecialTexture, sampler2D textHoverSpecialTexture");
+        setSegment("FragmentTemplate", FRAGMENT_SHADER);
+        setSegment("VertexTemplate", VERTEX_SHADER);
     }
 }

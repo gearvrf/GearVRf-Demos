@@ -67,9 +67,9 @@ public class AnimCleanButton extends MenuControlSceneObject {
 
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(
-                new GVRMaterial(gvrContext, new ButtonShader(gvrContext).getShaderId()));
+                new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
         getRenderData().setMesh(sMesh);
-
+        getRenderData().setShaderTemplate(ButtonShader.class);
         createTextures();
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);

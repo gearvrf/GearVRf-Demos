@@ -16,34 +16,23 @@
 
 package org.gearvrf.controls.shaders;
 
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.controls.R;
+import android.content.Context;
 
-public class TileShader {
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.controls.R;
+import org.gearvrf.utility.TextFile;
+
+public class TileShader extends GVRShaderTemplate{
 
     public static final String TEXTURE_KEY = "texture";
     public static final String TILE_COUNT = "tile";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public TileShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.tileshader_vertex,
-                R.raw.tileshader_fragment);
+        super("float tile, sampler2D texture");
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.tileshader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.tileshader_vertex));
 
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey(TEXTURE_KEY, TEXTURE_KEY);
-        mCustomShader.addUniformFloatKey(TILE_COUNT,
-                TILE_COUNT);
-
-    }
-
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
     }
 }

@@ -23,6 +23,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPicker.GVRPickedObject;
@@ -30,6 +31,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 
@@ -135,7 +137,7 @@ public class ViewerMain extends GVRMain {
             GVRTexture env_tex = mGVRContext
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "env.jpg"));
             mReflectionMaterial = new GVRMaterial(mGVRContext,
-                    mReflectionShader.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mReflectionMaterial.setVec4(ReflectionShader.COLOR_KEY, 1.0f, 1.0f,
                     1.0f, 1.0f);
             mReflectionMaterial.setFloat(ReflectionShader.RADIUS_KEY, 10.0f);
@@ -146,31 +148,31 @@ public class ViewerMain extends GVRMain {
             // materials
             // watch
             mMetalMaterial = new GVRMaterial(mGVRContext,
-                    mMetalOnlyShader.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mMetalMaterial.setVec4(MetalOnlyShader.COLOR_KEY, 1.7f, 1.4f, 1.0f,
                     1.0f);
             mMetalMaterial.setFloat(MetalOnlyShader.RADIUS_KEY, 10.0f);
             mMetalMaterial.setTexture(MetalOnlyShader.TEXTURE_KEY, env_tex);
 
             mGlassMaterial = new GVRMaterial(mGVRContext,
-                    mGlassShader.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mGlassMaterial.setVec4(GlassShader.COLOR_KEY, 1.0f, 1.0f, 1.0f,
                     1.0f);
-            mGlassMaterial.setFloat(MetalOnlyShader.RADIUS_KEY, 10.0f);
+            mGlassMaterial.setFloat(GlassShader.RADIUS_KEY, 10.0f);
             mGlassMaterial.setTexture(GlassShader.TEXTURE_KEY, env_tex);
 
             GVRTexture board_tex = mGVRContext
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "watch/board.jpg"));
             mDiffuseMaterial = new GVRMaterial(mGVRContext,
-                    mDiffuseShader.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mDiffuseMaterial.setVec4(DiffuseShader.COLOR_KEY, 1.0f, 1.0f, 1.0f,
                     1.0f);
             mDiffuseMaterial.setTexture(DiffuseShader.TEXTURE_KEY, board_tex);
 
             // jar
             mPhongMaterial = new GVRMaterial(mGVRContext,
-                    mPhongShader.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mPhongMaterial.setVec4(PhongShader.COLOR_KEY, 1.2f, 1.2f, 1.3f,
                     1.0f);
             mPhongMaterial.setFloat(PhongShader.RADIUS_KEY, 10.0f);
@@ -181,20 +183,20 @@ public class ViewerMain extends GVRMain {
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/body.jpg"));
             mCarBodyMaterial = new GVRMaterial(mGVRContext,
-                    mPhongShader3.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarBodyMaterial.setFloat(PhongShader3.RADIUS_KEY, 10.0f);
             mCarBodyMaterial.setTexture(PhongShader3.ENV_KEY, env_tex);
             mCarBodyMaterial.setTexture(PhongShader3.TEXTURE_KEY, car_body_tex);
 
             mCarWheelMaterial = new GVRMaterial(mGVRContext,
-                    mMetalShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarWheelMaterial.setVec4(MetalShader2.COLOR_KEY, 1.2f, 1.2f, 1.2f,
                     1.0f);
             mCarWheelMaterial.setFloat(MetalShader2.RADIUS_KEY, 10.0f);
             mCarWheelMaterial.setTexture(MetalShader2.TEXTURE_KEY, env_tex);
 
             mCarGlassMaterial = new GVRMaterial(mGVRContext,
-                    mGlassShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarGlassMaterial.setVec4(GlassShader2.COLOR_KEY, 1.0f, 1.0f, 1.0f,
                     1.0f);
             mCarGlassMaterial.setFloat(GlassShader2.RADIUS_KEY, 10.0f);
@@ -204,7 +206,7 @@ public class ViewerMain extends GVRMain {
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/default.png"));
             mCarTireMaterial = new GVRMaterial(mGVRContext,
-                    mDiffuseShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarTireMaterial.setVec4(DiffuseShader2.COLOR_KEY, 0.1f, 0.1f,
                     0.1f, 1.0f);
             mCarTireMaterial
@@ -214,7 +216,7 @@ public class ViewerMain extends GVRMain {
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/back.jpg"));
             mCarBackMaterial = new GVRMaterial(mGVRContext,
-                    mDiffuseShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarBackMaterial.setVec4(DiffuseShader2.COLOR_KEY, 1.0f, 1.0f,
                     1.0f, 1.0f);
             mCarBackMaterial.setTexture(DiffuseShader2.TEXTURE_KEY, back_tex);
@@ -223,20 +225,20 @@ public class ViewerMain extends GVRMain {
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "car/grill.jpg"));
             mCarGrillMaterial = new GVRMaterial(mGVRContext,
-                    mDiffuseShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarGrillMaterial.setVec4(DiffuseShader2.COLOR_KEY, 1.0f, 1.0f,
                     1.0f, 1.0f);
             mCarGrillMaterial.setTexture(DiffuseShader2.TEXTURE_KEY, grill_tex);
 
             mCarLightMaterial = new GVRMaterial(mGVRContext,
-                    mGlassShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarLightMaterial.setVec4(GlassShader2.COLOR_KEY, 2.5f, 2.5f, 2.5f,
                     1.0f);
             mCarLightMaterial.setFloat(GlassShader2.RADIUS_KEY, 10.0f);
             mCarLightMaterial.setTexture(GlassShader2.TEXTURE_KEY, env_tex);
 
             mCarInsideMaterial = new GVRMaterial(mGVRContext,
-                    mPhongShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mCarInsideMaterial.setVec4(PhongShader2.COLOR_KEY, 0.0f, 0.0f,
                     0.0f, 1.0f);
             mCarInsideMaterial.setFloat(PhongShader2.RADIUS_KEY, 10.0f);
@@ -247,28 +249,28 @@ public class ViewerMain extends GVRMain {
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "robot/head.jpg"));
             mRobotHeadMaterial = new GVRMaterial(mGVRContext,
-                    mPhongShader3.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mRobotHeadMaterial.setFloat(PhongShader3.RADIUS_KEY, 10.0f);
             mRobotHeadMaterial.setTexture(PhongShader3.ENV_KEY, env_tex);
             mRobotHeadMaterial.setTexture(PhongShader3.TEXTURE_KEY,
                     robot_head_tex);
 
             mRobotMetalMaterial = new GVRMaterial(mGVRContext,
-                    mMetalShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mRobotMetalMaterial.setVec4(MetalShader2.COLOR_KEY, 1.5f, 1.5f,
                     1.5f, 1.0f);
             mRobotMetalMaterial.setFloat(MetalShader2.RADIUS_KEY, 10.0f);
             mRobotMetalMaterial.setTexture(MetalShader2.TEXTURE_KEY, env_tex);
 
             mRobotBodyMaterial = new GVRMaterial(mGVRContext,
-                    mPhongShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mRobotBodyMaterial.setVec4(PhongShader2.COLOR_KEY, 1.0f, 1.0f,
                     1.0f, 1.0f);
             mRobotBodyMaterial.setFloat(PhongShader2.RADIUS_KEY, 10.0f);
             mRobotBodyMaterial.setTexture(PhongShader2.TEXTURE_KEY, env_tex);
 
             mRobotRubberMaterial = new GVRMaterial(mGVRContext,
-                    mDiffuseShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mRobotRubberMaterial.setVec4(DiffuseShader2.COLOR_KEY, 0.3f, 0.3f,
                     0.3f, 1.0f);
             mRobotRubberMaterial.setTexture(DiffuseShader2.TEXTURE_KEY,
@@ -279,13 +281,13 @@ public class ViewerMain extends GVRMain {
                     .getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "leaf/box.jpg"));
             mLeafBoxMaterial = new GVRMaterial(mGVRContext,
-                    mPhongShader3.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mLeafBoxMaterial.setFloat(PhongShader3.RADIUS_KEY, 10.0f);
             mLeafBoxMaterial.setTexture(PhongShader3.ENV_KEY, env_tex);
             mLeafBoxMaterial.setTexture(PhongShader3.TEXTURE_KEY, leaf_box_tex);
 
             mLeafBodyMaterial = new GVRMaterial(mGVRContext,
-                    mMetalShader2.getShaderId());
+                    GVRMaterial.GVRShaderType.BeingGenerated.ID);
             mLeafBodyMaterial.setVec4(MetalShader2.COLOR_KEY, 2.5f, 2.5f, 2.5f,
                     1.0f);
             mLeafBodyMaterial.setFloat(MetalShader2.RADIUS_KEY, 10.0f);
@@ -306,6 +308,9 @@ public class ViewerMain extends GVRMain {
             renderData1.setMesh(mesh1);
             renderData1.setMaterial(mMetalMaterial);
             obj1.attachRenderData(renderData1);
+            GVRMaterialShaderManager shaderManager = gvrContext.getMaterialShaderManager();
+            GVRShaderTemplate obj1ST = shaderManager.retrieveShaderTemplate(MetalOnlyShader.class);
+            obj1ST.bindShader(gvrContext, obj1.getRenderData(), mainScene);
             Objects[2].addChildObject(obj1);
 
             GVRSceneObject obj2 = new GVRSceneObject(mGVRContext);
@@ -315,6 +320,9 @@ public class ViewerMain extends GVRMain {
             renderData2.setMesh(mesh2);
             renderData2.setMaterial(mDiffuseMaterial);
             obj2.attachRenderData(renderData2);
+
+            GVRShaderTemplate obj2ST = shaderManager.retrieveShaderTemplate(DiffuseShader.class);
+            obj2ST.bindShader(gvrContext, obj2.getRenderData(), mainScene);
             Objects[2].addChildObject(obj2);
 
             GVRSceneObject obj3 = new GVRSceneObject(mGVRContext);
@@ -325,7 +333,9 @@ public class ViewerMain extends GVRMain {
             renderData3.setMaterial(mGlassMaterial);
             obj3.attachRenderData(renderData3);
 
+            GVRShaderTemplate obj3ST = shaderManager.retrieveShaderTemplate(GlassShader.class);
             obj3.getRenderData().setRenderingOrder(3000);
+            obj3ST.bindShader(gvrContext, obj3.getRenderData(), mainScene);
             Objects[2].addChildObject(obj3);
 
             Objects[2].getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
@@ -340,6 +350,8 @@ public class ViewerMain extends GVRMain {
             renderData5.setMesh(mesh5);
             renderData5.setMaterial(mPhongMaterial);
             obj5.attachRenderData(renderData5);
+            GVRShaderTemplate obj5ST = shaderManager.retrieveShaderTemplate(PhongShader.class);
+            obj5ST.bindShader(gvrContext, obj5.getRenderData(), mainScene);
             Objects[1].addChildObject(obj5);
 
             GVRSceneObject obj4 = new GVRSceneObject(mGVRContext);
@@ -364,6 +376,8 @@ public class ViewerMain extends GVRMain {
             renderData6.setMesh(mesh6);
             renderData6.setMaterial(mCarBodyMaterial);
             obj6.attachRenderData(renderData6);
+            GVRShaderTemplate obj6ST = shaderManager.retrieveShaderTemplate(PhongShader3.class);
+            obj6ST.bindShader(gvrContext, obj6.getRenderData(), mainScene);
             obj6.getRenderData().setCullTest(false);
             Objects[3].addChildObject(obj6);
 
@@ -374,6 +388,8 @@ public class ViewerMain extends GVRMain {
             renderData9.setMesh(mesh9);
             renderData9.setMaterial(mCarTireMaterial);
             obj9.attachRenderData(renderData9);
+            GVRShaderTemplate obj9ST = shaderManager.retrieveShaderTemplate(DiffuseShader2.class);
+            obj9ST.bindShader(gvrContext, obj9.getRenderData(), mainScene);
             Objects[3].addChildObject(obj9);
 
             GVRSceneObject obj10 = new GVRSceneObject(mGVRContext);
@@ -385,6 +401,8 @@ public class ViewerMain extends GVRMain {
             obj10.attachRenderData(renderData10);
             obj10.getRenderData().setCullTest(false);
             obj10.getRenderData().setRenderingOrder(3000);
+            GVRShaderTemplate obj10ST = shaderManager.retrieveShaderTemplate(GlassShader2.class);
+            obj10ST.bindShader(gvrContext, obj10.getRenderData(), mainScene);
             Objects[3].addChildObject(obj10);
 
             GVRSceneObject obj11 = new GVRSceneObject(mGVRContext);
@@ -394,6 +412,8 @@ public class ViewerMain extends GVRMain {
             renderData11.setMesh(mesh11);
             renderData11.setMaterial(mCarWheelMaterial);
             obj11.attachRenderData(renderData11);
+            GVRShaderTemplate obj11ST = shaderManager.retrieveShaderTemplate(MetalShader2.class);
+            obj11ST.bindShader(gvrContext, obj11.getRenderData(), mainScene);
             Objects[3].addChildObject(obj11);
 
             GVRSceneObject obj12 = new GVRSceneObject(mGVRContext);
@@ -403,6 +423,8 @@ public class ViewerMain extends GVRMain {
             renderData12.setMesh(mesh12);
             renderData12.setMaterial(mCarBackMaterial);
             obj12.attachRenderData(renderData12);
+            GVRShaderTemplate obj12ST = shaderManager.retrieveShaderTemplate(DiffuseShader2.class);
+            obj12ST.bindShader(gvrContext, obj12.getRenderData(), mainScene);
             Objects[3].addChildObject(obj12);
 
             GVRSceneObject obj13 = new GVRSceneObject(mGVRContext);
@@ -412,6 +434,8 @@ public class ViewerMain extends GVRMain {
             renderData13.setMesh(mesh13);
             renderData13.setMaterial(mCarGrillMaterial);
             obj13.attachRenderData(renderData13);
+            GVRShaderTemplate obj13ST = shaderManager.retrieveShaderTemplate(DiffuseShader2.class);
+            obj13ST.bindShader(gvrContext, obj13.getRenderData(), mainScene);
             obj10.getRenderData().setRenderingOrder(3000);
             Objects[3].addChildObject(obj13);
 
@@ -423,6 +447,8 @@ public class ViewerMain extends GVRMain {
             renderData14.setMaterial(mCarLightMaterial);
             obj14.attachRenderData(renderData14);
             obj14.getRenderData().setRenderingOrder(4000);
+            GVRShaderTemplate obj14ST = shaderManager.retrieveShaderTemplate(GlassShader2.class);
+            obj14ST.bindShader(gvrContext, obj14.getRenderData(), mainScene);
             Objects[3].addChildObject(obj14);
 
             GVRSceneObject obj19 = new GVRSceneObject(mGVRContext);
@@ -432,6 +458,8 @@ public class ViewerMain extends GVRMain {
             renderData19.setMesh(mesh19);
             renderData19.setMaterial(mCarInsideMaterial);
             obj19.attachRenderData(renderData19);
+            GVRShaderTemplate obj19ST = shaderManager.retrieveShaderTemplate(PhongShader2.class);
+            obj19ST.bindShader(gvrContext, obj19.getRenderData(), mainScene);
             Objects[3].addChildObject(obj19);
 
             Objects[3].getTransform().setPosition(0.0f, -2.0f,
@@ -447,6 +475,8 @@ public class ViewerMain extends GVRMain {
             renderData15.setMesh(mesh15);
             renderData15.setMaterial(mRobotBodyMaterial);
             obj15.attachRenderData(renderData15);
+            GVRShaderTemplate obj15ST = shaderManager.retrieveShaderTemplate(PhongShader2.class);
+            obj15ST.bindShader(gvrContext, obj15.getRenderData(), mainScene);
             Objects[4].addChildObject(obj15);
 
             GVRSceneObject obj16 = new GVRSceneObject(mGVRContext);
@@ -456,6 +486,8 @@ public class ViewerMain extends GVRMain {
             renderData16.setMesh(mesh16);
             renderData16.setMaterial(mRobotHeadMaterial);
             obj16.attachRenderData(renderData16);
+            GVRShaderTemplate obj16ST = shaderManager.retrieveShaderTemplate(PhongShader3.class);
+            obj16ST.bindShader(gvrContext, obj16.getRenderData(), mainScene);
             Objects[4].addChildObject(obj16);
 
             GVRSceneObject obj17 = new GVRSceneObject(mGVRContext);
@@ -465,6 +497,8 @@ public class ViewerMain extends GVRMain {
             renderData17.setMesh(mesh17);
             renderData17.setMaterial(mRobotMetalMaterial);
             obj17.attachRenderData(renderData17);
+            GVRShaderTemplate obj17ST = shaderManager.retrieveShaderTemplate(MetalShader2.class);
+            obj17ST.bindShader(gvrContext, obj17.getRenderData(), mainScene);
             obj17.getRenderData().setRenderingOrder(3000);
             Objects[4].addChildObject(obj17);
 
@@ -475,6 +509,8 @@ public class ViewerMain extends GVRMain {
             renderData18.setMesh(mesh18);
             renderData18.setMaterial(mRobotRubberMaterial);
             obj18.attachRenderData(renderData18);
+            GVRShaderTemplate obj18ST = shaderManager.retrieveShaderTemplate(DiffuseShader2.class);
+            obj18ST.bindShader(gvrContext, obj18.getRenderData(), mainScene);
             Objects[4].addChildObject(obj18);
 
             Objects[4].getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
@@ -489,6 +525,8 @@ public class ViewerMain extends GVRMain {
             renderData20.setMesh(mesh20);
             renderData20.setMaterial(mLeafBodyMaterial);
             obj20.attachRenderData(renderData20);
+            GVRShaderTemplate obj20ST = shaderManager.retrieveShaderTemplate(MetalShader2.class);
+            obj20ST.bindShader(gvrContext, obj20.getRenderData(), mainScene);
             Objects[0].addChildObject(obj20);
 
             GVRSceneObject obj21 = new GVRSceneObject(mGVRContext);
@@ -498,6 +536,8 @@ public class ViewerMain extends GVRMain {
             renderData21.setMesh(mesh21);
             renderData21.setMaterial(mLeafBoxMaterial);
             obj21.attachRenderData(renderData21);
+            GVRShaderTemplate obj21ST = shaderManager.retrieveShaderTemplate(PhongShader3.class);
+            obj21ST.bindShader(gvrContext, obj21.getRenderData(), mainScene);
             Objects[0].addChildObject(obj21);
 
             Objects[0].getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
@@ -568,6 +608,8 @@ public class ViewerMain extends GVRMain {
                 ThumbnailGlasses[i].setMesh(glass_mesh);
                 ThumbnailGlasses[i].setMaterial(mReflectionMaterial);
                 obj.attachRenderData(ThumbnailGlasses[i]);
+                GVRShaderTemplate objST = shaderManager.retrieveShaderTemplate(ReflectionShader.class);
+                objST.bindShader(gvrContext, obj.getRenderData(), mainScene);
                 obj.getRenderData().setRenderingOrder(ThumbnailOrder[i]);
                 ThumbnailRotation[i].addChildObject(obj);
                 ThumbnailObject[i].addChildObject(ThumbnailRotation[i]);

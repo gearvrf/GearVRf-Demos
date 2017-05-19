@@ -17,6 +17,7 @@ package org.gearvrf.controls;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -50,12 +51,13 @@ public class WormBasePart extends GVRSceneObject {
         GVRMesh mesh = gvrContext.loadMesh(
                 new GVRAndroidResource(gvrContext, meshResId));
 
-        GVRTexture texture = gvrContext.loadTexture(
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext, textureResId));
 
-        segment = new GVRSceneObject(gvrContext, mesh, texture, new ColorSwapShader(
-                getGVRContext()).getShaderId());
-
+        segment = new GVRSceneObject(gvrContext, mesh, texture);
+        GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        segment.getRenderData().setMaterial(material);
+        segment.getRenderData().setShaderTemplate(ColorSwapShader.class);
         segment.getRenderData().setRenderingOrder(RenderingOrder.WORM);
 
         applyShader(gvrContext, segment, color);
@@ -64,7 +66,7 @@ public class WormBasePart extends GVRSceneObject {
 
     private void applyShader(GVRContext gvrContext, GVRSceneObject wormPiece, Color color) {
 
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.wormy_diffuse_light));
 
         wormPiece.getRenderData().getMaterial()

@@ -45,9 +45,9 @@ public class ColorsButton extends MenuControlSceneObject {
 
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(
-                new GVRMaterial(gvrContext, new ColorSwapShader(gvrContext).getShaderId()));
+                new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
         getRenderData().setMesh(sMesh);
-
+        getRenderData().setShaderTemplate(ColorSwapShader.class);
         setTextures(gvrContext);
 
         attachEyePointeeHolder();

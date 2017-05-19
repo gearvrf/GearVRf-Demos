@@ -86,19 +86,20 @@ public class Apple extends GVRSceneObject {
                 R.raw.apple));
 
         ColorSwapShader shader = new ColorSwapShader(gvrContext);
-        GVRMaterial material = new GVRMaterial(gvrContext, shader.getShaderId());
+        GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
         GVRRenderData renderData = new GVRRenderData(gvrContext);
         renderData.setMesh(mesh);
         renderData.setMaterial(material);
+        renderData.setShaderTemplate(ColorSwapShader.class);
         this.attachRenderData(renderData);
 
         getRenderData().setRenderingOrder(RenderingOrder.APPLE);
     }
 
     public void setAppleShaderParameters(GVRContext gvrContext) {
-        GVRTexture grayScaleTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture grayScaleTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.apple_diffuse));
-        GVRTexture detailsTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture detailsTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.apple_details));
 
         this.getRenderData().getMaterial().setOpacity(0);
