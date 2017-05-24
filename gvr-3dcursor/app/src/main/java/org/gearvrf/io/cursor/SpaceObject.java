@@ -179,10 +179,10 @@ class SpaceObject {
 
         AssetObjectTuple tuple = holder.getTuple(state);
 
-        Future<GVRMesh> mesh = tuple.mesh;
+        GVRMesh mesh = tuple.mesh;
         Future<GVRTexture> texture = tuple.texture;
 
-        if (renderData != mesh) {
+        if (renderData.getMesh() != mesh) {
             renderData.setMesh(mesh);
         }
         if (renderData.getMaterial() != texture) {

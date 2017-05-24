@@ -146,7 +146,7 @@ public class CursorMain extends GVRMain {
     private CursorType currentType = CursorType.UNKNOWN;
     private List<Cursor> cursors;
     private String[] textViewStrings;
-    private Map<String, Future<GVRMesh>> meshMap;
+    private Map<String, GVRMesh> meshMap;
     private Map<String, Future<GVRTexture>> textureMap;
     private GearWearableDevice gearWearableDevice;
 
@@ -210,15 +210,15 @@ public class CursorMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
         mainScene = gvrContext.getMainScene();
-        meshMap = new HashMap<String, Future<GVRMesh>>();
+        meshMap = new HashMap<String, GVRMesh>();
         textureMap = new HashMap<String, Future<GVRTexture>>();
         addSurroundings(gvrContext, mainScene);
         try {
             ZipLoader.load(gvrContext, MESH_FILE, new ZipLoader
-                    .ZipEntryProcessor<Future<GVRMesh>>() {
+                    .ZipEntryProcessor<GVRMesh>() {
                 @Override
-                public Future<GVRMesh> getItem(GVRContext context, GVRAndroidResource resource) {
-                    Future<GVRMesh> mesh = context.loadFutureMesh(resource);
+                public GVRMesh getItem(GVRContext context, GVRAndroidResource resource) {
+                    GVRMesh mesh = context.getAssetLoader().loadMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
                     return mesh;
                 }
@@ -231,7 +231,7 @@ public class CursorMain extends GVRMain {
                         @Override
                         public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource
                                 resource) {
-                            Future<GVRTexture> texture = context.loadFutureTexture(resource);
+                            Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(resource);
                             textureMap.put(resource.getResourceFilename(), texture);
                             return texture;
                         }
@@ -602,7 +602,7 @@ public class CursorMain extends GVRMain {
     private void addSurroundings(GVRContext gvrContext, GVRScene scene) {
         FutureWrapper<GVRMesh> futureQuadMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
-        Future<GVRTexture> futureCubemapTexture = gvrContext
+        Future<GVRTexture> futureCubemapTexture = gvrContext.getAssetLoader()
                 .loadFutureCubemapTexture(
                         new GVRAndroidResource(gvrContext, R.raw.earth));
 
