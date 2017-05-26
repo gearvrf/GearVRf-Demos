@@ -51,7 +51,7 @@ public class MultiLightMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
-        mScene = mGVRContext.getNextMainScene();
+        mScene = mGVRContext.getMainScene();
         float zdist = 2.0f;
 
         GVRSceneObject root = new GVRSceneObject(gvrContext);
