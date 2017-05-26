@@ -114,7 +114,6 @@ public class GlassShader2 extends GVRShaderTemplate{
     private GVRMaterialMap mCustomShader = null;
 
     public GlassShader2(GVRContext gvrContext) {
-
         super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D intexture", 300);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);

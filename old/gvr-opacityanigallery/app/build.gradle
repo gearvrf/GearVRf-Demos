@@ -2,8 +2,8 @@ apply plugin: 'com.android.application'
 
 System.setProperty("appName", "gvr-opacityanigallery")
 
-if(file("../../common.gradle").exists()) {
-    apply from: '../../common.gradle'
+if(file("../../../common.gradle").exists()) {
+    apply from: '../../../common.gradle'
 }
 else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'

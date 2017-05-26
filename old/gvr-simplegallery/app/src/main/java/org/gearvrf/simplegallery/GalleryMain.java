@@ -18,6 +18,7 @@ package org.gearvrf.simplegallery;
 import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
@@ -63,7 +64,7 @@ public class GalleryMain extends GVRMain {
         mAnimationEngine = gvrContext.getAnimationEngine();
 
         GVRScene mainScene = mGVRContext.getMainScene();
-
+        GVRAssetLoader loader = mGVRContext.getAssetLoader();
         mainScene.getMainCameraRig().getLeftCamera()
                 .setBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);
         mainScene.getMainCameraRig().getRightCamera()
@@ -72,16 +73,16 @@ public class GalleryMain extends GVRMain {
         mainScene.getMainCameraRig().getTransform()
                 .setPosition(0.0f, 0.0f, 0.0f);
 
-        GVRMesh sphereMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+        GVRMesh sphereMesh = loader.loadMesh(new GVRAndroidResource(
                 mGVRContext, R.raw.sphere_mesh));
 
         GVRSceneObject leftScreen = new GVRSceneObject(mGVRContext, sphereMesh,
-                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
+                loader.loadTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.left_screen)));
         leftScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         leftScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
         GVRSceneObject rightScreen = new GVRSceneObject(mGVRContext,
-                sphereMesh, mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
+                sphereMesh, loader.loadTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.right_screen)));
         rightScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         rightScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
@@ -95,7 +96,7 @@ public class GalleryMain extends GVRMain {
                 R.drawable.photo_5, R.drawable.photo_6, R.drawable.photo_7,
                 R.drawable.photo_8, R.drawable.photo_9 };
         for (int id : resourceIds) {
-            numberTextures.add(mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
+            numberTextures.add(loader.loadTexture(new GVRAndroidResource(
                     mGVRContext, id)));
         }
 
