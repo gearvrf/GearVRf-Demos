@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
@@ -53,16 +54,17 @@ public class SampleMain extends GVRMain {
          * IOException.
          */
         try {
+            GVRAssetLoader loader = mGVRContext.getAssetLoader();
             // If "cylinder.obj" exists - but is not a valid ASSIMP mesh file -
             // loadMesh() will return null.
-            mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+            mesh = loader.loadMesh(new GVRAndroidResource(mGVRContext,
                     "cylinder.obj"));
 
             leftScreen = new GVRSceneObject(gvrContext, mesh,
-                    gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
+                    loader.loadTexture(new GVRAndroidResource(mGVRContext,
                             "sample_20140509_l.png")));
             rightScreen = new GVRSceneObject(gvrContext, mesh,
-                    gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
+                    loader.loadTexture(new GVRAndroidResource(mGVRContext,
                             "sample_20140509_r.png")));
         } catch (IOException e) {
             e.printStackTrace();

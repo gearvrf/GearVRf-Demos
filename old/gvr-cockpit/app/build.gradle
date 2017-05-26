@@ -2,14 +2,18 @@ apply plugin: 'com.android.application'
 
 System.setProperty("appName", "gvr-cockpit")
 
-if(file("../../common.gradle").exists()) {
-    apply from: '../../common.gradle'
+if(file("../../../common.gradle").exists()) {
+    apply from: '../../../common.gradle'
 }
 else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
 android {
+    defaultConfig {
+        applicationId "org.gearvrf.cockpit"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
