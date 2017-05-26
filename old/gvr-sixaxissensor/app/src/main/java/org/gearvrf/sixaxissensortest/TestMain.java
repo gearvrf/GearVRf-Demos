@@ -70,7 +70,7 @@ public class TestMain extends GVRMain {
         mainScene.getMainCameraRig().setCameraRigType(
                 GVRCameraRig.GVRCameraRigType.YawOnly.ID);
 
-        GVRMesh cylinderMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+        GVRMesh cylinderMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 mGVRContext, "cylinder.obj"));
         Bitmap cylinderBitmap = BitmapFactory.decodeResource(mGVRContext
                 .getContext().getResources(), R.drawable.cylinder2);

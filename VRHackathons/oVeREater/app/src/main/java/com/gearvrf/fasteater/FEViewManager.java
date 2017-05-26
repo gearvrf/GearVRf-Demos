@@ -108,7 +108,7 @@ public class FEViewManager extends GVRScript {
         mMainScene.addSceneObject(mainSceneObject);
         mMainScene.getMainCameraRig().getTransform().setPosition(0.0f, 6.0f, 8.0f);
 
-        GVRMesh mesh = context.loadMesh(new GVRAndroidResource(context,
+        GVRMesh mesh = context.getAssetLoader().loadMesh(new GVRAndroidResource(context,
                 "space_sphere.obj"));
 
         GVRSceneObject leftScreen = new GVRSceneObject(context, mesh,
