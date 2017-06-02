@@ -184,8 +184,6 @@ public class AccessibilityScene extends GVRScene {
 
     private void applyShader(AccessibilitySceneShader shader, GVRSceneObject object) {
         if (object != null && object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-            GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-            object.getRenderData().setMaterial(material);
             object.getRenderData().getMaterial().setTexture(AccessibilitySceneShader.TEXTURE_KEY,
                     object.getRenderData().getMaterial().getMainTexture());
             object.getRenderData().getMaterial().setFloat(AccessibilitySceneShader.BLUR_INTENSITY, 1);
