@@ -75,7 +75,7 @@ public class GazeCursorSceneObject extends GVRSceneObject {
     private GVRRenderData createRenderData(GVRContext gvrContext) {
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRMesh mesh = gvrContext.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE);
-        material.setMainTexture(gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.head_tracker)));
+        material.setMainTexture(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.head_tracker)));
         GVRRenderData renderData = new GVRRenderData(gvrContext);
         renderData.setMaterial(material);
         renderData.setMesh(mesh);

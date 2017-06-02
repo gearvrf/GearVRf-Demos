@@ -90,63 +90,67 @@ public class DinosaurFactory {
     }
 
     private FocusableSceneObject createDinosaur(int dinoMeshId, int dinoTextureId) {
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, dinoMeshId), settings);
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, dinoMeshId), settings);
+        GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
         final FocusableSceneObject dino = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
-        gvrContext.loadTexture(new TextureCallback() {
+        gvrContext.getAssetLoader().loadTexture(
+                new GVRAndroidResource(gvrContext, dinoTextureId),
+                new TextureCallback() {
 
-            @Override
-            public void loaded(GVRTexture arg0, GVRAndroidResource arg1) {
-                dino.getRenderData().getMaterial().setMainTexture(arg0);
-            }
+                    @Override
+                    public void loaded(GVRTexture arg0, GVRAndroidResource arg1) {
+                        dino.getRenderData().getMaterial().setMainTexture(arg0);
+                    }
 
-            @Override
-            public void failed(Throwable arg0, GVRAndroidResource arg1) {
-                // TODO Auto-generated method stub
-            }
+                    @Override
+                    public void failed(Throwable arg0, GVRAndroidResource arg1) {
+                        // TODO Auto-generated method stub
+                    }
 
-            @Override
-            public boolean stillWanted(GVRAndroidResource arg0) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-        }, new GVRAndroidResource(gvrContext, dinoTextureId));
+                    @Override
+                    public boolean stillWanted(GVRAndroidResource arg0) {
+                        // TODO Auto-generated method stub
+                        return false;
+                    }
+                });
 
         return dino;
     }
 
     private FocusableSceneObject createDinosaurBase(int baseMeshId) {
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
-        GVRTexture baseTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
+        GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
         FocusableSceneObject dinosaurBase = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         return dinosaurBase;
     }
 
     private FocusableSceneObject createDinosaurGround(int groundMesh) {
 
-        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
-        GVRTexture groundTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
+        GVRTexture groundTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
         final FocusableSceneObject dinosaurGround = new FocusableSceneObject(gvrContext, mesh, groundTexture);
-        gvrContext.loadTexture(new TextureCallback() {
+        gvrContext.getAssetLoader().loadTexture(
+                new GVRAndroidResource(gvrContext, R.raw.ground_tex_diffuse),
+                new TextureCallback() {
 
-            @Override
-            public void loaded(GVRTexture texture, GVRAndroidResource arg1) {
-                dinosaurGround.getRenderData().getMaterial().setMainTexture(texture);
+                    @Override
+                    public void loaded(GVRTexture texture, GVRAndroidResource arg1) {
+                        dinosaurGround.getRenderData().getMaterial().setMainTexture(texture);
 
-            }
+                    }
 
-            @Override
-            public void failed(Throwable arg0, GVRAndroidResource arg1) {
-                // TODO Auto-generated method stub
+                    @Override
+                    public void failed(Throwable arg0, GVRAndroidResource arg1) {
+                        // TODO Auto-generated method stub
 
-            }
+                    }
 
-            @Override
-            public boolean stillWanted(GVRAndroidResource arg0) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-        }, new GVRAndroidResource(gvrContext, R.raw.ground_tex_diffuse));
+                    @Override
+                    public boolean stillWanted(GVRAndroidResource arg0) {
+                        // TODO Auto-generated method stub
+                        return false;
+                    }
+                });
         return dinosaurGround;
     }
 

@@ -95,7 +95,7 @@ public class CursorUtils {
                 }
                 cursor = new GVRSceneObject(gvrContext, 
                         new FutureWrapper<GVRMesh>(gvrContext.createQuad(0.1f, 0.1f)),
-                        gvrContext.loadFutureTexture(new GVRAndroidResource(gvrContext, R.raw.cursor)));
+                        gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext, R.raw.cursor)));
                 cursor.setName("cursor");
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                 gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);

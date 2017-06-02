@@ -46,21 +46,21 @@ public class IMAXMovieTheater extends MovieTheater {
         super(context);
         try {
             // background
-            GVRMesh backgroundMesh = context.loadMesh(
+            GVRMesh backgroundMesh = context.getAssetLoader().loadMesh(
                     new GVRAndroidResource(context, "imax/cinema.obj"));
             GVRTexture backgroundLightOffTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "imax/cinema_light_off.png"));
             GVRTexture backgroundLightOnTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "imax/cinema_light_on.png"));
-            GVRMesh backgroundRadiosity = context.loadMesh(new GVRAndroidResource(context, "imax/radiosity1.obj"));
+            GVRMesh backgroundRadiosity = context.getAssetLoader().loadMesh(new GVRAndroidResource(context, "imax/radiosity1.obj"));
             backgroundMesh.setNormals(backgroundRadiosity.getVertices());
             background = new GVRSceneObject(context, backgroundMesh, backgroundLightOffTexture);
             background.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
-            GVRMesh additiveMesh = context.loadMesh(
+            GVRMesh additiveMesh = context.getAssetLoader().loadMesh(
                     new GVRAndroidResource(context, "imax/additive.obj"));
             GVRTexture additiveTexture = context.getAssetLoader().loadTexture(
                     new GVRAndroidResource(context, "imax/additive.png"));
-            GVRMesh additiveRadiosity = context.loadMesh(new GVRAndroidResource(context, "imax/radiosity2.obj"));
+            GVRMesh additiveRadiosity = context.getAssetLoader().loadMesh(new GVRAndroidResource(context, "imax/radiosity2.obj"));
             additiveMesh.setNormals(additiveRadiosity.getVertices());
             additive = new GVRSceneObject(context, additiveMesh, additiveTexture);
             additive.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
@@ -81,7 +81,7 @@ public class IMAXMovieTheater extends MovieTheater {
             additive.getRenderData().setShaderTemplate(AdditiveShader.class);
             additive.getRenderData().getMaterial().setTexture(AdditiveShader.TEXTURE_KEY, additiveTexture);
             // screen
-            GVRMesh screenMesh = context.loadMesh(new GVRAndroidResource(
+            GVRMesh screenMesh = context.getAssetLoader().loadMesh(new GVRAndroidResource(
                     context, "imax/screen.obj"));
             screen = new GVRVideoSceneObject(context, screenMesh, player,
                     screenTexture, GVRVideoSceneObject.GVRVideoType.MONO);

@@ -81,7 +81,7 @@ public class ColorsMenu extends MenuWindow {
 
     private void createPreviewBox() {
         previewArea = new MenuColorsPreview(getGVRContext(), getGVRContext().createQuad(1.2f, 1),
-                getGVRContext().loadTexture(
+                getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(this.getGVRContext(), R.raw.empty)));
 
         previewArea.getTransform().setPosition(PREVIEW_POSITION_X, PREVIEW_POSITION_Y,

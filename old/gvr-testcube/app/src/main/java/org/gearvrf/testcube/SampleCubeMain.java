@@ -42,22 +42,22 @@ public class SampleCubeMain extends GVRMain {
         ArrayList<Future<GVRTexture>> futureTextureList = new ArrayList<Future<GVRTexture>>(
                 6);
         futureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.back)));
         futureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.right)));
         futureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.front)));
         futureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.left)));
         futureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.top)));
         futureTextureList.add(gvrContext
-                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.bottom)));
         GVRSceneObject mCube = new GVRCubeSceneObject(gvrContext,
                 false, futureTextureList);

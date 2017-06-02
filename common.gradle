@@ -8,7 +8,7 @@ allprojects {
             url "http://google.bintray.com/googlevr"
         }
         flatDir {
-            dirs '../../../GearVRf/GVRf/gearvrf-libs'
+            dirs '../../../GearVRf/GVRf/gearvrf-libs', '../../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }

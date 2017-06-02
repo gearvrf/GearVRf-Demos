@@ -89,11 +89,11 @@ public class LoadComponentTextBackGround extends GVRSceneObject implements Focus
     }
 
     private void loadingTexture() {
-        circleAlphaTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        circleAlphaTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.loading_two__colors));
-        circleTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        circleTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.loading));
-        plusTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        plusTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.plus));
     }
 

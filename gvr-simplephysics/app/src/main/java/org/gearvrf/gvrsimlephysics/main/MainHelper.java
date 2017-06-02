@@ -65,7 +65,7 @@ public class MainHelper {
     }
 
    public static GVRSceneObject createDirectLight(GVRContext context, float x, float y, float z) {
-        Future<GVRTexture> texture = context.loadFutureTexture(new GVRAndroidResource(context, R.drawable.yellow));
+        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.yellow));
         GVRSceneObject lightObject = new GVRSceneObject(context);//GVRSphereSceneObject(context, true, texture);
         GVRDirectLight light = new GVRDirectLight(context);
 
@@ -84,7 +84,7 @@ public class MainHelper {
     }
 
     public static GVRSceneObject createGround(GVRContext context, float x, float y, float z) {
-        Future<GVRTexture> texture = context.loadFutureTexture(new GVRAndroidResource(context, R.drawable.orange));
+        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.orange));
         GVRMaterial material = new GVRMaterial(context);
 
         GVRSceneObject groundObject = new GVRCubeSceneObject(context, true, texture);
@@ -113,8 +113,8 @@ public class MainHelper {
 
     public static GVRSceneObject createCylinder(GVRContext context, float x, float y, float z,
                                                  int drawable) throws IOException {
-        Future<GVRTexture> texture = context.loadFutureTexture(new GVRAndroidResource(context, drawable));
-        Future<GVRMesh> mesh = context.loadFutureMesh(new GVRAndroidResource(context, "cylinder.fbx"));
+        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, drawable));
+        Future<GVRMesh> mesh = context.getAssetLoader().loadFutureMesh(new GVRAndroidResource(context, "cylinder.fbx"));
         GVRSceneObject cylinderObject = new GVRSceneObject(context, mesh, texture);
 
         cylinderObject.getTransform().setPosition(x, y, z);
@@ -139,8 +139,8 @@ public class MainHelper {
 
     public static GVRSceneObject createBall(GVRContext context, float x, float y, float z,
                                             float[] force) throws IOException {
-        Future<GVRTexture> texture = context.loadFutureTexture(new GVRAndroidResource(context, R.drawable.grey));
-        Future<GVRMesh> mesh = context.loadFutureMesh(new GVRAndroidResource(context, "ball.fbx"));
+        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.grey));
+        Future<GVRMesh> mesh = context.getAssetLoader().loadFutureMesh(new GVRAndroidResource(context, "ball.fbx"));
 
         GVRSceneObject ballObject = new GVRSceneObject(context, mesh, texture);
         ballObject.getTransform().setScale(0.7f, 0.7f, 0.7f);
@@ -167,7 +167,7 @@ public class MainHelper {
     public static GVRSceneObject createGaze(GVRContext context, float x, float y, float z) {
         GVRSceneObject gaze = new GVRSceneObject(context,
                 new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
-                context.loadFutureTexture(new GVRAndroidResource(context, R.drawable.gaze)));
+                context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.gaze)));
 
         gaze.getTransform().setPosition(x, y, z);
         gaze.getRenderData().setDepthTest(false);

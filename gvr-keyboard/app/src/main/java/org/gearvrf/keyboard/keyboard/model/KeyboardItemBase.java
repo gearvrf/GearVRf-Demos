@@ -78,12 +78,12 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
 
         getRenderData().getMaterial().setTexture(
                 TransparentButtonShaderThreeStates.TEXTURE_KEY,
-                getGVRContext().loadTexture(
+                getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(getGVRContext(), styleItem.getTexture())));
 
         getRenderData().getMaterial().setTexture(
                 TransparentButtonShaderThreeStates.TEXTURE_HOVER_KEY,
-                getGVRContext().loadTexture(
+                getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(getGVRContext(), styleItem.getTextureHover())));
 
         getRenderData().getMaterial().setFloat(TransparentButtonShaderThreeStates.TEXTURE_SWITCH,
@@ -93,7 +93,7 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
     protected void setTextureFromResource(String shaderKey, int resource) {
 
         getRenderData().getMaterial().setTexture(shaderKey,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), resource)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), resource)));
     }
 
     public void setNomalTexture(String character, String ShaderKey) {

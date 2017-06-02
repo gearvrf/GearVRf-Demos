@@ -173,7 +173,7 @@ public class VuforiaSampleMain extends GVRMain {
     private void createTeaPotObject() {
         try {
             modelShader = new ModelShader(gvrContext);
-            GVRMesh teapotMesh = gvrContext.loadMesh(
+            GVRMesh teapotMesh = gvrContext.getAssetLoader().loadMesh(
                     new GVRAndroidResource(gvrContext, "teapot.obj"));
             GVRTexture teapotTexture = gvrContext.getAssetLoader().loadTexture(
                     new GVRAndroidResource(gvrContext.getContext(), "teapot_tex1.jpg"));

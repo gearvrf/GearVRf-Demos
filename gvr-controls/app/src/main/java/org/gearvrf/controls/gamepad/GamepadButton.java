@@ -56,10 +56,10 @@ public class GamepadButton extends GVRSceneObject {
         parameters.setAnisotropicValue(16);
         parameters.setMinFilterType(TextureFilterType.GL_NEAREST_MIPMAP_NEAREST);
         parameters.setMagFilterType(TextureFilterType.GL_NEAREST_MIPMAP_NEAREST);
-        buttonTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        buttonTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.gamepad_diffuse), parameters);
 
-        eventTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        eventTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.event_color));
 
         attachButton(array.getResourceId(1, -0));
@@ -74,7 +74,7 @@ public class GamepadButton extends GVRSceneObject {
 
     private void attachButton(int drawable) {
 
-        GVRMesh buttonMesh = getGVRContext().loadMesh(new GVRAndroidResource(
+        GVRMesh buttonMesh = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(
                 getGVRContext(), drawable));
 
         buttonNormal = new GVRSceneObject(getGVRContext(), buttonMesh,
@@ -91,7 +91,7 @@ public class GamepadButton extends GVRSceneObject {
             return;
         }
 
-        GVRMesh dpadEventMesh = getGVRContext().loadMesh(new GVRAndroidResource(
+        GVRMesh dpadEventMesh = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(
                 getGVRContext(), drawable));
 
         buttonHover = new GVRSceneObject(getGVRContext(), dpadEventMesh, eventTexture);

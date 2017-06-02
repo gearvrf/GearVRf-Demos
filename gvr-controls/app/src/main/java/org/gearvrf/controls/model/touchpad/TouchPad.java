@@ -62,32 +62,32 @@ public class TouchPad extends GVRSceneObject {
     private void createArrows() {
 
         aroowUp = new Arrow(getGVRContext(), 1f, 1f,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.UP);
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.UP);
         aroowDown = new Arrow(getGVRContext(), 1f, 1f,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.DOWN);
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.DOWN);
         aroowLeft = new Arrow(getGVRContext(), 1f, 1f,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.LEFT);
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.LEFT);
         aroowRight = new Arrow(getGVRContext(), 1f, 1f,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.RIGHT);
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.swipe)), Arrow.RIGHT);
 
     }
 
     private void createIndicator() {
         indicator = new IndicatorTap(getGVRContext(), 1f, 1f,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.tap)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.tap)));
 
     }
 
     private void createIndicatorLongPress() {
         indicatorLongPress = new IndicatorLongPress(getGVRContext(), 1f, 1f,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.longpress)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.longpress)));
 
     }
 
     private void createTouchpad() {
         touchPad = new GVRSceneObject(getGVRContext(),
-                getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), (R.raw.gear_vr))),
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.gear_vr_texture)));
+                getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(getGVRContext(), (R.raw.gear_vr))),
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.gear_vr_texture)));
         touchPad.getTransform().setPositionZ(-4f);
         touchPad.getTransform().setPositionY(0.1f);
         touchPad.getTransform().setPositionX(-0.895f);

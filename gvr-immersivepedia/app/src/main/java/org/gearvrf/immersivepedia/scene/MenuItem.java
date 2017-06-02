@@ -177,7 +177,7 @@ public class MenuItem extends FocusableSceneObject {
 
     private void createTextBackground() {
         GVRMesh mesh = getGVRContext().createQuad(TEXT_WIDTH, TEXT_HEIGHT);
-        textBackground = new GVRSceneObject(getGVRContext(), mesh, getGVRContext().loadTexture(
+        textBackground = new GVRSceneObject(getGVRContext(), mesh, getGVRContext().getAssetLoader().loadTexture(
                 new GVRAndroidResource(getGVRContext(), R.drawable.text_bg)));
 
         textBackground.getTransform().setPosition(0, TEXT_BACKGROUND_Y, TEXT_BACKGROUND_Z);

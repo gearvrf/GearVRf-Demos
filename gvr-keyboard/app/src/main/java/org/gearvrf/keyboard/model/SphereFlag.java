@@ -146,7 +146,7 @@ public class SphereFlag extends GVRSceneObject {
 
     private GVRRenderData getRenderData(GVRMaterial material) {
         GVRRenderData renderData = new GVRRenderData(gvrContext);
-        renderData.setMesh(gvrContext.loadFutureMesh(new GVRAndroidResource(gvrContext,
+        renderData.setMesh(gvrContext.getAssetLoader().loadFutureMesh(new GVRAndroidResource(gvrContext,
                 R.raw.sphere_uv_flag)));
         renderData.setMaterial(material);
         renderData.setRenderingOrder(100);

@@ -222,7 +222,7 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
         if (this.photoId == resource)
             return;
         this.getRenderData().getMaterial()
-                .setMainTexture(gvrContext.loadTexture(new GVRAndroidResource(this.gvrContext,
+                .setMainTexture(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(this.gvrContext,
                         resource)));
         this.photoId = resource;
     }

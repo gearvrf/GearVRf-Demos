@@ -215,9 +215,9 @@ public class ScaleMenu extends MenuWindow {
     private ArrayList<GVRTexture> createTextureList(GVRContext gvrContext, int res1, int res2,
             int res3) {
         ArrayList<GVRTexture> textureList = new ArrayList<GVRTexture>();
-        textureList.add(gvrContext.loadTexture(new GVRAndroidResource(getGVRContext(), res1)));
-        textureList.add(gvrContext.loadTexture(new GVRAndroidResource(getGVRContext(), res2)));
-        textureList.add(gvrContext.loadTexture(new GVRAndroidResource(getGVRContext(), res3)));
+        textureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), res1)));
+        textureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), res2)));
+        textureList.add(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), res3)));
         return textureList;
     }
 

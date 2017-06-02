@@ -16,6 +16,7 @@
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
@@ -264,7 +265,7 @@ public class FileBrowserUtils {
                         spinner.setVisibility(View.VISIBLE);
                         // try to load the model
                         try {
-                            GVRModelSceneObject model = gvrContext.loadModelFromSD(filename);
+                            GVRModelSceneObject model = gvrContext.getAssetLoader().loadModel("sd:" + filename, GVRImportSettings.getRecommendedSettings(), true, null);
                             gvrContext.getMainScene().addSceneObject(model);
                             gvrContext.getMainScene().bindShaders();
 

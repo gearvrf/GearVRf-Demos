@@ -141,8 +141,7 @@ public class SampleMain extends GVRMain {
 
         GVRMesh mesh = null;
         try {
-            mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
-                    "bunny.obj"));
+            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
         } catch (IOException e) {
             e.printStackTrace();
             mesh = null;

@@ -41,7 +41,7 @@ public class GazeController {
 
         cursor = new GVRSceneObject(gvrContext,
                 gvrContext.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.head_tracker)));
         cursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
         cursor.getRenderData().setRenderingOrder(
@@ -51,7 +51,7 @@ public class GazeController {
 
         highlightCursor = new GVRSceneObject(gvrContext,
                 gvrContext.createQuad(HIGHLIGHT_CURSOR_SIZE, HIGHLIGHT_CURSOR_SIZE),
-                gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.highlightcursor)));
         highlightCursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
         highlightCursor.getRenderData().setRenderingOrder(

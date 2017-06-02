@@ -48,7 +48,7 @@ public class WormBasePart extends GVRSceneObject {
 
         GVRContext gvrContext = getGVRContext();
 
-        GVRMesh mesh = gvrContext.loadMesh(
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, meshResId));
 
         GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
@@ -72,7 +72,7 @@ public class WormBasePart extends GVRSceneObject {
         wormPiece.getRenderData().getMaterial()
                 .setTexture(ColorSwapShader.TEXTURE_GRAYSCALE, texture);
 
-        texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.wormy_diffuse_2));
 
         wormPiece.getRenderData().getMaterial()

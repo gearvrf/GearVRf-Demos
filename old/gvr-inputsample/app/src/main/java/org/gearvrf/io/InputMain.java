@@ -223,7 +223,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
         FutureWrapper<GVRMesh> futureQuadMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
         Future<GVRTexture> futureCubemapTexture = gvrContext
-                .loadFutureCubemapTexture(
+                .getAssetLoader().loadFutureCubemapTexture(
                         new GVRAndroidResource(gvrContext, R.raw.earth));
 
         GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,
@@ -282,7 +282,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
     @Override
     public void onCursorControllerAdded(final GVRCursorController controller) {
         GVRSceneObject sceneObject = new GVRSceneObject(gvrContext);
-        Future<GVRTexture> texture = gvrContext.loadFutureTexture(
+        Future<GVRTexture> texture = gvrContext.getAssetLoader().loadFutureTexture(
                 new GVRAndroidResource(gvrContext, R.raw.earthmap1k));
 
         GVRMaterial material = new GVRMaterial(gvrContext,
@@ -296,7 +296,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
         material.setVec3(CustomShaderManager.COLOR_KEY, r, g, b);
         material.setTexture(CustomShaderManager.TEXTURE_KEY, texture);
         material.setMainTexture(texture);
-        Future<GVRMesh> futureCursorMesh = gvrContext.loadFutureMesh(
+        Future<GVRMesh> futureCursorMesh = gvrContext.getAssetLoader().loadFutureMesh(
                 new GVRAndroidResource(gvrContext, R.raw.cursor));
 
         GVRRenderData cursorRenderData = new GVRRenderData(gvrContext);
@@ -332,7 +332,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
         public Cube(GVRContext gvrContext, String name,
                 CustomShaderManager shaderManager) {
             super(gvrContext, true);
-            Future<GVRTexture> texture = gvrContext.loadFutureTexture(
+            Future<GVRTexture> texture = gvrContext.getAssetLoader().loadFutureTexture(
                     new GVRAndroidResource(gvrContext, R.raw.cube_texture));
             GVRMaterial material = getRenderData().getMaterial();
             material.setShaderType(shaderManager.getShaderId());
