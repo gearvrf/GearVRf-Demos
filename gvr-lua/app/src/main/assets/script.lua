@@ -2,7 +2,7 @@ function onInit(gvrf)
   local mainScene = gvrf:getMainScene()
 
   -- 3D model
-  local model = gvrf:loadModel("astro_boy.dae")
+  local model = gvrf:getAssetLoader():loadModel("astro_boy.dae")
   model:getTransform():setRotationByAxis(45.0, 0.0, 1.0, 0.0)
   model:getTransform():setScale(3, 3, 3)
   model:getTransform():setPosition(0.0, -0.4, -0.5)

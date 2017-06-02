@@ -6,7 +6,7 @@ function onInit(gvrf) {
   var mainScene = gvrf.getMainScene();
 
   // 3D Boat Scene
-  var boat = gvrf.loadModel("RowBoatFBX/RowBoatAnimated.fbx");
+  var boat = gvrf.getAssetLoader().loadModel("RowBoatFBX/RowBoatAnimated.fbx");
   boat.setName("boat");
   boat.getTransform().setScale(.5, .5, .5);
   boat.getTransform().setRotationByAxis(20, 0, 1, 0);
