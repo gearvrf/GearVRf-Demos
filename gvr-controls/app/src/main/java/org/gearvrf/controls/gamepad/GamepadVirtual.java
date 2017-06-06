@@ -43,10 +43,10 @@ public class GamepadVirtual extends GVRSceneObject {
 
         res = gvrContext.getContext().getResources();
 
-        GVRMesh gamepadMesh = gvrContext.loadMesh(new GVRAndroidResource(
+        GVRMesh gamepadMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                 gvrContext, R.raw.gamepad_dev));
 
-        gamepadTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        gamepadTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.gamepad_diffuse));
 
         GVRSceneObject sceneObject = new GVRSceneObject(getGVRContext(), gamepadMesh, gamepadTexture);

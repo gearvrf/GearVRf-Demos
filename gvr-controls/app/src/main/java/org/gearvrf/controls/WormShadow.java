@@ -35,7 +35,7 @@ public class WormShadow extends GVRSceneObject {
 
         GVRMesh checkMesh = getGVRContext().createQuad(width, height);
 
-        GVRTexture checkTexture = getGVRContext().loadTexture(
+        GVRTexture checkTexture = getGVRContext().getAssetLoader().loadTexture(
                 new GVRAndroidResource(getGVRContext(), R.drawable.shadow));
 
         GVRSceneObject shadowObject = new GVRSceneObject(getGVRContext(), checkMesh, checkTexture);

@@ -173,7 +173,7 @@ public class BulletSampleMain extends GVRMain {
         GVRSceneObject object = null;
         try {
             object = new GVRSceneObject(mGVRContext, futureMesh,
-                    mGVRContext.loadFutureTexture(new GVRAndroidResource(
+                    mGVRContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                             mGVRContext, texture)));
             // TODO: Create mesh collider to ground and add GVRCollision component
         } catch (IOException e) {

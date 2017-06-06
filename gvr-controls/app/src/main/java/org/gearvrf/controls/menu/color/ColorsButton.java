@@ -59,7 +59,7 @@ public class ColorsButton extends MenuControlSceneObject {
     private void createCheckObject() {
 
         GVRMesh checkMesh = getGVRContext().createQuad(BUTTON_SIZE, BUTTON_SIZE);
-        GVRTexture checkTexture = getGVRContext().loadTexture(
+        GVRTexture checkTexture = getGVRContext().getAssetLoader().loadTexture(
                 new GVRAndroidResource(getGVRContext(), R.drawable.ic_selected_color));
 
         checkObject = new GVRSceneObject(getGVRContext(), checkMesh, checkTexture);
@@ -73,7 +73,7 @@ public class ColorsButton extends MenuControlSceneObject {
     private void createHoverObject() {
 
         GVRMesh checkMesh = getGVRContext().createQuad(BUTTON_SIZE, BUTTON_SIZE);
-        GVRTexture checkTexture = getGVRContext().loadTexture(
+        GVRTexture checkTexture = getGVRContext().getAssetLoader().loadTexture(
                 new GVRAndroidResource(getGVRContext(), R.drawable.ic_hover_color));
 
         hoverObject = new GVRSceneObject(getGVRContext(), checkMesh, checkTexture);
@@ -87,12 +87,12 @@ public class ColorsButton extends MenuControlSceneObject {
 
     private void setTextures(GVRContext gvrContext) {
 
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.grayscale_circle));
 
         getRenderData().getMaterial().setTexture(ColorSwapShader.TEXTURE_GRAYSCALE, texture);
 
-        texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.raw.empty));
 
         getRenderData().getMaterial().setTexture(ColorSwapShader.TEXTURE_DETAILS, texture);

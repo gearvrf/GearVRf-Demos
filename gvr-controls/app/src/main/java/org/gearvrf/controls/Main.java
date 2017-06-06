@@ -174,9 +174,9 @@ public class Main extends GVRMain {
 
     private void createFence() {
 
-        GVRMesh mesh = mGVRContext.loadMesh(
+        GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.fence));
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
         fence = new GVRSceneObject(mGVRContext, mesh, texture);
         fence.getTransform().setPositionY(GROUND_Y_POSITION);
@@ -223,9 +223,9 @@ public class Main extends GVRMain {
 
     private void createSkybox() {
 
-        GVRMesh mesh = mGVRContext.loadMesh(
+        GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.skybox));
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.skybox));
 
         skybox = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -241,9 +241,9 @@ public class Main extends GVRMain {
 
     private void createSurroundings() {
 
-        GVRMesh mesh = mGVRContext.loadMesh(
+        GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.stones));
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
 
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -253,9 +253,9 @@ public class Main extends GVRMain {
         scene.addSceneObject(surroundings);
         // ground.addChildObject(surroundings);
 
-        mesh = mGVRContext.loadMesh(
+        mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.grass));
-        texture = mGVRContext.loadTexture(
+        texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
 
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -265,9 +265,9 @@ public class Main extends GVRMain {
         // ground.addChildObject(surroundings);
         surroundings.getRenderData().setRenderingOrder(RenderingOrder.GRASS);
 
-        mesh = mGVRContext.loadMesh(
+        mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.flowers));
-        texture = mGVRContext.loadTexture(
+        texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
 
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -277,9 +277,9 @@ public class Main extends GVRMain {
         // ground.addChildObject(surroundings);
         surroundings.getRenderData().setRenderingOrder(RenderingOrder.FLOWERS);
 
-        mesh = mGVRContext.loadMesh(
+        mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.wood));
-        texture = mGVRContext.loadTexture(
+        texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
         surroundings.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
@@ -293,7 +293,7 @@ public class Main extends GVRMain {
     private void createSun() {
 
         GVRMesh mesh = mGVRContext.createQuad(SUN_SIZE, SUN_SIZE);
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.sun));
         sun = new GVRSceneObject(mGVRContext, mesh, texture);
         sun.getTransform().setRotationByAxis(90, 1, 0, 0);

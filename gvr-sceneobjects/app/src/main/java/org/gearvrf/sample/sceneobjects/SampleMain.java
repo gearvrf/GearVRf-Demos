@@ -62,13 +62,13 @@ public class SampleMain extends GVRMain {
 
         // load texture asynchronously
         Future<GVRTexture> futureTexture = gvrContext
-                .loadFutureTexture(new GVRAndroidResource(gvrContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.gearvr_logo));
         Future<GVRTexture> futureTextureTop = gvrContext
-                .loadFutureTexture(new GVRAndroidResource(gvrContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.top));
         Future<GVRTexture> futureTextureBottom = gvrContext
-                .loadFutureTexture(new GVRAndroidResource(gvrContext,
+                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.bottom));
         ArrayList<Future<GVRTexture>> futureTextureList = new ArrayList<Future<GVRTexture>>(
                 3);

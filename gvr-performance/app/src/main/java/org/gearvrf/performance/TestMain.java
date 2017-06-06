@@ -82,7 +82,7 @@ public class TestMain extends GVRMain {
 
                 @Override
                 public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource resource) {
-                    return context.loadFutureTexture(resource);
+                    return context.getAssetLoader().loadFutureTexture(resource);
                 }
             });
 
@@ -93,7 +93,7 @@ public class TestMain extends GVRMain {
 
                 // we assume that the mesh and the textures are valid
                 bunny = new GVRSceneObject(gvrContext,
-                        gvrContext.loadFutureMesh(new GVRAndroidResource(gvrContext,
+                        gvrContext.getAssetLoader().loadFutureMesh(new GVRAndroidResource(gvrContext,
                                 "bunny.obj")), textures.get(i % numTextures));
 
                 Random random = new Random();

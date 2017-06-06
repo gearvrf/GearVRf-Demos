@@ -198,7 +198,7 @@ public class EventsMain extends GVRMain {
             if (controller.getControllerType() == GVRControllerType.GAZE) {
                 cursor = new GVRSceneObject(context,
                         new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
-                        context.loadFutureTexture(new GVRAndroidResource(context, R.raw.cursor)));
+                        context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.raw.cursor)));
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                 mainScene.getMainCameraRig().addChildObject(cursor);
                 cursor.getRenderData().setDepthTest(false);

@@ -86,7 +86,7 @@ public class X3DparserScript extends GVRMain
 
       GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
               new FutureWrapper<GVRMesh>(mGVRContext.createQuad(1.0f, 1.0f)),
-              mGVRContext.loadFutureTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+              mGVRContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
       cursor.getTransform().setPosition(0.0f, 0.0f, -10.0f);
       cursor.getRenderData().setDepthTest(false);
       cursor.getRenderData().setRenderingOrder(100000);

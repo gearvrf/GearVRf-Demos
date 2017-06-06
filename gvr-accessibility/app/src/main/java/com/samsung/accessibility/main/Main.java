@@ -99,8 +99,8 @@ public class Main extends GVRMain {
     }
 
     private void createPedestalObject() {
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
-        GVRMesh bookMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
+        GVRMesh bookMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
         GVRTexture bookTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
 
@@ -121,19 +121,19 @@ public class Main extends GVRMain {
     }
 
     private GVRSceneObject createSkybox() {
-        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
         GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshGround = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
+        GVRMesh meshGround = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
         GVRTexture textureGround = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(gvrContext, meshGround, textureGround);
         skyboxGround.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshFx = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
+        GVRMesh meshFx = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
         GVRTexture textureFx = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(gvrContext, meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
@@ -150,7 +150,7 @@ public class Main extends GVRMain {
         EnumSet<GVRImportSettings> settings = GVRImportSettings
                 .getRecommendedSettingsWith(additionalSettings);
 
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
         trex = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         trex.getTransform().setPosition(0, -1.6f, -7f);

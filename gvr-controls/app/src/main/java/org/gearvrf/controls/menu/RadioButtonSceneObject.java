@@ -92,7 +92,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
                 create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, bitmapIddle);
 
         text.textSize = 4;
@@ -102,7 +102,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
                 create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, bitmapHover);
 
         text.textColor = Color.parseColor("#000000");
@@ -112,7 +112,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
                 create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, bitmapSelected);
     }
 

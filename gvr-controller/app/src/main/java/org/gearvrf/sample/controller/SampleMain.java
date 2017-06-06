@@ -138,7 +138,7 @@ public class SampleMain extends GVRMain {
 
         GVRMesh mesh = null;
         try {
-            mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
+            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
         } catch (IOException e) {
             e.printStackTrace();
             mesh = null;
@@ -202,7 +202,7 @@ public class SampleMain extends GVRMain {
                             .getAssetLoader()
                             .loadFutureTexture(new GVRAndroidResource(mGVRContext, "texture.png"));
 
-                    sphere = new GVRSceneObject(mGVRContext, mGVRContext.loadFutureMesh(new
+                    sphere = new GVRSceneObject(mGVRContext, mGVRContext.getAssetLoader().loadFutureMesh(new
                             GVRAndroidResource(mGVRContext, "sphere.obj")), futureTexture);
                     sphere.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                     parent.addChildObject(sphere);
@@ -210,7 +210,7 @@ public class SampleMain extends GVRMain {
                     sphere.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder
                             .OVERLAY);
 
-                    GVRSceneObject cube = new GVRSceneObject(mGVRContext, mGVRContext.loadFutureMesh(new
+                    GVRSceneObject cube = new GVRSceneObject(mGVRContext, mGVRContext.getAssetLoader().loadFutureMesh(new
                             GVRAndroidResource(mGVRContext, "cube.obj")), futureTexture);
                     cube.getTransform().setPosition(0.0f,0.0f,0.0f);
                     parent.addChildObject(cube);

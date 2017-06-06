@@ -72,17 +72,17 @@ public class SampleCubeMain extends GVRMain {
         FutureWrapper<GVRMesh> futureMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
         Future<GVRTexture> futureCubemapTexture = gvrContext
-                .loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext,
                         R.raw.beach));
         mFrontFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.front)));
         mFrontFace.setName("front");
         scene.addSceneObject(mFrontFace);
         mFrontFace.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f);
 
         mFrontFace2 = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.front)));
         mFrontFace2.setName("front2");
         scene.addSceneObject(mFrontFace2);
@@ -90,7 +90,7 @@ public class SampleCubeMain extends GVRMain {
                 -CUBE_WIDTH * 0.5f * 2.0f);
 
         mFrontFace3 = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.front)));
         mFrontFace3.setName("front3");
         scene.addSceneObject(mFrontFace3);
@@ -98,7 +98,7 @@ public class SampleCubeMain extends GVRMain {
                 -CUBE_WIDTH * 0.5f * 3.0f);
 
         GVRSceneObject backFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.back)));
         backFace.setName("back");
         scene.addSceneObject(backFace);
@@ -106,7 +106,7 @@ public class SampleCubeMain extends GVRMain {
         backFace.getTransform().rotateByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
         GVRSceneObject leftFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.left)));
         leftFace.setName("left");
         scene.addSceneObject(leftFace);
@@ -116,7 +116,7 @@ public class SampleCubeMain extends GVRMain {
         leftFace.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
 
         GVRSceneObject rightFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.right)));
         rightFace.setName("right");
         scene.addSceneObject(rightFace);
@@ -126,7 +126,7 @@ public class SampleCubeMain extends GVRMain {
         rightFace.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
         GVRSceneObject topFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.top)));
         topFace.setName("top");
         scene.addSceneObject(topFace);
@@ -134,7 +134,7 @@ public class SampleCubeMain extends GVRMain {
         topFace.getTransform().rotateByAxis(90.0f, 1.0f, 0.0f, 0.0f);
 
         GVRSceneObject bottomFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.bottom)));
         bottomFace.setName("bottom");
         scene.addSceneObject(bottomFace);
@@ -147,7 +147,7 @@ public class SampleCubeMain extends GVRMain {
 
         // reflective object
         Future<GVRMesh> futureSphereMesh = gvrContext
-                .loadFutureMesh(new GVRAndroidResource(mGVRContext,
+                .getAssetLoader().loadFutureMesh(new GVRAndroidResource(mGVRContext,
                         R.raw.sphere));
         GVRMaterial cubemapReflectionMaterial = new GVRMaterial(gvrContext,
                 GVRMaterial.GVRShaderType.CubemapReflection.ID);

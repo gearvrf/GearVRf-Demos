@@ -90,15 +90,15 @@ public class Util {
     }
 
     public static GVRTexture transparentTexture(GVRContext context) {
-        return context.loadTexture(new GVRAndroidResource(context, R.raw.empty));
+        return context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.raw.empty));
     }
 
     public static GVRTexture whiteTexture(GVRContext context) {
-        return context.loadTexture(new GVRAndroidResource(context, R.drawable.white));
+        return context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.white));
     }
 
     public static GVRTexture loadTexture(GVRContext context, int res) {
-        return context.loadTexture(new GVRAndroidResource(context, res));
+        return context.getAssetLoader().loadTexture(new GVRAndroidResource(context, res));
     }
 
     public static float getYRotationAngle(GVRSceneObject rotatingObject, GVRSceneObject targetObject) {

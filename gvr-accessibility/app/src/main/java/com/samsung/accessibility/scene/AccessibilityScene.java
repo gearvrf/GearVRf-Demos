@@ -54,19 +54,19 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private GVRSceneObject createSkybox() {
-        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
         GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshGround = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
+        GVRMesh meshGround = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
         GVRTexture textureGround = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(gvrContext, meshGround, textureGround);
         skyboxGround.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshFx = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
+        GVRMesh meshFx = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
         GVRTexture textureFx = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(gvrContext, meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
@@ -80,7 +80,7 @@ public class AccessibilityScene extends GVRScene {
         float positionY = -1f;
         float positionZ = -10f;
         float scale = 0.03f;
-        GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.accessibility_item));
+        GVRMesh mesh = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.accessibility_item));
         final SceneItem invertedColors = new SceneItem(getGVRContext(), mesh, getGVRContext()
                 .getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.inverted_colors)));
         invertedColors.getTransform().setPosition(positionX, positionY, positionZ);

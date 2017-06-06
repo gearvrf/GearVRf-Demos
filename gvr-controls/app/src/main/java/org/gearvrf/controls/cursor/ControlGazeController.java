@@ -39,7 +39,7 @@ public class ControlGazeController {
 
         cursor = new GVRSceneObject(context,
                 context.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE),
-                context.loadTexture(new GVRAndroidResource(context,
+                context.getAssetLoader().loadTexture(new GVRAndroidResource(context,
                         R.drawable.cursor_idle)));
         cursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
         cursor.getRenderData().setRenderingOrder(
@@ -50,7 +50,7 @@ public class ControlGazeController {
 
         highlightCursor = new GVRSceneObject(context,
                 context.createQuad(HIGHLIGHT_CURSOR_SIZE, HIGHLIGHT_CURSOR_SIZE),
-                context.loadTexture(new GVRAndroidResource(context,
+                context.getAssetLoader().loadTexture(new GVRAndroidResource(context,
                         R.drawable.cursor_hover)));
         highlightCursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
         highlightCursor.getRenderData().setRenderingOrder(

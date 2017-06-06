@@ -88,7 +88,7 @@ public class AnimCleanButton extends MenuControlSceneObject {
                 create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, bitmapIddle);
 
         text.textSize = 3.3f;
@@ -97,14 +97,14 @@ public class AnimCleanButton extends MenuControlSceneObject {
                 create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, bitmapHover);
 
         GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext(),
                 create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,
-                getGVRContext().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.raw.empty)));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, bitmapSelected);
     }
 

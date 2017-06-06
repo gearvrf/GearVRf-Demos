@@ -59,7 +59,7 @@ public class SpatialAudioMain extends GVRMain
         light.setSpecularIntensity(1.0f, 0.5f, 0.5f, 1.0f);
 
         try {
-            GVRModelSceneObject r2d2Model = gvrContext.loadModel("R2D2/R2D2.dae");
+            GVRModelSceneObject r2d2Model = gvrContext.getAssetLoader().loadModel("R2D2/R2D2.dae");
             r2d2Model.getTransform().setPosition(modelX, modelY, modelZ);
             scene.addSceneObject(r2d2Model);
         } catch (IOException e) {
@@ -68,7 +68,7 @@ public class SpatialAudioMain extends GVRMain
 
         // add a floor
         GVRSceneObject floor = new GVRSceneObject(gvrContext, gvrContext.createQuad(120.0f, 120.0f),
-        gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
+        gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
 
         GVRMaterial floorMaterial = floor.getRenderData().getMaterial();
         setupLight(floorMaterial);

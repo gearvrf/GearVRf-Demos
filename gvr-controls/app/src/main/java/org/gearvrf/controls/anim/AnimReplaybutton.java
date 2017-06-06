@@ -47,12 +47,12 @@ public class AnimReplaybutton extends ControlSceneObject {
 
     private void createTextures(GVRContext gvrContext) {
 
-        GVRTexture empty = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
-        GVRTexture idle = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture empty = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
+        GVRTexture idle = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.bt_replay_idle));
-        GVRTexture hover = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture hover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.bt_replay_hover));
-        GVRTexture selected = gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+        GVRTexture selected = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.bt_replay_pressed));
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE, empty);

@@ -38,7 +38,7 @@ public class Clouds extends GVRSceneObject {
     public Clouds(GVRContext gvrContext, float cloudDistance, int numberOfClouds) {
         super(gvrContext);
 
-        GVRMesh mesh = gvrContext.loadMesh(
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, R.raw.cloud_mesh));
 
         clouds = new Cloud[numberOfClouds];

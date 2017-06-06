@@ -55,10 +55,10 @@ public class MenuCloseButton extends ControlSceneObject {
 
     private void createTextures(GVRContext gvrContext) {
         
-        GVRTexture empty = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
-        GVRTexture idle = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close));
-        GVRTexture hover = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_hover));
-        GVRTexture selected = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_pressed));
+        GVRTexture empty = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
+        GVRTexture idle = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close));
+        GVRTexture hover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_hover));
+        GVRTexture selected = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_pressed));
         
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE, empty);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, idle);

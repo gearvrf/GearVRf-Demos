@@ -61,7 +61,7 @@ public class SampleMain extends GVRMain {
         
         GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
                 mGVRContext.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE),
-                mGVRContext.loadTexture(new GVRAndroidResource(mGVRContext,
+                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                         "cursor_idle.png")));
         cursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
         cursor.getRenderData().setRenderingOrder(
@@ -72,7 +72,7 @@ public class SampleMain extends GVRMain {
         
         try {
 
-            GVRMesh mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+            GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
                     "bunny.obj"));
 
             final int OBJECTS_CNT = 5;

@@ -77,7 +77,7 @@ public class MotionMenu extends MenuWindow {
     private void createPreviewBox() {
       
         previewArea = new MenuPreview(getGVRContext(), getGVRContext().createQuad(1.2f, 1),
-                getGVRContext().loadTexture( new GVRAndroidResource(this.getGVRContext(), R.raw.empty)));
+                getGVRContext().getAssetLoader().loadTexture( new GVRAndroidResource(this.getGVRContext(), R.raw.empty)));
        
         previewArea.getTransform().setPosition(PREVIEW_POSITION_X, PREVIEW_POSITION_Y,
                 PREVIEW_POSITION_Z);

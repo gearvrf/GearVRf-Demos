@@ -32,9 +32,9 @@ public class Star extends GVRSceneObject {
     private static final float STAR_SCALE = 0.75f;
 
     public Star(GVRContext gvrContext) {
-        super(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
+        super(gvrContext, gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
                 R.raw.star)),
-                gvrContext
+                gvrContext.getAssetLoader()
                         .loadTexture(new GVRAndroidResource(gvrContext, R.drawable.star_diffuse)));
         this.getRenderData().getMaterial().setOpacity(0);
         this.getTransform().setScale(STAR_SCALE, STAR_SCALE, STAR_SCALE);

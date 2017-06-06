@@ -206,7 +206,7 @@ public class BalloonMain extends GVRMain {
 
     GVRSceneObject makeEnvironment(GVRContext context)
     {
-        Future<GVRTexture> tex = context.loadFutureCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
+        Future<GVRTexture> tex = context.getAssetLoader().loadFutureCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
         GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.Cubemap.ID);
         material.setMainTexture(tex);
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);

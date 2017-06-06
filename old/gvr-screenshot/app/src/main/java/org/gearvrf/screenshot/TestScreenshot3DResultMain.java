@@ -40,14 +40,14 @@ public class TestScreenshot3DResultMain extends GVRMain {
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
 
         GVRSceneObject mFrontFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.screenshot3d_5)));
         mFrontFace.setName("front");
         scene.addSceneObject(mFrontFace);
         mFrontFace.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f);
 
         GVRSceneObject backFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.screenshot3d_4)));
         backFace.setName("back");
         scene.addSceneObject(backFace);
@@ -55,7 +55,7 @@ public class TestScreenshot3DResultMain extends GVRMain {
         backFace.getTransform().rotateByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
         GVRSceneObject leftFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.screenshot3d_1)));
         leftFace.setName("left");
         scene.addSceneObject(leftFace);
@@ -63,7 +63,7 @@ public class TestScreenshot3DResultMain extends GVRMain {
         leftFace.getTransform().rotateByAxis(90.0f, 0.0f, 1.0f, 0.0f);
 
         GVRSceneObject rightFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.screenshot3d_0)));
         rightFace.setName("right");
         scene.addSceneObject(rightFace);
@@ -71,7 +71,7 @@ public class TestScreenshot3DResultMain extends GVRMain {
         rightFace.getTransform().rotateByAxis(-90.0f, 0.0f, 1.0f, 0.0f);
 
         GVRSceneObject topFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.screenshot3d_2)));
         topFace.setName("top");
         scene.addSceneObject(topFace);
@@ -79,7 +79,7 @@ public class TestScreenshot3DResultMain extends GVRMain {
         topFace.getTransform().rotateByAxis(90.0f, 1.0f, 0.0f, 0.0f);
 
         GVRSceneObject bottomFace = new GVRSceneObject(gvrContext, futureMesh,
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.screenshot3d_3)));
         bottomFace.setName("bottom");
         scene.addSceneObject(bottomFace);
