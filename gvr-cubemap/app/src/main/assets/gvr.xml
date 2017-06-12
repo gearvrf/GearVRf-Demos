@@ -49,8 +49,8 @@
             depthFormat="DEPTH_24"
             fov-y="DEFAULT"
             multiSamples="2"
-            resolutionWidth="DEFAULT"
-            resolutionHeight="DEFAULT"
+            resolutionWidth="2048"
+            resolutionHeight="2048"
             resolveDepth="false" />
 
         <head-model-parms

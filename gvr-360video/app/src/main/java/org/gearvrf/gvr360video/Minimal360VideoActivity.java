@@ -20,6 +20,8 @@ import android.media.MediaCodec;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.view.MotionEvent;
 import android.view.Surface;
 
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -35,7 +37,10 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 
+import java.io.File;
 import java.io.IOException;
+
+import static android.view.MotionEvent.ACTION_DOWN;
 
 public class Minimal360VideoActivity extends GVRActivity {
 
@@ -90,14 +95,19 @@ public class Minimal360VideoActivity extends GVRActivity {
 
     private GVRVideoSceneObjectPlayer<MediaPlayer> makeMediaPlayer() {
         final MediaPlayer mediaPlayer = new MediaPlayer();
-        final AssetFileDescriptor afd;
 
         try {
-            afd = getAssets().openFd("videos_s_3.mp4");
-            android.util.Log.d("Minimal360Video", "Assets was found.");
-            mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
-            android.util.Log.d("Minimal360Video", "DataSource was set.");
-            afd.close();
+            final File file = new File(Environment.getExternalStorageDirectory()+"/gvr-360video/video.mp4");
+            if (!file.exists()) {
+                final AssetFileDescriptor afd = getAssets().openFd("video.mp4");
+                android.util.Log.d("Minimal360Video", "Assets was found.");
+                mediaPlayer.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                android.util.Log.d("Minimal360Video", "DataSource was set.");
+                afd.close();
+            } else {
+                mediaPlayer.setDataSource(file.getAbsolutePath());
+            }
+
             mediaPlayer.prepare();
         } catch (IOException e) {
             e.printStackTrace();
@@ -188,6 +198,22 @@ public class Minimal360VideoActivity extends GVRActivity {
         };
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (null != videoSceneObjectPlayer) {
+            if (ACTION_DOWN == event.getAction()) {
+                if (mPlaying) {
+                    videoSceneObjectPlayer.pause();
+                } else {
+                    videoSceneObjectPlayer.start();
+                }
+                mPlaying = !mPlaying;
+            }
+        }
+        return super.onTouchEvent(event);
+    }
+
+    private boolean mPlaying = true;
     private GVRVideoSceneObjectPlayer<?> videoSceneObjectPlayer;
 
     static final boolean USE_EXO_PLAYER = false;
