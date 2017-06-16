@@ -56,15 +56,15 @@ public class Main extends GVRMain {
         manager = new AccessibilityManager(gvrContext);
         //gvrContext.getNextMainScene().setFrustumCulling(false);
         ShortcutMenu shortcutMenu = createShortcut();
-        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getNextMainScene(), shortcutMenu);
+        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
 
         createPedestalObject();
         createDinossaur();
 
         cursor.setName("cursor");
-        gvrContext.getNextMainScene().addSceneObject(shortcutMenu);
-        gvrContext.getNextMainScene().getMainCameraRig().addChildObject(cursor);
-        gvrContext.getNextMainScene().addSceneObject(createSkybox());
+        gvrContext.getMainScene().addSceneObject(shortcutMenu);
+        gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
+        gvrContext.getMainScene().addSceneObject(createSkybox());
 
     }
 
@@ -94,7 +94,7 @@ public class Main extends GVRMain {
         pedestalObject.addChildObject(baseObject);
         pedestalObject.addChildObject(bookObject);
 
-        gvrContext.getNextMainScene().addSceneObject(pedestalObject);
+        gvrContext.getMainScene().addSceneObject(pedestalObject);
     }
 
     private GVRSceneObject createSkybox() {
@@ -138,7 +138,7 @@ public class Main extends GVRMain {
         trex.getTransform().rotateByAxis(-90, 1, 0, 0);
         trex.getTransform().rotateByAxis(90, 0, 1, 0);
         activeTalkBack();
-        gvrContext.getNextMainScene().addSceneObject(trex);
+        gvrContext.getMainScene().addSceneObject(trex);
     }
 
     @Override

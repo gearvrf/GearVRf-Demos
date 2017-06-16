@@ -56,7 +56,7 @@ public class SampleMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) throws IOException {
 
-        GVRScene scene = gvrContext.getNextMainScene();
+        GVRScene scene = gvrContext.getMainScene();
 
         // load texture asynchronously
        GVRTexture futureTexture = gvrContext.getAssetLoader().loadTexture(

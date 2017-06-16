@@ -54,7 +54,7 @@ public class ShadowsMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws Throwable {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
 
         mainCameraRig.getLeftCamera().setBackgroundColor(Color.BLACK);

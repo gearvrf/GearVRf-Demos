@@ -47,7 +47,7 @@ public class VideoMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene mainScene = gvrContext.getNextMainScene();
+        GVRScene mainScene = gvrContext.getMainScene();
 
         // focusableController
         focusableController = new FocusableController();
