@@ -52,7 +52,7 @@ public class CubemapMain extends GVRMain {
     //    (method C)
     // 4: surrounding cylinder using GVRCylinderSceneObject
     // 5: surrounding cube using six GVRSceneOjbects (quads)
-    private int mEnvironmentType = 1;
+    private int mEnvironmentType = 2;
 
     // Type of object for the reflective object
     // 0: reflective sphere using GVRSphereSceneObject

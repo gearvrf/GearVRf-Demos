@@ -57,7 +57,7 @@ public class TestMain extends GVRMain {
 
         mAnimationEngine = gvrContext.getAnimationEngine();
 
-        mMainScene = gvrContext.getNextMainScene();
+        mMainScene = gvrContext.getMainScene();
 
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
 

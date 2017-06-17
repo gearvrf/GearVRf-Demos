@@ -46,7 +46,7 @@ public class SampleMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        scene = mGVRContext.getNextMainScene();
+        scene = mGVRContext.getMainScene();
 
         /*
          * Add a head tracking pointer to the scene

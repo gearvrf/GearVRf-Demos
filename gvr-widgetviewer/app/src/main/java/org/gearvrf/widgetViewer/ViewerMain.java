@@ -130,7 +130,7 @@ public class ViewerMain extends GVRMain {
         mPhongShader2 = new PhongShader2(mGVRContext);
         mPhongShader3 = new PhongShader3(mGVRContext);*/
 
-        GVRScene mainScene = mGVRContext.getNextMainScene();
+        GVRScene mainScene = mGVRContext.getMainScene();
 
         mainScene.getMainCameraRig().getLeftCamera()
                 .setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);

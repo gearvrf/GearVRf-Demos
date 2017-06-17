@@ -41,7 +41,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getNextMainScene();
+        mScene = context.getMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
