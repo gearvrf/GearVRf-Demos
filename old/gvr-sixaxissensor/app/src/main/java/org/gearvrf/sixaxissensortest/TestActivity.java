@@ -40,7 +40,7 @@ public class TestActivity extends GVRActivity implements OnGestureListener, OnDo
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mMain = new TestMain();
-        setMain(mMain);
+        setMain(mMain, "gvr.xml");
         mDetector = new GestureDetector(this, this);
         mDetector.setOnDoubleTapListener(this);
     }

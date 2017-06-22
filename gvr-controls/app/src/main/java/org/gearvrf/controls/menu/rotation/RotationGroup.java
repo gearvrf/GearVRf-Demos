@@ -42,7 +42,7 @@ public class RotationGroup extends GVRSceneObject {
         place.getTransform().setScale(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
         place.addChildObject(star);
         place.addChildObject(base);
-        
+
         StarPreviewInfo.putStarReference(place);
     }
 
@@ -51,14 +51,14 @@ public class RotationGroup extends GVRSceneObject {
         GVRAndroidResource baseTextRes = new GVRAndroidResource(getGVRContext(),
                 R.drawable.direction_rotation);
 
-        base = new GVRSceneObject(getGVRContext(), 1, 1, getGVRContext().loadTexture(baseTextRes));
+        base = new GVRSceneObject(getGVRContext(), 1, 1, getGVRContext().getAssetLoader().loadTexture(baseTextRes));
 
         base.getTransform().rotateByAxis(90, 0, 0, 1);
         base.getTransform().rotateByAxis(-90, 1, 0, 0);
     }
 
     private void createStar() {
-        
+
         GVRAndroidResource starMeshRes = new GVRAndroidResource(getGVRContext(), R.raw.star);
         GVRAndroidResource starTextRes = new GVRAndroidResource(getGVRContext(),
                 R.drawable.star_diffuse);
@@ -68,26 +68,26 @@ public class RotationGroup extends GVRSceneObject {
     }
 
     public void rotate(final float angleFactor) {
-        
+
         GVRRotationByAxisAnimation rotationAnimation = new GVRRotationByAxisAnimation(place, 0.1f, angleFactor, 0, 1, 0);
-        
+
         rotationAnimation.setOnFinish(new GVROnFinish() {
-            
+
             @Override
             public void finished(GVRAnimation arg0) {
-                
+
                 Main.enableAnimationStar();
-                
+
                 if(angleFactor > 0){
-                    
+
                     StarPreviewInfo.changeRotationFactor(StarPreviewInfo.Direction.left);
                 } else {
-                    
+
                     StarPreviewInfo.changeRotationFactor(StarPreviewInfo.Direction.right);
                 }
             }
         });
-        
+
         rotationAnimation.start(getGVRContext().getAnimationEngine());
     }
 }

@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVROpacityAnimation;
@@ -69,7 +68,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
 
         ankylosaurus = DinosaurFactory.getInstance(getGVRContext()).getAnkylosaurus();
         ankylosaurus.getTransform().setRotationByAxis(-90, 1, 0, 0);
-        ankylosaurus.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        ankylosaurus.attachEyePointeeHolder();
         ankylosaurus.setOnGestureListener(this);
         ankylosaurus.setName("ankylosaurus");
         addChildObject(ankylosaurus);
@@ -78,7 +77,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
 
     private void createTotem() {
         Totem totem = new Totem(this.gvrContext,
-                this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+                this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);

@@ -1,28 +1,47 @@
 package org.gearvrf.gvrshadowssample;
 
-import android.graphics.Color;
-import android.view.MotionEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
+import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
+
 import org.gearvrf.GVRLightBase;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRScreenshotCallback;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSpotLight;
+
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.Future;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.Environment;
+import android.util.Log;
+import android.view.MotionEvent;
 
 public class ShadowsMain extends GVRMain {
 
@@ -61,7 +80,7 @@ public class ShadowsMain extends GVRMain {
         GVRTexture tex = context.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
         GVRSceneObject backdrop = new GVRSceneObject(context, 100.0f, 100.0f, tex);
         GVRRenderData rdata = backdrop.getRenderData();
-        GVRMaterial material = new GVRMaterial(context);
+        GVRMaterial material = new GVRMaterial(context,new GVRShaderId(GVRPhongShader.class));
 
         material.setVec4("diffuse_color", 0.8f, 0.8f, 0.8f, 1.0f);
         material.setVec4("ambient_color", 0.3f, 0.3f, 0.3f, 1.0f);
@@ -71,7 +90,6 @@ public class ShadowsMain extends GVRMain {
         material.setTexture("diffuseTexture", tex);
         backdrop.setName("Backdrop");
         rdata.setMaterial(material);
-        rdata.setShaderTemplate(GVRPhongShader.class);
         return backdrop;
     }
 
@@ -120,7 +138,7 @@ public class ShadowsMain extends GVRMain {
     @Override
     public void onStep()
     {
-        if (rotateObject == null)
+       if (rotateObject == null)
             return;
         GVRTransform trans = rotateObject.getTransform();
         float xrot = trans.getRotationPitch();
@@ -149,6 +167,7 @@ public class ShadowsMain extends GVRMain {
         trans.rotateByAxis(xrot, 1, 0, 0);
         trans.rotateByAxis(yrot, 0, 1, 0);
         trans.setPosition(xpos, ypos, zpos);
+
     }
 
     public void onTouchEvent(MotionEvent event)
@@ -174,15 +193,15 @@ public class ShadowsMain extends GVRMain {
 
     private GVRMaterial createCustomMaterial(GVRContext context, String textureFile) throws IOException
     {
-        GVRMaterial litMaterial = new GVRMaterial(context);
+        GVRMaterial litMaterial = new GVRMaterial(context, new GVRShaderId(GVRPhongShader.class));
 
-        litMaterial.setVec4("diffuseColor", 1.0f, 1.0f, 1.0f, 1.0f);
-        litMaterial.setVec4("ambientColor", 0.5f, 0.5f, 0.5f, 0.0f);
-        litMaterial.setVec4("specularColor", 1.0f, 1.0f, 1.0f, 1.0f);
-        litMaterial.setVec4("emissiveColor", 0.0f, 0.0f, 0.0f, 0.0f);
-        litMaterial.setFloat("specularExponent", 10.0f);
+        litMaterial.setVec4("diffuse_color", 1.0f, 1.0f, 1.0f, 1.0f);
+        litMaterial.setVec4("ambient_color", 0.5f, 0.5f, 0.5f, 0.0f);
+        litMaterial.setVec4("specular_color", 1.0f, 1.0f, 1.0f, 1.0f);
+        litMaterial.setVec4("emissive_color", 0.0f, 0.0f, 0.0f, 0.0f);
+        litMaterial.setFloat("specular_exponent", 10.0f);
 
-        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, textureFile));
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, textureFile));
         litMaterial.setTexture("diffuseTexture", texture);
         return litMaterial;
     }
@@ -193,7 +212,9 @@ public class ShadowsMain extends GVRMain {
         cubeObject.getTransform().setPosition(x, y, z);
         cubeObject.getTransform().setScale(size, size, size);
         cubeObject.setName("cube");
-        cubeObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+     //   cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
+        //cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext,GVRPhongShader.class));
+      //  cubeObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(cubeObject);
     }
 
@@ -204,13 +225,14 @@ public class ShadowsMain extends GVRMain {
         sphereObject.setName("sphere");
         sphereObject.getTransform().setPosition(x, y, z);
         sphereObject.getTransform().setScale(radius, radius, radius);
-        sphereObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+      //  sphereObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
+       // sphereObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(sphereObject);
     }
 
     private GVRSceneObject addStormtrooper(GVRScene scene, float x, float y, float z) throws IOException
     {
-        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj", scene);
+        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj");
         List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
         GVRRenderData rdata = rdatas.get(0);
         GVRSceneObject stormTrooper = rdata.getOwnerObject();
@@ -219,6 +241,7 @@ public class ShadowsMain extends GVRMain {
         stormTrooper.getTransform().setPosition(x, y, z);
         stormTrooper.getTransform().setScale(1.5f, 1.5f, 1.5f);
         stormTrooper.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
+        rdata.setMaterial(createCustomMaterial(mGVRContext, "stormstrooper.jpg"));
         scene.addSceneObject(stormTrooper);
         return stormTrooper;
     }

@@ -6,12 +6,11 @@ function onInit(gvrf) {
   var mainScene = gvrf.getMainScene();
 
   // 3D Boat Scene
-  var boat = gvrf.loadModel("RowBoatFBX/RowBoatAnimated.fbx");
+  var boat = gvrf.getAssetLoader().loadModel("RowBoatFBX/RowBoatAnimated.fbx", mainScene);
   boat.setName("boat");
   boat.getTransform().setScale(.5, .5, .5);
   boat.getTransform().setRotationByAxis(20, 0, 1, 0);
   boat.getTransform().setPosition(20, -20, -40);
-  mainScene.addSceneObject(boat);
 
   // Text
   var textView = new GVRTextViewSceneObject(gvrf);

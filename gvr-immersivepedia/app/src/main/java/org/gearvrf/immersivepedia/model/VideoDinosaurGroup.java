@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
@@ -63,7 +62,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
     private void createDinosaur() throws IOException {
 
         trex = DinosaurFactory.getInstance(getGVRContext()).getTRex();
-        trex.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        trex.attachEyePointeeHolder();
         trex.setOnGestureListener(this);
         trex.getTransform().setRotationByAxis(-90, 1, 0, 0);
         trex.setName("trex");
@@ -73,7 +72,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
 
     private void createTotem() {
         Totem totem = new Totem(this.gvrContext,
-                this.gvrContext.loadTexture(new GVRAndroidResource(gvrContext,
+                this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.totem_tex_diffuse)));
 
         totem.getTransform().setPosition(0f, 0f, 0f);

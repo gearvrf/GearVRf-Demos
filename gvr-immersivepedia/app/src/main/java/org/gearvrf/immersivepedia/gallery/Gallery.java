@@ -17,7 +17,6 @@ package org.gearvrf.immersivepedia.gallery;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRPositionAnimation;
@@ -30,7 +29,6 @@ import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
-import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
 
@@ -188,8 +186,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         this.gvrContext = gvrContext;
         this.getRenderData().setRenderingOrder(RenderingOrderApplication.GALLERY);
         this.setName("gallery");
-        this.attachCollider(new GVRMeshCollider(getGVRContext(), false));
-
+        this.attachEyePointeeHolder();
         this.focusListener = new FocusListener() {
 
             @Override

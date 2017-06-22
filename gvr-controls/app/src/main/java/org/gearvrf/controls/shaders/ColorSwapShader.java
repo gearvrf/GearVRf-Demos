@@ -1,4 +1,3 @@
-
 /* Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,35 +15,33 @@
 
 package org.gearvrf.controls.shaders;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.controls.R;
+import org.gearvrf.utility.TextFile;
 
-public class ColorSwapShader {
+public class ColorSwapShader extends GVRShader{
 
     public static final String TEXTURE_GRAYSCALE = "grayScaleTexture";
     public static final String TEXTURE_DETAILS = "detailsTexture";
-    public static final String COLOR = "color";
-
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
+    public static final String COLOR = "u_color";
 
     public ColorSwapShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.color_swap_shader_vertex,
-                R.raw.color_swap_shader_fragment);
 
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey(TEXTURE_GRAYSCALE, TEXTURE_GRAYSCALE);
-        mCustomShader.addTextureKey(TEXTURE_DETAILS, TEXTURE_DETAILS);
-        mCustomShader.addUniformVec4Key(COLOR, COLOR);
-        mCustomShader.addUniformFloatKey("opacity", "opacity");
+        super("float4 u_color float u_opacity", "sampler2D grayScaleTexture sampler2D detailsTexture", "float3 a_position float2 a_texcoord",300);
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.color_swap_shader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.color_swap_shader_vertex));
     }
-
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
+    protected void setMaterialDefaults(GVRShaderData material) {
+        material.setFloat("u_opacity", 1.0f);
+        material.setVec4("u_color", 1.0f, 1.0f, 1.0f, 1.0f);
     }
 }

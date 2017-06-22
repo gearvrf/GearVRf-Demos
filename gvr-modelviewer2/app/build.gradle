@@ -25,10 +25,6 @@ android {
 }
 
 dependencies {
-    if(rootProject.useLocalDependencies || (rootProject.hasProperty("buildGvrfAndDemos") && rootProject.buildGvrfAndDemos)) {
-        compile(name: 'widgetplugin-debug', ext: 'aar')
-    } else {
-        compile "org.gearvrf:widgetplugin:$gearvrfVersion"
-    }
+    compile(name: 'widgetplugin-debug', ext: 'aar')
     compile files('src/main/assets/commons-io-2.5.jar')
 }

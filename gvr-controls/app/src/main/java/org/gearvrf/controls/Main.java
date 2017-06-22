@@ -25,6 +25,7 @@ import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRTextureParameters.TextureFilterType;
@@ -96,58 +97,57 @@ public class Main extends GVRMain {
         createFence();
         createMenu();
         createGamepad3D();
-
         for (int i = 0; i < Constants.NUMBER_OF_APPLES; i++) {
             createApple();
         }
 
         createTouchPad3D();
-        
+
         createStar();
         enableAnimationWorm();
     }
-    
+
     public static void animWormReset(){
         animationColor.resetAnimationState();
     }
-    
+
     public static void animationColor(org.gearvrf.controls.util.ColorControls.Color color){
-        
+
         ColorWorm.lastColor = worm.getColor();
         ColorWorm.currentColor = color;
         animationColor.showPlayButton();
     }
-    
+
     public static void enableAnimationStar(){
         starBox.showPlayButton();
     }
-    
+
     public void createStar(){
-        
+
         GVRSceneObject object = new GVRSceneObject(mGVRContext);
-        
+
         starBox = new StarBoxSceneObject(mGVRContext);
-        
+
         starBox.getTransform().setPosition(0, .4f, 8.5f);
         starBox.getTransform().rotateByAxisWithPivot(125, 0, 1, 0, 0, 0, 0);
-        
+        starBox.setName("star");
         object.addChildObject(starBox);
 
         scene.addSceneObject(object);
     }
-    
+
     public void enableAnimationWorm(){
-        
+
         GVRSceneObject wormParent = worm.getWormParentation();
-            
+
         animationColor = new ActionWormAnimation(mGVRContext);
-       
+
         GVRSceneObject object = new GVRSceneObject(mGVRContext);
         object.addChildObject(animationColor);
-    
+
         wormParent.addChildObject(object);
     }
-    
+
     @Override
     public SplashMode getSplashMode() {
         return SplashMode.NONE;
@@ -156,6 +156,7 @@ public class Main extends GVRMain {
     private void createApple() {
 
         apple = new Apple(mGVRContext);
+        apple.setName("apple");
         mGVRContext.getMainScene().addSceneObject(apple);
         apple.setAppleRandomPosition(mGVRContext);
         apple.getTransform().setPositionY(Constants.APPLE_INICIAL_YPOS);
@@ -168,6 +169,7 @@ public class Main extends GVRMain {
         touchpad.getTransform().setPositionY(0.6f);
         touchpad.getTransform().setScale(0.6f, 0.6f, 0.6f);
         touchpad.getTransform().rotateByAxisWithPivot(90 + 45, 0, 1, 0, 0, 0, 0);
+        touchpad.setName("touchpad");
         mGVRContext.getMainScene().addSceneObject(touchpad);
     }
 
@@ -175,13 +177,14 @@ public class Main extends GVRMain {
 
         GVRMesh mesh = mGVRContext.loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.fence));
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
         fence = new GVRSceneObject(mGVRContext, mesh, texture);
         fence.getTransform().setPositionY(GROUND_Y_POSITION);
         fence.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         fence.getRenderData().setCullFace(GVRCullFaceEnum.None);
         fence.getRenderData().setRenderingOrder(RenderingOrder.FENCE);
+        fence.setName("fence");
         scene.addSceneObject(fence);
     }
 
@@ -189,6 +192,7 @@ public class Main extends GVRMain {
 
         worm = new Worm(mGVRContext);
         worm.enableShadow();
+        worm.setName("worm");
         scene.addSceneObject(worm);
     }
 
@@ -202,19 +206,20 @@ public class Main extends GVRMain {
         parameters.setMagFilterType(TextureFilterType.GL_LINEAR);
 
         GVRMesh mesh = mGVRContext.createQuad(GROUND_SIZE, GROUND_SIZE);
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.ground_512), parameters);
 
         ground = new GVRSceneObject(mGVRContext, mesh, texture,
-                new TileShader(mGVRContext).getShaderId());
+                new GVRShaderId(TileShader.class));
         ground.getTransform().setPositionY(GROUND_Y_POSITION);
         ground.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         ground.getTransform().setRotationByAxis(-45, 0, 0, 1);
         ground.getTransform().setRotationByAxis(-90, 1, 0, 0);
         ground.getRenderData().setRenderingOrder(RenderingOrder.GROUND);
 
-        ground.getRenderData().getMaterial().setFloat(TileShader.TILE_COUNT, GROUND_TILES);
+       // ground.getRenderData().getMaterial().setFloat(TileShader.TILE_COUNT, GROUND_TILES);
         ground.getRenderData().getMaterial().setTexture(TileShader.TEXTURE_KEY, texture);
+        ground.setName("ground");
         scene.addSceneObject(ground);
     }
 
@@ -222,25 +227,27 @@ public class Main extends GVRMain {
 
         GVRMesh mesh = mGVRContext.loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.skybox));
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.skybox));
 
         skybox = new GVRSceneObject(mGVRContext, mesh, texture);
         skybox.getTransform().setScale(SKYBOX_SIZE, SKYBOX_SIZE, SKYBOX_SIZE);
         skybox.getRenderData().setRenderingOrder(RenderingOrder.SKYBOX);
+        skybox.setName("skybox");
         scene.addSceneObject(skybox);
     }
 
     private void createClouds() {
 
         clouds = new Clouds(mGVRContext, CLOUDS_DISTANCE, NUMBER_OF_CLOUDS);
+        clouds.setName("clouds");
     }
 
     private void createSurroundings() {
 
         GVRMesh mesh = mGVRContext.loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.stones));
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
 
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -252,7 +259,7 @@ public class Main extends GVRMain {
 
         mesh = mGVRContext.loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.grass));
-        texture = mGVRContext.loadTexture(
+        texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
 
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -264,7 +271,7 @@ public class Main extends GVRMain {
 
         mesh = mGVRContext.loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.flowers));
-        texture = mGVRContext.loadTexture(
+        texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
 
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
@@ -276,13 +283,14 @@ public class Main extends GVRMain {
 
         mesh = mGVRContext.loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.wood));
-        texture = mGVRContext.loadTexture(
+        texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.atlas01));
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
         surroundings.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         surroundings.getTransform().setPositionY(SCENE_Y);
         surroundings.getRenderData().setCullFace(GVRCullFaceEnum.None);
         scene.addSceneObject(surroundings);
+        surroundings.setName("surroundings");
         // ground.addChildObject(surroundings);
         surroundings.getRenderData().setRenderingOrder(RenderingOrder.WOOD);
     }
@@ -290,25 +298,26 @@ public class Main extends GVRMain {
     private void createSun() {
 
         GVRMesh mesh = mGVRContext.createQuad(SUN_SIZE, SUN_SIZE);
-        GVRTexture texture = mGVRContext.loadTexture(
+        GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.sun));
         sun = new GVRSceneObject(mGVRContext, mesh, texture);
         sun.getTransform().setRotationByAxis(90, 1, 0, 0);
         sun.getTransform().setPositionY(SUN_Y_POSITION);
         sun.getTransform().rotateByAxisWithPivot(SUN_ANGLE_POSITION, 1, 0, 0, 0, 0, 0);
         sun.getRenderData().setRenderingOrder(RenderingOrder.SUN);
+        sun.setName("sun");
         scene.addSceneObject(sun);
     }
 
     @Override
     public void onStep() {
-
         worm.chainMove(mGVRContext);
 
         GamepadInput.process();
         TouchPadInput.process();
 
-        touchpad.updateIndicator();
+        if(touchpad != null)
+            touchpad.updateIndicator();
 
         worm.interactWithDPad();
         worm.animateWormByTouchPad();
@@ -318,12 +327,12 @@ public class Main extends GVRMain {
             gamepadObject.inputControl();
         }
         worm.checkWormEatingApple(mGVRContext);
-
     }
 
     private void createMenu() {
 
         menu = new MenuBox(mGVRContext);
+        menu.setName("menu");
         scene.addSceneObject(menu);
     }
 
@@ -336,7 +345,7 @@ public class Main extends GVRMain {
 
         gamepadObject.getTransform().setPosition(0, 1.f, -8.5f);
         gamepadObject.getTransform().rotateByAxisWithPivot(225, 0, 1, 0, 0, 0, 0);
-
+        gamepadObject.setName("gamepad");
         scene.addSceneObject(gamepadObject);
     }
 }

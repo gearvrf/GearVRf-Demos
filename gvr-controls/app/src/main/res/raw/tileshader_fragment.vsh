@@ -1,13 +1,11 @@
 precision mediump float;
-varying vec2  coord;
-uniform sampler2D texture;
-uniform float tile;
+in vec2  coord;
+uniform sampler2D u_texture;
+out vec4 outColor;
 void main() {
-	
-	
-	
+
 	vec4 color;
-    color = texture2D(texture, coord);
+    color = texture(u_texture, coord);
 		
-	gl_FragColor = color;
+	outColor = color;
 }

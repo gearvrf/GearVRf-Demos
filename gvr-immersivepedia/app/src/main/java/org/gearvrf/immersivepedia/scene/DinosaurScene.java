@@ -107,6 +107,7 @@ public class DinosaurScene extends GVRScene {
     }
 
     public void show() {
+        getGVRContext().setMainScene(this);
         GazeController.enableGaze();
         for (GVRSceneObject object : getWholeSceneObjects()) {
             if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
@@ -126,60 +127,21 @@ public class DinosaurScene extends GVRScene {
     private GVRSceneObject createSkybox() {
 
         GVRMesh mesh = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_walls_mesh));
-        GVRTexture texture = getGVRContext().loadTexture(new
-                GVRAndroidResource(gvrContext, R.drawable.empty));
-
+        GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new
+                GVRAndroidResource(gvrContext, R.raw.environment_walls_tex_diffuse));
         final GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
-        getGVRContext().loadTexture(new TextureCallback() {
-
-            @Override
-            public void loaded(GVRTexture texture, GVRAndroidResource resource) {
-                skybox.getRenderData().getMaterial().setMainTexture(texture);
-            }
-
-            @Override
-            public void failed(Throwable throwable, GVRAndroidResource resource) {
-            }
-
-            @Override
-            public boolean stillWanted(GVRAndroidResource resource) {
-                return false;
-            }
-        }, new GVRAndroidResource(getGVRContext().getContext(), R.raw.environment_walls_tex_diffuse));
 
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
         skybox.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshGround = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_ground_mesh));
-        GVRTexture textureGround = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
+        GVRTexture textureGround = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.environment_ground_tex_diffuse));
         final GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(), meshGround, textureGround);
-
-        getGVRContext().loadTexture(new TextureCallback() {
-
-            @Override
-            public void loaded(GVRTexture arg0, GVRAndroidResource arg1) {
-
-                skyboxGround.getRenderData().getMaterial().setMainTexture(arg0);
-
-            }
-
-            @Override
-            public void failed(Throwable arg0, GVRAndroidResource arg1) {
-                // TODO Auto-generated method stub
-
-            }
-
-            @Override
-            public boolean stillWanted(GVRAndroidResource arg0) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-        }, new GVRAndroidResource(gvrContext, R.raw.environment_ground_tex_diffuse));
 
         skyboxGround.getRenderData().setRenderingOrder(0);
 
         GVRMesh meshFx = getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
-        GVRTexture textureFx = getGVRContext().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
+        GVRTexture textureFx = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
 

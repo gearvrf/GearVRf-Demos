@@ -14,7 +14,7 @@ public class BulletSampleActivity extends GVRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         main = new BulletSampleMain();
-        setMain(main);
+        setMain(main, "gvr.xml");
     }
 
     @Override

@@ -13,7 +13,12 @@
 // limitations under the License.
 
 precision mediump float;
-uniform vec4 u_color;
+layout (std140) uniform Material_ubo
+{
+    vec4 u_color;
+};
+
+out vec4 fragColor;
 void main() {  
-  gl_FragColor = vec4(u_color.r, u_color.g, u_color.b, u_color.a);
+  fragColor = vec4(u_color.r, u_color.g, u_color.b, u_color.a);
 }

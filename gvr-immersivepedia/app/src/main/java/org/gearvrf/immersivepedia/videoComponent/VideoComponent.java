@@ -19,7 +19,6 @@ import android.media.MediaPlayer;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.immersivepedia.GazeController;
@@ -85,7 +84,7 @@ public class VideoComponent extends GVRSceneObject {
         video = new GVRVideoSceneObject(gvrContext, WIDTH, HEIGHT, mediaPlayer, GVRVideoType.MONO);
         focus = new FocusableSceneObject(gvrContext, WIDTH, HEIGHT, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.empty_clickable)));
-        focus.attachCollider(new GVRMeshCollider(gvrContext, false));
+        focus.attachEyePointeeHolder();
         focus.setName("video");
         focus.focusListener = new FocusListener() {
 
@@ -216,7 +215,8 @@ public class VideoComponent extends GVRSceneObject {
     }
 
     public void forwardOrRewindVideo() {
-        float x = seekbar.hitLocation[0];
+
+        float x = seekbar.getEyePointeeHolder().getHit()[0];
         float posX = Seekbar.WIDTH / 2 + x;
         int current = (int) (mediaPlayer.getDuration() * posX / Seekbar.WIDTH);
         mediaPlayer.seekTo(current);

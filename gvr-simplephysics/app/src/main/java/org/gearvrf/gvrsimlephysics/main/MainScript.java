@@ -36,7 +36,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
-        mScene = gvrContext.getMainScene();
+        mScene = gvrContext.getNextMainScene();
         mCamera = mScene.getMainCameraRig();
 
         initCamera(gvrContext, mCamera);

@@ -34,7 +34,8 @@ public class GearVRScriptingMain extends GVRMain
     private static final String TAG = GearVRScriptingMain.class.getSimpleName();
     private static final int DEBUG_SERVER_PORT = 5000;
     DebugWebServer server;
-
+    private GVRContext gvrContext;
+    
     @Override
     public void onInit(GVRContext gvrContext) {
         final DebugServer debug = gvrContext.startDebugServer();
@@ -80,12 +81,16 @@ public class GearVRScriptingMain extends GVRMain
         server.listen(DEBUG_SERVER_PORT);
     }
 
+    @Override
+    public void onStep() {
+    }
+
     public void stop() {
         if(server != null) {
             server.stop();
         }
-        if (null != getGVRContext()){
-            getGVRContext().stopDebugServer();
+        if (null != gvrContext){
+            gvrContext.stopDebugServer();
         }
     }
 }

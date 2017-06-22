@@ -53,7 +53,7 @@ public class VideoMain extends GVRMain {
         focusableController = new FocusableController();
 
         // movie manager
-        mMovieManager = new MovieManager(mGVRContext, mActivity);
+        mMovieManager = new MovieManager(mGVRContext);
         // add all theaters to main scene
         GVRSceneObject theaters[] = mMovieManager.getAllMovieTheater();
         for (GVRSceneObject theater : theaters) {

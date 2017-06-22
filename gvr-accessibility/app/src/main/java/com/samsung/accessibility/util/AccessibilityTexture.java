@@ -44,16 +44,16 @@ public class AccessibilityTexture {
     }
 
     private void loadFiles() {
-        accessibilityIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_accessibility));
-        backIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_back));
-        spaceTexture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
-        talkBackMore = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_mais));
-        talkBackLess = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_menos));
-        zoomIn = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_mais));
-        invertedColorsIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_inverted));
-        zoomOut = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_menos));
-        speechIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_speech));
-        emptyIcon = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
+        accessibilityIcon = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_accessibility));
+        backIcon = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_back));
+        spaceTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
+        talkBackMore = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_mais));
+        talkBackLess = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_talkback_menos));
+        zoomIn = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_mais));
+        invertedColorsIcon = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_inverted));
+        zoomOut = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_zoom_menos));
+        speechIcon = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.ico_speech));
+        emptyIcon = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
     }
 
     public GVRTexture getAccessibilityIcon() {

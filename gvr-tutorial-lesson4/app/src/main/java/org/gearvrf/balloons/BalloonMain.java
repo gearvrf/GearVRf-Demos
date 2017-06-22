@@ -74,7 +74,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getMainScene();
+        mScene = context.getNextMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -147,7 +147,7 @@ public class BalloonMain extends GVRMain {
 
     GVRSceneObject makeEnvironment(GVRContext context)
     {
-        Future<GVRTexture> tex = context.loadFutureCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
+        GVRTexture tex = context.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
         GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.Cubemap.ID);
         material.setMainTexture(tex);
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);

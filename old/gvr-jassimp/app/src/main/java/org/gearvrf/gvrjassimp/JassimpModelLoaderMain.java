@@ -15,24 +15,50 @@
 
 package org.gearvrf.gvrjassimp;
 
-import android.graphics.Color;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IAssetEvents;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import android.graphics.Color;
+class AssetListener implements IAssetEvents
+{
+    private GVRScene mScene;
+    
+    public AssetListener(GVRScene scene) {
+        mScene = scene;
+    }
+    
+    public void onModelLoaded(GVRContext context, GVRSceneObject model, String modelFile) { }
+    public void onTextureLoaded(GVRContext context, GVRTexture texture, String texFile) {}
+    public void onModelError(GVRContext context, String error, String modelFile) { }
+    public void onTextureError(GVRContext context, String error, String texFile) { }
+    public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
+    {
+        if ((model != null) && (errors == null))
+        {
+            Log.d("gvrjassimp", filePath + " loaded successfully");
+            mScene.addSceneObject(model);
+        }
+        else
+        {
+            Log.e("gvrjassimp", filePath + " did not load " + errors);
+        }
+    }
+}
 
 public class JassimpModelLoaderMain extends GVRMain {
 
@@ -47,7 +73,7 @@ public class JassimpModelLoaderMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         mAnimationEngine = gvrContext.getAnimationEngine();
-        mMainScene = gvrContext.getMainScene();
+        mMainScene = gvrContext.getNextMainScene();
         mMainScene.setFrustumCulling(true);
 
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
@@ -100,41 +126,13 @@ public class JassimpModelLoaderMain extends GVRMain {
     }
 
     @Override
-    public SplashMode getSplashMode() {
-        return SplashMode.MANUAL;
+    public void onStep() {
     }
 
     void onTap() {
         // toggle whether stats are displayed.
         boolean statsEnabled = mMainScene.getStatsEnabled();
         mMainScene.setStatsEnabled(!statsEnabled);
-    }
-
-    class AssetListener implements IAssetEvents
-    {
-        private GVRScene mScene;
-
-        public AssetListener(GVRScene scene) {
-            mScene = scene;
-        }
-
-        public void onModelLoaded(GVRContext context, GVRSceneObject model, String modelFile) { }
-        public void onTextureLoaded(GVRContext context, GVRTexture texture, String texFile) {}
-        public void onModelError(GVRContext context, String error, String modelFile) { }
-        public void onTextureError(GVRContext context, String error, String texFile) { }
-        public void onAssetLoaded(GVRContext context, GVRSceneObject model, String filePath, String errors)
-        {
-            if ((model != null) && (errors == null))
-            {
-                Log.d("gvrjassimp", filePath + " loaded successfully");
-                mScene.addSceneObject(model);
-            }
-            else
-            {
-                Log.e("gvrjassimp", filePath + " did not load " + errors);
-            }
-            closeSplashScreen();
-        }
     }
 
 }

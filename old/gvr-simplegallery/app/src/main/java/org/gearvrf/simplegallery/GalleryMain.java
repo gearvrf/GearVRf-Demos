@@ -21,10 +21,11 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPostEffect;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
@@ -60,7 +61,7 @@ public class GalleryMain extends GVRMain {
 
         mAnimationEngine = gvrContext.getAnimationEngine();
 
-        GVRScene mainScene = mGVRContext.getMainScene();
+        GVRScene mainScene = mGVRContext.getNextMainScene();
 
         mainScene.getMainCameraRig().getLeftCamera()
                 .setBackgroundColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -80,7 +81,7 @@ public class GalleryMain extends GVRMain {
         leftScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
         GVRSceneObject rightScreen = new GVRSceneObject(mGVRContext,
                 sphereMesh, mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
-                        mGVRContext, R.drawable.right_screen)));
+                mGVRContext, R.drawable.right_screen)));
         rightScreen.getTransform().setScale(10.0f, 10.0f, 10.0f);
         rightScreen.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
 
@@ -135,13 +136,10 @@ public class GalleryMain extends GVRMain {
 
         CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(
                 mGVRContext);
-        GVRPostEffect postEffect = new GVRPostEffect(mGVRContext,
-                shaderManager.getShaderId());
-        postEffect.setVec3("ratio_r", 0.393f, 0.769f, 0.189f);
-        postEffect.setVec3("ratio_g", 0.349f, 0.686f, 0.168f);
-        postEffect.setVec3("ratio_b", 0.272f, 0.534f, 0.131f);
-        mainScene.getMainCameraRig().getLeftCamera().addPostEffect(postEffect);
-        mainScene.getMainCameraRig().getRightCamera().addPostEffect(postEffect);
+        GVRShaderId shaderId = gvrContext.getMaterialShaderManager().getShaderType(CustomPostEffectShaderManager.class);
+        GVRShaderData shaderData = new GVRShaderData(gvrContext, shaderId );
+        mainScene.getMainCameraRig().getLeftCamera().addPostEffect(shaderData);
+        mainScene.getMainCameraRig().getRightCamera().addPostEffect(shaderData);
 
     }
 

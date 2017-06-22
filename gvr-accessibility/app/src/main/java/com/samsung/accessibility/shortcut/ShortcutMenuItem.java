@@ -23,7 +23,6 @@ import org.gearvrf.accessibility.GVRAccessibilitySpeechListener;
 
 import android.content.Context;
 import android.media.AudioManager;
-import android.util.Log;
 
 import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableSceneObject;
@@ -35,7 +34,7 @@ import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class ShortcutMenuItem extends FocusableSceneObject {
-    private static final String TAG = ShortcutMenuItem.class.getSimpleName();
+
     private GVRContext gvrContext;
     private static final int IN_FOCUS_COLOR = 8570046;
     private static final int LOST_FOCUS_COLOR = 6186095;
@@ -59,7 +58,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     private void createRenderData() {
         GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.circle_menu));
-        GVRTexture texture = gvrContext.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.circle_normal));
         textures = AccessibilityTexture.getInstance(gvrContext);
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRRenderData renderData = new GVRRenderData(gvrContext);
@@ -230,16 +229,12 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     private void zoom() {
-        try {
-            if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getZoomIn())) {
-                Main.manager.getZoom().zoomIn(Main.accessibilityScene.getMainApplicationScene(),
-                        Main.accessibilityScene);
-            } else {
-                Main.manager.getZoom().zoomOut(Main.accessibilityScene.getMainApplicationScene(),
-                        Main.accessibilityScene);
-            }
-        } catch (UnsupportedOperationException e) {
-            Log.e(TAG, "Feature not supported", e);
+        if (icon.getRenderData().getMaterial().getMainTexture().equals(textures.getZoomIn())) {
+            Main.manager.getZoom().zoomIn(Main.accessibilityScene.getMainApplicationScene(),
+                    Main.accessibilityScene);
+        } else {
+            Main.manager.getZoom().zoomOut(Main.accessibilityScene.getMainApplicationScene(),
+                    Main.accessibilityScene);
         }
     }
 

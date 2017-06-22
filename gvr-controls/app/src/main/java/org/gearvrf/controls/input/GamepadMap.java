@@ -1,6 +1,6 @@
+
 /* Copyright 2015 Samsung Electronics import android.util.SparseArray;
 import android.view.KeyEvent;
-
 import java.util.ArrayList;
 t use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -103,3 +103,6 @@ public class GamepadMap {
     }
 
 }
+
+
+

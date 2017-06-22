@@ -1,20 +1,20 @@
 package org.gearvrf.gvrcamera2renderscript;
 
+import org.gearvrf.GVRActivity;
 import android.os.Bundle;
 
-import org.gearvrf.GVRActivity;
-
-public class Camera2RenderscriptActivity extends GVRActivity {
-    private Camera2RenderscriptManager mManger;
-
-    @Override
+public class Camera2RenderscriptActivity extends GVRActivity 
+{
+	private Camera2RenderscriptManager mManger;
+	
+	@Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
         mManger = new Camera2RenderscriptManager(this);
-        setMain(mManger);
+        setMain(mManger, "gvr.xml");
     }
-
+	
     @Override
     protected void onPause() {
         super.onPause();

@@ -39,7 +39,7 @@ public class GridSceneObjects extends GVRSceneObject {
     private int gridConfig;
 
     public GridSceneObjects(GVRContext gvrContext, ArrayList<MenuControlSceneObject> listItens,
-            int gridConfig, ItemSelectedListener listener) {
+                            int gridConfig, ItemSelectedListener listener) {
         super(gvrContext);
 
         this.gridConfig = gridConfig;
@@ -102,7 +102,7 @@ public class GridSceneObjects extends GVRSceneObject {
                 handleUISelection(item);
             }
         });
-        
+
         item.setGamepadTouchListener(new GamepadTouchImpl() {
 
             @Override
@@ -115,7 +115,7 @@ public class GridSceneObjects extends GVRSceneObject {
                         code == GamepadMap.KEYCODE_BUTTON_Y) {
 
                     handleUISelection(item);
-                    
+
                     item.select();
                 }
             }
@@ -127,7 +127,7 @@ public class GridSceneObjects extends GVRSceneObject {
     }
 
     private void handleUISelection(MenuControlSceneObject object) {
-        
+
         if (buttonSelected != null) {
 
             if (buttonSelected != object) {

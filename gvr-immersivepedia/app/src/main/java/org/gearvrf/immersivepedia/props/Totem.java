@@ -17,7 +17,6 @@ package org.gearvrf.immersivepedia.props;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.R;
@@ -64,7 +63,7 @@ public class Totem extends FocusableSceneObject implements FocusListener {
         this.gvrContext = gvrContext;
         this.getRenderData().setCullFace(GVRCullFaceEnum.None);
         getRenderData().setRenderingOrder(RenderingOrderApplication.TOTEM);
-        this.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        attachEyePointeeHolder();
         this.focusListener = this;
     }
 
@@ -132,7 +131,7 @@ public class Totem extends FocusableSceneObject implements FocusListener {
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, iconPath)));
         icon.getTransform().setPosition(0f, 1f, -0.11f);
         icon.getTransform().rotateByAxis(-180, 0, 1, 0);
-        this.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+        icon.attachEyePointeeHolder();
         addChildObject(icon);
     }
 

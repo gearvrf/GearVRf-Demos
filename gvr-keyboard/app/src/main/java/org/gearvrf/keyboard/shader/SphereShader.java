@@ -15,29 +15,35 @@
 
 package org.gearvrf.keyboard.shader;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.keyboard.R;
+import org.gearvrf.utility.TextFile;
 
-public class SphereShader {
+public class SphereShader extends GVRShader{
 
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
     public static final String TRANSITION_COLOR = "trans_color";
-    public static final String TEXTURE_KEY = "texture";
+    public static final String TEXTURE_KEY = "texture_t";
     public static final String SECUNDARY_TEXTURE_KEY = "second_texture";
     public static final String ANIM_TEXTURE = "animTexture";
     public static final String BLUR_INTENSITY = "blur";
-    public static final String HDRI_TEXTURE_KEY = "hdri_texture";
+    public static final String HDRI_TEXTURE_KEY = "HDRI_texture";
 
-    private GVRCustomMaterialShaderId mShaderId;
+    //private GVRCustomMaterialShaderId mShaderId;
     private GVRMaterialMap mCustomShader = null;
 
     public SphereShader(GVRContext gvrContext) {
-        final GVRMaterialShaderManager shaderManager = gvrContext
+        /*final GVRMaterialShaderManager shaderManager = gvrContext
                 .getMaterialShaderManager();
+
         mShaderId = shaderManager.addShader(R.raw.sphereshader_vertex, R.raw.sphereshader_fragment);
 
         mCustomShader = shaderManager.getShaderMap(mShaderId);
@@ -48,11 +54,22 @@ public class SphereShader {
         mCustomShader.addTextureKey(SECUNDARY_TEXTURE_KEY, SECUNDARY_TEXTURE_KEY);
         mCustomShader.addUniformFloatKey(ANIM_TEXTURE, ANIM_TEXTURE);
         mCustomShader.addUniformFloatKey(BLUR_INTENSITY, BLUR_INTENSITY);
-        mCustomShader.addTextureKey("hdri_texture", HDRI_TEXTURE_KEY);
+        mCustomShader.addTextureKey("hdri_texture", HDRI_TEXTURE_KEY);*/
 
+        super("float3 u_eye, float3 u_light, float3 trans_color, float animTexture, float blur, float u_radius", "sampler2D texture_t sampler2D second_texture sampler2D HDRI_texture", "float4 a_position, float3 a_normal, float2 a_texcoord",300);
+        Context context = gvrContext.getContext();
+        setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.sphereshader_fragment));
+        setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.sphereshader_vertex));
     }
 
-    public GVRCustomMaterialShaderId getShaderId() {
-        return mShaderId;
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+
+        material.setVec3("u_eye", 0, 0, 0);
+        material.setVec3("u_light", 1, 1, 1);
+        material.setVec3("trans_color", 1, 1, 1);
+        material.setFloat("blur", 1);
+        material.setFloat("animTexture", 1);
+        material.setFloat("u_radius", 1);
     }
 }

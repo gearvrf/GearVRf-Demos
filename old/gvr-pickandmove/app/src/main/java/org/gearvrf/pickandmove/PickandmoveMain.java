@@ -15,26 +15,29 @@
 
 package org.gearvrf.pickandmove;
 
-import android.util.Log;
-import android.view.MotionEvent;
-
-import org.gearvrf.FutureWrapper;
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRTransform;
-import org.gearvrf.IPickEvents;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
+
+import org.gearvrf.FutureWrapper;
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRSphereCollider;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTransform;
+import org.gearvrf.GVRPicker.GVRPickedObject;
+import org.gearvrf.IPickEvents;
+import org.gearvrf.pickandmove.R;
+
+import android.util.Log;
+import android.view.MotionEvent;
 
 public class PickandmoveMain extends GVRMain {
 
@@ -71,12 +74,12 @@ public class PickandmoveMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        mScene = mGVRContext.getMainScene();
+        mScene = mGVRContext.getNextMainScene();
 
         // head-tracking pointer
         GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
                 new FutureWrapper<GVRMesh>(gvrContext.createQuad(0.1f, 0.1f)),
-                gvrContext.loadFutureTexture(new GVRAndroidResource(
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         mGVRContext, R.drawable.headtrackingpointer)));
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
@@ -88,8 +91,8 @@ public class PickandmoveMain extends GVRMain {
         FutureWrapper<GVRMesh> futureQuadMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
 
-        Future<GVRTexture> futureCubemapTexture = gvrContext
-                .loadFutureCubemapTexture(new GVRAndroidResource(mGVRContext,
+        GVRTexture futureCubemapTexture = gvrContext
+                .getAssetLoader().loadCubemapTexture(new GVRAndroidResource(mGVRContext,
                         R.raw.beach));
 
         GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,

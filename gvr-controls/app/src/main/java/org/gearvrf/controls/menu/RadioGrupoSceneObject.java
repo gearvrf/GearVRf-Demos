@@ -32,7 +32,7 @@ public class RadioGrupoSceneObject extends GVRSceneObject {
     private ItemSelectedListener mItemSelectedListener;
 
     public RadioGrupoSceneObject(GVRContext gvrContext, ItemSelectedListener mItemSelectedListener,
-            float time1, float time2, float time3) {
+                                 float time1, float time2, float time3) {
         super(gvrContext);
 
         this.mItemSelectedListener = mItemSelectedListener;

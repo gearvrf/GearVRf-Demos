@@ -11,7 +11,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
@@ -21,7 +20,6 @@ import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.physics.ICollisionEvents;
 
 import java.io.IOException;
-import java.util.List;
 
 public class BulletSampleMain extends GVRMain {
 
@@ -37,10 +35,9 @@ public class BulletSampleMain extends GVRMain {
         }
 
         private void swapTextures(GVRSceneObject sceneObj0) {
-            List<GVRRenderData> rdatas = sceneObj0.getAllComponents(GVRRenderData.getComponentType());
-            GVRTexture tmp = rdatas.get(0).getMaterial().getTexture("diffuseTexture");
+            GVRTexture tmp = sceneObj0.getRenderData().getMaterial().getMainTexture();
 
-            rdatas.get(0).getMaterial().setTexture("diffuseTexture", blueObject);
+            sceneObj0.getRenderData().getMaterial().setMainTexture(blueObject);
 
             blueObject = tmp;
         }
@@ -66,7 +63,7 @@ public class BulletSampleMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws Throwable {
         mGVRContext = gvrContext;
         mCollisionHandler = new CollisionHandler();
-        GVRScene scene = mGVRContext.getMainScene();
+        GVRScene scene = mGVRContext.getNextMainScene();
 
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getLeftCamera().setBackgroundColor(Color.BLACK);
@@ -173,7 +170,7 @@ public class BulletSampleMain extends GVRMain {
         GVRSceneObject object = null;
         try {
             object = new GVRSceneObject(mGVRContext, futureMesh,
-                    mGVRContext.loadFutureTexture(new GVRAndroidResource(
+                    mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                             mGVRContext, texture)));
             // TODO: Create mesh collider to ground and add GVRCollision component
         } catch (IOException e) {
@@ -182,12 +179,11 @@ public class BulletSampleMain extends GVRMain {
         return object;
     }
 
-    private GVRSceneObject meshWithTexture(String meshFileName, String texture) {
+    private GVRSceneObject meshWithTexture(String mesh, String texture) {
         GVRSceneObject object = null;
-        try
-        {
+        try {
             object = new GVRSceneObject(mGVRContext, new GVRAndroidResource(
-                    mGVRContext, meshFileName), new GVRAndroidResource(mGVRContext,
+                    mGVRContext, mesh), new GVRAndroidResource(mGVRContext,
                     texture));
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,18 +223,9 @@ public class BulletSampleMain extends GVRMain {
      * Function to add a cube of unit size with mass at the specified position
      * in Bullet physics world and scene graph.
      */
-    private void addCube(GVRScene scene, float x, float y, float z, float mass)
-    {
-        GVRSceneObject cubeObject;
-        try
-        {
-            cubeObject = mGVRContext.getAssetLoader().loadModel("cube.obj", scene);
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-            return;
-        }
+    private void addCube(GVRScene scene, float x, float y, float z, float mass) {
+
+        GVRSceneObject cubeObject = meshWithTexture("cube.obj", "cube.jpg");
         cubeObject.getTransform().setPosition(x, y, z);
 
         // Collider
@@ -254,6 +241,8 @@ public class BulletSampleMain extends GVRMain {
         body.setFriction(1.0f);
 
         cubeObject.attachComponent(body);
+
+        scene.addSceneObject(cubeObject);
     }
 
     /*
@@ -262,16 +251,9 @@ public class BulletSampleMain extends GVRMain {
      */
     private void addSphere(GVRScene scene, float radius, float x, float y,
                            float z, float mass) {
-        GVRSceneObject sphereObject;
-        try
-        {
-            sphereObject = mGVRContext.getAssetLoader().loadModel("sphere.obj", scene);
-        }
-        catch (IOException ex)
-        {
-            ex.printStackTrace();
-            return;
-        }
+
+        GVRSceneObject sphereObject = meshWithTexture("sphere.obj",
+                "sphere.jpg");
         sphereObject.getTransform().setPosition(x, y, z);
 
         // Collider
@@ -288,6 +270,8 @@ public class BulletSampleMain extends GVRMain {
         sphereObject.getEventReceiver().addListener(mCollisionHandler);
 
         sphereObject.attachComponent(mSphereRigidBody);
+
+        scene.addSceneObject(sphereObject);
     }
 
 }

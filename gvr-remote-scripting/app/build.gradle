@@ -29,9 +29,5 @@ android {
 }
 
 dependencies {
-    if(rootProject.useLocalDependencies) {
-        compile(name: 'debugwebserver-debug', ext: 'aar')
-    } else {
-        compile "org.gearvrf:debugwebserver:$gearvrfVersion"
-    }
+    compile(name:'debugwebserver-debug', ext:'aar')
 }

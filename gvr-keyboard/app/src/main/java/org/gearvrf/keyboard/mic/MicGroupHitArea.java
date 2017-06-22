@@ -17,7 +17,6 @@ package org.gearvrf.keyboard.mic;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.mic.model.MicItem;
 import org.gearvrf.keyboard.util.SceneObjectNames;
@@ -46,7 +45,7 @@ public class MicGroupHitArea extends GVRSceneObject {
     }
 
     private void attachDefaultEyePointee(GVRSceneObject sceneObject) {
-        sceneObject.attachComponent(new GVRSphereCollider(getGVRContext()));
+        sceneObject.attachEyePointeeHolder();
     }
 
 }

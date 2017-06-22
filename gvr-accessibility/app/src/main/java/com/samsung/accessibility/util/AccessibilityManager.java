@@ -10,23 +10,24 @@
  */
 package com.samsung.accessibility.util;
 
-import org.gearvrf.GVRContext;
-import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
-import org.gearvrf.accessibility.GVRAccessibilityZoom;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.gearvrf.GVRContext;
+import org.gearvrf.accessibility.GVRAccessibilityInvertedColors;
+import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
+import org.gearvrf.accessibility.GVRAccessibilityZoom;
 
 public class AccessibilityManager {
 
     private List<GVRAccessibilityTalkBack> mTalkBacks;
 
-    private AccessibilityInvertedColors mInvertedColors;
+    private GVRAccessibilityInvertedColors mInvertedColors;
     private GVRAccessibilityZoom mZoom;
 
     public AccessibilityManager(GVRContext gvrContext) {
         mTalkBacks = new ArrayList<GVRAccessibilityTalkBack>();
-        mInvertedColors = new AccessibilityInvertedColors(gvrContext);
+        mInvertedColors = new GVRAccessibilityInvertedColors(gvrContext);
         mZoom = new GVRAccessibilityZoom();
     }
 
@@ -34,7 +35,7 @@ public class AccessibilityManager {
         return mTalkBacks;
     }
 
-    public AccessibilityInvertedColors getInvertedColors() {
+    public GVRAccessibilityInvertedColors getInvertedColors() {
         return mInvertedColors;
     }
 

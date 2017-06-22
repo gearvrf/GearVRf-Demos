@@ -27,7 +27,6 @@ import org.gearvrf.keyboard.main.MainActivity;
 import org.gearvrf.keyboard.mic.model.MicItem;
 import org.gearvrf.keyboard.textField.TextField;
 import org.gearvrf.keyboard.util.SceneObjectNames;
-import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
 
@@ -175,30 +174,42 @@ public class Mic extends GVRSceneObject implements RecognitionListener {
         }
     }
 
-    public void onUpdate(GVRSceneObject sceneObject) {
+    public void onUpdate() {
 
         if (mMicHitGroupArea != null) {
-            verifyEyePointee(sceneObject);
+            verifyEyePointee();
         }
     }
 
-    private void verifyEyePointee(GVRSceneObject sceneObject) {
-        handleEyePointeeListNew(sceneObject);
+    private void verifyEyePointee() {
+
+        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
+                .getMainScene());
+
+        if (eyePointeeHolders.length == 0) {
+            tryChangeSeeMe(false);
+        } else {
+            handleEyePointeeListNew(eyePointeeHolders);
+        }
     }
 
-    private void handleEyePointeeListNew(GVRSceneObject sceneObject) {
+    private void handleEyePointeeListNew(GVREyePointeeHolder[] eyePointeeHolders) {
 
         // https://github.com/Samsung/GearVRf/issues/102
         if (mMicHitGroupArea != null && mMicHitGroupArea.mHitArea != null) {
-            boolean seeMeNow = false;
 
-            if (mMicHitGroupArea.mHitArea.hashCode() == sceneObject.hashCode()) {
-                tryChangeSeeMe(true);
-                seeMeNow = true;
-            }
+            for (GVREyePointeeHolder gVREyePointeeHolder : eyePointeeHolders) {
 
-            if (!seeMeNow) {
-                tryChangeSeeMe(false);
+                boolean seeMeNow = false;
+
+                if (mMicHitGroupArea.mHitArea.hashCode() == gVREyePointeeHolder.getOwnerObject().hashCode()) {
+                    tryChangeSeeMe(true);
+                    seeMeNow = true;
+                }
+
+                if (!seeMeNow) {
+                    tryChangeSeeMe(false);
+                }
             }
         }
     }

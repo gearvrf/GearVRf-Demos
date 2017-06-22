@@ -15,6 +15,7 @@ import org.gearvrf.GVRRenderTexture;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 
 import com.vuforia.GLTextureData;
@@ -44,23 +45,23 @@ public class VuforiaSampleMain extends GVRMain {
 
     static final int VUFORIA_CAMERA_WIDTH = 1024;
     static final int VUFORIA_CAMERA_HEIGHT = 1024;
-    
+
     private volatile boolean init = false;
 
     private GVRScene mainScene;
-    
+
     private float[] vuforiaMVMatrix;
     private float[] totalMVMatrix;
 
     private boolean teapotVisible = false;
     boolean isReady = false;
 
-    ModelShader modelShader = null;
+    //ModelShader modelShader = null;
 
     boolean isPassThroughVisible = false;
 
     GVRTexture passThroughTexture;
-    
+
     @Override
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
@@ -150,10 +151,11 @@ public class VuforiaSampleMain extends GVRMain {
                             .getTextureSize().getData()[1]);
 
                     GVRRenderData renderData = passThroughObject.getRenderData();
-                    GVRMaterial material = new GVRMaterial(gvrContext);
-                    renderData.setMaterial(material);
+                    GVRMaterial material = new GVRMaterial(gvrContext, GVRShaderType.Texture.ID);
+
                     material.setMainTexture(passThroughTexture);
-                    material.setShaderType(GVRShaderType.Texture.ID);
+                    renderData.setMaterial(material);
+                    //material.setShaderType(GVRShaderType.Texture.ID);
 
                     float[] texCoords = { 0.0f, 0.0f, 0.0f, vRatio, uRatio, 0.0f, uRatio, vRatio };
                     GVRMesh mesh = renderData.getMesh();
@@ -172,14 +174,14 @@ public class VuforiaSampleMain extends GVRMain {
 
     private void createTeaPotObject() {
         try {
-            modelShader = new ModelShader(gvrContext);
+            //modelShader = new ModelShader(gvrContext);
             GVRMesh teapotMesh = gvrContext.loadMesh(
                     new GVRAndroidResource(gvrContext, "teapot.obj"));
-            GVRTexture teapotTexture = gvrContext.loadTexture(
+            GVRTexture teapotTexture = gvrContext.getAssetLoader().loadTexture(
                     new GVRAndroidResource(gvrContext.getContext(), "teapot_tex1.jpg"));
             teapot = new GVRSceneObject(gvrContext, teapotMesh);
 
-            GVRMaterial material = new GVRMaterial(gvrContext, modelShader.getShaderId());
+            GVRMaterial material = new GVRMaterial(gvrContext, new GVRShaderId(ModelShader.class));
             material.setTexture(ModelShader.TEXTURE_KEY, teapotTexture);
 
             teapot.getRenderData().setMaterial(material);

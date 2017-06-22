@@ -17,7 +17,6 @@ package org.gearvrf.immersivepedia.videoComponent;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
@@ -61,7 +60,7 @@ public class ButtonBoard extends GVRSceneObject {
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.play)));
         playPauseButton.getRenderData().setRenderingOrder(RenderingOrderApplication.BUTTON_BOARD + 1);
         playPauseButton.getTransform().setPosition(PLAY_PAUSE_X_POSITION, PLAY_PAUSE_Y_POSITION, PLAY_PAUSE_Z_POSITION);
-        playPauseButton.attachCollider(new GVRMeshCollider(gvrContext, false));
+        playPauseButton.attachEyePointeeHolder();
         renderTextureButton(PlayPauseButton.PAUSE_NORMAL, playPauseButton);
         playPauseButton.focusListener = new FocusListener() {
 

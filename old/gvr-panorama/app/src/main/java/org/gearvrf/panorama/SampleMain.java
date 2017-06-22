@@ -80,10 +80,14 @@ public class SampleMain extends GVRMain {
         // chance of memory leak.
         mActivity = null;
 
-        GVRScene mainScene = mGVRContext.getMainScene();
+        GVRScene mainScene = mGVRContext.getNextMainScene();
 
         mainScene.addSceneObject(leftScreen);
         mainScene.addSceneObject(rightScreen);
+    }
+
+    @Override
+    public void onStep() {
     }
 
 }

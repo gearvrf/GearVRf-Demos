@@ -15,6 +15,8 @@
 
 package org.gearvrf.video.overlay;
 
+import android.media.MediaPlayer;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRRenderData;
@@ -103,7 +105,7 @@ public class OverlayUI extends GVRSceneObject {
                 @Override
                 public void onClick() {
                     if (movieManager.getMediaPlayer() != null) {
-                        movieManager.playerSeekTo(movieManager.playerGetCurrentPosition() + 10000);
+                        movieManager.getMediaPlayer().seekTo(movieManager.getMediaPlayer().getCurrentPosition() + 10000);
                     }
                 }
             });
@@ -118,7 +120,7 @@ public class OverlayUI extends GVRSceneObject {
                 @Override
                 public void onClick() {
                     if (movieManager.getMediaPlayer() != null) {
-                        movieManager.playerSeekTo(movieManager.playerGetCurrentPosition() - 10000);
+                        movieManager.getMediaPlayer().seekTo(movieManager.getMediaPlayer().getCurrentPosition() - 10000);
                     }
                 }
             });
@@ -161,9 +163,9 @@ public class OverlayUI extends GVRSceneObject {
     }
 
     public boolean playVideo() {
-        android.util.Log.d(TAG, "pressed Play button");
-        if (!mMovieManager.isPlaying()) {
-            mMovieManager.playerStart();
+        MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
+        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
             mMovieManager.getCurrentMovieTheater().switchOffLights();
             return true;
         }
@@ -171,9 +173,9 @@ public class OverlayUI extends GVRSceneObject {
     }
 
     public boolean pauseVideo() {
-        android.util.Log.d(TAG, "pressed Pause button");
-        if (mMovieManager.isPlaying()) {
-            mMovieManager.playerPause();
+        MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
             mMovieManager.getCurrentMovieTheater().switchOnLights();
             return true;
         }
@@ -185,7 +187,8 @@ public class OverlayUI extends GVRSceneObject {
                 | GVRRenderData.GVRRenderMaskBit.Right);
         mButtonBoard.getRenderData().setRenderMask(GVRRenderData.GVRRenderMaskBit.Left
                 | GVRRenderData.GVRRenderMaskBit.Right);
-        if (mMovieManager.isPlaying()) {
+        MediaPlayer mediaPlayer = mMovieManager.getMediaPlayer();
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mPauseButton.show();
         } else {
             mPlayButton.show();
@@ -218,8 +221,8 @@ public class OverlayUI extends GVRSceneObject {
             mSeekbar.unglow();
         }
         if (mMovieManager.getMediaPlayer() != null) {
-            mSeekbar.setTime(context, mMovieManager.playerGetCurrentPosition(),
-                      mMovieManager.playerGetDuration());
+            mSeekbar.setTime(context, mMovieManager.getMediaPlayer().getCurrentPosition(),
+                    mMovieManager.getMediaPlayer().getDuration());
         }
     }
 
@@ -230,9 +233,9 @@ public class OverlayUI extends GVRSceneObject {
     public void processTouch(GVRContext context) {
         Float seekBarRatio = mSeekbar.getRatio(context.getMainScene().getMainCameraRig().getLookAt());
         if (seekBarRatio != null && mMovieManager.getMediaPlayer() != null) {
-            long current = (long) (mMovieManager.playerGetDuration() * seekBarRatio);
-            mMovieManager.playerSeekTo(current);
-            mSeekbar.setTime(context, current, mMovieManager.playerGetDuration());
+            int current = (int) (mMovieManager.getMediaPlayer().getDuration() * seekBarRatio);
+            mMovieManager.getMediaPlayer().seekTo(current);
+            mSeekbar.setTime(context, current, mMovieManager.getMediaPlayer().getDuration());
         }
     }
 }

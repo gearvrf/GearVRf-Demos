@@ -15,24 +15,25 @@
 
 package org.gearvrf.balloons;
 
-import android.view.MotionEvent;
-
+import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRPicker.GVRPickedObject;
-import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.IPickEvents;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import android.view.MotionEvent;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.IPickEvents;
+import org.gearvrf.GVRPicker.GVRPickedObject;
 
 import java.util.concurrent.Future;
 
@@ -71,7 +72,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getMainScene();
+        mScene = context.getNextMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -80,7 +81,7 @@ public class BalloonMain extends GVRMain {
          */
         GVRSceneObject headTracker = new GVRSceneObject(context,
                 context.createQuad(0.1f, 0.1f),
-                context.loadTexture(new GVRAndroidResource(context, R.drawable.headtrackingpointer)));
+                context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.headtrackingpointer)));
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
         headTracker.getRenderData().setRenderingOrder(100000);
@@ -122,7 +123,7 @@ public class BalloonMain extends GVRMain {
 
     GVRSceneObject makeEnvironment(GVRContext context)
     {
-        Future<GVRTexture> tex = context.loadFutureCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
+        GVRTexture tex = context.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
         GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.Cubemap.ID);
         material.setMainTexture(tex);
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);

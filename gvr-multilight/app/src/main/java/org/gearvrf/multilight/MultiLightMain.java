@@ -16,9 +16,11 @@
 package org.gearvrf.multilight;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
@@ -42,12 +44,15 @@ public class MultiLightMain extends GVRMain {
     private GVRSceneObject rotateObject;
     private GVRSceneObject backdrop;
     private GVRScene mScene;
-    
+  //  @Override
+    /*public SplashMode getSplashMode() {
+        return SplashMode.NONE;
+    }*/
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
         mScene = mGVRContext.getMainScene();
-        float zdist = 2;
+        float zdist = 2.0f;
 
         GVRSceneObject root = new GVRSceneObject(gvrContext);
         GVRSceneObject character = createCharacter(gvrContext);
@@ -81,7 +86,7 @@ public class MultiLightMain extends GVRMain {
         }
     }
 
-    private boolean lightEnabled = true;
+    private boolean lightEnabled = false;
 
     public void onTouchEvent(MotionEvent event) {
         if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
@@ -102,6 +107,18 @@ public class MultiLightMain extends GVRMain {
          try
          {
             GVRModelSceneObject model = context.getAssetLoader().loadModel("astro_boy.dae");
+          /*   ArrayList<GVRLight> lights = model.getAllComponents(GVRLight.getComponentType());
+             if(lights.isEmpty())
+                 org.gearvrf.utility.Log.e("RC", "it is empty");
+             for(GVRLight light : lights){
+                 GVRSceneObject lightobj = light.getOwnerObject();
+                 if(lightobj == null)
+                     Log.e("RC", "lightobj is null");
+                 if(lightobj.getParent() == null)
+                     Log.e("RC", "getParent is null");
+                 lightobj.getParent().removeChildObject(lightobj);
+             }
+*/
             model.getTransform().setScale(10, 10, 10);
             model.getTransform().setPositionY(-1);
             return model;

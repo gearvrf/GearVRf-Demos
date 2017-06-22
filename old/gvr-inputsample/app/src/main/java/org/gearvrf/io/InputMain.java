@@ -14,6 +14,8 @@
  */
 package org.gearvrf.io;
 
+import android.content.Context;
+
 import java.util.Random;
 import java.util.concurrent.Future;
 
@@ -22,7 +24,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
-import org.gearvrf.GVRCustomMaterialShaderId;
+//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterialMap;
 import org.gearvrf.GVRMaterialShaderManager;
@@ -31,6 +33,9 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ISensorEvents;
 import org.gearvrf.SensorEvent;
@@ -38,6 +43,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.utility.Log;
+import org.gearvrf.utility.TextFile;
 
 public class InputMain extends GVRMain implements CursorControllerListener {
     private static final String TAG = InputMain.class.getSimpleName();
@@ -73,7 +79,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
         random = new Random();
-        mainScene = gvrContext.getMainScene();
+        mainScene = gvrContext.getNextMainScene();
         shaderManager = new CustomShaderManager(gvrContext);
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f,
                 1.0f, 1.0f, 1.0f);
@@ -177,11 +183,11 @@ public class InputMain extends GVRMain implements CursorControllerListener {
                     selectedCursorId = id;
                     event.getObject().getTransform()
                             .setPosition(-cursor.getTransform().getPositionX()
-                                    + selected.getTransform().getPositionX(),
-                            -cursor.getTransform().getPositionY()
-                                    + selected.getTransform().getPositionY(),
-                            -cursor.getTransform().getPositionZ()
-                                    + selected.getTransform().getPositionZ());
+                                            + selected.getTransform().getPositionX(),
+                                    -cursor.getTransform().getPositionY()
+                                            + selected.getTransform().getPositionY(),
+                                    -cursor.getTransform().getPositionZ()
+                                            + selected.getTransform().getPositionZ());
                     cursor.addChildObject(selected);
 
                     cube.setGreen();
@@ -222,8 +228,8 @@ public class InputMain extends GVRMain implements CursorControllerListener {
     private void addSurroundings(GVRContext gvrContext, GVRScene scene) {
         FutureWrapper<GVRMesh> futureQuadMesh = new FutureWrapper<GVRMesh>(
                 gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
-        Future<GVRTexture> futureCubemapTexture = gvrContext
-                .loadFutureCubemapTexture(
+        GVRTexture futureCubemapTexture = gvrContext
+                .getAssetLoader().loadCubemapTexture(
                         new GVRAndroidResource(gvrContext, R.raw.earth));
 
         GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,
@@ -282,11 +288,11 @@ public class InputMain extends GVRMain implements CursorControllerListener {
     @Override
     public void onCursorControllerAdded(final GVRCursorController controller) {
         GVRSceneObject sceneObject = new GVRSceneObject(gvrContext);
-        Future<GVRTexture> texture = gvrContext.loadFutureTexture(
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext, R.raw.earthmap1k));
 
         GVRMaterial material = new GVRMaterial(gvrContext,
-                shaderManager.getShaderId());
+                new GVRShaderId(CustomShaderManager.class));
 
         // stay away from the darker colors for the cursor
         float r = random.nextFloat() / 2.0f + 0.5f;
@@ -330,12 +336,14 @@ public class InputMain extends GVRMain implements CursorControllerListener {
 
     private static class Cube extends GVRCubeSceneObject {
         public Cube(GVRContext gvrContext, String name,
-                CustomShaderManager shaderManager) {
+                    CustomShaderManager shaderManager) {
             super(gvrContext, true);
-            Future<GVRTexture> texture = gvrContext.loadFutureTexture(
+            GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
                     new GVRAndroidResource(gvrContext, R.raw.cube_texture));
+
+            //material.setShaderType(shaderManager.getShaderId());
+            getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(CustomShaderManager.class)));
             GVRMaterial material = getRenderData().getMaterial();
-            material.setShaderType(shaderManager.getShaderId());
             setColor(material, 0.7f, 0.7f, 0.7f);
             material.setTexture(CustomShaderManager.TEXTURE_KEY, texture);
             getTransform().setScale(2.0f, 2.0f, 2.0f);
@@ -364,22 +372,28 @@ public class InputMain extends GVRMain implements CursorControllerListener {
         }
     }
 
-    private static class CustomShaderManager {
-        private final GVRCustomMaterialShaderId shaderId;
+    public static class CustomShaderManager extends GVRShader{
+        //private final GVRCustomMaterialShaderId shaderId;
         public static final String TEXTURE_KEY = "texture";
         public static final String COLOR_KEY = "color";
 
         public CustomShaderManager(GVRContext gvrContext) {
+            /*
             final GVRMaterialShaderManager shaderManager = gvrContext
                     .getMaterialShaderManager();
             shaderId = shaderManager.addShader(R.raw.vertex, R.raw.fragment);
             GVRMaterialMap customShader = shaderManager.getShaderMap(shaderId);
             customShader.addUniformVec3Key("u_color", COLOR_KEY);
-            customShader.addTextureKey("u_texture", TEXTURE_KEY);
+            customShader.addTextureKey("u_texture", TEXTURE_KEY);*/
+            super("float4 u_color", "sampler2D u_texture", "float4 a_position, float3 a_normal, float2 a_tex_coord");
+            Context context = gvrContext.getContext();
+            setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.fragment));
+            setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.vertex));
+
         }
 
-        public GVRCustomMaterialShaderId getShaderId() {
-            return shaderId;
+        protected void setMaterialDefaults(GVRShaderData material) {
+            material.setVec4("u_color", 1, 1, 1, 1);
         }
     }
 

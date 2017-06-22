@@ -44,12 +44,12 @@ import android.os.Environment;
 import android.util.Log;
 
 /**
- * 
- * @author m1.williams 
+ *
+ * @author m1.williams
  * X3d Demo comes with test files in the assets directory:
  *         cylindersandplanes.x3d, helloworldtext.x3d, multipleanimations.x3d,
  *         multiplepointlights.x3d, navigationinfo.x3d, teapotandtorus.x3d
- * 
+ *
  *         In the line: "String filename = ", change to one of the above file
  *         names or supply you own.
  *
@@ -86,7 +86,7 @@ public class X3DparserScript extends GVRMain
 
       GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
               new FutureWrapper<GVRMesh>(mGVRContext.createQuad(1.0f, 1.0f)),
-              mGVRContext.loadFutureTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+              mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
       cursor.getTransform().setPosition(0.0f, 0.0f, -10.0f);
       cursor.getRenderData().setDepthTest(false);
       cursor.getRenderData().setRenderingOrder(100000);
@@ -153,7 +153,7 @@ public class X3DparserScript extends GVRMain
             if (lastScreenshotCenterFinished)
             {
               mGVRContext
-                  .captureScreenCenter(newScreenshotCallback(filename, 0));
+                      .captureScreenCenter(newScreenshotCallback(filename, 0));
               lastScreenshotCenterFinished = false;
             }
             break;
@@ -168,7 +168,7 @@ public class X3DparserScript extends GVRMain
             if (lastScreenshotRightFinished)
             {
               mGVRContext
-                  .captureScreenRight(newScreenshotCallback(filename, 2));
+                      .captureScreenRight(newScreenshotCallback(filename, 2));
               lastScreenshotRightFinished = false;
             }
             break;
@@ -187,7 +187,7 @@ public class X3DparserScript extends GVRMain
   }
 
   private GVRScreenshotCallback newScreenshotCallback(final String filename,
-      final int mode)
+                                                      final int mode)
   {
     return new GVRScreenshotCallback()
     {
@@ -198,7 +198,7 @@ public class X3DparserScript extends GVRMain
         if (bitmap != null)
         {
           File file = new File(Environment.getExternalStorageDirectory(),
-              filename + ".png");
+                  filename + ".png");
           FileOutputStream outputStream = null;
           try
           {
@@ -258,7 +258,7 @@ public class X3DparserScript extends GVRMain
           {
             Bitmap bitmap = bitmapArray[i];
             File file = new File(Environment.getExternalStorageDirectory(),
-                filename + "_" + i + ".png");
+                    filename + "_" + i + ".png");
             FileOutputStream outputStream = null;
             try
             {

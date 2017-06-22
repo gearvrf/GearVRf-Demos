@@ -56,10 +56,10 @@ public class GamepadButton extends GVRSceneObject {
         parameters.setAnisotropicValue(16);
         parameters.setMinFilterType(TextureFilterType.GL_NEAREST_MIPMAP_NEAREST);
         parameters.setMagFilterType(TextureFilterType.GL_NEAREST_MIPMAP_NEAREST);
-        buttonTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        buttonTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.gamepad_diffuse), parameters);
 
-        eventTexture = gvrContext.loadTexture(new GVRAndroidResource(
+        eventTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.event_color));
 
         attachButton(array.getResourceId(1, -0));

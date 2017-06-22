@@ -92,7 +92,7 @@ public final class GamepadInput {
     // getCenteredAxis() and some other code are referenced from:
     // https://developer.android.com/training/game-controllers/controller-input.html
     private static float getCenteredAxis(MotionEvent event, InputDevice device,
-            int axis, int historyPos) {
+                                         int axis, int historyPos) {
         final InputDevice.MotionRange range = device.getMotionRange(axis,
                 event.getSource());
 

@@ -82,7 +82,7 @@ public class Worm extends GVRSceneObject {
 
         ColorControls gvrColor = new ColorControls(gvrContext.getContext());
         Color color = gvrColor.parseColor(R.color.color10);
-        
+
         this.color = color;
 
         createWormParts(color);
@@ -99,7 +99,7 @@ public class Worm extends GVRSceneObject {
     }
 
     private void createWormParts(Color color) {
-        
+
         wormParent = new GVRSceneObject(getGVRContext());
         addChildObject(wormParent);
 
@@ -111,11 +111,11 @@ public class Worm extends GVRSceneObject {
         head.getTransform().setPosition(0, 0, 0);
 
         wormParent.addChildObject(head);
-        
+
         addChildObject(middle);
         addChildObject(end);
     }
-    
+
     public void enableShadow() {
 
         float factor = 3f;
@@ -126,12 +126,12 @@ public class Worm extends GVRSceneObject {
         head.addChildObject(shadowHead);
         middle.addChildObject(shadowMiddle);
         end.addChildObject(shadowEnd);
-        
+
         startShadowsPosition();
     }
 
     private void startShadowsPosition() {
-        
+
         shadowHead.getTransform().setPositionY(shadowHead.getParent().getParent().getTransform().getPositionY() + SHADOW_HEAD_OFFSET);
         shadowMiddle.getTransform().setPositionY(shadowMiddle.getParent().getTransform().getPositionY() + SHADOW_MIDDLE_OFFSET);
         shadowEnd.getTransform().setPositionY(shadowEnd.getParent().getTransform().getPositionY() + SHADOW_END_OFFSET);
@@ -145,7 +145,7 @@ public class Worm extends GVRSceneObject {
         colorArray[0] = color.getRed();
         colorArray[1] = color.getGreen();
         colorArray[2] = color.getBlue();
-        
+
         head.animChangeColor(color);
         middle.animChangeColor(color);
         end.animChangeColor(color);
@@ -173,7 +173,7 @@ public class Worm extends GVRSceneObject {
 
                 float chainSpeed = CHAIN_SPEED_HEAD_MIDDLE
                         * (float) Util.distance(wormParent.getTransform(), getGVRContext()
-                                .getMainScene().getMainCameraRig().getTransform());
+                        .getMainScene().getMainCameraRig().getTransform());
 
                 middle.getTransform().setRotationByAxis(
                         MathUtils.getYRotationAngle(middle, wormParent), 0, 1, 0);
@@ -199,7 +199,7 @@ public class Worm extends GVRSceneObject {
 
                 float chainSpeed = CHAIN_SPEED_MIDDLE_END
                         * (float) Util.distance(wormParent.getTransform(), getGVRContext()
-                                .getMainScene().getMainCameraRig().getTransform());
+                        .getMainScene().getMainCameraRig().getTransform());
 
                 middle.getTransform().setRotationByAxis(
                         MathUtils.getYRotationAngle(middle, wormParent), 0, 1, 0);
@@ -267,7 +267,7 @@ public class Worm extends GVRSceneObject {
             return;
         if (movement > 0
                 && MathUtils.distance(cameraObject.getTransform(),
-                        wormParent.getTransform()) > Constants.MAX_WORM_MOVE_DISTANCE)
+                wormParent.getTransform()) > Constants.MAX_WORM_MOVE_DISTANCE)
             return;
 
         wormParentAnimation = new GVRRelativeMotionAnimation(wormParent.getTransform(),

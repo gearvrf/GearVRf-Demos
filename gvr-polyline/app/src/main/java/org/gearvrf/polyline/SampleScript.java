@@ -25,6 +25,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
@@ -49,8 +50,8 @@ public class SampleScript extends GVRMain {
         float[] E = { 2.5f, 1, Z, 1.5f, 1, Z, 1.5f, -1, Z,
                       2.5f, -1, Z, 2.5f, 0, Z, 1.5f, 0, Z,
                       1.5f, 1, Z, 1.5f, -1, Z};
-    	GVRMaterial redMaterial = new GVRMaterial(gvrContext);
-        GVRMaterial blueMaterial = new GVRMaterial(gvrContext);
+    	GVRMaterial redMaterial = new GVRMaterial(gvrContext,new GVRShaderId(GVRPhongShader.class));
+        GVRMaterial blueMaterial = new GVRMaterial(gvrContext,new GVRShaderId(GVRPhongShader.class));
         GVRMesh mesh = new GVRMesh(gvrContext);
         GVRRenderData rd = new GVRRenderData(gvrContext);
 
@@ -110,4 +111,9 @@ public class SampleScript extends GVRMain {
         sphere.getTransform().setPositionZ(Z);
         scene.addSceneObject(sphere);
      }
+
+    @Override
+    public void onStep() {
+    }
+
 }
