@@ -158,7 +158,7 @@ public class SampleMain extends GVRMain {
         object.getTransform().setPosition(3.0f, 3.0f, -2.0f);
         attachMeshCollider(object);
         mainScene.addSceneObject(object);
-        object.getRenderData().setCullTest(false);
+        object.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         mObjects.add(object);
 
         // These 2 are testing by the bounding box of the mesh.
