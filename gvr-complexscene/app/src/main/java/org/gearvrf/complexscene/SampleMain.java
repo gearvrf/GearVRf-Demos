@@ -31,8 +31,6 @@ public class SampleMain extends GVRMain {
 
     private GVRContext mGVRContext;
 
-   // private GVRConsole console;
-
     @Override
     public SplashMode getSplashMode() {
         return SplashMode.NONE;
@@ -107,14 +105,10 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        //GVRMaterial material = new GVRMaterial(mGVRContext,
-        //        mColorShader.getShaderId());
 
         GVRMaterial material = new GVRMaterial(mGVRContext,
                 GVRMaterial.GVRShaderType.Color.ID);
 
-        //  material.setVec4(ColorShader.COLOR_KEY, 1.0f,
-        //         0.0f, 1.0f, 1.0f);
         material.setColor(1.0f, 0.0f, 1.0f);
 
         GVRSceneObject meshObject = null;
