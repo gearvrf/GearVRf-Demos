@@ -38,15 +38,11 @@ public class Minimal360PhotoMain extends GVRMain {
         // load texture
         GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.photosphere));
 
-        // create a sphere scene object with the specified texture and triangles facing inward (the 'false' argument) 
+        // create a sphere scene object with the specified texture and triangles facing inward (the 'false' argument)
         sphereObject = new GVRSphereSceneObject(gvrContext, 72, 144, false, texture);
 
         // add the scene object to the scene graph
         scene.addSceneObject(sphereObject);
-    }
-
-    @Override
-    public void onStep() {
     }
 
 }

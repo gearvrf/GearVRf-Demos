@@ -28,6 +28,6 @@ public class Minimal360PhotoActivity extends GVRActivity
         super.onCreate(savedInstanceState);
 
         Minimal360PhotoMain main = new Minimal360PhotoMain();
-        setMain(main, "gvr.xml");
+        setMain(main);
     }
 }
