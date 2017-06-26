@@ -72,20 +72,10 @@ eg. ~/.gradle/gradle.properties:
 useLocalDependencies=true
 
  */
-if(!rootProject.hasProperty("useLocalDependencies")) {
-    rootProject.ext.useLocalDependencies=false;
-} else {
-    if(useLocalDependencies=="true") {
-        rootProject.ext.useLocalDependencies=true
-    } else {
-        rootProject.ext.useLocalDependencies=false
-    }
-}
-
 ext.gearvrfVersion='3.2.1-SNAPSHOT'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 
-if(rootProject.useLocalDependencies) {
+if(rootProject.hasProperty("useLocalDependencies") && rootProject.useLocalDependencies) {
     dependencies {
         compile 'com.google.code.gson:gson:2.7'
         compile "org.joml:joml-android:${jomlVersion}"
