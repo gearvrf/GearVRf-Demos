@@ -45,7 +45,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    if(rootProject.useLocalDependencies) {
+    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         compile(name: '3DCursorLibrary-debug', ext: 'aar')
     } else {
         compile "org.gearvrf:3DCursorLibrary:$gearvrfVersion"

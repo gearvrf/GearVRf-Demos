@@ -1,3 +1,7 @@
+if(file("../../../extra_properties.gradle").exists()) {
+    apply from: '../../../extra_properties.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
@@ -45,7 +49,7 @@ android {
     // ignore the x86 files from the google vr libraries
     packagingOptions {
         exclude 'lib/x86/libgvr.so'
-        if (!rootProject.hasProperty("ARM64")) {
+        if (!project.hasProperty("ARM64")) {
             exclude 'lib/arm64-v8a/*.so'
         } else {
             exclude 'lib/armeabi-v7a/*.so'
@@ -54,9 +58,9 @@ android {
 }
 
 task copyOculusSignature(type: Copy) {
-    if (rootProject.hasProperty("OCULUS_SIGS_DIRECTORY")) {
+    if (project.hasProperty("OCULUS_SIGS_DIRECTORY")) {
         copy {
-            from rootProject.property("OCULUS_SIGS_DIRECTORY")
+            from project.property("OCULUS_SIGS_DIRECTORY")
             into 'src/main/assets'
             include 'oculussig_*'
         }
@@ -75,7 +79,7 @@ useLocalDependencies=true
 ext.gearvrfVersion='3.2.1-SNAPSHOT'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 
-if(rootProject.hasProperty("useLocalDependencies") && rootProject.useLocalDependencies) {
+if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
     dependencies {
         compile 'com.google.code.gson:gson:2.7'
         compile "org.joml:joml-android:${jomlVersion}"
@@ -87,7 +91,7 @@ if(rootProject.hasProperty("useLocalDependencies") && rootProject.useLocalDepend
             releaseCompile(name: 'framework-release', ext: 'aar')
         }
 
-        if (rootProject.hasProperty("only_daydream")) {
+        if (project.hasProperty("only_daydream")) {
             if (findProject(':backend_daydream')) {
                 compile project(':backend_daydream')
             } else {
@@ -96,7 +100,7 @@ if(rootProject.hasProperty("useLocalDependencies") && rootProject.useLocalDepend
             }
             compile 'com.google.vr:sdk-base:1.30.0'
         } else {
-            if (rootProject.hasProperty("no_oculus")) {
+            if (project.hasProperty("no_oculus")) {
                 if (findProject(':backend')) {
                     compile project(':backend')
                 } else {
@@ -127,7 +131,7 @@ if(rootProject.hasProperty("useLocalDependencies") && rootProject.useLocalDepend
         compile "org.joml:joml-android:${jomlVersion}"
         compile "org.gearvrf:framework:$gearvrfVersion"
 
-        if (rootProject.hasProperty("only_daydream")) {
+        if (project.hasProperty("only_daydream")) {
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
             compile 'com.google.vr:sdk-base:1.30.0'
         } else { //default oculus+daydream
