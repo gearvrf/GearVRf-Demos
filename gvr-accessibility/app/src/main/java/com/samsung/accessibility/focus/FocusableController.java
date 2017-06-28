@@ -11,12 +11,9 @@
 
 package com.samsung.accessibility.focus;
 
-import java.util.ArrayList;
-
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
-import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
+
+import java.util.ArrayList;
 
 public final class FocusableController {
 
