@@ -18,20 +18,16 @@ package org.gearvrf.gvrexposeapi;
 import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IPickEvents;
-import org.gearvrf.utility.Log;
 
 import java.util.concurrent.Future;
 

@@ -2,6 +2,10 @@ if(file("../../../extra_properties.gradle").exists()) {
     apply from: '../../../extra_properties.gradle'
 }
 
+if(file("../../../../extra_properties.gradle").exists()) {
+    apply from: '../../../../extra_properties.gradle'
+}
+
 allprojects {
     repositories {
         jcenter()
