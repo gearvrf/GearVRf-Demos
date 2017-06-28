@@ -33,7 +33,8 @@ public class RadiosityShader extends GVRShader {
     public static final String LIGHT_KEY = "u_lightness";
 
     private static final String VERTEX_SHADER = "" //
-            + "#extension GL_OES_EGL_image_external_essl3 : require\n"
+            + "#extension GL_OES_EGL_image_external : enable\n"
+            + "#extension GL_OES_EGL_image_external_essl3 : enable\n"
             + "precision highp float;\n"
             + "in vec3 a_position;\n"
             + "in vec3 a_normal;\n"

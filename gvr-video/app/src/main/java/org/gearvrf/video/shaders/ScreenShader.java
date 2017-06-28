@@ -38,7 +38,8 @@ public class ScreenShader extends GVRShader{
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
-            + "#extension GL_OES_EGL_image_external_essl3 : require\n"
+            + "#extension GL_OES_EGL_image_external : enable\n"
+            + "#extension GL_OES_EGL_image_external_essl3 : enable\n"
             + "precision mediump float;\n"
             + "uniform samplerExternalOES u_screen;\n"
             + "varying vec2 v_tex_coord;\n"
