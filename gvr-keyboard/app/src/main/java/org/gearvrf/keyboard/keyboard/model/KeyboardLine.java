@@ -16,8 +16,6 @@
 package org.gearvrf.keyboard.keyboard.model;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.util.Constants;

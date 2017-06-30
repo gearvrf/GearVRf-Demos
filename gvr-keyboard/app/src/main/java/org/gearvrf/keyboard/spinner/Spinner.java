@@ -20,7 +20,6 @@ import android.util.Log;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;

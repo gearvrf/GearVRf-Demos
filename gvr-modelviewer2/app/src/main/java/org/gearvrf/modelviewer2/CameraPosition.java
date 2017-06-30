@@ -1,9 +1,7 @@
 package org.gearvrf.modelviewer2;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.scene_objects.GVRModelSceneObject;

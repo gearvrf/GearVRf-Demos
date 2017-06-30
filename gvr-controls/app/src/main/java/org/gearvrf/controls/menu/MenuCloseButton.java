@@ -18,6 +18,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVROpacityAnimation;
@@ -49,8 +50,9 @@ public class MenuCloseButton extends ControlSceneObject {
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT + 1);
-        
-        attachEyePointeeHolder();
+
+
+        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
     }
 
     private void createTextures(GVRContext gvrContext) {

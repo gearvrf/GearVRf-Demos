@@ -7,7 +7,6 @@ import android.util.Log;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;

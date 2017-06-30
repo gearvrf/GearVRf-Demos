@@ -16,7 +16,6 @@
 package org.gearvrf.controls.focus;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.controls.cursor.ControlGazeController;
 import org.gearvrf.controls.input.GamepadInput;
@@ -32,19 +31,19 @@ public class ControlSceneObjectBehavior {
 
     public static void process(GVRContext context) {
 
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context.getMainScene());
+        GVRPicker.GVRPickedObject[] pickedObjects = GVRPicker.pickObjects(context.getMainScene(), 0,0,0,0,0,-1);
         ArrayList<ControlSceneObject> needToDisableFocus = new ArrayList<ControlSceneObject>();
         for (ControlSceneObject obj : interactiveObjects) {
             obj.onStep();
             needToDisableFocus.add(obj);
         }
 
-        if (eyePointeeHolders.length == 0) {
+        if (pickedObjects.length == 0) {
             ControlGazeController.disableInteractiveCursor();
         } else {
-            for (GVREyePointeeHolder eph : eyePointeeHolders) {
+            for (GVRPicker.GVRPickedObject po : pickedObjects) {
                 for (ControlSceneObject object : interactiveObjects) {
-                    if (eph.getOwnerObject().equals(object)) {
+                    if (po.getHitObject().equals(object)) {
                         object.setFocus(true);
                         needToDisableFocus.remove(object);
                     }
