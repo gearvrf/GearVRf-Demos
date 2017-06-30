@@ -21,7 +21,6 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;

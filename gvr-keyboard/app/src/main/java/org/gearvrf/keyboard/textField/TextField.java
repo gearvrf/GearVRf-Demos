@@ -19,7 +19,6 @@ import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;

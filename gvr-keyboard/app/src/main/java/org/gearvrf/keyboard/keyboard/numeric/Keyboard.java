@@ -19,7 +19,6 @@ import android.content.res.Resources;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVROpacityAnimation;

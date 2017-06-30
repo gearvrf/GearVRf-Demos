@@ -18,10 +18,8 @@ package org.gearvrf.modelviewer2;
 import android.util.Log;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;

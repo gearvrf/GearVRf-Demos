@@ -18,6 +18,7 @@ package org.gearvrf.controls.menu;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.controls.focus.ControlSceneObject;
@@ -47,7 +48,7 @@ public class TouchableButton extends ControlSceneObject {
 
         getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT);
 
-        attachEyePointeeHolder();
+        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
     }
 
     @Override

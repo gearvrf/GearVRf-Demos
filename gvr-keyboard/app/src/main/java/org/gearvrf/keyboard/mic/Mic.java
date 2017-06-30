@@ -20,7 +20,6 @@ import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.keyboard.main.MainActivity;
