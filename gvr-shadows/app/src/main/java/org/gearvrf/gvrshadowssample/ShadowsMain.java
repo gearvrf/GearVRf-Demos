@@ -97,9 +97,6 @@ public class ShadowsMain extends GVRMain {
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
         GVRDirectLight light = new GVRDirectLight(context);
-        GVRMaterial shadowMtl = GVRLightBase.getShadowMaterial(context);
-        shadowMtl.setFloat("shadow_near", 1f);
-        shadowMtl.setFloat("shadow_far", 150.0f);
 
         light.setCastShadow(true);
         lightNode.attachLight(light);
@@ -115,9 +112,6 @@ public class ShadowsMain extends GVRMain {
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
         GVRSpotLight light = new GVRSpotLight(context);
-        GVRMaterial shadowMtl = GVRLightBase.getShadowMaterial(context);
-        shadowMtl.setFloat("shadow_near", 0.2f);
-        shadowMtl.setFloat("shadow_far", 40.0f);
 
         light.setCastShadow(true);
         lightNode.attachLight(light);
