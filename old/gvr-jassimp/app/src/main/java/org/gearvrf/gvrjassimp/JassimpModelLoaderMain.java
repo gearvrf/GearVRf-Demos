@@ -73,7 +73,7 @@ public class JassimpModelLoaderMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         mAnimationEngine = gvrContext.getAnimationEngine();
-        mMainScene = gvrContext.getNextMainScene();
+        mMainScene = gvrContext.getMainScene();
         mMainScene.setFrustumCulling(true);
 
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
