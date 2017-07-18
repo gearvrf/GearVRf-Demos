@@ -25,7 +25,5 @@ android {
 
 dependencies {
     compile(name:'framework-debug', ext:'aar')
-    compile(name: 'google-vr-base', ext: 'aar')
-    compile(name: 'google-vr-common', ext: 'aar')
     compile(name: 'gvrf-physics-debug', ext:'aar')
 }

@@ -27,7 +27,7 @@
     <vr-app-settings
         framebufferPixelsHigh="DEFAULT"
         framebufferPixelsWide="DEFAULT"
-        showLoadingIcon="true"
+        showLoadingIcon="false"
         useProtectedFramebuffer="false"
         useSrgbFramebuffer="false" >
 

@@ -5,9 +5,6 @@ System.setProperty("appName", "gvr-jassimp")
 if(file("../../../common.gradle").exists()) {
     apply from: '../../../common.gradle'
 }
-else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
-    apply from: '../../../../GearVRf-Demos/common.gradle'
-}
 
 android {
     buildTypes {

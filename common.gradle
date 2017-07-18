@@ -8,7 +8,7 @@ allprojects {
             url "http://google.bintray.com/googlevr"
         }
         flatDir {
-            dirs '../../../GearVRf/GVRf/gearvrf-libs'
+            dirs '../../../GearVRf/GVRf/gearvrf-libs', '../../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
@@ -30,8 +30,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 19
+        minSdkVersion 21
+        targetSdkVersion 21
     }
 
     applicationVariants.all { variant ->
@@ -68,7 +68,9 @@ preBuild {}.dependsOn copyOculusSignature
 /*
 To use local dependencies add the following line in a global gradle properties file
 eg. ~/.gradle/gradle.properties:
+
 useLocalDependencies=true
+
  */
 if(!rootProject.hasProperty("useLocalDependencies")) {
     rootProject.ext.useLocalDependencies=false;
@@ -145,3 +147,4 @@ if(rootProject.useLocalDependencies) {
         }
     }
 }
+
