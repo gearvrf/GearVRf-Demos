@@ -5,6 +5,9 @@ System.setProperty("appName", "gvr-simplephysics")
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
 
 android {
     buildTypes {
@@ -21,6 +24,12 @@ android {
 }
 
 dependencies {
-    compile(name:'framework-debug', ext:'aar')
-    compile(name: 'gvrf-physics-debug', ext:'aar')
+    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        compile(name: 'gvrf-physics-debug', ext: 'aar')
+    } else {
+        compile "org.gearvrf:gvrf-physics:$gearvrfVersion"
+    }
 }
+
+
+
