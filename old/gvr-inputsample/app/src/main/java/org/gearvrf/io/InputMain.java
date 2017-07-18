@@ -150,7 +150,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
 
             int id = event.getCursorController().getId();
             // Safe to assume that the returned object is a cube
-            Cube cube = (Cube) event.getObject();
+            Cube cube = (Cube) event.getPickedObject().getHitObject();
             if (cursor == null
                     || (selected != null && selectedCursorId != id)) {
                 Log.d(TAG, "onSensorEvent Return null");
@@ -175,7 +175,7 @@ public class InputMain extends GVRMain implements CursorControllerListener {
                 if (cube.isColliding(cursor) && selected == null) {
                     selected = cube;
                     selectedCursorId = id;
-                    event.getObject().getTransform()
+                    event.getPickedObject().getHitObject().getTransform()
                             .setPosition(-cursor.getTransform().getPositionX()
                                     + selected.getTransform().getPositionX(),
                             -cursor.getTransform().getPositionY()

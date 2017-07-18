@@ -296,7 +296,7 @@ public class FileBrowserUtils {
                     pointerCoords.y = savedHitPointY
                             + ((motionEvent.getY() - savedMotionEventY) * SCALE);
                 } else {
-                    float[] hitPoint = event.getHitPoint();
+                    float[] hitPoint = event.getPickedObject().getHitLocation();
                     pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
                     pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
 
