@@ -73,7 +73,7 @@ public class JassimpModelLoaderMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         mAnimationEngine = gvrContext.getAnimationEngine();
-        mMainScene = gvrContext.getNextMainScene();
+        mMainScene = gvrContext.getMainScene();
         mMainScene.setFrustumCulling(true);
 
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
@@ -97,7 +97,7 @@ public class JassimpModelLoaderMain extends GVRMain {
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
-
+/*
         // Model with color
         try {
             GVRSceneObject benchModel = gvrContext.getAssetLoader().loadModel("bench.dae", mMainScene);
@@ -120,6 +120,7 @@ public class JassimpModelLoaderMain extends GVRMain {
         } catch (SecurityException se) {
             Log.e(TAG, "Failed to load a model from URL: %s", se);
         }
+ */
         for (GVRAnimation animation : mAnimations) {
             animation.start(mAnimationEngine);
         }
