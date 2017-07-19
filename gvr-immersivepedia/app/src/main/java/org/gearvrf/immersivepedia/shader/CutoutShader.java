@@ -27,11 +27,11 @@ import org.gearvrf.utility.TextFile;
 
 public class CutoutShader extends GVRShaderTemplate{
 
-    public static final String TEXTURE_KEY = "texture";
+    public static final String TEXTURE_KEY = "u_texture";
     public static final String CUTOUT = "cutout";
 
     public CutoutShader(GVRContext gvrContext) {
-        super("float cutout, sampler2D texture");
+        super("float cutout, sampler2D u_texture", 300);
 
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.cutout_fragment));
