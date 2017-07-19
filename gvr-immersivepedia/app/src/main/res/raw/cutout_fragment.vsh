@@ -1,17 +1,19 @@
 precision mediump float;
-varying vec2  coord;
-uniform sampler2D texture;
+
+uniform sampler2D u_texture;
+in vec2 coord;
 uniform float cutout;
+out vec4 out_color;
+
 void main() {
-	
-	vec4 color;	
-	color = texture2D(texture, coord);
+	vec4 color;
+	color = texture(u_texture, coord);
 	
 	if(color.r < cutout){
-		gl_FragColor = vec4(0,0,0,color.a);
+		out_color = vec4(0,0,0,color.a);
 	}else{
-		gl_FragColor = vec4(0,0,0,0);
+		out_color = vec4(0,0,0,0);
 	}
 	if(color.a < 1.0)
-		gl_FragColor = vec4(0,0,0,0);	
+		out_color = vec4(0,0,0,0);
 }

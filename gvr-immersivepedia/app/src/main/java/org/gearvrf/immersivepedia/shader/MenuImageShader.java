@@ -32,7 +32,7 @@ public class MenuImageShader extends GVRShaderTemplate{
     public static final String TEXTURE_SWITCH = "textureSwitch";
 
     public MenuImageShader(GVRContext gvrContext) {
-        super("float textureSwitch, sampler2D state1, sampler2D state2");
+        super("float textureSwitch, sampler2D state1, sampler2D state2", 300);
 
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.menu_image_shader_fragment));

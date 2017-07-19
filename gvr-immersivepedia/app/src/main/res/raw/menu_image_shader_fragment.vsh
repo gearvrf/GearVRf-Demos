@@ -1,18 +1,16 @@
 precision mediump float;
-varying vec2  coord;
+
+in vec2 coord;
 uniform sampler2D state1;
 uniform sampler2D state2;
 uniform float textureSwitch;
 uniform float opacity;
+out vec4 out_color;
 
 void main() {
-	vec4 texture;
-	if(textureSwitch == 0.0) {
-		texture = texture2D(state1, coord);
-	} else {
-		texture = texture2D(state2, coord);
-	}
-		
-	gl_FragColor = texture;
-	//gl_FragColor.a = gl_FragColor.a * 1;
+    if(textureSwitch == 0.0) {
+        out_color = texture(state1, coord);
+    } else {
+        out_color = texture(state2, coord);
+    }
 }
