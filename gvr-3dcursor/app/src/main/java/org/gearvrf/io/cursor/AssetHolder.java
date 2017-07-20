@@ -30,10 +30,10 @@ public class AssetHolder {
     }
 
     public static class AssetObjectTuple {
-        final Future<GVRMesh> mesh;
+        final GVRMesh mesh;
         final GVRTexture texture;
 
-        AssetObjectTuple(Future<GVRMesh> mesh, GVRTexture texture) {
+        AssetObjectTuple(GVRMesh mesh, GVRTexture texture) {
             this.mesh = mesh;
             this.texture = texture;
         }

@@ -144,7 +144,7 @@ public class CursorMain extends GVRMain {
     private CursorType currentType = CursorType.UNKNOWN;
     private List<Cursor> cursors;
     private String[] textViewStrings;
-    private Map<String, Future<GVRMesh>> meshMap;
+    private Map<String, GVRMesh> meshMap;
     private Map<String, GVRTexture> textureMap;
     private GearWearableDevice gearWearableDevice;
 
@@ -208,15 +208,15 @@ public class CursorMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         this.gvrContext = gvrContext;
         mainScene = gvrContext.getMainScene();
-        meshMap = new HashMap<String, Future<GVRMesh>>();
+        meshMap = new HashMap<String, GVRMesh>();
         textureMap = new HashMap<String, GVRTexture>();
         addSurroundings(gvrContext, mainScene);
         try {
             ZipLoader.load(gvrContext, MESH_FILE, new ZipLoader
-                    .ZipEntryProcessor<Future<GVRMesh>>() {
+                    .ZipEntryProcessor<GVRMesh>() {
                 @Override
-                public Future<GVRMesh> getItem(GVRContext context, GVRAndroidResource resource) {
-                    Future<GVRMesh> mesh = context.loadFutureMesh(resource);
+                public GVRMesh getItem(GVRContext context, GVRAndroidResource resource) {
+                    GVRMesh mesh = context.loadMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
                     return mesh;
                 }
