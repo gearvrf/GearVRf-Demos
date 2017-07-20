@@ -17,6 +17,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
@@ -50,21 +51,22 @@ public class Main extends GVRMain {
 
     @Override
     public void onInit(final GVRContext gvrContext) {
+        GVRScene scene = gvrContext.getMainScene();
         this.gvrContext = gvrContext;
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
         //gvrContext.getNextMainScene().setFrustumCulling(false);
         ShortcutMenu shortcutMenu = createShortcut();
-        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
+        accessibilityScene = new AccessibilityScene(gvrContext, scene, shortcutMenu);
 
         createPedestalObject();
         createDinossaur();
 
         cursor.setName("cursor");
-        gvrContext.getMainScene().addSceneObject(shortcutMenu);
-        gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-        gvrContext.getMainScene().addSceneObject(createSkybox());
+        scene.addSceneObject(shortcutMenu);
+        scene.getMainCameraRig().addChildObject(cursor);
+        scene.addSceneObject(createSkybox());
 
     }
 
