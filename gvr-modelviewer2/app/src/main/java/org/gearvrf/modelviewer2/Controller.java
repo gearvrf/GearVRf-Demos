@@ -5,8 +5,8 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
@@ -400,13 +400,13 @@ public class Controller {
         mCharacter.getTransform().setModelMatrix(matrix);
     }
 
-    public void setCameraPositionByNavigator(GVREyePointeeHolder picked, GVRScene scene, GVRScene
+    public void setCameraPositionByNavigator(GVRCollider picked, GVRScene scene, GVRScene
             room, GVRWidgetSceneObject widget, float original[]) {
         if (picked == null)
-            picked = oDefaultCameraPosition.get(0).cameraModel.getEyePointeeHolder();
+            picked = oDefaultCameraPosition.get(0).cameraModel.getCollider();
 
         for (int i = 0; i < oDefaultCameraPosition.size(); i++) {
-            if (picked.equals(oDefaultCameraPosition.get(i).cameraModel.getEyePointeeHolder())) {
+            if (picked.equals(oDefaultCameraPosition.get(i).cameraModel.getCollider())) {
 
                 // START Code to Attach Menu According to Camera Position
                 scene.removeSceneObject(widget);
@@ -573,11 +573,11 @@ public class Controller {
         removeLoadingInRoom(room);
     }
 
-    void onScrollOverModel(GVREyePointeeHolder holder, float scrollValue) {
+    void onScrollOverModel(GVRCollider collider, float scrollValue) {
         GVRAnimation animation = null;
 
         if (currentDisplayedModel != null) {
-            if (holder == currentDisplayedModel.getModel(context).getEyePointeeHolder()) {
+            if (collider == currentDisplayedModel.getModel(context).getCollider()) {
                 Log.d(TAG, "Angle mover applied");
                 if (scrollValue > 0)
                     animation = new GVRRotationByAxisAnimation(currentDisplayedModel.getModel

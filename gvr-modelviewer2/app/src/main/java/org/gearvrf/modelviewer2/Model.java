@@ -17,10 +17,10 @@ package org.gearvrf.modelviewer2;
 
 import android.util.Log;
 
+import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMeshEyePointee;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
@@ -73,9 +73,8 @@ public class Model {
 
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
         BoundingBoxCreator boundingBox = new BoundingBoxCreator(context, bv);
-        GVREyePointeeHolder playPauseHolder = new GVREyePointeeHolder(context);
-        playPauseHolder.addPointee(new GVRMeshEyePointee(context, boundingBox.getMesh()));
-        model.attachEyePointeeHolder(playPauseHolder);
+        GVRCollider playPauseHolder = new GVRMeshCollider(context, false);
+        model.attachCollider(playPauseHolder);
 
         // Adding Pointee to Model
         bv = model.getBoundingVolume();
