@@ -15,15 +15,11 @@
 
 package org.gearvrf.vuforiasample;
 
-import android.content.Context;
 
 import org.gearvrf.GVRContext;
-//import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
-import org.gearvrf.utility.TextFile;
+
 
 public class ModelShader extends GVRShader{
 
@@ -31,21 +27,17 @@ public class ModelShader extends GVRShader{
     public static final String MVP_KEY = "modelViewProjectionMatrix";
 
     private static final String VERTEX_SHADER = "" //
-            + "#version 300 es \n"
             + "in vec3 a_position;\n"
             + "in vec4 a_normal;\n"
             + "in vec2 a_texcoord;\n"
             + "out vec2 v_tex_coord;\n"
-            + "layout (std140) uniform Material_ubo{\n"
-            + "mat4 modelViewProjectionMatrix;\n"
-            +" }\n"
+            + "@MATERIAL_UNIFORMS\n"
             + "void main() {\n"
             + "  v_tex_coord = a_texcoord.xy;\n"
             + "  gl_Position = modelViewProjectionMatrix * vec4(a_position,1.0);\n"
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
-            + "#version 300 es \n"
             + "precision highp float;\n"
             + "in vec2 v_tex_coord; \n"
             + "uniform sampler2D texSampler2D;\n"
@@ -54,19 +46,8 @@ public class ModelShader extends GVRShader{
             + "  outColor = texture(texSampler2D, v_tex_coord);\n"
             + "}\n";
 
-    //private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public ModelShader(GVRContext gvrContext) {
-        /*
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("texSampler2D", TEXTURE_KEY);
-        mCustomShader.addUniformMat4Key("modelViewProjectionMatrix", MVP_KEY);
-        */
-        super("mat4 modelViewProjectionMatrix", "sampler2D texSampler2D ", "float3 a_position, float4 a_normal, float2 a_tex_coord");
+        super("mat4 modelViewProjectionMatrix", "sampler2D texSampler2D ", "float3 a_position, float4 a_normal, float2 a_tex_coord", GLSLESVersion.VULKAN);
 
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
