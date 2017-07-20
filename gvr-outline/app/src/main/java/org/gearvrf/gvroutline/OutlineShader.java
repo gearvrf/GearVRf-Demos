@@ -29,7 +29,7 @@ public class OutlineShader extends GVRShader {
                     + "@MATRIX_UNIFORMS\n"
                     +  "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
-                    + "  vec4 pos = vec4(a_position.xyz + a_normal * u_thickness.x, 1.0);\n"
+                    + "  vec4 pos = vec4(a_position.xyz + a_normal * u_thickness, 1.0);\n"
                     + "  gl_Position = u_mvp * pos;\n"
                     + "}\n";
 
