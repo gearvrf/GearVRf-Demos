@@ -8,11 +8,7 @@ uniform sampler2D state1Background;
 uniform sampler2D state2Background;
 uniform sampler2D state3Background;
 
-layout (std140) uniform Material_ubo
-{
- float textureSwitch;
- float u_opacity;
-};
+@MATERIAL_UNIFORMS
 out vec4 outColor;
 void main() {
 	vec4 background;
