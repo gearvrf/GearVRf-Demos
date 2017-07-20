@@ -14,9 +14,7 @@
 
 precision mediump float;
 uniform sampler2D u_texture;
-layout (std140) uniform Material_ubo{
-    float u_gamma;
-};
+@MATERIAL_UNIFORMS
 in vec2 v_tex_coord;
 out vec4 outColor;
 void main() {

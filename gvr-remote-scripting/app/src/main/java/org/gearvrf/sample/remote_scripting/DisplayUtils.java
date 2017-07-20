@@ -19,6 +19,7 @@ import org.gearvrf.GVRContext;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 
 import java.lang.Runnable;
 
@@ -32,8 +33,8 @@ public class DisplayUtils {
 
     public void addGammaCorrection() {
         // add a custom post effect for dynamically adjusting gamma
-        CustomPostEffectShaderManager shaderManager = new CustomPostEffectShaderManager(gvrContext);
-        postEffect = new GVRShaderData(gvrContext, shaderManager.getShaderId());
+        GVRShaderId gammaShader = new GVRShaderId(GammaShader.class);
+        postEffect = new GVRShaderData(gvrContext, gammaShader);
 
         postEffect.setFloat("u_gamma", 2.2f);
         GVRCameraRig rig = gvrContext.getMainScene().getMainCameraRig();
