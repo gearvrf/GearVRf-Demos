@@ -63,7 +63,7 @@ public class BulletSampleMain extends GVRMain {
     public void onInit(GVRContext gvrContext) throws Throwable {
         mGVRContext = gvrContext;
         mCollisionHandler = new CollisionHandler();
-        GVRScene scene = mGVRContext.getNextMainScene();
+        GVRScene scene = mGVRContext.getMainScene();
 
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getLeftCamera().setBackgroundColor(Color.BLACK);
@@ -116,9 +116,10 @@ public class BulletSampleMain extends GVRMain {
         mScene = scene;
     }
 
-    long randomActions = -1;
+    int randomActions = -1;
 
     public void touchEvent() {
+        GVRWorld world = mSphereRigidBody.getWorld();
         if (randomActions < 0) {
             /*
             0 - Enable/disable world simulation
@@ -126,31 +127,40 @@ public class BulletSampleMain extends GVRMain {
             2 - Add/Remove scene object
             3 - apply force on the ball
              */
-            randomActions = System.currentTimeMillis() % 4;
+            randomActions = (int) System.currentTimeMillis() % 4;
         }
-
-        if (randomActions == 0) {
-            if (mSphereRigidBody.getWorld().isEnabled()) {
-                mSphereRigidBody.getWorld().disable();
+        switch (randomActions)
+        {
+            case 0:
+            if (world.isEnabled()) {
+                world.disable();
             } else {
-                mSphereRigidBody.getWorld().enable();
+                world.enable();
                 randomActions = -1;
             }
-        } else if (randomActions == 1) {
+            break;
+
+            case 1:
             if (mSphereRigidBody.isEnabled()) {
                 mSphereRigidBody.disable();
             } else {
                 mSphereRigidBody.enable();
                 randomActions = -1;
             }
-        } else if (randomActions == 2) {
-            if (mSphereRigidBody.getWorld() != null) {
-                mScene.removeSceneObject(mSphereRigidBody.getOwnerObject());
+            break;
+
+            case 2:
+            GVRSceneObject owner = mSphereRigidBody.getOwnerObject();
+
+            if (world != null) {
+                mScene.removeSceneObject(owner);
             } else {
-                mScene.addSceneObject(mSphereRigidBody.getOwnerObject());
+                mScene.addSceneObject(owner);
                 randomActions = -1;
             }
-        } else {
+            break;
+
+            default:
             mSphereRigidBody.applyCentralForce(-20.0f, 900.0f, 0.0f);
             mSphereRigidBody.applyTorque(5.0f, 0.5f, 0.0f);
             randomActions = -1;
@@ -164,19 +174,18 @@ public class BulletSampleMain extends GVRMain {
 
     private GVRSceneObject quadWithTexture(float width, float height,
                                            String texture) {
-        // TODO: Check about future mesh to bullet
-        FutureWrapper<GVRMesh> futureMesh = new FutureWrapper<GVRMesh>(
-                mGVRContext.createQuad(width, height));
-        GVRSceneObject object = null;
-        try {
-            object = new GVRSceneObject(mGVRContext, futureMesh,
-                    mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
-                            mGVRContext, texture)));
+        GVRMesh mesh = new GVRMesh(getGVRContext());
+        mesh.createQuad(width, height);
+        try
+        {
+            GVRTexture tex = mGVRContext.getAssetLoader().loadTexture(
+                                    new GVRAndroidResource(mGVRContext, texture));
+            return new GVRSceneObject(mGVRContext, width, height, tex);
             // TODO: Create mesh collider to ground and add GVRCollision component
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return object;
+        return null;
     }
 
     private GVRSceneObject meshWithTexture(String mesh, String texture) {
@@ -193,16 +202,14 @@ public class BulletSampleMain extends GVRMain {
 
     private void addGroundMesh(GVRScene scene, float x, float y, float z, float mass) {
         try {
-            GVRMesh mesh = mGVRContext.createQuad(100.0f, 100.0f);
-            GVRTexture texture =
-                    mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
-            GVRSceneObject meshObject = new GVRSceneObject(mGVRContext, mesh, texture);
+            GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "floor.jpg"));
+            GVRSceneObject meshObject =  new GVRSceneObject(mGVRContext, 100.0f, 100.0f, texture);
 
             meshObject.getTransform().setPosition(x, y, z);
             meshObject.getTransform().setRotationByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
 
             // Collider
-            GVRMeshCollider meshCollider = new GVRMeshCollider(mGVRContext, mesh);
+            GVRMeshCollider meshCollider = new GVRMeshCollider(mGVRContext, false);
             meshObject.attachCollider(meshCollider);
 
             // Physics body
