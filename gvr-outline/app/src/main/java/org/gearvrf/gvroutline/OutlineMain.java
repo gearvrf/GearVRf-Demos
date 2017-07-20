@@ -88,7 +88,6 @@ public class OutlineMain extends GVRMain {
 
             // For outline we want to cull front faces
             mCharacter.getRenderData().setMaterial(outlineMaterial);
-            //mCharacter.getRenderData().setShaderTemplate(OutlineShader.class);
             mCharacter.getRenderData().setCullFace(GVRCullFaceEnum.Front);
 
             // Create Additional Pass
