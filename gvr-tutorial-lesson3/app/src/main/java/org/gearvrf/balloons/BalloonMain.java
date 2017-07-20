@@ -27,6 +27,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
@@ -72,7 +73,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getNextMainScene();
+        mScene = context.getMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -106,14 +107,13 @@ public class BalloonMain extends GVRMain {
     {
         GVRSceneObject sphere = new GVRSphereSceneObject(context, true);
         GVRRenderData rdata = sphere.getRenderData();
-        GVRMaterial mtl = new GVRMaterial(context);
+        GVRMaterial mtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSphereCollider collider = new GVRSphereCollider(context);
 
         collider.setRadius(1.0f);
         sphere.attachComponent(collider);
         mtl.setDiffuseColor(1.0f, 0.0f, 1.0f, 0.5f);
         sphere.setName("balloon");
-        rdata.setShaderTemplate(GVRPhongShader.class);
         rdata.setAlphaBlend(true);
         rdata.setMaterial(mtl);
         rdata.setRenderingOrder(GVRRenderingOrder.TRANSPARENT);
@@ -129,10 +129,13 @@ public class BalloonMain extends GVRMain {
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);
         environment.getTransform().setScale(20.0f, 20.0f, 20.0f);
 
-        GVRDirectLight sunLight = new GVRDirectLight(context);
-        sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
-        sunLight.setDiffuseIntensity(0.6f, 0.6f, 0.6f, 1.0f);
-        environment.attachComponent(sunLight);
+        if (!GVRShader.isVulkanInstance())
+        {
+            GVRDirectLight sunLight = new GVRDirectLight(context);
+            sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
+            sunLight.setDiffuseIntensity(0.6f, 0.6f, 0.6f, 1.0f);
+            environment.attachComponent(sunLight);
+        }
         return environment;
     }
 

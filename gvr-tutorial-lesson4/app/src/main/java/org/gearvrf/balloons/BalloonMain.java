@@ -26,6 +26,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
@@ -74,7 +75,7 @@ public class BalloonMain extends GVRMain {
         /*
          * Set the background color
          */
-        mScene = context.getNextMainScene();
+        mScene = context.getMainScene();
         mScene.getMainCameraRig().getLeftCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
         mScene.getMainCameraRig().getRightCamera().setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -136,7 +137,6 @@ public class BalloonMain extends GVRMain {
         int mtlIndex = rand.nextInt(mMaterials.size() - 1);
 
         balloon.setName("balloon");
-        rdata.setShaderTemplate(GVRPhongShader.class);
         rdata.setAlphaBlend(true);
         rdata.setMaterial(mMaterials.get(mtlIndex));
         rdata.setRenderingOrder(GVRRenderingOrder.TRANSPARENT);
@@ -153,10 +153,13 @@ public class BalloonMain extends GVRMain {
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);
         environment.getTransform().setScale(20.0f, 20.0f, 20.0f);
 
-        GVRDirectLight sunLight = new GVRDirectLight(context);
-        sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
-        sunLight.setDiffuseIntensity(0.6f, 0.6f, 0.6f, 1.0f);
-        environment.attachComponent(sunLight);
+        if (!GVRShader.isVulkanInstance())
+        {
+            GVRDirectLight sunLight = new GVRDirectLight(context);
+            sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
+            sunLight.setDiffuseIntensity(0.6f, 0.6f, 0.6f, 1.0f);
+            environment.attachComponent(sunLight);
+        }
         return environment;
     }
 
@@ -177,7 +180,7 @@ public class BalloonMain extends GVRMain {
         ArrayList<GVRMaterial> materials = new ArrayList<GVRMaterial>();
         for (int i = 0; i < 6; ++i)
         {
-            GVRMaterial mtl = new GVRMaterial(ctx);
+            GVRMaterial mtl = new GVRMaterial(ctx, GVRMaterial.GVRShaderType.Phong.ID);
             mtl.setDiffuseColor(colors[i][0], colors[i][1], colors[i][2], colors[i][3]);
             materials.add(mtl);
         }
