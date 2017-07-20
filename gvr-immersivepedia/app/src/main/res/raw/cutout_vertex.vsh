@@ -1,7 +1,7 @@
 attribute vec4 a_position;
 attribute vec3 a_normal;
 attribute vec2 a_texcoord;
-uniform mat4 u_mvp;
+@MATRIX_UNIFORMS
 varying vec2 coord;
 
 void main() {

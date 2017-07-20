@@ -16,9 +16,6 @@
 package org.gearvrf.immersivepedia.shader;
 
 import org.gearvrf.GVRContext;
-//import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
 import org.gearvrf.immersivepedia.R;
@@ -31,22 +28,8 @@ public class MenuImageShader extends GVRShader {
     public static final String STATE2_TEXTURE = "state2";
     public static final String TEXTURE_SWITCH = "textureSwitch";
 
-    //private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public MenuImageShader(GVRContext gvrContext) {
-/*        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(R.raw.menu_image_shader_vertex,
-                R.raw.menu_image_shader_fragment);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey(STATE1_TEXTURE, STATE1_TEXTURE);
-        mCustomShader.addTextureKey(STATE2_TEXTURE, STATE2_TEXTURE);
-        mCustomShader.addUniformFloatKey(TEXTURE_SWITCH, TEXTURE_SWITCH);
-        mCustomShader.addUniformFloatKey("opacity", "opacity");
-*/
-
-        super("float textureSwitch float u_opacity", "sampler2D state1 sampler2D state2 ", "float4 a_position, float3 a_normal, float2 a_tex_coord",300);
+        super("float textureSwitch float u_opacity", "sampler2D state1 sampler2D state2 ", "float4 a_position, float3 a_normal, float2 a_tex_coord", GLSLESVersion.VULKAN);
 
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.menu_image_shader_fragment));
