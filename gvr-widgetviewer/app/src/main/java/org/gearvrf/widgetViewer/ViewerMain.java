@@ -31,18 +31,7 @@ public class ViewerMain extends GVRMain {
 
     private GVRWidgetPlugin mPlugin;
     private GVRContext mGVRContext = null;
-
-    /*
-    private MetalOnlyShader mMetalOnlyShader = null;
-    private GlassShader mGlassShader = null;
-    private DiffuseShader mDiffuseShader = null;
-    private ReflectionShader mReflectionShader = null;
-    private PhongShader mPhongShader = null;
-    private MetalShader2 mMetalShader2 = null;
-    private GlassShader2 mGlassShader2 = null;
-    private DiffuseShader2 mDiffuseShader2 = null;
-    private PhongShader2 mPhongShader2 = null;
-    private PhongShader3 mPhongShader3 = null;*/
+    private boolean mIsInitialized = false;
 
     private GVRMaterial mMetalMaterial = null;
     private GVRMaterial mGlassMaterial = null;
@@ -652,19 +641,12 @@ public class ViewerMain extends GVRMain {
             mainScene.addSceneObject(mWidgetButtonObject);
 
 
-            GVREyePointeeHolder eyePointeeHolder2 = new GVREyePointeeHolder(
-                    gvrContext);
-            GVRMeshEyePointee eyePointee2 = new GVRMeshEyePointee(gvrContext,
-                    button_pick_mesh);
-            eyePointeeHolder2.addPointee(eyePointee2);
-            mWidgetButtonObject.attachEyePointeeHolder(eyePointeeHolder2);
+            GVRCollider collider2 = new GVRMeshCollider(gvrContext, button_pick_mesh);
+            mWidgetButtonObject.attachCollider(collider2);
 
-            GVREyePointeeHolder eyePointeeHolder3 = new GVREyePointeeHolder(
-                    gvrContext);
-            GVRMeshEyePointee eyePointee3 = new GVRMeshEyePointee(gvrContext,
+            GVRCollider collider3 = new GVRMeshCollider(gvrContext,
                     widgetbutton2_mesh);
-            eyePointeeHolder3.addPointee(eyePointee3);
-            mWdgetButtonObject2.attachEyePointeeHolder(eyePointeeHolder3);
+            mWdgetButtonObject2.attachCollider(collider3);
 
             for (int i = 0; i < THUMBNAIL_NUM; i++) {
                 ThumbnailObject[i] = new GVRSceneObject(mGVRContext);
@@ -694,12 +676,8 @@ public class ViewerMain extends GVRMain {
                         ThumbnailTargetPosition[i][2]);
                 mainScene.addSceneObject(ThumbnailObject[i]);
 
-                GVREyePointeeHolder eyePointeeHolder = new GVREyePointeeHolder(
-                        gvrContext);
-                GVRMeshEyePointee eyePointee = new GVRMeshEyePointee(
-                        gvrContext, picks_mesh);
-                eyePointeeHolder.addPointee(eyePointee);
-                ThumbnailObject[i].attachEyePointeeHolder(eyePointeeHolder);
+                GVRCollider collider = new GVRMeshCollider(gvrContext, picks_mesh);
+                ThumbnailObject[i].attachCollider(collider);
             }
 
             GVRTexture m360 = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
@@ -713,14 +691,14 @@ public class ViewerMain extends GVRMain {
             env_object.getRenderData().setCullTest(false);
             mainScene.addSceneObject(env_object);
 
-            GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
-                    gvrContext.createQuad(0.1f, 0.1f),
+            GVRSceneObject headTracker = new GVRSceneObject(gvrContext, 0.1f, 0.1f,
                     gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
                             "Headtracking_pointer.png")));
             headTracker.getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
             headTracker.getRenderData().setDepthTest(false);
             headTracker.getRenderData().setRenderingOrder(100000);
             mainScene.getMainCameraRig().addChildObject(headTracker);
+            mIsInitialized = true;
         } catch (IOException e) {
             e.printStackTrace();
             Log.e(TAG, "Assets were not loaded. Stopping application!");
@@ -730,6 +708,9 @@ public class ViewerMain extends GVRMain {
     @Override
     public void onStep() {
        FPSCounter.tick();
+        if (!mIsInitialized) {
+            return;
+        }
         boolean isButtonDown = mIsButtonDown;
         boolean isSingleTapped = mIsSingleTapped;
         mIsButtonDown = false;
@@ -1106,11 +1087,10 @@ public class ViewerMain extends GVRMain {
         mReflectionMaterial.setVec3(ReflectionShader.EYE_KEY, eye[0], eye[1],
                 eye[2]);
 
-        GVREyePointeeHolder pickedHolders[] = GVRPicker.pickScene(mGVRContext
-                .getMainScene());
-        if (pickedHolders.length > 0) {
-            GVRSceneObject pickedObject = pickedHolders[0].getOwnerObject();
-            mPlugin.setPickedObject(pickedObject);
+        GVRPicker.GVRPickedObject hits[] = GVRPicker.pickObjects(mGVRContext.getMainScene(), 0, 0, 0, 0, 0, -1);
+        if (hits.length > 0) {
+            GVRSceneObject pickedObject = hits[0].hitObject;
+            mPlugin.setPickedObject(hits[0]);
             for (int i = 0; i < THUMBNAIL_NUM; ++i) {
                 if (ThumbnailObject[i].equals(pickedObject)) {
                     mObjectPointed = true;
