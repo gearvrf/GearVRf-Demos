@@ -61,7 +61,8 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
 
         GVRRenderData renderData = new GVRRenderData(getGVRContext());
 
-        GVRMesh mesh = getGVRContext().createQuad(
+        GVRMesh mesh = new GVRMesh(getGVRContext(), "float3 a_position float2 a_texcoord");
+        mesh.createQuad(
                 Util.convertPixelToVRFloatValue(styleItem.getSizeQuadWidth()),
                 Util.convertPixelToVRFloatValue(styleItem.getSizeQuadHeight()));
 
@@ -78,18 +79,18 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
     }
 
     public void configureTextures() {
-
-        getRenderData().getMaterial().setTexture(
+        GVRMaterial mtl = getRenderData().getMaterial();
+        mtl.setTexture(
                 TransparentButtonShaderThreeStates.TEXTURE_KEY,
                 getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(getGVRContext(), styleItem.getTexture())));
 
-        getRenderData().getMaterial().setTexture(
+        mtl.setTexture(
                 TransparentButtonShaderThreeStates.TEXTURE_HOVER_KEY,
                 getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(getGVRContext(), styleItem.getTextureHover())));
 
-        getRenderData().getMaterial().setFloat(TransparentButtonShaderThreeStates.TEXTURE_SWITCH,
+        mtl.setFloat(TransparentButtonShaderThreeStates.TEXTURE_SWITCH,
                 0.0f);
     }
 

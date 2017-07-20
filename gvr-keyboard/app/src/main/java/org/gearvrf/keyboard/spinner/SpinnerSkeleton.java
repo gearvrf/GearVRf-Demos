@@ -19,8 +19,10 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.util.RenderingOrder;
 import org.gearvrf.keyboard.util.SceneObjectNames;
@@ -47,7 +49,7 @@ public class SpinnerSkeleton extends GVRSceneObject {
         spinnerBox.getRenderData().setRenderingOrder(RenderingOrder.SPINNER_BOX);
         spinnerShadow.getRenderData().setRenderingOrder(RenderingOrder.SPINNER_SHADOW);
 
-        spinnerBox.attachEyePointeeHolder();
+        spinnerBox.attachComponent(new GVRMeshCollider(gvrContext, false));
         addChildObject(spinnerBox);
         addChildObject(spinnerShadow);
 
@@ -56,26 +58,9 @@ public class SpinnerSkeleton extends GVRSceneObject {
     }
 
     private GVRSceneObject getSpinnerBackground(int resourceTextureID) {
-
-        GVRSceneObject object = new GVRSceneObject(gvrContext);
-        GVRRenderData renderData = new GVRRenderData(gvrContext);
-        GVRMaterial material = new GVRMaterial(gvrContext);
-        GVRMesh mesh = gvrContext.createQuad(0.49f / 2, 1.63f / 2 /**
-         * - 0.01f
-         * 1.1f
-         */
-        );
-
-        renderData.setMaterial(material);
-        renderData.setMesh(mesh);
-        object.attachRenderData(renderData);
-        object.getRenderData()
-                .getMaterial()
-                .setMainTexture(
-                        gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
-                                resourceTextureID)));
-        return object;
-
+        GVRTexture tex = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
+                resourceTextureID));
+        return new GVRSceneObject(gvrContext, 0.49f / 2, 1.63f / 2, tex);
     }
 
     public GVRSceneObject getSpinnerBox() {
