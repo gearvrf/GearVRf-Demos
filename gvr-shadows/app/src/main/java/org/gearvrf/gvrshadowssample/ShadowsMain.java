@@ -97,11 +97,9 @@ public class ShadowsMain extends GVRMain {
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
         GVRDirectLight light = new GVRDirectLight(context);
-        GVRMaterial shadowMtl = GVRLightBase.getShadowMaterial(context);
-        shadowMtl.setFloat("shadow_near", 1f);
-        shadowMtl.setFloat("shadow_far", 150.0f);
 
         light.setCastShadow(true);
+        light.setShadowRange(1.0f, 150.0f);
         lightNode.attachLight(light);
         lightNode.getTransform().setRotationByAxis(-70, 1, 0, 0);
         light.setAmbientIntensity(0.3f, 0.3f, 0.3f, 1);
@@ -115,11 +113,9 @@ public class ShadowsMain extends GVRMain {
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
         GVRSpotLight light = new GVRSpotLight(context);
-        GVRMaterial shadowMtl = GVRLightBase.getShadowMaterial(context);
-        shadowMtl.setFloat("shadow_near", 0.2f);
-        shadowMtl.setFloat("shadow_far", 40.0f);
 
         light.setCastShadow(true);
+        light.setShadowRange(0.2f, 40.0f);
         lightNode.attachLight(light);
         lightNode.getTransform().setRotationByAxis(-35, 1, 0, 0);
         lightNode.getTransform().setPosition(-4, 7, 10);
@@ -193,7 +189,7 @@ public class ShadowsMain extends GVRMain {
 
     private GVRMaterial createCustomMaterial(GVRContext context, String textureFile) throws IOException
     {
-        GVRMaterial litMaterial = new GVRMaterial(context, new GVRShaderId(GVRPhongShader.class));
+        GVRMaterial litMaterial = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
 
         litMaterial.setVec4("diffuse_color", 1.0f, 1.0f, 1.0f, 1.0f);
         litMaterial.setVec4("ambient_color", 0.5f, 0.5f, 0.5f, 0.0f);
@@ -212,9 +208,6 @@ public class ShadowsMain extends GVRMain {
         cubeObject.getTransform().setPosition(x, y, z);
         cubeObject.getTransform().setScale(size, size, size);
         cubeObject.setName("cube");
-     //   cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
-        //cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext,GVRPhongShader.class));
-      //  cubeObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(cubeObject);
     }
 
@@ -225,25 +218,17 @@ public class ShadowsMain extends GVRMain {
         sphereObject.setName("sphere");
         sphereObject.getTransform().setPosition(x, y, z);
         sphereObject.getTransform().setScale(radius, radius, radius);
-      //  sphereObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
-       // sphereObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
         scene.addSceneObject(sphereObject);
     }
 
     private GVRSceneObject addStormtrooper(GVRScene scene, float x, float y, float z) throws IOException
     {
-        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj");
-        List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
-        GVRRenderData rdata = rdatas.get(0);
-        GVRSceneObject stormTrooper = rdata.getOwnerObject();
+        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj", scene);
 
-        stormTrooper.getParent().removeChildObject(stormTrooper);
-        stormTrooper.getTransform().setPosition(x, y, z);
-        stormTrooper.getTransform().setScale(1.5f, 1.5f, 1.5f);
-        stormTrooper.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
-        rdata.setMaterial(createCustomMaterial(mGVRContext, "stormstrooper.jpg"));
-        scene.addSceneObject(stormTrooper);
-        return stormTrooper;
+        model.getTransform().setPosition(x, y, z);
+        model.getTransform().setScale(1.5f, 1.5f, 1.5f);
+        model.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
+        return model;
     }
 
 }
