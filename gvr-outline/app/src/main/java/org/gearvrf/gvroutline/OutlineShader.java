@@ -24,12 +24,13 @@ public class OutlineShader extends GVRShader {
     public static final String COLOR_KEY = "u_color";
     public static final String THICKNESS_KEY = "u_thickness";
     private static final String VERTEX_SHADER =
-            "layout(location = 0) in  vec3 a_position;\n"
+            "precision mediump float;\n"
++            "layout(location = 0) in  vec3 a_position;\n"
                     + "layout(location = 1) in vec3 a_normal;\n"
                     + "@MATRIX_UNIFORMS\n"
                     +  "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
-                    + "  vec4 pos = vec4(a_position.xyz + a_normal * u_thickness.x, 1.0);\n"
+                    + "  vec4 pos = vec4(a_position.xyz + a_normal * u_thickness, 1.0);\n"
                     + "  gl_Position = u_mvp * pos;\n"
                     + "}\n";
 
