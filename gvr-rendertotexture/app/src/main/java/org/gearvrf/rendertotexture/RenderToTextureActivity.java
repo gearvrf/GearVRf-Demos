@@ -46,7 +46,9 @@ public final class RenderToTextureActivity extends GVRActivity {
     final class RenderToTextureMain extends GVRMain {
         @Override
         public void onInit(final GVRContext gvrContext) {
-            addLight();
+            if (GVRShader.isVulkanInstance()) {
+                addLight();
+            }
             final GVRSceneObject cube = addCube();
             final GVRScene scene = createRenderToTextureScene();
 
