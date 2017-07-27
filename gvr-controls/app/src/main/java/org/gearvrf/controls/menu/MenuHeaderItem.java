@@ -32,6 +32,7 @@ import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
@@ -84,7 +85,7 @@ class MenuHeaderItem extends ControlSceneObject {
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
 
-        attachEyePointeeHolder();
+        attachComponent(new GVRMeshCollider(getGVRContext(), false));
     }
 
     private void createTextures(GVRContext gvrContext, String title) {

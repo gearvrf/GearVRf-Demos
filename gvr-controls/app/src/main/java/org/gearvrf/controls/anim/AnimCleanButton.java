@@ -35,6 +35,7 @@ import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
@@ -79,7 +80,8 @@ public class AnimCleanButton extends MenuControlSceneObject {
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MOVE_BUTON);
 
-        attachEyePointeeHolder();
+        attachComponent(new GVRMeshCollider(gvrContext, false));
+
     }
 
     private void createTextures() {
