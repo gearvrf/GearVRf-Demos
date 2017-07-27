@@ -6,9 +6,9 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.particlesystem.emitters.GVREmitter;
-import org.gearvrf.particlesystem.emitters.GVRPlaneEmitter;
-import org.gearvrf.particlesystem.emitters.GVRSphericalEmitter;
+import org.gearvrf.particlesystem.GVREmitter;
+import org.gearvrf.particlesystem.GVRPlaneEmitter;
+import org.gearvrf.particlesystem.GVRSphericalEmitter;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
