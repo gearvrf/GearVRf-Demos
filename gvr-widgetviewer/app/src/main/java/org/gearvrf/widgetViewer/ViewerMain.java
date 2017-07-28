@@ -309,7 +309,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj1 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData1 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh1 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh1 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "watch/frame.obj"));
             renderData1.setMesh(mesh1);
             renderData1.setMaterial(mMetalMaterial);
@@ -319,7 +319,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj2 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData2 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh2 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh2 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "watch/board.obj"));
             renderData2.setMesh(mesh2);
             renderData2.setMaterial(mDiffuseMaterial);
@@ -330,7 +330,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj3 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData3 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh3 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh3 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "watch/glass.obj"));
             renderData3.setMesh(mesh3);
             obj3.setName("watch_glass");
@@ -349,7 +349,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj5 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData5 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh5 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh5 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "bike/bike.obj"));
             renderData5.setMesh(mesh5);
             renderData5.setMaterial(mPhongMaterial);
@@ -364,7 +364,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj6 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData6 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh6 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh6 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/body.obj"));
             renderData6.setMesh(mesh6);
             renderData6.setMaterial(mCarBodyMaterial);
@@ -374,7 +374,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj9 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData9 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh9 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh9 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/tire.obj"));
             renderData9.setMesh(mesh9);
             renderData9.setMaterial(mCarTireMaterial);
@@ -383,7 +383,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj10 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData10 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh10 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh10 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/glass.obj"));
             renderData10.setMesh(mesh10);
             renderData10.setMaterial(mCarGlassMaterial);
@@ -394,7 +394,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj11 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData11 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh11 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh11 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/wheel.obj"));
             renderData11.setMesh(mesh11);
             renderData11.setMaterial(mCarWheelMaterial);
@@ -403,7 +403,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj12 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData12 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh12 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh12 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/back.obj"));
             renderData12.setMesh(mesh12);
             renderData12.setMaterial(mCarBackMaterial);
@@ -412,7 +412,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj13 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData13 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh13 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh13 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/grill.obj"));
             renderData13.setMesh(mesh13);
             renderData13.setMaterial(mCarGrillMaterial);
@@ -422,7 +422,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj14 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData14 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh14 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh14 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/glass2.obj"));
             renderData14.setMesh(mesh14);
             renderData14.setMaterial(mCarLightMaterial);
@@ -432,7 +432,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj19 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData19 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh19 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh19 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "car/inside.obj"));
             renderData19.setMesh(mesh19);
             renderData19.setMaterial(mCarInsideMaterial);
@@ -446,7 +446,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj15 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData15 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh15 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh15 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "robot/body.obj"));
             renderData15.setMesh(mesh15);
             renderData15.setMaterial(mRobotBodyMaterial);
@@ -455,7 +455,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj16 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData16 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh16 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh16 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "robot/head.obj"));
             renderData16.setMesh(mesh16);
             renderData16.setMaterial(mRobotHeadMaterial);
@@ -464,7 +464,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj17 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData17 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh17 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh17 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "robot/metal.obj"));
             renderData17.setMesh(mesh17);
             renderData17.setMaterial(mRobotMetalMaterial);
@@ -474,7 +474,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj18 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData18 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh18 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh18 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "robot/rubber.obj"));
             renderData18.setMesh(mesh18);
             renderData18.setMaterial(mRobotRubberMaterial);
@@ -488,7 +488,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj20 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData20 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh20 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh20 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "leaf/leaf.obj"));
             renderData20.setMesh(mesh20);
             renderData20.setMaterial(mLeafBodyMaterial);
@@ -497,7 +497,7 @@ public class ViewerMain extends GVRMain {
 
             GVRSceneObject obj21 = new GVRSceneObject(mGVRContext);
             GVRRenderData renderData21 = new GVRRenderData(mGVRContext);
-            GVRMesh mesh21 = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh mesh21 = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "leaf/box.obj"));
             renderData21.setMesh(mesh21);
             renderData21.setMaterial(mLeafBoxMaterial);
@@ -541,16 +541,16 @@ public class ViewerMain extends GVRMain {
             ThumbnailOrder[3] = 10001;
             ThumbnailOrder[4] = 10000;
 
-            GVRMesh glass_mesh = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh glass_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "glass.obj"));
-            GVRMesh board_mesh = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh board_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "board.obj"));
-            GVRMesh picks_mesh = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh picks_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "pick.obj"));
             GVRMesh button_pick_mesh = mGVRContext
-                    .loadMesh(new GVRAndroidResource(mGVRContext, "button.obj"));
+                    .getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "button.obj"));
             GVRMesh widgetbutton2_mesh = mGVRContext
-                    .loadMesh(new GVRAndroidResource(mGVRContext, "button2.obj"));
+                    .getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "button2.obj"));
 
             mWidgetTexture = new GVRSharedTexture(gvrContext, mPlugin.getTextureId());
 
@@ -682,7 +682,7 @@ public class ViewerMain extends GVRMain {
 
             GVRTexture m360 = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                     mGVRContext, "env.jpg"));
-            GVRMesh sphere = mGVRContext.loadMesh(new GVRAndroidResource(
+            GVRMesh sphere = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
                     mGVRContext, "sphere.obj"));
 
             GVRSceneObject env_object = new GVRSceneObject(mGVRContext, sphere,
