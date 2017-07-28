@@ -74,7 +74,7 @@ public class GamepadButton extends GVRSceneObject {
 
     private void attachButton(int drawable) {
 
-        GVRMesh buttonMesh = getGVRContext().loadMesh(new GVRAndroidResource(
+        GVRMesh buttonMesh = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(
                 getGVRContext(), drawable));
 
         buttonNormal = new GVRSceneObject(getGVRContext(), buttonMesh,

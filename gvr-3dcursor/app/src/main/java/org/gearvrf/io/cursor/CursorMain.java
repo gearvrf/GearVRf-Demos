@@ -216,7 +216,7 @@ public class CursorMain extends GVRMain {
                     .ZipEntryProcessor<GVRMesh>() {
                 @Override
                 public GVRMesh getItem(GVRContext context, GVRAndroidResource resource) {
-                    GVRMesh mesh = context.loadMesh(resource);
+                    GVRMesh mesh = context.getAssetLoader().loadMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
                     return mesh;
                 }

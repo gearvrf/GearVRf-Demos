@@ -78,7 +78,7 @@ public class Main extends GVRMain {
     }
 
     private void createPedestalObject() {
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
         GVRMesh bookMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
         GVRTexture bookTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
