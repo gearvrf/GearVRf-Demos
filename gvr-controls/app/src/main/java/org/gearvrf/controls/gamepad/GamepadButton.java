@@ -91,7 +91,7 @@ public class GamepadButton extends GVRSceneObject {
             return;
         }
 
-        GVRMesh dpadEventMesh = getGVRContext().loadMesh(new GVRAndroidResource(
+        GVRMesh dpadEventMesh = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(
                 getGVRContext(), drawable));
 
         buttonHover = new GVRSceneObject(getGVRContext(), dpadEventMesh, eventTexture);
