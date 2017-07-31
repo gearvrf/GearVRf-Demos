@@ -90,7 +90,7 @@ public class DinosaurFactory {
     }
 
     private FocusableSceneObject createDinosaur(int dinoMeshId, int dinoTextureId) {
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, dinoMeshId), settings);
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, dinoMeshId), settings);
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, dinoTextureId));
         final FocusableSceneObject dino = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
 
@@ -98,7 +98,7 @@ public class DinosaurFactory {
     }
 
     private FocusableSceneObject createDinosaurBase(int baseMeshId) {
-        GVRMesh baseMesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
         FocusableSceneObject dinosaurBase = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         return dinosaurBase;
@@ -106,7 +106,7 @@ public class DinosaurFactory {
 
     private FocusableSceneObject createDinosaurGround(int groundMesh) {
 
-        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
         GVRTexture groundTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.ground_tex_diffuse));
         final FocusableSceneObject dinosaurGround = new FocusableSceneObject(gvrContext, mesh, groundTexture);
 

@@ -97,7 +97,7 @@ public class TestMain extends GVRMain {
                 EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(NO_LIGHTING));
                 // we assume that the mesh and the textures are valid
                 bunny = new GVRSceneObject(gvrContext,
-                        gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
+                        gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
                                 "bunny.obj"), settings), textures.get(i % numTextures));
 
                 Random random = new Random();

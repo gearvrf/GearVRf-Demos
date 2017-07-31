@@ -41,7 +41,7 @@ public class Totem extends FocusableSceneObject implements FocusListener {
     private int streamIDTotem;
 
     public Totem(GVRContext gvrContext, GVRTexture t) {
-        super(gvrContext, gvrContext.loadMesh(new GVRAndroidResource(gvrContext.getActivity(),
+        super(gvrContext, gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext.getActivity(),
                 R.raw.totem_standup_mesh)), t);
 
         prepareTotem(gvrContext);
