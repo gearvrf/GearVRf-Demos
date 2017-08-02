@@ -25,7 +25,11 @@ android {
 
 dependencies {
     if(rootProject.useLocalDependencies) {
-        compile(name: 'gvrf-particlesystem-debug', ext: 'aar')
+        if (findProject(':gvrf-particlesystem')) {
+            compile project(':gvrf-particlesystem')
+        } else {
+            compile(name: 'gvrf-particlesystem-debug', ext: 'aar')
+        }
     } else {
         compile "org.gearvrf:gvrf-particlesystem:$gearvrfVersion"
     }
