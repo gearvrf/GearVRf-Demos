@@ -6,7 +6,6 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.particlesystem.GVREmitter;
 import org.gearvrf.particlesystem.GVRPlaneEmitter;
 import org.gearvrf.particlesystem.GVRSphericalEmitter;
 import org.joml.Vector3f;
@@ -21,10 +20,10 @@ public class SampleMain extends GVRMain {
     private GVRContext mGVRContext;
 
     //particle emitters
-    GVREmitter fire, smoke, stars;
+    GVRPlaneEmitter fire, smoke, stars;
 
     //for fireworks, have more than one emitter with different textures
-    ArrayList<GVREmitter> fwEmitters;
+    ArrayList<GVRSphericalEmitter> fwEmitters;
     GVRSceneObject fw;
 
     private boolean enableFireworks = false;
@@ -34,7 +33,6 @@ public class SampleMain extends GVRMain {
 
     private int counter = 0;
     private int NUMBER_OF_SYSTEMS = 3;
-
 
     @Override
     public void onInit(GVRContext gvrContext) throws IOException {
@@ -76,7 +74,7 @@ public class SampleMain extends GVRMain {
             smoke.clearSystem();
 
         if (fwEmitters != null ) {
-            for (GVREmitter em : fwEmitters)
+            for (GVRSphericalEmitter em : fwEmitters)
                 if (em != null)
                     em.clearSystem();
             fwEmitters = null;
@@ -140,9 +138,8 @@ public class SampleMain extends GVRMain {
         }
     }
 
-
     //---------------------------------------STARS-----------------------------------
-    private GVREmitter createstars()
+    private GVRPlaneEmitter createstars()
     {
         GVRTexture starsTexture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.stars));
@@ -165,7 +162,7 @@ public class SampleMain extends GVRMain {
 
 
     //-----------------------------------------SMOKE-----------------------------------
-    private  GVREmitter createSmoke()
+    private  GVRPlaneEmitter createSmoke()
     {
         GVRTexture smokeTexture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.smoke));
@@ -190,7 +187,7 @@ public class SampleMain extends GVRMain {
 
 
     //----------------------------------------------FIRE-----------------------------------
-    private GVREmitter createFire()
+    private GVRPlaneEmitter createFire()
     {
         GVRPlaneEmitter fireEmitter = new GVRPlaneEmitter(mGVRContext);
         GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
@@ -214,16 +211,16 @@ public class SampleMain extends GVRMain {
     //---------------------------------------------FIREWORKS----------------------------------
     private GVRSceneObject createFireworks()
     {
-        ArrayList<GVREmitter> fwEmits = createFireworkEmitters();
+        ArrayList<GVRSphericalEmitter> fwEmits = createFireworkEmitters();
         GVRSceneObject fw = new GVRSceneObject(mGVRContext);
-        for ( GVREmitter emitter : fwEmits )
+        for ( GVRSphericalEmitter emitter : fwEmits )
             fw.addChildObject(emitter);
 
         return fw;
     }
 
 
-    private ArrayList<GVREmitter> createFireworkEmitters()
+    private ArrayList<GVRSphericalEmitter> createFireworkEmitters()
     {
 
         GVRTexture fireworksTexture1 = mGVRContext.getAssetLoader().loadTexture(
@@ -286,7 +283,7 @@ public class SampleMain extends GVRMain {
         fworksEmitter3.setParticleVolume(100, 100, 100);
         fworksEmitter4.setParticleVolume(100, 100, 100);
 
-        fwEmitters = new ArrayList<GVREmitter>();
+        fwEmitters = new ArrayList<GVRSphericalEmitter>();
 
         fwEmitters.add(fworksEmitter1);
         fwEmitters.add(fworksEmitter2);
