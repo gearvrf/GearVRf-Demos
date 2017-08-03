@@ -14,8 +14,6 @@ import org.joml.Vector4f;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static android.opengl.GLES20.GL_ONE;
-
 
 public class SampleMain extends GVRMain {
 
@@ -88,7 +86,7 @@ public class SampleMain extends GVRMain {
         clearSystems();
         mGVRContext.getMainScene().removeAllSceneObjects();
 
-        if ( counter == 0 )
+        if ( counter == 2 )
         {
             fire = createFire();
             smoke = createSmoke();
@@ -108,7 +106,7 @@ public class SampleMain extends GVRMain {
             enableFireworks = true;
         }
 
-        else if (counter == 2 )
+        else if (counter == 0 )
         {
             stars = createstars();
             stars.getTransform().setPosition(0,0,-50);
@@ -117,7 +115,6 @@ public class SampleMain extends GVRMain {
             mGVRContext.getMainScene().addSceneObject(stars);
             enableFireworks = false;
         }
-
     }
 
     @Override
@@ -171,11 +168,11 @@ public class SampleMain extends GVRMain {
 
         GVRPlaneEmitter smokeEmitter = new GVRPlaneEmitter(mGVRContext);
 
-        smokeEmitter.setPlaneWidth(0.7f);
-        smokeEmitter.setPlaneHeight(0.7f);
+        smokeEmitter.setPlaneWidth(1.0f);
+        smokeEmitter.setPlaneHeight(1.0f);
         smokeEmitter.setParticleSize(80.0f);
         smokeEmitter.setVelocityRange(1.0f, 2.0f);
-        smokeEmitter.setEmitRate(50);
+        smokeEmitter.setEmitRate(60);
         smokeEmitter.setFadeWithAge(true);
         smokeEmitter.setEnvironmentAcceleration(new Vector3f(0,0,0));
         smokeEmitter.setParticleVolume(10.0f, 20.0f, 10.0f);

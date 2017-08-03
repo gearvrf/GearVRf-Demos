@@ -16,11 +16,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-
- //   sourceSets.main {
- //       jni.srcDirs = [] // no auto generation of Android.mk
- //       jniLibs.srcDir 'jniLibs' // pre-compiled libraries
- //   }
 }
 
 dependencies {
