@@ -14,6 +14,8 @@ import org.joml.Vector4f;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static android.opengl.GLES20.GL_ONE;
+
 
 public class SampleMain extends GVRMain {
 
@@ -90,8 +92,8 @@ public class SampleMain extends GVRMain {
         {
             fire = createFire();
             smoke = createSmoke();
-            fire.getTransform().setPosition(0,-5.0f,-10);
-            smoke.getTransform().setPosition(0,-3.0f,-10);
+            fire.getTransform().setPosition(0,-3.5f,-9);
+            smoke.getTransform().setPosition(0,-3.0f,-9.0f);
 
             mGVRContext.getMainScene().addSceneObject(fire);
             mGVRContext.getMainScene().addSceneObject(smoke);
@@ -177,9 +179,9 @@ public class SampleMain extends GVRMain {
         smokeEmitter.setFadeWithAge(true);
         smokeEmitter.setEnvironmentAcceleration(new Vector3f(0,0,0));
         smokeEmitter.setParticleVolume(10.0f, 20.0f, 10.0f);
-        smokeEmitter.setParticleAge(2.5f);
+        smokeEmitter.setParticleAge(3.5f);
         smokeEmitter.setParticleTexture(smokeTexture);
-        smokeEmitter.setParticleSizeChangeRate(5.0f);
+        smokeEmitter.setParticleSizeChangeRate(6.0f);
         smokeEmitter.setColorMultiplier(new Vector4f(1.0f, 1.0f, 1.0f, 0.06f));
 
         return smokeEmitter;
@@ -191,9 +193,9 @@ public class SampleMain extends GVRMain {
     {
         GVRPlaneEmitter fireEmitter = new GVRPlaneEmitter(mGVRContext);
         GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(mGVRContext, R.drawable.fireparticle));
+                new GVRAndroidResource(mGVRContext, R.drawable.fire));
 
-        fireEmitter.setEmitRate(30);
+        fireEmitter.setEmitRate(65);
         fireEmitter.setBurstMode(false);
         fireEmitter.setParticleAge(4.0f);
         fireEmitter.setVelocityRange(0.5f, 1.5f);
@@ -201,7 +203,7 @@ public class SampleMain extends GVRMain {
         fireEmitter.setParticleVolume(50.0f, 100.0f, 50.0f);
         fireEmitter.setParticleSizeChangeRate(-6.0f);
         fireEmitter.setFadeWithAge(true);
-        fireEmitter.setParticleSize(50.0f);
+        fireEmitter.setParticleSize(60.0f);
         fireEmitter.setParticleTexture(texture);
 
         return fireEmitter;
@@ -227,13 +229,13 @@ public class SampleMain extends GVRMain {
                 new GVRAndroidResource(mGVRContext, R.drawable.stars));
 
         GVRTexture fireworksTexture2 = mGVRContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(mGVRContext, R.drawable.fireparticle));
+                new GVRAndroidResource(mGVRContext, R.drawable.fire));
 
         GVRTexture fireworksTexture3 = mGVRContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(mGVRContext, R.drawable.fworks1));
+                new GVRAndroidResource(mGVRContext, R.drawable.fworks));
 
         GVRTexture fireworksTexture4 = mGVRContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(mGVRContext, R.drawable.fworks2));
+                new GVRAndroidResource(mGVRContext, R.drawable.smoke));
 
 
         GVRSphericalEmitter fworksEmitter1 = new GVRSphericalEmitter(mGVRContext);
