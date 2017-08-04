@@ -27,7 +27,7 @@ public class PhongShader2 extends GVRShader {
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
     public static final String RADIUS_KEY = "u_radius";
-    public static final String TEXTURE_KEY = "intexture";
+    public static final String TEXTURE_KEY = "u_texture";
 
     public static final String MAT1_KEY = "u_mat1";
     public static final String MAT2_KEY = "u_mat2";
@@ -35,17 +35,19 @@ public class PhongShader2 extends GVRShader {
     public static final String MAT4_KEY = "u_mat4";
 
     private static final String VERTEX_SHADER = "" //
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
             + "precision mediump float;\n"
-            + "in vec3 a_position;\n"
-            + "in vec3 a_normal;\n" //
-            + "in vec2 a_texcoord;\n"
+            + "layout(location = 0) in vec3 a_position;\n"
+            + "layout(location = 2) in vec3 a_normal;\n" //
+            + "layout(location = 1) in vec2 a_texcoord;\n"
             + "@MATRIX_UNIFORMS\n"
             + "@MATERIAL_UNIFORMS\n"
-            + "out vec3 n;\n"
-            + "out vec3 v;\n" //
-            + "out vec3 l;\n"
-            + "out vec3 p;\n"
-            + "out vec2  coord;\n" //
+            + "layout(location = 0) out vec3 n;\n"
+            + "layout(location = 1) out vec3 v;\n" //
+            + "layout(location = 2) out vec3 l;\n"
+            + "layout(location = 3) out vec3 p;\n"
+            + "layout(location = 4) out vec2  coord;\n" //
             + "void main() {\n"
             + "  mat4 model;\n"
             + "  model[0] = u_mat1;\n" //
@@ -64,15 +66,17 @@ public class PhongShader2 extends GVRShader {
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
             + "precision mediump float;\n"
-            + "in vec2  coord;\n"
-            + "in vec3  n;\n"
-            + "in vec3  v;\n"
-            + "in vec3  l;\n"
-            + "in vec3  p;\n"
-            + "uniform sampler2D intexture;\n"
+            + "layout(location = 0) in vec3 n;\n"
+            + "layout(location = 1) in vec3 v;\n" //
+            + "layout(location = 2) in vec3 l;\n"
+            + "layout(location = 3) in vec3 p;\n"
+            + "layout(location = 4) in vec2  coord;\n" //
+            + "layout(set = 0, binding = 4) uniform sampler2D u_texture;\n"
             + "@MATERIAL_UNIFORMS\n"
-            + "out vec4 FragColor;\n"
+            + "layout(location = 0) out vec4 FragColor;\n"
             + "void main() {\n"
             + "  vec3  r = normalize(reflect(v,n));\n"
             + "  float b = dot(r,p);\n"
@@ -89,7 +93,7 @@ public class PhongShader2 extends GVRShader {
             + "  reflect_coord.y  = ray.y;\n"
             + "  reflect_coord.x = 0.5 + 0.6*asin(reflect_coord.x)/1.57079632675;\n"
             + "  reflect_coord.y = 0.5 + 0.6*asin(reflect_coord.y)/1.57079632675;\n"
-            + "  vec3 color = texture(intexture, reflect_coord).rgb;\n"
+            + "  vec3 color = texture(u_texture, reflect_coord).rgb;\n"
             + "  vec3  h = normalize(v+l);\n"
             + "  float diffuse  = max ( dot(l,n), 0.0 );\n"
             + "  float specular = max ( dot(h,n), 0.0 );\n"
@@ -102,9 +106,9 @@ public class PhongShader2 extends GVRShader {
 
     public PhongShader2(GVRContext gvrContext) {
         super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius ",
-              "sampler2D intexture",
-               "float3 a_position, float3 a_normal, float2 a_texcoord",
-               GLSLESVersion.V300);
+              "sampler2D u_texture",
+               "float3 a_position, float2 a_texcoord, float3 a_normal",
+               GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }
