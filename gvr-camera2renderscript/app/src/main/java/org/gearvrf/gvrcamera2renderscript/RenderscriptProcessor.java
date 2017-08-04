@@ -29,8 +29,8 @@ public class RenderscriptProcessor
         String model = Build.MODEL;
         Log.d("MODEL", model);
         if (model.contains("SM-N920") || model.contains("SM-G920") || model.contains("SM-G925") || model.contains("SM-G928")
-                || model.contains("SM-G93") || model.contains("SM-N9208")) {
-            mNeedYuvConversion = true;
+                    || model.contains("SM-G93") || model.contains("SM-N9208") || model.contains("SM-G95") ) {
+                mNeedYuvConversion = true;
         }
 
         Type.Builder yuvTypeBuilder = new Type.Builder(rs, Element.U8_4(rs));
