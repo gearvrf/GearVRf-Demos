@@ -55,6 +55,7 @@ public class SkyBox {
         GVRTexture texture = null;
         try {
             texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(skyBoxPath + skyBoxName));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

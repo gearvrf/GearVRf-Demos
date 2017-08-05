@@ -18,34 +18,41 @@ package org.gearvrf.util;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 
-public class OutlineShader extends GVRPhongShader {
+public class OutlineShader extends GVRShader {
     public static final String COLOR_KEY = "u_color";
     public static final String THICKNESS_KEY = "u_thickness";
     private static final String VERTEX_SHADER =
-            "layout(location = 0) in  vec4 a_position;\n"
+            "precision mediump float;\n"
+                    +            "layout(location = 0) in  vec3 a_position;\n"
                     + "layout(location = 1) in vec3 a_normal;\n"
-                    + "uniform mat4 u_mvp;\n"
-                    + "float u_thickness = 2.0f;\n"
+                    + "@MATRIX_UNIFORMS\n"
+                    +  "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
                     + "  vec4 pos = vec4(a_position.xyz + a_normal * u_thickness, 1.0);\n"
                     + "  gl_Position = u_mvp * pos;\n"
                     + "}\n";
 
-
-
     private static final String FRAGMENT_SHADER =
             "precision mediump float;\n"
-                    + "out vec4 gl_FragColor;\n"
-                    + "vec4  u_color = vec4(0.4f, 0.1725f, 0.1725f, 1.0f);\n"
+                    + "out vec4 outColor;\n"
+                    +  "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
-                    + "  gl_FragColor = u_color;\n"
+                    + "  outColor = u_color;\n"
                     + "}\n";
 
     public OutlineShader(GVRContext gvrcontext) {
-        super(gvrcontext);
+        super("float4 u_color; float u_thickness", "", "float3 a_position float3 a_normal", GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
+    }
+
+
+    protected void setMaterialDefaults(GVRShaderData material) {
+        material.setVec4("u_color", 1, 1, 1, 1);
+        material.setFloat("u_thickness", 1);
     }
 }
 
