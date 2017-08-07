@@ -41,6 +41,7 @@ import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRGearControllerSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
@@ -66,7 +67,7 @@ public class SampleMain extends GVRMain {
     private static final float SCALE = 200.0f;
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
-    private GVRSceneObject sphere;
+    private GVRGearControllerSceneObject controller;
 
     private GVRScene mainScene;
 
@@ -196,33 +197,18 @@ public class SampleMain extends GVRMain {
 
             if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
                 android.util.Log.d(TAG, "Got the orientation remote controller");
-                try {
-                    GVRSceneObject parent = new GVRSceneObject(mGVRContext);
-                    Future<GVRTexture> futureTexture = mGVRContext
-                            .getAssetLoader()
-                            .loadFutureTexture(new GVRAndroidResource(mGVRContext, "texture.png"));
-
-                    sphere = new GVRSceneObject(mGVRContext, mGVRContext.getAssetLoader().loadFutureMesh(new
-                            GVRAndroidResource(mGVRContext, "sphere.obj")), futureTexture);
-                    sphere.getTransform().setPosition(0.0f, 0.0f, DEPTH);
-                    parent.addChildObject(sphere);
-                    sphere.getRenderData().setDepthTest(false);
-                    sphere.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder
-                            .OVERLAY);
-
-                    GVRSceneObject cube = new GVRSceneObject(mGVRContext, mGVRContext.getAssetLoader().loadFutureMesh(new
-                            GVRAndroidResource(mGVRContext, "cube.obj")), futureTexture);
-                    cube.getTransform().setPosition(0.0f,0.0f,0.0f);
-                    parent.addChildObject(cube);
-                    mPicker.setPickRay(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, DEPTH);
-
-                    gvrCursorController.setSceneObject(parent);
-                    sphere.attachComponent(mPicker);
-
-                    gvrCursorController.addControllerEventListener(controllerEventListener);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
+                        mGVRContext.createQuad(1f, 1f),
+                        mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+                cursor.getRenderData().setDepthTest(false);
+                cursor.getRenderData().setRenderingOrder(100000);
+                controller = new GVRGearControllerSceneObject(mGVRContext);
+                controller.setCursorController(gvrCursorController);
+                mPicker.setPickRay(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, DEPTH);
+                controller.setRayDepth(DEPTH);
+                controller.setCursor(cursor);
+                controller.attachComponent(mPicker);
+                gvrCursorController.addControllerEventListener(controllerEventListener);
             }else{
                 gvrCursorController.setEnable(false);
             }
@@ -266,8 +252,8 @@ public class SampleMain extends GVRMain {
 
             if (state == ButtonState.UP && selectedObject != null) {
                 GVRTransform selectedTransform = selectedObject.getTransform();
-                Matrix4f cursorModelMatrix = sphere.getTransform().getModelMatrix4f();
-                sphere.removeChildObject(selectedObject);
+                Matrix4f cursorModelMatrix = controller.getTransform().getModelMatrix4f();
+                controller.removeChildObject(selectedObject);
                 mainScene.addSceneObject(selectedObject);
                 Matrix4f selectedModelMatrix = selectedTransform.getModelMatrix4f();
                 selectedTransform.setModelMatrix(cursorModelMatrix.mul(selectedModelMatrix));
@@ -310,12 +296,12 @@ public class SampleMain extends GVRMain {
                 if (state == ButtonState.DOWN && selectedObject == null) {
                     sceneObj.getCollider().setEnable(false);
                     selectedObject = sceneObj;
-                    Matrix4f matrix4f = sphere.getTransform().getModelMatrix4f();
+                    Matrix4f matrix4f = controller.getTransform().getModelMatrix4f();
                     Matrix4f selectedModelMatrix = selectedObject.getTransform().getModelMatrix4f();
                     matrix4f.invert();
                     selectedObject.getTransform().setModelMatrix(matrix4f.mul(selectedModelMatrix));
                     mainScene.removeSceneObject(selectedObject);
-                    sphere.addChildObject(selectedObject);
+                    controller.addChildObject(selectedObject);
                 }
             }
         }
