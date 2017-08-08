@@ -94,7 +94,7 @@ public class CursorUtils {
                     return;
                 }
                 cursor = new GVRSceneObject(gvrContext, 
-                        new FutureWrapper<GVRMesh>(gvrContext.createQuad(0.1f, 0.1f)),
+                        gvrContext.createQuad(0.1f, 0.1f),
                         gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.cursor)));
                 cursor.setName("cursor");
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);

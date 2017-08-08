@@ -30,19 +30,25 @@ public class GammaShader extends GVRShader {
     private  GVRShaderId mShaderId;
 
     private static final String VERTEX_SHADER =
-            "in vec3 a_position;\n" +
-            "in vec2 a_texcoord;\n" +
-            "out vec2 v_tex_coord;\n" +
+            "#extension GL_ARB_separate_shader_objects : enable \n" +
+            "#extension GL_ARB_shading_language_420pack : enable\n" +
+            "layout ( location = 0 ) in vec3 a_position;\n" +
+            "layout ( location = 1 ) in vec2 a_texcoord;\n" +
+            "layout ( location = 0 ) out vec2 v_tex_coord;\n" +
+            "@MATRIX_UNIFORMS \n" +
+            "@MATERIAL_UNIFORMS \n" +
             "void main() {\n" +
             "  v_tex_coord = a_texcoord.xy;\n" +
             "  gl_Position = vec4(a_position,1.0);\n" +
             "}\n";
     private static final String FRAGMENT_SHADER =
+            "#extension GL_ARB_separate_shader_objects : enable \n" +
+            "#extension GL_ARB_shading_language_420pack : enable \n" +
             "precision mediump float;\n" +
-            "uniform sampler2D u_texture;\n" +
+            "layout(binding = 4) uniform sampler2D u_texture;\n" +
             "@MATERIAL_UNIFORMS\n" +
-            "in vec2 v_tex_coord;\n" +
-            "out vec4 outColor;\n" +
+            "layout ( location = 0 ) in vec2 v_tex_coord;\n" +
+            "layout ( location = 0 ) out vec4 outColor;\n" +
             "void main() {\n" +
             "  vec4 tex = texture(u_texture, v_tex_coord);\n" +
             "  vec3 color = pow(tex.rgb, vec3(1.0/u_gamma));\n" +
