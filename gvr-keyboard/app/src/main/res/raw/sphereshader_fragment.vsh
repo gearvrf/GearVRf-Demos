@@ -1,31 +1,27 @@
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
+
 precision mediump float;
 
-in vec2  coord;
-in vec3  normal;
-in vec3  view;
-in vec3  light;
 
-uniform sampler2D HDRI_texture;
-uniform sampler2D texture_t;
-uniform sampler2D second_texture;
+layout(binding = 4) uniform sampler2D texture_t;
+layout(binding = 5) uniform sampler2D second_texture;
+layout(binding = 6) uniform sampler2D HDRI_texture;
 
 vec2  animOffset;
 
-in vec3  n;
-in vec3  v;
-in vec3  l;
-in vec3  p;
+layout(location = 0) in vec3 normal;
+layout(location = 1) in vec3 view;
+layout(location = 2) in vec3 light;
+layout(location = 3) in vec2 coord;
+layout(location = 4) in vec3  n;
+layout(location = 5) in vec3  v;
+layout(location = 6) in vec3  l;
+layout(location = 7) in vec3  p;
 
-layout (std140) uniform Material_ubo{
-    vec3 u_eye;
-    vec3 u_light;
-    vec3 trans_color;
-    float animTexture;
-    float blur;
-    float u_radius;
-};
+@MATERIAL_UNIFORMS
 
-out vec4 outCol;
+layout(location = 0) out vec4 outCol;
 void main() {
 
 	vec2 reflect_coord;

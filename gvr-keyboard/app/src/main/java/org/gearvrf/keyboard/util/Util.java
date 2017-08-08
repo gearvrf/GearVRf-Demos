@@ -21,7 +21,6 @@ import android.util.Log;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
@@ -271,14 +270,14 @@ public class Util {
     }
 
     public static boolean checkcheckEyePointeeHolder(GVRContext gvrContext, Object... varargsObject) {
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(gvrContext.getMainScene());
+        GVRPicker.GVRPickedObject[] pickedObjects = GVRPicker.pickObjects(gvrContext.getMainScene(), 0, 0, 0, 0, 0, -1);
 
-        if (eyePointeeHolders.length != 0 && varargsObject.length >= 1) {
-            for (GVREyePointeeHolder eyePointeeHolder : eyePointeeHolders) {
+        if (pickedObjects.length != 0 && varargsObject.length >= 1) {
+            for (GVRPicker.GVRPickedObject pickedObject : pickedObjects) {
 
                 for (int i = 0; i < varargsObject.length; i++) {
-                    if (eyePointeeHolder.hashCode() == ((GVRSceneObject) varargsObject[i])
-                            .getEyePointeeHolder().hashCode())
+                    if (pickedObject.hashCode() == ((GVRSceneObject) varargsObject[i])
+                            .getCollider().hashCode())
                         return false;
 
                 }

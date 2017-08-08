@@ -45,13 +45,23 @@ public class MicGroupIcons extends GVRSceneObject {
 
     private void changeMicIcon(final int res) {
         if (mIcon != null) {
-            mIcon.getRenderData()
-                    .getMaterial()
-                    .setMainTexture(
-                            MicGroupIcons.this.getGVRContext().getAssetLoader().loadTexture(
-                                    new GVRAndroidResource(MicGroupIcons.this
-                                            .getGVRContext(), res)));
+
+            this.getGVRContext().runOnGlThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    mIcon.getRenderData()
+                            .getMaterial()
+                            .setMainTexture(
+                                    MicGroupIcons.this.getGVRContext().getAssetLoader().loadTexture(
+                                            new GVRAndroidResource(MicGroupIcons.this
+                                                    .getGVRContext(), res)));
+                }
+
+            });
+
         }
+
     }
 
     public void hide() {
