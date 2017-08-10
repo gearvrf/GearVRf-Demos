@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-    if(rootProject.useLocalDependencies) {
+    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':gvrf-particlesystem')) {
             compile project(':gvrf-particlesystem')
         } else {
