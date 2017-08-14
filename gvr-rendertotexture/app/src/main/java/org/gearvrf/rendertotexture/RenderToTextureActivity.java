@@ -20,6 +20,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPerspectiveCamera;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderTarget;
 import org.gearvrf.GVRRenderTexture;
