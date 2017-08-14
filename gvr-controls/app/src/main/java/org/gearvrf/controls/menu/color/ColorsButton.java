@@ -18,6 +18,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
@@ -51,7 +52,7 @@ public class ColorsButton extends MenuControlSceneObject {
 
         setTextures(gvrContext);
 
-        attachEyePointeeHolder();
+        attachComponent(new GVRMeshCollider(gvrContext, false));
 
         createCheckObject();
         createHoverObject();
