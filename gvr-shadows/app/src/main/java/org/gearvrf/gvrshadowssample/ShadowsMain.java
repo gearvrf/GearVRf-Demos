@@ -104,6 +104,7 @@ public class ShadowsMain extends GVRMain {
         light.setAmbientIntensity(0.3f, 0.3f, 0.3f, 1);
         light.setDiffuseIntensity(1, 1, 1, 1);
         light.setSpecularIntensity(1, 1, 1, 1);
+        light.setShadowRange(1f, 150.0f);
         lightNode.setName("DirectLight");
         return lightNode;
     }
@@ -122,6 +123,7 @@ public class ShadowsMain extends GVRMain {
         light.setSpecularIntensity(1, 1, 1, 1);
         light.setInnerConeAngle(40);
         light.setOuterConeAngle(55);
+        light.setShadowRange(0.2f, 40.0f);
         lightNode.setName("SpotLight");
 
         return lightNode;
@@ -206,9 +208,7 @@ public class ShadowsMain extends GVRMain {
         cubeObject.getTransform().setPosition(x, y, z);
         cubeObject.getTransform().setScale(size, size, size);
         cubeObject.setName("cube");
-     //   cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
-        //cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext,GVRPhongShader.class));
-      //  cubeObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
         scene.addSceneObject(cubeObject);
     }
 
@@ -219,8 +219,7 @@ public class ShadowsMain extends GVRMain {
         sphereObject.setName("sphere");
         sphereObject.getTransform().setPosition(x, y, z);
         sphereObject.getTransform().setScale(radius, radius, radius);
-      //  sphereObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
-       // sphereObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        sphereObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
         scene.addSceneObject(sphereObject);
     }
 
