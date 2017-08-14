@@ -1,9 +1,9 @@
 package org.gearvrf.modelviewer2;
 
-import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.util.BoundingBoxCreator;
 import org.joml.Vector3f;
@@ -50,9 +50,8 @@ public class CameraPosition {
     }
 
     private void attachCollider(GVRContext context) {
-        GVRSceneObject.BoundingVolume bv = cameraModel.getBoundingVolume();
-        BoundingBoxCreator boundingBox = new BoundingBoxCreator(context, bv);
-        GVRCollider playPauseHolder = new GVRMeshCollider(context, false);
-        cameraModel.attachCollider(playPauseHolder);
+        GVRSphereCollider sphereCollider = new GVRSphereCollider(context);
+        sphereCollider.setRadius(0.5f);
+        cameraModel.attachComponent(sphereCollider);
     }
 }

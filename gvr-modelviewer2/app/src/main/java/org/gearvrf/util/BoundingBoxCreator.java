@@ -73,7 +73,7 @@ public class BoundingBoxCreator {
                 1.0f, 1.0f
         };
 
-        mesh.setTexCoords(textureCoords);
+        //mesh.setTexCoords(textureCoords);
     }
 
     public GVRMesh getMesh(){
