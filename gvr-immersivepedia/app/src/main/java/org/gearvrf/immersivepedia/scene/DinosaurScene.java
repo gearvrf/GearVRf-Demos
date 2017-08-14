@@ -108,7 +108,6 @@ public class DinosaurScene extends GVRScene {
     }
 
     public void show() {
-        getGVRContext().setMainScene(this);
         GazeController.enableGaze();
         for (GVRSceneObject object : getWholeSceneObjects()) {
             if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
@@ -153,9 +152,9 @@ public class DinosaurScene extends GVRScene {
     }
 
     private GVRSceneObject createBlueSkybox() {
-        GVRAssetLoader loader = getGVRContext().getAssetLoader();
-        GVRMesh mesh = loader.loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_mesh));
-        GVRTexture texture = loader.loadTexture(new
+
+        GVRMesh mesh = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.skybox_mesh));
+        GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new
                 GVRAndroidResource(getGVRContext(), R.drawable.dino_skybox_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().setScale(1, 1, 1);

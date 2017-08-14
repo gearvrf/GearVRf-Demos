@@ -17,6 +17,7 @@ package org.gearvrf.immersivepedia.focus;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
@@ -52,7 +53,7 @@ public class SwipeIndicator extends GVRSceneObject {
     }
 
     public void init() {
-        dino.attachEyePointeeHolder();
+        dino.attachCollider(new GVRMeshCollider(getGVRContext(), false));
         addChildObject(swipeIndicator);
         addChildObject(hand);
         dino.focusListener = new FocusListener() {

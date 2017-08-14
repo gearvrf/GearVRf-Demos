@@ -1,10 +1,13 @@
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
+
 precision mediump float;
-in vec4 a_position;
-in vec3 a_normal;
-in vec2 a_texcoord;
+layout ( location = 0 ) in vec4 a_position;
+layout ( location = 1 ) in vec3 a_normal;
+layout ( location = 2 ) in vec2 a_texcoord;
 
 @MATRIX_UNIFORMS
-out vec2 coord;
+layout ( location = 0 ) out vec2 coord;
 
 void main() {
 

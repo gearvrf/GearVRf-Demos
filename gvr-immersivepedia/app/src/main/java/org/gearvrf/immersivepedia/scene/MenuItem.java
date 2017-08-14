@@ -22,6 +22,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
@@ -34,10 +35,11 @@ import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.MathUtils;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.utility.Log;
 
 public class MenuItem extends FocusableSceneObject {
-    
-    
+
+
     private static final float difGroupTextY = -0f;
     private static final float difTextToBackground = -0.03f;
 
@@ -57,9 +59,8 @@ public class MenuItem extends FocusableSceneObject {
     private final float CHILD_WIDTH = 8f;
     private final int IDLE_STATE = 0;
     private final int HOVER_STATE = 1;
-    
+
     private final float SCALE_BIGER_OFFSET = .05f;
-   // private final float SCALE_SMALLER = 1f;
 
     private GVRSceneObject frontObj;
     private GVRSceneObject backgroundObj;
@@ -87,8 +88,9 @@ public class MenuItem extends FocusableSceneObject {
         backgroundObj = createSceneObject(backgroundIdleRes, backgroundHoverRes);
         backgroundObj.getRenderData().setRenderingOrder(RenderingOrderApplication.BACKGROUND_IMAGE);
 
-        attachEyePointeeHolder();
+        GVRMeshCollider collider = new GVRMeshCollider(gvrContext, false);
 
+        attachComponent(collider);
         createFocusListener();
     }
 
@@ -97,36 +99,38 @@ public class MenuItem extends FocusableSceneObject {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
+                Log.e("PICKER", "lostFocus " + object.getName());
                 frontObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
                 backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
                 hideText();
                 scaleSmaller();
-         
+
             }
 
             private void scaleBiger() {
                 frontObj.getTransform().setScale(scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET);
-                
+
             }
 
             @Override
             public void inFocus(FocusableSceneObject object) {
-               
+                Log.e("PICKER", "inFocus " + object.getName());
             }
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
+                Log.e("PICKER", "gainedFocus " + object.getName());
                 AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuHoverSoundID(), 1.0f, 1.0f);
                 frontObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
                 backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
                 showText();
                 scaleBiger();
-              
+
             }
 
             private void scaleSmaller() {
                 frontObj.getTransform().setScale(scale, scale, scale);
-                
+
             }
         };
     }

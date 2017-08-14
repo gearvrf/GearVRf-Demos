@@ -16,9 +16,11 @@
 package org.gearvrf.immersivepedia;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
-
 import org.gearvrf.immersivepedia.focus.FocusableController;
+import org.gearvrf.immersivepedia.focus.PickHandler;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
@@ -29,64 +31,69 @@ import android.media.MediaPlayer;
 
 public class Main extends GVRMain {
 
-	private static GVRContext mGvrContext;
+    private static GVRContext mGvrContext;
 
-	private MenuScene menuScene;
-	public static DinosaurScene dinosaurScene;
-	private static MediaPlayer mediaPlayer;
+    private MenuScene menuScene;
+    public static DinosaurScene dinosaurScene;
+    private static MediaPlayer mediaPlayer;
+    private PickHandler mPickHandler;
+    private GVRPicker mPicker;
 
-	@Override
-	public void onInit(final GVRContext gvrContext) throws Throwable {
-		mGvrContext = gvrContext;
+    @Override
+    public void onInit(final GVRContext gvrContext) throws Throwable {
+        mGvrContext = gvrContext;
 
-		AudioClip.getInstance(gvrContext.getContext());
-		mediaPlayer = MediaPlayer.create(gvrContext.getContext(),
-				R.raw.sfx_ambient_1_1);
-		mediaPlayer.setLooping(true);
-		mediaPlayer.setVolume(1.0f, 1.0f);
-		mediaPlayer.start();
+        AudioClip.getInstance(gvrContext.getContext());
+        mediaPlayer = MediaPlayer.create(gvrContext.getContext(),
+                R.raw.sfx_ambient_1_1);
+        mediaPlayer.setLooping(true);
+        mediaPlayer.setVolume(1.0f, 1.0f);
+        mediaPlayer.start();
 
-		dinosaurScene = new DinosaurScene(gvrContext);
-		menuScene = new MenuScene(gvrContext);
+        dinosaurScene = new DinosaurScene(gvrContext);
+        menuScene = new MenuScene(gvrContext);
 
-		GazeController.setupGazeCursor(gvrContext);
-		closeSplashScreen();
+        GazeController.setupGazeCursor(gvrContext);
+        closeSplashScreen();
 
-		gvrContext.runOnGlThreadPostRender(64, new Runnable() {
-			@Override
-			public void run() {
-				gvrContext.setMainScene(menuScene);
-				GazeController.enableGaze();
-			}
-		});
-	}
+        gvrContext.runOnGlThreadPostRender(64, new Runnable() {
+            @Override
+            public void run() {
+                setMainScene(menuScene);
+                GazeController.enableGaze();
+            }
+        });
 
-	@Override
-	public SplashMode getSplashMode() {
-		return SplashMode.AUTOMATIC;
-	}
+        // Set up to handle picking events
+        mPickHandler = new PickHandler();
+        mPicker = new GVRPicker(gvrContext, menuScene);
+    }
 
-	@Override
-	public void onStep() {
+    @Override
+    public SplashMode getSplashMode() {
+        return SplashMode.AUTOMATIC;
+    }
 
-		TouchPadInput.process();
-		FocusableController.process(mGvrContext);
-		FPSCounter.tick();
+    @Override
+    public void onStep() {
 
-		if (mGvrContext.getMainScene().equals(dinosaurScene)) {
-			dinosaurScene.onStep();
-		}
-	}
+        TouchPadInput.process();
+        FPSCounter.tick();
 
-	public void onSingleTapConfirmed() {
-		if (null != mGvrContext) {
-			FocusableController.clickProcess(mGvrContext);
-		}
-	}
+        if (mGvrContext.getMainScene().equals(dinosaurScene)) {
+            dinosaurScene.onStep();
+        }
+    }
 
-	public void onSwipe() {
-		FocusableController.swipeProcess(mGvrContext);
-	}
+    public void onSingleTapConfirmed() {
+        if (null != mGvrContext) {
+            FocusableController.clickProcess(mGvrContext, mPickHandler);
+        }
+    }
+
+    public void onSwipe() {
+        FocusableController.swipeProcess(mGvrContext, mPickHandler);
+    }
 
     public static void clickOut() {
         if (null != dinosaurScene && mGvrContext.getMainScene().equals(Main.dinosaurScene)) {
@@ -105,5 +112,28 @@ public class Main extends GVRMain {
         if (null != mGvrContext) {
             AudioClip.getInstance(mGvrContext.getContext()).autoPause();
         }
+    }
+
+    public void setMainScene(GVRScene newScene)
+    {
+        GVRScene oldScene = getGVRContext().getMainScene();
+        oldScene.getEventReceiver().removeListener(mPickHandler);
+        oldScene.getMainCameraRig().getHeadTransformObject().detachComponent(GVRPicker.getComponentType());
+        newScene.getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(mGvrContext, newScene);
+        newScene.getMainCameraRig().getHeadTransformObject().attachComponent(mPicker);
+        getGVRContext().setMainScene(newScene);
+    }
+
+    //@Override
+    public boolean onBackPress() {
+        final GVRScene mainScene = getGVRContext().getMainScene();
+        if (dinosaurScene == mainScene) {
+            menuScene = new MenuScene(getGVRContext());
+            setMainScene(menuScene);
+            GazeController.enableGaze();
+            return true;
+        }
+        return false;
     }
 }
