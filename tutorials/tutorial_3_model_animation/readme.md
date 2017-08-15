@@ -1,4 +1,4 @@
-##Getting Started
+## Getting Started
 
 This is a sample Gear VR app demostrates how to use load 3D model and play animation.
 

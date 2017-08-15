@@ -1,4 +1,4 @@
-##Getting Started
+## Getting Started
 
 This is a sample Gear VR app demostrates how to play VR video.
 
