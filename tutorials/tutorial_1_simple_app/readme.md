@@ -1,4 +1,4 @@
-##Getting Started
+## Getting Started
 
 This is a simple VR app that will display a cube in VR.
 
