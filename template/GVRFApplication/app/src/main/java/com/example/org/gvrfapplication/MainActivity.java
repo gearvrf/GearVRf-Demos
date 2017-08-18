@@ -14,30 +14,11 @@ public class MainActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setMain(new Main(), "gvr.xml");
-    }
 
-    private final class Main extends GVRMain {
-        @Override
-        public void onInit(GVRContext gvrContext) throws Throwable {
-            GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.__default_splash_screen__));
-
-            GVRSceneObject quad = new GVRSceneObject(gvrContext, 4, 2, texture);
-            quad.getTransform().setPosition(0, 0, -3);
-
-            gvrContext.getMainScene().addSceneObject(quad);
-            
-            //Set background colour to white
-            gvrContext.getMainScene().setBackgroundColor(255, 255, 255, 0);            
-        }
-
-        @Override
-        public SplashMode getSplashMode() {
-            return SplashMode.NONE;
-        }
-
-        @Override
-        public void onStep() {
-        }
+        /**
+         * Set Main Scene
+         * It will be displayed when app starts
+         */
+        setMain(new MainScene());
     }
 }
