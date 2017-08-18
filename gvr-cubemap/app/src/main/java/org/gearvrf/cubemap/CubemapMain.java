@@ -28,6 +28,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
@@ -253,6 +254,8 @@ public final class CubemapMain extends GVRMain {
 
         GVRMaterial cubemapReflectionMaterial = new GVRMaterial(mGVRContext);
         cubemapReflectionMaterial.setTexture("diffuseTexture", mFutureCubemapTexture);
+        cubemapReflectionMaterial.setMainTexture(mFutureCubemapTexture);
+        cubemapReflectionMaterial.setShaderType(GVRMaterial.GVRShaderType.CubemapReflection.ID);
 
         GVRSceneObject sphere = null;
         switch (mReflectiveType) {
