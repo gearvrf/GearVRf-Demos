@@ -5,6 +5,11 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    
+    <!-- Indicates use of Android's VR-mode, available only on Android N+. -->
+    <uses-feature android:name="android.software.vr.mode" android:required="false"/>
+    <!-- Indicates use of VR features that are available only on Daydream-ready devices. -->
+    <uses-feature android:name="android.hardware.vr.high_performance" android:required="false"/>
 
     <application
         android:allowBackup="true"
@@ -13,11 +18,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon">
+
+        <!-- meta-data for GearVR comment this for DayDream testing-->
         <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
+            android:enableVrMode="@string/gvr_vr_mode_component"
+            android:resizeableActivity="false"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
