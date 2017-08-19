@@ -148,7 +148,7 @@ public class SampleMain extends GVRMain {
         starsEmitter.setPlaneWidth(100);
         starsEmitter.setPlaneHeight(100);
         starsEmitter.setParticleSize(5.0f);
-        starsEmitter.setVelocityRange(2.0f, 15.5f);
+        starsEmitter.setVelocityRange(new Vector3f(0,2,0), new Vector3f(0,15.5f,0));
         starsEmitter.setEmitRate(300);
         starsEmitter.setFadeWithAge(false);
         starsEmitter.setEnvironmentAcceleration(new Vector3f(0,0,0));
@@ -168,15 +168,15 @@ public class SampleMain extends GVRMain {
 
         GVRPlaneEmitter smokeEmitter = new GVRPlaneEmitter(mGVRContext);
 
-        smokeEmitter.setPlaneWidth(1.0f);
-        smokeEmitter.setPlaneHeight(1.0f);
+        smokeEmitter.setPlaneWidth(1.5f);
+        smokeEmitter.setPlaneHeight(1.5f);
         smokeEmitter.setParticleSize(80.0f);
-        smokeEmitter.setVelocityRange(1.0f, 2.0f);
-        smokeEmitter.setEmitRate(60);
+        smokeEmitter.setVelocityRange(new Vector3f(0,2.0f,0), new Vector3f(0,5.0f,0));
+        smokeEmitter.setEmitRate(100);
         smokeEmitter.setFadeWithAge(true);
         smokeEmitter.setEnvironmentAcceleration(new Vector3f(0,0,0));
         smokeEmitter.setParticleVolume(10.0f, 20.0f, 10.0f);
-        smokeEmitter.setParticleAge(3.5f);
+        smokeEmitter.setParticleAge(1.5f);
         smokeEmitter.setParticleTexture(smokeTexture);
         smokeEmitter.setParticleSizeChangeRate(6.0f);
         smokeEmitter.setColorMultiplier(new Vector4f(1.0f, 1.0f, 1.0f, 0.06f));
@@ -192,16 +192,19 @@ public class SampleMain extends GVRMain {
         GVRTexture texture = mGVRContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(mGVRContext, R.drawable.fire));
 
-        fireEmitter.setEmitRate(65);
+        fireEmitter.setEmitRate(250);
         fireEmitter.setBurstMode(false);
-        fireEmitter.setParticleAge(4.0f);
-        fireEmitter.setVelocityRange(0.5f, 1.5f);
+        fireEmitter.setPlaneWidth(1.0f);
+        fireEmitter.setPlaneHeight(1.0f);
+        fireEmitter.setParticleAge(0.7f);
+        fireEmitter.setVelocityRange(new Vector3f(0,1.0f,0), new Vector3f(0,4.0f,0));
         fireEmitter.setEnvironmentAcceleration(new Vector3f(0,0.0f,0));
         fireEmitter.setParticleVolume(50.0f, 100.0f, 50.0f);
         fireEmitter.setParticleSizeChangeRate(-6.0f);
         fireEmitter.setFadeWithAge(true);
         fireEmitter.setParticleSize(60.0f);
         fireEmitter.setParticleTexture(texture);
+        fireEmitter.setNoiseFactor(0.07f);
 
         return fireEmitter;
     }
@@ -246,6 +249,7 @@ public class SampleMain extends GVRMain {
         fworksEmitter1.setEmitRate(100);
         fworksEmitter1.setParticleAge(6.0f);
         fworksEmitter1.setBurstMode(true);
+        fworksEmitter1.setVelocityRange(new Vector3f(0.1f,0.5f,0.3f), new Vector3f(1.5f,2.0f,3.0f));
         fworksEmitter1.setEnvironmentAcceleration(new Vector3f(0,-2.0f,0));
         fworksEmitter1.setParticleTexture(fireworksTexture1);
 
@@ -255,6 +259,7 @@ public class SampleMain extends GVRMain {
         fworksEmitter2.setEmitRate(150);
         fworksEmitter2.setParticleAge(6f);
         fworksEmitter2.setBurstMode(true);
+        fworksEmitter2.setVelocityRange(new Vector3f(1.0f,1.0f,1.0f), new Vector3f(2.0f,2.0f,2.0f));
         fworksEmitter2.setEnvironmentAcceleration(new Vector3f(0,-2.0f,0));
         fworksEmitter2.setParticleTexture(fireworksTexture2);
 
@@ -265,6 +270,7 @@ public class SampleMain extends GVRMain {
         fworksEmitter3.setParticleAge(6.0f);
         fworksEmitter3.setBurstMode(true);
         fworksEmitter3.setEnvironmentAcceleration(new Vector3f(0,-2.0f,0));
+        fworksEmitter3.setVelocityRange(new Vector3f(1.5f,0.7f,1.0f), new Vector3f(1.5f,1.8f,2.5f));
         fworksEmitter3.setParticleTexture(fireworksTexture3);
 
         fworksEmitter4.setRadius(0.1f);
@@ -273,6 +279,7 @@ public class SampleMain extends GVRMain {
         fworksEmitter4.setEmitRate(100);
         fworksEmitter4.setParticleAge(6);
         fworksEmitter4.setBurstMode(true);
+        fworksEmitter4.setVelocityRange(new Vector3f(0.1f,1.0f,0.3f), new Vector3f(1.3f,1.3f,4.0f));
         fworksEmitter4.setEnvironmentAcceleration(new Vector3f(0,-2.0f,0));
         fworksEmitter4.setParticleTexture(fireworksTexture4);
 
