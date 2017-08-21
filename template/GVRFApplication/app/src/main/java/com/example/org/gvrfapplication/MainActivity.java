@@ -19,6 +19,33 @@ public class MainActivity extends GVRActivity {
          * Set Main Scene
          * It will be displayed when app starts
          */
-        setMain(new MainScene());
+        setMain(new Main());
+    }
+
+    private final class Main extends GVRMain {
+
+        @Override
+        public void onInit(GVRContext gvrContext) throws Throwable {
+
+            //Load texture
+            GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.__default_splash_screen__));
+
+            //Create a rectangle with the texture we just loaded
+            GVRSceneObject quad = new GVRSceneObject(gvrContext, 4, 2, texture);
+            quad.getTransform().setPosition(0, 0, -3);
+
+            //Add rectangle to the scene
+            gvrContext.getMainScene().addSceneObject(quad);
+        }
+
+        @Override
+        public SplashMode getSplashMode() {
+            return SplashMode.NONE;
+        }
+
+        @Override
+        public void onStep() {
+            //Add update logic here
+        }
     }
 }
