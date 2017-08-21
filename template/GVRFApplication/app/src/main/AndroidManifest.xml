@@ -5,18 +5,13 @@
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    
-    <!-- Indicates use of Android's VR-mode, available only on Android N+. -->
-    <uses-feature android:name="android.software.vr.mode" android:required="false"/>
-    <!-- Indicates use of VR features that are available only on Daydream-ready devices. -->
-    <uses-feature android:name="android.hardware.vr.high_performance" android:required="false"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/GVRfAppTheme"
         tools:replace="android:icon">
 
         <!-- meta-data for GearVR comment this for DayDream testing-->
