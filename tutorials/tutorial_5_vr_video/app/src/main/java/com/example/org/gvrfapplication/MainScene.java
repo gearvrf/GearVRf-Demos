@@ -32,7 +32,12 @@ public class MainScene extends GVRMain {
     }
 
     public void onResume() {
-        if(mPlayerObj != null)
+        if (mPlayerObj != null)
             mPlayerObj.onResume();
+    }
+
+    public void onPause() {
+        if (mPlayerObj != null)
+            mPlayerObj.onPause();
     }
 }

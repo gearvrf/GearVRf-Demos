@@ -25,4 +25,10 @@ public class MainActivity extends GVRActivity {
         super.onResume();
         main.onResume();
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        main.onPause();
+    }
 }
