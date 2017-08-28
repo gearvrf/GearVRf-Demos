@@ -37,12 +37,13 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.scene_objects.view.GVRView;
+import org.gearvrf.scene_objects.view.GVRWebView;
 
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 
 public class SampleMain extends GVRMain {
     private static final String TAG = SampleMain.class.getSimpleName();
@@ -159,7 +160,7 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRViewSceneObject createWebViewObject(GVRContext gvrContext) {
-        GVRView webView = mActivity.getWebView();
+        GVRWebView webView = mActivity.getWebView();
         GVRViewSceneObject webObject = new GVRViewSceneObject(gvrContext,
                 webView, 8.0f, 4.0f);
         webObject.setName("web view object");
