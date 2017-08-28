@@ -218,6 +218,8 @@ public class SampleMain extends GVRMain {
         public void onCursorControllerRemoved(GVRCursorController gvrCursorController) {
             if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
                 android.util.Log.d(TAG, "Got the orientation remote controller");
+                gvrCursorController.removeControllerEventListener(controllerEventListener);
+                gvrCursorController.resetSceneObject();
             }
         }
     };
