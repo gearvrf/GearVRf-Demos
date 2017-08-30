@@ -58,7 +58,7 @@ public class SceneObjectActivity extends GVRActivity {
         });
     }
 
-    GVRView getWebView() {
+    GVRWebView getWebView() {
         return webView;
     }
 
