@@ -1,15 +1,17 @@
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
 precision mediump float;
-in vec2  coord;
+layout ( location = 0 ) in vec2  coord;
 
-uniform sampler2D state1Text;
-uniform sampler2D state2Text;
-uniform sampler2D state3Text;
-uniform sampler2D state1Background;
-uniform sampler2D state2Background;
-uniform sampler2D state3Background;
+layout(set = 0, binding = 4) uniform sampler2D state1Text;
+layout(set = 0, binding = 5) uniform sampler2D state2Text;
+layout(set = 0, binding = 6) uniform sampler2D state3Text;
+layout(set = 0, binding = 7) uniform sampler2D state1Background;
+layout(set = 0, binding = 8) uniform sampler2D state2Background;
+layout(set = 0, binding = 9) uniform sampler2D state3Background;
 
 @MATERIAL_UNIFORMS
-out vec4 outColor;
+layout(location = 0) out vec4 outColor;
 void main() {
 	vec4 background;
 	vec4 text;

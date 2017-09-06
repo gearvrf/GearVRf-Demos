@@ -31,7 +31,7 @@ public class ColorSwapShader extends GVRShader{
 
     public ColorSwapShader(GVRContext gvrContext) {
 
-        super("float4 u_color float u_opacity", "sampler2D grayScaleTexture sampler2D detailsTexture", "float3 a_position float2 a_texcoord", GLSLESVersion.VUKAN);
+        super("float4 u_color float u_opacity", "sampler2D grayScaleTexture sampler2D detailsTexture", "float3 a_position float2 a_texcoord", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.color_swap_shader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.color_swap_shader_vertex));
