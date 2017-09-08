@@ -19,11 +19,11 @@ public class MainScene extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
-        Future<GVRMesh> dinoMesh = gvrContext.getAssetLoader().loadFutureMesh(
+        GVRMesh dinoMesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, R.raw.trex_mesh)
         );
 
-        Future<GVRTexture> dinoTexture = gvrContext.getAssetLoader().loadFutureTexture(
+        GVRTexture dinoTexture = gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext, R.raw.trex_tex_diffuse)
         );
 
