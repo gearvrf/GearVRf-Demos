@@ -34,9 +34,8 @@
     
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <meta-data tools:replace="android:value" android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+        android:label="@string/app_name">
+        <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
         <activity
             android:name="org.gearvrf.polyline.SampleActivity"
             android:screenOrientation="landscape"
