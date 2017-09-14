@@ -25,7 +25,12 @@ android {
 
 dependencies {
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-        compile(name: 'gvrf-physics-debug', ext: 'aar')
+        if (findProject(':gvrf-physics')) {
+            compile project(':gvrf-physics')
+        } else {
+            debugCompile(name: 'gvrf-physics-debug', ext: 'aar')
+            releaseCompile(name: 'gvrf-physics-release', ext: 'aar')
+        }
     } else {
         compile "org.gearvrf:gvrf-physics:$gearvrfVersion"
     }
