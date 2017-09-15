@@ -80,7 +80,7 @@ eg. ~/.gradle/gradle.properties:
 useLocalDependencies=true
 
  */
-ext.gearvrfVersion='3.3'
+ext.gearvrfVersion='3.3.0'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 project.ext.daydreamVersion='1.80.0'
 
