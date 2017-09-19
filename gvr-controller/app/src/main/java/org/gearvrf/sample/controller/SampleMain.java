@@ -323,11 +323,6 @@ public class SampleMain extends GVRMain
 
     };
 
-    public void dispatchTouch(MotionEvent event)
-    {
-        mCursorController.dispatchMotionEvent(event);
-    }
-
     private ITouchEvents mPickHandler = new ITouchEvents()
     {
         private GVRSceneObject movingObject;
