@@ -28,8 +28,8 @@
         framebufferPixelsHigh="DEFAULT"
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
-        useGazeCursorController="true"
         useProtectedFramebuffer="false"
+        useGazeCursorController="false"
         useSrgbFramebuffer="false" >
 
         <mono-mode-parms
@@ -48,7 +48,7 @@
             colorFormat="COLOR_8888"
             depthFormat="DEPTH_24"
             fov-y="DEFAULT"
-            multiSamples="2"
+            multiSamples="4"
             resolutionWidth="DEFAULT"
             resolutionHeight="DEFAULT"
             resolveDepth="false" />

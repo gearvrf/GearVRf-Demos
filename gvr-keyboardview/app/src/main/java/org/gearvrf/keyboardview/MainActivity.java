@@ -13,25 +13,40 @@
  * limitations under the License.
  */
 
-package org.gearvrf.sample.controller;
+package org.gearvrf.keyboardview;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.utility.Log;
 
-public class SampleActivity extends GVRActivity {
-    private SampleMain main;
+public class MainActivity extends GVRActivity {
+
     @Override
-    protected void onCreate(Bundle icicle) {
-        super.onCreate(icicle);
-        main = new SampleMain(this);
-        setMain(main, "gvr.xml");
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setMain(new Main(this), "gvr.xml");
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        main.dispatchTouch(event);
-        return super.dispatchTouchEvent(event);
+    protected void onResume() {
+        super.onResume();
+        if (getFullScreenView() != null)
+            getFullScreenView().invalidate();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (getFullScreenView() != null)
+            getFullScreenView().invalidate();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
     }
 }

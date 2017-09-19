@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:state_pressed="true"
+        android:drawable="@drawable/key_pressed" />
+    <item
+        android:state_hovered="true"
+        android:drawable="@drawable/key_hovered" />
+    <item
+        android:drawable="@drawable/key_idle" />
+</selector>
