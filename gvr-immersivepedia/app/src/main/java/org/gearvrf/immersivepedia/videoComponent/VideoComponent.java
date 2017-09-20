@@ -52,7 +52,7 @@ public class VideoComponent extends GVRSceneObject {
     private FocusableSceneObject focus;
 
     public VideoComponent(GVRContext gvrContext, float WIDTH, float HEIGHT) {
-        super(gvrContext, WIDTH, HEIGHT);
+        super(gvrContext, 0, 0);
 
         this.gvrContext = gvrContext;
 
