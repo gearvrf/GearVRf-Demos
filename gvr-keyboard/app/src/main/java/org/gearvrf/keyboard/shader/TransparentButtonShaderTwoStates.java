@@ -15,10 +15,6 @@
 
 package org.gearvrf.keyboard.shader;
 
-import org.gearvrf.GVRContext;
-
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
 /*
 public class TransparentButtonShaderTwoStates  extends TransparentButtonShaderBase{
 

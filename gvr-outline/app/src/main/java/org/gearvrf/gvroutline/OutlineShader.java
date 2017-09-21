@@ -24,10 +24,11 @@ public class OutlineShader extends GVRShader {
     public static final String COLOR_KEY = "u_color";
     public static final String THICKNESS_KEY = "u_thickness";
     private static final String VERTEX_SHADER =
-            "#extension GL_ARB_separate_shader_objects : enable \n" +
+                    "#extension GL_ARB_separate_shader_objects : enable \n" +
                     "#extension GL_ARB_shading_language_420pack : enable \n" +
-                    "layout(location = 0) in  vec3 a_position;\n"
-                    + "layout(location = 2) in vec3 a_normal;\n"
+                    "precision mediump float;\n"
+                    + "layout(location = 0) in  vec3 a_position;\n"
+                    + "layout(location = 1) in vec3 a_normal;\n"
                     + "@MATRIX_UNIFORMS\n"
                     + "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"

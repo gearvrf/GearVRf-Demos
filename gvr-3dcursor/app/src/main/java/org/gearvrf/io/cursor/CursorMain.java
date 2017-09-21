@@ -216,7 +216,7 @@ public class CursorMain extends GVRMain {
                     .ZipEntryProcessor<GVRMesh>() {
                 @Override
                 public GVRMesh getItem(GVRContext context, GVRAndroidResource resource) {
-                    GVRMesh mesh = context.loadMesh(resource);
+                    GVRMesh mesh = context.getAssetLoader().loadMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
                     return mesh;
                 }
@@ -595,27 +595,26 @@ public class CursorMain extends GVRMain {
     // http://www.samsung.com/us/samsungdeveloperconnection/developer-resources/
     // gear-vr/apps-and-games/exercise-2-creating-the-splash-scene.html
     private void addSurroundings(GVRContext gvrContext, GVRScene scene) {
-        FutureWrapper<GVRMesh> futureQuadMesh = new FutureWrapper<GVRMesh>(
-                gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH));
-        GVRTexture futureCubemapTexture = gvrContext
+        GVRMesh quadMesh =  gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH);
+        GVRTexture cubemapTexture = gvrContext
                 .getAssetLoader().loadCubemapTexture(
                         new GVRAndroidResource(gvrContext, R.raw.earth));
 
         GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,
                 GVRMaterial.GVRShaderType.Cubemap.ID);
-        cubemapMaterial.setMainTexture(futureCubemapTexture);
+        cubemapMaterial.setMainTexture(cubemapTexture);
 
         // surrounding cube
         GVRSceneObject frontFace = new GVRSceneObject(gvrContext,
-                futureQuadMesh, futureCubemapTexture);
+                quadMesh, cubemapTexture);
         frontFace.getRenderData().setMaterial(cubemapMaterial);
         frontFace.setName("front");
         frontFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         scene.addSceneObject(frontFace);
         frontFace.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f);
 
-        GVRSceneObject backFace = new GVRSceneObject(gvrContext, futureQuadMesh,
-                futureCubemapTexture);
+        GVRSceneObject backFace = new GVRSceneObject(gvrContext, quadMesh,
+                cubemapTexture);
         backFace.getRenderData().setMaterial(cubemapMaterial);
         backFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         backFace.setName("back");
@@ -623,8 +622,8 @@ public class CursorMain extends GVRMain {
         backFace.getTransform().setPosition(0.0f, 0.0f, CUBE_WIDTH * 0.5f);
         backFace.getTransform().rotateByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
-        GVRSceneObject leftFace = new GVRSceneObject(gvrContext, futureQuadMesh,
-                futureCubemapTexture);
+        GVRSceneObject leftFace = new GVRSceneObject(gvrContext, quadMesh,
+                cubemapTexture);
         leftFace.getRenderData().setMaterial(cubemapMaterial);
         leftFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         leftFace.setName("left");
@@ -633,7 +632,7 @@ public class CursorMain extends GVRMain {
         leftFace.getTransform().rotateByAxis(90.0f, 0.0f, 1.0f, 0.0f);
 
         GVRSceneObject rightFace = new GVRSceneObject(gvrContext,
-                futureQuadMesh, futureCubemapTexture);
+                quadMesh, cubemapTexture);
         rightFace.getRenderData().setMaterial(cubemapMaterial);
         rightFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         rightFace.setName("right");
@@ -641,8 +640,8 @@ public class CursorMain extends GVRMain {
         rightFace.getTransform().setPosition(CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         rightFace.getTransform().rotateByAxis(-90.0f, 0.0f, 1.0f, 0.0f);
 
-        GVRSceneObject topFace = new GVRSceneObject(gvrContext, futureQuadMesh,
-                futureCubemapTexture);
+        GVRSceneObject topFace = new GVRSceneObject(gvrContext, quadMesh,
+                cubemapTexture);
         topFace.getRenderData().setMaterial(cubemapMaterial);
         topFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         topFace.setName("top");
@@ -651,7 +650,7 @@ public class CursorMain extends GVRMain {
         topFace.getTransform().rotateByAxis(90.0f, 1.0f, 0.0f, 0.0f);
 
         GVRSceneObject bottomFace = new GVRSceneObject(gvrContext,
-                futureQuadMesh, futureCubemapTexture);
+                quadMesh, cubemapTexture);
         bottomFace.getRenderData().setMaterial(cubemapMaterial);
         bottomFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         bottomFace.setName("bottom");
@@ -1187,21 +1186,21 @@ public class CursorMain extends GVRMain {
     private AssetHolder getAssetHolder(String[] meshes, String[] textures) {
         AssetHolder assetHolder = new AssetHolder();
 
-            int state = SpaceObject.INIT;
-            assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                    textureMap.get(textures[state])));
+        int state = SpaceObject.INIT;
+        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
+                textureMap.get(textures[state])));
 
-            state = SpaceObject.CLICKED;
-            assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                    textureMap.get(textures[state])));
+        state = SpaceObject.CLICKED;
+        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
+                textureMap.get(textures[state])));
 
-            state = SpaceObject.OVER;
-            assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                    textureMap.get(textures[state])));
+        state = SpaceObject.OVER;
+        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
+                textureMap.get(textures[state])));
 
-            state = SpaceObject.WIRE;
-            assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                    textureMap.get(textures[state])));
+        state = SpaceObject.WIRE;
+        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
+                textureMap.get(textures[state])));
 
         return assetHolder;
     }

@@ -73,7 +73,7 @@ public class SampleMain extends GVRMain {
 
         try {
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(NO_LIGHTING));
-            GVRMesh mesh = mGVRContext.loadMesh(
+            GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(
                     new GVRAndroidResource(mGVRContext, "bunny.obj"),
                     settings);
 

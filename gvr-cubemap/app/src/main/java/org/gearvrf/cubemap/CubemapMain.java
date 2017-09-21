@@ -234,7 +234,7 @@ public class CubemapMain extends GVRMain {
                 // ////////////////////////////////////////////
                 // create reflective sphere using OBJ model //
                 // ////////////////////////////////////////////
-                GVRMesh sphereMesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+                GVRMesh sphereMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
                                                           R.raw.sphere));
                 sphere = new GVRSceneObject(mGVRContext, sphereMesh, mCubemapTexture);
                 sphere.getRenderData().setMaterial(cubemapReflectionMaterial);
