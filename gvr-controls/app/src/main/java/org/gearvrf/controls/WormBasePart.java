@@ -48,7 +48,7 @@ public class WormBasePart extends GVRSceneObject {
 
         GVRContext gvrContext = getGVRContext();
 
-        GVRMesh mesh = gvrContext.loadMesh(
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(gvrContext, meshResId));
 
         GVRTexture texture = gvrContext.getAssetLoader().loadTexture(

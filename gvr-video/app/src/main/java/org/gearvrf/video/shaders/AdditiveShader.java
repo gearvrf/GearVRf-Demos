@@ -17,9 +17,6 @@
 package org.gearvrf.video.shaders;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterialMap;
-//import org.gearvrf.GVRMaterialShaderManager;
-//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
 
@@ -34,16 +31,7 @@ public class AdditiveShader extends GVRShader{
             + "in vec3 a_position;\n" //
             + "in vec2 a_texcoord;\n"
 
-            + "layout (std140) uniform Transform_ubo{\n" +
-            "     mat4 u_view;\n" +
-            "     mat4 u_mvp;\n" +
-            "     mat4 u_mv;\n" +
-            "     mat4 u_mv_it;\n" +
-            "     mat4 u_model;\n" +
-            "     mat4 u_view_i;\n" +
-            "     vec4 u_right;\n" +
-            "};\n"
-
+            + "@MATRIX_UNIFORMS\n"
             + "out vec2 coord;\n"
             + "void main() {\n" //
             + "  coord = a_texcoord;\n"
@@ -54,11 +42,7 @@ public class AdditiveShader extends GVRShader{
             + "precision highp float;\n"
             + "in vec2  coord;\n" //
 
-            + "layout (std140) uniform Material_ubo{\n" +
-             "float u_weight;\n" +
-             "float u_fade;\n" +
-            "};"
-
+            + "@MATERIAL_UNIFORMS\n"
             + "uniform sampler2D u_texture;\n"
 
             + "out vec4 FragColor;\n"
@@ -70,19 +54,8 @@ public class AdditiveShader extends GVRShader{
             + "  FragColor = vec4( u_fade*color, alpha );\n" //
             + "}\n";
 
-    //private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public AdditiveShader(GVRContext gvrContext) {
-        /*
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addTextureKey("texture", TEXTURE_KEY);
-        mCustomShader.addUniformFloatKey("u_weight", WEIGHT_KEY);
-        mCustomShader.addUniformFloatKey("u_fade", FADE_KEY);*/
-        super("float u_weight, float u_fade", "sampler2D u_texture", "float3 a_position, float2 a_tex_coord", 300);
+        super("float u_weight, float u_fade", "sampler2D u_texture", "float3 a_position, float2 a_tex_coord", GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }

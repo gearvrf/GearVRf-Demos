@@ -83,7 +83,7 @@ public class Apple extends GVRSceneObject {
     }
 
     public void setAppleRenderData(GVRContext gvrContext) {
-        GVRMesh mesh = gvrContext.loadMesh(new GVRAndroidResource(gvrContext,
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
                 R.raw.apple));
 
         GVRMaterial material = new GVRMaterial(gvrContext, new GVRShaderId(ColorSwapShader.class));

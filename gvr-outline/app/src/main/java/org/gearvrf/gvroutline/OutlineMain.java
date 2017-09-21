@@ -66,7 +66,7 @@ public class OutlineMain extends GVRMain {
         try {
             EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
-            GVRMesh characterMesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext,
+            GVRMesh characterMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
                     mModelPath), settings);
 
             // Setup Scene - Alternatively to set character transform, one could
@@ -88,7 +88,6 @@ public class OutlineMain extends GVRMain {
 
             // For outline we want to cull front faces
             mCharacter.getRenderData().setMaterial(outlineMaterial);
-            //mCharacter.getRenderData().setShaderTemplate(OutlineShader.class);
             mCharacter.getRenderData().setCullFace(GVRCullFaceEnum.Front);
 
             // Create Additional Pass

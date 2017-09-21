@@ -21,8 +21,10 @@ import java.util.List;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IAssetEvents;
 import org.gearvrf.GVRMain;
@@ -37,11 +39,11 @@ import android.graphics.Color;
 class AssetListener implements IAssetEvents
 {
     private GVRScene mScene;
-    
+
     public AssetListener(GVRScene scene) {
         mScene = scene;
     }
-    
+
     public void onModelLoaded(GVRContext context, GVRSceneObject model, String modelFile) { }
     public void onTextureLoaded(GVRContext context, GVRTexture texture, String texFile) {}
     public void onModelError(GVRContext context, String error, String modelFile) { }
@@ -73,7 +75,7 @@ public class JassimpModelLoaderMain extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) {
         mAnimationEngine = gvrContext.getAnimationEngine();
-        mMainScene = gvrContext.getNextMainScene();
+        mMainScene = gvrContext.getMainScene();
         mMainScene.setFrustumCulling(true);
 
         GVRCameraRig mainCameraRig = mMainScene.getMainCameraRig();
@@ -94,6 +96,15 @@ public class JassimpModelLoaderMain extends GVRMain {
             astroBoyModel.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
             astroBoyModel.getTransform().setScale(3, 3, 3);
             astroBoyModel.getTransform().setPosition(0.0f, -0.4f, -0.5f);
+            if (GVRShader.isVulkanInstance()) // remove light on Vulkan
+            {
+                List<GVRLightBase> lights = astroBoyModel.getAllComponents(GVRLightBase.getComponentType());
+                for (GVRLightBase l : lights)
+                {
+                    GVRSceneObject owner = l.getOwnerObject();
+                    owner.getParent().removeChildObject(owner);
+                }
+            }
         } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
@@ -105,7 +116,7 @@ public class JassimpModelLoaderMain extends GVRMain {
             benchModel.getTransform().setScale(0.66f, 0.66f, 0.66f);
             benchModel.getTransform().setPosition(0.0f, -4.0f, -20.0f);
             benchModel.getTransform().setRotationByAxis(180.0f, 0.0f, 1.0f, 0.0f);
-            } catch (IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Failed to load a model: %s", e);
         }
 

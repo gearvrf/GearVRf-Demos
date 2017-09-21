@@ -86,7 +86,7 @@ public class TouchPad extends GVRSceneObject {
 
     private void createTouchpad() {
         touchPad = new GVRSceneObject(getGVRContext(),
-                getGVRContext().loadMesh(new GVRAndroidResource(getGVRContext(), (R.raw.gear_vr))),
+                getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(getGVRContext(), (R.raw.gear_vr))),
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.gear_vr_texture)));
         touchPad.getTransform().setPositionZ(-4f);
         touchPad.getTransform().setPositionY(0.1f);

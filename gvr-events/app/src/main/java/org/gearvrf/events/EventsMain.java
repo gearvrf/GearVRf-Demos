@@ -109,8 +109,7 @@ public class EventsMain extends GVRMain {
     public void onInit(final GVRContext gvrContext) throws Throwable {
         context = gvrContext;
 
-        layoutSceneObject = new GVRViewSceneObject(gvrContext, frameLayout,
-                context.createQuad(QUAD_X, QUAD_Y));
+        layoutSceneObject = new GVRViewSceneObject(gvrContext, frameLayout, QUAD_X, QUAD_Y);
         mainScene = gvrContext.getMainScene();
         mainScene.addSceneObject(layoutSceneObject);
 
@@ -196,8 +195,7 @@ public class EventsMain extends GVRMain {
         public void onCursorControllerAdded(GVRCursorController controller) {
             // Only allow only gaze
             if (controller.getControllerType() == GVRControllerType.GAZE) {
-                cursor = new GVRSceneObject(context,
-                        new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
+                cursor = new GVRSceneObject(context, 0.1f, 0.1f,
                         context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.raw.cursor)));
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                 mainScene.getMainCameraRig().addChildObject(cursor);

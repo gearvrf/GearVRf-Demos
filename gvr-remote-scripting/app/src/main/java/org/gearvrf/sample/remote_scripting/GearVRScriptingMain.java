@@ -35,9 +35,10 @@ public class GearVRScriptingMain extends GVRMain
     private static final int DEBUG_SERVER_PORT = 5000;
     DebugWebServer server;
     private GVRContext gvrContext;
-    
+
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext context) {
+        gvrContext = context;
         final DebugServer debug = gvrContext.startDebugServer();
         GVRScene scene = gvrContext.getMainScene();
         IErrorEvents errorHandler = new IErrorEvents()

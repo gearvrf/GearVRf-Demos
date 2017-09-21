@@ -59,24 +59,24 @@ public class SampleMain extends GVRMain {
         GVRScene scene = gvrContext.getMainScene();
 
         // load texture asynchronously
-       GVRTexture futureTexture = gvrContext.getAssetLoader().loadTexture(
+       GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext,
                         R.drawable.gearvr_logo));
-        GVRTexture futureTextureTop =gvrContext.getAssetLoader().loadTexture(
+        GVRTexture textureTop =gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext,
                         R.drawable.top));
-        GVRTexture futureTextureBottom = gvrContext.getAssetLoader().loadTexture(
+        GVRTexture textureBottom = gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext,
                         R.drawable.bottom));
-        ArrayList<GVRTexture> futureTextureList = new ArrayList<GVRTexture>(
+        ArrayList<GVRTexture> textureList = new ArrayList<GVRTexture>(
                 3);
-        futureTextureList.add(futureTextureTop);
-        futureTextureList.add(futureTexture);
-        futureTextureList.add(futureTextureBottom);
+        textureList.add(textureTop);
+        textureList.add(texture);
+        textureList.add(textureBottom);
 
         // setup material
         GVRMaterial material = new GVRMaterial(gvrContext);
-        material.setMainTexture(futureTexture);
+        material.setMainTexture(texture);
 
         // create a scene object (this constructor creates a rectangular scene
         // object that uses the standard 'unlit' shader)

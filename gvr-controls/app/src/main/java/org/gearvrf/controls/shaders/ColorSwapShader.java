@@ -18,12 +18,8 @@ package org.gearvrf.controls.shaders;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-//import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
-import org.gearvrf.GVRShaderId;
 import org.gearvrf.controls.R;
 import org.gearvrf.utility.TextFile;
 
@@ -35,7 +31,7 @@ public class ColorSwapShader extends GVRShader{
 
     public ColorSwapShader(GVRContext gvrContext) {
 
-        super("float4 u_color float u_opacity", "sampler2D grayScaleTexture sampler2D detailsTexture", "float3 a_position float2 a_texcoord",300);
+        super("float4 u_color float u_opacity", "sampler2D grayScaleTexture sampler2D detailsTexture", "float3 a_position float2 a_texcoord", GLSLESVersion.V300);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.color_swap_shader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.color_swap_shader_vertex));

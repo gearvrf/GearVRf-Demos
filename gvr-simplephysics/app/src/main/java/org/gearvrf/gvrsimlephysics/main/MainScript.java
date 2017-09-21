@@ -7,14 +7,17 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShader;
 import org.gearvrf.gvrsimlephysics.R;
 import org.gearvrf.gvrsimlephysics.entity.Countdown;
 import org.gearvrf.gvrsimlephysics.util.MathUtils;
 import org.gearvrf.gvrsimlephysics.util.VRTouchPadGestureDetector;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
+import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 
 import java.io.IOException;
@@ -36,7 +39,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
-        mScene = gvrContext.getNextMainScene();
+        mScene = gvrContext.getMainScene();
         mCamera = mScene.getMainCameraRig();
 
         initCamera(gvrContext, mCamera);
@@ -60,7 +63,10 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     }
 
     private void initScene(GVRContext context, GVRScene scene) {
-        addLights(context, scene);
+        if (!GVRShader.isVulkanInstance())
+        {
+            addLights(context, scene);
+        }
         addGround(context, scene);
         addCylinderGroup(context, scene);
     }
@@ -121,10 +127,12 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         final int SQUARE_SIZE = 3;
         float offset = 0;
         try {
+            GVRCylinderSceneObject cylinder = new GVRCylinderSceneObject(context, 0.5f, 0.5f, 0.5f, 2, 16, true);
+            GVRMesh mesh = cylinder.getRenderData().getMesh();
             for (int y = 0; y < SQUARE_SIZE; y++) {
                 for (int x = 0; x < SQUARE_SIZE - y; x++) {
                     for (int z = 0; z < SQUARE_SIZE; z++) {
-                        addCylinder(context, scene, (x - (SQUARE_SIZE / 2.0f)) * 2.5f + 1.5f + offset,
+                        addCylinder(context, mesh, scene, (x - (SQUARE_SIZE / 2.0f)) * 2.5f + 1.5f + offset,
                                 1f + (y * 1.2f), (z + (SQUARE_SIZE / 2.0f)) * 2.5f - 5f,
                                 CYLINDER_COLORS[mNumCylinders++ % CYLINDER_COLORS.length]);
                     }
@@ -136,9 +144,9 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         }
     }
 
-    private static void addCylinder(GVRContext context, GVRScene scene, float x, float y, float z,
+    private static void addCylinder(GVRContext context, GVRMesh mesh, GVRScene scene, float x, float y, float z,
                                     int drawable) throws IOException {
-        scene.addSceneObject(MainHelper.createCylinder(context, x, y, z, drawable));
+        scene.addSceneObject(MainHelper.createCylinder(context, mesh, x, y, z, drawable));
     }
 
     public void onSwipe(VRTouchPadGestureDetector.SwipeDirection swipeDirection, float velocityX) {

@@ -17,9 +17,6 @@
 package org.gearvrf.widgetViewer;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-//import org.gearvrf.GVRCustomMaterialShaderId;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
 public class MetalShader2 extends GVRShader {
@@ -36,41 +33,12 @@ public class MetalShader2 extends GVRShader {
     public static final String MAT4_KEY = "u_mat4";
 
     private static final String VERTEX_SHADER = "" //
-            + "#version 300 es \n"
             + "precision mediump float;\n"
-
             + "in vec3 a_position;\n"
             + "in vec3 a_normal;\n" //
             + "in vec2 a_texcoord;\n"
-//            + "uniform mat4 u_mvp;\n" //
-//            + "uniform vec4 u_mat1;\n"
-//            + "uniform vec4 u_mat2;\n" //
-//            + "uniform vec4 u_mat3;\n"
-//            + "uniform vec4 u_mat4;\n" //
-//            + "uniform vec3 u_eye;\n"
-//            + "uniform vec3 u_light;\n" //
-
-            + "layout (std140) uniform Transform_ubo{\n" +
-            "     mat4 u_view;\n" +
-            "     mat4 u_mvp;\n" +
-            "     mat4 u_mv;\n" +
-            "     mat4 u_mv_it;\n" +
-            "     mat4 u_model;\n" +
-            "     mat4 u_view_i;\n" +
-            "     vec4 u_right;\n" +
-            "};\n"
-
-            + "layout (std140) uniform Material_ubo{\n" +
-            "    vec4 u_mat1;\n" +
-            "    vec4 u_mat2;\n" +
-            "    vec4 u_mat3;\n" +
-            "    vec4 u_mat4;\n" +
-            "    vec3 u_eye;\n" +
-            "    vec3 u_light;\n" +
-            "    vec4 u_color;\n" +
-            "    float u_radius;\n" +
-            "};"
-
+            + "@MATRIX_UNIFORMS\n"
+            + "@MATERIAL_UNIFORMS\n"
             + "out vec3  n;\n" //
             + "out vec3  v;\n" //
             + "out vec3  l;\n"
@@ -94,22 +62,9 @@ public class MetalShader2 extends GVRShader {
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
-            + "#version 300 es \n"
             + "precision mediump float;\n"
-
             + "in vec2  coord;\n"
-
-            + "layout (std140) uniform Material_ubo{\n" +
-            "    vec4 u_mat1;\n" +
-            "    vec4 u_mat2;\n" +
-            "    vec4 u_mat3;\n" +
-            "    vec4 u_mat4;\n" +
-            "    vec3 u_eye;\n" +
-            "    vec3 u_light;\n" +
-            "    vec4 u_color;\n" +
-            "    float u_radius;\n" +
-            "};"
-
+            + "@MATERIAL_UNIFORMS\n"
             + "in vec3  n;\n"
             + "in vec3  v;\n"
             + "in vec3  l;\n"
@@ -144,27 +99,9 @@ public class MetalShader2 extends GVRShader {
             + "  FragColor = vec4( color, 1.0 );\n" //
             + "}\n";
 
-    //private GVRCustomMaterialShaderId mShaderId;
-    // private GVRMaterialMap mCustomShader = null;
 
     public MetalShader2(GVRContext gvrContext) {
-        /*
-        final GVRMaterialShaderManager shaderManager = gvrContext
-                .getMaterialShaderManager();
-        mShaderId = shaderManager.addShader(VERTEX_SHADER, FRAGMENT_SHADER);
-        mCustomShader = shaderManager.getShaderMap(mShaderId);
-        mCustomShader.addUniformVec4Key("u_color", COLOR_KEY);
-        mCustomShader.addUniformVec3Key("u_light", LIGHT_KEY);
-        mCustomShader.addUniformVec3Key("u_eye", EYE_KEY);
-        mCustomShader.addUniformFloatKey("u_radius", RADIUS_KEY);
-        mCustomShader.addTextureKey("intexture", TEXTURE_KEY);
-
-        mCustomShader.addUniformVec4Key("u_mat1", MAT1_KEY);
-        mCustomShader.addUniformVec4Key("u_mat2", MAT2_KEY);
-        mCustomShader.addUniformVec4Key("u_mat3", MAT3_KEY);
-        mCustomShader.addUniformVec4Key("u_mat4", MAT4_KEY);*/
-
-        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius ", "sampler2D intexture", "float3 a_position, float3 a_normal, float2 a_tex_coord");
+        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius ", "sampler2D intexture", "float3 a_position, float3 a_normal, float2 a_texcoord", GLSLESVersion.V300);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }

@@ -3,10 +3,7 @@ in vec2  coord;
 uniform sampler2D state1;
 uniform sampler2D state2;
 
-layout (std140) uniform Material_ubo{
-    float textureSwitch;
-    float u_opacity;
-};
+@MATERIAL_UNIFORMS
 
 out vec4 outColor;
 

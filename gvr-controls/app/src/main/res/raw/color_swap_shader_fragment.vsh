@@ -3,11 +3,8 @@ in vec2  coord;
 uniform sampler2D grayScaleTexture;
 uniform sampler2D detailsTexture;
 
-layout (std140) uniform Material_ubo
-{
- vec4 u_color;
- float u_opacity;
-};
+@MATERIAL_UNIFORMS
+
 out vec4 outColor;
 void main() {
 	

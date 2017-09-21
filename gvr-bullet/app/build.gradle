@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
-System.setProperty("appName", "gvr-bullet")
+System.setProperty("appName", "gvr-simplephysics")
 
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }
-else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
@@ -24,8 +24,12 @@ android {
 }
 
 dependencies {
-    compile(name:'framework-debug', ext:'aar')
-    compile(name: 'google-vr-base', ext: 'aar')
-    compile(name: 'google-vr-common', ext: 'aar')
-    compile(name: 'gvrf-physics-debug', ext:'aar')
+    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        compile(name: 'gvrf-physics-debug', ext: 'aar')
+    } else {
+        compile "org.gearvrf:gvrf-physics:$gearvrfVersion"
+    }
 }
+
+
+

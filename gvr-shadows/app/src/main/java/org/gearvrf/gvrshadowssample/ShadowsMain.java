@@ -99,6 +99,7 @@ public class ShadowsMain extends GVRMain {
         GVRDirectLight light = new GVRDirectLight(context);
 
         light.setCastShadow(true);
+        light.setShadowRange(1.0f, 150.0f);
         lightNode.attachLight(light);
         lightNode.getTransform().setRotationByAxis(-70, 1, 0, 0);
         light.setAmbientIntensity(0.3f, 0.3f, 0.3f, 1);
@@ -115,6 +116,7 @@ public class ShadowsMain extends GVRMain {
         GVRSpotLight light = new GVRSpotLight(context);
 
         light.setCastShadow(true);
+        light.setShadowRange(0.2f, 40.0f);
         lightNode.attachLight(light);
         lightNode.getTransform().setRotationByAxis(-35, 1, 0, 0);
         lightNode.getTransform().setPosition(-4, 7, 10);
@@ -189,7 +191,7 @@ public class ShadowsMain extends GVRMain {
 
     private GVRMaterial createCustomMaterial(GVRContext context, String textureFile) throws IOException
     {
-        GVRMaterial litMaterial = new GVRMaterial(context, new GVRShaderId(GVRPhongShader.class));
+        GVRMaterial litMaterial = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
 
         litMaterial.setVec4("diffuse_color", 1.0f, 1.0f, 1.0f, 1.0f);
         litMaterial.setVec4("ambient_color", 0.5f, 0.5f, 0.5f, 0.0f);
@@ -223,18 +225,12 @@ public class ShadowsMain extends GVRMain {
 
     private GVRSceneObject addStormtrooper(GVRScene scene, float x, float y, float z) throws IOException
     {
-        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj");
-        List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
-        GVRRenderData rdata = rdatas.get(0);
-        GVRSceneObject stormTrooper = rdata.getOwnerObject();
+        GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj", scene);
 
-        stormTrooper.getParent().removeChildObject(stormTrooper);
-        stormTrooper.getTransform().setPosition(x, y, z);
-        stormTrooper.getTransform().setScale(1.5f, 1.5f, 1.5f);
-        stormTrooper.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
-        rdata.setMaterial(createCustomMaterial(mGVRContext, "stormstrooper.jpg"));
-        scene.addSceneObject(stormTrooper);
-        return stormTrooper;
+        model.getTransform().setPosition(x, y, z);
+        model.getTransform().setScale(1.5f, 1.5f, 1.5f);
+        model.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
+        return model;
     }
 
 }

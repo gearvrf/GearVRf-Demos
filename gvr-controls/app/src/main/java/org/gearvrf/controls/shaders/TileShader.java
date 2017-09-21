@@ -18,11 +18,7 @@ package org.gearvrf.controls.shaders;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-//import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRShader;
-import org.gearvrf.GVRShaderId;
 import org.gearvrf.controls.R;
 import org.gearvrf.utility.TextFile;
 
@@ -33,7 +29,7 @@ public class TileShader extends GVRShader{
     public TileShader(GVRContext gvrContext) {
 
 
-        super("","sampler2D u_texture", "float3 a_position",300);
+        super("","sampler2D u_texture", "float3 a_position", GLSLESVersion.V300);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.tileshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.tileshader_vertex));

@@ -44,10 +44,7 @@ public class MultiLightMain extends GVRMain {
     private GVRSceneObject rotateObject;
     private GVRSceneObject backdrop;
     private GVRScene mScene;
-  //  @Override
-    /*public SplashMode getSplashMode() {
-        return SplashMode.NONE;
-    }*/
+
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
@@ -107,18 +104,7 @@ public class MultiLightMain extends GVRMain {
          try
          {
             GVRModelSceneObject model = context.getAssetLoader().loadModel("astro_boy.dae");
-          /*   ArrayList<GVRLight> lights = model.getAllComponents(GVRLight.getComponentType());
-             if(lights.isEmpty())
-                 org.gearvrf.utility.Log.e("RC", "it is empty");
-             for(GVRLight light : lights){
-                 GVRSceneObject lightobj = light.getOwnerObject();
-                 if(lightobj == null)
-                     Log.e("RC", "lightobj is null");
-                 if(lightobj.getParent() == null)
-                     Log.e("RC", "getParent is null");
-                 lightobj.getParent().removeChildObject(lightobj);
-             }
-*/
+
             model.getTransform().setScale(10, 10, 10);
             model.getTransform().setPositionY(-1);
             return model;
@@ -161,7 +147,7 @@ public class MultiLightMain extends GVRMain {
         GVRTexture tex = context.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.gearvrflogo));
         GVRSceneObject backdrop = new GVRSceneObject(context, 10.0f, 4.0f, tex);
         GVRRenderData rdata = backdrop.getRenderData();
-        GVRMaterial material = new GVRMaterial(context);
+        GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
         
         material.setVec4("diffuse_color", 0.8f, 0.8f, 0.8f, 1.0f);
         material.setVec4("ambient_color", 0.3f, 0.3f, 0.3f, 1.0f);
@@ -172,7 +158,6 @@ public class MultiLightMain extends GVRMain {
         backdrop.setName("Backdrop");
         backdrop.getTransform().setPositionZ(-2.0f);
         rdata.setMaterial(material);
-    	rdata.setShaderTemplate(GVRPhongShader.class);
     	return backdrop;
     }
 

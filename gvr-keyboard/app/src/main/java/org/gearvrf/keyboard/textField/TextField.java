@@ -18,6 +18,7 @@ package org.gearvrf.keyboard.textField;
 import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
@@ -143,15 +144,15 @@ public class TextField extends GVRSceneObject {
 
     protected TextFieldItem getObjectInHitArea() {
 
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
-                .getMainScene());
+        GVRPicker.GVRPickedObject[] hits = GVRPicker.pickObjects(this.getGVRContext()
+                .getMainScene(), 0, 0, 0, 0, 0, -1);
 
-        for (GVREyePointeeHolder eph : eyePointeeHolders) {
+        for (GVRPicker.GVRPickedObject hit : hits) {
 
             for (int i = 0; i < mListFieldItems.size(); i++) {
 
-                if (eph.getOwnerObject().hashCode() == mListFieldItems.get(i)
-                        .getEyePointeeHolder().getOwnerObject().hashCode()) {
+                if (hit.getHitObject().hashCode() == mListFieldItems.get(i)
+                        .getCollider().getOwnerObject().hashCode()) {
 
                     currentCharPosition = i;
                     return mListFieldItems.get(i);
