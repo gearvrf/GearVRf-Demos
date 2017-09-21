@@ -208,7 +208,6 @@ public class ShadowsMain extends GVRMain {
         cubeObject.getTransform().setPosition(x, y, z);
         cubeObject.getTransform().setScale(size, size, size);
         cubeObject.setName("cube");
-        cubeObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
         scene.addSceneObject(cubeObject);
     }
 
@@ -219,7 +218,6 @@ public class ShadowsMain extends GVRMain {
         sphereObject.setName("sphere");
         sphereObject.getTransform().setPosition(x, y, z);
         sphereObject.getTransform().setScale(radius, radius, radius);
-        sphereObject.getRenderData().setMaterial(new GVRMaterial(mGVRContext, new GVRShaderId(GVRPhongShader.class)));
         scene.addSceneObject(sphereObject);
     }
 
