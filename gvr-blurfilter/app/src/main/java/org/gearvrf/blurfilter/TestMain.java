@@ -106,7 +106,7 @@ public class TestMain extends GVRMain
         horzBlurMtl.setTexture("u_texture", texture);
         rdata.setMaterial(horzBlurMtl);
 
-        GVRShaderData vertBlurMtl = new GVRShaderData(mContext, new GVRShaderId(VertBlurShader.class));
+        GVRMaterial vertBlurMtl = new GVRMaterial(mContext, new GVRShaderId(VertBlurShader.class));
         GVRCamera camera = scene.getMainCameraRig().getCenterCamera();
 
         vertBlurMtl.setFloat("u_resolution", 1024.0f);
