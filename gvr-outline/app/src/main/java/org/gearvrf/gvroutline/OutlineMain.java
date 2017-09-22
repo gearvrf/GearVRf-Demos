@@ -64,7 +64,7 @@ public class OutlineMain extends GVRMain {
         GVRScene outlineScene = gvrContext.getMainScene();
 
         try {
-            EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
+            EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS,  GVRImportSettings.NO_ANIMATION);
             EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
             GVRMesh characterMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
                     mModelPath), settings);
