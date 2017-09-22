@@ -17,12 +17,12 @@ package org.gearvrf.modelviewer2;
 
 import android.util.Log;
 
-import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.util.BoundingBoxCreator;
@@ -73,8 +73,8 @@ public class Model {
 
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
         BoundingBoxCreator boundingBox = new BoundingBoxCreator(context, bv);
-        GVRCollider playPauseHolder = new GVRMeshCollider(context, false);
-        model.attachCollider(playPauseHolder);
+
+        model.attachComponent(new GVRMeshCollider(boundingBox.getMesh()));
 
         // Adding Pointee to Model
         bv = model.getBoundingVolume();
@@ -83,7 +83,7 @@ public class Model {
         Vector3f min_corner = bv.minCorner;
         Vector3f max_corner = bv.maxCorner;
 
-        // TODO Scale Approparetly
+        // TODO Scale Appropriately
         if (originalRadius > 7.0f || originalRadius < 5.0f) {
             float scaleFactor = 7 / originalRadius;
             model.getTransform().setScale(scaleFactor, scaleFactor, scaleFactor);

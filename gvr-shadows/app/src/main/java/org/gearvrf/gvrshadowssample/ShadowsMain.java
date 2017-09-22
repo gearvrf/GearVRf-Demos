@@ -105,6 +105,7 @@ public class ShadowsMain extends GVRMain {
         light.setAmbientIntensity(0.3f, 0.3f, 0.3f, 1);
         light.setDiffuseIntensity(1, 1, 1, 1);
         light.setSpecularIntensity(1, 1, 1, 1);
+        light.setShadowRange(1f, 150.0f);
         lightNode.setName("DirectLight");
         return lightNode;
     }
@@ -124,6 +125,7 @@ public class ShadowsMain extends GVRMain {
         light.setSpecularIntensity(1, 1, 1, 1);
         light.setInnerConeAngle(40);
         light.setOuterConeAngle(55);
+        light.setShadowRange(0.2f, 40.0f);
         lightNode.setName("SpotLight");
 
         return lightNode;
