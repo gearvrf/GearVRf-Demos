@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
@@ -91,8 +92,9 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 
 	private void createDinoAnimation() {
         final PlayPauseButton playPause = totem.getIcon();
-        playPause.attachEyePointeeHolder();
-        playPause.setOnClickListener(new OnClickListener() {
+
+		playPause.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+		playPause.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick() {
