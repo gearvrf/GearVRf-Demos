@@ -15,26 +15,29 @@
 
 package org.gearvrf.cubemap;
 
-import java.util.ArrayList;
-import java.util.concurrent.Future;
+import android.graphics.BitmapFactory;
+import android.os.Environment;
+import android.util.Log;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
-import android.util.Log;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.Future;
 
-public class CubemapMain extends GVRMain {
+public final class CubemapMain extends GVRMain {
 
     private static final float CUBE_WIDTH = 20.0f;
     private static final float SCALE_FACTOR = 2.0f;
@@ -63,6 +66,8 @@ public class CubemapMain extends GVRMain {
     private GVRMaterial mCubemapMaterial;
     private GVRMaterial mCompressedCubemapMaterial;
     private ArrayList<GVRTexture> mTextureList;
+    private ArrayList<File> mSdcardResources;
+
     @Override
     public SplashMode getSplashMode() {
         return SplashMode.NONE;
@@ -73,35 +78,58 @@ public class CubemapMain extends GVRMain {
 
         GVRScene scene = mGVRContext.getMainScene();
         GVRAssetLoader loader = mGVRContext.getAssetLoader();
-        scene.setStatsEnabled(true);
         scene.setFrustumCulling(true);
 
-        // Uncompressed cubemap texture
-        mCubemapTexture = loader.loadCubemapTexture(new GVRAndroidResource(mGVRContext, R.raw.beach));
-        mCubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
-        mCubemapMaterial.setMainTexture(mCubemapTexture);
+        boolean usingSdcard = false;
+        final File file = new File(Environment.getExternalStorageDirectory()+"/gvr-cubemap");
+        if (file.exists()) {
+            final File[] files = file.listFiles();
+            if (0 < files.length) {
+                for (final File f : files) {
+                    final String name = f.getName();
+                    if (name.endsWith(".bmp") || name.endsWith(".png") || name.endsWith(".zip")) {
+                        if (null == mSdcardResources) {
+                            usingSdcard = true;
+                            mEnvironmentType = 0;
+                            mSdcardResources = new ArrayList<>();
+                        }
+                        mSdcardResources.add(f);
+                    }
+                }
+            }
+        }
 
-        // Compressed cubemap texture
-        final GVRTexture compressedCubemapTexture = loader.loadCompressedCubemapTexture(new GVRAndroidResource(mGVRContext,
-                R.raw.museum));
-        mCompressedCubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
-        mCompressedCubemapMaterial.setMainTexture(compressedCubemapTexture);
+        if (!usingSdcard) {
+            scene.setStatsEnabled(true);
+            // Uncompressed cubemap texture
+            mCubemapTexture = loader.loadCubemapTexture(new GVRAndroidResource(mGVRContext, R.raw.beach));
+            mCubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
+            mCubemapMaterial.setMainTexture(mCubemapTexture);
 
-        // List of textures (one per face)
-        mTextureList = new ArrayList<GVRTexture>(6);
-        mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.back)));
-        mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.right)));
-        mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.front)));
-        mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.left)));
-        mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.top)));
-        mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
-                R.drawable.bottom)));
-        applyCubemap(scene);
+            // Compressed cubemap texture
+            final GVRTexture compressedCubemapTexture = loader.loadCompressedCubemapTexture(new GVRAndroidResource(mGVRContext,
+                    R.raw.museum));
+            mCompressedCubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
+            mCompressedCubemapMaterial.setMainTexture(compressedCubemapTexture);
+
+            // List of textures (one per face)
+            mTextureList = new ArrayList<GVRTexture>(6);
+            mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
+                    R.drawable.back)));
+            mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
+                    R.drawable.right)));
+            mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
+                    R.drawable.front)));
+            mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
+                    R.drawable.left)));
+            mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
+                    R.drawable.top)));
+            mTextureList.add(loader.loadTexture(new GVRAndroidResource(gvrContext,
+                    R.drawable.bottom)));
+            applyCubemap(scene);
+        } else {
+            applyFromSdcard(scene);
+        }
     }
 
     private void applyCubemap(GVRScene scene) {
@@ -254,6 +282,47 @@ public class CubemapMain extends GVRMain {
         }
     }
 
+    private void applyFromSdcard(final GVRScene scene) {
+        final File file = mSdcardResources.get(mEnvironmentType);
+
+        if (file.getName().endsWith(".zip")) {
+            scene.getMainCameraRig().setCameraRigType(GVRCameraRig.GVRCameraRigType.Free.ID);
+
+            try {
+                final GVRTexture cubemapTexture = getGVRContext().getAssetLoader().loadCubemapTexture(new GVRAndroidResource(file.getAbsolutePath()));
+                final GVRMaterial material = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Cubemap.ID);
+                material.setMainTexture(cubemapTexture);
+
+                final GVRSceneObject sceneObject = new GVRCubeSceneObject(mGVRContext, false, material);
+                sceneObject.getTransform().setScale(CUBE_WIDTH, CUBE_WIDTH, CUBE_WIDTH);
+                scene.addSceneObject(sceneObject);
+            } catch(final Exception exc) {
+                exc.printStackTrace();
+            }
+
+        } else {
+            applyFromSdcard2dImpl(file);
+        }
+    }
+
+    private void applyFromSdcard2dImpl(final File file) {
+        final GVRScene scene = getGVRContext().getMainScene();
+        scene.getMainCameraRig().setCameraRigType(GVRCameraRig.GVRCameraRigType.Freeze.ID);
+
+        try {
+            final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+            bitmapOptions.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(file.getAbsolutePath(), bitmapOptions);
+
+            final GVRTexture t = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(file.getAbsolutePath()));
+            final GVRSceneObject sceneObject = new GVRSceneObject(mGVRContext, 20, 20*bitmapOptions.outHeight/bitmapOptions.outWidth, t);
+            sceneObject.getTransform().setPositionZ(-11);
+            scene.addSceneObject(sceneObject);
+        } catch(final Exception exc) {
+            exc.printStackTrace();
+        }
+    }
+
     @Override
     public void onStep() {
         FPSCounter.tick();
@@ -266,9 +335,16 @@ public class CubemapMain extends GVRMain {
                 public void run() {
                     mGVRContext.getMainScene().clear();
                     ++mEnvironmentType;
-                    mEnvironmentType %= MAX_ENVIRONMENTS;
+
+                    if (null == mSdcardResources) {
+                        mEnvironmentType %= MAX_ENVIRONMENTS;
+                        applyCubemap(mGVRContext.getMainScene());
+                    } else {
+                        mEnvironmentType %= mSdcardResources.size();
+                        applyFromSdcard(mGVRContext.getMainScene());
+                    }
+
                     Log.i(TAG, "mEnvironmentType: " + mEnvironmentType);
-                    applyCubemap(mGVRContext.getMainScene());
                 }
             });
         }
