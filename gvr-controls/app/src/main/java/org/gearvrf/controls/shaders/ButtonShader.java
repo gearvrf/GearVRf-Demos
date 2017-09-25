@@ -36,8 +36,8 @@ public class ButtonShader extends GVRShader{
 
     public ButtonShader(GVRContext gvrContext) {
         super("float textureSwitch float u_opacity",
-              "sampler2D state1Text sampler2D state2Text sampler2D state3Text sampler2D state1Background state2Background sampler2D sampler2D state3Background",
-              "float3 a_position, float3 a_normal, float2 a_texcoord", GLSLESVersion.V300);
+              "sampler2D state1Text sampler2D state2Text sampler2D state3Text sampler2D state1Background sampler2D state2Background  sampler2D state3Background",
+              "float3 a_position, float3 a_normal, float2 a_texcoord", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.buttonshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.buttonshader_vertex));
