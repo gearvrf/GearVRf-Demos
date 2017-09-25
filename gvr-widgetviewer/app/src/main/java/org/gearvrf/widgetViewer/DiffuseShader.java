@@ -25,24 +25,21 @@ public class DiffuseShader extends GVRShader {
     public static final String COLOR_KEY = "u_color";
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
-    public static final String TEXTURE_KEY = "texture_t";
-
-    public static final String MAT1_KEY = "u_mat1";
-    public static final String MAT2_KEY = "u_mat2";
-    public static final String MAT3_KEY = "u_mat3";
-    public static final String MAT4_KEY = "u_mat4";
+    public static final String TEXTURE_KEY = "u_texture";
 
     private static final String VERTEX_SHADER = "" //
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
             + "precision mediump float;\n"
-            + "in vec3 a_position;\n"
-            + "in vec3 a_normal;\n" //
-            + "in vec2 a_texcoord;\n"
+            + "layout(location = 0) in vec3 a_position;\n"
+            + "layout(location = 2) in vec3 a_normal;\n" //
+            + "layout(location = 1) in vec2 a_texcoord;\n"
             + "@MATRIX_UNIFORMS\n"
             + "@MATERIAL_UNIFORMS\n"
-            + "out vec3 normal;\n"
-            + "out vec3 view;\n" //
-            + "out vec3 light;\n"
-            + "out vec2 coord;\n" //
+            + "layout(location = 0) out vec3 normal;\n"
+            + "layout(location = 1) out vec3 view;\n" //
+            + "layout(location = 2) out vec3 light;\n"
+            + "layout(location = 3) out vec2 coord;\n" //
 
             + "void main() {\n"
             + "  normal = a_normal;\n" //
@@ -53,19 +50,21 @@ public class DiffuseShader extends GVRShader {
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
             + "precision mediump float;\n"
             + "@MATERIAL_UNIFORMS\n"
-            + "in vec2  coord;\n"
-            + "in vec3  normal;\n" //
-            + "in vec3  view;\n"
-            + "in vec3  light;\n" //
-            + "uniform sampler2D texture_t;\n"
-            + "out vec4  outColor;\n" //
+            + "layout(location = 0) in vec3 normal;\n"
+            + "layout(location = 1) in vec3 view;\n" //
+            + "layout(location = 2) in vec3 light;\n"
+            + "layout(location = 3) in vec2 coord;\n" //
+            + "layout(set = 0, binding = 4) uniform sampler2D u_texture;\n"
+            + "layout(location = 0) out vec4  outColor;\n" //
             + "void main() {\n" //
             + "  vec3  v = normalize(view);\n"
             + "  vec3  l = normalize(light);\n"
             + "  vec3  n = normalize(normal);\n"
-            + "  vec3 color = texture(texture_t, coord).rgb;\n"
+            + "  vec3 color = texture(u_texture, coord).rgb;\n"
             + "  vec3  h = normalize(v+l);\n"
             + "  float diffuse  = max ( dot(l,n), 0.1 );\n"
             + "  float specular = max ( dot(h,n), 0.0 );\n"
@@ -77,7 +76,7 @@ public class DiffuseShader extends GVRShader {
             + "}\n";
 
     public DiffuseShader(GVRContext gvrContext) {
-        super("float3 u_eye, float3 u_light, float4 u_color ", "sampler2D texture_t", "float3 a_position, float3 a_normal, float2 a_tex_coord", GLSLESVersion.V300);
+        super("float3 u_eye, float3 u_light, float4 u_color ", "sampler2D u_texture", "float3 a_position, float2 a_texcoord, float3 a_normal ", GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
 
