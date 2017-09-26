@@ -31,8 +31,7 @@ public class InteractiveText extends GVRSceneObject {
     public InteractiveText(GVRContext gvrContext, int width, int height) {
 
         super(gvrContext, Util.convertPixelToVRFloatValue(width), Util
-                .convertPixelToVRFloatValue(height),
-                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty)));
+                .convertPixelToVRFloatValue(height));
         setName(SceneObjectNames.INTERACTIVE_TEXT);
 
         currentText = new Text();

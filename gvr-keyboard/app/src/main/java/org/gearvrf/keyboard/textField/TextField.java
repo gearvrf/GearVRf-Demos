@@ -111,7 +111,7 @@ public class TextField extends GVRSceneObject {
                         new GVRAndroidResource(TextField.this.getGVRContext(),
                                 R.drawable.key_space_active)));
 
-        space.getTransform().setPosition(position * TEXT_WIDTH, SUB_LINE_Y, 0);
+        space.getTransform().setPosition(position * TEXT_WIDTH, SUB_LINE_Y, 0.5f);
         space.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD);
 
         return space;
@@ -186,8 +186,8 @@ public class TextField extends GVRSceneObject {
 
                     character.currentText.maxLength = 1;
                     character.setText(getGVRContext(), charItem);
-                    character.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD - 30);
-                    character.getTransform().setPosition(position * TEXT_WIDTH, 0, 0);
+                    character.getRenderData().setRenderingOrder(RenderingOrder.KEYBOARD);
+                    character.getTransform().setPosition(position * TEXT_WIDTH, 0, 0.7f);
                     character.attachComponent(new GVRSphereCollider(getGVRContext()));
                     mListFieldItems.add(position, character);
                     addChildObject(character);
