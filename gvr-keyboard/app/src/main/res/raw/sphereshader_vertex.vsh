@@ -1,44 +1,21 @@
-
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
 precision mediump float;
 
-in vec4 a_position;
-in vec3 a_normal;
-in vec2 a_texcoord;
+layout(location = 0) in vec4 a_position;
+layout(location = 2) in vec3 a_normal;
+layout(location = 1) in vec2 a_texcoord;
 
-out vec3 normal;
-out vec3 view;
-out vec3 light;
-out vec2 coord;
-out vec3  n;
-out vec3  v;
-out vec3  l;
-out vec3  p;
-
-layout (std140) uniform Material_ubo{
-    vec3 u_eye;
-    vec3 u_light;
-    vec3 trans_color;
-    float animTexture;
-    float blur;
-    float u_radius;
-};
-
-layout (std140) uniform Transform_ubo{
- #ifdef HAS_MULTIVIEW
-     mat4 u_view_[2];
-     mat4 u_mvp_[2];
-     mat4 u_mv_[2];
-     mat4 u_mv_it_[2];
- #else
-     mat4 u_view;
-     mat4 u_mvp;
-     mat4 u_mv;
-     mat4 u_mv_it;
- #endif
-     mat4 u_model;
-     mat4 u_view_i;
-     vec4 u_right;
-};
+layout(location = 0) out vec3 normal;
+layout(location = 1) out vec3 view;
+layout(location = 2) out vec3 light;
+layout(location = 3) out vec2 coord;
+layout(location = 4) out vec3  n;
+layout(location = 5) out vec3  v;
+layout(location = 6) out vec3  l;
+layout(location = 7) out vec3  p;
+@MATRIX_UNIFORMS
+@MATERIAL_UNIFORMS
 void main() {
 
 	vec4 pos = u_mvp * a_position;

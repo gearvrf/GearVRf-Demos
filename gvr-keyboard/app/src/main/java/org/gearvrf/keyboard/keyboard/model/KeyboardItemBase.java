@@ -28,7 +28,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.keyboard.model.KeyboardCharItem;
-//import org.gearvrf.keyboard.shader.TransparentButtonShaderBase;
 import org.gearvrf.keyboard.shader.TransparentButtonShaderThreeStates;
 import org.gearvrf.keyboard.util.GVRTextBitmapFactory;
 import org.gearvrf.keyboard.util.RenderingOrder;
@@ -79,18 +78,18 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
     }
 
     public void configureTextures() {
-        GVRMaterial mtl = getRenderData().getMaterial();
-        mtl.setTexture(
+
+        getRenderData().getMaterial().setTexture(
                 TransparentButtonShaderThreeStates.TEXTURE_KEY,
                 getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(getGVRContext(), styleItem.getTexture())));
 
-        mtl.setTexture(
+        getRenderData().getMaterial().setTexture(
                 TransparentButtonShaderThreeStates.TEXTURE_HOVER_KEY,
                 getGVRContext().getAssetLoader().loadTexture(
                         new GVRAndroidResource(getGVRContext(), styleItem.getTextureHover())));
 
-        mtl.setFloat(TransparentButtonShaderThreeStates.TEXTURE_SWITCH,
+        getRenderData().getMaterial().setFloat(TransparentButtonShaderThreeStates.TEXTURE_SWITCH,
                 0.0f);
     }
 
@@ -124,6 +123,7 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
                         styleItem.getFontSize(), Paint.Align.CENTER,
                         styleItem.getHoverTextColor(), styleItem.getColorBackgroundTextHover(),
                         getGVRContext().getContext().getApplicationContext()));
+
         GVRTexture texture = new GVRTexture(getGVRContext());
         texture.setImage(bitmapHover);
         getRenderData().getMaterial().setTexture(ShaderKey, texture);

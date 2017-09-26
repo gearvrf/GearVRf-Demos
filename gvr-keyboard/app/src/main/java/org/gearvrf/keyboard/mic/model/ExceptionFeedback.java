@@ -91,6 +91,7 @@ public class ExceptionFeedback extends GVRSceneObject {
     }
 
     private void hide() {
+
         AnimateScale(1.3f);
         AnimateOpacity(0);
     }

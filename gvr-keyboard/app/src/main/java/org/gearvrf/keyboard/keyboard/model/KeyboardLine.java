@@ -16,10 +16,8 @@
 package org.gearvrf.keyboard.keyboard.model;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
-import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRMeshEyePointee;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.keyboard.util.Constants;
 import org.gearvrf.keyboard.util.SceneObjectNames;
 import org.gearvrf.keyboard.util.Util;
@@ -56,9 +54,7 @@ public class KeyboardLine extends GVRSceneObject {
     }
 
     private void attachDefaultEyePointee(GVRSceneObject sceneObject) {
-        GVRMeshCollider collider = new GVRMeshCollider(
-                sceneObject.getGVRContext(), false);
-        sceneObject.attachCollider(collider);
+        sceneObject.attachComponent(new GVRSphereCollider(getGVRContext()));
     }
 
     public void alingCenter(int numbersLine) {

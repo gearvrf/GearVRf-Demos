@@ -36,7 +36,7 @@ public class TextFieldItem extends GVRSceneObject {
     public TextFieldItem(GVRContext gvrContext, float sceneObjectWidth, float sceneObjectHeigth,
             int bitmapWidth, int bitmapHeigth, Text text,
             int position) {
-        super(gvrContext, sceneObjectWidth, sceneObjectHeigth, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty)));
+        super(gvrContext, sceneObjectWidth, sceneObjectHeigth);
         setName(SceneObjectNames.TEXT_FIELD_ITEM);
 
         currentText = text;

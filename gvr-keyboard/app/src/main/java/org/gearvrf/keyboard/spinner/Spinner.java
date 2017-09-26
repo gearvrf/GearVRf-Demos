@@ -20,7 +20,6 @@ import android.util.Log;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
@@ -121,23 +120,10 @@ public class Spinner extends GVRSceneObject {
         }
     }
 
-    public boolean isHitArea() {
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(this.getGVRContext()
-                .getMainScene());
-
-        if (eyePointeeHolders.length > 0) {
-
-            for (GVREyePointeeHolder eyePointeeHolder : eyePointeeHolders) {
-
-                if (eyePointeeHolder.hashCode() == spinnerSkeleton.getSpinnerBox()
-                        .getEyePointeeHolder().hashCode()) {
-
-                    return false;
-                }
-            }
+    public boolean isHitArea(GVRSceneObject sceneObject) {
+        if (sceneObject.getCollider().hashCode() == spinnerSkeleton.getSpinnerBox().getCollider().hashCode()) {
+            return false;
         }
-
         return true;
     }
 

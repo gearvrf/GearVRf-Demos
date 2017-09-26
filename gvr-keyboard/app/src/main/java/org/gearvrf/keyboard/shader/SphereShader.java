@@ -20,6 +20,7 @@ import android.content.Context;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.utility.TextFile;
 
@@ -32,13 +33,15 @@ public class SphereShader extends GVRShader{
     public static final String SECUNDARY_TEXTURE_KEY = "second_texture";
     public static final String ANIM_TEXTURE = "animTexture";
     public static final String BLUR_INTENSITY = "blur";
-    public static final String HDRI_TEXTURE_KEY = "HDRI_texture";
+    public static final String HDRI_TEXTURE_KEY = "hdri_texture";
 
     public SphereShader(GVRContext gvrContext) {
-        super("float3 u_eye, float3 u_light, float3 trans_color, float animTexture, float blur, float u_radius", "sampler2D texture_t sampler2D second_texture sampler2D HDRI_texture", "float4 a_position, float3 a_normal, float2 a_texcoord", GLSLESVersion.V300);
+        super("float3 u_eye, float3 u_light, float3 trans_color, float animTexture, float blur, float u_radius", "sampler2D texture_t sampler2D second_texture sampler2D HDRI_texture",
+                "float4 a_position, float2 a_texcoord float3 a_normal", GVRShader.GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.sphereshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.sphereshader_vertex));
+
     }
 
     protected void setMaterialDefaults(GVRShaderData material)
@@ -50,4 +53,5 @@ public class SphereShader extends GVRShader{
         material.setFloat("animTexture", 1);
         material.setFloat("u_radius", 1);
     }
+
 }
