@@ -45,7 +45,11 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile(name:'3DCursorLibrary-debug', ext:'aar')
+    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        compile(name: '3DCursorLibrary-debug', ext: 'aar')
+    } else {
+        compile "org.gearvrf:3DCursorLibrary:$gearvrfVersion"
+    }
     //_VENDOR_TODO_ add the device to gvr-3dcursor-simple here
     //compile project(':IODevices:io_template')
     //compile project(':IODevices:io_hand_template')
