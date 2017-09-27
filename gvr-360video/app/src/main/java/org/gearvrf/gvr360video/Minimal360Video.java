@@ -59,6 +59,7 @@ public class Minimal360Video extends GVRMain
 
         // create video scene
         GVRVideoSceneObject video = new GVRVideoSceneObject( gvrContext, mesh, mPlayer, GVRVideoType.MONO );
+        video.getTransform().setScale(100f, 100f, 100f);
         video.setName( "video" );
 
         // apply video to scene
