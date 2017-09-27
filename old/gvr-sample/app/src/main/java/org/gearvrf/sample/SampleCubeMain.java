@@ -27,7 +27,6 @@ import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPicker.GVRPickedObject;
 import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRRenderData.GVRRenderMaskBit;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshot3DCallback;
@@ -52,7 +51,8 @@ public class SampleCubeMain extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) {
-        final GVRScene scene = gvrContext.getNextMainScene();
+        final GVRScene scene = gvrContext.getMainScene();
+        scene.setFrustumCulling(false);
 
         mPicker = new GVRPicker(gvrContext, scene);
         final GVRMesh mesh = gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH);
@@ -90,7 +90,7 @@ public class SampleCubeMain extends GVRMain {
         scene.addSceneObject(leftFace);
         leftFace.getTransform().setPosition(-CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         leftFace.getTransform().rotateByAxis(90.0f, 0.0f, 1.0f, 0.0f);
-        leftFace.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
+        leftFace.getRenderData().setRenderMask(GVRRenderData.GVRRenderMaskBit.Left);
 
         GVRSceneObject rightFace = new GVRSceneObject(gvrContext, mesh,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.right)));
@@ -98,7 +98,7 @@ public class SampleCubeMain extends GVRMain {
         scene.addSceneObject(rightFace);
         rightFace.getTransform().setPosition(CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         rightFace.getTransform().rotateByAxis(-90.0f, 0.0f, 1.0f, 0.0f);
-        rightFace.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
+        rightFace.getRenderData().setRenderMask(GVRRenderData.GVRRenderMaskBit.Right);
 
         GVRSceneObject topFace = new GVRSceneObject(gvrContext, mesh,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.top)));
