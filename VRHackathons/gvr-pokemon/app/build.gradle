@@ -3,15 +3,18 @@ apply plugin: 'com.android.application'
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
         flatDir {
-            dirs '../../gearvrf-libs'
+            dirs '../../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
 
 android {
     compileSdkVersion 19
-    buildToolsVersion "23.0.3"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.samsung.android.gvr.sample"
@@ -40,6 +43,12 @@ android {
     }
 }
 
+project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 dependencies {
-    compile(name:'framework-debug', ext:'aar')
+    compile "org.joml:joml-android:${jomlVersion}"
+    compile 'com.google.code.gson:gson:2.7'
+    debugCompile(name:'framework-debug', ext:'aar')
+    debugCompile(name: 'backend_oculus-debug', ext: 'aar')
+    releaseCompile(name:'framework-release', ext:'aar')
+    releaseCompile(name: 'backend_oculus-release', ext: 'aar')
 }
