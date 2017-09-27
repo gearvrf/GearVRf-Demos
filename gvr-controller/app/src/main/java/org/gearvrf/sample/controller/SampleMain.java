@@ -16,7 +16,6 @@ package org.gearvrf.sample.controller;
 import android.view.KeyEvent;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.Future;
 
 import org.gearvrf.GVRActivity;
@@ -43,6 +42,7 @@ import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRGearControllerSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
@@ -68,7 +68,7 @@ public class SampleMain extends GVRMain {
     private static final float SCALE = 200.0f;
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
-    private GVRSceneObject sphere;
+    private GVRGearControllerSceneObject controller;
 
     private GVRScene mainScene;
 
@@ -140,7 +140,7 @@ public class SampleMain extends GVRMain {
 
         GVRMesh mesh = null;
         try {
-            mesh = mGVRContext.loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
+            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
         } catch (IOException e) {
             e.printStackTrace();
             mesh = null;
@@ -183,48 +183,33 @@ public class SampleMain extends GVRMain {
             cursorControllerListener.onCursorControllerAdded(cursor);
         }
 
-        GVRTexture texture = assetLoader.loadTexture(new
+        GVRTexture futureTexture = assetLoader.loadTexture(new
                 GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRSphereSceneObject skyBox = new GVRSphereSceneObject(gvrContext, false, material);
         skyBox.getTransform().setScale(SCALE, SCALE, SCALE);
-        skyBox.getRenderData().getMaterial().setMainTexture(texture);
+        skyBox.getRenderData().getMaterial().setMainTexture(futureTexture);
         mainScene.addSceneObject(skyBox);
     }
 
     private CursorControllerListener cursorControllerListener = new CursorControllerListener() {
         @Override
         public void onCursorControllerAdded(GVRCursorController gvrCursorController) {
-            android.util.Log.d(TAG, "onCursorControllerAdded: " + gvrCursorController.getClass());
+
             if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
                 android.util.Log.d(TAG, "Got the orientation remote controller");
-                try {
-                    GVRSceneObject parent = new GVRSceneObject(mGVRContext);
-                    GVRTexture texture = mGVRContext
-                            .getAssetLoader()
-                            .loadTexture(new GVRAndroidResource(mGVRContext, "texture.png"));
-
-                    sphere = new GVRSceneObject(mGVRContext, mGVRContext.loadFutureMesh(new
-                            GVRAndroidResource(mGVRContext, "sphere.obj")), texture);
-                    sphere.getTransform().setPosition(0.0f, 0.0f, DEPTH);
-                    parent.addChildObject(sphere);
-                    sphere.getRenderData().setDepthTest(false);
-                    sphere.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder
-                            .OVERLAY);
-
-                    GVRSceneObject cube = new GVRSceneObject(mGVRContext, mGVRContext.loadFutureMesh(new
-                            GVRAndroidResource(mGVRContext, "cube.obj")), texture);
-                    cube.getTransform().setPosition(0.0f,0.0f,0.0f);
-                    parent.addChildObject(cube);
-                    mPicker.setPickRay(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, DEPTH);
-
-                    gvrCursorController.setSceneObject(parent);
-                    sphere.attachComponent(mPicker);
-
-                    gvrCursorController.addControllerEventListener(controllerEventListener);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
+                        mGVRContext.createQuad(1f, 1f),
+                        mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+                cursor.getRenderData().setDepthTest(false);
+                cursor.getRenderData().setRenderingOrder(100000);
+                controller = new GVRGearControllerSceneObject(mGVRContext);
+                controller.setCursorController(gvrCursorController);
+                mPicker.setPickRay(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, DEPTH);
+                controller.setRayDepth(DEPTH);
+                controller.setCursor(cursor);
+                controller.attachComponent(mPicker);
+                gvrCursorController.addControllerEventListener(controllerEventListener);
             }else{
                 gvrCursorController.setEnable(false);
             }
@@ -234,33 +219,22 @@ public class SampleMain extends GVRMain {
         public void onCursorControllerRemoved(GVRCursorController gvrCursorController) {
             if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
                 android.util.Log.d(TAG, "Got the orientation remote controller");
+                gvrCursorController.removeControllerEventListener(controllerEventListener);
+                gvrCursorController.resetSceneObject();
             }
         }
     };
 
     private GVRCursorController.ControllerEventListener controllerEventListener = new
             GVRCursorController.ControllerEventListener() {
-        @Override
-        public void onEvent(GVRCursorController gvrCursorController) {
-            KeyEvent keyEvent = gvrCursorController.getKeyEvent();
-
-            if(keyEvent != null){
-                mPickHandler.setClicked(keyEvent.getAction() == KeyEvent.ACTION_DOWN);
-            }
-        }
-    };
-
-//    private GearCursorController.ControllerEventListener controllerEventListener2 = new
-//            GearCursorController.ControllerEventListener(){
-//                @Override
-//                public void onEvent(GVRCursorController controller){
-//                    GearCursorController cntrlr = (GearCursorController) controller;
-//                    android.util.Log.d("DEBUGGING", "onMotionEvent: " + cntrlr.getMotionEvent());
-//                    android.util.Log.d("DEBUGGING", "onTouch: " + cntrlr.getTouch());
-//                    android.util.Log.d("DEBUGGING", "onRotation: " + cntrlr.getRotation());
-//
-//                }
-//            };
+                @Override
+                public void onEvent(GVRCursorController gvrCursorController) {
+                    KeyEvent keyEvent = gvrCursorController.getKeyEvent();
+                    if(keyEvent != null){
+                        mPickHandler.setClicked(keyEvent.getAction() == KeyEvent.ACTION_DOWN);
+                    }
+                }
+            };
 
 
 
@@ -281,8 +255,8 @@ public class SampleMain extends GVRMain {
 
             if (state == ButtonState.UP && selectedObject != null) {
                 GVRTransform selectedTransform = selectedObject.getTransform();
-                Matrix4f cursorModelMatrix = sphere.getTransform().getModelMatrix4f();
-                sphere.removeChildObject(selectedObject);
+                Matrix4f cursorModelMatrix = controller.getTransform().getModelMatrix4f();
+                controller.removeChildObject(selectedObject);
                 mainScene.addSceneObject(selectedObject);
                 Matrix4f selectedModelMatrix = selectedTransform.getModelMatrix4f();
                 selectedTransform.setModelMatrix(cursorModelMatrix.mul(selectedModelMatrix));
@@ -325,12 +299,12 @@ public class SampleMain extends GVRMain {
                 if (state == ButtonState.DOWN && selectedObject == null) {
                     sceneObj.getCollider().setEnable(false);
                     selectedObject = sceneObj;
-                    Matrix4f matrix4f = sphere.getTransform().getModelMatrix4f();
+                    Matrix4f matrix4f = controller.getTransform().getModelMatrix4f();
                     Matrix4f selectedModelMatrix = selectedObject.getTransform().getModelMatrix4f();
                     matrix4f.invert();
                     selectedObject.getTransform().setModelMatrix(matrix4f.mul(selectedModelMatrix));
                     mainScene.removeSceneObject(selectedObject);
-                    sphere.addChildObject(selectedObject);
+                    controller.addChildObject(selectedObject);
                 }
             }
         }
@@ -341,20 +315,18 @@ public class SampleMain extends GVRMain {
 
     }
 
-    private GVRShaderId colorId = new GVRShaderId(ColorShader.class);
     private GVRSceneObject getColorBoard() {
-        GVRMaterial material = new GVRMaterial(mGVRContext, colorId);
+        GVRMaterial material = new GVRMaterial(mGVRContext, new GVRShaderId(ColorShader.class));
         material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         GVRCubeSceneObject board = new GVRCubeSceneObject(mGVRContext);
         board.getRenderData().setMaterial(material);
         board.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        board.getRenderData().setShaderTemplate(ColorShader.class);
         return board;
     }
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext, colorId);
+        GVRMaterial material = new GVRMaterial(mGVRContext, new GVRShaderId(ColorShader.class));
         material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
 
@@ -362,7 +334,6 @@ public class SampleMain extends GVRMain {
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
         meshObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        meshObject.getRenderData().setShaderTemplate(ColorShader.class);
         return meshObject;
     }
 
