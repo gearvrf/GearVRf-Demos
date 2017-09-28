@@ -271,7 +271,7 @@ public final class CubemapMain extends GVRMain {
 
         if (sphere != null) {
             sphere.setName("sphere");
-         //   scene.addSceneObject(sphere);
+            scene.addSceneObject(sphere);
             sphere.getTransform().setScale(SCALE_FACTOR, SCALE_FACTOR,
                     SCALE_FACTOR);
             sphere.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.25f);
