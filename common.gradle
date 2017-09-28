@@ -82,6 +82,7 @@ useLocalDependencies=true
  */
 ext.gearvrfVersion='3.2.1-SNAPSHOT'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
+project.ext.daydreamVersion='1.80.0'
 
 if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
     dependencies {
@@ -102,7 +103,8 @@ if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) 
                 debugCompile(name: 'backend_daydream-debug', ext: 'aar')
                 releaseCompile(name: 'backend_daydream-release', ext: 'aar')
             }
-            compile 'com.google.vr:sdk-base:1.30.0'
+            compile "com.google.vr:sdk-base:${daydreamVersion}"
+            compile "com.google.vr:sdk-controller:${daydreamVersion}"
         } else {
             if (project.hasProperty("no_oculus")) {
                 if (findProject(':backend')) {
@@ -118,7 +120,8 @@ if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) 
                     debugCompile(name: 'backend_daydream-debug', ext: 'aar')
                     releaseCompile(name: 'backend_daydream-release', ext: 'aar')
                 }
-                compile 'com.google.vr:sdk-base:1.30.0'
+                compile "com.google.vr:sdk-base:${daydreamVersion}"
+                compile "com.google.vr:sdk-controller:${daydreamVersion}"
 
                 if (findProject(':backend_oculus')) {
                     compile project(':backend_oculus')
@@ -137,10 +140,12 @@ if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) 
 
         if (project.hasProperty("only_daydream")) {
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
-            compile 'com.google.vr:sdk-base:1.30.0'
+            compile "com.google.vr:sdk-base:${daydreamVersion}"
+            compile "com.google.vr:sdk-controller:${daydreamVersion}"
         } else { //default oculus+daydream
             compile "org.gearvrf:backend_daydream:$gearvrfVersion"
-            compile 'com.google.vr:sdk-base:1.30.0'
+            compile "com.google.vr:sdk-base:${daydreamVersion}"
+            compile "com.google.vr:sdk-controller:${daydreamVersion}"
             compile "org.gearvrf:backend_oculus:$gearvrfVersion"
         }
     }
