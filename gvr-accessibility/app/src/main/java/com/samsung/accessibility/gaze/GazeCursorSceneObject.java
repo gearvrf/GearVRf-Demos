@@ -24,7 +24,8 @@ import com.samsung.accessibility.R;
 public class GazeCursorSceneObject extends GVRSceneObject {
 
     private static final float NEAR_CLIPPING_OFFSET = 0.00001f;
-    private static final float NORMAL_CURSOR_SIZE = 0.0228f;
+    private static final float DEFAULT_NEAR_CLIPPING_DISTANCE = 0.1f;
+    private static final float NORMAL_CURSOR_SIZE = 0.0028f;
     private static final int CURSOR_RENDER_ORDER = 100000;
 
     private GVRSceneObject rightCursor;
@@ -43,21 +44,31 @@ public class GazeCursorSceneObject extends GVRSceneObject {
 
         float xRightCursor = gvrContext.getMainScene().getMainCameraRig().getRightCamera().getTransform().getPositionX();
         float xLeftCursor = gvrContext.getMainScene().getMainCameraRig().getLeftCamera().getTransform().getPositionX();
-        float zRightCursor = -(((GVRPerspectiveCamera) gvrContext.getMainScene().getMainCameraRig().getRightCamera()).getNearClippingDistance() + NEAR_CLIPPING_OFFSET);
-        float zLeftCursor = -(((GVRPerspectiveCamera) gvrContext.getMainScene().getMainCameraRig().getLeftCamera()).getNearClippingDistance() + NEAR_CLIPPING_OFFSET);
+        float zRightCursor, zLeftCursor;
+        try {
+            zRightCursor = -(((GVRPerspectiveCamera) gvrContext.getMainScene()
+                    .getMainCameraRig().getRightCamera()).getNearClippingDistance() +
+                    NEAR_CLIPPING_OFFSET);
+            zLeftCursor = -(((GVRPerspectiveCamera) gvrContext.getMainScene()
+                    .getMainCameraRig().getLeftCamera()).getNearClippingDistance() +
+                    NEAR_CLIPPING_OFFSET);
+        } catch (ClassCastException e) {
+            // cameras cannot be cast to GVRPerspectiveCamera, use the default clipping distances
+            // instead.
+            zRightCursor = -(DEFAULT_NEAR_CLIPPING_DISTANCE + NEAR_CLIPPING_OFFSET);
+            zLeftCursor = -(DEFAULT_NEAR_CLIPPING_DISTANCE + NEAR_CLIPPING_OFFSET);
+        }
 
         rightCursor = new GVRSceneObject(gvrContext);
         rightCursor.attachRenderData(createRenderData(gvrContext));
         rightCursor.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
         rightCursor.getTransform().setPosition(xRightCursor, 0, zRightCursor);
-        rightCursor.setName("right");
         addChildObject(rightCursor);
 
         leftCursor = new GVRSceneObject(gvrContext);
         leftCursor.attachRenderData(createRenderData(gvrContext));
         leftCursor.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
-        leftCursor.getTransform().setPosition(xLeftCursor, 0,  zLeftCursor);
-        leftCursor.setName("left");
+        leftCursor.getTransform().setPosition(xLeftCursor, 0, zLeftCursor);
         addChildObject(leftCursor);
     }
 

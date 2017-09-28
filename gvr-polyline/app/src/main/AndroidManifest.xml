@@ -23,8 +23,8 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="19" />
+        android:minSdkVersion="21"
+        android:targetSdkVersion="21" />
     
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -34,9 +34,8 @@
     
     <application
         android:allowBackup="true"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <meta-data tools:replace="android:value" android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+        android:label="@string/app_name">
+        <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
         <activity
             android:name="org.gearvrf.polyline.SampleActivity"
             android:screenOrientation="landscape"

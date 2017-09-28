@@ -63,15 +63,15 @@ public class MainActivity extends GVRActivity {
         mTextView.setTextColor(Color.WHITE);
     }
 
-    public GVRView getFrameLayoutLeft() {
+    public GVRFrameLayout getFrameLayoutLeft() {
         return mFrameLayoutLeft;
     }
 
-    public GVRView getWebView() {
+    public GVRWebView getWebView() {
         return mWebView;
     }
 
-    public GVRView getTextView() {
+    public GVRTextView getTextView() {
         return mTextView;
     }
 }

@@ -14,7 +14,6 @@
 
     <application
         android:allowBackup="true"
-        tools:replace="icon,label"
         android:allowClearUserData="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"

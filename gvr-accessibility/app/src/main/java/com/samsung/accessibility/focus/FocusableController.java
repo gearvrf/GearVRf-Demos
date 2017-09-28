@@ -11,39 +11,28 @@
 
 package com.samsung.accessibility.focus;
 
-import java.util.ArrayList;
+import org.gearvrf.GVRSceneObject;
 
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVREyePointeeHolder;
-import org.gearvrf.GVRPicker;
+import java.util.ArrayList;
 
 public final class FocusableController {
 
     public static ArrayList<FocusableSceneObject> interactiveObjects = new ArrayList<FocusableSceneObject>();
 
-    public static void process(GVRContext context) {
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context
-                .getMainScene());
-
+    public static void process(GVRSceneObject pickedObject) {
         ArrayList<FocusableSceneObject> needToDisableFocus = new ArrayList<FocusableSceneObject>();
 
         for (FocusableSceneObject obj : interactiveObjects) {
             needToDisableFocus.add(obj);
         }
 
-        if (eyePointeeHolders.length == 0) {
+        if (pickedObject == null) {
             // GazeController.disableInteractiveCursor();
         } else {
-            for (GVREyePointeeHolder holder : eyePointeeHolders) {
-                for (FocusableSceneObject object : interactiveObjects) {
-                    if (holder.getOwnerObject().equals(object)) {
-                        object.setFocus(true);
-                        object.dispatchInFocus();
-                        needToDisableFocus.remove(object);
-                    }
-                }
-            }
+            FocusableSceneObject object = (FocusableSceneObject) pickedObject;
+            object.setFocus(true);
+            object.dispatchInFocus();
+            needToDisableFocus.remove(object);
         }
 
         for (FocusableSceneObject obj : needToDisableFocus) {
@@ -52,20 +41,12 @@ public final class FocusableController {
 
     }
 
-    public static boolean clickProcess(GVRContext context) {
-
-        GVREyePointeeHolder[] eyePointeeHolders = GVRPicker.pickScene(context
-                .getMainScene());
-
-        for (GVREyePointeeHolder holder : eyePointeeHolders) {
-            for (FocusableSceneObject object : interactiveObjects) {
-                if (holder.getOwnerObject().equals(object)) {
-                    object.dispatchInClick();
-                    return true;
-                }
-            }
+    public static boolean clickProcess(GVRSceneObject pickedObject) {
+        if(pickedObject != null) {
+            FocusableSceneObject object = (FocusableSceneObject) pickedObject;
+            object.dispatchInClick();
+            return true;
         }
-
         return false;
     }
 

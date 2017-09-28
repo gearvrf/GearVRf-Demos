@@ -37,13 +37,16 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.scene_objects.view.GVRView;
+import org.gearvrf.scene_objects.view.GVRWebView;
 
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 
 public class SampleMain extends GVRMain {
+    private static final String TAG = SampleMain.class.getSimpleName();
     private List<GVRSceneObject> objectList = new ArrayList<GVRSceneObject>();
 
     private int currentObject = 0;
@@ -59,24 +62,24 @@ public class SampleMain extends GVRMain {
         GVRScene scene = gvrContext.getMainScene();
 
         // load texture asynchronously
-       GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(gvrContext,
+        GVRTexture futureTexture = gvrContext
+                .getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.gearvr_logo));
-        GVRTexture textureTop =gvrContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(gvrContext,
+        GVRTexture futureTextureTop = gvrContext
+                .getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.top));
-        GVRTexture textureBottom = gvrContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(gvrContext,
+        GVRTexture futureTextureBottom = gvrContext
+                .getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.drawable.bottom));
-        ArrayList<GVRTexture> textureList = new ArrayList<GVRTexture>(
+        ArrayList<GVRTexture> futureTextureList = new ArrayList<GVRTexture>(
                 3);
-        textureList.add(textureTop);
-        textureList.add(texture);
-        textureList.add(textureBottom);
+        futureTextureList.add(futureTextureTop);
+        futureTextureList.add(futureTexture);
+        futureTextureList.add(futureTextureBottom);
 
         // setup material
         GVRMaterial material = new GVRMaterial(gvrContext);
-        material.setMainTexture(texture);
+        material.setMainTexture(futureTexture);
 
         // create a scene object (this constructor creates a rectangular scene
         // object that uses the standard 'unlit' shader)
@@ -90,9 +93,15 @@ public class SampleMain extends GVRMain {
         GVRConeSceneObject coneObject = new GVRConeSceneObject(gvrContext,
                 true, material);
         GVRViewSceneObject webViewObject = createWebViewObject(gvrContext);
-        GVRCameraSceneObject cameraObject = new GVRCameraSceneObject(
-                gvrContext, 3.6f, 2.0f, mActivity.getCamera());
-        cameraObject.setUpCameraForVrMode(1); // set up 60 fps camera preview.
+        GVRCameraSceneObject cameraObject = null;
+        try {
+            cameraObject = new GVRCameraSceneObject(gvrContext, 3.6f, 2.0f);
+            cameraObject.setUpCameraForVrMode(1); // set up 60 fps camera preview.
+        } catch (GVRCameraSceneObject.GVRCameraAccessException e) {
+            // Cannot open camera
+            Log.e(TAG, "Cannot open the camera",e);
+        }
+
         GVRVideoSceneObject videoObject = createVideoObject(gvrContext);
         GVRTextViewSceneObject textViewSceneObject = new GVRTextViewSceneObject(gvrContext, "Hello World!");
         textViewSceneObject.setGravity(Gravity.CENTER);
@@ -103,7 +112,9 @@ public class SampleMain extends GVRMain {
         objectList.add(cylinderObject);
         objectList.add(coneObject);
         objectList.add(webViewObject);
-        objectList.add(cameraObject);
+        if(cameraObject != null) {
+            objectList.add(cameraObject);
+        }
         objectList.add(videoObject);
         objectList.add(textViewSceneObject);
 
@@ -149,7 +160,7 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRViewSceneObject createWebViewObject(GVRContext gvrContext) {
-        GVRView webView = mActivity.getWebView();
+        GVRWebView webView = mActivity.getWebView();
         GVRViewSceneObject webObject = new GVRViewSceneObject(gvrContext,
                 webView, 8.0f, 4.0f);
         webObject.setName("web view object");
@@ -160,6 +171,10 @@ public class SampleMain extends GVRMain {
     }
 
     public void onPause() {
+        if (objectList.isEmpty()) {
+            return;
+        }
+
         GVRSceneObject object = objectList.get(currentObject);
         if (object instanceof GVRVideoSceneObject) {
             GVRVideoSceneObject video = (GVRVideoSceneObject) object;
@@ -192,9 +207,5 @@ public class SampleMain extends GVRMain {
                 GVRRenderData.GVRRenderMaskBit.Left
                         | GVRRenderData.GVRRenderMaskBit.Right);
 
-    }
-
-    @Override
-    public void onStep() {
     }
 }

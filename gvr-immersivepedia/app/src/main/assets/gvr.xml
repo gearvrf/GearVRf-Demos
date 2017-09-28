@@ -23,7 +23,8 @@
         showLoadingIcon="true"
         useProtectedFramebuffer="false"
         useAndroidWearTouchpad="true"
-        useSrgbFramebuffer="false" >
+        useSrgbFramebuffer="false"
+        useMultiview="true">
 
         <mono-mode-parms
             monoFullScreen="false"

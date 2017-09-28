@@ -62,7 +62,9 @@ public class EventsActivity extends GVRActivity {
         super.onCreate(savedInstanceState);
         frameLayout = new GVRFrameLayout(this);
         frameLayout.setBackgroundColor(Color.WHITE);
+        frameLayout.getLayoutParams().height = frameLayout.getLayoutParams().width = 700;
         View.inflate(this, R.layout.activity_main, frameLayout);
+
         button1 = (Button) frameLayout.findViewById(R.id.button1);
         button2 = (Button) frameLayout.findViewById(R.id.button2);
         checkBox = (CheckBox) frameLayout.findViewById(R.id.checkBox);
@@ -74,7 +76,7 @@ public class EventsActivity extends GVRActivity {
         listView.setBackgroundColor(Color.LTGRAY);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, items);
+                R.layout.list_item, items);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(itemClickListener);
         button1.setOnClickListener(clickListener);
