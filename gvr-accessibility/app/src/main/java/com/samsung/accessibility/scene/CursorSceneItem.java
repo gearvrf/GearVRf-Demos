@@ -86,7 +86,6 @@ public class CursorSceneItem extends FocusableSceneObject {
         if (!isAnimating) {
             isAnimating = true;
             if (isActive) {
-                float[] hit = getEyePointeeHolder().getHit();
                 new GVRRelativeMotionAnimation(this, duration, newPosition[0] - initialPosition[0], newPosition[1] - initialPosition[1],
                         newPosition[2] - initialPosition[2]).start(getGVRContext().getAnimationEngine())
                         .setInterpolator(InterpolatorBackEaseOut.getInstance()).setOnFinish(new GVROnFinish() {

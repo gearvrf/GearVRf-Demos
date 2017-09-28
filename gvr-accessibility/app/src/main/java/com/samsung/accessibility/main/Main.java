@@ -14,15 +14,15 @@ import java.util.EnumSet;
 import java.util.Locale;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRScene;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.IPickEvents;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 
 import android.view.MotionEvent;
@@ -51,25 +51,44 @@ public class Main extends GVRMain {
     public static AccessibilityScene accessibilityScene;
     public static AccessibilityManager manager;
 
+    private IPickEvents mPickHandler = new PickHandler();
+    private GVRPicker mPicker;
+    private GVRSceneObject pickedObject = null;
+
+    public class PickHandler implements IPickEvents
+    {
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo){}
+        public void onExit(GVRSceneObject sceneObj){}
+        public void onNoPick(GVRPicker picker) {
+            pickedObject = null;
+        }
+        public void onPick(GVRPicker picker) {
+            GVRPicker.GVRPickedObject[] picked = picker.getPicked();
+            pickedObject = picked[0].getHitObject();
+        }
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+    }
+
     @Override
     public void onInit(final GVRContext gvrContext) {
-        GVRScene scene = gvrContext.getMainScene();
         this.gvrContext = gvrContext;
+
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
-        //gvrContext.getNextMainScene().setFrustumCulling(false);
-        ShortcutMenu shortcutMenu = createShortcut();
-        accessibilityScene = new AccessibilityScene(gvrContext, scene, shortcutMenu);
+        final ShortcutMenu shortcutMenu = createShortcut();
+
+        accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
 
         createPedestalObject();
         createDinossaur();
 
-        cursor.setName("cursor");
-        scene.addSceneObject(shortcutMenu);
-        scene.getMainCameraRig().addChildObject(cursor);
-        scene.addSceneObject(createSkybox());
+        gvrContext.getMainScene().addSceneObject(shortcutMenu);
+        gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
+        gvrContext.getMainScene().addSceneObject(createSkybox());
 
+        gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
     }
 
     private ShortcutMenu createShortcut() {
@@ -80,11 +99,10 @@ public class Main extends GVRMain {
     }
 
     private void createPedestalObject() {
-        GVRAssetLoader loader = gvrContext.getAssetLoader();
-        GVRMesh baseMesh = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
-        GVRMesh bookMesh = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
-        GVRTexture bookTexture = loader.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
-        GVRTexture baseTexture = loader.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.base));
+        GVRMesh bookMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.book));
+        GVRTexture bookTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.book));
+        GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base));
 
         FocusableSceneObject baseObject = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         bookObject = new FocusableSceneObject(gvrContext, bookMesh, bookTexture);
@@ -103,42 +121,37 @@ public class Main extends GVRMain {
     }
 
     private GVRSceneObject createSkybox() {
-        GVRAssetLoader loader = gvrContext.getAssetLoader();
-        GVRMesh mesh = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
-        GVRTexture texture = loader.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
+        GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_walls_mesh));
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(gvrContext, mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
-
         skybox.getTransform().setPositionY(-1.6f);
         skybox.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshGround = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
-        GVRTexture textureGround = loader.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
+        GVRMesh meshGround = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.environment_ground_mesh));
+        GVRTexture textureGround = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.environment_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(gvrContext, meshGround, textureGround);
-
         skyboxGround.getRenderData().setRenderingOrder(0);
 
-        GVRMesh meshFx = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
-        GVRTexture textureFx = loader.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
+        GVRMesh meshFx = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.windows_fx_mesh));
+        GVRTexture textureFx = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(gvrContext, meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(0);
-
         skybox.addChildObject(skyboxFx);
         skybox.addChildObject(skyboxGround);
-
         return skybox;
     }
 
     private void createDinossaur() {
-        GVRAssetLoader loader = gvrContext.getAssetLoader();
+
         EnumSet<GVRImportSettings> additionalSettings = EnumSet
                 .of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
 
         EnumSet<GVRImportSettings> settings = GVRImportSettings
                 .getRecommendedSettingsWith(additionalSettings);
 
-        GVRMesh baseMesh = loader.loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
-        GVRTexture baseTexture = loader.loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
+        GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, R.raw.trex_mesh), settings);
+        GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.trex_tex_diffuse));
         trex = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         trex.getTransform().setPosition(0, -1.6f, -7f);
         trex.getTransform().rotateByAxis(-90, 1, 0, 0);
@@ -149,17 +162,20 @@ public class Main extends GVRMain {
 
     @Override
     public void onStep() {
-        FocusableController.process(gvrContext);
+        FocusableController.process(pickedObject);
     }
 
     public void onSingleTap(MotionEvent e) {
-        FocusableController.clickProcess(gvrContext);
+        FocusableController.clickProcess(pickedObject);
+        gvrContext.getMainScene().getEventReceiver().removeListener(mPickHandler);
+        gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
+        mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
     }
 
     private void activeTalkBack() {
         GVRAccessibilityTalkBack talkBackDinossaur = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Dinossaur");
         trex.setTalkBack(talkBackDinossaur);
-        trex.attachEyePointeeHolder();
+        trex.attachComponent(new GVRSphereCollider(gvrContext));
         trex.setOnFocusListener(new OnFocusListener() {
 
             @Override
@@ -178,17 +194,15 @@ public class Main extends GVRMain {
 
         GVRAccessibilityTalkBack talkBackBook = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Book");
         bookObject.setTalkBack(talkBackBook);
-        bookObject.attachCollider(new GVRMeshCollider(gvrContext, false));
+        bookObject.attachComponent(new GVRSphereCollider(gvrContext));
         bookObject.setOnFocusListener(new OnFocusListener() {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void inFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
             }
 
             @Override
