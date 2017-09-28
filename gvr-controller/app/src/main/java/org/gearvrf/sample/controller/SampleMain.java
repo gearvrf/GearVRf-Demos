@@ -197,7 +197,7 @@ public class SampleMain extends GVRMain
     private CursorControllerListener cursorControllerListener = new CursorControllerListener()
     {
         @Override
-        public void onCursorControllerAdded(GVRCursorController gvrCursorController)
+        synchronized public void onCursorControllerAdded(GVRCursorController gvrCursorController)
         {
             if (mCursorController == gvrCursorController)
             {
