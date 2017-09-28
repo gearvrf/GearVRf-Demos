@@ -73,6 +73,8 @@ public class SampleMain extends GVRMain
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
     private GVRSceneObject mControllerModel;
+    private GVRGearControllerSceneObject mGearModel;
+    private GVRCursorControllerSceneObject mGazeModel;
     private GVRScene mainScene;
     private GVRContext mGVRContext = null;
     private GVRActivity mActivity;
@@ -197,7 +199,7 @@ public class SampleMain extends GVRMain
     private CursorControllerListener cursorControllerListener = new CursorControllerListener()
     {
         @Override
-        public void onCursorControllerAdded(GVRCursorController gvrCursorController)
+        synchronized public void onCursorControllerAdded(GVRCursorController gvrCursorController)
         {
             if (mCursorController == gvrCursorController)
             {
@@ -206,7 +208,6 @@ public class SampleMain extends GVRMain
             if ((gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) &&
                 gvrCursorController.isConnected())
             {
-                mGearController = (GearCursorController) gvrCursorController;
                 if (mCursorController != null)
                 {
                     deselectController();
@@ -216,7 +217,6 @@ public class SampleMain extends GVRMain
             else if ((gvrCursorController.getControllerType() == GVRControllerType.GAZE) &&
                      gvrCursorController.isConnected())
             {
-                mGazeController = (GVRGazeCursorController) gvrCursorController;
                 if (mCursorController == gvrCursorController)
                 {
                     return;
@@ -262,30 +262,41 @@ public class SampleMain extends GVRMain
 
         public void selectGearController(GVRCursorController controller)
         {
-            GVRGearControllerSceneObject controllerModel = new GVRGearControllerSceneObject(mGVRContext);
-            controllerModel.setCursorController(controller);
-            controllerModel.setRayDepth(DEPTH);
-            controllerModel.setCursor(cursor);
-            controllerModel.enableSurfaceProjection();
+            if (mGearModel == null)
+            {
+                mGearModel = new GVRGearControllerSceneObject(mGVRContext);
+                mGearModel.setCursorController(controller);
+                mGearModel.setRayDepth(DEPTH);
+                mGearModel.setCursor(cursor);
+                mGearModel.enableSurfaceProjection();
+            }
             controller.addPickEventListener(mPickHandler);
-            mControllerModel = controllerModel;
+            mControllerModel = mGearModel;
+            mControllerModel.setEnable(true);
             mCursorController = controller;
             mGearController = (GearCursorController) controller;
+            mCursorController.setEnable(true);
         }
 
 
         public void selectGazeController(GVRCursorController controller)
         {
-            GVRCursorControllerSceneObject controllerModel = new GVRCursorControllerSceneObject(mGVRContext);
-            mainScene.getMainCameraRig().getHeadTransformObject().addChildObject(controllerModel);
-            controllerModel.setCursorController(controller);
-            controllerModel.setRayDepth(DEPTH);
-            controllerModel.setCursor(cursor);
-            controllerModel.enableSurfaceProjection();
+            if (mGazeModel != null)
+            {
+                mGazeModel = new GVRCursorControllerSceneObject(mGVRContext);
+                mainScene.getMainCameraRig().getHeadTransformObject().addChildObject(
+                        mGazeModel);
+                mGazeModel.setCursorController(controller);
+                mGazeModel.setRayDepth(DEPTH);
+                mGazeModel.setCursor(cursor);
+                mGazeModel.enableSurfaceProjection();
+            }
             controller.addPickEventListener(mPickHandler);
-            mControllerModel = controllerModel;
+            mControllerModel = mGazeModel;
+            mControllerModel.setEnable(true);
             mCursorController = controller;
             mGazeController = (GVRGazeCursorController) controller;
+            mCursorController.setEnable(true);
         }
 
         public void deselectController()
@@ -299,7 +310,6 @@ public class SampleMain extends GVRMain
             if (mControllerModel != null)
             {
                 mControllerModel.setEnable(false);
-                mControllerModel.getParent().removeChildObject(mControllerModel);
                 mControllerModel = null;
             }
         }
