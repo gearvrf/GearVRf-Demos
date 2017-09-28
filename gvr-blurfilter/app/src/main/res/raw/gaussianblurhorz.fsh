@@ -4,7 +4,7 @@
 #extension GL_OES_EGL_image_external : enable
 #extension GL_OES_EGL_image_external_essl3 : enable
 precision highp float;
-uniform float u_resolution;
+@MATERIAL_UNIFORMS
 uniform samplerExternalOES main_texture;
 
 layout (location = 0) in vec2 vTextureCoord;
