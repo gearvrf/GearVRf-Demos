@@ -2,6 +2,7 @@
 #extension GL_ARB_shading_language_420pack : enable
 
 precision mediump float;
+
 layout ( location = 0 ) in vec2  coord;
 layout(set = 0, binding = 4) uniform sampler2D u_texture;
 
@@ -21,4 +22,6 @@ void main() {
 	}
 	if(color.a < 1.0)
 		outColor = vec4(0,0,0,0);
+
+	//
 }
