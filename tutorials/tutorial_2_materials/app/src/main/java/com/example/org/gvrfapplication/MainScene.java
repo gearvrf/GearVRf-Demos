@@ -33,6 +33,7 @@ public class MainScene extends GVRMain {
         flatMaterial = new GVRMaterial(gvrContext);
         flatMaterial.setColor(1.0f, 1.0f, 1.0f);
 
+        //Create Sphere with solid color
         mSphere = new GVRSphereSceneObject(gvrContext);
         mSphere.getTransform().setPosition(2, 0, -3);
         mSphere.getRenderData().setMaterial(flatMaterial);
@@ -53,9 +54,6 @@ public class MainScene extends GVRMain {
         mCube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         gvrContext.getMainScene().addSceneObject(mCube);
 
-
-        //Create Sphere with solid color
-        mSphere = new GVRSphereSceneObject(gvrContext);
 
         /**************************
          * Create Light
