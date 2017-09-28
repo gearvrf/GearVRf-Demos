@@ -35,7 +35,6 @@ import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.concurrent.Future;
 
 public final class CubemapMain extends GVRMain {
 
@@ -56,7 +55,7 @@ public final class CubemapMain extends GVRMain {
     //    (method C)
     // 4: surrounding cylinder using GVRCylinderSceneObject
     // 5: surrounding cube using six GVRSceneOjbects (quads)
-    private int mEnvironmentType = 1;
+    private int mEnvironmentType = 2;
 
     // Type of object for the reflective object
     // 0: reflective sphere using GVRSphereSceneObject
@@ -245,8 +244,9 @@ public final class CubemapMain extends GVRMain {
                 break;
         }
 
-        GVRMaterial cubemapReflectionMaterial = new GVRMaterial(mGVRContext);
+        GVRMaterial cubemapReflectionMaterial = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.CubemapReflection.ID);
         cubemapReflectionMaterial.setTexture("diffuseTexture", mCubemapTexture);
+        cubemapReflectionMaterial.setMainTexture(mCubemapTexture);
 
         GVRSceneObject sphere = null;
         switch (mReflectiveType) {
