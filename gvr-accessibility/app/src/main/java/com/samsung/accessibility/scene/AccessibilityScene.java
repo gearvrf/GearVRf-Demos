@@ -176,19 +176,22 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private void applyShaderOnSkyBox(GVRSceneObject skyBox) {
-        AccessibilitySceneShader shader = new AccessibilitySceneShader(gvrContext);
-        applyShader(shader, skyBox);
+        applyShader(skyBox);
         for (GVRSceneObject object : skyBox.getChildren()) {
-            applyShader(shader, object);
+            applyShader(object);
         }
     }
 
-    private void applyShader(AccessibilitySceneShader shader, GVRSceneObject object) {
+    private void applyShader(GVRSceneObject object) {
         if (object != null && object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-            object.getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(AccessibilitySceneShader.class)));
-            object.getRenderData().getMaterial().setTexture(AccessibilitySceneShader.TEXTURE_KEY,
-                    object.getRenderData().getMaterial().getMainTexture());
+
+            GVRMaterial shader = new GVRMaterial(gvrContext, new GVRShaderId(AccessibilitySceneShader.class));
+            GVRTexture texture = object.getRenderData().getMaterial().getMainTexture();
+
+            object.getRenderData().setMaterial(shader);
             object.getRenderData().getMaterial().setFloat(AccessibilitySceneShader.BLUR_INTENSITY, 1);
+            object.getRenderData().getMaterial().setTexture(AccessibilitySceneShader.TEXTURE_KEY,
+                    texture);
         }
     }
 
