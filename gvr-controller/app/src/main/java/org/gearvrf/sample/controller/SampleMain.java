@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 package org.gearvrf.sample.controller;
-import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -36,17 +36,22 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.IPickEvents;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GearCursorController;
+import org.gearvrf.io.GVRGazeCursorController;
+
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRCursorControllerSceneObject;
 import org.gearvrf.scene_objects.GVRGearControllerSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 
-public class SampleMain extends GVRMain {
+public class SampleMain extends GVRMain
+{
     private static final String TAG = "SampleMain";
 
     private static final float UNPICKED_COLOR_R = 0.7f;
@@ -67,31 +72,35 @@ public class SampleMain extends GVRMain {
     private static final float SCALE = 200.0f;
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
-    private GVRGearControllerSceneObject controller;
-
+    private GVRSceneObject mControllerModel;
+    private GVRGearControllerSceneObject mGearModel;
+    private GVRCursorControllerSceneObject mGazeModel;
     private GVRScene mainScene;
-
-    private enum ButtonState {
-        UP,
-        DOWN
-    }
-
     private GVRContext mGVRContext = null;
-    private PickHandler mPickHandler = new PickHandler();
-    private GVRSceneObject selectedObject;
-
     private GVRActivity mActivity;
-    private GVRPicker mPicker;
+    private GearCursorController mGearController;
+    private GVRGazeCursorController mGazeController;
+    private GVRCursorController mCursorController;
+    private GVRSceneObject cursor;
 
-    SampleMain(GVRActivity activity) {
+    SampleMain(GVRActivity activity)
+    {
         mActivity = activity;
     }
 
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext)
+    {
         mGVRContext = gvrContext;
         mainScene = mGVRContext.getMainScene();
         mainScene.getEventReceiver().addListener(mPickHandler);
+        GVRInputManager inputManager = mGVRContext.getInputManager();
+        inputManager.addCursorControllerListener(cursorControllerListener);
+        cursor = new GVRSceneObject(mGVRContext, mGVRContext.createQuad(1f, 1f),
+                                    mGVRContext.getAssetLoader().loadTexture(
+                                    new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+        cursor.getRenderData().setDepthTest(false);
+        cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         /*
          * Adding Boards
@@ -135,16 +144,20 @@ public class SampleMain extends GVRMain {
         object.getTransform().setPosition(-BOARD_OFFSET, -BOARD_OFFSET, DEPTH);
         attachSphereCollider(object);
         mainScene.addSceneObject(object);
-        mPicker = new GVRPicker(mGVRContext, mainScene);
 
         GVRMesh mesh = null;
-        try {
-            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
-        } catch (IOException e) {
+        try
+        {
+            mesh = mGVRContext.getAssetLoader().loadMesh(
+                    new GVRAndroidResource(mGVRContext, "bunny.obj"));
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
             mesh = null;
         }
-        if (mesh == null) {
+        if (mesh == null)
+        {
             mActivity.finish();
             Log.e(TAG, "Mesh was not loaded. Stopping application!");
         }
@@ -173,17 +186,9 @@ public class SampleMain extends GVRMain {
         attachBoundsCollider(object);
         mainScene.addSceneObject(object);
 
-
         GVRAssetLoader assetLoader = gvrContext.getAssetLoader();
-
-        GVRInputManager inputManager = gvrContext.getInputManager();
-        inputManager.addCursorControllerListener(cursorControllerListener);
-        for (GVRCursorController cursor : inputManager.getCursorControllers()) {
-            cursorControllerListener.onCursorControllerAdded(cursor);
-        }
-
-        Future<GVRTexture> futureTexture = assetLoader.loadFutureTexture(new
-                GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
+        Future<GVRTexture> futureTexture = assetLoader.loadFutureTexture(
+                new GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRSphereSceneObject skyBox = new GVRSphereSceneObject(gvrContext, false, material);
         skyBox.getTransform().setScale(SCALE, SCALE, SCALE);
@@ -191,133 +196,227 @@ public class SampleMain extends GVRMain {
         mainScene.addSceneObject(skyBox);
     }
 
-    private CursorControllerListener cursorControllerListener = new CursorControllerListener() {
+    private CursorControllerListener cursorControllerListener = new CursorControllerListener()
+    {
         @Override
-        public void onCursorControllerAdded(GVRCursorController gvrCursorController) {
-
-            if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
-                android.util.Log.d(TAG, "Got the orientation remote controller");
-                GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
-                        mGVRContext.createQuad(1f, 1f),
-                        mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
-                cursor.getRenderData().setDepthTest(false);
-                cursor.getRenderData().setRenderingOrder(100000);
-                controller = new GVRGearControllerSceneObject(mGVRContext);
-                controller.setCursorController(gvrCursorController);
-                mPicker.setPickRay(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, DEPTH);
-                controller.setRayDepth(DEPTH);
-                controller.setCursor(cursor);
-                controller.attachComponent(mPicker);
-                gvrCursorController.addControllerEventListener(controllerEventListener);
-            }else{
+        synchronized public void onCursorControllerAdded(GVRCursorController gvrCursorController)
+        {
+            if (mCursorController == gvrCursorController)
+            {
+                return;
+            }
+            if ((gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) &&
+                gvrCursorController.isConnected())
+            {
+                if (mCursorController != null)
+                {
+                    deselectController();
+                }
+                selectGearController(gvrCursorController);
+            }
+            else if ((gvrCursorController.getControllerType() == GVRControllerType.GAZE) &&
+                     gvrCursorController.isConnected())
+            {
+                if (mCursorController == gvrCursorController)
+                {
+                    return;
+                }
+                if ((mCursorController == null) ||
+                    mCursorController.getControllerType() != GVRControllerType.CONTROLLER)
+                {
+                    selectGazeController(gvrCursorController);
+                }
+                else
+                {
+                    gvrCursorController.setEnable(false);
+                }
+            }
+            else
+            {
                 gvrCursorController.setEnable(false);
             }
         }
 
         @Override
-        public void onCursorControllerRemoved(GVRCursorController gvrCursorController) {
-            if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
-                android.util.Log.d(TAG, "Got the orientation remote controller");
-                gvrCursorController.removeControllerEventListener(controllerEventListener);
-                gvrCursorController.resetSceneObject();
+        public void onCursorControllerRemoved(GVRCursorController gvrCursorController)
+        {
+            if (gvrCursorController == mCursorController)
+            {
+                deselectController();
             }
-        }
-    };
-
-    private GVRCursorController.ControllerEventListener controllerEventListener = new
-            GVRCursorController.ControllerEventListener() {
-        @Override
-        public void onEvent(GVRCursorController gvrCursorController) {
-            KeyEvent keyEvent = gvrCursorController.getKeyEvent();
-            if(keyEvent != null){
-                mPickHandler.setClicked(keyEvent.getAction() == KeyEvent.ACTION_DOWN);
+            if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER)
+            {
+                android.util.Log.d(TAG, "Removed remote orientation controller");
             }
-        }
-    };
-
-
-
-    private class PickHandler implements IPickEvents {
-        boolean clicked = false;
-        boolean prevClicked = false;
-        ButtonState state = ButtonState.UP;
-
-        public void setClicked(boolean clicked) {
-            prevClicked = this.clicked;
-            this.clicked = clicked;
-
-            if (clicked && !prevClicked) {
-                state = ButtonState.DOWN;
-            } else if (!clicked && prevClicked) {
-                state = ButtonState.UP;
-            }
-
-            if (state == ButtonState.UP && selectedObject != null) {
-                GVRTransform selectedTransform = selectedObject.getTransform();
-                Matrix4f cursorModelMatrix = controller.getTransform().getModelMatrix4f();
-                controller.removeChildObject(selectedObject);
-                mainScene.addSceneObject(selectedObject);
-                Matrix4f selectedModelMatrix = selectedTransform.getModelMatrix4f();
-                selectedTransform.setModelMatrix(cursorModelMatrix.mul(selectedModelMatrix));
-                selectedObject.getCollider().setEnable(true);
-                selectedObject = null;
+            else if (gvrCursorController.getControllerType() == GVRControllerType.GAZE)
+            {
+                android.util.Log.d(TAG, "Removed gaze controller");
             }
         }
 
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            if (!clicked) {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
-                        PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
-            } else {
+        public void onCursorControllerActive(GVRCursorController gvrCursorController)
+        {
+            onCursorControllerAdded(gvrCursorController);
+        }
 
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
-                        CLICKED_COLOR_G, CLICKED_COLOR_B, CLICKED_COLOR_A);
+
+        public void selectGearController(GVRCursorController controller)
+        {
+            if (mGearModel == null)
+            {
+                mGearModel = new GVRGearControllerSceneObject(mGVRContext);
+                mGearModel.setCursorController(controller);
+                mGearModel.setRayDepth(DEPTH);
+                mGearModel.setCursor(cursor);
+                mGearModel.enableSurfaceProjection();
+            }
+            controller.addPickEventListener(mPickHandler);
+            mControllerModel = mGearModel;
+            mControllerModel.setEnable(true);
+            mCursorController = controller;
+            mGearController = (GearCursorController) controller;
+            mCursorController.setEnable(true);
+        }
+
+
+        public void selectGazeController(GVRCursorController controller)
+        {
+            if (mGazeModel != null)
+            {
+                mGazeModel = new GVRCursorControllerSceneObject(mGVRContext);
+                mainScene.getMainCameraRig().getHeadTransformObject().addChildObject(
+                        mGazeModel);
+                mGazeModel.setCursorController(controller);
+                mGazeModel.setRayDepth(DEPTH);
+                mGazeModel.setCursor(cursor);
+                mGazeModel.enableSurfaceProjection();
+            }
+            controller.addPickEventListener(mPickHandler);
+            mControllerModel = mGazeModel;
+            mControllerModel.setEnable(true);
+            mCursorController = controller;
+            mGazeController = (GVRGazeCursorController) controller;
+            mCursorController.setEnable(true);
+        }
+
+        public void deselectController()
+        {
+            if (mCursorController != null)
+            {
+                mCursorController.removePickEventListener(mPickHandler);
+                mCursorController.setEnable(false);
+                mCursorController = null;
+            }
+            if (mControllerModel != null)
+            {
+                mControllerModel.setEnable(false);
+                mControllerModel = null;
             }
         }
 
-        public void onExit(GVRSceneObject sceneObj) {
-            if (selectedObject != sceneObj) {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", UNPICKED_COLOR_R,
-                        UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
-            }
-        }
-
-        public void onNoPick(GVRPicker picker) {
-        }
-
-        public void onPick(GVRPicker picker) {
-        }
-
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            if (!clicked) {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
-                        PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
-            } else {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
-                        CLICKED_COLOR_G, CLICKED_COLOR_B, CLICKED_COLOR_A);
-                if (state == ButtonState.DOWN && selectedObject == null) {
-                    sceneObj.getCollider().setEnable(false);
-                    selectedObject = sceneObj;
-                    Matrix4f matrix4f = controller.getTransform().getModelMatrix4f();
-                    Matrix4f selectedModelMatrix = selectedObject.getTransform().getModelMatrix4f();
-                    matrix4f.invert();
-                    selectedObject.getTransform().setModelMatrix(matrix4f.mul(selectedModelMatrix));
-                    mainScene.removeSceneObject(selectedObject);
-                    controller.addChildObject(selectedObject);
+        public void onCursorControllerInactive(GVRCursorController gvrCursorController)
+        {
+            if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER)
+            {
+                android.util.Log.d(TAG, "Deactivated orientation remote controller");
+                deselectController();
+                if (mGazeController != null)
+                {
+                    selectGazeController(mGazeController);
                 }
             }
+            else if (gvrCursorController.getControllerType() == GVRControllerType.GAZE)
+            {
+                android.util.Log.d(TAG, "Deactivate gaze controller");
+            }
         }
-    }
+
+    };
+
+    private ITouchEvents mPickHandler = new ITouchEvents()
+    {
+        private GVRSceneObject movingObject;
+
+        private void stopMove()
+        {
+            GVRTransform objTrans = movingObject.getTransform();
+            Matrix4f cursorMatrix = mControllerModel.getTransform().getModelMatrix4f();
+            mControllerModel.removeChildObject(movingObject);
+            mainScene.addSceneObject(movingObject);
+            Matrix4f objMatrix = objTrans.getModelMatrix4f();
+            objTrans.setModelMatrix(cursorMatrix.mul(objMatrix));
+            movingObject = null;
+        }
+
+        private void startMove(GVRSceneObject sceneObj)
+        {
+            GVRTransform objTrans = sceneObj.getTransform();
+            movingObject = sceneObj;
+            Matrix4f controllerMtx = mControllerModel.getTransform().getModelMatrix4f();
+            Matrix4f objMatrix = objTrans.getModelMatrix4f();
+            controllerMtx.invert();
+            objTrans.setModelMatrix(controllerMtx.mul(objMatrix));
+            mainScene.removeSceneObject(sceneObj);
+            mControllerModel.addChildObject(sceneObj);
+        }
+
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
+                                                           PICKED_COLOR_G, PICKED_COLOR_B,
+                                                           PICKED_COLOR_A);
+        }
+
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if ((mControllerModel != null) && (movingObject == null))
+            {
+                sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
+                                                               CLICKED_COLOR_G, CLICKED_COLOR_B,
+                                                               CLICKED_COLOR_A);
+                startMove(sceneObj);
+            }
+        }
+
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
+                                                           PICKED_COLOR_G, PICKED_COLOR_B,
+                                                           PICKED_COLOR_A);
+            if ((mControllerModel != null) && (sceneObj == movingObject))
+            {
+                stopMove();
+            }
+        }
+
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", UNPICKED_COLOR_R,
+                                                           UNPICKED_COLOR_G, UNPICKED_COLOR_B,
+                                                           UNPICKED_COLOR_A);
+            if ((mControllerModel != null) && (sceneObj == movingObject))
+            {
+                stopMove();
+            }
+        }
+
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+        }
+
+    };
 
     @Override
-    public void onStep() {
+    public void onStep()
+    {
 
     }
 
-    private GVRSceneObject getColorBoard() {
+    private GVRSceneObject getColorBoard()
+    {
         GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
         material.setVec4("u_color", UNPICKED_COLOR_R,
-                UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
+                         UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         GVRCubeSceneObject board = new GVRCubeSceneObject(mGVRContext);
         board.getRenderData().setMaterial(material);
         board.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
@@ -325,10 +424,11 @@ public class SampleMain extends GVRMain {
         return board;
     }
 
-    private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
+    private GVRSceneObject getColorMesh(float scale, GVRMesh mesh)
+    {
         GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
         material.setVec4("u_color", UNPICKED_COLOR_R,
-                UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
+                         UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
 
         GVRSceneObject meshObject = new GVRSceneObject(mGVRContext, mesh);
         meshObject.getTransform().setScale(scale, scale, scale);
@@ -338,15 +438,18 @@ public class SampleMain extends GVRMain {
         return meshObject;
     }
 
-    private void attachMeshCollider(GVRSceneObject sceneObject) {
+    private void attachMeshCollider(GVRSceneObject sceneObject)
+    {
         sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, false));
     }
 
-    private void attachSphereCollider(GVRSceneObject sceneObject) {
+    private void attachSphereCollider(GVRSceneObject sceneObject)
+    {
         sceneObject.attachComponent(new GVRSphereCollider(mGVRContext));
     }
 
-    private void attachBoundsCollider(GVRSceneObject sceneObject) {
+    private void attachBoundsCollider(GVRSceneObject sceneObject)
+    {
         sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, true));
     }
 }
