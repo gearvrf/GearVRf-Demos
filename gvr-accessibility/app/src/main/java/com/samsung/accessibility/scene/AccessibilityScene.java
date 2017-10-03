@@ -176,7 +176,6 @@ public class AccessibilityScene extends GVRScene {
     }
 
     private void applyShaderOnSkyBox(GVRSceneObject skyBox) {
-        GVRMaterial shader = new GVRMaterial(gvrContext, new GVRShaderId(AccessibilitySceneShader.class));
         applyShader(skyBox);
         for (GVRSceneObject object : skyBox.getChildren()) {
             applyShader(object);
