@@ -3,7 +3,7 @@
     android:layout_width="500dp"
     android:layout_height="300dp"
     android:orientation="vertical"
-    android:background="@color/alignment_marker_color"
+    android:background="@color/gvr_keyboardview_alignment_marker_color"
     android:padding="20dp">
 
     <TextView
