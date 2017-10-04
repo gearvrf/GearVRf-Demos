@@ -24,6 +24,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -58,17 +59,16 @@ public class EventsActivity extends GVRActivity {
         super.onCreate(savedInstanceState);
         frameLayout = new GVRFrameLayout(this);
         frameLayout.setBackgroundColor(Color.WHITE);
-        frameLayout.getLayoutParams().height = frameLayout.getLayoutParams().width = 700;
+        frameLayout.setLayoutParams(new FrameLayout.LayoutParams(700, 700));
         View.inflate(this, R.layout.activity_main, frameLayout);
 
         button1 = (Button) frameLayout.findViewById(R.id.button1);
         button2 = (Button) frameLayout.findViewById(R.id.button2);
         checkBox = (CheckBox) frameLayout.findViewById(R.id.checkBox);
         keyTextView = (TextView) frameLayout.findViewById(R.id.keyTextView);
-        buttonTextView = (TextView) frameLayout
-                .findViewById(R.id.buttonTextView);
+        buttonTextView = (TextView) frameLayout.findViewById(R.id.buttonTextView);
         listTextView = (TextView) frameLayout.findViewById(R.id.listTextView);
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) frameLayout.findViewById(R.id.listView);
         listView.setBackgroundColor(Color.LTGRAY);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
