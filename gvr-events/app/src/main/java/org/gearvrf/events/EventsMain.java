@@ -15,6 +15,9 @@
 
 package org.gearvrf.events;
 
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Message;
 import android.view.InputDevice;
@@ -29,22 +32,28 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
+import org.gearvrf.IActivityEvents;
 import org.gearvrf.ISensorEvents;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.SensorEvent;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.scene_objects.GVRKeyboardSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.List;
 
 public class EventsMain extends GVRMain {
-    private static final String TAG = EventsMain.class.getSimpleName();
     private static final int KEY_EVENT = 1;
     private static final int MOTION_EVENT = 2;
 
@@ -120,23 +129,29 @@ public class EventsMain extends GVRMain {
         frameHeight = frameLayout.getHeight();
 
         // set up the input manager for the main scene
-        GVRInputManager inputManager = gvrContext.getInputManager();
-        inputManager.addCursorControllerListener(listener);
-        for (GVRCursorController cursor : inputManager.getCursorControllers()) {
-            listener.onCursorControllerAdded(cursor);
-        }
+        gvrContext.getInputManager().addCursorControllerListener(listener);
+
         GVRBaseSensor sensor = new GVRBaseSensor(gvrContext);
         layoutSceneObject.getEventReceiver().addListener(eventListener);
-        layoutSceneObject.setSensor(sensor);
+        layoutSceneObject.attachComponent(sensor);
+
+        mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
+        mPicker.getEventReceiver().addListener(GVRBaseSensor.getPickHandler());
+        mPicker.getEventReceiver().addListener(mTouchManager);
+        gvrContext.getActivity().getEventReceiver().addListener(mActivityEventsHandler);
     }
+    GVRPicker mPicker;
+    private static final float SCALE = 10.0f;
+
+    private float savedMotionEventX, savedMotionEventY, savedHitPointX,
+            savedHitPointY;
 
     private ISensorEvents eventListener = new ISensorEvents() {
-        private static final float SCALE = 10.0f;
-        private float savedMotionEventX, savedMotionEventY, savedHitPointX,
-                savedHitPointY;
-
         @Override
         public void onSensorEvent(SensorEvent event) {
+            if (null == event.getCursorController()) {
+                return;
+            }
             List<MotionEvent> motionEvents = event.getCursorController().getMotionEvents();
 
             for (MotionEvent motionEvent : motionEvents) {
@@ -206,15 +221,90 @@ public class EventsMain extends GVRMain {
                 controller.setPosition(0.0f, 0.0f, DEPTH);
                 controller.setNearDepth(DEPTH);
                 controller.setFarDepth(DEPTH);
+                controller.setEnable(true);
             } else {
                 // disable all other types
                 controller.setEnable(false);
             }
         }
+
+        @Override
+        public void onCursorControllerActive(GVRCursorController controller) {
+        }
+        @Override
+        public void onCursorControllerInactive(GVRCursorController controller) {
+        }
     };
 
-    @Override
-    public void onStep() {
-        // unused
-    }
+    private IActivityEvents mActivityEventsHandler = new GVREventListeners.ActivityEvents()
+    {
+        @Override
+        public void dispatchTouchEvent(MotionEvent event)
+        {
+            int action = event.getAction();
+            boolean touched = (action == MotionEvent.ACTION_DOWN) ||
+                    (action == MotionEvent.ACTION_MOVE);
+            mPicker.processPick(touched, event);
+        }
+    };
+
+    private ITouchEvents mTouchManager = new ITouchEvents()
+    {
+        private GVRSceneObject mCurrentKey; // top key picked
+        private boolean mInsideKeyboard;    // true if inside keyboard
+
+        public void onEnter(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
+        {
+        }
+
+        @Override
+        public void onExit(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
+        {
+        }
+
+        @Override
+        public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
+        {
+            MotionEvent motionEvent = pickInfo.motionEvent;
+            if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+                pointerCoords.x = savedHitPointX
+                        + ((motionEvent.getX() - savedMotionEventX) * SCALE);
+                pointerCoords.y = savedHitPointY
+                        + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+            } else {
+                float[] hitPoint = pickInfo.getHitLocation();
+                pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
+                pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
+
+                if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                    // save the co ordinates on down
+                    savedMotionEventX = motionEvent.getX();
+                    savedMotionEventY = motionEvent.getY();
+
+                    savedHitPointX = pointerCoords.x;
+                    savedHitPointY = pointerCoords.y;
+                }
+            }
+
+            final MotionEvent clone = MotionEvent.obtain(
+                    motionEvent.getDownTime(), motionEvent.getEventTime(),
+                    motionEvent.getAction(), 1, pointerProperties,
+                    pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
+                    InputDevice.SOURCE_TOUCHSCREEN, 0);
+
+            Message message = Message.obtain(mainThreadHandler, MOTION_EVENT, 0, 0,
+                    clone);
+            mainThreadHandler.sendMessage(message);
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
+        {
+        }
+
+        public void onInside(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
+        {
+        }
+    };
+
 }
