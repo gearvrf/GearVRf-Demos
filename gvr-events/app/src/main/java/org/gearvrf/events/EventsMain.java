@@ -155,35 +155,7 @@ public class EventsMain extends GVRMain {
             List<MotionEvent> motionEvents = event.getCursorController().getMotionEvents();
 
             for (MotionEvent motionEvent : motionEvents) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    pointerCoords.x = savedHitPointX
-                            + ((motionEvent.getX() - savedMotionEventX) * SCALE);
-                    pointerCoords.y = savedHitPointY
-                            + ((motionEvent.getY() - savedMotionEventY) * SCALE);
-                } else {
-                    float[] hitPoint = event.getPickedObject().getHitLocation();
-                    pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
-                    pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
-
-                    if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                        // save the co ordinates on down
-                        savedMotionEventX = motionEvent.getX();
-                        savedMotionEventY = motionEvent.getY();
-
-                        savedHitPointX = pointerCoords.x;
-                        savedHitPointY = pointerCoords.y;
-                    }
-                }
-
-                final MotionEvent clone = MotionEvent.obtain(
-                        motionEvent.getDownTime(), motionEvent.getEventTime(),
-                        motionEvent.getAction(), 1, pointerProperties,
-                        pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
-                        InputDevice.SOURCE_TOUCHSCREEN, 0);
-
-                Message message = Message.obtain(mainThreadHandler, MOTION_EVENT, 0, 0,
-                        clone);
-                mainThreadHandler.sendMessage(message);
+                sendEvent(event.getPickedObject());
             }
 
             List<KeyEvent> keyEvents = event.getCursorController().getKeyEvents();
@@ -265,46 +237,51 @@ public class EventsMain extends GVRMain {
         @Override
         public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
         {
-            MotionEvent motionEvent = pickInfo.motionEvent;
-            if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                pointerCoords.x = savedHitPointX
-                        + ((motionEvent.getX() - savedMotionEventX) * SCALE);
-                pointerCoords.y = savedHitPointY
-                        + ((motionEvent.getY() - savedMotionEventY) * SCALE);
-            } else {
-                float[] hitPoint = pickInfo.getHitLocation();
-                pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
-                pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
-
-                if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                    // save the co ordinates on down
-                    savedMotionEventX = motionEvent.getX();
-                    savedMotionEventY = motionEvent.getY();
-
-                    savedHitPointX = pointerCoords.x;
-                    savedHitPointY = pointerCoords.y;
-                }
-            }
-
-            final MotionEvent clone = MotionEvent.obtain(
-                    motionEvent.getDownTime(), motionEvent.getEventTime(),
-                    motionEvent.getAction(), 1, pointerProperties,
-                    pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
-                    InputDevice.SOURCE_TOUCHSCREEN, 0);
-
-            Message message = Message.obtain(mainThreadHandler, MOTION_EVENT, 0, 0,
-                    clone);
-            mainThreadHandler.sendMessage(message);
+            sendEvent(pickInfo);
         }
 
         @Override
         public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
         {
+            sendEvent(pickInfo);
         }
 
         public void onInside(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickInfo)
         {
         }
     };
+
+    private void sendEvent(GVRPicker.GVRPickedObject pickInfo) {
+        MotionEvent motionEvent = pickInfo.motionEvent;
+        if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
+            pointerCoords.x = savedHitPointX
+                    + ((motionEvent.getX() - savedMotionEventX) * SCALE);
+            pointerCoords.y = savedHitPointY
+                    + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+        } else {
+            float[] hitPoint = pickInfo.getHitLocation();
+            pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
+            pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
+
+            if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                // save the co ordinates on down
+                savedMotionEventX = motionEvent.getX();
+                savedMotionEventY = motionEvent.getY();
+
+                savedHitPointX = pointerCoords.x;
+                savedHitPointY = pointerCoords.y;
+            }
+        }
+
+        final MotionEvent clone = MotionEvent.obtain(
+                motionEvent.getDownTime(), motionEvent.getEventTime(),
+                motionEvent.getAction(), 1, pointerProperties,
+                pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
+                InputDevice.SOURCE_TOUCHSCREEN, 0);
+
+        Message message = Message.obtain(mainThreadHandler, MOTION_EVENT, 0, 0,
+                clone);
+        mainThreadHandler.sendMessage(message);
+    }
 
 }
