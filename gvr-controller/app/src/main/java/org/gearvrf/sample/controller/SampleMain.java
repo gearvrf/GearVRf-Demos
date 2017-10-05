@@ -281,7 +281,7 @@ public class SampleMain extends GVRMain
 
         public void selectGazeController(GVRCursorController controller)
         {
-            if (mGazeModel != null)
+            if (mGazeModel == null)
             {
                 mGazeModel = new GVRCursorControllerSceneObject(mGVRContext);
                 mainScene.getMainCameraRig().getHeadTransformObject().addChildObject(
