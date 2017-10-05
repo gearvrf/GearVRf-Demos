@@ -17,18 +17,16 @@
 package org.gearvrf.widgetViewer;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 
-public class GlassShader2 extends GVRShaderTemplate {
+public class GlassShader2  extends GVRShader {
 
     public static final String COLOR_KEY = "u_color";
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
     public static final String RADIUS_KEY = "u_radius";
-    public static final String TEXTURE_KEY = "intexture";
+    public static final String TEXTURE_KEY = "u_texture";
 
     public static final String MAT1_KEY = "u_mat1";
     public static final String MAT2_KEY = "u_mat2";
@@ -36,22 +34,20 @@ public class GlassShader2 extends GVRShaderTemplate {
     public static final String MAT4_KEY = "u_mat4";
 
     private static final String VERTEX_SHADER = "" //
-          //  + "#version 300 es\n"
-            + "in vec4 a_position;\n"
-            + "in vec3 a_normal;\n" //
-            + "in vec2 a_texcoord;\n"
-            + "uniform mat4 u_mvp;\n" //
-            + "uniform vec4 u_mat1;\n"
-            + "uniform vec4 u_mat2;\n" //
-            + "uniform vec4 u_mat3;\n"
-            + "uniform vec4 u_mat4;\n" //
-            + "uniform vec3 u_eye;\n"
-            + "uniform vec3 u_light;\n" //
-            + "out vec3  n;\n"
-            + "out vec3  v;\n" //
-            + "out vec3  l;\n"
-            + "out vec3  p;\n" //
-            + "out vec2  coord;\n"
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
+            + "precision mediump float;\n"
+
+            + "layout(location = 0) in vec3 a_position;\n"
+            + "layout(location = 2) in vec3 a_normal;\n" //
+            + "layout(location = 1) in vec2 a_texcoord;\n"
+            + "@MATRIX_UNIFORMS\n"
+            + "@MATERIAL_UNIFORMS\n"
+            + "layout(location = 0) out vec3  n;\n"
+            + "layout(location = 1) out vec3  v;\n" //
+            + "layout(location = 2) out vec3  l;\n"
+            + "layout(location = 3) out vec3  p;\n" //
+            + "layout(location = 4) out vec2  coord;\n"
             + "void main() {\n" //
             + "  mat4 model;\n" //
             + "  model[0] = u_mat1;\n"
@@ -59,33 +55,32 @@ public class GlassShader2 extends GVRShaderTemplate {
             + "  model[2] = u_mat3;\n"
             + "  model[3] = u_mat4;\n" //
             + "  model = inverse(model);\n"
-            + "  vec4 pos = model*a_position;\n"
+            + "  vec4 pos = model*vec4(a_position,1.0);\n"
             + "  vec4 nrm = model*vec4(a_normal,1.0);\n"
             + "  n = normalize(nrm.xyz);\n"
-            + "  v = normalize(u_eye-pos.xyz);\n"
-            + "  l = normalize(u_light-pos.xyz);\n" //
+            + "  v = normalize(vec3(u_eye.x, u_eye.y, u_eye.z)-pos.xyz);\n"
+            + "  l = normalize(vec3(u_light.x, u_light.y, u_light.z)-pos.xyz);\n" //
             + "  p = pos.xyz;\n" //
             + "  coord = a_texcoord;\n"
-            + "  gl_Position = u_mvp*a_position;\n" //
+            + "  gl_Position = u_mvp*vec4(a_position,1.0);\n" //
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
-        //    + "#version 300 es\n"
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
             + "precision mediump float;\n"
-            + "in vec2  coord;\n"
-            + "uniform vec4  u_color;\n"
-            + "uniform float u_radius;\n"
-            + "in vec3  n;\n"
-            + "in vec3  v;\n"
-            + "in vec3  l;\n"
-            + "in vec3  p;\n"
-            + "uniform sampler2D intexture;\n"
-            + "out vec4 FragColor;\n"
+            + "@MATERIAL_UNIFORMS\n"
+            + "layout(location = 0) in vec3  n;\n"
+            + "layout(location = 1) in vec3  v;\n" //
+            + "layout(location = 2) in vec3  l;\n"
+            + "layout(location = 3) in vec3  p;\n" //
+            + "layout(location = 4) in vec2  coord;\n"
+            + "layout(set = 0, binding = 4) uniform sampler2D u_texture;\n"
+            + "layout(location = 0) out vec4 FragColor;\n"
             + "void main() {\n"
             + "  vec3  r = normalize(reflect(v,n));\n"
-            // + "  vec3  r = normalize(refract(v,n,0.86));\n"
             + "  float b = dot(r,p);\n"
-            + "  float c = dot(p,p)-u_radius*u_radius;\n"
+            + "  float c = dot(p,p) - u_radius * u_radius;\n"
             + "  float t = sqrt(b*b-c);\n"
             + "  if( -b + t > 0.0 ) t = -b + t;\n"
             + "  else               t = -b - t;\n"
@@ -98,7 +93,7 @@ public class GlassShader2 extends GVRShaderTemplate {
             + "  reflect_coord.y  = ray.y;\n"
             + "  reflect_coord.x = 0.5 + 0.6*asin(reflect_coord.x)/1.57079632675;\n"
             + "  reflect_coord.y = 0.5 + 0.6*asin(reflect_coord.y)/1.57079632675;\n"
-            + "  vec3 color = texture(intexture, reflect_coord).rgb;\n"
+            + "  vec3 color = texture(u_texture, reflect_coord).rgb;\n"
             + "  vec3  h = normalize(v+l);\n"
             + "  float diffuse  = max ( dot(l,n), 0.0 );\n"
             + "  float specular = max ( dot(h,n), 0.0 );\n"
@@ -110,12 +105,21 @@ public class GlassShader2 extends GVRShaderTemplate {
             + "  FragColor.rgb *= FragColor.a;\n" //
             + "}\n";
 
-    private GVRCustomMaterialShaderId mShaderId;
-    private GVRMaterialMap mCustomShader = null;
-
     public GlassShader2(GVRContext gvrContext) {
-        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D intexture", 300);
+        super("float4 u_mat1, float4 u_mat2, float4 u_mat3, float4 u_mat4, float3 u_eye, float3 u_light, float4 u_color, float u_radius ", "sampler2D u_texture", "float3 a_position, float2 a_texcoord, float3 a_normal", GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
+    }
+
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setVec4("u_color", 1, 1, 1, 1);
+        material.setVec3("u_light", 1, 1, 1);
+        material.setVec3("u_eye", 0, 0, 0);
+        material.setFloat("u_radius", 1);
+        material.setVec4("u_mat1", 1, 1, 1, 1);
+        material.setVec4("u_mat2", 1, 1, 1, 1);
+        material.setVec4("u_mat3", 1, 1, 1, 1);
+        material.setVec4("u_mat4", 1, 1, 1, 1);
     }
 }

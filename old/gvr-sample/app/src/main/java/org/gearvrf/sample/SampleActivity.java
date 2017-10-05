@@ -26,7 +26,7 @@ public class SampleActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setMain(main);
+        setMain(main, "gvr.xml");
     }
 
     @Override

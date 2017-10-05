@@ -19,6 +19,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.model.CharItem;
 import org.gearvrf.keyboard.util.GVRTextBitmapFactory;
@@ -35,8 +36,7 @@ public class TextFieldItem extends GVRSceneObject {
     public TextFieldItem(GVRContext gvrContext, float sceneObjectWidth, float sceneObjectHeigth,
             int bitmapWidth, int bitmapHeigth, Text text,
             int position) {
-        super(gvrContext, sceneObjectWidth, sceneObjectHeigth, gvrContext
-                .getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty)));
+        super(gvrContext, sceneObjectWidth, sceneObjectHeigth);
         setName(SceneObjectNames.TEXT_FIELD_ITEM);
 
         currentText = text;
@@ -53,7 +53,9 @@ public class TextFieldItem extends GVRSceneObject {
     public void updateText(GVRContext context) {
         GVRBitmapTexture tex = new GVRBitmapTexture(context, GVRTextBitmapFactory.create(
                 context.getContext(), width, height, currentText, 0));
-        getRenderData().getMaterial().setMainTexture(tex);
+        GVRTexture texture = new GVRTexture(getGVRContext());
+        texture.setImage(tex);
+        getRenderData().getMaterial().setMainTexture(texture);
     }
 
     public void setTextAdditive(GVRContext context, String newText) {

@@ -33,6 +33,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
@@ -182,7 +183,7 @@ public class SampleMain extends GVRMain {
             cursorControllerListener.onCursorControllerAdded(cursor);
         }
 
-        Future<GVRTexture> futureTexture = assetLoader.loadFutureTexture(new
+        GVRTexture futureTexture = assetLoader.loadTexture(new
                 GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRSphereSceneObject skyBox = new GVRSphereSceneObject(gvrContext, false, material);
@@ -226,14 +227,14 @@ public class SampleMain extends GVRMain {
 
     private GVRCursorController.ControllerEventListener controllerEventListener = new
             GVRCursorController.ControllerEventListener() {
-        @Override
-        public void onEvent(GVRCursorController gvrCursorController) {
-            KeyEvent keyEvent = gvrCursorController.getKeyEvent();
-            if(keyEvent != null){
-                mPickHandler.setClicked(keyEvent.getAction() == KeyEvent.ACTION_DOWN);
-            }
-        }
-    };
+                @Override
+                public void onEvent(GVRCursorController gvrCursorController) {
+                    KeyEvent keyEvent = gvrCursorController.getKeyEvent();
+                    if(keyEvent != null){
+                        mPickHandler.setClicked(keyEvent.getAction() == KeyEvent.ACTION_DOWN);
+                    }
+                }
+            };
 
 
 
@@ -315,18 +316,17 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRSceneObject getColorBoard() {
-        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
+        GVRMaterial material = new GVRMaterial(mGVRContext, new GVRShaderId(ColorShader.class));
         material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         GVRCubeSceneObject board = new GVRCubeSceneObject(mGVRContext);
         board.getRenderData().setMaterial(material);
         board.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        board.getRenderData().setShaderTemplate(ColorShader.class);
         return board;
     }
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
+        GVRMaterial material = new GVRMaterial(mGVRContext, new GVRShaderId(ColorShader.class));
         material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
 
@@ -334,7 +334,6 @@ public class SampleMain extends GVRMain {
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
         meshObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
-        meshObject.getRenderData().setShaderTemplate(ColorShader.class);
         return meshObject;
     }
 

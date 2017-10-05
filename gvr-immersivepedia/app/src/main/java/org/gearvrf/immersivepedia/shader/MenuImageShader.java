@@ -15,28 +15,31 @@
 
 package org.gearvrf.immersivepedia.shader;
 
-import android.content.Context;
-
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.utility.TextFile;
+import android.content.Context;
 
-public class MenuImageShader extends GVRShaderTemplate{
+public class MenuImageShader extends GVRShader {
 
     public static final String STATE1_TEXTURE = "state1";
     public static final String STATE2_TEXTURE = "state2";
     public static final String TEXTURE_SWITCH = "textureSwitch";
 
     public MenuImageShader(GVRContext gvrContext) {
-        super("float textureSwitch, sampler2D state1, sampler2D state2", 300);
+        super("float textureSwitch float u_opacity", "sampler2D state1 sampler2D state2 ", "float4 a_position, float2 a_texcoord", GLSLESVersion.VULKAN);
 
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.menu_image_shader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.menu_image_shader_vertex));
 
+    }
+
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setFloat("textureSwitch", 1);
+        material.setFloat("u_opacity", 1);
     }
 }

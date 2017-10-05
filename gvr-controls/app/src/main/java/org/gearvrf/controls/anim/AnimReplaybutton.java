@@ -16,10 +16,12 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.focus.ControlSceneObject;
 import org.gearvrf.controls.shaders.ButtonShader;
+import org.gearvrf.controls.shaders.ColorSwapShader;
 import org.gearvrf.controls.util.RenderingOrder;
 
 public class AnimReplaybutton extends ControlSceneObject {
@@ -35,15 +37,15 @@ public class AnimReplaybutton extends ControlSceneObject {
 
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(
-                new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
+                new GVRMaterial(gvrContext, new GVRShaderId(ButtonShader.class)));
         getRenderData().setMesh(sMesh);
-        getRenderData().setShaderTemplate(ButtonShader.class);
         createTextures(gvrContext);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MOVE_BUTON);
 
-        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
+        attachComponent(new GVRMeshCollider(gvrContext, false));
+
     }
 
     private void createTextures(GVRContext gvrContext) {

@@ -1,4 +1,3 @@
-
 /* Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,20 +18,21 @@ package org.gearvrf.controls.shaders;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
 import org.gearvrf.controls.R;
 import org.gearvrf.utility.TextFile;
 
-public class TileShader extends GVRShaderTemplate{
+public class TileShader extends GVRShader{
 
-    public static final String TEXTURE_KEY = "texture";
-    public static final String TILE_COUNT = "tile";
+    public static final String TEXTURE_KEY = "u_texture";
 
     public TileShader(GVRContext gvrContext) {
-        super("float tile, sampler2D texture");
+
+
+        super("","sampler2D u_texture", "float3 a_position float2 a_texcoord", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.tileshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.tileshader_vertex));
-
     }
+
 }

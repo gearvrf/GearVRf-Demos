@@ -29,11 +29,11 @@ import org.gearvrf.controls.R;
 import org.gearvrf.controls.util.RenderingOrder;
 
 public class MenuFrame extends GVRSceneObject {
-    
+
     private static final float ANIMATION_TIME = 0.4f;
     private static final float ANIMATION_FRAME_RESIZE = .8f;
     private static final float FRAME_POSITION_Z = -.02f;
-    
+
     private static final float FRAME_EXPAND_SCALE_X = 160f;
     private static final float PIVOT_OFFSET_Y = .8f;
 
@@ -52,7 +52,7 @@ public class MenuFrame extends GVRSceneObject {
 
         pivot = new GVRSceneObject(gvrContext);
         pivot.getTransform().setPosition(0, PIVOT_OFFSET_Y,FRAME_POSITION_Z);
-        
+
         GVRMesh mesh = getGVRContext().createQuad(3.57f, 0.01f);
         GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(this.getGVRContext(), R.drawable.background_frame));
 
@@ -90,7 +90,7 @@ public class MenuFrame extends GVRSceneObject {
             });
 
             isOpen = true;
-           
+
         } else {
             menuHeader.show();
         }
@@ -138,7 +138,7 @@ public class MenuFrame extends GVRSceneObject {
             });
 
             rmCollapse.start(getGVRContext().getAnimationEngine());
-           
+
             isOpen = false;
         }
     }

@@ -224,7 +224,7 @@ public class ParticleEmitter extends GVRBehavior
             particle = new Particle(getGVRContext(), velocity, direction);
             sceneObj.attachComponent(particle);
             getOwnerObject().addChildObject(sceneObj);
-            sceneObj.getRenderData().bindShader(mScene);
+      //      sceneObj.getRenderData().bindShader(mScene);
         }
         particle.setPosition(getNextPosition());
         mActiveParticles.add(particle);

@@ -17,6 +17,7 @@ package org.gearvrf.keyboard.spinner;
 
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.keyboard.textField.Text;
 import org.gearvrf.keyboard.textField.TextFieldItem;
 import org.gearvrf.keyboard.util.GVRTextBitmapFactory;
@@ -41,13 +42,17 @@ public class SpinnerItem extends TextFieldItem {
                 GVRBitmapTexture tex = new GVRBitmapTexture(context, SpinnerItemFactory.getInstance(
                         getGVRContext()).getBitmap(charItem.getMode(),
                         charItem.getPosition()));
-                getRenderData().getMaterial().setMainTexture(tex);
+                GVRTexture texture = new GVRTexture(getGVRContext());
+                texture.setImage(tex);
+                getRenderData().getMaterial().setMainTexture(texture);
             }
 
         } else {
             GVRBitmapTexture tex = new GVRBitmapTexture(context, GVRTextBitmapFactory.create(
                     context.getContext(), width, height, currentText, 0));
-            getRenderData().getMaterial().setMainTexture(tex);
+            GVRTexture texture = new GVRTexture(getGVRContext());
+            texture.setImage(tex);
+            getRenderData().getMaterial().setMainTexture(texture);
         }
     }
 

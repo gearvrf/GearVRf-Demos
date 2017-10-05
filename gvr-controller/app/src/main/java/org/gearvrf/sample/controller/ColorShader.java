@@ -21,14 +21,14 @@ import org.gearvrf.GVRShaderTemplate;
 
 public class ColorShader extends GVRShaderTemplate
 {
-    private static final String VERTEX_SHADER = "in vec4 a_position;\n"
-            + "uniform mat4 u_mvp;\n"
+    private static final String VERTEX_SHADER = "in vec3 a_position;\n"
+            + "@MATRIX_UNIFORMS\n"
             + "void main() {\n"
-            + "  gl_Position = u_mvp * a_position;\n"
+            + "  gl_Position = u_mvp * vec4(a_position, 1.0f);\n"
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "precision mediump float;\n"
-            + "uniform vec4 u_color;\n"
+            + "@MATERIAL_UNIFORMS\n"
             + "out vec4 fragColor;\n"
             + "void main() {\n"
             + "  fragColor = u_color;\n"
@@ -36,7 +36,7 @@ public class ColorShader extends GVRShaderTemplate
 
     public ColorShader(GVRContext gvrContext)
     {
-        super("float4 u_color", 300);
+        super("float4 u_color", "", "float3 a_position", GLSLESVersion.V310);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }

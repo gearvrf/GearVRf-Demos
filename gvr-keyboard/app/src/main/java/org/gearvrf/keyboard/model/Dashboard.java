@@ -35,8 +35,8 @@ public class Dashboard extends GVRSceneObject {
 
     private boolean heightSyncLocked = false;
 
-    public static float HIGHT = 10.0f;
-    public static float WIDTH = 8.0f;
+    public static float HIGHT = 0.0f;
+    public static float WIDTH = 0.0f;
     public boolean onFocus = false;
     private float deltaY;
     private float lastY;
@@ -61,8 +61,7 @@ public class Dashboard extends GVRSceneObject {
 
     public Dashboard(GVRContext gvrContext, int gVRAndroidResourceTexture) {
 
-        super(gvrContext, HIGHT, WIDTH, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
-                gVRAndroidResourceTexture)));
+        super(gvrContext, HIGHT, WIDTH);
         setName(SceneObjectNames.DASHBOARD);
 
         Dashboard.currentDashboardHashCode = this.hashCode();

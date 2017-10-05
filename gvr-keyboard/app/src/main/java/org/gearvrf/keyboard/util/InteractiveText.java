@@ -19,6 +19,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.textField.Text;
 
@@ -30,8 +31,7 @@ public class InteractiveText extends GVRSceneObject {
     public InteractiveText(GVRContext gvrContext, int width, int height) {
 
         super(gvrContext, Util.convertPixelToVRFloatValue(width), Util
-                .convertPixelToVRFloatValue(height),
-                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty)));
+                .convertPixelToVRFloatValue(height));
         setName(SceneObjectNames.INTERACTIVE_TEXT);
 
         currentText = new Text();
@@ -45,7 +45,9 @@ public class InteractiveText extends GVRSceneObject {
 
         GVRBitmapTexture tex = new GVRBitmapTexture(context, GVRTextBitmapFactory.create(width,
                 height, currentText));
-        getRenderData().getMaterial().setMainTexture(tex);
+        GVRTexture texture = new GVRTexture(getGVRContext());
+        texture.setImage(tex);
+        getRenderData().getMaterial().setMainTexture(texture);
     }
 
     public void setTextAdditive(GVRContext context, String newText) {

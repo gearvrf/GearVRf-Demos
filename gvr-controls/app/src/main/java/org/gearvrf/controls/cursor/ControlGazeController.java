@@ -60,7 +60,7 @@ public class ControlGazeController {
         context.getMainScene().getMainCameraRig().addChildObject(highlightCursor);
 
         highlightCursor.getRenderData().getMaterial().setOpacity(0f);
-        
+
         cursor.getTransform().setScale(.35f, .35f, .35f);
         highlightCursor.getTransform().setScale(.35f, .35f, .3f);
     }

@@ -23,6 +23,8 @@ import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 

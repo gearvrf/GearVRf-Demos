@@ -17,17 +17,22 @@ package org.gearvrf.sample.gvrjavascript;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShaderId;
+import org.gearvrf.IScriptEvents;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.script.GVRScriptBundle;
+import org.gearvrf.script.GVRScriptException;
+import org.gearvrf.script.GVRScriptManager;
+
+import java.io.IOException;
 
 public class GearVRJavascriptMain extends GVRMain {
     private static final String TAG = GearVRJavascriptMain.class.getSimpleName();
@@ -36,7 +41,8 @@ public class GearVRJavascriptMain extends GVRMain {
     private GVRContext context;
     private CustomShaderManager shaderManager;
     private GVRScene mainScene;
-
+    private GVRMaterial mShaderMaterial;
+    private GVRShaderId mShaderID = null;
     @Override
     public void onInit(GVRContext gvrContext) {
         // The onInit function in script.js will be invoked
@@ -57,6 +63,11 @@ public class GearVRJavascriptMain extends GVRMain {
         }
     }
 
+    @Override
+    public void onStep() {
+        // The onStep function in script.js will be invoked
+    }
+
     private CursorControllerListener listener = new CursorControllerListener() {
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
@@ -72,13 +83,18 @@ public class GearVRJavascriptMain extends GVRMain {
             if (controller.getControllerType() == GVRControllerType.GAZE) {
                 GVRSceneObject cursor = new GVRSphereSceneObject(context);
                 GVRRenderData cursorRenderData = cursor.getRenderData();
-                GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.BeingGenerated.ID);
-                material.setVec4(CustomShaderManager.COLOR_KEY, 1.0f, 0.0f,
+
+                mShaderID = new GVRShaderId(CustomShaderManager.class);
+                mShaderMaterial = new GVRMaterial(getGVRContext(),
+                        mShaderID);
+
+
+                //material.setShaderType(shaderManager.getShaderId());
+                //cursor.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(CustomShaderManager.class)));
+                mShaderMaterial.setVec4(CustomShaderManager.COLOR_KEY, 1.0f, 0.0f,
                         0.0f, 0.5f);
 
-                cursorRenderData.setMaterial(material);
-                cursorRenderData.setShaderTemplate(CustomShaderManager.class);
-
+                cursorRenderData.setMaterial(mShaderMaterial);
                 mainScene.addSceneObject(cursor);
                 cursor.getRenderData().setDepthTest(false);
                 cursor.getRenderData().setRenderingOrder(100000);

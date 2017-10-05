@@ -1,8 +1,11 @@
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
 
-attribute vec3 a_position;
-attribute vec2 a_texcoord;
+precision mediump float;
+layout ( location = 0 ) in  vec3 a_position;
+layout ( location = 1 ) in vec2 a_texcoord;
 
-varying vec2 vTextureCoord;
+layout ( location = 0 ) out vec2 vTextureCoord;
 
 void main()
 {

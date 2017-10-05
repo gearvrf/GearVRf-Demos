@@ -1,16 +1,25 @@
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
 precision mediump float;
 
-in vec2 coord;
-uniform sampler2D state1;
-uniform sampler2D state2;
-uniform float textureSwitch;
-uniform float opacity;
-out vec4 out_color;
+layout ( location = 0 ) in vec2  coord;
+layout(set = 0, binding = 4) uniform sampler2D state1;
+layout(set = 0, binding = 5) uniform sampler2D state2;
+
+@MATERIAL_UNIFORMS
+
+layout ( location = 0 ) out vec4 outColor;
 
 void main() {
-    if(textureSwitch == 0.0) {
-        out_color = texture(state1, coord);
-    } else {
-        out_color = texture(state2, coord);
-    }
+	vec4 textureColor;
+	if(textureSwitch == 0.0) {
+		textureColor = texture(state1, coord);
+	} else {
+		textureColor = texture(state2, coord);
+	}
+
+	outColor = textureColor;
+	outColor.a = outColor.a * u_opacity;
+
+	//outColor = vec4(1,0,0,1);
 }

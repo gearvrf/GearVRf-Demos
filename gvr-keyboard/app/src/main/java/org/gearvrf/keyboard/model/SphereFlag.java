@@ -25,6 +25,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
@@ -77,7 +78,7 @@ public class SphereFlag extends GVRSceneObject {
         GVRMaterial material = getMaterial();
         
         GVRRenderData renderData = getRenderData(material);
-        renderData.setShaderTemplate(SphereShader.class);
+        //renderData.setShaderTemplate(SphereShader.class);
         attachRenderData(renderData);
         
         updateMaterial();
@@ -126,7 +127,7 @@ public class SphereFlag extends GVRSceneObject {
     }
 
     private GVRMaterial getMaterial() {
-        GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID);
+        GVRMaterial material = new GVRMaterial(gvrContext, new GVRShaderId(SphereShader.class));
         material.setTexture(SphereShader.TEXTURE_KEY,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, mTexture)));
         material.setFloat("blur", 0);
@@ -146,7 +147,7 @@ public class SphereFlag extends GVRSceneObject {
 
     private GVRRenderData getRenderData(GVRMaterial material) {
         GVRRenderData renderData = new GVRRenderData(gvrContext);
-        renderData.setMesh(gvrContext.getAssetLoader().loadFutureMesh(new GVRAndroidResource(gvrContext,
+        renderData.setMesh(gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
                 R.raw.sphere_uv_flag)));
         renderData.setMaterial(material);
         renderData.setRenderingOrder(100);

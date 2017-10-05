@@ -16,7 +16,7 @@
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRPostEffect;
+
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;

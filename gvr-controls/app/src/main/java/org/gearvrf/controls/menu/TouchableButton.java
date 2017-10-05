@@ -48,7 +48,8 @@ public class TouchableButton extends ControlSceneObject {
 
         getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT);
 
-        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
+        attachComponent(new GVRMeshCollider(gvrContext, false));
+
     }
 
     @Override

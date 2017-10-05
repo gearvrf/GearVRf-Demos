@@ -15,20 +15,22 @@
 
 package org.gearvrf.balloons;
 
-import android.view.MotionEvent;
-
+import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRRenderData.GVRRenderingOrder;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import android.view.MotionEvent;
 
 import java.util.concurrent.Future;
 
@@ -68,10 +70,9 @@ public class BalloonMain extends GVRMain {
     {
         GVRSceneObject sphere = new GVRSphereSceneObject(context, true);
         GVRRenderData rdata = sphere.getRenderData();
-        GVRMaterial mtl = new GVRMaterial(context);
+        GVRMaterial mtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
         mtl.setDiffuseColor(1.0f, 0.0f, 1.0f, 0.5f);
         sphere.setName("balloon");
-        rdata.setShaderTemplate(GVRPhongShader.class);
         rdata.setAlphaBlend(true);
         rdata.setMaterial(mtl);
         rdata.setRenderingOrder(GVRRenderingOrder.TRANSPARENT);
@@ -81,22 +82,29 @@ public class BalloonMain extends GVRMain {
 
     GVRSceneObject makeEnvironment(GVRContext context)
     {
-        Future<GVRTexture> tex = context.getAssetLoader().loadFutureCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
+        GVRTexture tex = context.getAssetLoader().loadCubemapTexture(new GVRAndroidResource(context, R.raw.lycksele3));
         GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.Cubemap.ID);
         material.setMainTexture(tex);
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);
         environment.getTransform().setScale(20.0f, 20.0f, 20.0f);
 
-        GVRDirectLight sunLight = new GVRDirectLight(context);
-        sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
-        sunLight.setDiffuseIntensity(0.6f, 0.6f, 0.6f, 1.0f);
-        environment.attachComponent(sunLight);
+        if (!GVRShader.isVulkanInstance())
+        {
+            GVRDirectLight sunLight = new GVRDirectLight(context);
+            sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
+            sunLight.setDiffuseIntensity(0.6f, 0.6f, 0.6f, 1.0f);
+            environment.attachComponent(sunLight);
+        }
         return environment;
     }
 
     @Override
     public void onStep() {
         FPSCounter.tick();
+    }
+
+    public void onTouchEvent(MotionEvent event)
+    {
     }
 
 }

@@ -20,6 +20,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPerspectiveCamera;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderTarget;
 import org.gearvrf.GVRRenderTexture;
@@ -46,7 +47,9 @@ public final class RenderToTextureActivity extends GVRActivity {
     final class RenderToTextureMain extends GVRMain {
         @Override
         public void onInit(final GVRContext gvrContext) {
-            addLight();
+            if (GVRShader.isVulkanInstance()) {
+                addLight();
+            }
             final GVRSceneObject cube = addCube();
             final GVRScene scene = createRenderToTextureScene();
 
@@ -60,8 +63,7 @@ public final class RenderToTextureActivity extends GVRActivity {
 
                     scene.getMainCameraRig().getOwnerObject().attachComponent(renderTarget);
                     //to prevent rendering untextured cube for few frames at the start
-                    cube.getRenderData().getMaterial().setTexture("diffuseTexture", mRenderTexture);
-                    gvrContext.getMainScene().bindShaders();
+                    cube.getRenderData().getMaterial().setMainTexture(mRenderTexture);
                     closeSplashScreen();
                     renderTarget.setEnable(true);
                 }
@@ -98,7 +100,6 @@ public final class RenderToTextureActivity extends GVRActivity {
 
         private GVRSceneObject addCube() {
             final GVRSceneObject cube = new GVRCubeSceneObject(getGVRContext(), true);
-            cube.getRenderData().setShaderTemplate(GVRPhongShader.class);
             mCubeTransform = cube.getTransform();
             mCubeTransform.setPosition(0, 0, -4f).setScale(2, 2, 2);
 

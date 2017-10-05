@@ -15,22 +15,24 @@
 
 package org.gearvrf.gvrswitch;
 
-import android.util.Log;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRSwitch;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRConeSceneObject;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCylinderSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+
+import android.util.Log;
+import android.view.MotionEvent;
 
 public class SampleMain extends GVRMain {
 
@@ -42,7 +44,8 @@ public class SampleMain extends GVRMain {
     private int counter = 0;
     
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext)
+    {
         mGVRContext = gvrContext;
 
         scene = mGVRContext.getMainScene();
@@ -50,8 +53,9 @@ public class SampleMain extends GVRMain {
         /*
          * Add a head tracking pointer to the scene
          */
-        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.drawable.headtrackingpointer));
-        GVRSceneObject headTracker = new GVRSceneObject(gvrContext, gvrContext.createQuad(0.1f, 0.1f), texture);
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(
+                new GVRAndroidResource(mGVRContext, R.drawable.headtrackingpointer));
+        GVRSceneObject headTracker = new GVRSceneObject(gvrContext, 0.1f, 0.1f, texture);
         headTracker.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         headTracker.getRenderData().setDepthTest(false);
         headTracker.getRenderData().setRenderingOrder(100000);
@@ -59,17 +63,20 @@ public class SampleMain extends GVRMain {
         /*
          * Add a light to the scene that looks down the negative Z axis
          */
-        GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
-        GVRDirectLight light = new GVRDirectLight(gvrContext);
-        
-        lightObj.getTransform().setPositionZ(2.0f);
-        lightObj.attachComponent(light);
-        scene.addSceneObject(lightObj);
+        if (!GVRShader.isVulkanInstance())
+        {
+            GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
+            GVRDirectLight light = new GVRDirectLight(gvrContext);
+
+            lightObj.getTransform().setPositionZ(2.0f);
+            lightObj.attachComponent(light);
+            scene.addSceneObject(lightObj);
+        }
         /*
          * Add a root node with four geometric shapes as children
          */
-        GVRMaterial red = new GVRMaterial(gvrContext);
-        GVRMaterial blue = new GVRMaterial(gvrContext);
+        GVRMaterial red = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial blue = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
         GVRSceneObject root = new GVRSceneObject(gvrContext);
         GVRCubeSceneObject cube = new GVRCubeSceneObject(gvrContext, true, red);
         GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, true, blue);
@@ -80,12 +87,8 @@ public class SampleMain extends GVRMain {
         red.setDiffuseColor(1,  0,  0, 1);
         blue.setDiffuseColor(0, 0,  1, 1);
         cube.setName("cube");
-        cube.getRenderData().setShaderTemplate(GVRPhongShader.class);
         sphere.setName("sphere");
-        sphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        cylinder.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cylinder.setName("cylinder");
-        cone.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cone.setName("cone");
         root.addChildObject(cube);
         root.addChildObject(sphere);

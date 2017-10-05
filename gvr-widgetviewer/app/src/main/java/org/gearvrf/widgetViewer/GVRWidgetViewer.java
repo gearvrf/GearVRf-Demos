@@ -128,7 +128,7 @@ public class GVRWidgetViewer extends GVRActivity implements
 
     @Override
     public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-            float velocityX, float velocityY) {
+                           float velocityX, float velocityY) {
         return false;
     }
 

@@ -82,7 +82,7 @@ public class MenuPreview extends GVRSceneObject {
         apple.getRenderData().getMaterial().setOpacity(0f);
         getGVRContext().getAnimationEngine().stop(appleAnimation);
     }
-    
+
     public void animationsTime(){
         getGVRContext().getAnimationEngine().stop(appleAnimation);
         startAppleAnimation();

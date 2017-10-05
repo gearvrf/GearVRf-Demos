@@ -20,11 +20,13 @@ import com.google.vr.sdk.audio.GvrAudioEngine;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShader;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 
 import java.io.IOException;
@@ -39,7 +41,7 @@ public class SpatialAudioMain extends GVRMain
     private float modelX = 0.0f;
     private float modelY = -1.5f;
     private float modelZ = -9.0f;
-    private GVRLight light;
+    private GVRDirectLight light;
     private static final float LIGHT_Z = 100.0f;
 
     public SpatialAudioMain(GvrAudioEngine audioEngine) {
@@ -49,15 +51,20 @@ public class SpatialAudioMain extends GVRMain
     @Override
     public void onInit(GVRContext gvrContext) {
         GVRScene scene = gvrContext.getMainScene();
+        GVRSceneObject lightObj = new GVRSceneObject(gvrContext);
         cameraRig = scene.getMainCameraRig();
 
-        // setup light
-        light = new GVRLight(gvrContext);
-        light.setPosition(0.0f, 0.0f, LIGHT_Z);
-        light.setAmbientIntensity(0.5f, 0.5f, 0.5f, 1.0f);
-        light.setDiffuseIntensity(0.8f, 0.8f, 0.8f, 1.0f);
-        light.setSpecularIntensity(1.0f, 0.5f, 0.5f, 1.0f);
-
+        if (!GVRShader.isVulkanInstance())
+        {
+            // setup light
+            light = new GVRDirectLight(gvrContext);
+            light.setPosition(0.0f, 0.0f, LIGHT_Z);
+            light.setAmbientIntensity(0.5f, 0.5f, 0.5f, 1.0f);
+            light.setDiffuseIntensity(0.8f, 0.8f, 0.8f, 1.0f);
+            light.setSpecularIntensity(1.0f, 0.5f, 0.5f, 1.0f);
+            lightObj.attachComponent(light);
+            scene.addSceneObject(lightObj);
+        }
         try {
             GVRModelSceneObject r2d2Model = gvrContext.getAssetLoader().loadModel("R2D2/R2D2.dae");
             r2d2Model.getTransform().setPosition(modelX, modelY, modelZ);
@@ -67,8 +74,8 @@ public class SpatialAudioMain extends GVRMain
         }
 
         // add a floor
-        GVRSceneObject floor = new GVRSceneObject(gvrContext, gvrContext.createQuad(120.0f, 120.0f),
-        gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
+        GVRSceneObject floor = new GVRSceneObject(gvrContext, 120.0f, 120.0f,
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor)));
 
         GVRMaterial floorMaterial = floor.getRenderData().getMaterial();
         setupLight(floorMaterial);
@@ -76,9 +83,6 @@ public class SpatialAudioMain extends GVRMain
         floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
         floor.getTransform().setPositionY(-1.5f);
         floor.getRenderData().setRenderingOrder(0);
-        floor.getRenderData().setLight(light);
-        floor.getRenderData().enableLight();
-
         scene.addSceneObject(floor);
 
         // Avoid any delays during start-up due to decoding of sound files.

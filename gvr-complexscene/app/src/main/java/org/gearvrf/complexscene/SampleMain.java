@@ -19,24 +19,26 @@ import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShaderTemplate;
-
 import java.io.IOException;
+import java.util.EnumSet;
+
+import static org.gearvrf.GVRImportSettings.NO_LIGHTING;
 
 public class SampleMain extends GVRMain {
 
     private GVRContext mGVRContext;
-    private ColorShader mColorShader;
+
+   // private GVRConsole console;
 
     @Override
-    public GVRMain.SplashMode getSplashMode() {
+    public SplashMode getSplashMode() {
         return SplashMode.NONE;
     }
 
@@ -46,7 +48,6 @@ public class SampleMain extends GVRMain {
         // save context for possible use in onStep(), even though that's empty
         // in this sample
         mGVRContext = gvrContext;
-        mColorShader = new ColorShader(mGVRContext);
 
         // set background color
         GVRScene scene = gvrContext.getMainScene();
@@ -58,22 +59,23 @@ public class SampleMain extends GVRMain {
         float NORMAL_CURSOR_SIZE = 0.4f;
         float CURSOR_Z_POSITION = -9.0f;
         int CURSOR_RENDER_ORDER = 100000;
-        
+
         GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
-                mGVRContext.createQuad(NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE),
-                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
-                        "cursor_idle.png")));
+                NORMAL_CURSOR_SIZE, NORMAL_CURSOR_SIZE,
+                mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, "cursor_idle.png")));
         cursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
         cursor.getRenderData().setRenderingOrder(
                 GVRRenderData.GVRRenderingOrder.OVERLAY);
+        cursor.setName("cursor");
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
         mGVRContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-        
-        try {
 
-            GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
-                    "bunny.obj"));
+        try {
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(NO_LIGHTING));
+            GVRMesh mesh = mGVRContext.getAssetLoader().loadMesh(
+                    new GVRAndroidResource(mGVRContext, "bunny.obj"),
+                    settings);
 
             final int OBJECTS_CNT = 5;
             for (int x=-OBJECTS_CNT; x<=OBJECTS_CNT; ++x) {
@@ -84,14 +86,16 @@ public class SampleMain extends GVRMain {
                     scene.addSceneObject(sceneObject);
                 }
 
-            }
-
-        } catch (IOException e) {
+        }
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+
     }
 
     public boolean processKeyEvent(int keyCode) {
+
         return false;
     }
 
@@ -100,26 +104,21 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext,
-                GVRMaterial.GVRShaderType.BeingGenerated.ID);
-        material.setVec4(ColorShader.COLOR_KEY, 1.0f,
-                0.0f, 1.0f, 1.0f);
+        //GVRMaterial material = new GVRMaterial(mGVRContext,
+        //        mColorShader.getShaderId());
 
-        GVRRenderData renderData = new GVRRenderData(mGVRContext);
-        renderData.setMaterial(material);
-        renderData.setMesh(mesh);
-        GVRSceneObject meshObject = new GVRSceneObject(mGVRContext);
-        meshObject.attachRenderData(renderData);
+        GVRMaterial material = new GVRMaterial(mGVRContext,
+                GVRMaterial.GVRShaderType.Color.ID);
+
+        material.setColor(1.0f, 0.0f, 1.0f);
+
+        GVRSceneObject meshObject = new GVRSceneObject(mGVRContext, mesh);
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
 
-        GVRMaterialShaderManager shaderManager = mGVRContext.getMaterialShaderManager();
-        GVRShaderTemplate shaderTemplate = shaderManager.retrieveShaderTemplate(ColorShader.class);
-        shaderTemplate.bindShader(mGVRContext, meshObject.getRenderData(), getGVRContext().getMainScene());
-
         return meshObject;
     }
-    
+
 }
 
 

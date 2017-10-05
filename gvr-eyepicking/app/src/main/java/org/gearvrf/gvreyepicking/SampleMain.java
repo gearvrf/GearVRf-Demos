@@ -14,24 +14,13 @@
  */
 package org.gearvrf.gvreyepicking;
 
-import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMaterial.GVRShaderType;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
-import org.gearvrf.IPickEvents;
-import org.gearvrf.utility.Log;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.gearvrf.*;
+import org.gearvrf.GVRMaterial.GVRShaderType;
+import org.gearvrf.utility.Log;
 
 public class SampleMain extends GVRMain {
     public class PickHandler implements IPickEvents
@@ -46,7 +35,7 @@ public class SampleMain extends GVRMain {
         }
         public void onNoPick(GVRPicker picker) { }
         public void onPick(GVRPicker picker) { }
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }      
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
     }
 
     private static final String TAG = "SampleMain";
@@ -66,7 +55,7 @@ public class SampleMain extends GVRMain {
     private GVRPicker mPicker;
 
     private GVRActivity mActivity;
-    
+
     SampleMain(GVRActivity activity) {
         mActivity = activity;
     }
@@ -141,7 +130,8 @@ public class SampleMain extends GVRMain {
 
         GVRMesh mesh = null;
         try {
-            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
+            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
+                    "bunny.obj"));
         } catch (IOException e) {
             e.printStackTrace();
             mesh = null;
@@ -166,7 +156,7 @@ public class SampleMain extends GVRMain {
         object.getTransform().setPosition(3.0f, 3.0f, -2.0f);
         attachMeshCollider(object);
         mainScene.addSceneObject(object);
-        object.getRenderData().setCullTest(false);
+        object.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         mObjects.add(object);
 
         // These 2 are testing by the bounding box of the mesh.
@@ -188,17 +178,18 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRSceneObject getColorBoard(float width, float height) {
-        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.Color.ID);
         material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         GVRSceneObject board = new GVRSceneObject(mGVRContext, width, height);
         board.getRenderData().setMaterial(material);
-        board.getRenderData().setShaderTemplate(ColorShader.class);
+        // material.setVec4("u_color", UNPICKED_COLOR_R,
+        //        UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         return board;
     }
 
     private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.BeingGenerated.ID);
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRMaterial.GVRShaderType.Color.ID);
         material.setVec4("u_color", UNPICKED_COLOR_R,
                 UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
 
@@ -206,7 +197,8 @@ public class SampleMain extends GVRMain {
         meshObject = new GVRSceneObject(mGVRContext, mesh);
         meshObject.getTransform().setScale(scale, scale, scale);
         meshObject.getRenderData().setMaterial(material);
-        meshObject.getRenderData().setShaderTemplate(ColorShader.class);
+        // material.setVec4("u_color", UNPICKED_COLOR_R,
+        //          UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         return meshObject;
     }
 
@@ -217,7 +209,7 @@ public class SampleMain extends GVRMain {
     private void attachSphereCollider(GVRSceneObject sceneObject) {
         sceneObject.attachComponent(new GVRSphereCollider(mGVRContext));
     }
-    
+
     private void attachBoundsCollider(GVRSceneObject sceneObject) {
         sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, true));
     }

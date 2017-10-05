@@ -15,18 +15,19 @@
 
 package org.gearvrf.testcube;
 
-import android.util.Log;
+import java.util.ArrayList;
+import java.util.concurrent.Future;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.testcube.R;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 
-import java.util.ArrayList;
-import java.util.concurrent.Future;
+import android.util.Log;
 
 public class SampleCubeMain extends GVRMain {
 
@@ -37,27 +38,27 @@ public class SampleCubeMain extends GVRMain {
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
 
-        GVRScene scene = mGVRContext.getMainScene();
+        GVRScene scene = mGVRContext.getNextMainScene();
 
         ArrayList<Future<GVRTexture>> futureTextureList = new ArrayList<Future<GVRTexture>>(
                 6);
         futureTextureList.add(gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.back)));
         futureTextureList.add(gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.right)));
         futureTextureList.add(gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.front)));
         futureTextureList.add(gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.left)));
         futureTextureList.add(gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.top)));
         futureTextureList.add(gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(mGVRContext,
+                .loadFutureTexture(new GVRAndroidResource(mGVRContext,
                         R.drawable.bottom)));
         GVRSceneObject mCube = new GVRCubeSceneObject(gvrContext,
                 false, futureTextureList);

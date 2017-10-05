@@ -14,23 +14,26 @@ package com.samsung.accessibility.util;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.utility.TextFile;
 
 import com.samsung.accessibility.R;
 
-public class AccessibilitySceneShader extends GVRShaderTemplate{
+public class AccessibilitySceneShader extends GVRShaderTemplate {
 
-    public static final String TEXTURE_KEY = "texture";
+    public static final String TEXTURE_KEY = "u_texture";
     public static final String BLUR_INTENSITY = "blur";
 
     public AccessibilitySceneShader(GVRContext gvrContext) {
-        super("float blur, sampler2D texture", 100);
+        super("float blur", "sampler2D u_texture", "float3 a_position; float2 a_texcoord float3 a_normal", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.scene_shader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.scene_shader_vertex));
+    }
+
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setFloat("blur", 1);
     }
 }

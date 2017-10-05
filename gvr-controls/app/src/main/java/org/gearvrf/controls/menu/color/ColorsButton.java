@@ -21,6 +21,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.menu.MenuControlSceneObject;
@@ -46,13 +47,12 @@ public class ColorsButton extends MenuControlSceneObject {
 
         attachRenderData(new GVRRenderData(gvrContext));
         getRenderData().setMaterial(
-                new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
+                new GVRMaterial(gvrContext, new GVRShaderId(ColorSwapShader.class)));
         getRenderData().setMesh(sMesh);
-        getRenderData().setShaderTemplate(ColorSwapShader.class);
+
         setTextures(gvrContext);
 
-
-        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
+        attachComponent(new GVRMeshCollider(gvrContext, false));
 
         createCheckObject();
         createHoverObject();

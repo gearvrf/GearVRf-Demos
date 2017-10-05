@@ -22,6 +22,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -33,9 +34,12 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.Future;
+
+import static org.gearvrf.GVRImportSettings.NO_LIGHTING;
 
 public class TestMain extends GVRMain {
     private static final String TAG = "TestMain";
@@ -76,13 +80,13 @@ public class TestMain extends GVRMain {
         mainCameraRig.getTransform().setPosition(0.0f, 0.0f, 0.0f);
 
         try {
-            List<Future<GVRTexture>> textures;
+            List<GVRTexture> textures;
             textures = ZipLoader.load(gvrContext, TEXTURE_FILE_NAME, new ZipLoader
-                    .ZipEntryProcessor<Future<GVRTexture>>() {
+                    .ZipEntryProcessor<GVRTexture>() {
 
                 @Override
-                public Future<GVRTexture> getItem(GVRContext context, GVRAndroidResource resource) {
-                    return context.getAssetLoader().loadFutureTexture(resource);
+                public GVRTexture getItem(GVRContext context, GVRAndroidResource resource) {
+                    return context.getAssetLoader().loadTexture(resource);
                 }
             });
 
@@ -90,11 +94,11 @@ public class TestMain extends GVRMain {
             for (int i = 0; i < numberOfBunnies; ++i) {
 
                 GVRSceneObject bunny;
-
+                EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(EnumSet.of(NO_LIGHTING));
                 // we assume that the mesh and the textures are valid
                 bunny = new GVRSceneObject(gvrContext,
-                        gvrContext.getAssetLoader().loadFutureMesh(new GVRAndroidResource(gvrContext,
-                                "bunny.obj")), textures.get(i % numTextures));
+                        gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
+                                "bunny.obj"), settings), textures.get(i % numTextures));
 
                 Random random = new Random();
 

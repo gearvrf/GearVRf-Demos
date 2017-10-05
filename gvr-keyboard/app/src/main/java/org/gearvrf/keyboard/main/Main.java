@@ -21,11 +21,14 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
@@ -58,7 +61,9 @@ import org.gearvrf.keyboard.util.StringUtil;
 import org.gearvrf.keyboard.util.Util;
 import org.gearvrf.keyboard.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Vector;
 
@@ -171,6 +176,7 @@ public class Main extends GVRMain implements KeyboardEventListener {
         GVRCameraRig cameraObject = gvrContext.getMainScene()
                 .getMainCameraRig();
         for (GVRSceneObject spherePack : flagListCostructor.listFlag) {
+            spherePack.getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(SphereShader.class)));
             rotateObject(spherePack, cameraObject.getTransform());
 
             double distance = Util.distance(spherePack, gvrContext
@@ -278,14 +284,17 @@ public class Main extends GVRMain implements KeyboardEventListener {
         mGVRContext.getMainScene().getMainCameraRig()
                 .getTransform().setPosition(-0f, Util.applyRatioAt(1.70), 0f);
 
-        GVRMesh spaceMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
-                mGVRContext, R.raw.skybox_esphere));
-        GVRTexture spaceTexture = mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext,
-                R.raw.skybox));
-
-        GVRSceneObject mSpaceSceneObject = new GVRSceneObject(mGVRContext, spaceMesh, spaceTexture);
+        GVRSceneObject mSpaceSceneObject = null;
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettings();
+        try {
+            mSpaceSceneObject = mGVRContext.getAssetLoader().loadModel(new GVRAndroidResource(mGVRContext, R.raw.skybox_esphere), settings, false, mGVRContext.getMainScene());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         mGVRContext.getMainScene().addSceneObject(mSpaceSceneObject);
-        mSpaceSceneObject.getRenderData().setRenderingOrder(0);
+        List<GVRRenderData> rdatas = mSpaceSceneObject.getAllComponents(GVRRenderData.getComponentType());
+        GVRRenderData rdata = rdatas.get(0);
+        rdata.setRenderingOrder(0);
     }
 
     private void addCursorPosition() {

@@ -46,6 +46,9 @@ public class TextFactory {
         canvas.drawColor(Color.TRANSPARENT);
         canvas.drawText(text, x, y, p);
 
-        return new GVRBitmapTexture(gvrContext, bitmap);
+        GVRBitmapTexture tex = new GVRBitmapTexture(gvrContext, bitmap);
+        GVRTexture texture = new GVRTexture(gvrContext);
+        texture.setImage(tex);
+        return  texture;
     }
 }

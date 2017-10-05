@@ -19,7 +19,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
@@ -85,9 +84,8 @@ public class CursorMain extends GVRMain {
 
         float[] position = new float[]{5.0f, 0.0f, -20.0f};
         try {
-            GVRAssetLoader loader = gvrContext.getAssetLoader();
-            astronautModel = loader.loadModel(ASTRONAUT_MODEL);
-            rocketModel = loader.loadModel(ROCKET_MODEL);
+            astronautModel = gvrContext.getAssetLoader().loadModel(ASTRONAUT_MODEL);
+            rocketModel = gvrContext.getAssetLoader().loadModel(ROCKET_MODEL);
         } catch (IOException e) {
             Log.e(TAG, "Could not load the assets:", e);
             return;
@@ -112,7 +110,7 @@ public class CursorMain extends GVRMain {
         position[0] = 2.0f;
         position[1] = 2.0f;
         GVRCubeSceneObject cubeSceneObject = new GVRCubeSceneObject(gvrContext, true, gvrContext
-                .getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext,R.mipmap.ic_launcher)));
+                .getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,R.mipmap.ic_launcher)));
         cubeSceneObject.getTransform().setPosition(position[0], position[1], position[2]);
         MovableBehavior movableCubeBehavior = new MovableBehavior(cursorManager);
         cubeSceneObject.attachComponent(movableCubeBehavior);
@@ -208,6 +206,8 @@ public class CursorMain extends GVRMain {
                 gvrContext.getContext().getResources(),
                 R.mipmap.ic_launcher);
         // return the correct splash screen bitmap
-        return new GVRBitmapTexture(gvrContext, bitmap);
+        GVRTexture tex = new GVRTexture(gvrContext);
+        tex.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        return tex;
     }
 }

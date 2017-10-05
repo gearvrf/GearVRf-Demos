@@ -18,16 +18,22 @@ package org.gearvrf.sample.gvrjavascript;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.utility.TextFile;
 
-public class CustomShaderManager extends GVRShaderTemplate{
+public class CustomShaderManager extends GVRShader{
     static final String COLOR_KEY = "u_color";
 
     public CustomShaderManager(GVRContext gvrContext) {
-        super("float4 u_color, sampler2D temp");
+        super("float4 u_color", "", "float4 a_position", GLSLESVersion.V300);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.vertex));
+    }
+
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setVec4("u_color", 1, 1, 1, 1);
     }
 }

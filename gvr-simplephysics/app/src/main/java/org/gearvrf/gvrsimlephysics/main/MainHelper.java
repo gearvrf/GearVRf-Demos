@@ -12,6 +12,7 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRPointLight;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
@@ -22,6 +23,7 @@ import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.Future;
 
 /**
@@ -65,7 +67,7 @@ public class MainHelper {
     }
 
    public static GVRSceneObject createDirectLight(GVRContext context, float x, float y, float z) {
-        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.yellow));
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.yellow));
         GVRSceneObject lightObject = new GVRSceneObject(context);//GVRSphereSceneObject(context, true, texture);
         GVRDirectLight light = new GVRDirectLight(context);
 
@@ -84,8 +86,8 @@ public class MainHelper {
     }
 
     public static GVRSceneObject createGround(GVRContext context, float x, float y, float z) {
-        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.orange));
-        GVRMaterial material = new GVRMaterial(context);
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.orange));
+        GVRMaterial material = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
 
         GVRSceneObject groundObject = new GVRCubeSceneObject(context, true, texture);
 
@@ -94,9 +96,6 @@ public class MainHelper {
         groundObject.getRenderData().getMaterial().setMainTexture(texture);
         groundObject.getTransform().setScale(15.0f, 0.5f, 15.0f);
         groundObject.getTransform().setPosition(x, y, z);
-
-        //set phong Shader
-        groundObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
 
         // Collider
         GVRMeshCollider meshCollider = new GVRMeshCollider(context, groundObject.getRenderData().getMesh());
@@ -111,21 +110,18 @@ public class MainHelper {
         return groundObject;
     }
 
-    public static GVRSceneObject createCylinder(GVRContext context, float x, float y, float z,
+    public static GVRSceneObject createCylinder(GVRContext context, GVRMesh mesh, float x, float y, float z,
                                                  int drawable) throws IOException {
-        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, drawable));
-        Future<GVRMesh> mesh = context.getAssetLoader().loadFutureMesh(new GVRAndroidResource(context, "cylinder.fbx"));
-        GVRSceneObject cylinderObject = new GVRSceneObject(context, mesh, texture);
+        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, drawable));
+        GVRMaterial mtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRSceneObject cylinderObject = new GVRSceneObject(context, mesh, mtl);
 
         cylinderObject.getTransform().setPosition(x, y, z);
         cylinderObject.getTransform().setRotationByAxis(90.0f, 1.0f, 0.0f, 0.0f);
-
-        cylinderObject.getRenderData().getMaterial().setTexture("diffuseTexture", texture);
-        //set phong Shader
-        cylinderObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
+        mtl.setTexture("diffuseTexture", texture);
 
         // Collider
-        GVRMeshCollider meshCollider = new GVRMeshCollider(context, cylinderObject.getRenderData().getMesh());
+        GVRMeshCollider meshCollider = new GVRMeshCollider(context, false);
         cylinderObject.attachCollider(meshCollider);
 
         // Physics body
@@ -139,35 +135,32 @@ public class MainHelper {
 
     public static GVRSceneObject createBall(GVRContext context, float x, float y, float z,
                                             float[] force) throws IOException {
-        Future<GVRTexture> texture = context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.grey));
-        Future<GVRMesh> mesh = context.getAssetLoader().loadFutureMesh(new GVRAndroidResource(context, "ball.fbx"));
+        GVRSceneObject ballObject = context.getAssetLoader().loadModel("ball.fbx");
+        List<GVRRenderData> rdatas = ballObject.getAllComponents(GVRRenderData.getComponentType());
+        GVRSceneObject ballGeometry = rdatas.get(0).getOwnerObject();
 
-        GVRSceneObject ballObject = new GVRSceneObject(context, mesh, texture);
-        ballObject.getTransform().setScale(0.7f, 0.7f, 0.7f);
-        ballObject.getTransform().setPosition(x, y, z);
-
-        ballObject.getRenderData().getMaterial().setTexture("diffuseTexture", texture);
-        //set phong Shader
-        ballObject.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        ballObject.getRenderData().getMaterial().setDiffuseColor(1.0f, 1.0f, 1.0f, 1.f);
+        ballGeometry.getParent().removeChildObject(ballGeometry);
+        ballGeometry.getTransform().setScale(0.7f, 0.7f, 0.7f);
+        ballGeometry.getTransform().setPosition(x, y, z);
+        ballGeometry.getRenderData().getMaterial().setDiffuseColor(1.0f, 1.0f, 1.0f, 1.f);
 
         GVRSphereCollider sphereCollider = new GVRSphereCollider(context);
         sphereCollider.setRadius(1.0f);
-        ballObject.attachCollider(sphereCollider);
+        ballGeometry.attachCollider(sphereCollider);
 
         GVRRigidBody rigidBody = new GVRRigidBody(context, BALL_MASS, COLLISION_GROUP_BALL);
         rigidBody.setRestitution(1.5f);
         rigidBody.setFriction(0.5f);
         rigidBody.applyCentralForce(force[0], force[1], force[2]);
-        ballObject.attachComponent(rigidBody);
-
-        return ballObject;
+        ballGeometry.attachComponent(rigidBody);
+        return ballGeometry;
     }
 
     public static GVRSceneObject createGaze(GVRContext context, float x, float y, float z) {
-        GVRSceneObject gaze = new GVRSceneObject(context,
-                new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
-                context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.drawable.gaze)));
+        GVRMesh mesh = new GVRMesh(context, "float3 a_position float2 a_texcoord");
+        mesh.createQuad(0.1f, 0.1f);
+        GVRSceneObject gaze = new GVRSceneObject(context, mesh,
+                context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.gaze)));
 
         gaze.getTransform().setPosition(x, y, z);
         gaze.getRenderData().setDepthTest(false);

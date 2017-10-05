@@ -15,6 +15,7 @@
 
 package org.gearvrf.solarsystem;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
@@ -26,6 +27,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisWithPivotAnimation;
 import org.gearvrf.utility.Log;
@@ -39,13 +41,18 @@ public class SolarMain extends GVRMain {
     @SuppressWarnings("unused")
     private static final String TAG = Log.tag(SolarMain.class);
 
-    private GVRAnimationEngine mAnimationEngine;
+    private GVRAnimator mAnimator;
     private GVRScene mMainScene;
+
+    private GVRSceneObject asyncSceneObject(GVRContext context,
+            String textureName) throws IOException {
+        return new GVRSceneObject(context, //
+                new GVRAndroidResource(context, "sphere.obj"), //
+                new GVRAndroidResource(context, textureName));
+    }
 
     @Override
     public void onInit(final GVRContext gvrContext) throws IOException {
-        mAnimationEngine = gvrContext.getAnimationEngine();
-
         final GVRCameraRig newRig = GVRCameraRig.makeInstance(gvrContext);
         final GVRCamera leftCamera = new GVRPerspectiveCamera(gvrContext);
         leftCamera.setRenderMask(GVRRenderData.GVRRenderMaskBit.Left);
@@ -56,16 +63,17 @@ public class SolarMain extends GVRMain {
         newRig.attachLeftCamera(leftCamera);
         newRig.attachRightCamera(rightCamera);
         newRig.attachCenterCamera(centerCamera);
-
+        mAnimator = new GVRAnimator(gvrContext);
         mMainScene = gvrContext.getMainScene();
 
         GVRSceneObject solarSystemObject = new GVRSceneObject(gvrContext);
+        solarSystemObject.attachComponent(mAnimator);
         mMainScene.addSceneObject(solarSystemObject);
 
         GVRSceneObject sunRotationObject = new GVRSceneObject(gvrContext);
         solarSystemObject.addChildObject(sunRotationObject);
 
-        GVRSceneObject sunMeshObject = gvrContext.getAssetLoader().loadModel("sphere_sun.obj", mMainScene);
+        GVRSceneObject sunMeshObject = asyncSceneObject(gvrContext, "sunmap.astc");
         sunMeshObject.getTransform().setScale(10.0f, 10.0f, 10.0f);
         sunRotationObject.addChildObject(sunMeshObject);
 
@@ -76,7 +84,7 @@ public class SolarMain extends GVRMain {
         GVRSceneObject mercuryRotationObject = new GVRSceneObject(gvrContext);
         mercuryRevolutionObject.addChildObject(mercuryRotationObject);
 
-        GVRSceneObject mercuryMeshObject = gvrContext.getAssetLoader().loadModel("sphere_mercury.obj", mMainScene);
+        GVRSceneObject mercuryMeshObject = asyncSceneObject(gvrContext, "mercurymap.jpg");
         mercuryMeshObject.getTransform().setScale(0.3f, 0.3f, 0.3f);
         mercuryRotationObject.addChildObject(mercuryMeshObject);
 
@@ -87,7 +95,7 @@ public class SolarMain extends GVRMain {
         GVRSceneObject venusRotationObject = new GVRSceneObject(gvrContext);
         venusRevolutionObject.addChildObject(venusRotationObject);
 
-        GVRSceneObject venusMeshObject = gvrContext.getAssetLoader().loadModel("sphere_venus.obj", mMainScene);
+        GVRSceneObject venusMeshObject = asyncSceneObject(gvrContext, "venusmap.jpg");
         venusMeshObject.getTransform().setScale(0.8f, 0.8f, 0.8f);
         venusRotationObject.addChildObject(venusMeshObject);
 
@@ -103,7 +111,7 @@ public class SolarMain extends GVRMain {
         earthRevolutionObject.addChildObject(moonRevolutionObject);
         moonRevolutionObject.addChildObject(newRig.getOwnerObject());
 
-        GVRSceneObject earthMeshObject = gvrContext.getAssetLoader().loadModel("sphere_earthmap.obj", mMainScene);
+        GVRSceneObject earthMeshObject = asyncSceneObject(gvrContext, "earthmap1k.jpg");
         earthMeshObject.getTransform().setScale(1.0f, 1.0f, 1.0f);
         earthRotationObject.addChildObject(earthMeshObject);
 
@@ -114,7 +122,7 @@ public class SolarMain extends GVRMain {
         GVRSceneObject marsRotationObject = new GVRSceneObject(gvrContext);
         marsRevolutionObject.addChildObject(marsRotationObject);
 
-        GVRSceneObject marsMeshObject = gvrContext.getAssetLoader().loadModel("sphere_mars.obj", mMainScene);
+        GVRSceneObject marsMeshObject = asyncSceneObject(gvrContext, "mars_1k_color.jpg");
         marsMeshObject.getTransform().setScale(0.6f, 0.6f, 0.6f);
         marsRotationObject.addChildObject(marsMeshObject);
 
@@ -135,23 +143,12 @@ public class SolarMain extends GVRMain {
 
         counterClockwise(marsRevolutionObject, 1200f);
         counterClockwise(marsRotationObject, 200f);
-
-        closeSplashScreen();
-        for (GVRAnimation animation : mAnimations) {
-            animation.start(mAnimationEngine);
-        }
-        mAnimations = null;
-        gvrContext.runOnGlThread(new Runnable() {
-            @Override
-            public void run() {
-                mMainScene.setMainCameraRig(newRig);
-            }
-        });
+        mAnimator.start();
+        mMainScene.setMainCameraRig(newRig);
     }
 
     @Override
-    public SplashMode getSplashMode() {
-        return SplashMode.MANUAL;
+    public void onStep() {
     }
 
     void onTap() {
@@ -162,11 +159,9 @@ public class SolarMain extends GVRMain {
         }
     }
 
-    private List<GVRAnimation> mAnimations = new ArrayList<GVRAnimation>();
-
     private void setup(GVRAnimation animation) {
         animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
-        mAnimations.add(animation);
+        mAnimator.addAnimation(animation);
     }
 
     private void counterClockwise(GVRSceneObject object, float duration) {

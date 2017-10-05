@@ -25,6 +25,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
@@ -49,8 +50,8 @@ public class SampleScript extends GVRMain {
         float[] E = { 2.5f, 1, Z, 1.5f, 1, Z, 1.5f, -1, Z,
                       2.5f, -1, Z, 2.5f, 0, Z, 1.5f, 0, Z,
                       1.5f, 1, Z, 1.5f, -1, Z};
-    	GVRMaterial redMaterial = new GVRMaterial(gvrContext);
-        GVRMaterial blueMaterial = new GVRMaterial(gvrContext);
+    	GVRMaterial redMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMaterial blueMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
         GVRMesh mesh = new GVRMesh(gvrContext);
         GVRRenderData rd = new GVRRenderData(gvrContext);
 
@@ -64,7 +65,6 @@ public class SampleScript extends GVRMain {
     	rd.setMesh(mesh);
     	rd.setDrawMode(GLES20.GL_LINE_STRIP);
     	rd.setMaterial(redMaterial);
-    	rd.setShaderTemplate(GVRPhongShader.class);
     	Lobj.attachRenderData(rd);
     	scene.addSceneObject(Lobj);
 
@@ -75,7 +75,6 @@ public class SampleScript extends GVRMain {
         rd.setMesh(mesh);
         rd.setDrawMode(GLES20.GL_LINES);
         rd.setMaterial(redMaterial);
-        rd.setShaderTemplate(GVRPhongShader.class);
         Iobj.attachRenderData(rd);
         scene.addSceneObject(Iobj);
 
@@ -86,7 +85,6 @@ public class SampleScript extends GVRMain {
         rd.setMesh(mesh);
         rd.setDrawMode(GLES20.GL_LINE_STRIP);
         rd.setMaterial(redMaterial);
-        rd.setShaderTemplate(GVRPhongShader.class);
         Nobj.attachRenderData(rd);
         scene.addSceneObject(Nobj);
         
@@ -98,16 +96,19 @@ public class SampleScript extends GVRMain {
         rd.setDrawMode(GLES20.GL_LINES);
         rd.setMaterial(blueMaterial);
         rd.setAlphaBlend(true);
-        rd.setShaderTemplate(GVRPhongShader.class);
         Eobj.attachRenderData(rd);
         scene.addSceneObject(Eobj);
         
         GVRSceneObject sphere = new GVRSphereSceneObject(gvrContext);
         rd = sphere.getRenderData();
         rd.setAlphaBlend(true);
-        rd.setShaderTemplate(GVRPhongShader.class);
         rd.setMaterial(blueMaterial);
         sphere.getTransform().setPositionZ(Z);
         scene.addSceneObject(sphere);
      }
+
+    @Override
+    public void onStep() {
+    }
+
 }

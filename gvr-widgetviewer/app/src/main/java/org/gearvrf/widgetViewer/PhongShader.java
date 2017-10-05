@@ -17,18 +17,16 @@
 package org.gearvrf.widgetViewer;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 
-public class PhongShader extends GVRShaderTemplate {
+public class PhongShader extends GVRShader {
 
     public static final String COLOR_KEY = "u_color";
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
     public static final String RADIUS_KEY = "u_radius";
-    public static final String TEXTURE_KEY = "texture";
+    public static final String TEXTURE_KEY = "u_texture";
 
     public static final String MAT1_KEY = "u_mat1";
     public static final String MAT2_KEY = "u_mat2";
@@ -36,43 +34,48 @@ public class PhongShader extends GVRShaderTemplate {
     public static final String MAT4_KEY = "u_mat4";
 
     private static final String VERTEX_SHADER = "" //
-            + "attribute vec4 a_position;\n"
-            + "attribute vec3 a_normal;\n" //
-            + "attribute vec2 a_texcoord;\n"
-            + "uniform mat4 u_mvp;\n" //
-            + "uniform vec3 u_eye;\n"
-            + "uniform vec3 u_light;\n" //
-            + "varying vec3 normal;\n"
-            + "varying vec3 view;\n" //
-            + "varying vec3 light;\n"
-            + "varying vec3 p;\n" //
-            + "varying vec2 coord;\n" //
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
+            + "precision mediump float;\n"
+            + "layout(location = 0) in vec3 a_position;\n"
+            + "layout(location = 2) in vec3 a_normal;\n" //
+            + "layout(location = 1) in vec2 a_texcoord;\n"
+            + "@MATRIX_UNIFORMS\n"
+            + "@MATERIAL_UNIFORMS\n"
+            + "layout(location = 0) out vec3 normal;\n"
+            + "layout(location = 1) out vec3 view;\n" //
+            + "layout(location = 2) out vec3 light;\n"
+            + "layout(location = 3) out vec3 p;\n" //
+            + "layout(location = 4) out vec2 coord;\n" //
             + "void main() {\n"
             + "  normal = a_normal;\n" //
-            + "  view  = u_eye - a_position.xyz;\n"
-            + "  light = u_light - a_position.xyz;\n"
+            + "  view  = vec3(u_eye.x, u_eye.y, u_eye.z) - a_position.xyz;\n"
+            + "  light = vec3(u_light.x, u_light.y, u_light.z) - a_position.xyz;\n"
             + "  p = a_position.xyz;\n" //
             + "  coord = a_texcoord;\n"
-            + "  gl_Position = u_mvp * a_position;\n" //
+            + "  gl_Position = u_mvp * vec4(a_position,1.0);\n" //
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
+            + "#extension GL_ARB_separate_shader_objects : enable\n"
+            + "#extension GL_ARB_shading_language_420pack : enable\n"
             + "precision mediump float;\n"
-            + "varying vec3  normal;\n" //
-            + "varying vec2  coord;\n"
-            + "uniform vec4  u_color;\n" //
-            + "uniform float u_radius;\n"
-            + "varying vec3  view;\n" //
-            + "varying vec3  light;\n"
-            + "varying vec3  p;\n" //
-            + "uniform sampler2D texture;\n"
+            + "@MATERIAL_UNIFORMS\n"
+            + "layout(location = 0) in vec3 normal;\n"
+            + "layout(location = 1) in vec3 view;\n" //
+            + "layout(location = 2) in vec3 light;\n"
+            + "layout(location = 3) in vec3 p;\n" //
+            + "layout(location = 4) in vec2 coord;\n" //
+            + "layout(set = 0, binding = 4) uniform sampler2D u_texture;\n"
+            + "layout(location = 0) out vec4 FragColor;\n"
+
             + "void main() {\n" //
             + "  vec3  v = normalize(view);\n"
             + "  vec3  l = normalize(light);\n"
             + "  vec3  n = normalize(normal);\n"
             + "  vec3  r = normalize(reflect(v,n));\n"
             + "  float b =-dot(r,p);\n"
-            + "  float c = dot(p,p)-u_radius*u_radius;\n"
+            + "  float c = dot(p,p)-u_radius *u_radius;\n"
             + "  float t = sqrt(b*b-c);\n"
             + "  if( -b + t > 0.0 ) t = -b + t;\n"
             + "  else               t = -b - t;\n"
@@ -81,7 +84,7 @@ public class PhongShader extends GVRShaderTemplate {
             + "  if( target.x > 0.0 ) u =  target.z + 3.0;\n"
             + "  else                 u = -target.z + 1.0;\n"
             + "  vec2 uv = vec2( u/4.0, 0.5*target.y + 0.5 );\n"
-            + "  vec3 color = texture2D(texture, uv).rgb;\n"
+            + "  vec3 color = texture(u_texture, uv).rgb;\n"
             + "  vec3  h = normalize(v+l);\n"
             + "  float diffuse  = max ( dot(l,n), 0.12 );\n"
             + "  float specular = max ( dot(h,n), 0.0 );\n"
@@ -89,13 +92,23 @@ public class PhongShader extends GVRShaderTemplate {
             + "  vec3 color1 = vec3(diffuse);\n" //
             + "  color1 *= u_color.rgb;\n"
             + "  color1 += specular;\n"
-            + "  gl_FragColor = vec4( 0.1*color + 0.9*color1, 1.0 );\n" //
+            + "  FragColor = vec4( 0.1*color + 0.9*color1, 1.0 );\n" //
             + "}\n";
 
-
     public PhongShader(GVRContext gvrContext) {
-        super("float3 u_eye, float3 u_light, float4 u_color, float u_radius, sampler2D texture");
+        super("float3 u_eye, float3 u_light, float4 u_color, float u_radius",
+               "sampler2D u_texture",
+               "float3 a_position, float2 a_texcoord, float3 a_normal",
+                GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
+    }
+
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setVec4("u_color", 1, 1, 1, 1);
+        material.setVec3("u_light", 1, 1, 1);
+        material.setVec3("u_eye", 0, 0, 0);
+        material.setFloat("u_radius", 1);
     }
 }

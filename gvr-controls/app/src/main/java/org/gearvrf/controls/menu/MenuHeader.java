@@ -70,6 +70,7 @@ public class MenuHeader extends ControlSceneObject implements ItemSelectedListen
 
         this.frameListener = frameListener;
 
+        attachComponent(new GVRMeshCollider(gvrContext, false));
 
         createMenuTypes();
         createMenuItems(gvrContext);
@@ -78,7 +79,6 @@ public class MenuHeader extends ControlSceneObject implements ItemSelectedListen
         setOriginalPosition();
 
         getRenderData().setRenderingOrder(RenderingOrder.MENU_HEADER);
-        attachCollider(new GVRMeshCollider(gvrContext, getRenderData().getMesh()));
     }
 
     private void createMenuTypes() {

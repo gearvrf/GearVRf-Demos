@@ -36,16 +36,16 @@ public class BasketBall {
 			int index) {
 		try {
 			this.mAnimationEngine = mAnimationEngine;
-			mesh = vrcontext.getAssetLoader().loadMesh(new GVRAndroidResource(vrcontext,
+			mesh = vrcontext.loadMesh(new GVRAndroidResource(vrcontext,
 					"sphere.obj"));
-			texture = vrcontext.getAssetLoader().loadTexture(new GVRAndroidResource(vrcontext,
+			texture = vrcontext.loadTexture(new GVRAndroidResource(vrcontext,
 					"basketbal.jpg"));
 			vrObject = new GVRSceneObject(vrcontext, mesh, texture);
 			vrObject.getTransform().setScale(0.2f, 0.2f, 0.2f);
 
-			pmesh = vrcontext.getAssetLoader().loadMesh(new GVRAndroidResource(vrcontext,
+			pmesh = vrcontext.loadMesh(new GVRAndroidResource(vrcontext,
 					"cube.obj"));
-			ptexture = vrcontext.getAssetLoader().loadTexture(new GVRAndroidResource(vrcontext,
+			ptexture = vrcontext.loadTexture(new GVRAndroidResource(vrcontext,
 					"mars_1k_color.jpg"));
 			vrpObject = new GVRSceneObject(vrcontext, pmesh, ptexture);
 			vrpObject.getTransform().setScale(0.1f, 4f, 0.1f);

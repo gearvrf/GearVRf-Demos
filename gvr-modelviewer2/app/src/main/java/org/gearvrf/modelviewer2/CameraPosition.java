@@ -44,12 +44,12 @@ public class CameraPosition {
             e.printStackTrace();
         }
 
-        attachEyePointee(context);
+        attachCollider(context);
         cameraModel.getTransform().setPosition(position.x, position.y, position.z);
         return cameraModel;
     }
 
-    private void attachEyePointee(GVRContext context) {
+    private void attachCollider(GVRContext context) {
         GVRSphereCollider sphereCollider = new GVRSphereCollider(context);
         sphereCollider.setRadius(0.5f);
         cameraModel.attachComponent(sphereCollider);

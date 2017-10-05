@@ -1,17 +1,17 @@
+#define HAS_MULTIVIEW 1
+
 #ifdef HAS_MULTIVIEW
 #extension GL_OVR_multiview2 : enable
 layout(num_views = 2) in;
 #endif
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
+precision mediump float;
 
-in vec4 a_position;
-in vec3 a_normal;
-in vec2 a_texcoord;
-#ifdef HAS_MULTIVIEW
-uniform mat4 u_mvp_[2];
-#else
-uniform mat4 u_mvp;
-#endif
-out vec2 coord;
+layout(location = 0) in vec4 a_position;
+layout(location = 1) in vec2 a_texcoord;
+@MATRIX_UNIFORMS
+layout ( location = 0 ) out vec2 coord;
 
 void main() {
 #ifdef HAS_MULTIVIEW

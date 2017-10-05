@@ -27,9 +27,9 @@ public class SkyBox {
         GVRSphereSceneObject sphereObject = null;
 
         // load texture
-        Future<GVRTexture> texture = null;
+        GVRTexture texture = null;
         try {
-            texture = gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(gvrContext, skyBoxPath + skyBoxName));
+            texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, skyBoxPath + skyBoxName));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -52,9 +52,10 @@ public class SkyBox {
         GVRSphereSceneObject sphereObject = null;
 
         // load texture
-        Future<GVRTexture> texture = null;
+        GVRTexture texture = null;
         try {
-            texture = gvrContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(skyBoxPath + skyBoxName));
+            texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(skyBoxPath + skyBoxName));
+
         } catch (Exception e) {
             e.printStackTrace();
         }

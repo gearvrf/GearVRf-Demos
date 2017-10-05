@@ -18,7 +18,6 @@ package org.gearvrf.video.overlay;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.video.focus.FocusListener;
 import org.gearvrf.video.focus.FocusableSceneObject;
@@ -33,7 +32,7 @@ public class Button extends FocusableSceneObject {
         this.getRenderData().setOffset(true);
         this.getRenderData().setOffsetFactor(-1.0f);
         this.getRenderData().setOffsetUnits(-1.0f);
-        this.attachComponent(new GVRSphereCollider(gvrContext));
+        this.attachEyePointeeHolder();
 
         super.setFocusListener(new FocusListener() {
             @Override
@@ -57,11 +56,11 @@ public class Button extends FocusableSceneObject {
     public void show() {
         getRenderData().setRenderMask(
                 GVRRenderData.GVRRenderMaskBit.Left | GVRRenderData.GVRRenderMaskBit.Right);
-        getCollider().setEnable(true);
+        getEyePointeeHolder().setEnable(true);
     }
 
     public void hide() {
         getRenderData().setRenderMask(0);
-        getCollider().setEnable(false);
+        getEyePointeeHolder().setEnable(false);
     }
 }

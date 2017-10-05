@@ -21,12 +21,11 @@ import android.view.Gravity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusListener;
@@ -156,14 +155,12 @@ public class MenuItem extends FocusableSceneObject {
         GVRTexture hover = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
 
         obj.attachRenderData(new GVRRenderData(getGVRContext()));
-        obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.BeingGenerated.ID));
+        obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(MenuImageShader.class)));
         obj.getRenderData().setMesh(getGVRContext().createQuad(CHILD_WIDTH, CHILD_HEIGHT));
         obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE1_TEXTURE, idle);
         obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE2_TEXTURE, hover);
         obj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
-        GVRMaterialShaderManager shaderManager = getGVRContext().getMaterialShaderManager();
-        GVRShaderTemplate shaderTemplate = shaderManager.retrieveShaderTemplate(MenuImageShader.class);
-        shaderTemplate.bindShader(getGVRContext(), obj.getRenderData(), getGVRContext().getMainScene());
+
         addChildObject(obj);
 
         return obj;

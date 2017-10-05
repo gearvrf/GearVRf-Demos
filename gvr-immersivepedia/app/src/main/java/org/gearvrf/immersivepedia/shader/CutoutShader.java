@@ -18,24 +18,27 @@ package org.gearvrf.immersivepedia.shader;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCustomMaterialShaderId;
-import org.gearvrf.GVRMaterialMap;
-import org.gearvrf.GVRMaterialShaderManager;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.utility.TextFile;
 
-public class CutoutShader extends GVRShaderTemplate{
+public class CutoutShader extends GVRShader{
 
     public static final String TEXTURE_KEY = "u_texture";
     public static final String CUTOUT = "cutout";
 
     public CutoutShader(GVRContext gvrContext) {
-        super("float cutout, sampler2D u_texture", 300);
+        super("float cutout", "sampler2D u_texture", "float4 a_position, float2 a_texcoord", GLSLESVersion.VULKAN);
 
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.cutout_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.cutout_vertex));
+
     }
 
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setFloat("cutout", 1);
+    }
 }

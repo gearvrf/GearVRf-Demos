@@ -16,10 +16,10 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.focus.ControlSceneObject;
-import org.gearvrf.controls.input.Button;
 import org.gearvrf.controls.shaders.ButtonShader;
 import org.gearvrf.controls.util.RenderingOrder;
 
@@ -35,16 +35,17 @@ public class AnimButtonPlay extends ControlSceneObject {
         GVRMesh sMesh = getGVRContext().createQuad(0.3f, 0.3f);
 
         attachRenderData(new GVRRenderData(gvrContext));
+        GVRShaderId id = new GVRShaderId(ButtonShader.class);
         getRenderData().setMaterial(
-                new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
+                new GVRMaterial(gvrContext, id));
         getRenderData().setMesh(sMesh);
-        getRenderData().setShaderTemplate(ButtonShader.class);
         createTextures(gvrContext);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MOVE_BUTON);
 
-        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
+        attachComponent(new GVRMeshCollider(gvrContext, false));
+
     }
 
     private void createTextures(GVRContext gvrContext) {
@@ -57,11 +58,12 @@ public class AnimButtonPlay extends ControlSceneObject {
         GVRTexture selected = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.bt_play_pressed));
 
+        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, hover);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE, empty);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, idle);
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE, empty);
-        getRenderData().getMaterial().setTexture(ButtonShader.STATE2_TEXT_TEXTURE, hover);
+
 
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE, empty);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_TEXT_TEXTURE, selected);

@@ -59,7 +59,7 @@ public class MyGdxWidget extends GVRWidget {
     Button mColorButton;
     Button mResetButton;
     Button mLookInsideButton;
-    public CheckBox mCheckBox;  
+    public CheckBox mCheckBox;
     float mFontScale = 4.0f;
 
     @SuppressWarnings("unchecked")
@@ -75,7 +75,7 @@ public class MyGdxWidget extends GVRWidget {
 
         InputListener stopTouchDown = new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y,
-                    int pointer, int button) {
+                                     int pointer, int button) {
                 event.stop();
                 return false;
             }
@@ -167,8 +167,8 @@ public class MyGdxWidget extends GVRWidget {
                 }
                 ;
                 slider.addListener(stopTouchDown); // Stops touchDown events
-                                                   // from propagating to the
-                                                   // FlickScrollPane.
+                // from propagating to the
+                // FlickScrollPane.
                 if (i == 0) {
                     Label l = new Label("Rotate X", skin);
                     table.add(l);
@@ -214,7 +214,7 @@ public class MyGdxWidget extends GVRWidget {
         slider.addListener(stopTouchDown);
         Label zoom = new Label("  Zoom  ", skin);
         zoom.setFontScale(mFontScale);
-        table.pad(10).add(zoom); 
+        table.pad(10).add(zoom);
         table.add(slider).height(150.0f).width(800);
         final TextButton flickButton = new TextButton("Flick Scroll", skin.get(
                 "toggle", TextButtonStyle.class));

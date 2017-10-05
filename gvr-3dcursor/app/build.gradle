@@ -50,9 +50,9 @@ dependencies {
         compile(name: 'GearWearIoDevice-debug', ext: 'aar')
         compile(name: 'gearwearlibrary-debug', ext: 'aar')
     } else {
-        compile "org.gearvrf:3DCursorLibrary:$gearvrfVersion"
-        compile "org.gearvrf:GearWearIoDevice:$gearvrfVersion"
-        compile "org.gearvrf:gearwearlibrary:$gearvrfVersion"
+        compile "org.gearvrf:3DCursorLibrary-debug:$gearvrfVersion"
+        compile "org.gearvrf:GearWearIoDevice-debug:$gearvrfVersion"
+        compile "org.gearvrf:gearwearlibrary-debug:$gearvrfVersion"
     }
     //_VENDOR_TODO_ add the device to gvr-3dcursor here
     //compile project(':IODevices:io_template')

@@ -18,11 +18,12 @@ package org.gearvrf.controls.shaders;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.controls.R;
 import org.gearvrf.utility.TextFile;
 
-public class ButtonShader extends GVRShaderTemplate{
+public class ButtonShader extends GVRShader{
 
     public static final String STATE1_BACKGROUND_TEXTURE = "state1Background";
     public static final String STATE1_TEXT_TEXTURE = "state1Text";
@@ -32,12 +33,18 @@ public class ButtonShader extends GVRShaderTemplate{
     public static final String STATE3_TEXT_TEXTURE = "state3Text";
     public static final String TEXTURE_SWITCH = "textureSwitch";
 
+
     public ButtonShader(GVRContext gvrContext) {
-        super("float opacity, float textureSwitch, sampler2D state1Background sampler2D state1Text sampler2D state2Background sampler2D state2Text sampler2D state3Background sampler2D state3Text");
+        super("float textureSwitch float u_opacity",
+              "sampler2D state1Text sampler2D state2Text sampler2D state3Text sampler2D state1Background sampler2D state2Background  sampler2D state3Background",
+              "float3 a_position, float3 a_normal, float2 a_texcoord", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.buttonshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.buttonshader_vertex));
-
     }
 
+    protected void setMaterialDefaults(GVRShaderData material) {
+        material.setFloat(TEXTURE_SWITCH, 0.0f);
+        material.setFloat("u_opacity", 1.0f);
+    }
 }

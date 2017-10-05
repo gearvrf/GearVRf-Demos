@@ -65,6 +65,7 @@ public class SphereStaticList {
             float eX = mat[0] * x + mat[1] * y + mat[2] * z + mat[3] * 1;
             float eY = mat[4] * x + mat[5] * y + mat[6] * z + mat[7] * 1;
             float eZ = mat[8] * x + mat[9] * y + mat[10] * z + mat[11] * 1;
+
             sphereFlag
                     .getRenderData()
                     .getMaterial()

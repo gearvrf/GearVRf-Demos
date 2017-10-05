@@ -38,25 +38,25 @@ public class MotionMenu extends MenuWindow {
     private final float GRID_POSITION_X = 0.33f;
     private final float GRID_POSITION_Y = -0.38f;
     private final float GRID_POSITION_Z = 0.f;
-    
+
     private MenuPreview previewArea;
     private GridSceneObjects mGrid;
     private RadioGrupoSceneObject radioGroup;
-    
+
     public MotionMenu(GVRContext gvrContext) {
         super(gvrContext);
 
         createPreviewBox();
 
         attachGrid();
-        
+
         attachRadioGroup();
     }
 
     private void attachGrid() {
-        
+
         ParserMotionItem parse = new ParserMotionItem(getGVRContext());
-    
+
         mGrid = new GridSceneObjects(getGVRContext(), parse.getList(),R.array.grid,
                 new ItemSelectedListener() {
 
@@ -69,16 +69,16 @@ public class MotionMenu extends MenuWindow {
                         previewArea.changeColorTo(Apple.getColor(getGVRContext()));
                     }
                 });
-        
+
         mGrid.getTransform().setPosition(GRID_POSITION_X, GRID_POSITION_Y,
                 GRID_POSITION_Z);
     }
 
     private void createPreviewBox() {
-      
+
         previewArea = new MenuPreview(getGVRContext(), getGVRContext().createQuad(1.2f, 1),
                 getGVRContext().getAssetLoader().loadTexture( new GVRAndroidResource(this.getGVRContext(), R.raw.empty)));
-       
+
         previewArea.getTransform().setPosition(PREVIEW_POSITION_X, PREVIEW_POSITION_Y,
                 PREVIEW_POSITION_Z);
 
@@ -86,29 +86,29 @@ public class MotionMenu extends MenuWindow {
 
         addChildObject(previewArea);
     }
-    
+
     private void attachRadioGroup() {
 
         radioGroup =  new RadioGrupoSceneObject(getGVRContext(), new ItemSelectedListener() {
-            
+
             @Override
             public void selected(ControlSceneObject object) {
-                
+
                 RadioButtonSceneObject button = (RadioButtonSceneObject)object;
                 AnimationsTime.setDropTime(button.getSecond());
-                
+
                 previewArea.animationsTime();
             }
         }, 1, 3, 5);
-        
+
         radioGroup.getTransform().setPosition(-1.37f, -1.24f, PREVIEW_POSITION_Z);
-        
+
         addChildObject(radioGroup);
     }
 
     @Override
     public void show() {
-        
+
         radioGroup.show();
 
         removeChildObject(mGrid);
@@ -125,7 +125,7 @@ public class MotionMenu extends MenuWindow {
 
     @Override
     public void hide() {
-        
+
         radioGroup.hide();
 
         removeChildObject(mGrid);

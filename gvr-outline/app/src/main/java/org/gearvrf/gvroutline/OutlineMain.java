@@ -24,6 +24,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -42,64 +43,70 @@ public class OutlineMain extends GVRMain {
     private static final float ROTATION_SPEED = 0.75f;
     private final String mModelPath = "FreeCharacter_01.fbx";
     private final String mDiffuseTexturePath = "Body_Diffuse_01.jpg";
-    
+
     private GVRActivity mActivity;
-     
+
     private static final String TAG = "OutlineSample";
- 
+    private GVRShaderId outlineID;
+
     public OutlineMain(GVRActivity activity) {
-      mActivity = activity;
+        mActivity = activity;
     }
-    
+
+        @Override
+        public SplashMode getSplashMode() {
+            return SplashMode.NONE;
+        }
+
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
         GVRScene outlineScene = gvrContext.getMainScene();
-        
+
         try {
-          EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
-          EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
-          GVRMesh characterMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
-              mModelPath), settings);
-          
-          // Setup Scene - Alternatively to set character transform, one could
-          // achieve same effect by setting camera transform (outlineScene->getMainCameraRig)
-          // passing inverse transformation values.
-          mCharacter = new GVRSceneObject(mGVRContext, characterMesh);
-          mCharacter.getTransform().setPosition(0.0f, -300.0f, -200.0f);
-          mCharacter.getTransform().setRotationByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
+            EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS,  GVRImportSettings.NO_ANIMATION);
+            EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
+            GVRMesh characterMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext,
+                    mModelPath), settings);
 
-          // Create Base Material Pass
-          // ---------------------------------------------------------------
-          GVRMaterial outlineMaterial = new GVRMaterial(mGVRContext);
-  
-          // Brown-ish outline color
-          outlineMaterial.setVec4(OutlineShader.COLOR_KEY, 0.4f, 0.1725f,
-                  0.1725f, 1.0f);
-          outlineMaterial.setFloat(OutlineShader.THICKNESS_KEY, 2.0f);
-  
-          // For outline we want to cull front faces
-          mCharacter.getRenderData().setMaterial(outlineMaterial);
-          mCharacter.getRenderData().setShaderTemplate(OutlineShader.class);
-          mCharacter.getRenderData().setCullFace(GVRCullFaceEnum.Front);
+            // Setup Scene - Alternatively to set character transform, one could
+            // achieve same effect by setting camera transform (outlineScene->getMainCameraRig)
+            // passing inverse transformation values.
+            mCharacter = new GVRSceneObject(mGVRContext, characterMesh);
+            mCharacter.getTransform().setPosition(0.0f, -300.0f, -200.0f);
+            mCharacter.getTransform().setRotationByAxis(-90.0f, 1.0f, 0.0f, 0.0f);
 
-          // Create Additional Pass
-          // ----------------------------------------------------------------
-          // load texture
-          GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
-                  mGVRContext, mDiffuseTexturePath));
+            // Create Base Material Pass
+            // --------------------------------------------------------------
+            outlineID = new GVRShaderId(OutlineShader.class);
+            GVRMaterial outlineMaterial = new GVRMaterial(mGVRContext, outlineID);
 
-          GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.Texture.ID);
-          material.setMainTexture(texture);
+            // Brown-ish outline color
+            outlineMaterial.setVec4(OutlineShader.COLOR_KEY, 0.4f, 0.1725f,
+                    0.1725f, 1.0f);
+            outlineMaterial.setFloat(OutlineShader.THICKNESS_KEY, 2.0f);
 
-          GVRRenderPass pass = new GVRRenderPass(mGVRContext);
-          pass.setMaterial(material);
-          pass.setCullFace(GVRCullFaceEnum.Back);
-          mCharacter.getRenderData().addPass(pass);
-          
-          // Finally Add Cube to Scene
-          outlineScene.addSceneObject(mCharacter);
-          
+            // For outline we want to cull front faces
+            mCharacter.getRenderData().setMaterial(outlineMaterial);
+            mCharacter.getRenderData().setCullFace(GVRCullFaceEnum.Front);
+
+            // Create Additional Pass
+            // ----------------------------------------------------------------
+            // load texture
+            GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
+                    mGVRContext, mDiffuseTexturePath));
+
+            GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.Texture.ID);
+            material.setMainTexture(texture);
+
+            GVRRenderPass pass = new GVRRenderPass(mGVRContext);
+            pass.setMaterial(material);
+            pass.setCullFace(GVRCullFaceEnum.Back);
+            mCharacter.getRenderData().addPass(pass);
+
+            // Finally Add Cube to Scene
+            outlineScene.addSceneObject(mCharacter);
+
         } catch(IOException e) {
             e.printStackTrace();
             mActivity.finish();
@@ -111,7 +118,7 @@ public class OutlineMain extends GVRMain {
     @Override
     public void onStep() {
         if (mCharacter != null) {
-          mCharacter.getTransform().rotateByAxis(ROTATION_SPEED, 0.0f, 1.0f, 0.0f);
+            mCharacter.getTransform().rotateByAxis(ROTATION_SPEED, 0.0f, 1.0f, 0.0f);
         }
     }
 

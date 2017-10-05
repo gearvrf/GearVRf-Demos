@@ -15,16 +15,17 @@
 
 package org.gearvrf.gvrtextviewsample;
 
-import android.graphics.Color;
-import android.view.Gravity;
+import java.util.ArrayList;
+import java.util.Random;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
 
-import java.util.ArrayList;
-import java.util.Random;
+import android.graphics.Color;
+import android.view.Gravity;
+import android.widget.LinearLayout;
 
 public class SampleMain extends GVRMain {
 
@@ -60,7 +61,7 @@ public class SampleMain extends GVRMain {
             sceneObject.setTextSize(textSize);
             sceneObject.setRefreshFrequency(frequencies[i % 3]);
             // add the scene object to the scene graph
-            gvrContext.getMainScene().addSceneObject(sceneObject);
+            gvrContext.getNextMainScene().addSceneObject(sceneObject);
             sceneObject.getTransform().setPositionZ(-3.0f);
             textviews.add(sceneObject);
             textSize += 2;

@@ -5,15 +5,14 @@ import org.gearvrf.GVRCamera;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRPostEffect;
-import org.gearvrf.GVRPostEffectShaderManager;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRRenderTarget;
 import org.gearvrf.GVRRenderTexture;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSwitch;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCameraSceneObject;
@@ -102,21 +101,16 @@ public class TestMain extends GVRMain
     {
         final GVRSceneObject blurryQuad = new GVRSceneObject(mContext, 2.0f, 2.0f, texture, GVRMaterial.GVRShaderType.OES.ID);
         GVRRenderData rdata = blurryQuad.getRenderData();
-        GVRMaterial horzBlurMtl = rdata.getMaterial();
-        GVRPostEffectShaderManager shaderManager = mContext.getPostEffectShaderManager();
-        GVRShaderTemplate vertBlurShader = shaderManager.retrieveShaderTemplate(VertBlurShader.class);
-        GVRShaderTemplate horzBlurShader = shaderManager.retrieveShaderTemplate(HorzBlurShader.class);
-        GVRPostEffect vertBlurMtl = new GVRPostEffect(mContext, GVRPostEffect.GVRPostEffectShaderType.HorizontalFlip.ID);
-        GVRCamera camera = scene.getMainCameraRig().getCenterCamera();
-
+        GVRMaterial horzBlurMtl = new GVRMaterial(mContext, new GVRShaderId(HorzBlurShader.class));
         horzBlurMtl.setFloat("u_resolution", 1024.0f);
-        horzBlurMtl.setTexture("main_texture", texture);
-        rdata.setShaderTemplate(HorzBlurShader.class);
-        horzBlurShader.bindShader(mContext, rdata, scene);
+        horzBlurMtl.setTexture("u_texture", texture);
+        rdata.setMaterial(horzBlurMtl);
+
+        GVRMaterial vertBlurMtl = new GVRMaterial(mContext, new GVRShaderId(VertBlurShader.class));
+        GVRCamera camera = scene.getMainCameraRig().getCenterCamera();
 
         vertBlurMtl.setFloat("u_resolution", 1024.0f);
         vertBlurMtl.setTexture("u_texture", texture);
-        vertBlurShader.bindShader(mContext, vertBlurMtl);
         camera.addPostEffect(vertBlurMtl);
 
         blurryQuad.getTransform().setPositionZ(-0.1f);

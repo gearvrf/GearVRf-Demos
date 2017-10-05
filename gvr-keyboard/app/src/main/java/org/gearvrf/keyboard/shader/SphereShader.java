@@ -18,27 +18,40 @@ package org.gearvrf.keyboard.shader;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.keyboard.R;
 import org.gearvrf.utility.TextFile;
 
-public class SphereShader extends GVRShaderTemplate{
+public class SphereShader extends GVRShader{
 
     public static final String LIGHT_KEY = "u_light";
     public static final String EYE_KEY = "u_eye";
     public static final String TRANSITION_COLOR = "trans_color";
-    public static final String TEXTURE_KEY = "texture";
+    public static final String TEXTURE_KEY = "texture_t";
     public static final String SECUNDARY_TEXTURE_KEY = "second_texture";
     public static final String ANIM_TEXTURE = "animTexture";
     public static final String BLUR_INTENSITY = "blur";
     public static final String HDRI_TEXTURE_KEY = "hdri_texture";
 
     public SphereShader(GVRContext gvrContext) {
-        super("float3 u_eye, float3 u_light, float3 trans_color, float animTexture, float blur, float u_radius, sampler2D texture_t sampler2D second_texture sampler2D HDRI_texture");
+        super("float3 u_eye, float3 u_light, float3 trans_color, float animTexture, float blur, float u_radius", "sampler2D texture_t sampler2D second_texture sampler2D HDRI_texture",
+                "float4 a_position, float2 a_texcoord float3 a_normal", GVRShader.GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.sphereshader_fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.sphereshader_vertex));
 
+    }
+
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setVec3("u_eye", 0, 0, 0);
+        material.setVec3("u_light", 1, 1, 1);
+        material.setVec3("trans_color", 1, 1, 1);
+        material.setFloat("blur", 1);
+        material.setFloat("animTexture", 1);
+        material.setFloat("u_radius", 1);
     }
 
 }

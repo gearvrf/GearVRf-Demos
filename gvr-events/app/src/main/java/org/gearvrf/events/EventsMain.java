@@ -79,7 +79,7 @@ public class EventsMain extends GVRMain {
     }
 
     public EventsMain(EventsActivity activity,
-                        final GVRFrameLayout frameLayout, final TextView keyTextView) {
+                      final GVRFrameLayout frameLayout, final TextView keyTextView) {
         this.frameLayout = frameLayout;
         final String keyPressed = activity.getResources()
                 .getString(R.string.keyCode);
@@ -99,7 +99,7 @@ public class EventsMain extends GVRMain {
                 if (msg.what == KEY_EVENT) {
                     int keyCode = msg.arg1;
                     keyTextView.setText(String.format("%s %s ", keyPressed,
-                            KeyEvent.keyCodeToString(keyCode)));
+                                                      KeyEvent.keyCodeToString(keyCode)));
                 }
             }
         };
@@ -110,7 +110,7 @@ public class EventsMain extends GVRMain {
         context = gvrContext;
 
         layoutSceneObject = new GVRViewSceneObject(gvrContext, frameLayout,
-                context.createQuad(QUAD_X, QUAD_Y));
+                                                   context.createQuad(QUAD_X, QUAD_Y));
         mainScene = gvrContext.getMainScene();
         mainScene.addSceneObject(layoutSceneObject);
 
@@ -142,9 +142,9 @@ public class EventsMain extends GVRMain {
             for (MotionEvent motionEvent : motionEvents) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
                     pointerCoords.x = savedHitPointX
-                            + ((motionEvent.getX() - savedMotionEventX) * SCALE);
+                                      + ((motionEvent.getX() - savedMotionEventX) * SCALE);
                     pointerCoords.y = savedHitPointY
-                            + ((motionEvent.getY() - savedMotionEventY) * SCALE);
+                                      + ((motionEvent.getY() - savedMotionEventY) * SCALE);
                 } else {
                     float[] hitPoint = event.getPickedObject().getHitLocation();
                     pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
@@ -167,14 +167,14 @@ public class EventsMain extends GVRMain {
                         InputDevice.SOURCE_TOUCHSCREEN, 0);
 
                 Message message = Message.obtain(mainThreadHandler, MOTION_EVENT, 0, 0,
-                        clone);
+                                                 clone);
                 mainThreadHandler.sendMessage(message);
             }
 
             List<KeyEvent> keyEvents = event.getCursorController().getKeyEvents();
             for (KeyEvent keyEvent : keyEvents) {
                 Message message = Message.obtain(mainThreadHandler, KEY_EVENT,
-                        keyEvent.getKeyCode(), 0, null);
+                                                 keyEvent.getKeyCode(), 0, null);
                 mainThreadHandler.sendMessage(message);
             }
         }
@@ -196,9 +196,8 @@ public class EventsMain extends GVRMain {
         public void onCursorControllerAdded(GVRCursorController controller) {
             // Only allow only gaze
             if (controller.getControllerType() == GVRControllerType.GAZE) {
-                cursor = new GVRSceneObject(context,
-                        new FutureWrapper<GVRMesh>(context.createQuad(0.1f, 0.1f)),
-                        context.getAssetLoader().loadFutureTexture(new GVRAndroidResource(context, R.raw.cursor)));
+                cursor = new GVRSceneObject(context, 0.1f, 0.1f,
+                                            context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.raw.cursor)));
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                 mainScene.getMainCameraRig().addChildObject(cursor);
                 cursor.getRenderData().setDepthTest(false);

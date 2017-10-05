@@ -17,7 +17,6 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScript;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRRelativeMotionAnimation;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
@@ -59,7 +58,6 @@ public class MUNIVisualizerScript extends GVRScript {
 		mCtx = ctx;
 
 		GVRScene scene = ctx.getMainScene();
-		GVRAssetLoader loader = ctx.getAssetLoader();
 		scene.setFrustumCulling(true);
 
 		float r = 126f / 255f;
@@ -73,15 +71,15 @@ public class MUNIVisualizerScript extends GVRScript {
 		scene.getMainCameraRig().getTransform()
 				.setPosition(0f, 0f, 0f);
 
-		busMesh = loader.loadMesh(new GVRAndroidResource(ctx, "cube.obj"));
+		busMesh = ctx.loadMesh(new GVRAndroidResource(ctx, "cube.obj"));
 
-		busTex = loader.loadTexture(new GVRAndroidResource(ctx, "bus.jpg"));
+		busTex = ctx.loadTexture(new GVRAndroidResource(ctx, "bus.jpg"));
 		busTex.setKeepWrapper(true);
 
-		trainTex = loader.loadTexture(new GVRAndroidResource(ctx, "train.jpg"));
+		trainTex = ctx.loadTexture(new GVRAndroidResource(ctx, "train.jpg"));
 		trainTex.setKeepWrapper(true);
 
-		mapTex = loader.loadTexture(new GVRAndroidResource(ctx, "map.jpg"));
+		mapTex = ctx.loadTexture(new GVRAndroidResource(ctx, "map.jpg"));
 
 		root = new GVRSceneObject(ctx);
 		scene.addSceneObject(root);

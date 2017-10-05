@@ -16,7 +16,7 @@ import org.gearvrf.GVRTexture;
 
 import com.samsung.accessibility.R;
 
-public class AccessibilityTexture {
+public class    AccessibilityTexture {
 
     private static AccessibilityTexture instance;
     private GVRTexture accessibilityIcon;

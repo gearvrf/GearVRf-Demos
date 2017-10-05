@@ -20,6 +20,7 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -43,25 +44,23 @@ public class MenuCloseButton extends ControlSceneObject {
         GVRMesh sMesh = getGVRContext().createQuad(0.4f, 0.4f);
 
         attachRenderData(new GVRRenderData(gvrContext));
-        getRenderData().setMaterial(new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.BeingGenerated.ID));
+        getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(ButtonShader.class)));
         getRenderData().setMesh(sMesh);
-        getRenderData().setShaderTemplate(ButtonShader.class);
         createTextures(gvrContext);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
         getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT + 1);
 
-
-        attachCollider(new GVRMeshCollider(gvrContext, sMesh));
+        attachComponent(new GVRMeshCollider(gvrContext, false));
     }
 
     private void createTextures(GVRContext gvrContext) {
-        
+
         GVRTexture empty = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.empty));
         GVRTexture idle = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close));
         GVRTexture hover = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_hover));
         GVRTexture selected = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.bt_close_pressed));
-        
+
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE, empty);
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_TEXT_TEXTURE, idle);
 
@@ -85,39 +84,39 @@ public class MenuCloseButton extends ControlSceneObject {
     @Override
     protected void singleTap() {
         super.singleTap();
-        
+
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, SELECTED_STATE);
-        
+
     }
 
     public void unselect() {
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
     }
-    
+
     private void stop(){
-        
+
         if(opacityShow != null){
             getGVRContext().getAnimationEngine().stop(opacityShow);
         }
-        
+
         if(opacityHide != null){
             getGVRContext().getAnimationEngine().stop(opacityHide);
         }
     }
-    
+
     public void show(){
-    
+
         stop();
-        
+
         opacityShow = new GVROpacityAnimation(this, 1f, 1);
         opacityShow.setRepeatMode(GVRRepeatMode.ONCE);
         opacityShow.start(getGVRContext().getAnimationEngine());
     }
-    
+
     public void hide(){
-        
+
         stop();
-        
+
         opacityHide = new GVROpacityAnimation(this, 0.3f, 0);
         opacityHide.setRepeatMode(GVRRepeatMode.ONCE);
         opacityHide.start(getGVRContext().getAnimationEngine());

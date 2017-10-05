@@ -25,14 +25,14 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImage;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.sixaxissensortest.R;
-
-import java.io.IOException;
 
 public class TestMain extends GVRMain {
 
@@ -60,61 +60,88 @@ public class TestMain extends GVRMain {
     }
 
     @Override
-    public void onInit(GVRContext gvrContext) throws IOException {
+    public void onInit(GVRContext gvrContext) {
 
         mGVRContext = gvrContext;
         mGyroscope = new Gyroscope(mGVRContext.getContext());
 
-        GVRScene mainScene = mGVRContext.getMainScene();
+        GVRScene mainScene = mGVRContext.getNextMainScene();
 
         mainScene.getMainCameraRig().setCameraRigType(
                 GVRCameraRig.GVRCameraRigType.YawOnly.ID);
 
-        GVRMesh cylinderMesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(
-                mGVRContext, "cylinder.obj"));
+        GVRMesh cylinderMesh = mGVRContext.loadMesh(new GVRAndroidResource(
+                mGVRContext, R.raw.cylinder_obj));
         Bitmap cylinderBitmap = BitmapFactory.decodeResource(mGVRContext
                 .getContext().getResources(), R.drawable.cylinder2);
+
+        GVRImage image1 = new GVRBitmapTexture(mGVRContext, cylinderBitmap);
+        GVRTexture texture1 = new GVRTexture(gvrContext);
+        texture1.setImage(image1);
+
         GVRSceneObject cylinder = new GVRSceneObject(mGVRContext, cylinderMesh,
-                new GVRBitmapTexture(mGVRContext, cylinderBitmap));
+                texture1);
 
         mainScene.addSceneObject(cylinder);
 
         Bitmap cursorBitmap = BitmapFactory.decodeResource(mGVRContext
                 .getContext().getResources(), R.drawable.cursor);
 
+        GVRImage image = new GVRBitmapTexture(mGVRContext, cursorBitmap);
+        GVRTexture texture = new GVRTexture(gvrContext);
+        texture.setImage(image);
         GVRSceneObject cursor = new GVRSceneObject(mGVRContext, 0.05f, 0.5f,
-                new GVRBitmapTexture(mGVRContext, cursorBitmap));
+                texture);
         cursor.getTransform().setPosition(0.0f, 0.0f, -5.0f);
         mainScene.getMainCameraRig().addChildObject(cursor);
 
         Bitmap degreeBitmap = GVRTextBitmapFactory2.create(1024, 128,
                 "degree : 0.00", 40, Align.LEFT, Color.YELLOW,
                 Color.TRANSPARENT);
+        GVRImage image2 = new GVRBitmapTexture(mGVRContext, degreeBitmap);
+        GVRTexture texture2 = new GVRTexture(gvrContext);
+        texture2.setImage(image2);
+
+
         mDegreeBoard = new GVRSceneObject(mGVRContext, 2.0f, 0.5f,
-                new GVRBitmapTexture(mGVRContext, degreeBitmap));
+                texture2);
         mDegreeBoard.getTransform().setPosition(-0.5f, 0.7f, -2.0f);
         mainScene.getMainCameraRig().addChildObject(mDegreeBoard);
 
         Bitmap angularVelocityBitmap = GVRTextBitmapFactory2.create(1024, 128,
                 "velocity : 0.00", 50, Align.LEFT, Color.YELLOW,
                 Color.TRANSPARENT);
+
+        GVRImage image3 = new GVRBitmapTexture(mGVRContext, angularVelocityBitmap);
+        GVRTexture texture3 = new GVRTexture(gvrContext);
+        texture3.setImage(image3);
+
         mAngularVelocityBoard = new GVRSceneObject(mGVRContext, 2.0f, 0.5f,
-                new GVRBitmapTexture(mGVRContext, angularVelocityBitmap));
+               texture3);
         mAngularVelocityBoard.getTransform().setPosition(-0.5f, -0.7f, -2.0f);
         mainScene.getMainCameraRig().addChildObject(mAngularVelocityBoard);
 
         Bitmap aValueBitmap = GVRTextBitmapFactory2.create(1024, 128, String
                 .format("ZRO : %.2f, Spec degree : %.2f", mAValue, mBValue),
                 30, Align.LEFT, Color.YELLOW, Color.TRANSPARENT);
+        GVRImage image4 = new GVRBitmapTexture(mGVRContext, aValueBitmap);
+        GVRTexture texture4 = new GVRTexture(gvrContext);
+        texture4.setImage(image4);
+
         mValueBoard = new GVRSceneObject(mGVRContext, 2.0f, 0.5f,
-                new GVRBitmapTexture(mGVRContext, aValueBitmap));
+                texture4);
         mValueBoard.getTransform().setPosition(-0.5f, 0.5f, -2.0f);
         mainScene.getMainCameraRig().addChildObject(mValueBoard);
 
         Bitmap stateBitmap = GVRTextBitmapFactory2.create(1024, 128, "", 50,
                 Align.LEFT, Color.TRANSPARENT, Color.TRANSPARENT);
+        GVRImage image5 = new GVRBitmapTexture(mGVRContext, stateBitmap);
+        GVRTexture texture5 = new GVRTexture(gvrContext);
+        texture5.setImage(image5);
+
+
         mStateBoard = new GVRSceneObject(mGVRContext, 2.5f, 0.625f,
-                new GVRBitmapTexture(mGVRContext, stateBitmap));
+                texture5);
         mStateBoard.getTransform().setPosition(-0.5f, -0.7f, -5.0f);
         mainScene.getMainCameraRig().addChildObject(mStateBoard);
 

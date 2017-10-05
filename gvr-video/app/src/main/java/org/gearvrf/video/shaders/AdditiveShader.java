@@ -17,43 +17,52 @@
 package org.gearvrf.video.shaders;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRShaderTemplate;
+import org.gearvrf.GVRShader;
+import org.gearvrf.GVRShaderData;
 
-public class AdditiveShader extends GVRShaderTemplate{
+public class AdditiveShader extends GVRShader{
 
     public static final String TEXTURE_KEY = "texture";
-    public static final String WEIGHT_KEY = "weight";
-    public static final String FADE_KEY = "fade";
+    public static final String WEIGHT_KEY = "u_weight";
+    public static final String FADE_KEY = "u_fade";
 
     private static final String VERTEX_SHADER = "" //
             + "precision highp float;\n"
-            + "attribute vec4 a_position;\n" //
-            + "attribute vec2 a_texcoord;\n"
-            + "uniform mat4 u_mvp;\n" //
-            + "varying vec2 coord;\n"
+            + "in vec3 a_position;\n" //
+            + "in vec2 a_texcoord;\n"
+
+            + "@MATRIX_UNIFORMS\n"
+            + "out vec2 coord;\n"
             + "void main() {\n" //
             + "  coord = a_texcoord;\n"
-            + "  gl_Position = u_mvp * a_position;\n" //
+            + "  gl_Position = u_mvp * vec4(a_position,1.0);\n" //
             + "}\n";
 
     private static final String FRAGMENT_SHADER = "" //
             + "precision highp float;\n"
-            + "varying vec2  coord;\n" //
-            + "uniform sampler2D texture;\n"
-            + "uniform float u_weight;\n" //
-            + "uniform float u_fade;\n"
+            + "in vec2  coord;\n" //
+
+            + "@MATERIAL_UNIFORMS\n"
+            + "uniform sampler2D u_texture;\n"
+
+            + "out vec4 FragColor;\n"
             + "void main() {\n"
-            + "  vec3 color1 = texture2D(texture, coord).rgb;\n"
+            + "  vec3 color1 = texture(u_texture, coord).rgb;\n"
             + "  vec3 color2 = vec3(0.0);\n"
             + "  vec3 color  = color1*(1.0-u_weight)+color2*u_weight;\n"
             + "  float alpha = length(color);\n"
-            + "  gl_FragColor = vec4( u_fade*color, alpha );\n" //
+            + "  FragColor = vec4( u_fade*color, alpha );\n" //
             + "}\n";
 
     public AdditiveShader(GVRContext gvrContext) {
-        super("float u_weight, float u_fade, sampler2D texture");
+        super("float u_weight, float u_fade", "sampler2D u_texture", "float3 a_position, float2 a_tex_coord", GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }
 
+    protected void setMaterialDefaults(GVRShaderData material)
+    {
+        material.setFloat("u_weight", 1);
+        material.setFloat("u_fade", 1);
+    }
 }

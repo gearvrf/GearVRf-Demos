@@ -24,6 +24,6 @@ public class OutlineActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        setMain(new OutlineMain(this));
+        setMain(new OutlineMain(this), "gvr.xml");
     }
 }

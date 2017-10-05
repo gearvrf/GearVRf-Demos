@@ -16,8 +16,7 @@
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRImportSettings;
-import org.gearvrf.GVRPostEffect;
+
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
@@ -265,9 +264,8 @@ public class FileBrowserUtils {
                         spinner.setVisibility(View.VISIBLE);
                         // try to load the model
                         try {
-                            GVRModelSceneObject model = gvrContext.getAssetLoader().loadModel("sd:" + filename, GVRImportSettings.getRecommendedSettings(), true, null);
+                            GVRModelSceneObject model = gvrContext.getAssetLoader().loadModel("sd:/" +filename);
                             gvrContext.getMainScene().addSceneObject(model);
-                            gvrContext.getMainScene().bindShaders();
 
                             // base the name for the model on the filename, minus the suffix.  Also add a prefix since there may already be (and i've already seen) a node inside the model based on the filename
                             int end = filename.lastIndexOf(".");

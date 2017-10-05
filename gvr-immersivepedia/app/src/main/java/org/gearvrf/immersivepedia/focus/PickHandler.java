@@ -4,7 +4,6 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IPickEvents;
 import org.gearvrf.immersivepedia.GazeController;
-import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.utility.Log;
 
 public class PickHandler implements IPickEvents
