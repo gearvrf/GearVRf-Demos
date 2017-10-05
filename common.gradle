@@ -107,6 +107,7 @@ if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) 
             compile "com.google.vr:sdk-controller:${daydreamVersion}"
         } else {
             if (project.hasProperty("no_oculus")) {
+		compile 'com.google.vr:sdk-base:1.80.0'
                 if (findProject(':backend')) {
                     compile project(':backend')
                 } else {
