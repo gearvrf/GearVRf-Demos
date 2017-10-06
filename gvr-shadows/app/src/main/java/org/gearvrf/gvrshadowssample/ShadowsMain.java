@@ -1,30 +1,17 @@
 package org.gearvrf.gvrshadowssample;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeoutException;
-
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 
-import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPhongShader;
-import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSpotLight;
 
@@ -32,15 +19,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.joml.AxisAngle4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Environment;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class ShadowsMain extends GVRMain {
@@ -99,8 +78,8 @@ public class ShadowsMain extends GVRMain {
         GVRDirectLight light = new GVRDirectLight(context);
 
         light.setCastShadow(true);
-        light.setShadowRange(1.0f, 150.0f);
         lightNode.attachLight(light);
+        light.setShadowRange(1.0f, 150.0f);
         lightNode.getTransform().setRotationByAxis(-70, 1, 0, 0);
         light.setAmbientIntensity(0.3f, 0.3f, 0.3f, 1);
         light.setDiffuseIntensity(1, 1, 1, 1);
@@ -116,7 +95,6 @@ public class ShadowsMain extends GVRMain {
         GVRSpotLight light = new GVRSpotLight(context);
 
         light.setCastShadow(true);
-        light.setShadowRange(0.2f, 40.0f);
         lightNode.attachLight(light);
         lightNode.getTransform().setRotationByAxis(-35, 1, 0, 0);
         lightNode.getTransform().setPosition(-4, 7, 10);
@@ -125,7 +103,7 @@ public class ShadowsMain extends GVRMain {
         light.setSpecularIntensity(1, 1, 1, 1);
         light.setInnerConeAngle(40);
         light.setOuterConeAngle(55);
-        light.setShadowRange(0.2f, 40.0f);
+        light.setShadowRange(0.2f, 100.0f);
         lightNode.setName("SpotLight");
 
         return lightNode;
@@ -226,7 +204,6 @@ public class ShadowsMain extends GVRMain {
     private GVRSceneObject addStormtrooper(GVRScene scene, float x, float y, float z) throws IOException
     {
         GVRSceneObject model = mGVRContext.getAssetLoader().loadModel("storm.obj", scene);
-
         model.getTransform().setPosition(x, y, z);
         model.getTransform().setScale(1.5f, 1.5f, 1.5f);
         model.getTransform().setRotationByAxis((float) -90, 0, 1, 0);
