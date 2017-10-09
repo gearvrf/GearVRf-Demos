@@ -40,6 +40,7 @@ public class SceneItem extends FocusableSceneObject {
                 R.raw.edge_box_normal)), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
         onFocusSceneObject.getTransform().setPositionZ(-.1f);
         onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
+        onFocusSceneObject.getRenderData().setDepthTest(false);
 
         setOnFocusListener(new OnFocusListener() {
 
