@@ -1,6 +1,6 @@
 importPackage(org.gearvrf);
 var scene = gvrf.getMainScene();
-var pointer_tex = gvrf.getAssetLoader().loadTexture("headtrackingpointer.png");
+var pointer_tex = gvrf.getAssetLoader().loadTexture(new GVRAndroidResource(gvrf, "headtrackingpointer.png"));
 var headTracker = new GVRSceneObject(gvrf, 0.1, 0.1, pointer_tex);
 headTracker.setName("headtracker");
 headTracker.getTransform().setPosition(0.0, 0.0, -1.0);
