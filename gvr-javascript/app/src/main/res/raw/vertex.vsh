@@ -11,25 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
 
-in vec4 a_position;
 
-layout (std140) uniform Transform_ubo{
- #ifdef HAS_MULTIVIEW
-     mat4 u_view_[2];
-     mat4 u_mvp_[2];
-     mat4 u_mv_[2];
-     mat4 u_mv_it_[2];
- #else
-     mat4 u_view;
-     mat4 u_mvp;
-     mat4 u_mv;
-     mat4 u_mv_it;
- #endif
-     mat4 u_model;
-     mat4 u_view_i;
-     float u_right;
-};
+precision highp float;
+@MATRIX_UNIFORMS
+
+layout(location = 0) in vec4 a_position;
 
 void main() {  
   gl_Position = u_mvp * a_position;
