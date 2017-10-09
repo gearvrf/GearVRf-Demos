@@ -26,7 +26,7 @@ public class CustomShaderManager extends GVRShader{
     static final String COLOR_KEY = "u_color";
 
     public CustomShaderManager(GVRContext gvrContext) {
-        super("float4 u_color", "", "float4 a_position", GLSLESVersion.V300);
+        super("float4 u_color", "", "float4 a_position", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.fragment));
         setSegment("VertexTemplate", TextFile.readTextFile(context,R.raw.vertex));
