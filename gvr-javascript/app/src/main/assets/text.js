@@ -16,13 +16,14 @@ function onSensorEvent(event) {
         return;
     }
 
-    if (keyEvent.getAction() == 0x0 /* ACTION_DOWN */) {
+    var actionType = keyEvent.getAction();
+    if (actionType == 0x0 /* ACTION_DOWN */) {
 	    if (++colorIdx >= colors.length) {
             colorIdx = 0;
 	    }
 
 	    // Change text color
-	    var textSceneObject = event.getObject();
+	    var textSceneObject = event.getPickedObject().getHitObject();
 	    textSceneObject.setTextColor(0xFF << 24 | colors[colorIdx]);
 
 	    // Local animation
