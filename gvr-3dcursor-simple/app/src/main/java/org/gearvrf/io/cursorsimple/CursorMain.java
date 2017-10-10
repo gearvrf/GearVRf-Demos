@@ -28,6 +28,7 @@ import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.io.cursor3d.Cursor;
@@ -148,34 +149,30 @@ public class CursorMain extends GVRMain {
 
     private void addCustomMovableCube(GVRContext gvrContext) {
         GVRSceneObject root = new GVRSceneObject(gvrContext);
-        GVRMaterial red = new GVRMaterial(gvrContext);
-        GVRMaterial blue = new GVRMaterial(gvrContext);
-        GVRMaterial green = new GVRMaterial(gvrContext);
-        GVRMaterial alphaRed = new GVRMaterial(gvrContext);
+        GVRMaterial red = new GVRMaterial(gvrContext, new GVRShaderId(GVRPhongShader.class));
+        GVRMaterial blue = new GVRMaterial(gvrContext, new GVRShaderId(GVRPhongShader.class));
+        GVRMaterial green = new GVRMaterial(gvrContext, new GVRShaderId(GVRPhongShader.class));
+        GVRMaterial alphaRed = new GVRMaterial(gvrContext, new GVRShaderId(GVRPhongShader.class));
         red.setDiffuseColor(1, 0, 0, 1);
         blue.setDiffuseColor(0, 0, 1, 1);
         green.setDiffuseColor(0, 1, 0, 1);
         alphaRed.setDiffuseColor(1, 0, 0, 0.5f);
 
         GVRCubeSceneObject cubeDefault = new GVRCubeSceneObject(gvrContext, true, red);
-        cubeDefault.getRenderData().setShaderTemplate(GVRPhongShader.class);
         root.addChildObject(cubeDefault);
 
         GVRMesh cubeMesh = cubeDefault.getRenderData().getMesh();
 
         GVRSceneObject cubeColliding = new GVRSceneObject(gvrContext, cubeMesh);
         cubeColliding.getRenderData().setMaterial(blue);
-        cubeColliding.getRenderData().setShaderTemplate(GVRPhongShader.class);
         root.addChildObject(cubeColliding);
 
         GVRSceneObject cubeClicked = new GVRSceneObject(gvrContext, cubeMesh);
         cubeClicked.getRenderData().setMaterial(green);
-        cubeClicked.getRenderData().setShaderTemplate(GVRPhongShader.class);
         root.addChildObject(cubeClicked);
 
         GVRSceneObject cubeBehind = new GVRSceneObject(gvrContext, cubeMesh);
         cubeBehind.getRenderData().setMaterial(alphaRed);
-        cubeBehind.getRenderData().setShaderTemplate(GVRPhongShader.class);
         cubeBehind.getRenderData().getMaterial().setOpacity(0.5f);
         cubeBehind.getRenderData().setRenderingOrder(GVRRenderingOrder.TRANSPARENT);
         root.addChildObject(cubeBehind);
