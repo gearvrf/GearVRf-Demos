@@ -127,12 +127,10 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         final int SQUARE_SIZE = 3;
         float offset = 0;
         try {
-            GVRCylinderSceneObject cylinder = new GVRCylinderSceneObject(context, 0.5f, 0.5f, 0.5f, 2, 16, true);
-            GVRMesh mesh = cylinder.getRenderData().getMesh();
             for (int y = 0; y < SQUARE_SIZE; y++) {
                 for (int x = 0; x < SQUARE_SIZE - y; x++) {
                     for (int z = 0; z < SQUARE_SIZE; z++) {
-                        addCylinder(context, mesh, scene, (x - (SQUARE_SIZE / 2.0f)) * 2.5f + 1.5f + offset,
+                        addCylinder(context, scene, (x - (SQUARE_SIZE / 2.0f)) * 2.5f + 1.5f + offset,
                                 1f + (y * 1.2f), (z + (SQUARE_SIZE / 2.0f)) * 2.5f - 5f,
                                 CYLINDER_COLORS[mNumCylinders++ % CYLINDER_COLORS.length]);
                     }
@@ -144,9 +142,9 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         }
     }
 
-    private static void addCylinder(GVRContext context, GVRMesh mesh, GVRScene scene, float x, float y, float z,
+    private static void addCylinder(GVRContext context, GVRScene scene, float x, float y, float z,
                                     int drawable) throws IOException {
-        scene.addSceneObject(MainHelper.createCylinder(context, mesh, x, y, z, drawable));
+        scene.addSceneObject(MainHelper.createCylinder(context, x, y, z, drawable));
     }
 
     public void onSwipe(VRTouchPadGestureDetector.SwipeDirection swipeDirection, float velocityX) {
