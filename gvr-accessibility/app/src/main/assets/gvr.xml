@@ -28,6 +28,7 @@
         framebufferPixelsHigh="DEFAULT"
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
+        useMultiview="true"
         useProtectedFramebuffer="false"
         useAndroidWearTouchpad="true"
         useSrgbFramebuffer="false" >

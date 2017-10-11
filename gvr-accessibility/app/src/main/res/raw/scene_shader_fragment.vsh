@@ -14,8 +14,7 @@ void main() {
 	
 	vec4 color = texture(u_texture, coord) / division;
 	vec3 color2 = texture(u_texture, coord ).rgb;
-	
-	
+
 	color += texture(u_texture, (coord + vec2(0.001, 0.0))) / division;
 	color += texture(u_texture, (coord + vec2(0.001, 0.001))) / division;
 	color += texture(u_texture, (coord + vec2(0.0, 0.001))) / division;
