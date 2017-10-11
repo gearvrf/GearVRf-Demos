@@ -216,7 +216,7 @@ public class BalloonMain extends GVRMain {
         GVRSphereSceneObject environment = new GVRSphereSceneObject(context, 18, 36, false, material, 4, 4);
         environment.getTransform().setScale(20.0f, 20.0f, 20.0f);
 
-        if (GVRShader.isVulkanInstance())
+        if (!GVRShader.isVulkanInstance())
         {
             GVRDirectLight sunLight = new GVRDirectLight(context);
             sunLight.setAmbientIntensity(0.4f, 0.4f, 0.4f, 1.0f);
