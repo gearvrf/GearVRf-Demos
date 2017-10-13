@@ -12,13 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-precision mediump float;
-layout (std140) uniform Material_ubo
-{
-    vec4 u_color;
-};
+#extension GL_ARB_separate_shader_objects : enable
+#extension GL_ARB_shading_language_420pack : enable
 
-out vec4 fragColor;
+
+#define HAS_MULTIVIEW
+#extension GL_OVR_multiview2 : enable
+
+precision mediump float;
+
+@MATERIAL_UNIFORMS
+
+layout (location = 0) out vec4 fragColor;
 void main() {  
   fragColor = vec4(u_color.r, u_color.g, u_color.b, u_color.a);
 }

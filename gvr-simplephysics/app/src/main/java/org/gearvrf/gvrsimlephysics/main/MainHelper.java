@@ -110,10 +110,11 @@ public class MainHelper {
         return groundObject;
     }
 
-    public static GVRSceneObject createCylinder(GVRContext context, GVRMesh mesh, float x, float y, float z,
+    public static GVRSceneObject createCylinder(GVRContext context, float x, float y, float z,
                                                  int drawable) throws IOException {
         GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, drawable));
         GVRMaterial mtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
+        GVRMesh mesh = context.getAssetLoader().loadMesh(new GVRAndroidResource(context, "cylinder.fbx"));
         GVRSceneObject cylinderObject = new GVRSceneObject(context, mesh, mtl);
 
         cylinderObject.getTransform().setPosition(x, y, z);
@@ -142,6 +143,7 @@ public class MainHelper {
         ballGeometry.getParent().removeChildObject(ballGeometry);
         ballGeometry.getTransform().setScale(0.7f, 0.7f, 0.7f);
         ballGeometry.getTransform().setPosition(x, y, z);
+        ballGeometry.getRenderData().setMaterial(new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID));
         ballGeometry.getRenderData().getMaterial().setDiffuseColor(1.0f, 1.0f, 1.0f, 1.f);
 
         GVRSphereCollider sphereCollider = new GVRSphereCollider(context);
@@ -165,6 +167,7 @@ public class MainHelper {
         gaze.getTransform().setPosition(x, y, z);
         gaze.getRenderData().setDepthTest(false);
         gaze.getRenderData().setRenderingOrder(100000);
+        gaze.getRenderData().disableLight();
 
         return gaze;
     }
