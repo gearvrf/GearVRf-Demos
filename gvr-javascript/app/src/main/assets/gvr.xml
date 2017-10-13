@@ -29,7 +29,7 @@
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
         useGazeCursorController="true"
-        useMultiview="true"
+        useMultiview="false"
         useProtectedFramebuffer="false"
         useSrgbFramebuffer="false" >
 

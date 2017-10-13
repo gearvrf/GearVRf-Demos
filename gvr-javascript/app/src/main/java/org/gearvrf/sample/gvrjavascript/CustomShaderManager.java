@@ -20,9 +20,10 @@ import android.content.Context;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.utility.TextFile;
 
-public class CustomShaderManager extends GVRShader{
+public class CustomShaderManager extends GVRShaderTemplate{
     static final String COLOR_KEY = "u_color";
 
     public CustomShaderManager(GVRContext gvrContext) {

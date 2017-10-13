@@ -16,8 +16,9 @@
 #extension GL_ARB_shading_language_420pack : enable
 
 
-#define HAS_MULTIVIEW
+#ifdef HAS_MULTIVIEW
 #extension GL_OVR_multiview2 : enable
+#endif
 
 precision mediump float;
 
