@@ -26,7 +26,7 @@ public class OutlineShader extends GVRShader {
     private static final String VERTEX_SHADER =
                     "#extension GL_ARB_separate_shader_objects : enable \n" +
                     "#extension GL_ARB_shading_language_420pack : enable \n" +
-                    "precision mediump float;\n"
+                    "precision highp float;\n"
                     + "layout(location = 0) in  vec3 a_position;\n"
                     + "layout(location = 1) in vec3 a_normal;\n"
                     + "@MATRIX_UNIFORMS\n"
@@ -39,7 +39,7 @@ public class OutlineShader extends GVRShader {
     private static final String FRAGMENT_SHADER =
             "#extension GL_ARB_separate_shader_objects : enable \n" +
                     "#extension GL_ARB_shading_language_420pack : enable \n" +
-                    "precision mediump float;\n"
+                    "precision highp float;\n"
                     + "layout(location = 0)out vec4 outColor;\n"
                     + "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
