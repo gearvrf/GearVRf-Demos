@@ -36,22 +36,15 @@ public class Main extends GVRMain {
         // GVRCubeSceneObject - Just to take cube mesh.
         GVRCubeSceneObject cube = new GVRCubeSceneObject(gvrContext);
 
-        mLayoutLeftSceneObject = new GVRViewSceneObject(gvrContext,
-                mActivity.getFrameLayoutLeft(), cube.getRenderData().getMesh());
-
+        mLayoutLeftSceneObject = new GVRViewSceneObject(gvrContext, mActivity.getFrameLayoutLeft(), cube.getRenderData().getMesh());
         gvrContext.getMainScene().addSceneObject(mLayoutLeftSceneObject);
-
         mLayoutLeftSceneObject.getTransform().setPosition(-1.0f, 0.0f, -2.5f);
 
-        mWebSceneObject = new GVRViewSceneObject(gvrContext,
-                mActivity.getWebView(), cube.getRenderData().getMesh());
-
+        mWebSceneObject = new GVRViewSceneObject(gvrContext, mActivity.getWebView(), cube.getRenderData().getMesh());
         gvrContext.getMainScene().addSceneObject(mWebSceneObject);
-
         mWebSceneObject.getTransform().setPosition(1.0f, 0.0f, -2.5f);
 
-        mTextSceneObject = new GVRViewSceneObject(gvrContext,
-                mActivity.getTextView(), 2.0f, 1.0f);
+        mTextSceneObject = new GVRViewSceneObject(gvrContext, mActivity.getTextView(), 2.0f, 1.0f);
         gvrContext.getMainScene().addSceneObject(mTextSceneObject);
         mTextSceneObject.getTransform().setPosition(0.0f, -2.0f, -2.5f);
     }
@@ -59,7 +52,6 @@ public class Main extends GVRMain {
     @Override
     public void onStep() {
         mLayoutLeftSceneObject.getTransform().rotateByAxis(0.5f, 1, 1, 0);
-
         mWebSceneObject.getTransform().rotateByAxis(-0.5f, 1, 1, 0);
     }
 

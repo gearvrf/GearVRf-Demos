@@ -15,25 +15,26 @@
 
 package org.gearvrf.renderableview;
 
+import android.graphics.Color;
+import android.os.Bundle;
+import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
+
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import org.gearvrf.scene_objects.view.GVRTextView;
-import org.gearvrf.scene_objects.view.GVRView;
-import org.gearvrf.scene_objects.view.GVRWebView;
-
-import android.graphics.Color;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout.LayoutParams;
 
 public class MainActivity extends GVRActivity {
     private GVRMain mMain;
 
-    private GVRFrameLayout mFrameLayoutLeft;
-    private GVRWebView mWebView;
-    private GVRTextView mTextView;
+    private FrameLayout mFrameLayoutLeft;
+    private WebView mWebView;
+    private TextView mTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,32 +47,30 @@ public class MainActivity extends GVRActivity {
     }
 
     private void createView() {
-        mFrameLayoutLeft = new GVRFrameLayout(this);
-        mFrameLayoutLeft.setLayoutParams(new FrameLayout.LayoutParams(
-                    LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        mFrameLayoutLeft = new FrameLayout(this);
+        mFrameLayoutLeft.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         mFrameLayoutLeft.setBackgroundColor(Color.CYAN);
-
         View.inflate(this, R.layout.activity_main, mFrameLayoutLeft);
 
-        mWebView = new GVRWebView(this);
+        mWebView = new WebView(this);
+        mWebView.setWebViewClient(new WebViewClient());
         mWebView.loadUrl("https://resources.samsungdevelopers.com/Gear_VR/020_GearVR_Framework_Project");
-        mWebView.setLayoutParams(new FrameLayout.LayoutParams(
-                    LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        mWebView.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
-        mTextView = new GVRTextView(this);
+        mTextView = new TextView(this);
         mTextView.setText("Android's Renderable Views");
         mTextView.setTextColor(Color.WHITE);
     }
 
-    public GVRFrameLayout getFrameLayoutLeft() {
+    public FrameLayout getFrameLayoutLeft() {
         return mFrameLayoutLeft;
     }
 
-    public GVRWebView getWebView() {
+    public WebView getWebView() {
         return mWebView;
     }
 
-    public GVRTextView getTextView() {
+    public TextView getTextView() {
         return mTextView;
     }
 }
