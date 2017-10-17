@@ -37,7 +37,7 @@ android {
     }
 }
 
-ext.gearvrfVersion='4.0.0-SNAPSHOT'
+ext.gearvrfVersion='4.0.0'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 
 dependencies {
