@@ -15,10 +15,13 @@
 
 package org.gearvrf.immersivepedia;
 
+import android.media.MediaPlayer;
+
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRMain;
 import org.gearvrf.immersivepedia.focus.FocusableController;
 import org.gearvrf.immersivepedia.focus.PickHandler;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
@@ -26,8 +29,7 @@ import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
-
-import android.media.MediaPlayer;
+import org.gearvrf.io.CursorControllerListener;
 
 public class Main extends GVRMain {
 
@@ -56,6 +58,7 @@ public class Main extends GVRMain {
         GazeController.setupGazeCursor(gvrContext);
         closeSplashScreen();
 
+        mPickHandler = new PickHandler();
         gvrContext.runOnGlThreadPostRender(64, new Runnable() {
             @Override
             public void run() {
@@ -64,9 +67,21 @@ public class Main extends GVRMain {
             }
         });
 
-        // Set up to handle picking events
-        mPickHandler = new PickHandler();
-        mPicker = new GVRPicker(gvrContext, menuScene);
+        gvrContext.getInputManager().addCursorControllerListener(new CursorControllerListener() {
+            @Override
+            public void onCursorControllerAdded(GVRCursorController controller) {
+                controller.setEnable(false);
+            }
+            @Override
+            public void onCursorControllerRemoved(GVRCursorController controller) {
+            }
+            @Override
+            public void onCursorControllerActive(GVRCursorController controller) {
+            }
+            @Override
+            public void onCursorControllerInactive(GVRCursorController controller) {
+            }
+        });
     }
 
     @Override
