@@ -15,16 +15,8 @@
 
 package org.gearvrf.events;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRMain;
-
-import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -32,13 +24,18 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRMain;
+import org.gearvrf.scene_objects.view.GVRFrameLayout;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventsActivity extends GVRActivity {
-    private static final String TAG = EventsActivity.class.getSimpleName();
     private GVRMain main;
     private GVRFrameLayout frameLayout;
     private TextView buttonTextView, keyTextView, listTextView;
@@ -62,17 +59,16 @@ public class EventsActivity extends GVRActivity {
         super.onCreate(savedInstanceState);
         frameLayout = new GVRFrameLayout(this);
         frameLayout.setBackgroundColor(Color.WHITE);
-        frameLayout.getLayoutParams().height = frameLayout.getLayoutParams().width = 700;
+        frameLayout.setLayoutParams(new FrameLayout.LayoutParams(700, 700));
         View.inflate(this, R.layout.activity_main, frameLayout);
 
         button1 = (Button) frameLayout.findViewById(R.id.button1);
         button2 = (Button) frameLayout.findViewById(R.id.button2);
         checkBox = (CheckBox) frameLayout.findViewById(R.id.checkBox);
         keyTextView = (TextView) frameLayout.findViewById(R.id.keyTextView);
-        buttonTextView = (TextView) frameLayout
-                .findViewById(R.id.buttonTextView);
+        buttonTextView = (TextView) frameLayout.findViewById(R.id.buttonTextView);
         listTextView = (TextView) frameLayout.findViewById(R.id.listTextView);
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) frameLayout.findViewById(R.id.listView);
         listView.setBackgroundColor(Color.LTGRAY);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
