@@ -15,9 +15,6 @@
 
 package org.gearvrf.immersivepedia.dinosaur;
 
-import java.io.IOException;
-import java.util.EnumSet;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAndroidResource.TextureCallback;
 import org.gearvrf.GVRContext;
@@ -27,6 +24,8 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 
+import java.util.EnumSet;
+
 public class DinosaurFactory {
 
     private static final int NEGATIVE_DEGRES_90 = 90;
@@ -34,7 +33,6 @@ public class DinosaurFactory {
     private static float adjustAbsolute = 3f; // default = 0 (close as possible)
     private static float adjustAngleArroundCamera = 0f;
 
-    public static float STYRACOSAURUS_DISTANCE = (4.5506f * adujstRelative) + adjustAbsolute;
     public static float ANKYLOSAURUS_DISTANCE = (4.41f * adujstRelative) + adjustAbsolute;
     public static float APATOSAURUS_DISTANCE = (8.1883f * adujstRelative) + adjustAbsolute;
     public static float TREX_DISTANCE = (6.4987f * adujstRelative) + adjustAbsolute;
@@ -44,52 +42,20 @@ public class DinosaurFactory {
     public static float APATOSAURUS_ANGLE_AROUND_CAMERA = (2 * NEGATIVE_DEGRES_90) + adjustAngleArroundCamera;
     public static float TREX_ANGLE_AROUND_CAMERA = (1 * NEGATIVE_DEGRES_90) + adjustAngleArroundCamera;
 
-    private static DinosaurFactory instance;
-    private GVRContext gvrContext;
+    private final static EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
+    private final static EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
 
-    EnumSet<GVRImportSettings> additionalSettings = EnumSet
-            .of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS);
-    EnumSet<GVRImportSettings> settings = GVRImportSettings
-            .getRecommendedSettingsWith(additionalSettings);
-
-    boolean getFromFile = false;
-    private Dinosaur styracosaurus;
-    private Dinosaur ankylosaurus;
-    private Dinosaur apatosaurus;
-    private Dinosaur tRex;
-
-    private DinosaurFactory(GVRContext gvrContext) throws IOException {
-        this.gvrContext = gvrContext;
-        styracosaurus = createStyrocosaurus();
-        ankylosaurus = createAnkylosaurus();
-        apatosaurus = createApatosaurus();
-        tRex = createTRex();
-
-    }
-
-    public static synchronized DinosaurFactory getInstance(GVRContext gvrContext)
-            throws IOException {
-
-        if (instance == null) {
-            instance = new DinosaurFactory(gvrContext);
-
-        }
-        return instance;
-    }
-
-    private Dinosaur createDinosauros(String name, int dinoMeshId, int dinoTextureId,
+    private static Dinosaur createDinosauros(GVRContext gvrContext, int dinoMeshId, int dinoTextureId,
             int baseMeshId, int groundMeshId) {
 
-        FocusableSceneObject dino = null;
-        dino = createDinosaur(dinoMeshId, dinoTextureId);
-
-        FocusableSceneObject base = createDinosaurBase(baseMeshId);
-        FocusableSceneObject ground = createDinosaurGround(groundMeshId);
+        FocusableSceneObject dino = createDinosaur(gvrContext, dinoMeshId, dinoTextureId);
+        FocusableSceneObject base = createDinosaurBase(gvrContext, baseMeshId);
+        FocusableSceneObject ground = createDinosaurGround(gvrContext, groundMeshId);
 
         return new Dinosaur(gvrContext, dino, base, ground);
     }
 
-    private FocusableSceneObject createDinosaur(int dinoMeshId, int dinoTextureId) {
+    private static FocusableSceneObject createDinosaur(GVRContext gvrContext, int dinoMeshId, int dinoTextureId) {
         GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, dinoMeshId), settings);
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
         final FocusableSceneObject dino = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
@@ -104,12 +70,10 @@ public class DinosaurFactory {
 
                     @Override
                     public void failed(Throwable arg0, GVRAndroidResource arg1) {
-                        // TODO Auto-generated method stub
                     }
 
                     @Override
                     public boolean stillWanted(GVRAndroidResource arg0) {
-                        // TODO Auto-generated method stub
                         return false;
                     }
                 });
@@ -117,14 +81,14 @@ public class DinosaurFactory {
         return dino;
     }
 
-    private FocusableSceneObject createDinosaurBase(int baseMeshId) {
+    public static FocusableSceneObject createDinosaurBase(GVRContext gvrContext, int baseMeshId) {
         GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
         FocusableSceneObject dinosaurBase = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
         return dinosaurBase;
     }
 
-    private FocusableSceneObject createDinosaurGround(int groundMesh) {
+    public static FocusableSceneObject createDinosaurGround(GVRContext gvrContext, int groundMesh) {
 
         GVRMesh mesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, groundMesh), settings);
         GVRTexture groundTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.empty));
@@ -141,62 +105,39 @@ public class DinosaurFactory {
 
                     @Override
                     public void failed(Throwable arg0, GVRAndroidResource arg1) {
-                        // TODO Auto-generated method stub
-
                     }
 
                     @Override
                     public boolean stillWanted(GVRAndroidResource arg0) {
-                        // TODO Auto-generated method stub
                         return false;
                     }
                 });
         return dinosaurGround;
     }
 
-    private Dinosaur createStyrocosaurus() {
-
-        return createDinosauros("styracosaurus",
-                R.raw.styracosaurus_mesh, R.raw.styracosaurus_tex_diffuse,
+    public static Dinosaur createStyrocosaurus(GVRContext gvrContext) {
+        return createDinosauros(gvrContext, R.raw.styracosaurus_mesh, R.raw.styracosaurus_tex_diffuse,
                 R.raw.styracosaurus_base_mesh, R.raw.styracosaurus_ground_mesh);
 
     }
 
-    private Dinosaur createAnkylosaurus() {
-
-        return createDinosauros("ankylosaurus",
+    public static Dinosaur createAnkylosaurus(GVRContext gvrContext) {
+        return createDinosauros(gvrContext,
                 R.raw.ankylosaurus_mesh, R.raw.ankyosaurus_tex_diffuse,
                 R.raw.ankylosaurus_base_mesh, R.raw.ankylosaurus_ground_mesh);
     }
 
-    private Dinosaur createApatosaurus() {
-
-        return createDinosauros("apatosaurus",
+    public static Dinosaur createApatosaurus(GVRContext gvrContext) {
+        return createDinosauros(gvrContext,
                 R.raw.apatosaurus_mesh, R.raw.apatosaurus_tex_diffuse,
                 R.raw.apatosaurus_base_mesh, R.raw.apatosaurus_ground_mesh);
     }
 
-    private Dinosaur createTRex() {
+    public static Dinosaur createTRex(GVRContext gvrContext) {
 
-        return createDinosauros("trex",
+        return createDinosauros(gvrContext,
                 R.raw.trex_mesh, R.raw.trex_tex_diffuse,
                 R.raw.trex_base_mesh, R.raw.trex_ground_mesh);
-    }
-
-    public Dinosaur getStyracosaurus() {
-        return styracosaurus;
-    }
-
-    public Dinosaur getAnkylosaurus() {
-        return ankylosaurus;
-    }
-
-    public Dinosaur getApatosaurus() {
-        return apatosaurus;
-    }
-
-    public Dinosaur getTRex() {
-        return tRex;
     }
 
 }
