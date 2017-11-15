@@ -25,6 +25,7 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPhongShader;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -120,7 +121,7 @@ public class CursorMain extends GVRMain {
         movableCubeBehavior.setStateChangedListener(new StateChangedListener() {
             @Override
             public void onStateChanged(SelectableBehavior selectableBehavior, ObjectState prev,
-                                       ObjectState current, Cursor cursor) {
+                                       ObjectState current, Cursor cursor, GVRPicker.GVRPickedObject hit) {
                 if (current == ObjectState.CLICKED) {
                     GVRTransform transform = astronaut.getTransform();
                     transform.setPositionZ(transform.getPositionZ() - 1);
@@ -188,7 +189,6 @@ public class CursorMain extends GVRMain {
         movableBehavior.setStateChangedListener(new StateChangedListener() {
             @Override
             public void onStateChanged(SelectableBehavior selectableBehavior, ObjectState prev,
-                                       ObjectState current, Cursor cursor) {
                 if(current == ObjectState.CLICKED) {
                     GVRTransform transform = astronaut.getTransform();
                     transform.setPositionZ(transform.getPositionZ() + 1);
