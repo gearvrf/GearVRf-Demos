@@ -67,8 +67,7 @@ public class MainHelper {
     }
 
    public static GVRSceneObject createDirectLight(GVRContext context, float x, float y, float z) {
-        GVRTexture texture = context.getAssetLoader().loadTexture(new GVRAndroidResource(context, R.drawable.yellow));
-        GVRSceneObject lightObject = new GVRSceneObject(context);//GVRSphereSceneObject(context, true, texture);
+        GVRSceneObject lightObject = new GVRSceneObject(context);
         GVRDirectLight light = new GVRDirectLight(context);
 
         light.setCastShadow(true);
