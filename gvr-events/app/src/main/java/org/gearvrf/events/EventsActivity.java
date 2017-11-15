@@ -25,6 +25,7 @@ import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -32,6 +33,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -40,7 +42,7 @@ import android.widget.TextView;
 public class EventsActivity extends GVRActivity {
     private static final String TAG = EventsActivity.class.getSimpleName();
     private GVRMain main;
-    private GVRFrameLayout frameLayout;
+    private FrameLayout frameLayout;
     private TextView buttonTextView, keyTextView, listTextView;
     private Button button1, button2;
     private CheckBox checkBox;
@@ -60,8 +62,9 @@ public class EventsActivity extends GVRActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        frameLayout = new GVRFrameLayout(this);
+        frameLayout = new FrameLayout(this);
         frameLayout.setBackgroundColor(Color.WHITE);
+        registerView(frameLayout);
         frameLayout.getLayoutParams().height = frameLayout.getLayoutParams().width = 700;
         View.inflate(this, R.layout.activity_main, frameLayout);
 
@@ -84,7 +87,7 @@ public class EventsActivity extends GVRActivity {
         checkBox.setOnClickListener(clickListener);
         buttonPressed = getResources().getString(R.string.buttonPressed);
         listItemClicked = getResources().getString(R.string.listClicked);
-        main = new EventsMain(this, frameLayout, keyTextView);
+        main = new EventsMain(this, frameLayout);
         setMain(main, "gvr.xml");
     }
 
@@ -120,4 +123,12 @@ public class EventsActivity extends GVRActivity {
                     items.get(position)));
         }
     };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        keyTextView.setText(String.format("Key Pressed: %s ",
+                KeyEvent.keyCodeToString(keyCode)));
+        return false;
+    }
 }
