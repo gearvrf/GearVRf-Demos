@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.gearvrf.scene_objects.view.keyboard.GVRKeyboardPopup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/keyboard_popup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FFF"
+    android:orientation="horizontal">
+
+    <android.inputmethodservice.KeyboardView
+        android:id="@android:id/keyboardView"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:keyTextColor="#fff"
+        android:keyTextSize="22sp"/>
+</org.gearvrf.scene_objects.view.keyboard.GVRKeyboardPopup>
