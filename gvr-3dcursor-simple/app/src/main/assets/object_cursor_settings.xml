@@ -15,8 +15,8 @@
   ~ limitations under the License.
   -->
 <!--
-   ~ This file defines a Laser Cursor. To use a Laser Cursor in the app make sure this file is
-   ~ placed in the assets directory and is named "settings.xml".
+  ~ This file defines an Object Cursor. To use the Object Cursor make sure this file is placed in
+  ~ the assets folder and is named "settings.xml".
 -->
 <settings xmlns="http://www.w3schools.com/3DCursor"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -24,45 +24,30 @@
     <global onscreen="yes"
             preview="no"
             soundEnabled="yes"/>
-    <theme name="Red Dot"
-           cursorType="laser"
-           description="Defines a red laser dot with animations"
-           id="red_dot">
+    <theme name="Crystal Sphere"
+           cursorType="object"
+           id="crystal_sphere">
         <asset action="default"
+               animated="no"
                soundEnabled="no"
-               src="cursor_default.png"
-               type="2D"
-               x="4"
-               y="4"/>
+               src="poly_sphere_default"
+               type="3D"/>
         <asset action="click"
-               soundEnabled="yes"
-               soundSrc="click_a.mp3"
-               src="cursor_action1.png"
-               type="2D"
-               x="4"
-               y="4"/>
-        <asset action="loading"
-               animated="yes"
-               duration="1.0"
+               animated="no"
                soundEnabled="no"
-               src="cursor_loading.zip"
-               type="2D"
-               x="4"
-               y="4"/>
-        <asset action="hover"
-               animated="yes"
-               duration="1.0"
+               src="poly_sphere_click"
+               type="3D"/>
+        <asset action="intersect"
+               animated="no"
                soundEnabled="no"
-               src="cursor_hover.zip"
-               type="2D"
-               x="4"
-               y="4"/>
+               src="poly_sphere_collision"
+               type="3D"/>
     </theme>
-    <cursor name="Laser Cursor"
+    <cursor name="Object Cursor"
             active="yes"
             position="center"
-            themeId="red_dot"
-            type="laser">
+            themeId="crystal_sphere"
+            type="object">
         <io deviceId="controller"
             priority="1"
             productId="2"
@@ -80,4 +65,35 @@
             productId="42240"
             vendorId="1256"/>
     </cursor>
+
+    <!--_VENDOR_TODO_ Uncomment for template devices -->
+    <!--<cursor name="Template Left Cursor"
+            active="yes"
+            position="center"
+            themeId="crystal_sphere"
+            type="object">
+        <io deviceId="left_INDEX"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+        <io deviceId="template_1"
+            priority="2"
+            productId="5678"
+            vendorId="1234"/>
+    </cursor>
+    <cursor name="Template Right Cursor"
+            active="yes"
+            position="center"
+            themeId="crystal_sphere"
+            type="object">
+        <io deviceId="right_INDEX"
+            priority="1"
+            productId="5678"
+            vendorId="1234"/>
+        <io deviceId="template_2"
+            priority="2"
+            productId="5678"
+            vendorId="1234"/>
+    </cursor>-->
+
 </settings>
