@@ -27,19 +27,16 @@ public class FocusableSceneObject extends GVRAccessiblityObject {
 
     public FocusableSceneObject(GVRContext gvrContext) {
         super(gvrContext);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public FocusableSceneObject(GVRContext gvrContext, GVRMesh gvrMesh,
             GVRTexture gvrTexture) {
         super(gvrContext, gvrMesh, gvrTexture);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public FocusableSceneObject(GVRContext gvrContext, float width,
             float height, GVRTexture t) {
         super(gvrContext, width, height, t);
-        FocusableController.interactiveObjects.add(this);
     }
 
     public void dispatchGainedFocus() {
@@ -83,7 +80,7 @@ public class FocusableSceneObject extends GVRAccessiblityObject {
                 focusCount++;
         }
         if (showInteractiveCursor) {
-            // GazeController.enableInteractiveCursor();
+            // GazeController.get().enableInteractiveCursor();
         }
     }
 

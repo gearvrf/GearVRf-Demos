@@ -25,7 +25,7 @@ public class GazeCursorSceneObject extends GVRSceneObject {
 
     private static final float NEAR_CLIPPING_OFFSET = 0.00001f;
     private static final float DEFAULT_NEAR_CLIPPING_DISTANCE = 0.1f;
-    private static final float NORMAL_CURSOR_SIZE = 0.0028f;
+    private static final float NORMAL_CURSOR_SIZE = 0.5f;
     private static final int CURSOR_RENDER_ORDER = 100000;
 
     private GVRSceneObject rightCursor;
