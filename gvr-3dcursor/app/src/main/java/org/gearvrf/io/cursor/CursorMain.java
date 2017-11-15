@@ -21,50 +21,52 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.TextView;
 
 import com.gearvrf.io.gearwear.GearWearableDevice;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBitmapTexture;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ZipLoader;
-import org.gearvrf.io.cursor.AssetHolder.AssetObjectTuple;
+import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.io.cursor3d.Cursor;
 import org.gearvrf.io.cursor3d.CursorActivationListener;
-import org.gearvrf.io.cursor3d.CursorEvent;
-import org.gearvrf.io.cursor3d.CursorEventListener;
 import org.gearvrf.io.cursor3d.CursorManager;
 import org.gearvrf.io.cursor3d.CursorTheme;
 import org.gearvrf.io.cursor3d.CursorType;
 import org.gearvrf.io.cursor3d.IoDevice;
+import org.gearvrf.io.cursor3d.MovableBehavior;
+import org.gearvrf.io.cursor3d.SelectableBehavior;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.utility.Log;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 public class CursorMain extends GVRMain {
     private static final String TAG = CursorMain.class.getSimpleName();
 
     private static final float CUBE_WIDTH = 200.0f;
-
+    private static final float DEFAULT_CURSOR_DEPTH = 10;
     private static final float SCENE_DEPTH = -35.0f;
     private static final float SCENE_HEIGHT = 3.0f;
     private static final float SPACE_OBJECT_MARGIN = 30.0f;
@@ -133,10 +135,10 @@ public class CursorMain extends GVRMain {
     private final long interval = 100;
 
     private CursorManager cursorManager;
-    private final List<GVRTextView> textViewList;
-    private final List<GVRTextView> circleTextViewList;
-    private final GVRTextView resetTextView;
-    private final GVRTextView settingsTextView;
+    private final List<TextView> textViewList;
+    private final List<TextView> circleTextViewList;
+    private final TextView resetTextView;
+    private final TextView settingsTextView;
 
     private Map<String, SpaceObject> objects;
     private List<CursorTheme> laserCursorThemes;
@@ -145,19 +147,19 @@ public class CursorMain extends GVRMain {
     private List<Cursor> cursors;
     private String[] textViewStrings;
     private Map<String, GVRMesh> meshMap;
-    private Map<String, GVRTexture> textureMap;
+    private Map<String, GVRMaterial> materialMap;
     private GearWearableDevice gearWearableDevice;
 
     public CursorMain(GVRActivity gvrActivity) {
         Resources resources = gvrActivity.getResources();
         LIGHT_BLUE_COLOR = resources.getColor(R.color.LIGHT_BLUE);
         objects = new HashMap<String, SpaceObject>();
-        textViewList = new ArrayList<GVRTextView>(NUM_TEXT_VIEWS);
+        textViewList = new ArrayList<TextView>(NUM_TEXT_VIEWS);
         for (int i = 0; i < NUM_TEXT_VIEWS; i++) {
             addGVRTextView(gvrActivity, i);
         }
 
-        circleTextViewList = new ArrayList<GVRTextView>(NUM_TEXT_VIEWS);
+        circleTextViewList = new ArrayList<TextView>(NUM_TEXT_VIEWS);
         addCircleGVRTextViews(gvrActivity, resources);
 
         resetTextView = getTextView(gvrActivity, 0);
@@ -209,7 +211,7 @@ public class CursorMain extends GVRMain {
         this.gvrContext = gvrContext;
         mainScene = gvrContext.getMainScene();
         meshMap = new HashMap<String, GVRMesh>();
-        textureMap = new HashMap<String, GVRTexture>();
+        materialMap = new HashMap<String, GVRMaterial>();
         addSurroundings(gvrContext, mainScene);
         try {
             ZipLoader.load(gvrContext, MESH_FILE, new ZipLoader
@@ -218,6 +220,9 @@ public class CursorMain extends GVRMain {
                 public GVRMesh getItem(GVRContext context, GVRAndroidResource resource) {
                     GVRMesh mesh = context.getAssetLoader().loadMesh(resource);
                     meshMap.put(resource.getResourceFilename(), mesh);
+                    if (mesh == null) {
+                        throw new IllegalArgumentException("Mesh " + resource.getResourceFilename() + " cannot be loaded");
+                    }
                     return mesh;
                 }
             });
@@ -227,10 +232,12 @@ public class CursorMain extends GVRMain {
                             .ZipEntryProcessor<GVRTexture>() {
 
                         @Override
-                        public GVRTexture getItem(GVRContext context, GVRAndroidResource
-                                resource) {
+                        public GVRTexture getItem(GVRContext context, GVRAndroidResource resource)
+                        {
                             GVRTexture texture = context.getAssetLoader().loadTexture(resource);
-                            textureMap.put(resource.getResourceFilename(), texture);
+                            GVRMaterial mtl = new GVRMaterial(context);
+                            mtl.setMainTexture(texture);
+                            materialMap.put(resource.getResourceFilename(), mtl);
                             return texture;
                         }
                     });
@@ -238,20 +245,10 @@ public class CursorMain extends GVRMain {
             Log.e(TAG, "Error Loading textures/meshes");
         }
 
-        AssetHolder starAssetHolder = getStarAssetHolder();
-        AssetHolder cubeAssetHolder = getCubeAssetHolder();
-        AssetHolder astronautAssetHolder = getAstronautAssetHolder();
-        AssetHolder rocketShipAssetHolder = getRocketShipAssetHolder();
-        AssetHolder settingAssetHolder = getSettingAssetHolder();
-        AssetHolder cloud1AssetHolder = getCloud1AssetHolder();
-        AssetHolder cloud2AssetHolder = getCloud2AssetHolder();
-        AssetHolder cloud3AssetHolder = getCloud3AssetHolder();
-        AssetHolder buttonAssetHolder = getButtonAssetHolder();
-        AssetHolder swordAssetHolder = getSwordAssetHolder();
-
         mainScene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
         mainScene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
 
+        GVRInputManager inputManager = gvrContext.getInputManager();
         List<IoDevice> devices = new ArrayList<IoDevice>();
 
         //_VENDOR_TODO_ register the devices with Cursor Manager here.
@@ -269,6 +266,23 @@ public class CursorMain extends GVRMain {
 
         gearWearableDevice = new GearWearableDevice(gvrContext, GEARS2_DEVICE_ID, "Gear Wearable");
         devices.add(gearWearableDevice);
+        /*
+         * Because we are using GVRViewSceneObject we want pick events to be converted
+         * to Android motion events. We need to enable GVRPicker.EventOptions.SEND_TO_HIT_OBJECT
+         * to send touch events to the GVRViewSceneObject which propagates them to the Android view.
+         */
+        inputManager.getEventReceiver().addListener(
+                new GVRInputManager.ICursorControllerSelectListener()
+                {
+                    @Override
+                    public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
+                    {
+                        GVRPicker picker = newController.getPicker();
+                        EnumSet<GVRPicker.EventOptions> eventOptions = picker.getEventOptions();
+                        eventOptions.add(GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
+                        newController.setCursorDepth(DEFAULT_CURSOR_DEPTH);
+                    }
+                });
 
         cursorManager = new CursorManager(gvrContext, mainScene, devices);
         List<CursorTheme> themes = cursorManager.getCursorThemes();
@@ -300,87 +314,87 @@ public class CursorMain extends GVRMain {
 
         Vector3f position = new Vector3f();
         position.set(0.0f, SCENE_HEIGHT + 2.0f, SCENE_DEPTH);
-        addSpaceObject(new SpaceObject(gvrContext, rocketShipAssetHolder, "rocketship", position,
+        addSpaceObject(new SpaceObject(cursorManager, getRocketShipAsset(), "rocketship", position,
                 1.5f, getRotationFromIndex(INDEX_ROCKET), 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT - 1.5f, SCENE_DEPTH + 5.0f);
-        addSpaceObject(new MovableObject(gvrContext, starAssetHolder, "star1", position, 0.75f,
+        addSpaceObject(new MovableObject(cursorManager, getStarAsset(), "star1", position, 0.75f,
                 getRotationFromIndex(INDEX_STAR), 0.0f, 0.0f, STAR_Y_ORIENTATION, 0.0f));
         position.set(0.0f, SCENE_HEIGHT - 0.5f, SCENE_DEPTH);
-        addSpaceObject(new MovableObject(gvrContext, starAssetHolder, "star2", position, 1.5f,
+        addSpaceObject(new MovableObject(cursorManager, getStarAsset(), "star2", position, 1.5f,
                 getRotationFromIndex(INDEX_STAR) - 1, 0.0f, 0.0f, STAR_Y_ORIENTATION, 0.0f));
         position.set(0.0f, SCENE_HEIGHT + 0.5f, SCENE_DEPTH - 5.0f);
-        addSpaceObject(new MovableObject(gvrContext, starAssetHolder, "star3", position, 2.25f,
+        addSpaceObject(new MovableObject(cursorManager, getStarAsset(), "star3", position, 2.25f,
                 getRotationFromIndex(INDEX_STAR) - 2, 0.0f, 0.0f, STAR_Y_ORIENTATION, 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT, SCENE_DEPTH);
-        addSpaceObject(new MovableObject(gvrContext, astronautAssetHolder, "astronaut", position,
+        addSpaceObject(new MovableObject(cursorManager, getAstronautAsset(), "astronaut", position,
                 1.0f, getRotationFromIndex(INDEX_ASTRONAUT), 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT - 1.5f, SCENE_DEPTH);
-        addSpaceObject(new LaserCursorButton(gvrContext, buttonAssetHolder, "laser_button",
+        addSpaceObject(new LaserCursorButton(cursorManager, getButtonAsset(), "laser_button",
                 position, 2f, getRotationFromIndex(INDEX_LASER_BUTTON), 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT - 1.50f, SCENE_DEPTH);
-        MovableObject object = new MovableObject(gvrContext, cubeAssetHolder, "cube1", position,
+        MovableObject object = new MovableObject(cursorManager, getCubeAsset(), "cube1", position,
                 1.8f, getRotationFromIndex(INDEX_CUBES_1) + 1.0f, 0, 0.0f, CUBE_Y_ORIENTATION,
                 0.0f);
         addSpaceObject(object);
 
         position.set(0.0f, SCENE_HEIGHT - 0.85f, SCENE_DEPTH - 3.0f);
-        object = new MovableObject(gvrContext, cubeAssetHolder, "cube2", position, 2.5f,
+        object = new MovableObject(cursorManager, getCubeAsset(), "cube2", position, 2.5f,
                 getRotationFromIndex(INDEX_CUBES_1) - 0.2f, 0, 0.0f, CUBE_Y_ORIENTATION, 0.0f);
         addSpaceObject(object);
 
         position.set(0.0f, SCENE_HEIGHT, SCENE_DEPTH - 8.0f);
-        object = new MovableObject(gvrContext, cubeAssetHolder, "cube3", position, 3.75f,
+        object = new MovableObject(cursorManager, getCubeAsset(), "cube3", position, 3.75f,
                 getRotationFromIndex(INDEX_CUBES_1) - 1.3f, 0, 0.0f, CUBE_Y_ORIENTATION, 0.0f);
         addSpaceObject(object);
 
         position.set(0.0f, SCENE_HEIGHT - 1.5f, SCENE_DEPTH);
-        addSpaceObject(new HandCursorButton(gvrContext, buttonAssetHolder, "hands_button",
+        addSpaceObject(new HandCursorButton(cursorManager, getButtonAsset(), "hands_button",
                 position, 2f, getRotationFromIndex(INDEX_HANDS_BUTTON), 0.0f));
 
         position.set(0, SCENE_HEIGHT, SCENE_DEPTH + 15.0f);
-        MovableObject rightSword = new MovableObject(gvrContext, swordAssetHolder, "sword_1",
+        MovableObject rightSword = new MovableObject(cursorManager, getSwordAsset(), "sword_1",
                 position, 1.5f, getRotationFromIndex(INDEX_SWORDS) - 6.5f, 0, 0.0f, 80.0f, -5.5f);
         addSpaceObject(rightSword);
 
         position.set(0, SCENE_HEIGHT, SCENE_DEPTH + 15.0f);
-        MovableObject leftSword = new MovableObject(gvrContext, swordAssetHolder, "sword_2",
+        MovableObject leftSword = new MovableObject(cursorManager, getSwordAsset(), "sword_2",
                 position, 1.5f, getRotationFromIndex(INDEX_SWORDS) + 6.5f, 0, 0.0f, -140.0f, -5.5f);
         addSpaceObject(leftSword);
 
         position.set(0.0f, SCENE_HEIGHT - 1.5f, SCENE_DEPTH);
-        addSpaceObject(new GearS2Button(gvrContext, buttonAssetHolder, "gears2_button", position,
+        addSpaceObject(new GearS2Button(cursorManager, getButtonAsset(), "gears2_button", position,
                 2f, getRotationFromIndex(INDEX_GEARS2_BUTTON), -1.0f));
 
         position.set(0.0f, SCENE_HEIGHT, SCENE_DEPTH);
-        addSpaceObject(new MovableObject(gvrContext, astronautAssetHolder,
+        addSpaceObject(new MovableObject(cursorManager, getAstronautAsset(),
                 "collection_astronaut", position, 1.0f, getRotationFromIndex
                 (INDEX_SPACE_COLLEC_1) + 3.5f, 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT + 2.0f, SCENE_DEPTH - 2.5f);
-        addSpaceObject(new MovableObject(gvrContext, rocketShipAssetHolder,
+        addSpaceObject(new MovableObject(cursorManager, getRocketShipAsset(),
                 "collection_rocketship", position, 1.25f, getRotationFromIndex
                 (INDEX_SPACE_COLLEC_1), 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT + 3.0f, SCENE_DEPTH - 5.0f);
-        addSpaceObject(new MovableObject(gvrContext, starAssetHolder, "collection_star",
+        addSpaceObject(new MovableObject(cursorManager, getStarAsset(), "collection_star",
                 position, 3f, getRotationFromIndex(INDEX_SPACE_COLLEC_1) - 5.0f, 0.0f));
 
         position.set(0.0f, SCENE_HEIGHT, SCENE_DEPTH - 15.0f);
-        addSpaceObject(new MovableObject(gvrContext, cloud1AssetHolder, "cloud1", position,
+        addSpaceObject(new MovableObject(cursorManager, getCloud1Asset(), "cloud1", position,
                 1.0f, 0.0f, +10.0f));
 
-        addSpaceObject(new MovableObject(gvrContext, cloud2AssetHolder, "cloud2", position,
+        addSpaceObject(new MovableObject(cursorManager, getCloud2Asset(), "cloud2", position,
                 1.0f, -15.0f, +3.0f));
 
-        addSpaceObject(new MovableObject(gvrContext, cloud3AssetHolder, "cloud3", position,
+        addSpaceObject(new MovableObject(cursorManager, getCloud3Asset(), "cloud3", position,
                 1.0f, +15.0f, +3.0f));
 
         position.set(0.0f, SCENE_HEIGHT, SCENE_DEPTH);
-        addSpaceObject(new ResetButton(gvrContext, buttonAssetHolder, "reset", position, 2.5f,
+        addSpaceObject(new ResetButton(cursorManager, getButtonAsset(), "reset", position, 2.5f,
                 SETTINGS_ROTATION_X, SETTINGS_ROTATION_Y - 2.0f));
         GVRViewSceneObject resetText = new GVRViewSceneObject(gvrContext, resetTextView,
                 gvrContext.createQuad(TEXT_QUAD_WIDTH, TEXT_QUAD_HEIGHT));
@@ -391,7 +405,7 @@ public class CursorMain extends GVRMain {
         mainScene.addSceneObject(resetText);
 
         position.set(0.0f, SCENE_HEIGHT, SCENE_DEPTH);
-        addSpaceObject(new SettingsObject(gvrContext, settingAssetHolder, "settings", position,
+        addSpaceObject(new SettingsObject(cursorManager, getSettingAsset(), "settings", position,
                 2.0f, -SETTINGS_ROTATION_X, SETTINGS_ROTATION_Y, 0.0f));
         GVRViewSceneObject settingsText = new GVRViewSceneObject(gvrContext, settingsTextView,
                 gvrContext.createQuad(TEXT_QUAD_WIDTH, TEXT_QUAD_HEIGHT));
@@ -478,9 +492,9 @@ public class CursorMain extends GVRMain {
         textViewList.add(getTextView(gvrActivity, index));
     }
 
-    private GVRTextView getTextView(GVRActivity gvrActivity, int index) {
+    private TextView getTextView(GVRActivity gvrActivity, int index) {
         Resources resources = gvrActivity.getResources();
-        GVRTextView textView = new GVRTextView(gvrActivity, TEXT_VIEW_WIDTH,
+        TextView textView = new GVRTextView(gvrActivity, TEXT_VIEW_WIDTH,
                 getTextViewHeightFromIndex(index));
         textView.setTextSize(STANDARD_TEXT_SIZE);
         textView.setTextColor(LIGHT_BLUE_COLOR);
@@ -501,7 +515,7 @@ public class CursorMain extends GVRMain {
         }
     }
 
-    private void setTextViewProperties(GVRTextView textView, Resources resources) {
+    private void setTextViewProperties(TextView textView, Resources resources) {
         textView.setBackground(resources.getDrawable(R.drawable.rounded_corner));
         textView.setTypeface(Typeface.DEFAULT_BOLD);
         textView.setPadding(TEXT_VIEW_H_PADDING, TEXT_VIEW_V_PADDING, TEXT_VIEW_V_PADDING,
@@ -521,7 +535,7 @@ public class CursorMain extends GVRMain {
         setTextOnMainThread(textViewList.get(position), text);
     }
 
-    private void setTextOnMainThread(final GVRTextView textView, final String text) {
+    private void setTextOnMainThread(final TextView textView, final String text) {
         gvrContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -538,10 +552,6 @@ public class CursorMain extends GVRMain {
             synchronized (cursors) {
                 cursors.remove(cursor);
             }
-            cursor.removeCursorEventListener(cursorEventListener);
-            for (SpaceObject spaceObject : objects.values()) {
-                spaceObject.onCursorDeactivated(cursor);
-            }
         }
 
         @Override
@@ -550,10 +560,6 @@ public class CursorMain extends GVRMain {
                 cursors.add(newCursor);
             }
 
-            for (SpaceObject spaceObject : objects.values()) {
-                spaceObject.onCursorActivated(newCursor);
-            }
-            newCursor.addCursorEventListener(cursorEventListener);
             List<IoDevice> ioDevices = newCursor.getAvailableIoDevices();
             if (currentType != newCursor.getCursorType()) {
                 currentType = newCursor.getCursorType();
@@ -561,18 +567,6 @@ public class CursorMain extends GVRMain {
             Log.d(TAG, "Available Io devices for Cursor are: ");
             for (int i = 0; i < ioDevices.size(); i++) {
                 Log.d(TAG, "IO Device:" + ioDevices.get(i).getDeviceId());
-            }
-        }
-    };
-
-    private CursorEventListener cursorEventListener = new CursorEventListener() {
-
-        @Override
-        public void onEvent(CursorEvent event) {
-            GVRSceneObject sceneObject = event.getObject();
-            SpaceObject spaceObject = objects.get(sceneObject.getName());
-            if(spaceObject != null) {
-                spaceObject.handleCursorEvent(event);
             }
         }
     };
@@ -595,26 +589,23 @@ public class CursorMain extends GVRMain {
     // http://www.samsung.com/us/samsungdeveloperconnection/developer-resources/
     // gear-vr/apps-and-games/exercise-2-creating-the-splash-scene.html
     private void addSurroundings(GVRContext gvrContext, GVRScene scene) {
-        GVRMesh quadMesh =  gvrContext.createQuad(CUBE_WIDTH, CUBE_WIDTH);
-        GVRTexture cubemapTexture = gvrContext
-                .getAssetLoader().loadCubemapTexture(
-                        new GVRAndroidResource(gvrContext, R.raw.earth));
+        GVRMesh quadMesh = new GVRMesh(gvrContext, "float3 a_position float2 a_texcoord");
+        GVRTexture cubemapTexture = gvrContext.getAssetLoader()
+                .loadCubemapTexture(new GVRAndroidResource(gvrContext, R.raw.earth));
 
-        GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext,
-                GVRMaterial.GVRShaderType.Cubemap.ID);
+        GVRMaterial cubemapMaterial = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Cubemap.ID);
         cubemapMaterial.setMainTexture(cubemapTexture);
+        quadMesh.createQuad(CUBE_WIDTH, CUBE_WIDTH);
 
         // surrounding cube
-        GVRSceneObject frontFace = new GVRSceneObject(gvrContext,
-                quadMesh, cubemapTexture);
+        GVRSceneObject frontFace = new GVRSceneObject(gvrContext, quadMesh, cubemapTexture);
         frontFace.getRenderData().setMaterial(cubemapMaterial);
         frontFace.setName("front");
         frontFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         scene.addSceneObject(frontFace);
         frontFace.getTransform().setPosition(0.0f, 0.0f, -CUBE_WIDTH * 0.5f);
 
-        GVRSceneObject backFace = new GVRSceneObject(gvrContext, quadMesh,
-                cubemapTexture);
+        GVRSceneObject backFace = new GVRSceneObject(gvrContext, quadMesh, cubemapTexture);
         backFace.getRenderData().setMaterial(cubemapMaterial);
         backFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         backFace.setName("back");
@@ -622,8 +613,7 @@ public class CursorMain extends GVRMain {
         backFace.getTransform().setPosition(0.0f, 0.0f, CUBE_WIDTH * 0.5f);
         backFace.getTransform().rotateByAxis(180.0f, 0.0f, 1.0f, 0.0f);
 
-        GVRSceneObject leftFace = new GVRSceneObject(gvrContext, quadMesh,
-                cubemapTexture);
+        GVRSceneObject leftFace = new GVRSceneObject(gvrContext, quadMesh, cubemapTexture);
         leftFace.getRenderData().setMaterial(cubemapMaterial);
         leftFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         leftFace.setName("left");
@@ -631,8 +621,7 @@ public class CursorMain extends GVRMain {
         leftFace.getTransform().setPosition(-CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         leftFace.getTransform().rotateByAxis(90.0f, 0.0f, 1.0f, 0.0f);
 
-        GVRSceneObject rightFace = new GVRSceneObject(gvrContext,
-                quadMesh, cubemapTexture);
+        GVRSceneObject rightFace = new GVRSceneObject(gvrContext, quadMesh, cubemapTexture);
         rightFace.getRenderData().setMaterial(cubemapMaterial);
         rightFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         rightFace.setName("right");
@@ -640,8 +629,7 @@ public class CursorMain extends GVRMain {
         rightFace.getTransform().setPosition(CUBE_WIDTH * 0.5f, 0.0f, 0.0f);
         rightFace.getTransform().rotateByAxis(-90.0f, 0.0f, 1.0f, 0.0f);
 
-        GVRSceneObject topFace = new GVRSceneObject(gvrContext, quadMesh,
-                cubemapTexture);
+        GVRSceneObject topFace = new GVRSceneObject(gvrContext, quadMesh, cubemapTexture);
         topFace.getRenderData().setMaterial(cubemapMaterial);
         topFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         topFace.setName("top");
@@ -649,8 +637,7 @@ public class CursorMain extends GVRMain {
         topFace.getTransform().setPosition(0.0f, CUBE_WIDTH * 0.5f, 0.0f);
         topFace.getTransform().rotateByAxis(90.0f, 1.0f, 0.0f, 0.0f);
 
-        GVRSceneObject bottomFace = new GVRSceneObject(gvrContext,
-                quadMesh, cubemapTexture);
+        GVRSceneObject bottomFace = new GVRSceneObject(gvrContext, quadMesh, cubemapTexture);
         bottomFace.getRenderData().setMaterial(cubemapMaterial);
         bottomFace.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         bottomFace.setName("bottom");
@@ -675,16 +662,16 @@ public class CursorMain extends GVRMain {
     }
 
     private class SettingsObject extends SpaceObject {
-        public SettingsObject(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public SettingsObject(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY, float orientationX) {
-            super(gvrContext, holder, name, position, scale, rotationX, rotationY, orientationX,
+            super(cursorMgr, asset, name, position, scale, rotationX, rotationY, orientationX,
                     0.0f, 0.0f);
         }
 
         @Override
-        void handleClickReleased(CursorEvent event) {
+        public void onTouchStart(Cursor c, GVRPicker.GVRPickedObject hit) {
             Log.d(TAG, "handleClickReleased: show settings menu");
-            cursorManager.setSettingsMenuVisibility(event.getCursor(), true);
+            cursorManager.setSettingsMenuVisibility(c, true);
         }
     }
 
@@ -713,9 +700,9 @@ public class CursorMain extends GVRMain {
         private CursorTheme rightHandTheme, leftHandTheme;
         private Vector3f leftCursorPosition, rightCursorPosition;
 
-        public HandCursorButton(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public HandCursorButton(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
-            super(gvrContext, holder, name, position, scale, rotationX, rotationY,
+            super(cursorMgr, asset, name, position, scale, rotationX, rotationY,
                     BUTTON_XORIENTATION, 0.0f, 0.0f);
             handCursors = new LinkedList<Cursor>();
             rightCursorPosition = new Vector3f();
@@ -732,15 +719,15 @@ public class CursorMain extends GVRMain {
         }
 
         @Override
-        void handleClickReleased(CursorEvent event) {
-            Cursor currentCursor = event.getCursor();
-            currentIoDevice = currentCursor.getIoDevice();
+        public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit) {
+            Cursor currentCursor = c;
+            currentIoDevice = c.getIoDevice();
             currentIoDeviceUsed = false;
             handCursors.clear();
             setOffsetPositionFromCursor(rightCursorPosition,currentCursor);
             leftCursorPosition.set(rightCursorPosition);
 
-            if (currentCursor.getCursorType() == CursorType.LASER) ;
+            if (c.getCursorType() == CursorType.LASER) ;
             {
                 currentCursor.setEnable(false);
             }
@@ -814,21 +801,21 @@ public class CursorMain extends GVRMain {
     }
 
     private class LaserCursorButton extends SpaceObject {
-        public LaserCursorButton(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public LaserCursorButton(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
-            super(gvrContext, holder, name, position, scale, rotationX, rotationY,
+            super(cursorMgr, asset, name, position, scale, rotationX, rotationY,
                     BUTTON_XORIENTATION, 0.0f, 0.0f);
         }
 
         @Override
-        void handleClickReleased(CursorEvent event) {
-            Cursor currentCursor = event.getCursor();
+        public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit) {
+            Cursor currentCursor = c;
             Cursor otherCursor = null, laserCursor = null;
             if (currentCursor.getCursorType() == CursorType.LASER) {
                 return;
             }
 
-            IoDevice targetIoDevice = currentCursor.getIoDevice();
+            IoDevice targetIoDevice = c.getIoDevice();
             List<Cursor> enabledCursors = cursorManager.getActiveCursors();
             for(Cursor inactiveCursor:cursorManager.getInactiveCursors()) {
                 if(inactiveCursor.isEnabled()) {
@@ -896,16 +883,16 @@ public class CursorMain extends GVRMain {
 
     private class GearS2Button extends SpaceObject {
         Vector3f cursorPosition;
-        public GearS2Button(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public GearS2Button(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
-            super(gvrContext, holder, name, position, scale, rotationX, rotationY,
+            super(cursorMgr, asset, name, position, scale, rotationX, rotationY,
                     BUTTON_XORIENTATION, 0.0f, 0.0f);
             cursorPosition = new Vector3f();
         }
 
         @Override
-        void handleClickReleased(CursorEvent event) {
-            Cursor currentCursor = event.getCursor();
+        public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit) {
+            Cursor currentCursor = c;
             Cursor targetCursor = null;
             CursorTheme crystalTheme = null;
             setOffsetPositionFromCursor(cursorPosition, currentCursor);
@@ -963,14 +950,14 @@ public class CursorMain extends GVRMain {
     private class ResetButton extends SpaceObject {
         private static final String RESET_CURSOR_NAME = "Right Cursor";
 
-        public ResetButton(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public ResetButton(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
-            super(gvrContext, holder, name, position, scale, rotationX, rotationY,
+            super(cursorMgr, asset, name, position, scale, rotationX, rotationY,
                     BUTTON_XORIENTATION + 10.0f, 0.0f, 0.0f);
         }
 
         @Override
-        void handleClickReleased(CursorEvent event) {
+        public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit) {
             for (SpaceObject spaceObject : objects.values()) {
                 spaceObject.reset();
             }
@@ -999,210 +986,89 @@ public class CursorMain extends GVRMain {
     }
 
     class MovableObject extends SpaceObject {
-
-        private Vector3f prevCursorPosition;
-        private Quaternionf rotation;
-        private Vector3f cross;
-
         private GVRSceneObject sceneObject;
-        private GVRSceneObject selected;
-        private GVRSceneObject selectedParent;
-        private GVRSceneObject cursorSceneObject;
-        private Cursor cursor;
 
-        public MovableObject(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public MovableObject(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY) {
-            this(gvrContext, holder, name, position, scale, rotationX, rotationY, 0.0f, 0.0f, 0.0f);
+            this(cursorMgr, asset, name, position, scale, rotationX, rotationY, 0.0f, 0.0f, 0.0f);
         }
 
-        public MovableObject(GVRContext gvrContext, AssetHolder holder, String name, Vector3f
+        public MovableObject(CursorManager cursorMgr, GVRSceneObject asset, String name, Vector3f
                 position, float scale, float rotationX, float rotationY, float orientationX,
                              float orientationY, float orientationZ) {
-            super(gvrContext, holder, name, position, scale, rotationX, rotationY, orientationX,
+            super(cursorMgr, asset, name, position, scale, rotationX, rotationY, orientationX,
                     orientationY, orientationZ);
-            initialize();
+            initialize(cursorMgr);
         }
 
-        private void initialize() {
-            prevCursorPosition = new Vector3f();
-            rotation = new Quaternionf();
-            cross = new Vector3f();
+        private void initialize(CursorManager cursorMgr) {
             sceneObject = getSceneObject();
-        }
-
-        @Override
-        void handleClickEvent(CursorEvent event) {
-            if (selected != null && cursor != event.getCursor()) {
-                // We have a selected object but not the correct cursor
-                return;
-            }
-
-            cursor = event.getCursor();
-            cursorSceneObject = event.getCursor().getSceneObject();
-            prevCursorPosition.set(cursor.getPositionX(), cursor.getPositionY(), cursor
-                    .getPositionZ());
-            selected = getSceneObject();
-            selectedParent = selected.getParent();
-            if (cursor.getCursorType() == CursorType.OBJECT) {
-                Vector3f position = new Vector3f(cursor.getPositionX(), cursor.getPositionY(),
-                        cursor
-                                .getPositionZ());
-
-                selected.getTransform().setPosition(-position.x + selected.getTransform()
-                        .getPositionX(), -position.y + selected.getTransform()
-                        .getPositionY(), -position.z + selected.getTransform().getPositionZ());
-                selectedParent.removeChildObject(selected);
-                cursorSceneObject.addChildObject(selected);
-            }
-        }
-
-        @Override
-        void handleDragEvent(CursorEvent event) {
-            if (cursor.getCursorType() == CursorType.LASER && cursor == event.getCursor()) {
-                Cursor cursor = event.getCursor();
-                Vector3f cursorPosition = new Vector3f(cursor.getPositionX(), cursor.getPositionY
-                        (), cursor.getPositionZ());
-                rotateObjectToFollowCursor(cursorPosition);
-                prevCursorPosition = cursorPosition;
-            }
-        }
-
-        @Override
-        void handleCursorLeave(CursorEvent event) {
-            if (event.isActive() && cursor == event.getCursor()) {
-                if (cursor.getCursorType() == CursorType.LASER) {
-                    Vector3f cursorPosition = new Vector3f(cursor.getPositionX(), cursor
-                            .getPositionY(), cursor.getPositionZ());
-                    rotateObjectToFollowCursor(cursorPosition);
-                    prevCursorPosition = cursorPosition;
-                } else if (cursor.getCursorType() == CursorType.OBJECT) {
-                    Log.d(TAG, "handleCursorLeave");
-                    handleClickReleased(event);
-                }
-            }
-        }
-
-        @Override
-        void handleClickReleased(CursorEvent event) {
-
-            if (selected != null && cursor != event.getCursor()) {
-                // We have a selected object but not the correct cursor
-                return;
-            }
-
-            if (selected != null && cursor.getCursorType() == CursorType.OBJECT) {
-                Vector3f position = new Vector3f(cursor.getPositionX(), cursor.getPositionY
-                        (), cursor.getPositionZ());
-                cursorSceneObject.removeChildObject(selected);
-                selectedParent.addChildObject(selected);
-                selected.getTransform().setPosition(+position.x + selected.getTransform()
-                        .getPositionX(), +position.y + selected.getTransform()
-                        .getPositionY(), +position.z + selected.getTransform().getPositionZ());
-            }
-            selected = null;
-            selectedParent = null;
-            // object has been moved, invalidate all other cursors to check for events
-            for (Cursor remaining : cursorManager.getActiveCursors()) {
-                if (cursor != remaining) {
-                    remaining.invalidate();
-                }
-            }
-        }
-
-        private void rotateObjectToFollowCursor(Vector3f cursorPosition) {
-            computeRotation(prevCursorPosition, cursorPosition);
-            sceneObject.getTransform().rotateWithPivot(rotation.w, rotation.x, rotation.y,
-                    rotation.z, 0,
-                    0, 0);
-            sceneObject.getTransform().setRotation(1, 0, 0, 0);
-        }
-
-        /*
-        formulae for quaternion rotation taken from
-        http://lolengine.net/blog/2014/02/24/quaternion-from-two-vectors-final
-        */
-        private void computeRotation(Vector3f start, Vector3f end) {
-            float norm_u_norm_v = (float) Math.sqrt(start.dot(start) * end.dot(end));
-            float real_part = norm_u_norm_v + start.dot(end);
-
-            if (real_part < 1.e-6f * norm_u_norm_v) {
-        /* If u and v are exactly opposite, rotate 180 degrees
-         * around an arbitrary orthogonal axis. Axis normalisation
-         * can happen later, when we normalise the quaternion. */
-                real_part = 0.0f;
-                if (Math.abs(start.x) > Math.abs(start.z)) {
-                    cross = new Vector3f(-start.y, start.x, 0.f);
-                } else {
-                    cross = new Vector3f(0.f, -start.z, start.y);
-                }
-            } else {
-                /* Otherwise, build quaternion the standard way. */
-                start.cross(end, cross);
-            }
-            rotation.set(cross.x, cross.y, cross.z, real_part).normalize();
+            cursorMgr.removeSelectableObject(sceneObject);
+            sceneObject.detachComponent(SelectableBehavior.getComponentType());
+            sceneObject.attachComponent(new MovableBehavior(cursorMgr, true));
         }
     }
 
-    private AssetHolder getStarAssetHolder() {
-        return getAssetHolder(STAR_MESHES, STAR_TEXTURES);
+    private GVRSceneObject getStarAsset() {
+        return getAsset(STAR_MESHES, STAR_TEXTURES, true);
     }
 
-    private AssetHolder getCubeAssetHolder() {
-        return getAssetHolder(CUBE_MESHES, CUBE_TEXTURES);
+    private GVRSceneObject getCubeAsset() {
+        return getAsset(CUBE_MESHES, CUBE_TEXTURES, true);
     }
 
-    private AssetHolder getAstronautAssetHolder() {
-        return getAssetHolder(ASTRONAUT_MESHES, ASTRONAUT_TEXTURES);
+    private GVRSceneObject getAstronautAsset() {
+        return getAsset(ASTRONAUT_MESHES, ASTRONAUT_TEXTURES, true);
     }
 
-    private AssetHolder getRocketShipAssetHolder() {
-        return getAssetHolder(ROCKET_SHIP_MESHES, ROCKET_SHIP_TEXTURES);
+    private GVRSceneObject getRocketShipAsset() {
+        return getAsset(ROCKET_SHIP_MESHES, ROCKET_SHIP_TEXTURES, true);
     }
 
-    private AssetHolder getSettingAssetHolder() {
-        return getAssetHolder(SETTING_MESHES, SETTING_TEXTURES);
+    private GVRSceneObject getSettingAsset() {
+        return getAsset(SETTING_MESHES, SETTING_TEXTURES, false);
     }
 
-    private AssetHolder getCloud1AssetHolder() {
-        return getAssetHolder(CLOUD_1_MESHES, CLOUD_TEXTURES);
+    private GVRSceneObject getCloud1Asset() {
+        return getAsset(CLOUD_1_MESHES, CLOUD_TEXTURES, false);
     }
 
-    private AssetHolder getCloud2AssetHolder() {
-        return getAssetHolder(CLOUD_2_MESHES, CLOUD_TEXTURES);
+    private GVRSceneObject getCloud2Asset() {
+        return getAsset(CLOUD_2_MESHES, CLOUD_TEXTURES, false);
     }
 
-    private AssetHolder getCloud3AssetHolder() {
-        return getAssetHolder(CLOUD_3_MESHES, CLOUD_TEXTURES);
+    private GVRSceneObject getCloud3Asset() {
+        return getAsset(CLOUD_3_MESHES, CLOUD_TEXTURES, false);
     }
 
-    private AssetHolder getButtonAssetHolder() {
-        return getAssetHolder(BUTTON_MESHES, BUTTON_TEXTURES);
+    private GVRSceneObject getButtonAsset() {
+        return getAsset(BUTTON_MESHES, BUTTON_TEXTURES, false);
     }
 
-    private AssetHolder getSwordAssetHolder() {
-        return getAssetHolder(SWORD_MESHES, SWORD_TEXTURES);
+    private GVRSceneObject getSwordAsset() {
+
+        return getAsset(SWORD_MESHES, SWORD_TEXTURES, false);
     }
 
-    private AssetHolder getAssetHolder(String[] meshes, String[] textures) {
-        AssetHolder assetHolder = new AssetHolder();
+    private GVRSceneObject getAsset(String[] meshes, String[] textures, boolean useMesh) {
+        GVRSceneObject root = new GVRSceneObject(gvrContext);
+        GVRMeshCollider collider = new GVRMeshCollider(gvrContext, true);
 
-        int state = SpaceObject.INIT;
-        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                textureMap.get(textures[state])));
+        collider.setMesh(meshMap.get(meshes[0]));
+        root.setName(meshes[0]);
+        root.attachCollider(collider);
+        for (int state = SelectableBehavior.ObjectState.DEFAULT.ordinal();
+             state <= SelectableBehavior.ObjectState.CLICKED.ordinal();
+             ++state)
+        {
+            GVRMesh mesh = meshMap.get(meshes[state]);
+            GVRSceneObject child = new GVRSceneObject(gvrContext, mesh);
 
-        state = SpaceObject.CLICKED;
-        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                textureMap.get(textures[state])));
-
-        state = SpaceObject.OVER;
-        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                textureMap.get(textures[state])));
-
-        state = SpaceObject.WIRE;
-        assetHolder.setTuple(state, new AssetObjectTuple(meshMap.get(meshes[state]),
-                textureMap.get(textures[state])));
-
-        return assetHolder;
+            child.getRenderData().setMaterial(materialMap.get(textures[state]));
+            child.setName(meshes[state]);
+            root.addChildObject(child);
+        }
+        return root;
     }
 
     @Override
@@ -1210,9 +1076,9 @@ public class CursorMain extends GVRMain {
         Bitmap bitmap = BitmapFactory.decodeResource(
                 gvrContext.getContext().getResources(),
                 R.mipmap.ic_launcher);
+        GVRTexture splashScreen = new GVRTexture(gvrContext);
         // return the correct splash screen bitmap
-        GVRTexture tex = new GVRTexture(gvrContext);
-        tex.setImage(new GVRBitmapTexture(gvrContext, bitmap));
-        return tex ;
+        splashScreen.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        return splashScreen;
     }
 }

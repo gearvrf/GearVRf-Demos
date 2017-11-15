@@ -189,6 +189,7 @@ public class CursorMain extends GVRMain {
         movableBehavior.setStateChangedListener(new StateChangedListener() {
             @Override
             public void onStateChanged(SelectableBehavior selectableBehavior, ObjectState prev,
+                                       ObjectState current, Cursor cursor, GVRPicker.GVRPickedObject hit) {
                 if(current == ObjectState.CLICKED) {
                     GVRTransform transform = astronaut.getTransform();
                     transform.setPositionZ(transform.getPositionZ() + 1);
