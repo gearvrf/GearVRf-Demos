@@ -16,12 +16,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 
+import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.VRTouchPadGestureDetector;
 import com.samsung.accessibility.focus.VRTouchPadGestureDetector.SwipeDirection;
 
 public class MainActivity extends GVRActivity implements
-        VRTouchPadGestureDetector.OnTouchPadGestureListener {
+        VRTouchPadGestureDetector.OnTouchPadGestureListener
+{
 
     private static final int BUTTON_INTERVAL = 500;
     private static final int TAP_INTERVAL = 300;
@@ -34,9 +37,8 @@ public class MainActivity extends GVRActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMain = new Main();
-
+        mDetector = new VRTouchPadGestureDetector(this);
         setMain(mMain, "gvr.xml");
-        mDetector = new VRTouchPadGestureDetector(this, this);
     }
 
     @Override

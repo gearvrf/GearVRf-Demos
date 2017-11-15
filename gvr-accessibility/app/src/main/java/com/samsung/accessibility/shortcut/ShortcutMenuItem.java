@@ -202,20 +202,22 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     private void back(final GVRSceneObject[] wholeSceneObjects) {
         final AccessibilityScene accessibilityScene = Main.accessibilityScene;
-        gvrContext.setMainScene(accessibilityScene.getMainApplicationScene());
+        Main main = (Main) gvrContext.getActivity().getMain();
+
+        main.setScene(accessibilityScene.getMainApplicationScene());
         createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
         accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
-        GVRSceneObject gazeCursorSceneObject = GazeCursorSceneObject.getInstance(gvrContext);
-        Main.accessibilityScene.getMainCameraRig().removeChildObject(gazeCursorSceneObject);
-        gvrContext.getMainScene().getMainCameraRig().addChildObject(gazeCursorSceneObject);
+//        GVRSceneObject gazeCursorSceneObject = GazeCursorSceneObject.getInstance(gvrContext);
+//        Main.accessibilityScene.getMainCameraRig().removeChildObject(gazeCursorSceneObject);
+//        gvrContext.getMainScene().getMainCameraRig().addChildObject(gazeCursorSceneObject);
     }
 
     private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
-        gvrContext.getMainScene().getMainCameraRig()
-                .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-        Main.accessibilityScene.getMainCameraRig()
-                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+//        gvrContext.getMainScene().getMainCameraRig()
+//                .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+//        Main.accessibilityScene.getMainCameraRig()
+//                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
         createIcon(textures.getBackIcon(), TypeItem.BACK);
         Main.accessibilityScene.show();
     }

@@ -17,30 +17,6 @@ import java.util.ArrayList;
 
 public final class FocusableController {
 
-    public static ArrayList<FocusableSceneObject> interactiveObjects = new ArrayList<FocusableSceneObject>();
-
-    public static void process(GVRSceneObject pickedObject) {
-        ArrayList<FocusableSceneObject> needToDisableFocus = new ArrayList<FocusableSceneObject>();
-
-        for (FocusableSceneObject obj : interactiveObjects) {
-            needToDisableFocus.add(obj);
-        }
-
-        if (pickedObject == null) {
-            // GazeController.disableInteractiveCursor();
-        } else {
-            FocusableSceneObject object = (FocusableSceneObject) pickedObject;
-            object.setFocus(true);
-            object.dispatchInFocus();
-            needToDisableFocus.remove(object);
-        }
-
-        for (FocusableSceneObject obj : needToDisableFocus) {
-            obj.setFocus(false);
-        }
-
-    }
-
     public static boolean clickProcess(GVRSceneObject pickedObject) {
         if(pickedObject != null) {
             FocusableSceneObject object = (FocusableSceneObject) pickedObject;

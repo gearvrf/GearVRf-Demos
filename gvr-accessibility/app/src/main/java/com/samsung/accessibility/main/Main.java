@@ -15,15 +15,24 @@ import java.util.Locale;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.IActivityEvents;
 import org.gearvrf.IPickEvents;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
+import org.gearvrf.io.GVRControllerType;
+import org.gearvrf.io.GVRGazeCursorController;
+import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.utility.Log;
 
 import android.view.MotionEvent;
 
@@ -31,6 +40,7 @@ import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnFocusListener;
+import com.samsung.accessibility.focus.VRTouchPadGestureDetector;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
@@ -51,22 +61,76 @@ public class Main extends GVRMain {
     public static AccessibilityScene accessibilityScene;
     public static AccessibilityManager manager;
 
-    private IPickEvents mPickHandler = new PickHandler();
-    private GVRPicker mPicker;
+    private ITouchEvents mTouchHandler = new TouchHandler();
+    private GVRCursorController mController = null;
     private GVRSceneObject pickedObject = null;
 
-    public class PickHandler implements IPickEvents
+    /*
+     * This listener routes touch events on the screen to the MainActivity
+     * so the Android gesture detector can process them.
+     * It is only used with the Gaze cursor controller which does not
+     * generate its own touch events.
+     */
+    private IActivityEvents activityTouchHandler = new GVREventListeners.ActivityEvents()
     {
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo){}
-        public void onExit(GVRSceneObject sceneObj){}
-        public void onNoPick(GVRPicker picker) {
-            pickedObject = null;
+        public void dispatchTouchEvent(MotionEvent event)
+        {
+            gvrContext.getActivity().onTouchEvent(event);
         }
-        public void onPick(GVRPicker picker) {
-            GVRPicker.GVRPickedObject[] picked = picker.getPicked();
-            pickedObject = picked[0].getHitObject();
+    };
+
+    /*
+     * Handles initializing the selected controller:
+     * - add listener for touch events coming from the controller
+     * - attach the scene object to represent the4 cursor
+     * - set cursor properties
+     * If we are using the Gaze controller, it does not generate touch events directly.
+     * We need to listen for them from GVRActivity to process them with a gesture detector.
+     */
+    private GVRInputManager.ICursorControllerSelectListener controllerSelector = new GVRInputManager.ICursorControllerSelectListener()
+    {
+        public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
+        {
+            if (oldController != null)
+            {
+                oldController.removePickEventListener(mTouchHandler);
+                if (oldController.getControllerType() == GVRControllerType.GAZE)
+                {
+                    gvrContext.getActivity().getEventReceiver().removeListener(activityTouchHandler);
+                }
+            }
+            mController = newController;
+            if (newController.getControllerType() == GVRControllerType.GAZE)
+            {
+                gvrContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
+            }
+            newController.addPickEventListener(mTouchHandler);
+            newController.setCursor(cursor);
+            newController.setCursorDepth(10.0f);
+            newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
         }
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+    };
+
+    /*
+     * Keeps track of the current picked object.
+     * The default for GVRPicker is to pick only the closest object.
+     * If that is changed, the logic below is incorrect because
+     * it is possible for multiple objects to be picked.
+     */
+    public class TouchHandler extends GVREventListeners.TouchEvents
+    {
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
+        {
+            pickedObject = hit.getHitObject();
+        }
+
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
+        {
+            if (sceneObj == pickedObject)
+            {
+                pickedObject = null;
+            }
+        }
     }
 
     @Override
@@ -87,8 +151,8 @@ public class Main extends GVRMain {
         gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
         gvrContext.getMainScene().addSceneObject(createSkybox());
 
-        gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
-        mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
+        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
+        gvrContext.getInputManager().selectController(gvrContext, controllerTypes, controllerSelector);
     }
 
     private ShortcutMenu createShortcut() {
@@ -160,16 +224,19 @@ public class Main extends GVRMain {
         gvrContext.getMainScene().addSceneObject(trex);
     }
 
+    public void setScene(GVRScene scene)
+    {
+        mController.setScene(scene);
+        gvrContext.setMainScene(scene);
+    }
+
     @Override
     public void onStep() {
-        FocusableController.process(pickedObject);
     }
+
 
     public void onSingleTap(MotionEvent e) {
         FocusableController.clickProcess(pickedObject);
-        gvrContext.getMainScene().getEventReceiver().removeListener(mPickHandler);
-        gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
-        mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
     }
 
     private void activeTalkBack() {
