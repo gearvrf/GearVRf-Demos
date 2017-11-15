@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 package org.gearvrf.sample.controller;
-import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
@@ -33,21 +33,23 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 
-import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.IPickEvents;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.CursorControllerListener;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GearCursorController;
+import org.gearvrf.io.GVRGazeCursorController;
+
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRGearControllerSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 
-public class SampleMain extends GVRMain {
+public class SampleMain extends GVRMain
+{
     private static final String TAG = "SampleMain";
 
     private static final float UNPICKED_COLOR_R = 0.7f;
@@ -68,31 +70,47 @@ public class SampleMain extends GVRMain {
     private static final float SCALE = 200.0f;
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
-    private GVRGearControllerSceneObject controller;
-
+    private GVRSceneObject mControllerModel;
     private GVRScene mainScene;
-
-    private enum ButtonState {
-        UP,
-        DOWN
-    }
-
     private GVRContext mGVRContext = null;
-    private PickHandler mPickHandler = new PickHandler();
-    private GVRSceneObject selectedObject;
-
     private GVRActivity mActivity;
-    private GVRPicker mPicker;
+    private GVRGazeCursorController mGazeController;
+    private GVRCursorController mCursorController;
+    private GVRSceneObject cursor;
 
-    SampleMain(GVRActivity activity) {
+    SampleMain(GVRActivity activity)
+    {
         mActivity = activity;
     }
 
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext)
+    {
         mGVRContext = gvrContext;
         mainScene = mGVRContext.getMainScene();
         mainScene.getEventReceiver().addListener(mPickHandler);
+        GVRInputManager inputManager = mGVRContext.getInputManager();
+        cursor = new GVRSceneObject(mGVRContext, mGVRContext.createQuad(1f, 1f),
+                                    mGVRContext.getAssetLoader().loadTexture(
+                                    new GVRAndroidResource(mGVRContext, R.raw.cursor)));
+        cursor.getRenderData().setDepthTest(false);
+        cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+
+        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.GAMEPAD, GVRControllerType.MOUSE, GVRControllerType.CONTROLLER  };
+        inputManager.selectController(mGVRContext, controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
+            {
+                if (oldController != null)
+                {
+                    oldController.removePickEventListener(mPickHandler);
+                }
+                newController.addPickEventListener(mPickHandler);
+                newController.setCursor(cursor);
+                newController.setCursorDepth(DEPTH);
+                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+            }
+        });
 
         /*
          * Adding Boards
@@ -100,52 +118,64 @@ public class SampleMain extends GVRMain {
         GVRSceneObject object = getColorBoard();
         object.getTransform().setPosition(0.0f, BOARD_OFFSET, DEPTH);
         attachMeshCollider(object);
+        object.setName("MeshBoard1");
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(0.0f, -BOARD_OFFSET, DEPTH);
         attachMeshCollider(object);
+        object.setName("MeshBoard2");
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(-BOARD_OFFSET, 0.0f, DEPTH);
         attachMeshCollider(object);
+        object.setName("MeshBoard3");
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(BOARD_OFFSET, 0.0f, DEPTH);
         attachMeshCollider(object);
+        object.setName("MeshBoard4");
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(BOARD_OFFSET, BOARD_OFFSET, DEPTH);
+        object.setName("MeshBoard5");
         attachMeshCollider(object);
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(BOARD_OFFSET, -BOARD_OFFSET, DEPTH);
         attachMeshCollider(object);
+        object.setName("MeshBoard6");
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(-BOARD_OFFSET, BOARD_OFFSET, DEPTH);
         attachSphereCollider(object);
+        object.setName("SphereBoard1");
         mainScene.addSceneObject(object);
 
         object = getColorBoard();
         object.getTransform().setPosition(-BOARD_OFFSET, -BOARD_OFFSET, DEPTH);
+        object.setName("SphereBoard2");
         attachSphereCollider(object);
         mainScene.addSceneObject(object);
-        mPicker = new GVRPicker(mGVRContext, mainScene);
 
         GVRMesh mesh = null;
-        try {
-            mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "bunny.obj"));
-        } catch (IOException e) {
+        try
+        {
+            mesh = mGVRContext.getAssetLoader().loadMesh(
+                    new GVRAndroidResource(mGVRContext, "bunny.obj"));
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
             mesh = null;
         }
-        if (mesh == null) {
+        if (mesh == null)
+        {
             mActivity.finish();
             Log.e(TAG, "Mesh was not loaded. Stopping application!");
         }
@@ -156,179 +186,137 @@ public class SampleMain extends GVRMain {
 
         object = getColorMesh(0.75f, mesh);
         object.getTransform().setPosition(0.0f, 0.0f, DEPTH);
+        object.setName("BoundsBunny1");
         attachBoundsCollider(object);
         mainScene.addSceneObject(object);
 
         object = getColorMesh(0.75f, mesh);
         object.getTransform().setPosition(4.0f, 0.0f, DEPTH);
         attachBoundsCollider(object);
+        object.setName("BoundsBunny2");
         mainScene.addSceneObject(object);
 
         object = getColorMesh(0.75f, mesh);
         object.getTransform().setPosition(-4.0f, 0.0f, DEPTH);
-        attachBoundsCollider(object);
+        attachMeshCollider(object);
+        object.setName("MeshBunny3");
         mainScene.addSceneObject(object);
 
         object = getColorMesh(0.75f, mesh);
         object.getTransform().setPosition(0.0f, -4.0f, DEPTH);
-        attachBoundsCollider(object);
+        attachMeshCollider(object);
+        object.setName("MeshBunny4");
         mainScene.addSceneObject(object);
 
-
         GVRAssetLoader assetLoader = gvrContext.getAssetLoader();
-
-        GVRInputManager inputManager = gvrContext.getInputManager();
-        inputManager.addCursorControllerListener(cursorControllerListener);
-        for (GVRCursorController cursor : inputManager.getCursorControllers()) {
-            cursorControllerListener.onCursorControllerAdded(cursor);
-        }
-
-        GVRTexture futureTexture = assetLoader.loadTexture(new
-                GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
+        GVRTexture texture = assetLoader.loadTexture(
+                new GVRAndroidResource(gvrContext, R.drawable.skybox_gridroom));
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRSphereSceneObject skyBox = new GVRSphereSceneObject(gvrContext, false, material);
         skyBox.getTransform().setScale(SCALE, SCALE, SCALE);
-        skyBox.getRenderData().getMaterial().setMainTexture(futureTexture);
+        skyBox.getRenderData().getMaterial().setMainTexture(texture);
         mainScene.addSceneObject(skyBox);
     }
 
-    private CursorControllerListener cursorControllerListener = new CursorControllerListener() {
-        @Override
-        public void onCursorControllerAdded(GVRCursorController gvrCursorController) {
+    private ITouchEvents mPickHandler = new ITouchEvents()
+    {
+        private GVRSceneObject movingObject;
 
-            if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
-                android.util.Log.d(TAG, "Got the orientation remote controller");
-                GVRSceneObject cursor = new GVRSceneObject(mGVRContext,
-                        mGVRContext.createQuad(1f, 1f),
-                        mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
-                cursor.getRenderData().setDepthTest(false);
-                cursor.getRenderData().setRenderingOrder(100000);
-                controller = new GVRGearControllerSceneObject(mGVRContext);
-                controller.setCursorController(gvrCursorController);
-                mPicker.setPickRay(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, DEPTH);
-                controller.setRayDepth(DEPTH);
-                controller.setCursor(cursor);
-                controller.attachComponent(mPicker);
-                gvrCursorController.addControllerEventListener(controllerEventListener);
-            }else{
-                gvrCursorController.setEnable(false);
+        private void stopMove()
+        {
+            GVRTransform objTrans = movingObject.getTransform();
+            Matrix4f cursorMatrix = cursor.getTransform().getModelMatrix4f();
+            cursor.removeChildObject(movingObject);
+            mainScene.addSceneObject(movingObject);
+            Matrix4f objMatrix = objTrans.getModelMatrix4f();
+            objTrans.setModelMatrix(cursorMatrix.mul(objMatrix));
+            movingObject = null;
+        }
+
+        private void startMove(GVRSceneObject sceneObj)
+        {
+            GVRTransform objTrans = sceneObj.getTransform();
+            movingObject = sceneObj;
+            Matrix4f controllerMtx = cursor.getTransform().getModelMatrix4f();
+            Matrix4f objMatrix = objTrans.getModelMatrix4f();
+            controllerMtx.invert();
+            objTrans.setModelMatrix(controllerMtx.mul(objMatrix));
+            mainScene.removeSceneObject(sceneObj);
+            cursor.addChildObject(sceneObj);
+        }
+
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
+                                                           PICKED_COLOR_G, PICKED_COLOR_B,
+                                                           PICKED_COLOR_A);
+        }
+
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if (movingObject == null)
+            {
+                sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
+                                                               CLICKED_COLOR_G, CLICKED_COLOR_B,
+                                                               CLICKED_COLOR_A);
+                startMove(sceneObj);
             }
         }
 
-        @Override
-        public void onCursorControllerRemoved(GVRCursorController gvrCursorController) {
-            if (gvrCursorController.getControllerType() == GVRControllerType.CONTROLLER) {
-                android.util.Log.d(TAG, "Got the orientation remote controller");
-                gvrCursorController.removeControllerEventListener(controllerEventListener);
-                gvrCursorController.resetSceneObject();
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
+                                                           PICKED_COLOR_G, PICKED_COLOR_B,
+                                                           PICKED_COLOR_A);
+            if (sceneObj == movingObject)
+            {
+                stopMove();
+            }
+         }
+
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            sceneObj.getRenderData().getMaterial().setVec4("u_color", UNPICKED_COLOR_R,
+                                                           UNPICKED_COLOR_G, UNPICKED_COLOR_B,
+                                                           UNPICKED_COLOR_A);
+            if (sceneObj == movingObject)
+            {
+                stopMove();
             }
         }
+
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+        }
+
+        public void onMotionOutside(GVRPicker picker, MotionEvent event)
+        {
+        }
+
     };
 
-    private GVRCursorController.ControllerEventListener controllerEventListener = new
-            GVRCursorController.ControllerEventListener() {
-                @Override
-                public void onEvent(GVRCursorController gvrCursorController) {
-                    KeyEvent keyEvent = gvrCursorController.getKeyEvent();
-                    if(keyEvent != null){
-                        mPickHandler.setClicked(keyEvent.getAction() == KeyEvent.ACTION_DOWN);
-                    }
-                }
-            };
-
-
-
-    private class PickHandler implements IPickEvents {
-        boolean clicked = false;
-        boolean prevClicked = false;
-        ButtonState state = ButtonState.UP;
-
-        public void setClicked(boolean clicked) {
-            prevClicked = this.clicked;
-            this.clicked = clicked;
-
-            if (clicked && !prevClicked) {
-                state = ButtonState.DOWN;
-            } else if (!clicked && prevClicked) {
-                state = ButtonState.UP;
-            }
-
-            if (state == ButtonState.UP && selectedObject != null) {
-                GVRTransform selectedTransform = selectedObject.getTransform();
-                Matrix4f cursorModelMatrix = controller.getTransform().getModelMatrix4f();
-                controller.removeChildObject(selectedObject);
-                mainScene.addSceneObject(selectedObject);
-                Matrix4f selectedModelMatrix = selectedTransform.getModelMatrix4f();
-                selectedTransform.setModelMatrix(cursorModelMatrix.mul(selectedModelMatrix));
-                selectedObject.getCollider().setEnable(true);
-                selectedObject = null;
-            }
-        }
-
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            if (!clicked) {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
-                        PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
-            } else {
-
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
-                        CLICKED_COLOR_G, CLICKED_COLOR_B, CLICKED_COLOR_A);
-            }
-        }
-
-        public void onExit(GVRSceneObject sceneObj) {
-            if (selectedObject != sceneObj) {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", UNPICKED_COLOR_R,
-                        UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
-            }
-        }
-
-        public void onNoPick(GVRPicker picker) {
-        }
-
-        public void onPick(GVRPicker picker) {
-        }
-
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            if (!clicked) {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
-                        PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
-            } else {
-                sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
-                        CLICKED_COLOR_G, CLICKED_COLOR_B, CLICKED_COLOR_A);
-                if (state == ButtonState.DOWN && selectedObject == null) {
-                    sceneObj.getCollider().setEnable(false);
-                    selectedObject = sceneObj;
-                    Matrix4f matrix4f = controller.getTransform().getModelMatrix4f();
-                    Matrix4f selectedModelMatrix = selectedObject.getTransform().getModelMatrix4f();
-                    matrix4f.invert();
-                    selectedObject.getTransform().setModelMatrix(matrix4f.mul(selectedModelMatrix));
-                    mainScene.removeSceneObject(selectedObject);
-                    controller.addChildObject(selectedObject);
-                }
-            }
-        }
-    }
-
     @Override
-    public void onStep() {
+    public void onStep()
+    {
 
     }
 
-    private GVRSceneObject getColorBoard() {
-        GVRMaterial material = new GVRMaterial(mGVRContext, new GVRShaderId(ColorShader.class));
+    private GVRSceneObject getColorBoard()
+    {
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.Color.ID);
         material.setVec4("u_color", UNPICKED_COLOR_R,
-                UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
+                         UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
         GVRCubeSceneObject board = new GVRCubeSceneObject(mGVRContext);
         board.getRenderData().setMaterial(material);
         board.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
         return board;
     }
 
-    private GVRSceneObject getColorMesh(float scale, GVRMesh mesh) {
-        GVRMaterial material = new GVRMaterial(mGVRContext, new GVRShaderId(ColorShader.class));
+    private GVRSceneObject getColorMesh(float scale, GVRMesh mesh)
+    {
+        GVRMaterial material = new GVRMaterial(mGVRContext, GVRShaderType.Color.ID);
         material.setVec4("u_color", UNPICKED_COLOR_R,
-                UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
+                         UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
 
         GVRSceneObject meshObject = new GVRSceneObject(mGVRContext, mesh);
         meshObject.getTransform().setScale(scale, scale, scale);
@@ -337,15 +325,18 @@ public class SampleMain extends GVRMain {
         return meshObject;
     }
 
-    private void attachMeshCollider(GVRSceneObject sceneObject) {
+    private void attachMeshCollider(GVRSceneObject sceneObject)
+    {
         sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, false));
     }
 
-    private void attachSphereCollider(GVRSceneObject sceneObject) {
+    private void attachSphereCollider(GVRSceneObject sceneObject)
+    {
         sceneObject.attachComponent(new GVRSphereCollider(mGVRContext));
     }
 
-    private void attachBoundsCollider(GVRSceneObject sceneObject) {
+    private void attachBoundsCollider(GVRSceneObject sceneObject)
+    {
         sceneObject.attachComponent(new GVRMeshCollider(mGVRContext, true));
     }
 }

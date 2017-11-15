@@ -16,7 +16,6 @@
 package org.gearvrf.sample.controller;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
@@ -29,11 +28,4 @@ public class SampleActivity extends GVRActivity {
         main = new SampleMain(this);
         setMain(main, "gvr.xml");
     }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        Log.d("MyActivity", "onTouchEvent: " + event);
-        return super.onTouchEvent(event);
-    }
-
 }
