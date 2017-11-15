@@ -24,6 +24,7 @@
         useProtectedFramebuffer="false"
         useAndroidWearTouchpad="true"
         useSrgbFramebuffer="false"
+        useGazeCursorController="true"
         useMultiview="true">
 
         <mono-mode-parms

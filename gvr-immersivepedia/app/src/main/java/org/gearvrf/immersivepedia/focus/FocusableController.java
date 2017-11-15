@@ -30,31 +30,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FocusableController {
 
-    public static CopyOnWriteArrayList<FocusableSceneObject> interactiveObjects = new CopyOnWriteArrayList<FocusableSceneObject>();
-
-    public static void process(GVRSceneObject sceneObject) {
-
-        ArrayList<FocusableSceneObject> needToDisableFocus = new ArrayList<FocusableSceneObject>();
-
-        for (FocusableSceneObject obj : interactiveObjects) {
-            needToDisableFocus.add(obj);
-        }
-
-        if (sceneObject == null) {
-            GazeController.disableInteractiveCursor();
-        } else {
-            FocusableSceneObject object = (FocusableSceneObject) sceneObject;
-            object.setFocus(true);
-            object.dispatchInFocus();
-            needToDisableFocus.remove(object);
-        }
-
-        for (FocusableSceneObject obj : needToDisableFocus) {
-            obj.setFocus(false);
-        }
-
-    }
-
     public static boolean swipeProcess(GVRContext context, PickHandler mPickHandler)
     {
         if (mPickHandler == null)

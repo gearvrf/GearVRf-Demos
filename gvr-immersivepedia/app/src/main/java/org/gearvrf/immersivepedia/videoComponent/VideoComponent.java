@@ -94,7 +94,7 @@ public class VideoComponent extends GVRSceneObject {
                 if (isActive()) {
                     getButtonbar().turnOnGUIButton();
                     getSeekbar().turnOnGUISeekbar();
-                    GazeController.enableGaze();
+                    GazeController.get().enableGaze();
                 }
             }
 
@@ -107,7 +107,7 @@ public class VideoComponent extends GVRSceneObject {
                 if (isActive() && isPlaying()) {
                     getButtonbar().turnOffGUIButton();
                     getSeekbar().turnOffGUISeekbar();
-                    GazeController.disableGaze();
+                    GazeController.get().disableGaze();
                 }
             }
         };
@@ -120,12 +120,12 @@ public class VideoComponent extends GVRSceneObject {
                     pauseVideo();
                     getButtonbar().turnOnGUIButtonUpdatingTexture();
                     getSeekbar().turnOnGUISeekbar();
-                    GazeController.enableGaze();
+                    GazeController.get().enableGaze();
                 } else {
                     playVideo();
                     getButtonbar().turnOffGUIButtonUpdatingTexture();
                     getSeekbar().turnOffGUISeekbar();
-                    GazeController.disableGaze();
+                    GazeController.get().disableGaze();
                 }
             }
         });

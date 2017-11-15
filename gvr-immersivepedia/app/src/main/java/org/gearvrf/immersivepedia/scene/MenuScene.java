@@ -16,8 +16,10 @@
 package org.gearvrf.immersivepedia.scene;
 
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -55,6 +57,43 @@ public class MenuScene extends GVRScene {
         getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
     }
 
+    private GVROnFinish onAfterHide = new GVROnFinish()
+    {
+        @Override
+        public void finished(GVRAnimation arg0)
+        {
+            finishCounter++;
+            if (finishCounter == totalRenderObject)
+            {
+                totalRenderObject = 0;
+                finishCounter = 0;
+                Main main = (Main) getGVRContext().getActivity().getMain();
+                main.setMainScene(Main.dinosaurScene);
+                Main.dinosaurScene.show();
+            }
+        }
+    };
+
+    private GVRSceneObject.ComponentVisitor hideAll = new GVRSceneObject.ComponentVisitor()
+    {
+        @Override
+        public boolean visit(GVRComponent comp)
+        {
+            GVRRenderData rd = (GVRRenderData) comp;
+            GVRSceneObject owner = rd.getOwnerObject();
+            try
+            {
+                new GVROpacityAnimation(owner, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(onAfterHide);
+                totalRenderObject++;
+            }
+            catch (UnsupportedOperationException ex)
+            {
+                // shader doesn't support opacity
+            }
+            return true;
+        }
+    };
+
     private void createDinosaursMenuItem() {
         MenuItem dinosaurs = new MenuItem(getGVRContext(), R.drawable.dinosaurs_front_idle, R.drawable.dinosaurs_front_hover,
                 R.drawable.dinosaurs_back_idle, R.drawable.dinosaurs_back_hover);
@@ -67,28 +106,9 @@ public class MenuScene extends GVRScene {
             @Override
             public void onClick() {
                 AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuSelectSoundID(), 1.0f, 1.0f);
-                for (GVRSceneObject object : getWholeSceneObjects()) {
-                    if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                        totalRenderObject++;
-                        new GVROpacityAnimation(object, 1f, 0f).start(getGVRContext().getAnimationEngine()).setOnFinish(new GVROnFinish() {
-
-                            @Override
-                            public void finished(GVRAnimation arg0) {
-                                finishCounter++;
-                                if (finishCounter == totalRenderObject) {
-                                    totalRenderObject = 0;
-                                    finishCounter = 0;
-                                    Main main = (Main) getGVRContext().getActivity().getMain();
-                                    main.setMainScene(Main.dinosaurScene);
-                                    Main.dinosaurScene.show();
-                                }
-                            }
-                        });
-                    }
-                }
+                getRoot().forAllComponents(hideAll, GVRRenderData.getComponentType());
             }
         });
-
         addSceneObject(dinosaurs);
     }
 

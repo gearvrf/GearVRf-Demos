@@ -16,9 +16,12 @@
 package org.gearvrf.immersivepedia;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
+import org.gearvrf.IActivityEvents;
 import org.gearvrf.immersivepedia.focus.FocusableController;
 import org.gearvrf.immersivepedia.focus.PickHandler;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
@@ -26,8 +29,11 @@ import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
+import org.gearvrf.io.GVRControllerType;
+import org.gearvrf.io.GVRInputManager;
 
 import android.media.MediaPlayer;
+import android.view.MotionEvent;
 
 public class Main extends GVRMain {
 
@@ -36,8 +42,21 @@ public class Main extends GVRMain {
     private MenuScene menuScene;
     public static DinosaurScene dinosaurScene;
     private static MediaPlayer mediaPlayer;
-    private PickHandler mPickHandler;
-    private GVRPicker mPicker;
+    private GVRCursorController mController;
+    private PickHandler pickHandler;
+    /*
+ * This listener routes touch events on the screen to the MainActivity
+ * so the Android gesture detector can process them.
+ * It is only used with the Gaze cursor controller which does not
+ * generate its own touch events.
+ */
+    private IActivityEvents activityTouchHandler = new GVREventListeners.ActivityEvents()
+    {
+        public void dispatchTouchEvent(MotionEvent event)
+        {
+            mGvrContext.getActivity().onTouchEvent(event);
+        }
+    };
 
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
@@ -52,22 +71,49 @@ public class Main extends GVRMain {
 
         dinosaurScene = new DinosaurScene(gvrContext);
         menuScene = new MenuScene(gvrContext);
-
-        GazeController.setupGazeCursor(gvrContext);
+        pickHandler = new PickHandler();
         closeSplashScreen();
 
         gvrContext.runOnGlThreadPostRender(64, new Runnable() {
             @Override
             public void run() {
                 setMainScene(menuScene);
-                GazeController.enableGaze();
             }
         });
+        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
+        gvrContext.getInputManager().selectController(gvrContext, controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
+            {
+                if (oldController != null)
+                {
+                    if (oldController.getControllerType() == GVRControllerType.GAZE)
+                    {
+                        gvrContext.getActivity().getEventReceiver().removeListener(activityTouchHandler);
+                    }
+                    oldController.setCursor(null);
+                    oldController.removePickEventListener(pickHandler);
+                }
+                GazeController cursor = GazeController.get();
 
-        // Set up to handle picking events
-        mPickHandler = new PickHandler();
-        mPicker = new GVRPicker(gvrContext, menuScene);
-    }
+                if (cursor == null)
+                {
+                    new GazeController(newController);
+                }
+                else
+                {
+                    newController.setCursor(cursor.getCursor());
+                }
+                mController = newController;
+                if (newController.getControllerType() == GVRControllerType.GAZE)
+                {
+                    gvrContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
+                }
+                newController.addPickEventListener(pickHandler);
+                newController.setCursorDepth(10.0f);
+                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+            }
+        });    }
 
     @Override
     public SplashMode getSplashMode() {
@@ -87,12 +133,12 @@ public class Main extends GVRMain {
 
     public void onSingleTapConfirmed() {
         if (null != mGvrContext) {
-            FocusableController.clickProcess(mGvrContext, mPickHandler);
+            FocusableController.clickProcess(mGvrContext, pickHandler);
         }
     }
 
     public void onSwipe() {
-        FocusableController.swipeProcess(mGvrContext, mPickHandler);
+        FocusableController.swipeProcess(mGvrContext, pickHandler);
     }
 
     public static void clickOut() {
@@ -116,12 +162,10 @@ public class Main extends GVRMain {
 
     public void setMainScene(GVRScene newScene)
     {
-        GVRScene oldScene = getGVRContext().getMainScene();
-        oldScene.getEventReceiver().removeListener(mPickHandler);
-        oldScene.getMainCameraRig().getHeadTransformObject().detachComponent(GVRPicker.getComponentType());
-        newScene.getEventReceiver().addListener(mPickHandler);
-        mPicker = new GVRPicker(mGvrContext, newScene);
-        newScene.getMainCameraRig().getHeadTransformObject().attachComponent(mPicker);
+        if (mController != null)
+        {
+            mController.setScene(newScene);
+        }
         getGVRContext().setMainScene(newScene);
     }
 
@@ -131,7 +175,7 @@ public class Main extends GVRMain {
         if (dinosaurScene == mainScene) {
             menuScene = new MenuScene(getGVRContext());
             setMainScene(menuScene);
-            GazeController.enableGaze();
+            GazeController.get().enableGaze();
             return true;
         }
         return false;

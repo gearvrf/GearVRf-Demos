@@ -51,7 +51,7 @@ public class FocusableSceneObject extends GVRSceneObject {
             this.focusListener.gainedFocus(this);
         }
         if (showInteractiveCursor) {
-            GazeController.enableInteractiveCursor();
+            GazeController.get().enableInteractiveCursor();
         }
     }
 
@@ -60,7 +60,7 @@ public class FocusableSceneObject extends GVRSceneObject {
             focusListener.lostFocus(this);
         }
         if (showInteractiveCursor) {
-            GazeController.disableInteractiveCursor();
+            GazeController.get().disableInteractiveCursor();
         }
     }
 
@@ -83,7 +83,7 @@ public class FocusableSceneObject extends GVRSceneObject {
             this.focusListener.inFocus(this);
         }
         if (showInteractiveCursor) {
-            GazeController.enableInteractiveCursor();
+            GazeController.get().enableInteractiveCursor();
         }
     }
 
