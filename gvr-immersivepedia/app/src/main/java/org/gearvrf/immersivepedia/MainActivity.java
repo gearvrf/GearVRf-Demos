@@ -26,7 +26,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 public class MainActivity extends GVRActivity implements
-		OnTouchPadGestureListener {
+		VRTouchPadGestureDetector.OnTouchPadGestureListener {
 
 	private Main main;
 	private VRTouchPadGestureDetector touchPadGestureDetector;

@@ -1,12 +1,15 @@
 package org.gearvrf.immersivepedia.focus;
 
+import android.view.MotionEvent;
+
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IPickEvents;
 import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.utility.Log;
 
-public class PickHandler implements IPickEvents
+public class PickHandler extends GVREventListeners.PickEvents
 {
     public GVRSceneObject PickedObject = null;
 
@@ -24,9 +27,12 @@ public class PickHandler implements IPickEvents
     }
 
     public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-        FocusableController.process(sceneObj);
+        if (sceneObj instanceof FocusableSceneObject)
+        {
+            FocusableSceneObject fo = (FocusableSceneObject) sceneObj;
+            fo.dispatchInFocus();
+        }
     }
-    public void onPick(GVRPicker picker) { }
 
     public void onExit(GVRSceneObject sceneObj)
     {
@@ -37,6 +43,7 @@ public class PickHandler implements IPickEvents
             fo.setFocus(false);
         }
     }
+
     public void onNoPick(GVRPicker picker)
     {
         FocusableSceneObject fo = (FocusableSceneObject) PickedObject;
@@ -46,7 +53,7 @@ public class PickHandler implements IPickEvents
             Log.v("PICKER", fo.getName() + " onNoPick");
         }
         PickedObject = null;
-        GazeController.disableInteractiveCursor();
+        GazeController.get().disableInteractiveCursor();
     }
 
 

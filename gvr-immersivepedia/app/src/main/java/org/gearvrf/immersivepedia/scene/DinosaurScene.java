@@ -20,8 +20,11 @@ import java.io.IOException;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAndroidResource.TextureCallback;
 import org.gearvrf.GVRAssetLoader;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -107,21 +110,54 @@ public class DinosaurScene extends GVRScene {
         }
     }
 
-    public void show() {
-        GazeController.enableGaze();
-        for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                new GVROpacityAnimation(object, 1f, 1f).start(getGVRContext().getAnimationEngine());
+    private GVRSceneObject.ComponentVisitor showAnimator = new GVRSceneObject.ComponentVisitor()
+    {
+        @Override
+        public boolean visit(GVRComponent comp)
+        {
+            GVRRenderData rd = (GVRRenderData) comp;
+            GVRMaterial mtl = rd.getMaterial();
+            GVRSceneObject owner = rd.getOwnerObject();
+            try
+            {
+                new GVROpacityAnimation(owner, 1f, 1f).start(getGVRContext().getAnimationEngine());
             }
+            catch (UnsupportedOperationException ex)
+            {
+                // shader doesn't support opacity
+            }
+            return true;
         }
+    };
+
+    private GVRSceneObject.ComponentVisitor hideAll = new GVRSceneObject.ComponentVisitor()
+    {
+        @Override
+        public boolean visit(GVRComponent comp)
+        {
+            GVRRenderData rd = (GVRRenderData) comp;
+            GVRMaterial mtl = rd.getMaterial();
+
+            if (mtl.hasUniform("u_opacity"))
+            {
+                rd.getMaterial().setOpacity(0.0f);
+            }
+            else if (mtl.hasUniform("diffuse_color"))
+            {
+                float[] c = mtl.getDiffuseColor();
+                mtl.setDiffuseColor(c[0], c[1], c[2], 0.0f);
+            }
+            return true;
+        }
+    };
+
+    public void show() {
+        GazeController.get().enableGaze();
+        getRoot().forAllComponents(showAnimator, GVRRenderData.getComponentType());
     }
 
     public void hide() {
-        for (GVRSceneObject object : getWholeSceneObjects()) {
-            if (object.getRenderData() != null && object.getRenderData().getMaterial() != null) {
-                object.getRenderData().getMaterial().setOpacity(0f);
-            }
-        }
+        getRoot().forAllComponents(hideAll, GVRRenderData.getComponentType());
     }
 
     private GVRSceneObject createSkybox() {
