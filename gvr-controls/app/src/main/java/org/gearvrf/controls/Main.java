@@ -16,10 +16,12 @@
 package org.gearvrf.controls;
 
 import android.graphics.Color;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRScene;
@@ -30,6 +32,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.GVRTextureParameters.TextureFilterType;
 import org.gearvrf.GVRTextureParameters.TextureWrapType;
+import org.gearvrf.IActivityEvents;
 import org.gearvrf.controls.anim.ActionWormAnimation;
 import org.gearvrf.controls.anim.ColorWorm;
 import org.gearvrf.controls.anim.StarBoxSceneObject;
@@ -73,6 +76,13 @@ public class Main extends GVRMain {
     private Apple apple;
     public static ActionWormAnimation animationColor;
     private static StarBoxSceneObject starBox;
+    private IActivityEvents activityTouchHandler = new GVREventListeners.ActivityEvents()
+    {
+        public void dispatchTouchEvent(MotionEvent event)
+        {
+            mGVRContext.getActivity().onTouchEvent(event);
+        }
+    };
 
     @Override
     public void onInit(GVRContext gvrContext) {
@@ -82,7 +92,7 @@ public class Main extends GVRMain {
         mGVRContext = gvrContext;
 
         scene = gvrContext.getMainScene();
-
+        mGVRContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getTransform().setPositionY(0);
