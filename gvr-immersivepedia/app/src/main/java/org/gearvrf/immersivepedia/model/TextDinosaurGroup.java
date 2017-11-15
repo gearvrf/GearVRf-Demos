@@ -15,7 +15,12 @@
 
 package org.gearvrf.immersivepedia.model;
 
-import java.io.IOException;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.view.Gravity;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -35,12 +40,7 @@ import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject.IntervalFrequency;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.view.Gravity;
+import java.io.IOException;
 
 public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListener, OnGestureListener {
 
@@ -66,14 +66,12 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
     }
 
     private void createDinosaur() throws IOException {
-
-        ankylosaurus = DinosaurFactory.getInstance(getGVRContext()).getAnkylosaurus();
+        ankylosaurus = DinosaurFactory.createAnkylosaurus(getGVRContext());
         ankylosaurus.getTransform().setRotationByAxis(-90, 1, 0, 0);
         ankylosaurus.attachCollider(new GVRMeshCollider(getGVRContext(), true));
         ankylosaurus.setOnGestureListener(this);
         ankylosaurus.setName("ankylosaurus");
         addChildObject(ankylosaurus);
-
     }
 
     private void createTotem() {

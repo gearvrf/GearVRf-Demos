@@ -15,7 +15,7 @@
 
 package org.gearvrf.immersivepedia.model;
 
-import java.io.IOException;
+import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -35,7 +35,7 @@ import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.PlayPauseButton;
 
-import android.util.Log;
+import java.io.IOException;
 
 public class RotateDinosaurGroup extends GVRSceneObject implements
 		OnGestureListener {
@@ -157,10 +157,8 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 	}
 
 	private void createDinosaur() throws IOException {
-		styrocosaurus = DinosaurFactory.getInstance(gvrContext)
-				.getStyracosaurus();
-		styrocosaurus.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0,
-				0);
+		styrocosaurus = DinosaurFactory.createStyrocosaurus(gvrContext);
+		styrocosaurus.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
 		styrocosaurus.getTransform().setPosition(0, 0, -8);
 		styrocosaurus.setOnGestureListener(this);
 		styrocosaurus.setName("styrocosaurus");
