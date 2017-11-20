@@ -19,31 +19,35 @@ public class MainScene extends GVRMain {
 
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
+
+        //Load Mesh
         GVRMesh dinoMesh = gvrContext.getAssetLoader().loadMesh(
-                new GVRAndroidResource(gvrContext, R.raw.trex_mesh)
+                new GVRAndroidResource(gvrContext, "trex_mesh.fbx")
         );
 
+        //Load Texture
         GVRTexture dinoTexture = gvrContext.getAssetLoader().loadTexture(
-                new GVRAndroidResource(gvrContext, R.raw.trex_tex_diffuse)
+                new GVRAndroidResource(gvrContext, "trex_tex_diffuse.png")
         );
 
+        //Create SceneObject
         GVRSceneObject dinoObj = new GVRSceneObject(gvrContext, dinoMesh, dinoTexture);
 
-        dinoObj.getTransform().setPosition(5,0,-10);
+        dinoObj.getTransform().setPosition(0,-3,-8);
         dinoObj.getTransform().rotateByAxis(-90, 1f, 0f, 0f);
         gvrContext.getMainScene().addSceneObject(dinoObj);
 
         //Load animated model
-        GVRModelSceneObject character = gvrContext.getAssetLoader().loadModel("astro_boy.dae");
-        character.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
-        character.getTransform().setScale(3, 3, 3);
-        character.getTransform().setPosition(0.0f, -0.4f, -0.5f);
-        gvrContext.getMainScene().addSceneObject(character);
-
-        final GVRAnimator animator = (GVRAnimator)character.getComponent(GVRAnimator.getComponentType());
-        animator.setRepeatCount(-1);
-        animator.setRepeatMode(GVRRepeatMode.REPEATED);
-        animator.start();
+//        GVRModelSceneObject character = gvrContext.getAssetLoader().loadModel("astro_boy.dae");
+//        character.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
+//        character.getTransform().setScale(3, 3, 3);
+//        character.getTransform().setPosition(0.0f, -0.4f, -0.5f);
+//        gvrContext.getMainScene().addSceneObject(character);
+//
+//        final GVRAnimator animator = (GVRAnimator)character.getComponent(GVRAnimator.getComponentType());
+//        animator.setRepeatCount(-1);
+//        animator.setRepeatMode(GVRRepeatMode.REPEATED);
+//        animator.start();
     }
 
     @Override

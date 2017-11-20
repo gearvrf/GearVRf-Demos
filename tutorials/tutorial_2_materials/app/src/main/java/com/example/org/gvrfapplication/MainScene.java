@@ -23,36 +23,35 @@ public class MainScene extends GVRMain {
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
 
-        //Load texture
-        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.crate_wood));
+        //Create Sphere
+        mSphere = new GVRSphereSceneObject(gvrContext);
+        mSphere.getTransform().setPosition(1, 0, -3);
+        gvrContext.getMainScene().addSceneObject(mSphere);
+
+        //Create Cube
+        mCube = new GVRCubeSceneObject(gvrContext);
+        mCube.getTransform().setPosition(-1, 0, -3);
+        gvrContext.getMainScene().addSceneObject(mCube);
 
         /*******************
-         * Create Sphere with flat material
+         * Assign solid color to Sphere
          ********************/
         GVRMaterial flatMaterial;
         flatMaterial = new GVRMaterial(gvrContext);
         flatMaterial.setColor(1.0f, 1.0f, 1.0f);
-
-        //Create Sphere with solid color
-        mSphere = new GVRSphereSceneObject(gvrContext);
-        mSphere.getTransform().setPosition(2, 0, -3);
         mSphere.getRenderData().setMaterial(flatMaterial);
-        mSphere.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        gvrContext.getMainScene().addSceneObject(mSphere);
+
 
         /********************
-         * Create Cube with textured material
+         * Assign textured material to Cube
          *********************/
+        //Load texture
+        GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.crate_wood));
+
         GVRMaterial textureMaterial;
         textureMaterial = new GVRMaterial(gvrContext);
         textureMaterial.setMainTexture(texture);
-        textureMaterial.setTexture("diffuseTexture", texture);
-
-        mCube = new GVRCubeSceneObject(gvrContext);
-        mCube.getTransform().setPosition(-2, 0, -3);
         mCube.getRenderData().setMaterial(textureMaterial);
-        mCube.getRenderData().setShaderTemplate(GVRPhongShader.class);
-        gvrContext.getMainScene().addSceneObject(mCube);
 
 
         /**************************
@@ -60,8 +59,7 @@ public class MainScene extends GVRMain {
          **************************/
         GVRPointLight pointLight;
         pointLight = new GVRPointLight(gvrContext);
-        pointLight.setDiffuseIntensity(0.8f, 0.5f, 0.5f, 1.0f);
-        pointLight.setSpecularIntensity(0.5f, 0.5f, 0.5f, 1.0f);
+        pointLight.setDiffuseIntensity(0.9f, 0.7f, 0.7f, 1.0f);
 
         GVRSceneObject lightNode = new GVRSceneObject(gvrContext);
         lightNode.getTransform().setPosition(0,0,0);
