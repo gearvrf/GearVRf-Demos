@@ -82,7 +82,7 @@ public class Main extends GVRMain {
     /*
      * Handles initializing the selected controller:
      * - add listener for touch events coming from the controller
-     * - attach the scene object to represent the4 cursor
+     * - attach the scene object to represent the cursor
      * - set cursor properties
      * If we are using the Gaze controller, it does not generate touch events directly.
      * We need to listen for them from GVRActivity to process them with a gesture detector.
