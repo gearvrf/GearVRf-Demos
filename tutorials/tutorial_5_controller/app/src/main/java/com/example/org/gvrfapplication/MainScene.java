@@ -40,8 +40,9 @@ public class MainScene extends GVRMain {
 
                 //Add controller cursor
                 cursor = new GVRSceneObject(mContext,
-                        new FutureWrapper<GVRMesh>(mContext.createQuad(0.1f, 0.1f)),
-                        mContext.getAssetLoader().loadFutureTexture(new GVRAndroidResource(mContext, R.raw.cursor)));
+                        mContext.createQuad(0.1f, 0.1f),
+                        mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
+                );
                 cursor.getTransform().setPosition(0.0f, 0.0f, DEPTH);
                 mMainScene.getMainCameraRig().addChildObject(cursor);
                 cursor.getRenderData().setDepthTest(false);
