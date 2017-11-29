@@ -174,7 +174,8 @@ public class EditorUtils {
 
         GVRBaseSensor sensor = new GVRBaseSensor(gvrContext);
         layoutSceneObject.getEventReceiver().addListener(sensorEvents);
-        layoutSceneObject.setSensor(sensor);
+        //@todo broken functionality
+        //layoutSceneObject.setSensor(sensor);
 
         gvrContext.getMainScene().addSceneObject(layoutSceneObject);
     }
