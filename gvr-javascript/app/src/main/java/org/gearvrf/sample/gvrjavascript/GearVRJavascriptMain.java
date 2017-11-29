@@ -72,7 +72,7 @@ public class GearVRJavascriptMain extends GVRMain {
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
             if (controller.getControllerType() == GVRControllerType.GAZE) {
-                controller.resetSceneObject();
+                controller.setCursor(null);
                 controller.setEnable(false);
             }
         }
@@ -98,7 +98,7 @@ public class GearVRJavascriptMain extends GVRMain {
                 mainScene.addSceneObject(cursor);
                 cursor.getRenderData().setDepthTest(false);
                 cursor.getRenderData().setRenderingOrder(100000);
-                controller.setSceneObject(cursor);
+                controller.setCursor(cursor);
                 controller.setPosition(0.0f, 0.0f, DEPTH);
                 controller.setNearDepth(DEPTH);
                 controller.setFarDepth(DEPTH);
