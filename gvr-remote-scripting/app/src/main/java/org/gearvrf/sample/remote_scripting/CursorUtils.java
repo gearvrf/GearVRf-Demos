@@ -73,7 +73,7 @@ public class CursorUtils {
         @Override
         public void onCursorControllerRemoved(GVRCursorController controller) {
             if (controller.getControllerType() == GVRControllerType.GAZE) {
-                controller.resetSceneObject();
+                controller.setCursor(null);
                 controller.setEnable(false);
                 gvrContext.getMainScene().getMainCameraRig().removeChildObject(cursor);
             }
