@@ -13,16 +13,16 @@
  * limitations under the License.
  */
 package org.gearvrf.sample.controller;
-import android.view.MotionEvent;
 
-import java.io.IOException;
-import java.util.concurrent.Future;
-
+import org.gearvrf.CursorControllerListener;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRControllerType;
 import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVRGazeCursorController;
+import org.gearvrf.GVRInputManager;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
@@ -32,23 +32,20 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.GearCursorController;
 import org.gearvrf.ITouchEvents;
-import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRControllerType;
-import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.io.GearCursorController;
-import org.gearvrf.io.GVRGazeCursorController;
-
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRCursorControllerSceneObject;
 import org.gearvrf.scene_objects.GVRGearControllerSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
+
+import java.io.IOException;
+import java.util.concurrent.Future;
 
 public class SampleMain extends GVRMain
 {

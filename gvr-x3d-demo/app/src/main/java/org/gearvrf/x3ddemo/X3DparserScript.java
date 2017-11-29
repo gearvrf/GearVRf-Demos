@@ -15,33 +15,32 @@
 
 package org.gearvrf.x3ddemo;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Environment;
+import android.util.Log;
 
 import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRControllerType;
 import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRDirectLight;
-
+import org.gearvrf.GVRInputManager;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.io.GVRControllerType;
-import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRScreenshot3DCallback;
 import org.gearvrf.GVRScreenshotCallback;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Threads;
 
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Environment;
-import android.util.Log;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * 
