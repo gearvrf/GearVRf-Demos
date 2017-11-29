@@ -17,6 +17,7 @@ package org.gearvrf.immersivepedia;
 
 import android.media.MediaPlayer;
 
+import org.gearvrf.CursorControllerListener;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRMain;
@@ -29,7 +30,6 @@ import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
-import org.gearvrf.io.CursorControllerListener;
 
 public class Main extends GVRMain {
 

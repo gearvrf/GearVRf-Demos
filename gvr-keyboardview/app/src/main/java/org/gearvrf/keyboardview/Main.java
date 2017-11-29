@@ -25,7 +25,6 @@ import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRRenderData;
@@ -33,10 +32,6 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IKeyboardEvents;
 import org.gearvrf.IViewEvents;
-import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRControllerType;
-import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.scene_objects.GVRGearControllerSceneObject;
 import org.gearvrf.scene_objects.GVRKeyboardSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
