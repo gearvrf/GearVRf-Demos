@@ -22,7 +22,8 @@ function onInit(gvrf) {
   textView.getTransform().setScale(50, 50, 50);
 
   var textSensor = new GVRBaseSensor(gvrf);
-  textView.setSensor(textSensor);
+  //@todo broken behavior;print exceptions in logcat
+  //textView.setSensor(textSensor);
   var script = new GVRScriptBehavior(gvrf, "text.js");
   textView.attachComponent(script);
   mainScene.addSceneObject(textView);
@@ -37,8 +38,3 @@ function onInit(gvrf) {
 
   mainScene.setFrustumCulling(false);
 }
-
-/*
-function onStep() {
-}
-*/
