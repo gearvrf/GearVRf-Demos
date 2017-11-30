@@ -54,7 +54,7 @@ public class GVRWidgetViewer extends GVRActivity implements
         mMain = new ViewerMain(mPlugin);
         mPlugin.setMain(mMain);
         mWidget.mMain = mMain;
-        setMain(mMain);
+        setMain(mMain, "gvr.xml");
     }
 
     @Override
@@ -75,9 +75,14 @@ public class GVRWidgetViewer extends GVRActivity implements
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        mDetector.onTouchEvent(event);
         if (mPlugin.getWidgetView() == null)
             return false;
+        return mPlugin.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        mDetector.onTouchEvent(event);
         if (mMain.mObjectPointed) {
             float x = 0, dx = 0, y = 0, dy = 0.0f;
             if (event.getAction() == 0) {
@@ -108,7 +113,7 @@ public class GVRWidgetViewer extends GVRActivity implements
                 }
             }
         }
-        return mPlugin.dispatchTouchEvent(event);
+        return true;
     }
 
     @Override

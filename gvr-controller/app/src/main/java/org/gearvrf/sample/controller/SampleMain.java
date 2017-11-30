@@ -23,6 +23,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
@@ -70,12 +71,9 @@ public class SampleMain extends GVRMain
     private static final float SCALE = 200.0f;
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
-    private GVRSceneObject mControllerModel;
     private GVRScene mainScene;
     private GVRContext mGVRContext = null;
     private GVRActivity mActivity;
-    private GVRGazeCursorController mGazeController;
-    private GVRCursorController mCursorController;
     private GVRSceneObject cursor;
 
     SampleMain(GVRActivity activity)
@@ -97,7 +95,7 @@ public class SampleMain extends GVRMain
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.GAMEPAD, GVRControllerType.MOUSE, GVRControllerType.CONTROLLER  };
-        inputManager.selectController(mGVRContext, controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        inputManager.selectController(controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
@@ -218,7 +216,7 @@ public class SampleMain extends GVRMain
         mainScene.addSceneObject(skyBox);
     }
 
-    private ITouchEvents mPickHandler = new ITouchEvents()
+    private ITouchEvents mPickHandler = new GVREventListeners.TouchEvents()
     {
         private GVRSceneObject movingObject;
 
@@ -284,15 +282,6 @@ public class SampleMain extends GVRMain
                 stopMove();
             }
         }
-
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
-        {
-        }
-
-        public void onMotionOutside(GVRPicker picker, MotionEvent event)
-        {
-        }
-
     };
 
     @Override

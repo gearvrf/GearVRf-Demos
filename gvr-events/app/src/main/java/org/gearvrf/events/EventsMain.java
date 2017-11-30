@@ -73,7 +73,7 @@ public class EventsMain extends GVRMain {
 
         GVRInputManager inputManager = gvrContext.getInputManager();
         GVRControllerType[] desiredTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER };
-        inputManager.selectController(context, desiredTypes,
+        inputManager.selectController(desiredTypes,
               new GVRInputManager.ICursorControllerSelectListener()
               {
                   @Override

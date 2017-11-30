@@ -83,7 +83,7 @@ public class Main extends GVRMain {
         mScene.getMainCameraRig().addChildObject(fpsObject);
 
         GVRControllerType[] desiredTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER };
-        gvrContext.getInputManager().selectController(gvrContext, desiredTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        gvrContext.getInputManager().selectController(desiredTypes,  new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
@@ -92,7 +92,7 @@ public class Main extends GVRMain {
 
                 options.add(GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
                 newController.setCursorDepth(DEPTH);
-                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 mKeyboardSceneObject.setPicker(picker);
             }
         });
@@ -133,7 +133,6 @@ public class Main extends GVRMain {
 
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent keyEvent) {
-//            return (keyCode == KeyEvent.KEYCODE_A);
             return false;
         }
     };

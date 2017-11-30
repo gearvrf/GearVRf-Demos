@@ -108,6 +108,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         addChildObject(icon);
         getRenderData().getMaterial().setMainTexture(textures.getSpaceTexture());
         this.typeItem = typeItem;
+        setName(typeItem.name());
     }
     
     public GVRTexture getIconTexture() {
@@ -119,16 +120,13 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
             @Override
             public void onClick() {
-                final GVRSceneObject wholeSceneObjects[] = gvrContext.getMainScene().getWholeSceneObjects();
                 switch (typeItem) {
                 case TALK_BACK:
-
                     talkBack();
                     break;
 
                 case BACK:
-
-                    back(wholeSceneObjects);
+                    back();
                     break;
 
                 case ZOOM:
@@ -138,7 +136,6 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                 case INVERTED_COLORS:
                     clickEffectMenu();
                     invertedColors();
-
                     break;
 
                 case SPEECH:
@@ -146,7 +143,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                     break;
 
                 case ACCESSIBILITY:
-                    accessibility(wholeSceneObjects);
+                    accessibility();
                     break;
                 default:
                     break;
@@ -200,7 +197,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         }
     }
 
-    private void back(final GVRSceneObject[] wholeSceneObjects) {
+    private void back() {
         final AccessibilityScene accessibilityScene = Main.accessibilityScene;
         Main main = (Main) gvrContext.getActivity().getMain();
 
@@ -208,16 +205,9 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
         accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
-//        GVRSceneObject gazeCursorSceneObject = GazeCursorSceneObject.getInstance(gvrContext);
-//        Main.accessibilityScene.getMainCameraRig().removeChildObject(gazeCursorSceneObject);
-//        gvrContext.getMainScene().getMainCameraRig().addChildObject(gazeCursorSceneObject);
     }
 
-    private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
-//        gvrContext.getMainScene().getMainCameraRig()
-//                .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-//        Main.accessibilityScene.getMainCameraRig()
-//                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+    private void accessibility() {
         createIcon(textures.getBackIcon(), TypeItem.BACK);
         Main.accessibilityScene.show();
     }
