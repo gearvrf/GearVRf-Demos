@@ -29,7 +29,11 @@ android {
 
 dependencies {
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-        compile(name: 'widgetplugin-debug', ext: 'aar')
+        if (findProject(':widgetplugin')) {
+            compile project(':widgetplugin')
+        } else {
+            compile(name: 'widgetplugin-debug', ext: 'aar')
+        }
     } else {
         compile "org.gearvrf:widgetplugin:$gearvrfVersion"
     }
