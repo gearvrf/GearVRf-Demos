@@ -75,6 +75,7 @@ public class SampleMain extends GVRMain
     private GVRContext mGVRContext = null;
     private GVRActivity mActivity;
     private GVRSceneObject cursor;
+    private GVRCursorController controller;
 
     SampleMain(GVRActivity activity)
     {
@@ -103,6 +104,7 @@ public class SampleMain extends GVRMain
                 {
                     oldController.removePickEventListener(mPickHandler);
                 }
+                controller = newController;
                 newController.addPickEventListener(mPickHandler);
                 newController.setCursor(cursor);
                 newController.setCursorDepth(DEPTH);
@@ -220,29 +222,6 @@ public class SampleMain extends GVRMain
     {
         private GVRSceneObject movingObject;
 
-        private void stopMove()
-        {
-            GVRTransform objTrans = movingObject.getTransform();
-            Matrix4f cursorMatrix = cursor.getTransform().getModelMatrix4f();
-            cursor.removeChildObject(movingObject);
-            mainScene.addSceneObject(movingObject);
-            Matrix4f objMatrix = objTrans.getModelMatrix4f();
-            objTrans.setModelMatrix(cursorMatrix.mul(objMatrix));
-            movingObject = null;
-        }
-
-        private void startMove(GVRSceneObject sceneObj)
-        {
-            GVRTransform objTrans = sceneObj.getTransform();
-            movingObject = sceneObj;
-            Matrix4f controllerMtx = cursor.getTransform().getModelMatrix4f();
-            Matrix4f objMatrix = objTrans.getModelMatrix4f();
-            controllerMtx.invert();
-            objTrans.setModelMatrix(controllerMtx.mul(objMatrix));
-            mainScene.removeSceneObject(sceneObj);
-            cursor.addChildObject(sceneObj);
-        }
-
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
             sceneObj.getRenderData().getMaterial().setVec4("u_color", PICKED_COLOR_R,
@@ -257,7 +236,10 @@ public class SampleMain extends GVRMain
                 sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
                                                                CLICKED_COLOR_G, CLICKED_COLOR_B,
                                                                CLICKED_COLOR_A);
-                startMove(sceneObj);
+                if (controller.startDrag(sceneObj))
+                {
+                    movingObject = sceneObj;
+                }
             }
         }
 
@@ -268,7 +250,8 @@ public class SampleMain extends GVRMain
                                                            PICKED_COLOR_A);
             if (sceneObj == movingObject)
             {
-                stopMove();
+                controller.stopDrag();
+                movingObject = null;
             }
          }
 
@@ -279,7 +262,8 @@ public class SampleMain extends GVRMain
                                                            UNPICKED_COLOR_A);
             if (sceneObj == movingObject)
             {
-                stopMove();
+                controller.stopDrag();
+                movingObject = null;
             }
         }
     };
