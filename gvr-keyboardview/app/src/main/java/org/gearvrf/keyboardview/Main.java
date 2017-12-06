@@ -51,7 +51,7 @@ public class Main extends GVRMain {
     private TextView mInputEdit;
     private Button mButtonOk;
     private Button mButtonCancel;
-    final float DEPTH = -1.8f;
+    final float DEPTH = -2f;
 
 
     public Main(MainActivity activity) {
@@ -88,9 +88,8 @@ public class Main extends GVRMain {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
                 GVRPicker picker = newController.getPicker();
-                EnumSet<GVRPicker.EventOptions> options = picker.getEventOptions();
 
-                options.add(GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
+                newController.getCursor().getTransform().setScale(0.5f, 0.5f, 0.5f);
                 newController.setCursorDepth(DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 mKeyboardSceneObject.setPicker(picker);
@@ -186,7 +185,7 @@ public class Main extends GVRMain {
 
                     break;
                 case R.id.phoneEdit:
-                    mKeyboardSceneObject.getTransform().setPosition(0.0f,  -0.5f, DEPTH + 0.15f);
+                    mKeyboardSceneObject.getTransform().setPosition(0.0f,  -0.5f, DEPTH + 0.4f);
                     mKeyboardSceneObject.getTransform().setRotationByAxis(-15, 1, 0, 0);
                     mKeyboardSceneObject.getTransform().setScale(0.4f, 0.4f, 1.0f);
 
