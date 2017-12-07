@@ -83,10 +83,7 @@ public class Main extends GVRMain {
             newController.addPickEventListener(mTouchHandler);
             newController.setCursor(cursor);
             newController.setCursorDepth(10.0f);
-            if (newController instanceof GearCursorController)
-            {
-                ((GearCursorController) newController).sendEventsToActivity(true);
-            }
+            newController.sendEventsToActivity(true);
             newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
         }
     };
