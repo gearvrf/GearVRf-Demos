@@ -14,6 +14,9 @@ android:
     - platform-tools
     - build-tools-25.0.3
     - android-25
+  licenses:
+    - android-sdk-license-.+
+    - '.+'
 
 before_script:
     - cd ${PROJECT_DIR}
