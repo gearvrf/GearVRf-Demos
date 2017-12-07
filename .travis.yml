@@ -1,0 +1,41 @@
+language: android
+jdk: oraclejdk8
+sudo: required # false for Container-Based Infrastructure, required for Sudo-enabled Infrastructure
+dist: trusty
+
+env:
+  global:
+    - PROJECT_NAME= GearVRF
+    - PROJECT_DIR=${TRAVIS_BUILD_DIR} # Project direct
+android:
+  components:
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
+    - platform-tools
+    - build-tools-25.0.3
+    - android-25
+
+before_script:
+    - cd ${PROJECT_DIR}
+    - |
+cat  > variables.txt <<EOF
+only_daydream=true
+EOF
+
+if [ -d .gradle ] ; then
+    if [ -f .gradle/gradle.properties ] ; then
+	cat variables.txt  >> .gradle/gradle.properties
+    else
+	touch .gradle/gradle.properties;
+        cat variables.txt  >> .gradle/gradle.properties
+    fi
+else
+    mkdir .gradle ; touch .gradle/gradle.properties;
+    cat variables.txt  >> .gradle/gradle.properties
+fi
+
+rm variables.txt
+
+
+script:
+    - cd ${PROJECT_DIR}/GearVRf-Demos/ &&  ./gradlew assembleDebug
