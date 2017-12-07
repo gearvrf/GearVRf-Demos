@@ -72,22 +72,17 @@ public class Model {
         }
 
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-        BoundingBoxCreator boundingBox = new BoundingBoxCreator(context, bv);
-
-        model.attachComponent(new GVRMeshCollider(boundingBox.getMesh()));
+        model.attachComponent(new GVRMeshCollider(context, true));
 
         // Adding Pointee to Model
         bv = model.getBoundingVolume();
         float originalRadius = bv.radius;
         Log.i(TAG, "Radius" + Float.toString(originalRadius));
-        Vector3f min_corner = bv.minCorner;
-        Vector3f max_corner = bv.maxCorner;
 
         // TODO Scale Appropriately
         if (originalRadius > 7.0f || originalRadius < 5.0f) {
             float scaleFactor = 7 / originalRadius;
             model.getTransform().setScale(scaleFactor, scaleFactor, scaleFactor);
-            bv = model.getBoundingVolume();
         }
 
         // Make Copy of Original Render Data
