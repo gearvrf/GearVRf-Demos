@@ -17,25 +17,7 @@ android:
 
 before_script:
     - cd ${PROJECT_DIR}
-    - |
-cat  > variables.txt <<EOF
-only_daydream=true
-EOF
-
-if [ -d .gradle ] ; then
-    if [ -f .gradle/gradle.properties ] ; then
-	cat variables.txt  >> .gradle/gradle.properties
-    else
-	touch .gradle/gradle.properties;
-        cat variables.txt  >> .gradle/gradle.properties
-    fi
-else
-    mkdir .gradle ; touch .gradle/gradle.properties;
-    cat variables.txt  >> .gradle/gradle.properties
-fi
-
-rm variables.txt
-
-
+    - echo "only_daydream=true" >> gradle.properties
+      
 script:
     - cd ${PROJECT_DIR}/GearVRf-Demos/ &&  ./gradlew assembleDebug
