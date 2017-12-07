@@ -20,4 +20,4 @@ before_script:
     - echo "only_daydream=true" >> gradle.properties
       
 script:
-    - cd ${PROJECT_DIR}/GearVRf-Demos/ &&  ./gradlew assembleDebug
+    - cd ${PROJECT_DIR} &&  ./gradlew assembleDebug
