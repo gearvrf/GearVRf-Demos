@@ -10,6 +10,18 @@
  */
 package com.samsung.accessibility.shortcut;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.util.Log;
+
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
+import com.samsung.accessibility.main.Main;
+import com.samsung.accessibility.scene.AccessibilityScene;
+import com.samsung.accessibility.util.AccessibilityTexture;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -20,20 +32,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilitySpeech;
-import org.gearvrf.accessibility.GVRAccessibilitySpeechListener;
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.util.Log;
-
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.focus.OnFocusListener;
-import com.samsung.accessibility.gaze.GazeCursorSceneObject;
-import com.samsung.accessibility.main.Main;
-import com.samsung.accessibility.scene.AccessibilityScene;
-import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class ShortcutMenuItem extends FocusableSceneObject {
     private static final String TAG = ShortcutMenuItem.class.getSimpleName();
@@ -155,32 +153,11 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     private void speech() {
-        speech = new GVRAccessibilitySpeech(gvrContext);
-        speech.start(new GVRAccessibilitySpeechListener() {
-
+        gvrContext.getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onRmsChanged(float arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onFinish() {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onError(int arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-                // TODO Auto-generated method stub
+            public void run() {
+                speech = new GVRAccessibilitySpeech(gvrContext);
+                speech.start(null);
             }
         });
     }
