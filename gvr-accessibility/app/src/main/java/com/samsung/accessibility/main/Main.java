@@ -129,9 +129,7 @@ public class Main extends GVRMain {
         scene.addSceneObject(shortcutMenu);
         scene.getMainCameraRig().addChildObject(cursor);
         scene.addSceneObject(createSkybox());
-
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
-        gvrContext.getInputManager().selectController(controllerTypes, controllerSelector);
+        gvrContext.getInputManager().selectController(controllerSelector);
     }
 
     private ShortcutMenu createShortcut() {

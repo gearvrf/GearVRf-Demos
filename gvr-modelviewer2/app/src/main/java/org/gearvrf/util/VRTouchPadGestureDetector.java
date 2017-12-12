@@ -89,7 +89,7 @@ public class VRTouchPadGestureDetector extends Object implements
         /**
          * Notified when a swipe occurs.
          *
-         * @param e1
+         * @param e
          *            The first down motion event that started the fling.
          * @param swipeDirection
          *            The direction of swipe.

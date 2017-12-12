@@ -82,8 +82,7 @@ public class Main extends GVRMain {
         fpsObject.getTransform().setScale(0.2f, 0.2f, 1.0f);
         mScene.getMainCameraRig().addChildObject(fpsObject);
 
-        GVRControllerType[] desiredTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER };
-        gvrContext.getInputManager().selectController(desiredTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        gvrContext.getInputManager().selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {

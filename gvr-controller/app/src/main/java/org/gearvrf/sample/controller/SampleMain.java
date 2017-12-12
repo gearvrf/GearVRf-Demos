@@ -95,8 +95,7 @@ public class SampleMain extends GVRMain
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.GAMEPAD, GVRControllerType.MOUSE, GVRControllerType.CONTROLLER  };
-        inputManager.selectController(controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
