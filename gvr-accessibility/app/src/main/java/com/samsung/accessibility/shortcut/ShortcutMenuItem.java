@@ -10,6 +10,18 @@
  */
 package com.samsung.accessibility.shortcut;
 
+import android.content.Context;
+import android.media.AudioManager;
+import android.util.Log;
+
+import com.samsung.accessibility.R;
+import com.samsung.accessibility.focus.FocusableSceneObject;
+import com.samsung.accessibility.focus.OnClickListener;
+import com.samsung.accessibility.focus.OnFocusListener;
+import com.samsung.accessibility.main.Main;
+import com.samsung.accessibility.scene.AccessibilityScene;
+import com.samsung.accessibility.util.AccessibilityTexture;
+
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -20,20 +32,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessibilitySpeech;
-import org.gearvrf.accessibility.GVRAccessibilitySpeechListener;
-
-import android.content.Context;
-import android.media.AudioManager;
-import android.util.Log;
-
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.focus.FocusableSceneObject;
-import com.samsung.accessibility.focus.OnClickListener;
-import com.samsung.accessibility.focus.OnFocusListener;
-import com.samsung.accessibility.gaze.GazeCursorSceneObject;
-import com.samsung.accessibility.main.Main;
-import com.samsung.accessibility.scene.AccessibilityScene;
-import com.samsung.accessibility.util.AccessibilityTexture;
 
 public class ShortcutMenuItem extends FocusableSceneObject {
     private static final String TAG = ShortcutMenuItem.class.getSimpleName();
@@ -108,6 +106,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         addChildObject(icon);
         getRenderData().getMaterial().setMainTexture(textures.getSpaceTexture());
         this.typeItem = typeItem;
+        setName(typeItem.name());
     }
     
     public GVRTexture getIconTexture() {
@@ -119,16 +118,13 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
             @Override
             public void onClick() {
-                final GVRSceneObject wholeSceneObjects[] = gvrContext.getMainScene().getWholeSceneObjects();
                 switch (typeItem) {
                 case TALK_BACK:
-
                     talkBack();
                     break;
 
                 case BACK:
-
-                    back(wholeSceneObjects);
+                    back();
                     break;
 
                 case ZOOM:
@@ -138,7 +134,6 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                 case INVERTED_COLORS:
                     clickEffectMenu();
                     invertedColors();
-
                     break;
 
                 case SPEECH:
@@ -146,7 +141,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
                     break;
 
                 case ACCESSIBILITY:
-                    accessibility(wholeSceneObjects);
+                    accessibility();
                     break;
                 default:
                     break;
@@ -158,32 +153,11 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     private void speech() {
-        speech = new GVRAccessibilitySpeech(gvrContext);
-        speech.start(new GVRAccessibilitySpeechListener() {
-
+        gvrContext.getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onRmsChanged(float arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onFinish() {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onError(int arg0) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-                // TODO Auto-generated method stub
+            public void run() {
+                speech = new GVRAccessibilitySpeech(gvrContext);
+                speech.start(null);
             }
         });
     }
@@ -200,7 +174,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         }
     }
 
-    private void back(final GVRSceneObject[] wholeSceneObjects) {
+    private void back() {
         final AccessibilityScene accessibilityScene = Main.accessibilityScene;
         Main main = (Main) gvrContext.getActivity().getMain();
 
@@ -208,16 +182,9 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);
         accessibilityScene.removeSceneObject(accessibilityScene.getShortcutMenu());
         accessibilityScene.getMainApplicationScene().addSceneObject(accessibilityScene.getShortcutMenu());
-//        GVRSceneObject gazeCursorSceneObject = GazeCursorSceneObject.getInstance(gvrContext);
-//        Main.accessibilityScene.getMainCameraRig().removeChildObject(gazeCursorSceneObject);
-//        gvrContext.getMainScene().getMainCameraRig().addChildObject(gazeCursorSceneObject);
     }
 
-    private void accessibility(final GVRSceneObject[] wholeSceneObjects) {
-//        gvrContext.getMainScene().getMainCameraRig()
-//                .removeChildObject(GazeCursorSceneObject.getInstance(gvrContext));
-//        Main.accessibilityScene.getMainCameraRig()
-//                .addChildObject(GazeCursorSceneObject.getInstance(gvrContext));
+    private void accessibility() {
         createIcon(textures.getBackIcon(), TypeItem.BACK);
         Main.accessibilityScene.show();
     }

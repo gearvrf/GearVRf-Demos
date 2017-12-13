@@ -15,22 +15,20 @@
 
 package org.gearvrf.modelviewer2;
 
-import org.gearvrf.util.VRTouchPadGestureDetector;
-import org.gearvrf.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
-import org.gearvrf.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureDetector;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
+import org.gearvrf.utility.Log;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
-import android.util.Log;
 
 public class ModelViewer2Activity extends GVRActivity implements
-        OnTouchPadGestureListener {
+        GVRTouchPadGestureDetector.OnTouchPadGestureListener {
 
     private GVRWidgetPlugin mPlugin = new GVRWidgetPlugin(this);
-    private VRTouchPadGestureDetector mDetector = null;
+    private GVRTouchPadGestureDetector mDetector = null;
     private ModelViewer2Manager mManager = null;
     MyMenu mWidget;
 
@@ -43,7 +41,7 @@ public class ModelViewer2Activity extends GVRActivity implements
         mPlugin.setViewSize(displaymetrics.widthPixels,
                 displaymetrics.heightPixels);
 
-        mDetector = new VRTouchPadGestureDetector(this);
+        mDetector = new GVRTouchPadGestureDetector(this);
         mWidget = new MyMenu();
 
         //SkyBox List
@@ -67,7 +65,7 @@ public class ModelViewer2Activity extends GVRActivity implements
     }
 
     @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
+    public boolean onSwipe(MotionEvent e, GVRTouchPadGestureDetector.SwipeDirection swipeDirection,
                            float velocityX, float velocityY) {
         Log.i(TAG, "onSwipe");
         mManager.onSwipe(e, swipeDirection, velocityX, velocityY);
@@ -82,12 +80,14 @@ public class ModelViewer2Activity extends GVRActivity implements
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        mDetector.onTouchEvent(event);
-
         if (mPlugin.getWidgetView() == null)
             return false;
-
         return mPlugin.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return mDetector.onTouchEvent(event);
     }
 
     @Override

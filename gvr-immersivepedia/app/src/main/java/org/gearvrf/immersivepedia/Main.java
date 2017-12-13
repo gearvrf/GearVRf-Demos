@@ -31,6 +31,7 @@ import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GearCursorController;
 
 import android.media.MediaPlayer;
 import android.view.MotionEvent;
@@ -80,20 +81,10 @@ public class Main extends GVRMain {
                 setMainScene(menuScene);
             }
         });
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
-        gvrContext.getInputManager().selectController(gvrContext, controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        gvrContext.getInputManager().selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
-                if (oldController != null)
-                {
-                    if (oldController.getControllerType() == GVRControllerType.GAZE)
-                    {
-                        gvrContext.getActivity().getEventReceiver().removeListener(activityTouchHandler);
-                    }
-                    oldController.setCursor(null);
-                    oldController.removePickEventListener(pickHandler);
-                }
                 GazeController cursor = GazeController.get();
 
                 if (cursor == null)
@@ -105,15 +96,13 @@ public class Main extends GVRMain {
                     newController.setCursor(cursor.getCursor());
                 }
                 mController = newController;
-                if (newController.getControllerType() == GVRControllerType.GAZE)
-                {
-                    gvrContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
-                }
+                newController.sendEventsToActivity(true);
                 newController.addPickEventListener(pickHandler);
                 newController.setCursorDepth(10.0f);
-                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
             }
-        });    }
+        });
+    }
 
     @Override
     public SplashMode getSplashMode() {

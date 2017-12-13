@@ -39,10 +39,10 @@ public class GearVRJavascriptMain extends GVRMain {
     private static final float DEPTH = -1.5f;
 
     private GVRContext context;
-    private CustomShaderManager shaderManager;
-    private GVRScene mainScene;
     private GVRMaterial mShaderMaterial;
     private GVRShaderId mShaderID = null;
+    private GVRSceneObject cursorModel = null;
+
     @Override
     public void onInit(GVRContext gvrContext) {
         // The onInit function in script.js will be invoked
@@ -50,17 +50,7 @@ public class GearVRJavascriptMain extends GVRMain {
         gvrContext.startDebugServer();        
 
         context = gvrContext;
-        mainScene = gvrContext.getMainScene();
-
-        // shader for cursor
-        shaderManager = new CustomShaderManager(gvrContext);
-
-        // set up the input manager for the main scene
-        GVRInputManager inputManager = gvrContext.getInputManager();
-        inputManager.addCursorControllerListener(listener);
-        for (GVRCursorController cursor : inputManager.getCursorControllers()) {
-            listener.onCursorControllerAdded(cursor);
-        }
+        gvrContext.getInputManager().selectController(listener);
     }
 
     @Override
@@ -68,45 +58,32 @@ public class GearVRJavascriptMain extends GVRMain {
         // The onStep function in script.js will be invoked
     }
 
-    private CursorControllerListener listener = new CursorControllerListener() {
+    private GVRSceneObject createCursor()
+    {
+        GVRSceneObject cursor = new GVRSphereSceneObject(context);
+        GVRRenderData cursorRenderData = cursor.getRenderData();
+
+        mShaderID = new GVRShaderId(CustomShaderManager.class);
+        mShaderMaterial = new GVRMaterial(getGVRContext(), mShaderID);
+        mShaderMaterial.setVec4(CustomShaderManager.COLOR_KEY, 1.0f, 0.0f, 0.0f, 0.5f);
+        cursor.getTransform().setScale(-0.015f, -0.015f, -0.015f);
+        cursorRenderData.setMaterial(mShaderMaterial);
+        cursorRenderData.setDepthTest(false);
+        cursorRenderData.setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        cursorModel = cursor;
+        return cursor;
+    }
+
+    private GVRInputManager.ICursorControllerSelectListener listener = new GVRInputManager.ICursorControllerSelectListener() {
         @Override
-        public void onCursorControllerRemoved(GVRCursorController controller) {
-            if (controller.getControllerType() == GVRControllerType.GAZE) {
-                controller.setCursor(null);
-                controller.setEnable(false);
+        public void onCursorControllerSelected(GVRCursorController controller, GVRCursorController oldController) {
+            if (cursorModel == null)
+            {
+                createCursor();
             }
-        }
-
-        @Override
-        public void onCursorControllerAdded(GVRCursorController controller) {
-            // Only allow only gaze
-            if (controller.getControllerType() == GVRControllerType.GAZE) {
-                GVRSceneObject cursor = new GVRSphereSceneObject(context);
-                GVRRenderData cursorRenderData = cursor.getRenderData();
-
-                mShaderID = new GVRShaderId(CustomShaderManager.class);
-                mShaderMaterial = new GVRMaterial(getGVRContext(),
-                        mShaderID);
-
-
-                //material.setShaderType(shaderManager.getShaderId());
-                //cursor.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(CustomShaderManager.class)));
-                mShaderMaterial.setVec4(CustomShaderManager.COLOR_KEY, 1.0f, 0.0f,
-                        0.0f, 0.5f);
-
-                cursorRenderData.setMaterial(mShaderMaterial);
-                mainScene.addSceneObject(cursor);
-                cursor.getRenderData().setDepthTest(false);
-                cursor.getRenderData().setRenderingOrder(100000);
-                controller.setCursor(cursor);
-                controller.setPosition(0.0f, 0.0f, DEPTH);
-                controller.setNearDepth(DEPTH);
-                controller.setFarDepth(DEPTH);
-                cursor.getTransform().setScale(-0.015f, -0.015f, -0.015f);
-            } else {
-                // disable all other types
-                controller.setEnable(false);
-            }
+            controller.setCursor(cursorModel);
+            controller.setCursorDepth(DEPTH);
+            controller.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
         }
     };
 }

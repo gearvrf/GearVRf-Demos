@@ -28,7 +28,7 @@
         framebufferPixelsHigh="DEFAULT"
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
-        useGazeCursorController="true"
+        useControllerTypes="gaze"
         useMultiview="false"
         useProtectedFramebuffer="false"
         useSrgbFramebuffer="false" >

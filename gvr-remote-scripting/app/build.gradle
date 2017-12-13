@@ -30,7 +30,11 @@ android {
 
 dependencies {
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-        compile(name: 'debugwebserver-debug', ext: 'aar')
+        if (findProject(':debugwebserver')) {
+            compile project (':debugwebserver')
+        } else {
+            compile(name: 'debugwebserver-debug', ext: 'aar')
+        }
     } else {
         compile "org.gearvrf:debugwebserver:$gearvrfVersion"
     }
