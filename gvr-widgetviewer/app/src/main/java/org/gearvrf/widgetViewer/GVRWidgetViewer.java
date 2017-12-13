@@ -15,19 +15,20 @@
 
 package org.gearvrf.widgetViewer;
 
-import org.gearvrf.GVRActivity;
-import org.gearvrf.io.GVRTouchPadGestureDetector;
-import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import org.gearvrf.GVRActivity;
+import org.gearvrf.io.GVRTouchPadGestureDetector;
+import org.gearvrf.widgetplugin.GVRWidgetPlugin;
+
 public class GVRWidgetViewer extends GVRActivity implements
         GVRTouchPadGestureDetector.OnTouchPadGestureListener {
 
-    private GVRWidgetPlugin mPlugin = new GVRWidgetPlugin(this);
+    private GVRWidgetPlugin mPlugin;
     private static final int BUTTON_INTERVAL = 500;
     private static final int TAP_INTERVAL = 300;
     private long mLatestButton = 0;
@@ -43,12 +44,16 @@ public class GVRWidgetViewer extends GVRActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mWidget = new MyGdxWidget();
+        mPlugin = new GVRWidgetPlugin(this, mWidget);
+
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         mPlugin.setViewSize(displaymetrics.widthPixels,
                 displaymetrics.heightPixels);
         mDetector = new GVRTouchPadGestureDetector(this);
-        mWidget = new MyGdxWidget();
+
         mMain = new ViewerMain(mPlugin);
         mPlugin.setMain(mMain);
         mWidget.mMain = mMain;
@@ -135,17 +140,6 @@ public class GVRWidgetViewer extends GVRActivity implements
     public boolean onSwipe(MotionEvent e, GVRTouchPadGestureDetector.SwipeDirection swipeDirection,
                            float velocityX, float velocityY) {
         return false;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        mPlugin.initializeWidget(mWidget);
-        super.onResume();
     }
 
 }

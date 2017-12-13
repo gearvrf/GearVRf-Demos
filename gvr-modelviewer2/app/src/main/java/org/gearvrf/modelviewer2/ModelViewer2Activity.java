@@ -15,19 +15,19 @@
 
 package org.gearvrf.modelviewer2;
 
-import org.gearvrf.io.GVRTouchPadGestureDetector;
-import org.gearvrf.GVRActivity;
-import org.gearvrf.widgetplugin.GVRWidgetPlugin;
-import org.gearvrf.utility.Log;
-
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 
+import org.gearvrf.GVRActivity;
+import org.gearvrf.io.GVRTouchPadGestureDetector;
+import org.gearvrf.utility.Log;
+import org.gearvrf.widgetplugin.GVRWidgetPlugin;
+
 public class ModelViewer2Activity extends GVRActivity implements
         GVRTouchPadGestureDetector.OnTouchPadGestureListener {
 
-    private GVRWidgetPlugin mPlugin = new GVRWidgetPlugin(this);
+    private GVRWidgetPlugin mPlugin;
     private GVRTouchPadGestureDetector mDetector = null;
     private ModelViewer2Manager mManager = null;
     MyMenu mWidget;
@@ -36,13 +36,14 @@ public class ModelViewer2Activity extends GVRActivity implements
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
+        mDetector = new GVRTouchPadGestureDetector(this);
+
+        mWidget = new MyMenu();
+        mPlugin = new GVRWidgetPlugin(this, mWidget);
+
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        mPlugin.setViewSize(displaymetrics.widthPixels,
-                displaymetrics.heightPixels);
-
-        mDetector = new GVRTouchPadGestureDetector(this);
-        mWidget = new MyMenu();
+        mPlugin.setViewSize(displaymetrics.widthPixels, displaymetrics.heightPixels);
 
         //SkyBox List
         mManager = new ModelViewer2Manager(this, mPlugin);
@@ -89,16 +90,4 @@ public class ModelViewer2Activity extends GVRActivity implements
     public boolean onTouchEvent(MotionEvent event) {
         return mDetector.onTouchEvent(event);
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        mPlugin.initializeWidget(mWidget);
-        super.onResume();
-    }
-
 }
