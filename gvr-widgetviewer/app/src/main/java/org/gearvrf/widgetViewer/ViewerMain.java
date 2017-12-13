@@ -56,7 +56,7 @@ public class ViewerMain extends GVRMain {
     private static final int THUMBNAIL_RENDER_ORDER = GVRRenderData.GVRRenderingOrder.TRANSPARENT + 50;
     private static final String TAG = "ViewerMain";
 
-    private GVRWidgetPlugin mPlugin;
+    private GVRWidgetPlugin mPlugin = null;
     private GVRContext mGVRContext = null;
 
     private GVRMaterial mMetalMaterial = null;
@@ -180,8 +180,7 @@ public class ViewerMain extends GVRMain {
         GVRScene mainScene = mGVRContext.getMainScene();
         mainScene.setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-        GVRControllerType[] desiredTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER };
-        gvrContext.getInputManager().selectController(desiredTypes, mControllerSelector);
+        gvrContext.getInputManager().selectController(mControllerSelector);
 
         try {
             final GVRAssetLoader assetLoader = mGVRContext.getAssetLoader();

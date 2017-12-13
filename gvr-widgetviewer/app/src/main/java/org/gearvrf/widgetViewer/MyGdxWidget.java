@@ -16,6 +16,7 @@
 package org.gearvrf.widgetViewer;
 
 
+import org.gearvrf.utility.Log;
 import org.gearvrf.widgetplugin.GVRWidget;
 
 import com.badlogic.gdx.Gdx;
@@ -92,7 +93,7 @@ public class MyGdxWidget extends GVRWidget {
                 mNextButton = button;
                 button.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
-                        System.out.println("click " + x + ", " + y);
+                        Log.d("TOUCH", "click " + x + ", " + y);
 
                         mMain.ThumbnailSelected = (mMain.ThumbnailSelected + 1) % 5;
                         mNextButton.setChecked(false);
@@ -104,7 +105,7 @@ public class MyGdxWidget extends GVRWidget {
                 mPreviousButton = button;
                 button.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
-                        System.out.println("click " + x + ", " + y);
+                        Log.d("TOUCH", "click " + x + ", " + y);
                         mMain.ThumbnailSelected = (mMain.ThumbnailSelected + 4) % 5;
                         mPreviousButton.setChecked(false);
                     }
