@@ -81,8 +81,7 @@ public class Main extends GVRMain {
                 setMainScene(menuScene);
             }
         });
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
-        gvrContext.getInputManager().selectController(controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        gvrContext.getInputManager().selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
@@ -100,7 +99,7 @@ public class Main extends GVRMain {
                 newController.sendEventsToActivity(true);
                 newController.addPickEventListener(pickHandler);
                 newController.setCursorDepth(10.0f);
-                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
             }
         });
     }
