@@ -195,7 +195,6 @@ public class Main extends GVRMain implements KeyboardEventListener {
         gvrContext.getMainScene().getEventReceiver().addListener(mPickHandler);
         mPicker = new GVRPicker(gvrContext, gvrContext.getMainScene());
         createAndAttachAllEyePointee();
-
     }
 
     public void createSpinnerInvisible() {
