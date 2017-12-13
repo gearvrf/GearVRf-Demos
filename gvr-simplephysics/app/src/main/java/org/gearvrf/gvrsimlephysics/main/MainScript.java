@@ -139,8 +139,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         addPhysicsWorld(gvrContext, mScene);
 
         mScene.getEventReceiver().addListener(this);
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
-        gvrContext.getInputManager().selectController(controllerTypes, mControllerSelector);
+        gvrContext.getInputManager().selectController(mControllerSelector);
     }
 
     private static void initCamera(GVRContext context, GVRCameraRig camera) {
