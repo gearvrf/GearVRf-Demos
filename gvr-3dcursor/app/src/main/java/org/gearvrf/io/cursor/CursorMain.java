@@ -971,14 +971,7 @@ public class CursorMain extends GVRMain {
                 if ((cursor.getCursorType() == CursorType.OBJECT) &&
                     cursor.getName().equals(RESET_CURSOR_NAME))
                 {
-                    if (cursor.isEnabled())
-                    {
-                        cursor.onEnable();
-                    }
-                    else
-                    {
-                        cursor.setEnable(true);
-                    }
+                    cursor.setEnable(true);
                     cursor.setCursorTheme(crystalTheme);
                     break;
                 }
