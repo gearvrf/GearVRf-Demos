@@ -23,7 +23,7 @@ allprojects {
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "25.0.0"
+    buildToolsVersion "26.0.3"
 
     buildTypes {
         debug {
@@ -43,10 +43,8 @@ android {
     }
 
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    System.getProperty("appName") + ".apk")
+        variant.outputs.all { output ->
+            output.outputFileName = System.getProperty("appName") + ".apk"
         }
     }
 
