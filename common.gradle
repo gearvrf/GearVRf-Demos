@@ -82,7 +82,7 @@ useLocalDependencies=true
  */
 ext.gearvrfVersion='4.0.1-SNAPSHOT'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
-project.ext.daydreamVersion='1.80.0'
+project.ext.daydreamVersion = '1.101.0'
 
 if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
     dependencies {

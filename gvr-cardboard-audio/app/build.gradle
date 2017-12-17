@@ -42,8 +42,10 @@ android {
     }
 }
 
+project.ext.daydreamVersion = '1.101.0'
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile fileTree(dir: 'src/main/libs', include: ['*.jar'])
-    compile 'com.google.vr:sdk-audio:1.10.0'
+    compile "com.google.vr:sdk-audio:$daydreamVersion"
 }
