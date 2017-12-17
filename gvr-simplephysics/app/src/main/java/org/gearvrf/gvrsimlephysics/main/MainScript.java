@@ -9,22 +9,18 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
-import org.gearvrf.GVREventListeners;
+
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.IActivityEvents;
-import org.gearvrf.IPickEvents;
-import org.gearvrf.ITouchEvents;
 import org.gearvrf.gvrsimlephysics.R;
 import org.gearvrf.gvrsimlephysics.entity.Countdown;
 import org.gearvrf.gvrsimlephysics.util.MathUtils;
-import org.gearvrf.gvrsimlephysics.util.VRTouchPadGestureDetector;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GVRTouchPadGestureDetector;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
@@ -118,6 +114,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
             {
                 newController.addControllerEventListener(mControllerThrowHandler);
             }
+            newController.sendEventsToActivity(true);
             newController.setCursor(mCursor);
             newController.setCursorDepth(6.0f);
             newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
@@ -230,7 +227,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         scene.addSceneObject(MainHelper.createCylinder(context, x, y, z, drawable));
     }
 
-    public void onSwipe(VRTouchPadGestureDetector.SwipeDirection swipeDirection, float velocityX) {
+    public void onSwipe(GVRTouchPadGestureDetector.SwipeDirection swipeDirection, float velocityX) {
 
         if (gameStopped() || (mController.getControllerType() == GVRControllerType.CONTROLLER)) {
             return;
