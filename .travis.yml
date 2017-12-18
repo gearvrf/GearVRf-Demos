@@ -24,8 +24,8 @@ android:
     - google-gdk-license-.+
 
 install:
-    - git clone  https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/Samsung/GearVRf.git $PROJECT_DIR
-    - cd $PROJECT_DIR/GVRf/Framework
+    - git clone  https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/Samsung/GearVRf.git $PROJECT_DIR/gearvrf
+    - cd $PROJECT_DIR/gearvrf/GVRf/Framework
     - sed -e '/include ':backend_oculus/ s/^#*/#/' -i settings.gradle    
 
 before_script:
