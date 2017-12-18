@@ -15,14 +15,14 @@
 
 package org.gearvrf.immersivepedia.input;
 
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class TouchPadInputMap {
 
     public float axisX;
     public float axisY;
     public Button buttonState = new Button();
-    public SwipeDirection swipeDirection = SwipeDirection.Ignore;
+    public GVRTouchPadGestureListener.Action swipeDirection = GVRTouchPadGestureListener.Action.None;
 
     public void resetIntermadiateState() {
         buttonState.down = false;

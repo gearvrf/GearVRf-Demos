@@ -17,6 +17,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
@@ -86,7 +87,7 @@ public class AccessibilityScene extends GVRScene {
                 .getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.inverted_colors)));
         invertedColors.getTransform().setPosition(positionX, positionY, positionZ);
         invertedColors.getTransform().setScale(scale, scale, scale);
-        invertedColors.attachComponent(new GVRSphereCollider(gvrContext));
+        invertedColors.attachComponent(new GVRMeshCollider(gvrContext, null, true));
         invertedColors.setOnClickListener(new OnClickListener() {
 
             @Override

@@ -1,4 +1,4 @@
-package org.gearvrf.gvrsimlephysics.entity;
+package org.gearvrf.simplephysics.entity;
 
 import android.os.CountDownTimer;
 

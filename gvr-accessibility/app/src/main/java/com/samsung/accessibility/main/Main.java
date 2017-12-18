@@ -26,14 +26,9 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.IActivityEvents;
-import org.gearvrf.IPickEvents;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
-import org.gearvrf.io.GVRControllerType;
-import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.io.GearCursorController;
 import org.gearvrf.utility.Log;
 
 import android.view.MotionEvent;
@@ -42,7 +37,6 @@ import com.samsung.accessibility.R;
 import com.samsung.accessibility.focus.FocusableController;
 import com.samsung.accessibility.focus.FocusableSceneObject;
 import com.samsung.accessibility.focus.OnFocusListener;
-import com.samsung.accessibility.focus.VRTouchPadGestureDetector;
 import com.samsung.accessibility.gaze.GazeCursorSceneObject;
 import com.samsung.accessibility.scene.AccessibilityScene;
 import com.samsung.accessibility.shortcut.ShortcutMenu;
@@ -99,13 +93,21 @@ public class Main extends GVRMain {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
         {
             pickedObject = hit.getHitObject();
-            Log.d("PICK:", "onEnter %s %s", sceneObj.getClass().getSimpleName(), sceneObj.getName());
+            Log.d("NOLA:", "onEnter %s %s", sceneObj.getClass().getSimpleName(), sceneObj.getName());
+            if (pickedObject instanceof FocusableSceneObject)
+            {
+                ((FocusableSceneObject) pickedObject).setFocus(true);
+            }
         }
 
         public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
         {
             if (sceneObj == pickedObject)
             {
+                if (pickedObject instanceof FocusableSceneObject)
+                {
+                    ((FocusableSceneObject) pickedObject).setFocus(false);
+                }
                 pickedObject = null;
             }
         }

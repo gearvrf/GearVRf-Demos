@@ -15,14 +15,14 @@
 
 package org.gearvrf.controls.input;
 
-import org.gearvrf.controls.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class TouchPadInputMap {
 
     public float axisX;
     public float axisY;
     public TouchPress buttonState = new TouchPress();
-    public SwipeDirection swipeDirection = SwipeDirection.Ignore;
+    public GVRTouchPadGestureListener.Action swipeDirection = GVRTouchPadGestureListener.Action.None;
 
     public void resetIntermadiateState() {
         buttonState.down = false;
