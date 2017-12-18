@@ -5,7 +5,7 @@ dist: trusty
 
 env:
   global:
-    - PROJECT_NAME= GearVRF
+    - PROJECT_NAME=GearVRF-Demos
     - PROJECT_DIR=${TRAVIS_BUILD_DIR} # Project direct
     
 before_install:   
@@ -22,6 +22,11 @@ android:
     - android-sdk-preview-license-.+
     - android-sdk-license-.+
     - google-gdk-license-.+
+
+install:
+    - git clone  https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/Samsung/GearVRf.git $PROJECT_DIR
+    - cd $PROJECT_DIR/GVRf/Framework
+    - sed -e '/include ':backend_oculus/ s/^#*/#/' -i settings.gradle    
 
 before_script:
     - cd ${PROJECT_DIR}
