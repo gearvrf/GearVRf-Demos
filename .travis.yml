@@ -42,6 +42,7 @@ before_script:
     - git clone https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/gearvrf/GearVRf-Demos.git  $PROJECT_DIR/GearVRf-Demos
     - cd ${PROJECT_DIR}/GearVRf-Demos
     - echo "only_daydream=true" >> gradle.properties
+    - echo "useLocalDependencies=true" >> gradle.properties
       
 script:
     - cd ${PROJECT_DIR}/GearVRf-Demos &&  ./gradlew assembleDebug
