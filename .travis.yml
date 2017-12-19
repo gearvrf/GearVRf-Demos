@@ -13,7 +13,7 @@ before_install:
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
   # newest Android NDK
   - wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip -O ndk.zip
-  - unxip ndk.zip
+  - unzip ndk.zip
   - export ANDROID_NDK_HOME=`pwd`/android-ndk-r13b
   - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_NDK_HOME}
 android:
