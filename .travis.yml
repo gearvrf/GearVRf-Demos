@@ -29,17 +29,17 @@ android:
     - google-gdk-license-.+
 
 install:
-    - git clone  https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/Samsung/GearVRf.git $PROJECT_DIR/gearvrf
-    - cd $PROJECT_DIR/gearvrf/GVRf/Framework
+    - git clone  https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/Samsung/GearVRf.git $PROJECT_DIR
+    - cd $PROJECT_DIR/GearVRf/GVRf/Framework
     - echo "only_daydream=true" >> gradle.properties
-    - cd $PROJECT_DIR/gearvrf/GVRf/Framework
+    - cd $PROJECT_DIR/GearVRf/GVRf/Framework
     - ./gradlew assembleDebug
-    - cd $PROJECT_DIR/gearvrf/GVRf/Extensions
+    - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
     - echo "only_daydream=true" >> gradle.properties
-    - cd $PROJECT_DIR/gearvrf/GVRf/Extensions
+    - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
     - ./gradlew assembleDebug
 before_script:
-    - git clone https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/gearvrf/GearVRf-Demos.git  $PROJECT_DIR/GearVRf-Demos
+    - git clone https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/gearvrf/GearVRf-Demos.git  $PROJECT_DIR
     - cd ${PROJECT_DIR}/GearVRf-Demos
     - echo "only_daydream=true" >> gradle.properties
     - echo "useLocalDependencies=true" >> gradle.properties
