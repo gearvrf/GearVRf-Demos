@@ -47,3 +47,6 @@ before_script:
 script:
     - cd ${PROJECT_DIR}/GearVRf-Demos &&  ./gradlew assembleDebug
     - echo "Directory level and contents" ; ls -lrt ${PROJECT_DIR}
+    - echo "Directory : gearvrf" ;  ls -lrt ${PROJECT_DIR}/GearVRf
+    - echo "Directory : gearvrf-demos" ;  ls -lrt ${PROJECT_DIR}/GearVRf-Demos
+    
