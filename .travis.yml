@@ -36,6 +36,7 @@ install:
     - ./gradlew assembleDebug
     - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
     - echo "only_daydream=true" >> gradle.properties
+    - echo "useLocalDependencies=true" >> gradle.properties
     - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
     - ./gradlew assembleDebug
 before_script:
