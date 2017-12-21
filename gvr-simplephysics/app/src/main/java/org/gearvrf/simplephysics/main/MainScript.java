@@ -52,7 +52,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     private GVRSceneObject mCurrentBall = null;
 
 
-    private GVRCursorController.ControllerEventListener mControllerThrowHandler = new GVRCursorController.ControllerEventListener()
+    private GVRCursorController.IControllerEvent mControllerThrowHandler = new GVRCursorController.IControllerEvent()
     {
         private Vector3f mStartDrag = new Vector3f(0, 0, 0);
         private Vector3f mEndDrag = new Vector3f(0, 0, 0);
@@ -109,7 +109,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
             {
                 if (oldController.getControllerType() == GVRControllerType.CONTROLLER)
                 {
-                    oldController.removeControllerEventListener(mControllerThrowHandler);
+                    oldController.getEventReceiver().removeListener(mControllerThrowHandler);
                     if ((mCurrentBall != null) && (mCurrentBall.getParent() != null))
                     {
                         mCurrentBall.getParent().removeChildObject(mCurrentBall);
@@ -120,7 +120,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
             mController = newController;
             if (newController.getControllerType() == GVRControllerType.CONTROLLER)
             {
-                newController.addControllerEventListener(mControllerThrowHandler);
+                newController.getEventReceiver().addListener(mControllerThrowHandler);
             }
             newController.sendEventsToActivity(true);
             newController.setCursor(mCursor);

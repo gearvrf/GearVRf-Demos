@@ -42,7 +42,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.ZipLoader;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.io.cursor3d.Cursor;
-import org.gearvrf.io.cursor3d.CursorActivationListener;
+import org.gearvrf.io.cursor3d.ICursorActivationListener;
 import org.gearvrf.io.cursor3d.CursorManager;
 import org.gearvrf.io.cursor3d.CursorTheme;
 import org.gearvrf.io.cursor3d.CursorType;
@@ -56,7 +56,6 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -408,7 +407,7 @@ public class CursorMain extends GVRMain {
         mainScene.addSceneObject(settingsText);
 
         cursors = new ArrayList<Cursor>();
-        cursorManager.addCursorActivationListener(activationListener);
+        cursorManager.getEventReceiver().addListener(activationListener);
 
         // register all active cursors
         for(Cursor cursor : cursorManager.getActiveCursors()){
@@ -536,7 +535,7 @@ public class CursorMain extends GVRMain {
         });
     }
 
-    private CursorActivationListener activationListener = new CursorActivationListener() {
+    private ICursorActivationListener activationListener = new ICursorActivationListener() {
 
         @Override
         public void onDeactivated(Cursor cursor) {
