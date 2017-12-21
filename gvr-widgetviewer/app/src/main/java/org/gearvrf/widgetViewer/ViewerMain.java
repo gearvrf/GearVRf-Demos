@@ -22,7 +22,9 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRDrawFrameListener;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
@@ -41,29 +43,21 @@ import org.gearvrf.GVRSharedTexture;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.IPickEvents;
+import org.gearvrf.io.GVRControllerType;
+import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 import org.gearvrf.widgetplugin.GVRWidgetSceneObject;
 import org.gearvrf.widgetplugin.GVRWidgetSceneObjectMeshInfo;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
 public class ViewerMain extends GVRMain {
-
+    private static final int THUMBNAIL_RENDER_ORDER = GVRRenderData.GVRRenderingOrder.TRANSPARENT + 50;
     private static final String TAG = "ViewerMain";
 
-    private GVRWidgetPlugin mPlugin;
+    private GVRWidgetPlugin mPlugin = null;
     private GVRContext mGVRContext = null;
-    private MetalOnlyShader mMetalOnlyShader = null;
-    private GlassShader mGlassShader = null;
-    private DiffuseShader mDiffuseShader = null;
-    private ReflectionShader mReflectionShader = null;
-    private PhongShader mPhongShader = null;
-
-    private MetalShader2 mMetalShader2 = null;
-    private GlassShader2 mGlassShader2 = null;
-    private DiffuseShader2 mDiffuseShader2 = null;
-    private PhongShader2 mPhongShader2 = null;
-    private PhongShader3 mPhongShader3 = null;
 
     private GVRMaterial mMetalMaterial = null;
     private GVRMaterial mGlassMaterial = null;
@@ -111,7 +105,6 @@ public class ViewerMain extends GVRMain {
     private boolean mIsSingleTapped = false;
 
     private PickHandler mPickHandler = new PickHandler();
-    private GVRPicker mPicker;
 
     public GVRSceneObject[] Objects = new GVRSceneObject[THUMBNAIL_NUM];
     public float mRotateX = 0.0f;
@@ -140,28 +133,21 @@ public class ViewerMain extends GVRMain {
     GVRMaterial mWidgetMaterial2;
 
 
-    public class PickHandler implements IPickEvents
+    public class PickHandler extends GVREventListeners.PickEvents
     {
-        public GVRSceneObject PickedObject = null;
-
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
-        public void onExit(GVRSceneObject sceneObj) { }
-        public void onNoPick(GVRPicker picker) {
+        public void onExit(GVRSceneObject sceneObj) {
             mObjectPointed = false;
             mSelectionActive = false;
             mButtonPointed = false;
             mButton2Pointed = false;
         }
-        public void onPick(GVRPicker picker) {
-            GVRPicker.GVRPickedObject picked = picker.getPicked()[0];
-            GVRSceneObject PickedObject = picked.hitObject;
-
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             mObjectPointed = true;
-            if (mWidgetButtonObject.equals(PickedObject)) {
+            if (mWidgetButtonObject == sceneObj) {
                 mObjectPointed = false;
                 mButtonPointed = true;
                 mButton2Pointed = false;
-            } else if (mWdgetButtonObject2.equals(PickedObject)) {
+            } else if (mWdgetButtonObject2 == sceneObj) {
                 mObjectPointed = false;
                 mButton2Pointed = true;
                 mButtonPointed = false;
@@ -171,30 +157,30 @@ public class ViewerMain extends GVRMain {
             }
             mSelectionActive = true;
         }
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            mPlugin.setPickedObject(pickInfo);
-            PickedObject = pickInfo.getHitObject();
-        }
     }
 
-
+    private GVRInputManager.ICursorControllerSelectListener mControllerSelector = new GVRInputManager.ICursorControllerSelectListener()
+    {
+        public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
+        {
+            if (oldController != null)
+            {
+                oldController.removePickEventListener(mPlugin.getTouchHandler());
+                oldController.removePickEventListener(mPickHandler);
+            }
+            newController.addPickEventListener(mPickHandler);
+            newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+            newController.addPickEventListener(mPlugin.getTouchHandler());
+        }
+    };
     @Override
     public void onInit(GVRContext gvrContext) {
         mGVRContext = gvrContext;
-        mMetalOnlyShader = new MetalOnlyShader(mGVRContext);
-        mDiffuseShader = new DiffuseShader(mGVRContext);
-        mGlassShader = new GlassShader(mGVRContext);
-        mReflectionShader = new ReflectionShader(mGVRContext);
-        mPhongShader = new PhongShader(mGVRContext);
-
-        mMetalShader2 = new MetalShader2(mGVRContext);
-        mDiffuseShader2 = new DiffuseShader2(mGVRContext);
-        mGlassShader2 = new GlassShader2(mGVRContext);
-        mPhongShader2 = new PhongShader2(mGVRContext);
-        mPhongShader3 = new PhongShader3(mGVRContext);
 
         GVRScene mainScene = mGVRContext.getMainScene();
         mainScene.setBackgroundColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+        gvrContext.getInputManager().selectController(mControllerSelector);
 
         try {
             final GVRAssetLoader assetLoader = mGVRContext.getAssetLoader();
@@ -342,7 +328,7 @@ public class ViewerMain extends GVRMain {
             renderData3.setMesh(mesh3);
             renderData3.setMaterial(mGlassMaterial);
             obj3.attachRenderData(renderData3);
-            obj3.getRenderData().setRenderingOrder(3000);
+            obj3.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
             Objects[2].addChildObject(obj3);
 
             Objects[2].getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
@@ -388,7 +374,7 @@ public class ViewerMain extends GVRMain {
             renderData10.setMaterial(mCarGlassMaterial);
             obj10.attachRenderData(renderData10);
             obj10.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);;
-            obj10.getRenderData().setRenderingOrder(3000);
+            obj10.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
             Objects[3].addChildObject(obj10);
 
             GVRSceneObject obj11 = new GVRSceneObject(mGVRContext);
@@ -413,7 +399,7 @@ public class ViewerMain extends GVRMain {
             renderData13.setMesh(mesh13);
             renderData13.setMaterial(mCarGrillMaterial);
             obj13.attachRenderData(renderData13);
-            obj10.getRenderData().setRenderingOrder(3000);
+            obj10.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
             Objects[3].addChildObject(obj13);
 
             GVRSceneObject obj14 = new GVRSceneObject(mGVRContext);
@@ -422,7 +408,7 @@ public class ViewerMain extends GVRMain {
             renderData14.setMesh(mesh14);
             renderData14.setMaterial(mCarLightMaterial);
             obj14.attachRenderData(renderData14);
-            obj14.getRenderData().setRenderingOrder(4000);
+            obj14.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT + 1);
             Objects[3].addChildObject(obj14);
 
             GVRSceneObject obj19 = new GVRSceneObject(mGVRContext);
@@ -459,7 +445,7 @@ public class ViewerMain extends GVRMain {
             renderData17.setMesh(mesh17);
             renderData17.setMaterial(mRobotMetalMaterial);
             obj17.attachRenderData(renderData17);
-            obj17.getRenderData().setRenderingOrder(3000);
+            obj17.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
             Objects[4].addChildObject(obj17);
 
             GVRSceneObject obj18 = new GVRSceneObject(mGVRContext);
@@ -527,16 +513,14 @@ public class ViewerMain extends GVRMain {
                 ThumbnailTargetIndex[i] = i;
             }
 
-            ThumbnailOrder[0] = 10000;
-            ThumbnailOrder[1] = 10001;
-            ThumbnailOrder[2] = 10002;
-            ThumbnailOrder[3] = 10001;
-            ThumbnailOrder[4] = 10000;
+            ThumbnailOrder[0] = THUMBNAIL_RENDER_ORDER;
+            ThumbnailOrder[1] = THUMBNAIL_RENDER_ORDER + 1;
+            ThumbnailOrder[2] = THUMBNAIL_RENDER_ORDER + 2;
+            ThumbnailOrder[3] = THUMBNAIL_RENDER_ORDER + 3;
+            ThumbnailOrder[4] = THUMBNAIL_RENDER_ORDER + 4;
 
             GVRMesh glass_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "glass.obj"));
             GVRMesh board_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "board.obj"));
-            GVRMesh picks_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "pick.obj"));
-            GVRMesh button_pick_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "button.obj"));
             GVRMesh widgetbutton2_mesh = mGVRContext.getAssetLoader().loadMesh(new GVRAndroidResource(mGVRContext, "button2.obj"));
 
             mWidgetTexture = new GVRSharedTexture(gvrContext, mPlugin.getTextureId());
@@ -596,29 +580,24 @@ public class ViewerMain extends GVRMain {
 
             mWidgetButtonObject.getTransform().setPosition(0, 0, -EYE_TO_OBJECT - 1.5f);
             mWidgetButtonObject.getTransform().rotateByAxis(40.0f, 0.0f, 1.0f, 0.0f);
-            mWidgetButtonObject.getRenderData().setRenderingOrder(100000 - 1);
+            mWidgetButtonObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
 
             mWdgetButtonObject2.getTransform().setPosition(0, 0, -EYE_TO_OBJECT - 1.5f);
             mWdgetButtonObject2.getTransform().rotateByAxis(-40.0f, 0.0f, 1.0f, 0.0f);
-            mWdgetButtonObject2.getRenderData().setRenderingOrder(100000 - 1);
+            mWdgetButtonObject2.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
             mainScene.addSceneObject(mWidgetButtonObject);
-
-            mWidgetButtonObject.attachComponent(new GVRMeshCollider(mGVRContext, false));
 
             for (int i = 0; i < THUMBNAIL_NUM; i++) {
                 ThumbnailObject[i] = new GVRSceneObject(mGVRContext);
                 ThumbnailRotation[i] = new GVRSceneObject(mGVRContext);
-                GVRSceneObject obj = new GVRSceneObject(mGVRContext);
-                ThumbnailGlasses[i] = new GVRRenderData(mGVRContext);
-                ThumbnailGlasses[i].setMesh(glass_mesh);
-                ThumbnailGlasses[i].setMaterial(mReflectionMaterial);
-                obj.attachRenderData(ThumbnailGlasses[i]);
-                obj.getRenderData().setRenderingOrder(ThumbnailOrder[i]);
+                GVRSceneObject obj = new GVRSceneObject(mGVRContext, glass_mesh, mReflectionMaterial);
+                ThumbnailGlasses[i] = obj.getRenderData();
+                obj.getRenderData().setRenderingOrder(ThumbnailOrder[i] + 10);
                 ThumbnailRotation[i].addChildObject(obj);
                 ThumbnailObject[i].addChildObject(ThumbnailRotation[i]);
 
                 Thumbnails[i] = new GVRSceneObject(mGVRContext, board_mesh /*ThumbnailTextures[i]*/);
-                Thumbnails[i].getRenderData().setRenderingOrder(ThumbnailOrder[i] - 100);
+                Thumbnails[i].getRenderData().setRenderingOrder(ThumbnailOrder[i]);
                 Thumbnails[i].getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
                 Thumbnails[i].getTransform().setScale(1.0f, 1.2f, 1.0f);
                 ThumbnailRotation[i].addChildObject(Thumbnails[i]);
@@ -641,14 +620,6 @@ public class ViewerMain extends GVRMain {
             env_object.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
             mainScene.addSceneObject(env_object);
 
-            GVRSceneObject headTracker = new GVRSceneObject(gvrContext,
-                    gvrContext.createQuad(0.1f, 0.1f),
-                    assetLoader.loadTexture(new GVRAndroidResource(mGVRContext, "Headtracking_pointer.png")));
-            headTracker.getTransform().setPosition(0.0f, 0.0f, -EYE_TO_OBJECT);
-            headTracker.getRenderData().setDepthTest(false);
-            headTracker.getRenderData().setRenderingOrder(100000);
-            mainScene.getMainCameraRig().addChildObject(headTracker);
-
             gvrContext.registerDrawFrameListener(new GVRDrawFrameListener() {
                 @Override
                 public void onDrawFrame(float frameTime) {
@@ -660,9 +631,6 @@ public class ViewerMain extends GVRMain {
             Log.e(TAG, "Assets were not loaded. Stopping application!");
             gvrContext.getActivity().finish();
         }
-
-        mainScene.getEventReceiver().addListener(mPickHandler);
-        mPicker = new GVRPicker(gvrContext, mainScene);
     }
 
     private void updateState() {

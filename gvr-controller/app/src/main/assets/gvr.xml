@@ -29,7 +29,7 @@
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
         useProtectedFramebuffer="false"
-        useGazeCursorController="true"
+        useControllerTypes="gaze,gamepad,mouse,controller"
         useSrgbFramebuffer="false" >
 
         <mono-mode-parms

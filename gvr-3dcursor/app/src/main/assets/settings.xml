@@ -253,7 +253,7 @@
             vendorId="1256"/>
     </cursor>
     <cursor name="Right Cursor"
-            active="no"
+            active="yes"
             position="center"
             themeId="crystal_sphere"
             type="object">

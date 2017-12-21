@@ -28,7 +28,7 @@
         framebufferPixelsWide="DEFAULT"
         showLoadingIcon="true"
         useProtectedFramebuffer="false"
-        useAndroidWearTouchpad="true"
+        useControllerTypes="gaze,controller,weartouchpad"
         useSrgbFramebuffer="false" >
 
         <mono-mode-parms

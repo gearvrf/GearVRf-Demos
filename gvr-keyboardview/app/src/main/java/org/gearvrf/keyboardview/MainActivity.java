@@ -45,8 +45,4 @@ public class MainActivity extends GVRActivity {
             getFullScreenView().invalidate();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
-    }
 }

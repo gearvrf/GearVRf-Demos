@@ -266,20 +266,12 @@ public class CursorMain extends GVRMain {
 
         gearWearableDevice = new GearWearableDevice(gvrContext, GEARS2_DEVICE_ID, "Gear Wearable");
         devices.add(gearWearableDevice);
-        /*
-         * Because we are using GVRViewSceneObject we want pick events to be converted
-         * to Android motion events. We need to enable GVRPicker.EventOptions.SEND_TO_HIT_OBJECT
-         * to send touch events to the GVRViewSceneObject which propagates them to the Android view.
-         */
         inputManager.getEventReceiver().addListener(
                 new GVRInputManager.ICursorControllerSelectListener()
                 {
                     @Override
                     public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
                     {
-                        GVRPicker picker = newController.getPicker();
-                        EnumSet<GVRPicker.EventOptions> eventOptions = picker.getEventOptions();
-                        eventOptions.add(GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
                         newController.setCursorDepth(DEFAULT_CURSOR_DEPTH);
                     }
                 });

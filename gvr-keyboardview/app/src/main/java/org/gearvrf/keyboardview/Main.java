@@ -36,6 +36,7 @@ import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRKeyboardSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
+import org.gearvrf.utility.Log;
 
 import java.util.EnumSet;
 
@@ -47,11 +48,10 @@ public class Main extends GVRMain {
 
     private GVRViewSceneObject mFrameLayoutFormSceneObject;
     private EditText mFocusedEdit;
-
+    final float DEPTH = -2f;
     private TextView mInputEdit;
     private Button mButtonOk;
     private Button mButtonCancel;
-    final float DEPTH = -1.8f;
 
 
     public Main(MainActivity activity) {
@@ -82,17 +82,13 @@ public class Main extends GVRMain {
         fpsObject.getTransform().setScale(0.2f, 0.2f, 1.0f);
         mScene.getMainCameraRig().addChildObject(fpsObject);
 
-        GVRControllerType[] desiredTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER };
-        gvrContext.getInputManager().selectController(gvrContext, desiredTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        gvrContext.getInputManager().selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
                 GVRPicker picker = newController.getPicker();
-                EnumSet<GVRPicker.EventOptions> options = picker.getEventOptions();
-
-                options.add(GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
-                newController.setCursorDepth(DEPTH);
-                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+                Log.d("CONTROLLER", "selected " + newController.getClass().getSimpleName());
+                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 mKeyboardSceneObject.setPicker(picker);
             }
         });
@@ -133,7 +129,6 @@ public class Main extends GVRMain {
 
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent keyEvent) {
-//            return (keyCode == KeyEvent.KEYCODE_A);
             return false;
         }
     };
@@ -187,7 +182,7 @@ public class Main extends GVRMain {
 
                     break;
                 case R.id.phoneEdit:
-                    mKeyboardSceneObject.getTransform().setPosition(0.0f,  -0.5f, DEPTH + 0.15f);
+                    mKeyboardSceneObject.getTransform().setPosition(0.0f,  -0.5f, DEPTH + 0.4f);
                     mKeyboardSceneObject.getTransform().setRotationByAxis(-15, 1, 0, 0);
                     mKeyboardSceneObject.getTransform().setScale(0.4f, 0.4f, 1.0f);
 
