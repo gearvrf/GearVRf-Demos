@@ -43,10 +43,9 @@ before_script:
     - cd ${PROJECT_DIR}/
     - echo "only_daydream=true" >> gradle.properties
     - echo "useLocalDependencies=true" >> gradle.properties
-    - echo "gvr-bullet build.gradle" ;  cat  ${PROJECT_DIR}/GearVRf-Demos/gvr-bullet/app/build.gradle
       
 script:
-    - cd ${PROJECT_DIR}/GearVRf-Demos &&  ./gradlew assembleDebug
+    - cd ${PROJECT_DIR}/ &&  ./gradlew assembleDebug
     - echo "Directory level and contents" ; ls -lrt ${PROJECT_DIR}
     - echo "Directory gearvrf" ;  ls -lrt ${PROJECT_DIR}/GearVRf
     - echo "Directory gearvrf-demos" ;  ls -lrt ${PROJECT_DIR}/GearVRf-Demos
