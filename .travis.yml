@@ -40,8 +40,7 @@ install:
     - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
     - ./gradlew assembleDebug
 before_script:
-    - git clone https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/gearvrf/GearVRf-Demos.git  $PROJECT_DIR/GearVRf-Demos
-    - cd ${PROJECT_DIR}/GearVRf-Demos
+    - cd ${PROJECT_DIR}/
     - echo "only_daydream=true" >> gradle.properties
     - echo "useLocalDependencies=true" >> gradle.properties
     - echo "gvr-bullet build.gradle" ;  cat  ${PROJECT_DIR}/GearVRf-Demos/gvr-bullet/app/build.gradle
