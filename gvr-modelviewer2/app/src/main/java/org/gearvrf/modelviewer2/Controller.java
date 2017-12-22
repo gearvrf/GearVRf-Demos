@@ -37,7 +37,7 @@ public class Controller {
     // Variables related to SkyBox
     private ArrayList<SkyBox> aODefaultSkyBox;
     private ArrayList<SkyBox> aOSDSkyBox;
-    private final String sSDSkyBoxDirectory = "GVRModelViewer2/SkyBox";
+    private final String sSDSkyBoxDirectory = "SceneEditor/environments/";
     private final String sDefaultSkyBoxDirectory = "skybox";
     private GVRSphereSceneObject currentSkyBox;
 
@@ -463,10 +463,10 @@ public class Controller {
     }
 
     public void checkLookInside(GVRScene scene) {
-        Log.i("", "Check look insdie");
+        Log.i("", "Check look inside");
         if (lookInsideFlag) {
             Vector3f coord = oCurrentPosition.getCameraPosition();
-            Log.i("", "True Check look insdie" + Float.toString(coord.x) + Float.toString(coord
+            Log.i("", "True Check look inside" + Float.toString(coord.x) + Float.toString(coord
                     .y) + Float.toString(coord.z));
             scene.getMainCameraRig().getTransform().setPosition(coord.x, coord.y, coord.z);
             lookInsideFlag = false;
@@ -516,7 +516,7 @@ public class Controller {
 
         // Reads the List of Files from specified folder having extension specified in extensions.
         // Please place your models by creating GVRModelViewer2 folder in your internal phone memory
-        CardReader cRObject = new CardReader(sEnvironmentPath + "/GVRModelViewer2", extensions);
+        CardReader cRObject = new CardReader(sEnvironmentPath + "/SceneEditor", extensions);
         File list[] = cRObject.getModels();
 
         if (list == null)
@@ -592,25 +592,26 @@ public class Controller {
         float zTransform = (int) ((zoomBy) / (10));
         Log.d(TAG, "Zoom by" + Float.toString(zTransform) + "  " + Float.toString(zoomBy));
         if (currentDisplayedModel != null) {
+            GVRTransform trans = currentDisplayedModel.getModel(context).getTransform();
             float units = currentDisplayedModel.getCurrentZoom();
             if (units < zTransform) {
                 float scaleFactor = zTransform - units;
                 float sf = 1.1f;
                 for (int i = 0; i < scaleFactor; i++) {
-                    float x = currentDisplayedModel.getModel(context).getTransform().getScaleX();
-                    float y = currentDisplayedModel.getModel(context).getTransform().getScaleY();
-                    float z = currentDisplayedModel.getModel(context).getTransform().getScaleZ();
-                    currentDisplayedModel.getModel(context).getTransform().setScale(sf * x, sf *
+                    float x = trans.getScaleX();
+                    float y = trans.getScaleY();
+                    float z = trans.getScaleZ();
+                    trans.setScale(sf * x, sf *
                             y, sf * z);
                 }
             } else {
                 float scaleFactor = units - zTransform;
                 float sf = 0.9f;
                 for (int i = 0; i < scaleFactor; i++) {
-                    float x = currentDisplayedModel.getModel(context).getTransform().getScaleX();
-                    float y = currentDisplayedModel.getModel(context).getTransform().getScaleY();
-                    float z = currentDisplayedModel.getModel(context).getTransform().getScaleZ();
-                    currentDisplayedModel.getModel(context).getTransform().setScale(sf * x, sf *
+                    float x = trans.getScaleX();
+                    float y = trans.getScaleY();
+                    float z = trans.getScaleZ();
+                    trans.setScale(sf * x, sf *
                             y, sf * z);
                 }
             }

@@ -19,6 +19,7 @@ import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -32,6 +33,7 @@ import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GearCursorController;
 import org.gearvrf.utility.Log;
 
 import android.view.MotionEvent;
@@ -66,20 +68,6 @@ public class Main extends GVRMain {
     private GVRSceneObject pickedObject = null;
 
     /*
-     * This listener routes touch events on the screen to the MainActivity
-     * so the Android gesture detector can process them.
-     * It is only used with the Gaze cursor controller which does not
-     * generate its own touch events.
-     */
-    private IActivityEvents activityTouchHandler = new GVREventListeners.ActivityEvents()
-    {
-        public void dispatchTouchEvent(MotionEvent event)
-        {
-            gvrContext.getActivity().onTouchEvent(event);
-        }
-    };
-
-    /*
      * Handles initializing the selected controller:
      * - add listener for touch events coming from the controller
      * - attach the scene object to represent the cursor
@@ -91,22 +79,11 @@ public class Main extends GVRMain {
     {
         public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
         {
-            if (oldController != null)
-            {
-                oldController.removePickEventListener(mTouchHandler);
-                if (oldController.getControllerType() == GVRControllerType.GAZE)
-                {
-                    gvrContext.getActivity().getEventReceiver().removeListener(activityTouchHandler);
-                }
-            }
             mController = newController;
-            if (newController.getControllerType() == GVRControllerType.GAZE)
-            {
-                gvrContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
-            }
             newController.addPickEventListener(mTouchHandler);
             newController.setCursor(cursor);
             newController.setCursorDepth(10.0f);
+            newController.sendEventsToActivity(true);
             newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
         }
     };
@@ -122,6 +99,7 @@ public class Main extends GVRMain {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
         {
             pickedObject = hit.getHitObject();
+            Log.d("PICK:", "onEnter %s %s", sceneObj.getClass().getSimpleName(), sceneObj.getName());
         }
 
         public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
@@ -135,24 +113,23 @@ public class Main extends GVRMain {
 
     @Override
     public void onInit(final GVRContext gvrContext) {
-        this.gvrContext = gvrContext;
 
+        this.gvrContext = gvrContext;
         AccessibilityTexture.getInstance(gvrContext);
         cursor = GazeCursorSceneObject.getInstance(gvrContext);
         manager = new AccessibilityManager(gvrContext);
+
+        GVRScene scene = gvrContext.getMainScene();
         final ShortcutMenu shortcutMenu = createShortcut();
 
         accessibilityScene = new AccessibilityScene(gvrContext, gvrContext.getMainScene(), shortcutMenu);
-
         createPedestalObject();
         createDinossaur();
 
-        gvrContext.getMainScene().addSceneObject(shortcutMenu);
-        gvrContext.getMainScene().getMainCameraRig().addChildObject(cursor);
-        gvrContext.getMainScene().addSceneObject(createSkybox());
-
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
-        gvrContext.getInputManager().selectController(gvrContext, controllerTypes, controllerSelector);
+        scene.addSceneObject(shortcutMenu);
+        scene.getMainCameraRig().addChildObject(cursor);
+        scene.addSceneObject(createSkybox());
+        gvrContext.getInputManager().selectController(controllerSelector);
     }
 
     private ShortcutMenu createShortcut() {
@@ -261,7 +238,7 @@ public class Main extends GVRMain {
 
         GVRAccessibilityTalkBack talkBackBook = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Book");
         bookObject.setTalkBack(talkBackBook);
-        bookObject.attachComponent(new GVRSphereCollider(gvrContext));
+        bookObject.attachComponent(new GVRMeshCollider(gvrContext, true));
         bookObject.setOnFocusListener(new OnFocusListener() {
 
             @Override

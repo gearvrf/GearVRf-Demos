@@ -44,9 +44,11 @@ android {
 }
 
 project.ext.jomlVersion = "1.9.3-SNAPSHOT"
+project.ext.gsonVersion = '2.8.2'
+
 dependencies {
     compile "org.joml:joml-android:${jomlVersion}"
-    compile 'com.google.code.gson:gson:2.7'
+    compile "com.google.code.gson:gson:$gsonVersion"
     debugCompile(name:'framework-debug', ext:'aar')
     debugCompile(name: 'backend_oculus-debug', ext: 'aar')
     releaseCompile(name:'framework-release', ext:'aar')

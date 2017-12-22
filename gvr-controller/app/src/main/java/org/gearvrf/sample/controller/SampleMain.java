@@ -23,6 +23,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
@@ -70,13 +71,11 @@ public class SampleMain extends GVRMain
     private static final float SCALE = 200.0f;
     private static final float DEPTH = -7.0f;
     private static final float BOARD_OFFSET = 2.0f;
-    private GVRSceneObject mControllerModel;
     private GVRScene mainScene;
     private GVRContext mGVRContext = null;
     private GVRActivity mActivity;
-    private GVRGazeCursorController mGazeController;
-    private GVRCursorController mCursorController;
     private GVRSceneObject cursor;
+    private GVRCursorController controller;
 
     SampleMain(GVRActivity activity)
     {
@@ -96,8 +95,7 @@ public class SampleMain extends GVRMain
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.GAMEPAD, GVRControllerType.MOUSE, GVRControllerType.CONTROLLER  };
-        inputManager.selectController(mGVRContext, controllerTypes,  new GVRInputManager.ICursorControllerSelectListener()
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
@@ -105,6 +103,7 @@ public class SampleMain extends GVRMain
                 {
                     oldController.removePickEventListener(mPickHandler);
                 }
+                controller = newController;
                 newController.addPickEventListener(mPickHandler);
                 newController.setCursor(cursor);
                 newController.setCursorDepth(DEPTH);
@@ -218,32 +217,9 @@ public class SampleMain extends GVRMain
         mainScene.addSceneObject(skyBox);
     }
 
-    private ITouchEvents mPickHandler = new ITouchEvents()
+    private ITouchEvents mPickHandler = new GVREventListeners.TouchEvents()
     {
         private GVRSceneObject movingObject;
-
-        private void stopMove()
-        {
-            GVRTransform objTrans = movingObject.getTransform();
-            Matrix4f cursorMatrix = cursor.getTransform().getModelMatrix4f();
-            cursor.removeChildObject(movingObject);
-            mainScene.addSceneObject(movingObject);
-            Matrix4f objMatrix = objTrans.getModelMatrix4f();
-            objTrans.setModelMatrix(cursorMatrix.mul(objMatrix));
-            movingObject = null;
-        }
-
-        private void startMove(GVRSceneObject sceneObj)
-        {
-            GVRTransform objTrans = sceneObj.getTransform();
-            movingObject = sceneObj;
-            Matrix4f controllerMtx = cursor.getTransform().getModelMatrix4f();
-            Matrix4f objMatrix = objTrans.getModelMatrix4f();
-            controllerMtx.invert();
-            objTrans.setModelMatrix(controllerMtx.mul(objMatrix));
-            mainScene.removeSceneObject(sceneObj);
-            cursor.addChildObject(sceneObj);
-        }
 
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
@@ -259,7 +235,10 @@ public class SampleMain extends GVRMain
                 sceneObj.getRenderData().getMaterial().setVec4("u_color", CLICKED_COLOR_R,
                                                                CLICKED_COLOR_G, CLICKED_COLOR_B,
                                                                CLICKED_COLOR_A);
-                startMove(sceneObj);
+                if (controller.startDrag(sceneObj))
+                {
+                    movingObject = sceneObj;
+                }
             }
         }
 
@@ -270,7 +249,8 @@ public class SampleMain extends GVRMain
                                                            PICKED_COLOR_A);
             if (sceneObj == movingObject)
             {
-                stopMove();
+                controller.stopDrag();
+                movingObject = null;
             }
          }
 
@@ -281,18 +261,10 @@ public class SampleMain extends GVRMain
                                                            UNPICKED_COLOR_A);
             if (sceneObj == movingObject)
             {
-                stopMove();
+                controller.stopDrag();
+                movingObject = null;
             }
         }
-
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
-        {
-        }
-
-        public void onMotionOutside(GVRPicker picker, MotionEvent event)
-        {
-        }
-
     };
 
     @Override

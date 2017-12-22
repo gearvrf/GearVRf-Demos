@@ -92,7 +92,7 @@ public class Main extends GVRMain {
         mGVRContext = gvrContext;
 
         scene = gvrContext.getMainScene();
-        mGVRContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
+        //mGVRContext.getActivity().getEventReceiver().addListener(activityTouchHandler);
         // set background color
         GVRCameraRig mainCameraRig = scene.getMainCameraRig();
         mainCameraRig.getTransform().setPositionY(0);
