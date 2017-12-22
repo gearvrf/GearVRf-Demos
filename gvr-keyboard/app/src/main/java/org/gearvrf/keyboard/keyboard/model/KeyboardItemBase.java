@@ -19,7 +19,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -101,7 +101,7 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
 
     public void setNomalTexture(String character, String ShaderKey) {
 
-        GVRBitmapTexture bitmapNormal = new GVRBitmapTexture(getGVRContext(),
+        GVRBitmapImage bitmapNormal = new GVRBitmapImage(getGVRContext(),
                 GVRTextBitmapFactory.create(
                         styleItem.getCharacterBackgroundWidth(),
                         styleItem.getCharacterBackgroundHeight(), character, styleItem
@@ -116,7 +116,7 @@ public abstract class KeyboardItemBase extends GVRSceneObject {
 
     public void setHoverTexture(String character, String ShaderKey) {
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext(),
+        GVRBitmapImage bitmapHover = new GVRBitmapImage(getGVRContext(),
                 GVRTextBitmapFactory.create(
                         styleItem.getCharacterBackgroundWidth(),
                         styleItem.getCharacterBackgroundHeight(), character,

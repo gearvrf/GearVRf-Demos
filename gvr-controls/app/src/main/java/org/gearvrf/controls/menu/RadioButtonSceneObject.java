@@ -30,7 +30,7 @@
         import android.graphics.Typeface;
 
         import org.gearvrf.GVRAndroidResource;
-        import org.gearvrf.GVRBitmapTexture;
+        import org.gearvrf.GVRBitmapImage;
         import org.gearvrf.GVRContext;
         import org.gearvrf.GVRMaterial;
         import org.gearvrf.GVRMesh;
@@ -92,7 +92,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
                 Color.parseColor("#00000000"), 45);
         String font = "fonts/samsung-if-bold.ttf";
 
-        GVRBitmapTexture bitmapIdle = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapIdle = new GVRBitmapImage(getGVRContext());
         bitmapIdle.setFileName("radio_idle");
         bitmapIdle.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE1_BACKGROUND_TEXTURE,
@@ -104,7 +104,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
         text.textSize = 4;
         text.textColor = 0xfff8DF35;
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapHover = new GVRBitmapImage(getGVRContext());
         bitmapHover.setFileName("radio_hover");
         bitmapHover.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
@@ -116,7 +116,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
         text.textColor = Color.parseColor("#000000");
         text.backgroundColor = 0xfff8DF35;
 
-        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapSelected = new GVRBitmapImage(getGVRContext());
         bitmapSelected.setFileName("radio_selected");
         bitmapSelected.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         getRenderData().getMaterial().setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,

@@ -28,7 +28,7 @@ import android.graphics.Typeface;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -93,7 +93,7 @@ class MenuHeaderItem extends ControlSceneObject {
         Text text = new Text(title, Align.CENTER, 2.8f, Color.parseColor("#4b4b4b"), Color.parseColor("#ffffff"), 255);
         GVRMaterial material = getRenderData().getMaterial();
         GVRAssetLoader importer = gvrContext.getAssetLoader();
-        GVRBitmapTexture bitmapIdle = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapIdle = new GVRBitmapImage(getGVRContext());
 
         bitmapIdle.setFileName(title + "_idle");
         bitmapIdle.setBitmap(createText(text, false));
@@ -104,7 +104,7 @@ class MenuHeaderItem extends ControlSceneObject {
         material.setTexture(ButtonShader.STATE1_TEXT_TEXTURE, tex1);
         text.textColor = 0xffff6f54;
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapHover = new GVRBitmapImage(getGVRContext());
         bitmapHover.setFileName(title + "_hover");
         bitmapHover.setBitmap(createText(text, false));
         material.setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
@@ -113,7 +113,7 @@ class MenuHeaderItem extends ControlSceneObject {
         tex2.setImage(bitmapHover);
         material.setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex2);
 
-        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapSelected = new GVRBitmapImage(getGVRContext());
         bitmapSelected.setFileName(title + "_selected");
         bitmapSelected.setBitmap(createText(text, true));
         material.setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,

@@ -8,7 +8,6 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;

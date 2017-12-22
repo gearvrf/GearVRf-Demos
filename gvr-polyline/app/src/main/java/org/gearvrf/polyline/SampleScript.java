@@ -15,24 +15,16 @@
 
 package org.gearvrf.polyline;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShaderId;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 
-import android.graphics.Color;
 import android.opengl.GLES20;
-import android.util.Log;
 
 public class SampleScript extends GVRMain {
 

@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMesh;
@@ -91,7 +91,6 @@ public class Main extends GVRMain {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject hit)
         {
             pickedObject = hit.getHitObject();
-            Log.d("NOLA:", "onEnter %s %s", sceneObj.getClass().getSimpleName(), sceneObj.getName());
             if (pickedObject instanceof FocusableSceneObject)
             {
                 ((FocusableSceneObject) pickedObject).setFocus(true);

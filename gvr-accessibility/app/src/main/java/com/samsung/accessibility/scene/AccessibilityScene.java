@@ -10,18 +10,14 @@
  */
 package com.samsung.accessibility.scene;
 
-import java.util.List;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMaterialShaderManager;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
-import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.accessibility.GVRAccessiblityObject;

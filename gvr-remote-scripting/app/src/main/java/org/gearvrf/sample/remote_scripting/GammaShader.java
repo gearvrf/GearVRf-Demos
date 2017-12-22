@@ -18,9 +18,6 @@
 package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
-
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRPostEffectShaderManager;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
 import org.gearvrf.GVRShaderId;

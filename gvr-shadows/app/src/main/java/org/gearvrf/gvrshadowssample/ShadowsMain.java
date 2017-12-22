@@ -7,7 +7,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRPhongShader;
+import org.gearvrf.shaders.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;

@@ -20,7 +20,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
@@ -39,7 +38,6 @@ import org.joml.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.Future;
 
 public class BalloonMain extends GVRMain {
 

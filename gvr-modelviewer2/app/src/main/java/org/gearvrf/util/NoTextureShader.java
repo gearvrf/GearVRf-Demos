@@ -12,7 +12,7 @@
 package org.gearvrf.util;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRPhongShader;
+import org.gearvrf.shaders.GVRPhongShader;
 import org.gearvrf.modelviewer2.R;
 import org.gearvrf.utility.TextFile;
 

@@ -19,12 +19,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPhongShader;
+import org.gearvrf.shaders.GVRPhongShader;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRScene;
@@ -205,7 +205,7 @@ public class CursorMain extends GVRMain {
                 R.mipmap.ic_launcher);
         // return the correct splash screen bitmap
         GVRTexture tex = new GVRTexture(gvrContext);
-        tex.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        tex.setImage(new GVRBitmapImage(gvrContext, bitmap));
         return tex;
     }
 }
