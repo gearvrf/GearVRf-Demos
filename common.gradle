@@ -83,10 +83,11 @@ useLocalDependencies=true
 ext.gearvrfVersion='4.0.1-SNAPSHOT'
 project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 project.ext.daydreamVersion='1.80.0'
+project.ext.gsonVersion='2.8.2'
 
 if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
     dependencies {
-        compile 'com.google.code.gson:gson:2.7'
+        compile "com.google.code.gson:gson:$gsonVersion"
         compile "org.joml:joml-android:${jomlVersion}"
 
         if (findProject(':framework')) {
@@ -134,7 +135,7 @@ if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) 
     }
 } else {
     dependencies {
-        compile 'com.google.code.gson:gson:2.7'
+        compile "com.google.code.gson:gson:$gsonVersion"
         compile "org.joml:joml-android:${jomlVersion}"
         compile "org.gearvrf:framework:$gearvrfVersion"
 
