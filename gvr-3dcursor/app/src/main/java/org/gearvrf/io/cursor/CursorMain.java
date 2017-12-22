@@ -27,9 +27,9 @@ import com.gearvrf.io.gearwear.GearWearableDevice;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -969,7 +969,7 @@ public class CursorMain extends GVRMain {
                 R.mipmap.ic_launcher);
         GVRTexture splashScreen = new GVRTexture(gvrContext);
         // return the correct splash screen bitmap
-        splashScreen.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        splashScreen.setImage(new GVRBitmapImage(gvrContext, bitmap));
         return splashScreen;
     }
 }

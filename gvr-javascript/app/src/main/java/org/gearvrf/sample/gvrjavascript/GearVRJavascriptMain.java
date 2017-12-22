@@ -16,7 +16,7 @@
 package org.gearvrf.sample.gvrjavascript;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;

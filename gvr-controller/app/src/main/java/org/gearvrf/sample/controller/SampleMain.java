@@ -21,8 +21,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
-import org.gearvrf.GVREventListeners;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
@@ -214,7 +213,7 @@ public class SampleMain extends GVRMain
         mainScene.addSceneObject(skyBox);
     }
 
-    private ITouchEvents mPickHandler = new GVREventListeners.TouchEvents()
+    private ITouchEvents mPickHandler = new ITouchEvents()
     {
         private GVRSceneObject movingObject;
 
@@ -262,6 +261,9 @@ public class SampleMain extends GVRMain
                 movingObject = null;
             }
         }
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+
+        public void onMotionOutside(GVRPicker p, MotionEvent e) { }
     };
 
     @Override

@@ -17,7 +17,6 @@
 package org.gearvrf.util;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
 

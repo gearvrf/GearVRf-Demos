@@ -15,33 +15,19 @@
 
 package org.gearvrf.events;
 
-import android.os.Handler;
-import android.os.Message;
-import android.view.InputDevice;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.MotionEvent.PointerCoords;
-import android.view.MotionEvent.PointerProperties;
 import android.widget.FrameLayout;
-import android.widget.TextView;
 
-import org.gearvrf.GVRBaseSensor;
 import org.gearvrf.GVRContext;
 
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
-import org.gearvrf.ISensorEvents;
-import org.gearvrf.SensorEvent;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.scene_objects.view.GVRFrameLayout;
 
 import java.util.EnumSet;
-import java.util.List;
 
 public class EventsMain extends GVRMain {
     private static final String TAG = EventsMain.class.getSimpleName();
