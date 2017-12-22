@@ -27,7 +27,7 @@ android {
 dependencies {
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':widgetplugin')) {
-            compile project(':widgetplugin')
+            compile project (':widgetplugin')
         } else {
             compile(name: 'widgetplugin-debug', ext: 'aar')
         }

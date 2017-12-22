@@ -51,19 +51,6 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     private GVRSceneObject mCursor;
     private GVRContext mContext;
 
-    /*
-     * This listener routes touch events on the screen to the MainActivity
-     * so the Android gesture detector can process them.
-     * It is only used with the Gaze cursor controller which does not
-     * generate its own touch events.
-     */
-    private IActivityEvents mActivityTouchHandler = new GVREventListeners.ActivityEvents()
-    {
-        public void dispatchTouchEvent(MotionEvent event)
-        {
-            mContext.getActivity().onTouchEvent(event);
-        }
-    };
 
     private GVRCursorController.ControllerEventListener mControllerThrowHandler = new GVRCursorController.ControllerEventListener()
     {
@@ -100,7 +87,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
                 controller.getPicker().getWorldPickRay(mEndDrag, mTempDir);
                 mEndDrag.sub(mStartDrag, mTempDir);
                 mTempDir.mul(1000000.0f / dt);
-                rigidBody.applyCentralForce(mTempDir.x, mTempDir.y * 5.0f, mTempDir.z * 10.0f);
+                rigidBody.applyCentralForce(mTempDir.x, mTempDir.y, mTempDir.z * 4.0f);
                 rigidBody.setEnable(true);
                 mScene.addSceneObject(mCurrentBall);
                 mCurrentBall = null;
@@ -121,20 +108,12 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         {
             if (oldController != null)
             {
-                if (oldController.getControllerType() == GVRControllerType.GAZE)
-                {
-                    mContext.getActivity().getEventReceiver().removeListener(mActivityTouchHandler);
-                }
                 if (oldController.getControllerType() == GVRControllerType.CONTROLLER)
                 {
                     oldController.addControllerEventListener(mControllerThrowHandler);
                 }
             }
             mController = newController;
-            if (newController.getControllerType() == GVRControllerType.GAZE)
-            {
-                mContext.getActivity().getEventReceiver().addListener(mActivityTouchHandler);
-            }
             if (newController.getControllerType() == GVRControllerType.CONTROLLER)
             {
                 newController.addControllerEventListener(mControllerThrowHandler);
@@ -160,8 +139,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         addPhysicsWorld(gvrContext, mScene);
 
         mScene.getEventReceiver().addListener(this);
-        GVRControllerType[] controllerTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER  };
-        gvrContext.getInputManager().selectController(gvrContext, controllerTypes, mControllerSelector);
+        gvrContext.getInputManager().selectController(mControllerSelector);
     }
 
     private static void initCamera(GVRContext context, GVRCameraRig camera) {

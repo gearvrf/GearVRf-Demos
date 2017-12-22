@@ -46,9 +46,21 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-        compile(name: '3DCursorLibrary-debug', ext: 'aar')
-        compile(name: 'GearWearIoDevice-debug', ext: 'aar')
-        compile(name: 'gearwearlibrary-debug', ext: 'aar')
+        if (findProject(':3DCursorLibrary')) {
+            compile project (':3DCursorLibrary')
+        } else {
+            compile(name: '3DCursorLibrary-debug', ext: 'aar')
+        }
+        if (findProject(':GearWearIoDevice')) {
+            compile project (':GearWearIoDevice')
+        } else {
+            compile(name: 'GearWearIoDevice-debug', ext: 'aar')
+        }
+        if (findProject(':gearwearlibrary')) {
+            compile project (':gearwearlibrary')
+        } else {
+            compile(name: 'gearwearlibrary-debug', ext: 'aar')
+        }
     } else {
         compile "org.gearvrf:3DCursorLibrary:$gearvrfVersion"
         compile "org.gearvrf:GearWearIoDevice:$gearvrfVersion"

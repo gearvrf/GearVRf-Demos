@@ -87,14 +87,6 @@ public class X3DparserScript extends GVRMain
 
       model = gvrContext.getAssetLoader().loadModel(filename, scene);
 
-      GVRSceneObject cursor = new GVRSceneObject(mGVRContext, 1.0f, 1.0f,
-              mGVRContext.getAssetLoader().loadTexture(new GVRAndroidResource(mGVRContext, R.raw.cursor)));
-      cursor.getTransform().setPosition(0.0f, 0.0f, -10.0f);
-      cursor.getRenderData().setDepthTest(false);
-      cursor.getRenderData().setRenderingOrder(100000);
-
-      mainCameraRig.addChildObject(cursor);
-
       // check if a headlight was attached to the model's camera rig
       // during parsing, as specified by the NavigationInfo node.
       // If 4 objects are attached to the camera rig, one must be the
@@ -131,12 +123,7 @@ public class X3DparserScript extends GVRMain
       e.printStackTrace();
     }
 
-    GVRInputManager inputManager = mGVRContext.getInputManager();
-    for (GVRCursorController controller : inputManager.getCursorControllers()) {
-      if (controller.getControllerType() == GVRControllerType.GAZE) {
-        controller.setPosition(0.0f, 0.0f, -10.0f);
-      }
-    }
+    mGVRContext.getInputManager().selectController();
   } // end onInit()
 
   // @Override

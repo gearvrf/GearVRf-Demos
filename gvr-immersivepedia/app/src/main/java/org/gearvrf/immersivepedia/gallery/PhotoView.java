@@ -120,7 +120,7 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
         this.gvrContext = gvrContext;
         this.photoId = photo;
 
-        this.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+        this.attachCollider(new GVRMeshCollider(getGVRContext(), true));
 
         this.focusListener = this;
 

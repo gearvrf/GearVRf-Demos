@@ -70,21 +70,7 @@ public class EventsMain extends GVRMain {
         mainScene = gvrContext.getMainScene();
         mainScene.addSceneObject(layoutSceneObject);
         layoutSceneObject.getTransform().setPosition(0.0f, 0.0f, DEPTH);
-
-        GVRInputManager inputManager = gvrContext.getInputManager();
-        GVRControllerType[] desiredTypes = new GVRControllerType[] { GVRControllerType.GAZE, GVRControllerType.CONTROLLER };
-        inputManager.selectController(context, desiredTypes,
-              new GVRInputManager.ICursorControllerSelectListener()
-              {
-                  @Override
-                  public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
-                  {
-                      GVRPicker picker = newController.getPicker();
-                      EnumSet<GVRPicker.EventOptions> eventOptions = picker.getEventOptions();
-                      eventOptions.add(GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);  // send pick events to the GVRViewSceneObject
-                      newController.setCursorDepth(DEPTH);
-                  }
-              });
+        gvrContext.getInputManager().selectController();
     }
 
     @Override

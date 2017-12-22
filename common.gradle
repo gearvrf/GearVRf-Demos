@@ -16,7 +16,7 @@ allprojects {
             url "http://google.bintray.com/googlevr"
         }
         flatDir {
-            dirs '../../../GearVRf/GVRf/gearvrf-libs', '../../../../GearVRf/GVRf/gearvrf-libs'
+            dirs '../../GearVRf/GVRf/gearvrf-libs', '../../../GearVRf/GVRf/gearvrf-libs', '../../../../GearVRf/GVRf/gearvrf-libs'
         }
     }
 }
@@ -81,12 +81,13 @@ useLocalDependencies=true
 
  */
 ext.gearvrfVersion='4.0.1-SNAPSHOT'
-project.ext.jomlVersion = "1.9.1-SNAPSHOT"
 project.ext.daydreamVersion = '1.101.0'
+project.ext.jomlVersion = "1.9.3-SNAPSHOT"
+project.ext.gsonVersion='2.8.2'
 
 if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
     dependencies {
-        compile 'com.google.code.gson:gson:2.7'
+        compile "com.google.code.gson:gson:$gsonVersion"
         compile "org.joml:joml-android:${jomlVersion}"
 
         if (findProject(':framework')) {
@@ -134,7 +135,7 @@ if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) 
     }
 } else {
     dependencies {
-        compile 'com.google.code.gson:gson:2.7'
+        compile "com.google.code.gson:gson:$gsonVersion"
         compile "org.joml:joml-android:${jomlVersion}"
         compile "org.gearvrf:framework:$gearvrfVersion"
 
