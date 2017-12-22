@@ -19,20 +19,12 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRShaderId;
-import org.gearvrf.IScriptEvents;
-import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.script.GVRScriptBundle;
-import org.gearvrf.script.GVRScriptException;
-import org.gearvrf.script.GVRScriptManager;
 
-import java.io.IOException;
 
 public class GearVRJavascriptMain extends GVRMain {
     private static final String TAG = GearVRJavascriptMain.class.getSimpleName();
