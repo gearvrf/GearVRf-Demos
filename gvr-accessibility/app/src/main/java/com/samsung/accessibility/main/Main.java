@@ -129,7 +129,6 @@ public class Main extends GVRMain {
         createDinossaur();
 
         scene.addSceneObject(shortcutMenu);
-        scene.getMainCameraRig().addChildObject(cursor);
         scene.addSceneObject(createSkybox());
         gvrContext.getInputManager().selectController(controllerSelector);
     }
