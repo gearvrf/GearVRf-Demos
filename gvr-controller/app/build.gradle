@@ -30,4 +30,5 @@ android {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
+    buildToolsVersion '25.0.3'
 }
