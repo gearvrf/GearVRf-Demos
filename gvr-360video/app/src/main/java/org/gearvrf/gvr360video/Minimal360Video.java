@@ -15,24 +15,10 @@
 
 package org.gearvrf.gvr360video;
 
-import java.io.File;
-import java.io.IOException;
-import android.app.Activity;
-import android.os.Bundle;
-import android.os.Environment;
-import android.net.Uri;
-import android.media.MediaPlayer;
-import android.content.res.AssetFileDescriptor;
-
-import com.google.android.exoplayer.ExoPlayer;
-
-import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRMaterial;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
