@@ -122,10 +122,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
             {
                 newController.getEventReceiver().addListener(mControllerThrowHandler);
             }
-            newController.sendEventsToActivity(true);
             newController.setCursor(mCursor);
-            newController.setCursorDepth(6.0f);
-            newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
         }
     };
 

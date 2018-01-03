@@ -96,10 +96,7 @@ public class Main extends GVRMain {
                     newController.setCursor(cursor.getCursor());
                 }
                 mController = newController;
-                newController.sendEventsToActivity(true);
                 newController.addPickEventListener(pickHandler);
-                newController.setCursorDepth(10.0f);
-                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
             }
         });
     }

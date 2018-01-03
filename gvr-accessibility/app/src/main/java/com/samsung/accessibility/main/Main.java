@@ -76,9 +76,7 @@ public class Main extends GVRMain {
             mController = newController;
             newController.addPickEventListener(mTouchHandler);
             newController.setCursor(cursor);
-            newController.setCursorDepth(10.0f);
-            newController.sendEventsToActivity(true);
-            newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+            newController.setCursorDepth(8);
         }
     };
 
