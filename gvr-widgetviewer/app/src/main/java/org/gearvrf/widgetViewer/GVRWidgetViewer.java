@@ -17,13 +17,13 @@ package org.gearvrf.widgetViewer;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.io.GVRTouchPadGestureListener;
+import org.gearvrf.utility.Log;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 
 public class GVRWidgetViewer extends GVRActivity
@@ -127,6 +127,7 @@ public class GVRWidgetViewer extends GVRActivity
                 } else {
                     mMain.mRotateY = (dx / 2 + mYangle - mMoveoffset) % 360;
                 }
+                Log.d("NOLA", "onTouchEvent rotateY = %f", mMain.mRotateY);
             }
         }
         return true;
