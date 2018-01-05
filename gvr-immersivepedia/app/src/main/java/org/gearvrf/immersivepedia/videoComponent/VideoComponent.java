@@ -46,7 +46,6 @@ public class VideoComponent extends GVRSceneObject {
     private static final float DURATION = 0.5f;
 
     private boolean active = false;
-    private boolean closeVideo;
 
     private GVRVideoSceneObject video;
     private FocusableSceneObject focus;
@@ -199,16 +198,12 @@ public class VideoComponent extends GVRSceneObject {
     }
 
     public void hideVideo() {
+        active = false;
         mediaPlayer.stop();
         mediaPlayer.release();
         mediaPlayer = null;
         new GVROpacityAnimation(this, .1f, 0).start(gvrContext.getAnimationEngine());
         gvrContext.getMainScene().removeSceneObject(this);
-        active = false;
-    }
-
-    public boolean isCloseVideo() {
-        return closeVideo;
     }
 
     public boolean isActive() {

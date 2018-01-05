@@ -5,12 +5,17 @@ dist: trusty
 
 env:
   global:
-    - PROJECT_NAME= GearVRF
+    - PROJECT_NAME=GearVRF-Demos
     - PROJECT_DIR=${TRAVIS_BUILD_DIR} # Project direct
     
 before_install:   
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
   - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+  # newest Android NDK
+  - wget https://dl.google.com/android/repository/android-ndk-r13b-linux-x86_64.zip -O ndk.zip
+  - unzip ndk.zip  > /dev/null 2>&1
+  - export ANDROID_NDK_HOME=`pwd`/android-ndk-r13b
+  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_NDK_HOME}
 android:
   components:
     - tools # to get the new `repository-11.xml`
@@ -23,9 +28,22 @@ android:
     - android-sdk-license-.+
     - google-gdk-license-.+
 
-before_script:
-    - cd ${PROJECT_DIR}
+install:
+    - git clone  https://gearvrf:82c3775188fc23e31abd0d3e8db8fd499f17af34@github.com/Samsung/GearVRf.git $PROJECT_DIR/GearVRf
+    - cd $PROJECT_DIR/GearVRf/GVRf/Framework
     - echo "only_daydream=true" >> gradle.properties
+    - cd $PROJECT_DIR/GearVRf/GVRf/Framework
+    - ./gradlew assembleDebug
+    - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
+    - echo "only_daydream=true" >> gradle.properties
+    - echo "useLocalDependencies=true" >> gradle.properties
+    - cd $PROJECT_DIR/GearVRf/GVRf/Extensions
+    - ./gradlew assembleDebug
+before_script:
+    - cd ${PROJECT_DIR}/
+    - echo "only_daydream=true" >> gradle.properties
+    - echo "useLocalDependencies=true" >> gradle.properties
       
 script:
-    - cd ${PROJECT_DIR} &&  ./gradlew assembleDebug
+    - cd ${PROJECT_DIR}/ &&  ./gradlew assembleDebug
+    
