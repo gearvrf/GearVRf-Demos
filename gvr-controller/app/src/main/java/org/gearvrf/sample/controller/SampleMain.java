@@ -15,6 +15,7 @@
 package org.gearvrf.sample.controller;
 
 import java.io.IOException;
+import java.util.EnumSet;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
@@ -86,7 +87,9 @@ public class SampleMain extends GVRMain
                                     new GVRAndroidResource(mGVRContext, R.raw.cursor)));
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-
+        final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
+                GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
+                GVRPicker.EventOptions.SEND_TO_LISTENERS);
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
@@ -100,6 +103,8 @@ public class SampleMain extends GVRMain
                 newController.setCursor(cursor);
                 newController.setCursorDepth(DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+                newController.getPicker().setEventOptions(eventOptions);
+                newController.sendEventsToActivity(false);
             }
         });
 
