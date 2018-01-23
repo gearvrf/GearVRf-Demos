@@ -21,6 +21,8 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.input.TouchPadInput;
 import org.gearvrf.controls.util.RenderingOrder;
+import org.gearvrf.io.GVRTouchPadGestureListener;
+import org.gearvrf.io.GVRTouchPadGestureListener.Action;
 
 public class TouchPad extends GVRSceneObject {
 
@@ -137,22 +139,18 @@ public class TouchPad extends GVRSceneObject {
     private void updateArrows() {
 
         switch (TouchPadInput.getCurrent().swipeDirection) {
-            case Up:
+            case SwipeUp:
                 aroowUp.animateArrowOn();
                 break;
-            case Backward:
+            case SwipeBackward:
                 aroowLeft.animateArrowOn();
                 break;
-            case Down:
+            case SwipeDown:
                 aroowDown.animateArrowOn();
                 break;
-            case Forward:
+            case SwipeForward:
                 aroowRight.animateArrowOn();
                 break;
-            case Ignore:
-
-                break;
-
             default:
                 break;
         }

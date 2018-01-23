@@ -16,29 +16,61 @@
 package org.gearvrf.controls;
 
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.InputDevice;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.controls.input.GamepadInput;
 import org.gearvrf.controls.input.TouchPadInput;
-import org.gearvrf.controls.util.VRSamplesTouchPadGesturesDetector;
-import org.gearvrf.controls.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
-public class MainActivity extends GVRActivity implements
-        VRSamplesTouchPadGesturesDetector.OnTouchPadGestureListener {
-
-    private VRSamplesTouchPadGesturesDetector mDetector = null;
+public class MainActivity extends GVRActivity
+{
+    private GestureDetector mDetector = null;
     private Main main;
     private static final int TAP_INTERVAL = 300;
     private long mLatestTap = 0;
+    private SwipeListener swipeListener = new SwipeListener();
+
+    class SwipeListener extends GVRTouchPadGestureListener
+    {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e)
+        {
+            if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL)
+            {
+                mLatestTap = System.currentTimeMillis();
+                TouchPadInput.onSingleTap();
+            }
+
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e)
+        {
+            TouchPadInput.onLongPress();
+        }
+
+        @Override
+        public boolean onSwipe(MotionEvent e, Action action, float velocityX, float velocityY)
+        {
+            TouchPadInput.onSwipe(action);
+            return false;
+        }
+
+        public void onSwiping(MotionEvent e, MotionEvent e2, float vx, float vy, GVRTouchPadGestureListener.Action action) { }
+
+        public void onSwipeOppositeLastDirection() { }
+    };
 
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         main = new Main();
         setMain(main, "gvr.xml");
-        mDetector = new VRSamplesTouchPadGesturesDetector(this, this);
+        mDetector = new GestureDetector(getBaseContext(), swipeListener);
     }
 
     @Override
@@ -97,35 +129,5 @@ public class MainActivity extends GVRActivity implements
         return super.onTouchEvent(event);
     }
 
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
-        if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-            mLatestTap = System.currentTimeMillis();
-            TouchPadInput.onSingleTap();
-        }
 
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-        TouchPadInput.onLongPress();
-    }
-
-    @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection, float velocityX,
-                           float velocityY) {
-        TouchPadInput.onSwipe(swipeDirection);
-
-        return false;
-    }
-
-    @Override
-    public void onSwiping(MotionEvent e, MotionEvent e2, float velocityX, float velocityY,
-                          SwipeDirection swipeDirection) {
-    }
-
-    @Override
-    public void onSwipeOppositeLastDirection() {
-    }
 }

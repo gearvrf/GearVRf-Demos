@@ -26,6 +26,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderData.GVRRenderingOrder;
 import org.gearvrf.GVRSceneObject;
@@ -50,8 +51,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         super(gvrContext);
         this.gvrContext = gvrContext;
         createRenderData();
-        attachComponent(new GVRSphereCollider(gvrContext));
-        getRenderData().getMaterial().setColor(LOST_FOCUS_COLOR);
+        attachComponent(new GVRMeshCollider(gvrContext, false));
         focusAndUnFocus();
         clickEvent();
     }
@@ -62,10 +62,11 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         textures = AccessibilityTexture.getInstance(gvrContext);
         GVRMaterial material = new GVRMaterial(gvrContext);
         GVRRenderData renderData = new GVRRenderData(gvrContext);
+        material.setMainTexture(texture);
+        material.setColor(LOST_FOCUS_COLOR);
         renderData.setMaterial(material);
         renderData.setMesh(mesh);
         attachRenderData(renderData);
-        getRenderData().getMaterial().setMainTexture(texture);
     }
 
     private void focusAndUnFocus() {
@@ -118,6 +119,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
             @Override
             public void onClick() {
+                Log.d("NOLA", "Menu click " + typeItem.name());
                 switch (typeItem) {
                 case TALK_BACK:
                     talkBack();

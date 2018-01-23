@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 package org.gearvrf.sample.controller;
-import android.view.MotionEvent;
 
 import java.io.IOException;
-import java.util.concurrent.Future;
+import java.util.EnumSet;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
@@ -36,18 +35,12 @@ import org.gearvrf.GVRSceneObject;
 
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.ITouchEvents;
-import org.gearvrf.io.CursorControllerListener;
-import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.io.GearCursorController;
-import org.gearvrf.io.GVRGazeCursorController;
 
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
-import org.joml.Matrix4f;
 
 public class SampleMain extends GVRMain
 {
@@ -94,7 +87,9 @@ public class SampleMain extends GVRMain
                                     new GVRAndroidResource(mGVRContext, R.raw.cursor)));
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-
+        final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
+                GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
+                GVRPicker.EventOptions.SEND_TO_LISTENERS);
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
@@ -108,6 +103,8 @@ public class SampleMain extends GVRMain
                 newController.setCursor(cursor);
                 newController.setCursorDepth(DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+                newController.getPicker().setEventOptions(eventOptions);
+                newController.sendEventsToActivity(false);
             }
         });
 

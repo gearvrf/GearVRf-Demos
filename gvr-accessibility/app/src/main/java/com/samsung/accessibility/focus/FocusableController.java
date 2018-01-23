@@ -12,6 +12,7 @@
 package com.samsung.accessibility.focus;
 
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public final class FocusableController {
     public static boolean clickProcess(GVRSceneObject pickedObject) {
         if(pickedObject != null) {
             FocusableSceneObject object = (FocusableSceneObject) pickedObject;
+            Log.d("NOLA", "clickProcess " + object.getClass().getSimpleName());
             object.dispatchInClick();
             return true;
         }

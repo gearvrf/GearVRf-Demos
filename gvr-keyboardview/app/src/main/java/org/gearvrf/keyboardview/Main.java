@@ -87,8 +87,7 @@ public class Main extends GVRMain {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
                 GVRPicker picker = newController.getPicker();
-                Log.d("CONTROLLER", "selected " + newController.getClass().getSimpleName());
-                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+                newController.sendEventsToActivity(false);
                 mKeyboardSceneObject.setPicker(picker);
             }
         });

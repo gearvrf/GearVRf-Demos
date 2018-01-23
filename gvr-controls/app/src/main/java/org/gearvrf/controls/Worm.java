@@ -37,7 +37,7 @@ import org.gearvrf.controls.util.Constants;
 import org.gearvrf.controls.util.MathUtils;
 import org.gearvrf.controls.util.RenderingOrder;
 import org.gearvrf.controls.util.Util;
-import org.gearvrf.controls.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class Worm extends GVRSceneObject {
 
@@ -344,25 +344,30 @@ public class Worm extends GVRSceneObject {
 
         if (!ScaleWorm.animPlaying) {
 
-            SwipeDirection swipeDirection = TouchPadInput.getCurrent().swipeDirection;
+            GVRTouchPadGestureListener.Action swipeDirection = TouchPadInput.getCurrent().swipeDirection;
 
             float duration = 0.6f;
             float movement = 0.75f;
             float degree = 22.5f;
 
-            if (swipeDirection.name() == SwipeDirection.Up.name()) {
+            if (swipeDirection.equals(GVRTouchPadGestureListener.Action.SwipeUp))
+            {
                 moveAlongCameraVector(duration, movement);
                 rotateWorm(MovementDirection.Up);
-
-            } else if (swipeDirection.name() == SwipeDirection.Down.name()) {
+            }
+            else if (swipeDirection.equals(GVRTouchPadGestureListener.Action.SwipeDown))
+            {
                 moveAlongCameraVector(duration, -movement);
                 rotateWorm(MovementDirection.Down);
 
-            } else if (swipeDirection.name() == SwipeDirection.Forward.name()) {
+            }
+            else if (swipeDirection.equals(GVRTouchPadGestureListener.Action.SwipeForward))
+            {
                 rotateAroundCamera(duration, -degree);
                 rotateWorm(MovementDirection.Right);
-
-            } else if (swipeDirection.name() == SwipeDirection.Backward.name()) {
+            }
+            else if (swipeDirection.equals(GVRTouchPadGestureListener.Action.SwipeBackward))
+            {
                 rotateAroundCamera(duration, degree);
                 rotateWorm(MovementDirection.Left);
             }

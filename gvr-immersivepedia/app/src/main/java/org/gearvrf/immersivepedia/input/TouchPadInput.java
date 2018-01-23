@@ -18,7 +18,7 @@ package org.gearvrf.immersivepedia.input;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class TouchPadInput {
 
@@ -47,9 +47,9 @@ public class TouchPadInput {
             newButton.up = !newButton.pressed;
         }
         if (newTouchPadMap.swipeDirection == oldTouchPadMap.swipeDirection) {
-            if (newTouchPadMap.swipeDirection != SwipeDirection.Ignore) {
+            if (newTouchPadMap.swipeDirection != GVRTouchPadGestureListener.Action.None) {
 
-                newTouchPadMap.swipeDirection = SwipeDirection.Ignore;
+                newTouchPadMap.swipeDirection = GVRTouchPadGestureListener.Action.None;
             }
 
         }
@@ -74,7 +74,7 @@ public class TouchPadInput {
 
     }
 
-    public static void onSwipe(SwipeDirection swipeDirection) {
+    public static void onSwipe(GVRTouchPadGestureListener.Action swipeDirection) {
         newTouchPadMap.swipeDirection = swipeDirection;
     }
 

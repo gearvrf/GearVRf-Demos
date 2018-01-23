@@ -1,4 +1,4 @@
-package org.gearvrf.gvrsimlephysics.util;
+package org.gearvrf.simplephysics.util;
 
 /**
  * Created by d.alipio@samsung.com on 11/4/16.

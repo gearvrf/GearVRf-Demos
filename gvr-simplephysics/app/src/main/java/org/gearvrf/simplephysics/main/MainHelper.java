@@ -1,22 +1,20 @@
-package org.gearvrf.gvrsimlephysics.main;
+package org.gearvrf.simplephysics.main;
 
 import android.graphics.Color;
 import android.view.Gravity;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.gvrsimlephysics.R;
+import org.gearvrf.simplephysics.R;
 import org.gearvrf.physics.GVRCollisionMatrix;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -24,7 +22,6 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.Future;
 
 /**
  * Created by ragner on 11/9/16.
@@ -133,17 +130,12 @@ public class MainHelper {
         return cylinderObject;
     }
 
-    public static GVRSceneObject createBall(GVRContext context, float x, float y, float z,
+    public static GVRSceneObject createBall(GVRSceneObject ballProto, float x, float y, float z,
                                             float[] force) throws IOException {
-        GVRSceneObject ballObject = context.getAssetLoader().loadModel("ball.fbx");
-        List<GVRRenderData> rdatas = ballObject.getAllComponents(GVRRenderData.getComponentType());
-        GVRSceneObject ballGeometry = rdatas.get(0).getOwnerObject();
-
-        ballGeometry.getParent().removeChildObject(ballGeometry);
+        GVRContext context = ballProto.getGVRContext();
+        GVRSceneObject ballGeometry = new GVRSceneObject(context, ballProto.getRenderData().getMesh(), ballProto.getRenderData().getMaterial());
         ballGeometry.getTransform().setScale(0.7f, 0.7f, 0.7f);
         ballGeometry.getTransform().setPosition(x, y, z);
-        ballGeometry.getRenderData().setMaterial(new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID));
-        ballGeometry.getRenderData().getMaterial().setDiffuseColor(1.0f, 1.0f, 1.0f, 1.f);
 
         GVRSphereCollider sphereCollider = new GVRSphereCollider(context);
         sphereCollider.setRadius(1.0f);

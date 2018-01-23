@@ -1,4 +1,10 @@
-package org.gearvrf.gvrsimlephysics.main;
+package org.gearvrf.simplephysics.main;
+
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.simplephysics.entity.Countdown;
+import org.gearvrf.simplephysics.util.MathUtils;
+import org.gearvrf.simplephysics.R;
 
 import android.graphics.Color;
 import android.os.SystemClock;
@@ -9,28 +15,20 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRCursorController;
-import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.IActivityEvents;
-import org.gearvrf.IPickEvents;
-import org.gearvrf.ITouchEvents;
-import org.gearvrf.gvrsimlephysics.R;
-import org.gearvrf.gvrsimlephysics.entity.Countdown;
-import org.gearvrf.gvrsimlephysics.util.MathUtils;
-import org.gearvrf.gvrsimlephysics.util.VRTouchPadGestureDetector;
+
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-
 import java.io.IOException;
 
 public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisitor {
@@ -49,15 +47,16 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     private Countdown mCountDown;
     private GVRCursorController mController;
     private GVRSceneObject mCursor;
+    private GVRSceneObject mBallProto;
     private GVRContext mContext;
+    private GVRSceneObject mCurrentBall = null;
 
 
-    private GVRCursorController.ControllerEventListener mControllerThrowHandler = new GVRCursorController.ControllerEventListener()
+    private GVRCursorController.IControllerEvent mControllerThrowHandler = new GVRCursorController.IControllerEvent()
     {
         private Vector3f mStartDrag = new Vector3f(0, 0, 0);
         private Vector3f mEndDrag = new Vector3f(0, 0, 0);
         private Vector3f mTempDir = new Vector3f();
-        private GVRSceneObject mCurrentBall = null;
 
         public void onEvent(GVRCursorController controller, boolean touched)
         {
@@ -110,17 +109,20 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
             {
                 if (oldController.getControllerType() == GVRControllerType.CONTROLLER)
                 {
-                    oldController.addControllerEventListener(mControllerThrowHandler);
+                    oldController.getEventReceiver().removeListener(mControllerThrowHandler);
+                    if ((mCurrentBall != null) && (mCurrentBall.getParent() != null))
+                    {
+                        mCurrentBall.getParent().removeChildObject(mCurrentBall);
+                        mCurrentBall = null;
+                    }
                 }
             }
             mController = newController;
             if (newController.getControllerType() == GVRControllerType.CONTROLLER)
             {
-                newController.addControllerEventListener(mControllerThrowHandler);
+                newController.getEventReceiver().addListener(mControllerThrowHandler);
             }
             newController.setCursor(mCursor);
-            newController.setCursorDepth(6.0f);
-            newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
         }
     };
 
@@ -130,6 +132,8 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         mContext = gvrContext;
         mCamera = mScene.getMainCameraRig();
         mCursor = MainHelper.createGaze(gvrContext, 0.0f, 0.0f, 0.0f);
+        mBallProto = new GVRSphereSceneObject(gvrContext, true, new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID));
+
         initCamera(gvrContext, mCamera);
 
         initScene(gvrContext, mScene);
@@ -230,7 +234,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         scene.addSceneObject(MainHelper.createCylinder(context, x, y, z, drawable));
     }
 
-    public void onSwipe(VRTouchPadGestureDetector.SwipeDirection swipeDirection, float velocityX) {
+    public void onSwipe(GVRTouchPadGestureListener.Action action, float velocityX) {
 
         if (gameStopped() || (mController.getControllerType() == GVRControllerType.CONTROLLER)) {
             return;
@@ -241,7 +245,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
 
         try {
             GVRTransform trans = mCamera.getTransform();
-            GVRSceneObject ball = MainHelper.createBall(getGVRContext(),
+            GVRSceneObject ball = MainHelper.createBall(mBallProto,
                     5 * forward[0] + trans.getPositionX(),
                     5 * forward[1] + trans.getPositionY(),
                     5 * forward[2] + trans.getPositionZ(), force);
@@ -260,7 +264,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     {
         try
         {
-            GVRSceneObject ball = MainHelper.createBall(getGVRContext(),
+            GVRSceneObject ball = MainHelper.createBall(mBallProto,
                    0,0,0, new float[] { 0, 0, 0 });
             mNumBalls++;
             mBallsLabel.setText("Balls: " + (MAX_BALLS - mNumBalls));
