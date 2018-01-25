@@ -20,13 +20,12 @@ import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.resonanceaudio.GVRAudioListener;
+import org.gearvrf.resonanceaudio.GVRAudioManager;
 import org.gearvrf.resonanceaudio.GVRAudioSource;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Threads;
@@ -59,14 +58,14 @@ public final class SpatialAudioActivity extends GVRActivity
         private static final String SOUND_FILE = "cube_sound.wav";
         GVRModelSceneObject r2d2Model;
         private float modelY = -1.5f;
-        private GVRAudioListener audioListener;
+        private GVRAudioManager audioListener;
         private float time = 0f;
         private final float distance = 10;
 
         @Override
         public void onInit(GVRContext gvrContext) throws Throwable {
             GVRScene scene = gvrContext.getMainScene();
-            audioListener = new GVRAudioListener(gvrContext, scene);
+            audioListener = new GVRAudioManager(gvrContext);
 
             r2d2Model = gvrContext.getAssetLoader().loadModel("R2D2/R2D2.dae");
             r2d2Model.getTransform().setPosition(distance * (float)Math.sin(time), modelY,
@@ -74,6 +73,7 @@ public final class SpatialAudioActivity extends GVRActivity
             scene.addSceneObject(r2d2Model);
 
             final GVRAudioSource audioSource = new GVRAudioSource(gvrContext);
+            audioListener.addSource(audioSource);
             r2d2Model.attachComponent(audioSource);
 
             // add a floor
@@ -91,6 +91,7 @@ public final class SpatialAudioActivity extends GVRActivity
                         public void run() {
                             audioSource.load(SOUND_FILE);
                             audioSource.play(true);
+                            audioListener.setEnable(true);
                         }
                     });
         }

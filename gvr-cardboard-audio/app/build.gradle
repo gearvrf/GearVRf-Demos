@@ -53,8 +53,8 @@ dependencies {
         if (findProject(':ResonanceAudio')) {
             compile project(':ResonanceAudio')
         } else {
-            debugCompile(name: 'resonanceaudio-debug', ext: 'aar')
-            releaseCompile(name: 'resonanceaudio-release', ext: 'aar')
+            compile(name: 'ResonanceAudio-debug', ext: 'aar')
+            compile(name: 'ResonanceAudio-release', ext: 'aar')
         }
     } else {
         compile "org.gearvrf:resonanceaudio:$gearvrfVersion"
