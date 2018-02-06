@@ -1,4 +1,4 @@
-package org.gearvrf.gvrsimlephysics.main;
+package org.gearvrf.simplephysics.main;
 
 import android.graphics.Color;
 import android.view.Gravity;
@@ -9,13 +9,13 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.gvrsimlephysics.R;
-import org.gearvrf.gvrsimlephysics.entity.Countdown;
-import org.gearvrf.gvrsimlephysics.util.MathUtils;
-import org.gearvrf.gvrsimlephysics.util.VRTouchPadGestureDetector;
+import org.gearvrf.simplephysics.entity.Countdown;
+import org.gearvrf.simplephysics.util.MathUtils;
+import org.gearvrf.simplephysics.util.VRTouchPadGestureDetector;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.simplephysics.R;
 
 import java.io.IOException;
 

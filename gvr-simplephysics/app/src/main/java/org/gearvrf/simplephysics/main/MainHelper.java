@@ -1,4 +1,4 @@
-package org.gearvrf.gvrsimlephysics.main;
+package org.gearvrf.simplephysics.main;
 
 import android.graphics.Color;
 import android.view.Gravity;
@@ -15,11 +15,11 @@ import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.gvrsimlephysics.R;
 import org.gearvrf.physics.GVRCollisionMatrix;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.simplephysics.R;
 
 import java.io.IOException;
 import java.util.concurrent.Future;
