@@ -1,10 +1,10 @@
-package org.gearvrf.gvrsimlephysics.main;
+package org.gearvrf.simplephysics.main;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.gvrsimlephysics.util.VRTouchPadGestureDetector;
+import org.gearvrf.simplephysics.util.VRTouchPadGestureDetector;
 
 public class MainActivity extends GVRActivity implements VRTouchPadGestureDetector.OnTouchPadGestureListener {
 

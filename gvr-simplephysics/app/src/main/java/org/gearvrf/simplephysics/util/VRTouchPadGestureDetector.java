@@ -24,7 +24,7 @@ limitations under the License.
 
  *************************************************************************************/
 
-package org.gearvrf.gvrsimlephysics.util;
+package org.gearvrf.simplephysics.util;
 
 import android.content.Context;
 import android.os.Handler;
