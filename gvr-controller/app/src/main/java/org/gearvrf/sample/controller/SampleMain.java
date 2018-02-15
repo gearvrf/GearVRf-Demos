@@ -14,14 +14,12 @@
  */
 package org.gearvrf.sample.controller;
 
-import java.io.IOException;
-import java.util.EnumSet;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMaterial.GVRShaderType;
@@ -31,15 +29,17 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ITouchEvents;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
-
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
+
+import java.io.IOException;
+import java.util.EnumSet;
 
 public class SampleMain extends GVRMain
 {
@@ -265,12 +265,6 @@ public class SampleMain extends GVRMain
 
         public void onMotionOutside(GVRPicker p, MotionEvent e) { }
     };
-
-    @Override
-    public void onStep()
-    {
-
-    }
 
     private GVRSceneObject getColorBoard()
     {
