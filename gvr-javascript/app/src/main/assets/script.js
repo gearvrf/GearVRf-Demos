@@ -21,7 +21,7 @@ function onInit(gvrf) {
   textView.getTransform().setPosition(0, 0, -100);
   textView.getTransform().setScale(50, 50, 50);
 
-  var textSensor = new GVRBaseSensor(gvrf);
+  var textSensor = new GVRSensor(gvrf);
 
   textView.attachComponent(textSensor);
   var script = new GVRScriptBehavior(gvrf, "text.js");
