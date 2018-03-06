@@ -16,68 +16,65 @@
 package org.gearvrf.sample.gvrcardboardaudio;
 
 import android.os.Bundle;
-
-import com.google.vr.sdk.audio.GvrAudioEngine;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.resonanceaudio.GVRAudioManager;
+import org.gearvrf.resonanceaudio.GVRAudioSource;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Threads;
 
 public final class SpatialAudioActivity extends GVRActivity
 {
-    private GvrAudioEngine cardboardAudioEngine;
+    private SpatialAudioMain mMain;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
-        cardboardAudioEngine = new GvrAudioEngine(this, GvrAudioEngine.RenderingMode.BINAURAL_HIGH_QUALITY);
-        setMain(new SpatialAudioMain(cardboardAudioEngine), "gvr.xml");
+        mMain = new SpatialAudioMain();
+
+        setMain(mMain, "gvr.xml");
     }
 
     @Override
-    public void onPause() {
-        cardboardAudioEngine.pause();
-        super.onPause();
-    }
+    public boolean onTouchEvent(MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            mMain.toggleListener();
+        }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        cardboardAudioEngine.resume();
+        return super.onTouchEvent(event);
     }
-
 
     private static final class SpatialAudioMain extends GVRMain
     {
-        private GVRCameraRig cameraRig;
         private static final String SOUND_FILE = "cube_sound.wav";
-        private GvrAudioEngine audioEngine;
-        private volatile int soundId = GvrAudioEngine.INVALID_ID;
-        private float modelX = 0.0f;
+        GVRModelSceneObject r2d2Model;
         private float modelY = -1.5f;
-        private float modelZ = -9.0f;
-
-        public SpatialAudioMain(GvrAudioEngine audioEngine) {
-            this.audioEngine = audioEngine;
-        }
+        private GVRAudioManager audioListener;
+        private float time = 0f;
+        private final float distance = 10;
 
         @Override
         public void onInit(GVRContext gvrContext) throws Throwable {
             GVRScene scene = gvrContext.getMainScene();
-            cameraRig = scene.getMainCameraRig();
+            audioListener = new GVRAudioManager(gvrContext);
 
-            GVRModelSceneObject r2d2Model = gvrContext.getAssetLoader().loadModel("R2D2/R2D2.dae");
-            r2d2Model.getTransform().setPosition(modelX, modelY, modelZ);
+            r2d2Model = gvrContext.getAssetLoader().loadModel("R2D2/R2D2.dae");
+            r2d2Model.getTransform().setPosition(distance * (float)Math.sin(time), modelY,
+                    distance * (float)Math.cos(time));
             scene.addSceneObject(r2d2Model);
+
+            final GVRAudioSource audioSource = new GVRAudioSource(gvrContext);
+            audioListener.addSource(audioSource);
+            r2d2Model.attachComponent(audioSource);
 
             // add a floor
             final GVRTexture texture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.floor));
@@ -92,37 +89,27 @@ public final class SpatialAudioActivity extends GVRActivity
             Threads.spawn(
                     new Runnable() {
                         public void run() {
-                            // Start spatial audio playback of SOUND_FILE at the model postion. The returned
-                            //soundId handle is stored and allows for repositioning the sound object whenever
-                            // the cube position changes.
-                            audioEngine.preloadSoundFile(SOUND_FILE);
-                            soundId = audioEngine.createSoundObject(SOUND_FILE);
-                            audioEngine.setSoundObjectPosition(soundId, modelX, modelY, modelZ);
-                            audioEngine.playSound(soundId, true /* looped playback */);
+                            audioSource.load(SOUND_FILE);
+                            audioSource.play(true);
+                            audioListener.setEnable(true);
                         }
                     });
-
-            updateModelPosition();
         }
 
-        private void updateModelPosition() {
-            // Update the sound location to match it with the new cube position.
-            if (soundId != GvrAudioEngine.INVALID_ID) {
-                audioEngine.setSoundObjectPosition(soundId, modelX, modelY, modelZ);
+        public void toggleListener() {
+            if (audioListener != null) {
+                audioListener.setEnable(!audioListener.isEnabled());
             }
         }
 
         @Override
         public void onStep() {
-            // Update the 3d audio engine with the most recent head rotation.
-            float headX = cameraRig.getHeadTransform().getRotationX();
-            float headY = cameraRig.getHeadTransform().getRotationY();
-            float headZ = cameraRig.getHeadTransform().getRotationZ();
-            float headW = cameraRig.getHeadTransform().getRotationW();
-            audioEngine.setHeadRotation(headX, headY, headZ, headW);
+            if (r2d2Model != null) {
+                time += 0.016f;
 
-            // update audio position if need be
-            updateModelPosition();
+                r2d2Model.getTransform().setPosition(distance * (float) Math.sin(time), modelY,
+                        distance * (float) Math.cos(time));
+            }
         }
     }
 

@@ -17,27 +17,58 @@ package org.gearvrf.modelviewer2;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.io.GVRTouchPadGestureDetector;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.utility.Log;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 
-public class ModelViewer2Activity extends GVRActivity implements
-        GVRTouchPadGestureDetector.OnTouchPadGestureListener {
-
-    private GVRWidgetPlugin mPlugin;
-    private GVRTouchPadGestureDetector mDetector = null;
-    private ModelViewer2Manager mManager = null;
+public class ModelViewer2Activity extends GVRActivity
+{
     MyMenu mWidget;
+    private GVRWidgetPlugin mPlugin;
+    private GestureDetector mDetector = null;
+    private ModelViewer2Manager mManager = null;
+
+    private GVRTouchPadGestureListener swipeListener = new GVRTouchPadGestureListener()
+    {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e)
+        {
+            Log.i(TAG, "onSingleTap");
+            mManager.onSingleTap(e);
+            return false;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e)
+        {
+            Log.i(TAG, "onLongPress");
+        }
+
+        @Override
+        public boolean onSwipe(MotionEvent e, Action action, float vx, float vy)
+        {
+            Log.i(TAG, "onSwipe");
+            mManager.onSwipe(e, action, vx, vy);
+            return false;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3)
+        {
+            mManager.onScroll(arg0, arg1, arg2, arg3);
+            return false;
+        }
+    };
 
     @Override
-    protected void onCreate(Bundle icicle) {
+    protected void onCreate(Bundle icicle)
+    {
         super.onCreate(icicle);
-
-        mDetector = new GVRTouchPadGestureDetector(this);
-
+        mDetector = new GestureDetector(getBaseContext(), swipeListener);
         mWidget = new MyMenu();
         mPlugin = new GVRWidgetPlugin(this, mWidget);
 
@@ -53,41 +84,19 @@ public class ModelViewer2Activity extends GVRActivity implements
         setMain(mManager, "gvr.xml");
     }
 
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
-        Log.i(TAG, "onSingleTap");
-        mManager.onSingleTap(e);
-        return false;
-    }
 
     @Override
-    public void onLongPress(MotionEvent e) {
-        Log.i(TAG, "onLongPress");
-    }
-
-    @Override
-    public boolean onSwipe(MotionEvent e, GVRTouchPadGestureDetector.SwipeDirection swipeDirection,
-                           float velocityX, float velocityY) {
-        Log.i(TAG, "onSwipe");
-        mManager.onSwipe(e, swipeDirection, velocityX, velocityY);
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent arg0, MotionEvent arg1, float arg2, float arg3) {
-        mManager.onScroll(arg0, arg1, arg2, arg3);
-        return false;
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
+    public boolean dispatchTouchEvent(MotionEvent event)
+    {
         if (mPlugin.getWidgetView() == null)
             return false;
         return mPlugin.dispatchTouchEvent(event);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public boolean onTouchEvent(MotionEvent event)
+    {
         return mDetector.onTouchEvent(event);
     }
 }
+

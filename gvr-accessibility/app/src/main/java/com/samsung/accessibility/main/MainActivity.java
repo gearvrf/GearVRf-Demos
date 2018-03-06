@@ -11,19 +11,15 @@
 package com.samsung.accessibility.main;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 
-import com.samsung.accessibility.R;
-import com.samsung.accessibility.focus.VRTouchPadGestureDetector;
-import com.samsung.accessibility.focus.VRTouchPadGestureDetector.SwipeDirection;
-
-public class MainActivity extends GVRActivity implements
-        VRTouchPadGestureDetector.OnTouchPadGestureListener
+public class MainActivity extends GVRActivity
 {
 
     private static final int BUTTON_INTERVAL = 500;
@@ -31,13 +27,24 @@ public class MainActivity extends GVRActivity implements
     private long mLatestButton = 0;
     private long mLatestTap = 0;
     private Main mMain = null;
-    private VRTouchPadGestureDetector mDetector = null;
-
+    private GestureDetector mDetector = null;
+    private GVRTouchPadGestureListener swipeListener = new GVRTouchPadGestureListener()
+    {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.d(MainActivity.class.getSimpleName(), "onSingleTap");
+            if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
+                mLatestTap = System.currentTimeMillis();
+                mMain.onSingleTap(e);
+            }
+            return false;
+        }
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMain = new Main();
-        mDetector = new VRTouchPadGestureDetector(this);
+        mDetector = new GestureDetector(getBaseContext(), swipeListener);
         setMain(mMain, "gvr.xml");
     }
 
@@ -60,29 +67,6 @@ public class MainActivity extends GVRActivity implements
     public boolean onTouchEvent(MotionEvent event) {
         mDetector.onTouchEvent(event);
         return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
-        Log.d(MainActivity.class.getSimpleName(), "onSingleTap");
-        if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-            mLatestTap = System.currentTimeMillis();
-            mMain.onSingleTap(e);
-        }
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-        Log.d(MainActivity.class.getSimpleName(), "onLongPress");
-    }
-
-    @Override
-    public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-            float velocityX, float velocityY) {
-        Log.d(MainActivity.class.getSimpleName(), "onSwipe");
-
-        return false;
     }
 
 }

@@ -93,10 +93,10 @@ public class MyGdxWidget extends GVRWidget {
                 mNextButton = button;
                 button.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
-                        Log.d("TOUCH", "click " + x + ", " + y);
-
                         mMain.ThumbnailSelected = (mMain.ThumbnailSelected + 1) % 5;
+                        mMain.selectObject();
                         mNextButton.setChecked(false);
+                        mPreviousButton.setChecked(false);
                     }
                 });
             } else if (i == 1) {
@@ -105,8 +105,9 @@ public class MyGdxWidget extends GVRWidget {
                 mPreviousButton = button;
                 button.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
-                        Log.d("TOUCH", "click " + x + ", " + y);
                         mMain.ThumbnailSelected = (mMain.ThumbnailSelected + 4) % 5;
+                        mMain.selectObject();
+                        mNextButton.setChecked(false);
                         mPreviousButton.setChecked(false);
                     }
                 });
@@ -125,9 +126,7 @@ public class MyGdxWidget extends GVRWidget {
                         mMain.mTexColor = selectBox.getSelectedIndex() + 1;
                     }
                 });
-                selectBox
-                        .setItems("Maroon", "Black", "Blue", "Green", "Silver");
-
+                selectBox.setItems("Maroon", "Black", "Blue", "Green", "Silver");
                 selectBox.setSelected("Maroon");
                 selectBox.setVisible(false);
                 selectBox.setName("colorbutton");
@@ -197,7 +196,6 @@ public class MyGdxWidget extends GVRWidget {
         mLookInsideButton = button;
         button.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-
                 mMain.mLookInside = true;
                 mLookInsideButton.setChecked(false);
                 mLookInsideButton.toggle();
@@ -278,9 +276,7 @@ public class MyGdxWidget extends GVRWidget {
             ((Slider) ySlider).setValue(0);
             ((Slider) zSlider).setValue(0);
             mMain.mResetRotate = true;
-            for (int i = 0; i < 5; i++)
-                mMain.Objects[i].getTransform().setRotationByAxis(0.0f, 0.0f,
-                        0.0f, 0.0f);
+            mMain.mObjectRot.getTransform().setRotation(1, 0, 0, 0);
             mResetSlider = false;
         }
         if (mMain.ThumbnailSelected == 1 || mMain.ThumbnailSelected == 3) {

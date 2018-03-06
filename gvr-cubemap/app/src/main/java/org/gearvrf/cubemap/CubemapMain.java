@@ -47,7 +47,7 @@ public final class CubemapMain extends GVRMain {
 
     // Type of object for the environment
     // 0: surrounding sphere using GVRSphereSceneObject
-    // 1: surrounding cube using GVRCubeSceneObject and 1 GVRCubemapTexture
+    // 1: surrounding cube using GVRCubeSceneObject and 1 GVRCubemapImage
     //    (method A)
     // 2: surrounding cube using GVRCubeSceneObject and compressed ETC2 textures
     //    (method B, best performance)

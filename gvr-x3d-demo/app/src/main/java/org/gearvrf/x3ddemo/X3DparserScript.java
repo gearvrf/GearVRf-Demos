@@ -21,16 +21,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.GVRLight;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRDirectLight;
 
-import org.gearvrf.GVRLightBase;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRShader;
 import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
@@ -93,8 +91,8 @@ public class X3DparserScript extends GVRMain
       // directionalLight. Thus attach a dirLight to the main camera
       if (GVRShader.isVulkanInstance()) // remove light on Vulkan
       {
-        List<GVRLightBase> lights = model.getAllComponents(GVRLightBase.getComponentType());
-        for (GVRLightBase l : lights)
+        List<GVRLight> lights = model.getAllComponents(GVRLight.getComponentType());
+        for (GVRLight l : lights)
         {
           GVRSceneObject owner = l.getOwnerObject();
           owner.getParent().removeChildObject(owner);

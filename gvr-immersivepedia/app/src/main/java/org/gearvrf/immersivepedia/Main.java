@@ -16,9 +16,8 @@
 package org.gearvrf.immersivepedia;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVREventListeners;
-import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.IActivityEvents;
@@ -29,9 +28,7 @@ import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
-import org.gearvrf.io.GVRControllerType;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.io.GearCursorController;
 
 import android.media.MediaPlayer;
 import android.view.MotionEvent;
@@ -96,10 +93,7 @@ public class Main extends GVRMain {
                     newController.setCursor(cursor.getCursor());
                 }
                 mController = newController;
-                newController.sendEventsToActivity(true);
                 newController.addPickEventListener(pickHandler);
-                newController.setCursorDepth(10.0f);
-                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
             }
         });
     }

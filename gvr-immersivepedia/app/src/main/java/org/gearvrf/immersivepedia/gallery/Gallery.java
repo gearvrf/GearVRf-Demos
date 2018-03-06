@@ -30,7 +30,7 @@ import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener.Action;
 import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
@@ -381,11 +381,11 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
     public void process() {
 
-        if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Up) {
+        if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeUp) {
             if (this.checkIfThereIsAnyPhotoWIthStatus(PhotoView.PHOTO_VIEW_OPENED) == false)
                 scrollUp(true);
         }
-        if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Down) {
+        if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeDown) {
             if (this.checkIfThereIsAnyPhotoWIthStatus(PhotoView.PHOTO_VIEW_OPENED) == false)
                 scrollDown(true);
         }

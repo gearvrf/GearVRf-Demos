@@ -17,28 +17,41 @@ package org.gearvrf.widgetViewer;
 
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.io.GVRTouchPadGestureDetector;
+import org.gearvrf.io.GVRTouchPadGestureListener;
+import org.gearvrf.utility.Log;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 
-public class GVRWidgetViewer extends GVRActivity implements
-        GVRTouchPadGestureDetector.OnTouchPadGestureListener {
-
+public class GVRWidgetViewer extends GVRActivity
+{
     private GVRWidgetPlugin mPlugin;
     private static final int BUTTON_INTERVAL = 500;
     private static final int TAP_INTERVAL = 300;
     private long mLatestButton = 0;
     private long mLatestTap = 0;
     private ViewerMain mMain = null;
-    private GVRTouchPadGestureDetector mDetector = null;
+    private GestureDetector mDetector = null;
     public MyGdxWidget mWidget;
     float mYangle = 0.0f;
     boolean mMovestart = false;
     float mMoveoffset = 0.0f;
+
+    private GVRTouchPadGestureListener mSwipeListener = new GVRTouchPadGestureListener()
+    {
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.v("TOUCH", "onSingleTap");
+            if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
+                mLatestTap = System.currentTimeMillis();
+                mMain.onSingleTap(e);
+            }
+            return false;
+        }
+    };
 
     // GVRWidgetPlugin mPlugin;
     @Override
@@ -52,7 +65,7 @@ public class GVRWidgetViewer extends GVRActivity implements
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         mPlugin.setViewSize(displaymetrics.widthPixels,
                 displaymetrics.heightPixels);
-        mDetector = new GVRTouchPadGestureDetector(this);
+        mDetector = new GestureDetector(getBaseContext(), mSwipeListener);
 
         mMain = new ViewerMain(mPlugin);
         mPlugin.setMain(mMain);
@@ -114,32 +127,10 @@ public class GVRWidgetViewer extends GVRActivity implements
                 } else {
                     mMain.mRotateY = (dx / 2 + mYangle - mMoveoffset) % 360;
                 }
+                Log.d("NOLA", "onTouchEvent rotateY = %f", mMain.mRotateY);
             }
         }
         return true;
-    }
-
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float dx, float dy) { return false; }
-
-    @Override
-    public boolean onSingleTap(MotionEvent e) {
-        Log.v("TOUCH", "onSingleTap");
-        if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-            mLatestTap = System.currentTimeMillis();
-            mMain.onSingleTap(e);
-        }
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-        Log.v("TOUCH", "onLongPress");
-    }
-
-    @Override
-    public boolean onSwipe(MotionEvent e, GVRTouchPadGestureDetector.SwipeDirection swipeDirection,
-                           float velocityX, float velocityY) {
-        return false;
     }
 
 }

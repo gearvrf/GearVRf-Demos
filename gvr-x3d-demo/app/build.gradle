@@ -9,6 +9,19 @@ else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
+dependencies {
+    if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        if (findProject(':x3d')) {
+            compile project(':x3d')
+        } else {
+            debugCompile(name: 'x3d-debug', ext: 'aar')
+            releaseCompile(name: 'x3d-release', ext: 'aar')
+        }
+    } else {
+        compile "org.gearvrf:x3d:$gearvrfVersion"
+    }
+}
+
 android {
     buildTypes {
         release {

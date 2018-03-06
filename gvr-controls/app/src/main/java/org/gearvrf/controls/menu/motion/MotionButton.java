@@ -28,7 +28,7 @@ import android.graphics.Typeface;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -92,7 +92,7 @@ public class MotionButton extends MenuControlSceneObject {
         Text text = new Text(title, Align.LEFT, 3.5f, Color.parseColor("#ffffff"), Color.parseColor("#00000000"), 45);
         String font = "fonts/samsung-if-bold.ttf";
         GVRMaterial material = getRenderData().getMaterial();
-        GVRBitmapTexture bitmapIdle = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapIdle = new GVRBitmapImage(getGVRContext());
 
         bitmapIdle.setFileName("motion_idle");
         bitmapIdle.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
@@ -104,7 +104,7 @@ public class MotionButton extends MenuControlSceneObject {
 
         text.textSize = 4.3f;
 
-        GVRBitmapTexture bitmapHover = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapHover = new GVRBitmapImage(getGVRContext());
         bitmapHover.setFileName("motion_hover");
         bitmapHover.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         material.setTexture(ButtonShader.STATE2_BACKGROUND_TEXTURE,
@@ -114,7 +114,7 @@ public class MotionButton extends MenuControlSceneObject {
         material.setTexture(ButtonShader.STATE2_TEXT_TEXTURE, tex2);
 
         text.textColor = 0xfff8DF35;
-        GVRBitmapTexture bitmapSelected = new GVRBitmapTexture(getGVRContext());
+        GVRBitmapImage bitmapSelected = new GVRBitmapImage(getGVRContext());
         bitmapSelected.setFileName("motion_selected");
         bitmapSelected.setBitmap(create(getGVRContext().getContext(), WIDTH, HEIGHT, text, font));
         material.setTexture(ButtonShader.STATE3_BACKGROUND_TEXTURE,

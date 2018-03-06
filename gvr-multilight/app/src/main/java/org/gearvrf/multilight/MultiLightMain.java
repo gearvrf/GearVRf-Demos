@@ -16,13 +16,10 @@
 package org.gearvrf.multilight;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;

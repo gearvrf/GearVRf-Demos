@@ -15,12 +15,10 @@
 
 package org.gearvrf.keyboard.textField;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.keyboard.R;
 import org.gearvrf.keyboard.model.CharItem;
 import org.gearvrf.keyboard.util.GVRTextBitmapFactory;
 import org.gearvrf.keyboard.util.SceneObjectNames;
@@ -51,7 +49,7 @@ public class TextFieldItem extends GVRSceneObject {
     }
 
     public void updateText(GVRContext context) {
-        GVRBitmapTexture tex = new GVRBitmapTexture(context, GVRTextBitmapFactory.create(
+        GVRBitmapImage tex = new GVRBitmapImage(context, GVRTextBitmapFactory.create(
                 context.getContext(), width, height, currentText, 0));
         GVRTexture texture = new GVRTexture(getGVRContext());
         texture.setImage(tex);

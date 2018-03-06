@@ -21,7 +21,7 @@ import org.gearvrf.controls.cursor.ControlGazeController;
 import org.gearvrf.controls.input.GamepadInput;
 import org.gearvrf.controls.input.GamepadMap;
 import org.gearvrf.controls.input.TouchPadInput;
-import org.gearvrf.controls.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 import java.util.ArrayList;
 
@@ -149,7 +149,7 @@ public class ControlSceneObjectBehavior {
             if (TouchPadInput.getCurrent().buttonState.isPressed()) {
                 object.touchAndGesturelistener.pressed();
             }
-            if (TouchPadInput.getCurrent().swipeDirection != SwipeDirection.Ignore) {
+            if (TouchPadInput.getCurrent().swipeDirection != GVRTouchPadGestureListener.Action.None) {
                 object.touchAndGesturelistener.swipe(TouchPadInput.getCurrent().swipeDirection);
             }
         }

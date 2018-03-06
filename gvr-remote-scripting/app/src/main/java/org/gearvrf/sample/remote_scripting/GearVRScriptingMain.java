@@ -67,16 +67,15 @@ public class GearVRScriptingMain extends GVRMain
 
         // add it to the scene
         scene.addSceneObject(textViewSceneObject);
+        context.getInputManager().selectController();
 
         // Add display utils for scripts
         GVRScriptManager scriptManager = gvrContext.getScriptManager();
         scriptManager.addVariable("display", new DisplayUtils(gvrContext));
-        scriptManager.addVariable("cursor", new CursorUtils(gvrContext));
         scriptManager.addVariable("editor", new EditorUtils(gvrContext));
         scriptManager.addVariable("passthrough", new PassthroughUtils(gvrContext, activity));
         scriptManager.addVariable("filebrowser", new FileBrowserUtils(gvrContext));
         scriptManager.addVariable("source", new SourceUtils(gvrContext));
-        gvrContext.getInputManager().selectController();
         gvrContext.startDebugServer();
         server = new DebugWebServer(gvrContext);
         server.listen(DEBUG_SERVER_PORT);

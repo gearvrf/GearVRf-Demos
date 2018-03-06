@@ -17,25 +17,41 @@ package org.gearvrf.immersivepedia;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector;
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.OnTouchPadGestureListener;
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-public class MainActivity extends GVRActivity implements
-		VRTouchPadGestureDetector.OnTouchPadGestureListener {
-
+public class MainActivity extends GVRActivity
+{
 	private Main main;
-	private VRTouchPadGestureDetector touchPadGestureDetector;
+	private GestureDetector touchPadGestureDetector;
+	private GVRTouchPadGestureListener swipeListener = new GVRTouchPadGestureListener()
+	{
+		@Override
+		public boolean onSingleTapUp(MotionEvent e)
+		{
+
+			main.onSingleTapConfirmed();
+			return false;
+		}
+
+		@Override
+		public boolean onSwipe(MotionEvent e, Action action, float vx, float vy)
+		{
+			TouchPadInput.onSwipe(action);
+			main.onSwipe();
+			return false;
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		main = new Main();
-		touchPadGestureDetector = new VRTouchPadGestureDetector(this);
+		touchPadGestureDetector = new GestureDetector(getBaseContext(), swipeListener);
 		setMain(main, "gvr.xml");
 	}
 
@@ -46,25 +62,6 @@ public class MainActivity extends GVRActivity implements
 		return super.onTouchEvent(event);
 	}
 
-	@Override
-	public boolean onSingleTap(MotionEvent e) {
-
-		main.onSingleTapConfirmed();
-		return false;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-
-	}
-
-	@Override
-	public boolean onSwipe(MotionEvent e, SwipeDirection swipeDirection,
-			float velocityX, float velocityY) {
-		TouchPadInput.onSwipe(swipeDirection);
-		main.onSwipe();
-		return false;
-	}
 
 	@Override
 	protected void onResume() {

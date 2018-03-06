@@ -21,7 +21,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener.Action;
 import org.gearvrf.utility.Log;
 
 public class FocusableSceneObject extends GVRSceneObject {
@@ -108,20 +108,19 @@ public class FocusableSceneObject extends GVRSceneObject {
         return focus;
     }
 
-    public void dispatchInGesture(SwipeDirection swipeDirection) {
+    public void dispatchInGesture(Action swipeDirection) {
         if (this.onGestureListener != null) {
 
-            if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Ignore)
+            if (TouchPadInput.getCurrent().swipeDirection == Action.None)
                 onGestureListener.onSwipeIgnore();
-            else if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Forward)
+            else if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeForward)
                 onGestureListener.onSwipeForward();
-            else if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Backward)
+            else if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeBackward)
                 onGestureListener.onSwipeBack();
-            else if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Up)
+            else if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeUp)
                 onGestureListener.onSwipeUp();
-            else
+            else if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeDown)
                 onGestureListener.onSwipeDown();
-
         }
     }
 }

@@ -17,14 +17,12 @@ package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
 
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
-import org.gearvrf.GVRBaseSensor;
+import org.gearvrf.GVRSensor;
 import org.gearvrf.SensorEvent;
 import org.gearvrf.ISensorEvents;
 
-import org.gearvrf.GVRContext;
 import org.gearvrf.debug.cli.LineProcessor;
 import org.gearvrf.script.GVRScriptManager;
 
@@ -36,20 +34,16 @@ import javax.script.ScriptException;
 import java.lang.Runnable;
 import java.util.List;
 
-import android.graphics.Point;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
-import android.view.Display;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.MotionEvent.PointerCoords;
 import android.view.MotionEvent.PointerProperties;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.text.Editable;
@@ -172,7 +166,7 @@ public class EditorUtils {
         frameWidth = frameLayout.getWidth();
         frameHeight = frameLayout.getHeight();
 
-        GVRBaseSensor sensor = new GVRBaseSensor(gvrContext);
+        GVRSensor sensor = new GVRSensor(gvrContext);
         layoutSceneObject.getEventReceiver().addListener(sensorEvents);
         //@todo broken functionality
         //layoutSceneObject.setSensor(sensor);

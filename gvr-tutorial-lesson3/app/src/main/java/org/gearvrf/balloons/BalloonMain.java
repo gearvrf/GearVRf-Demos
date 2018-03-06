@@ -15,13 +15,10 @@
 
 package org.gearvrf.balloons;
 
-import org.gearvrf.FutureWrapper;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRPhongShader;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRMain;
@@ -35,8 +32,6 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.IPickEvents;
 import org.gearvrf.GVRPicker.GVRPickedObject;
-
-import java.util.concurrent.Future;
 
 public class BalloonMain extends GVRMain {
 

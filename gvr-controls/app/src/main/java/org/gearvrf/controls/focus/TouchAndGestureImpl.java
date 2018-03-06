@@ -15,7 +15,7 @@
 
 package org.gearvrf.controls.focus;
 
-import org.gearvrf.controls.util.VRSamplesTouchPadGesturesDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class TouchAndGestureImpl implements TouchAndGesture {
 
@@ -35,5 +35,5 @@ public class TouchAndGestureImpl implements TouchAndGesture {
     public void longPressed() {}
 
     @Override
-    public void swipe(SwipeDirection swipeDirection) {}
+    public void swipe(GVRTouchPadGestureListener.Action swipeDirection) {}
 }

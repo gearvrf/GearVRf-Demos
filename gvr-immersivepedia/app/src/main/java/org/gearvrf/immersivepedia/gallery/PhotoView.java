@@ -31,7 +31,7 @@ import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
-import org.gearvrf.immersivepedia.util.VRTouchPadGestureDetector.SwipeDirection;
+import org.gearvrf.io.GVRTouchPadGestureListener.Action;
 
 public class PhotoView extends FocusableSceneObject implements FocusListener {
 
@@ -326,7 +326,7 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
         }
 
         if (TouchPadInput.getCurrent().buttonState.isUp()
-                && (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Ignore)
+                && (TouchPadInput.getCurrent().swipeDirection == Action.None)
                 && (this.currentState == PHOTO_VIEW_CLOSED && this.getRenderData().getMaterial()
                         .getOpacity() > (PHOTO_VIEW_OPACITY_VISIBLE / 2.0f))) {
             if (this.PhotoItemListener != null
@@ -337,7 +337,7 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
 
         }
         else if (TouchPadInput.getCurrent().buttonState.isUp()
-                && (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Ignore)
+                && (TouchPadInput.getCurrent().swipeDirection == Action.None)
                 && (this.currentState == PHOTO_VIEW_OPENED)) {
             if (this.PhotoItemListener != null
                     && this.PhotoItemListener.shouldCloseItem(this) == true) {
@@ -346,13 +346,13 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
             }
         }
 
-        if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Forward
+        if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeForward
                 && (this.currentState == PHOTO_VIEW_OPENED)) {
             this.closeActionWithFadeAnimation(PHOTO_VIEW_ANIMATION_LEFT_TO_RIGHT);
             if (this.PhotoItemListener != null)
                 this.PhotoItemListener.itemSwipedToRight(this);
         }
-        if (TouchPadInput.getCurrent().swipeDirection == SwipeDirection.Backward
+        if (TouchPadInput.getCurrent().swipeDirection == Action.SwipeBackward
                 && (this.currentState == PHOTO_VIEW_OPENED)) {
             this.closeActionWithFadeAnimation(PHOTO_VIEW_ANIMATION_RIGHT_TO_LEFT);
             if (this.PhotoItemListener != null)

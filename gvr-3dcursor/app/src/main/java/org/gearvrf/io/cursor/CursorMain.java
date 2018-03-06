@@ -27,9 +27,9 @@ import com.gearvrf.io.gearwear.GearWearableDevice;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRBitmapTexture;
+import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -42,7 +42,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.ZipLoader;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.io.cursor3d.Cursor;
-import org.gearvrf.io.cursor3d.CursorActivationListener;
+import org.gearvrf.io.cursor3d.ICursorActivationListener;
 import org.gearvrf.io.cursor3d.CursorManager;
 import org.gearvrf.io.cursor3d.CursorTheme;
 import org.gearvrf.io.cursor3d.CursorType;
@@ -56,7 +56,6 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -408,7 +407,7 @@ public class CursorMain extends GVRMain {
         mainScene.addSceneObject(settingsText);
 
         cursors = new ArrayList<Cursor>();
-        cursorManager.addCursorActivationListener(activationListener);
+        cursorManager.getEventReceiver().addListener(activationListener);
 
         // register all active cursors
         for(Cursor cursor : cursorManager.getActiveCursors()){
@@ -536,7 +535,7 @@ public class CursorMain extends GVRMain {
         });
     }
 
-    private CursorActivationListener activationListener = new CursorActivationListener() {
+    private ICursorActivationListener activationListener = new ICursorActivationListener() {
 
         @Override
         public void onDeactivated(Cursor cursor) {
@@ -721,7 +720,7 @@ public class CursorMain extends GVRMain {
 
             if (c.getCursorType() == CursorType.LASER) ;
             {
-                currentCursor.setEnable(false);
+                currentCursor.deactivate();
             }
 
             List<Cursor> activeCursors;
@@ -780,13 +779,13 @@ public class CursorMain extends GVRMain {
         private void enablePointCursors(List<Cursor> cursors) {
             for (Cursor cursor : cursors) {
                 if (cursor.getCursorType() == CursorType.OBJECT) {
-                    cursor.setEnable(true);
+                    cursor.activate();
                     if (cursor.getIoDevice() == currentIoDevice) {
                         currentIoDeviceUsed = true;
                     }
                     handCursors.add(cursor);
                 } else if (cursor.getCursorType() == CursorType.LASER) {
-                    cursor.setEnable(false);
+                    cursor.deactivate();
                 }
             }
         }
@@ -801,75 +800,13 @@ public class CursorMain extends GVRMain {
 
         @Override
         public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit) {
-            Cursor currentCursor = c;
-            Cursor otherCursor = null, laserCursor = null;
-            if (currentCursor.getCursorType() == CursorType.LASER) {
+            Cursor laserCursor = cursorManager.findCursorByType(CursorType.LASER);
+
+            if ((laserCursor == null) || c.getCursorType().equals(CursorType.LASER))
+            {
                 return;
             }
-
-            IoDevice targetIoDevice = c.getIoDevice();
-            List<Cursor> enabledCursors = cursorManager.getActiveCursors();
-            for(Cursor inactiveCursor:cursorManager.getInactiveCursors()) {
-                if(inactiveCursor.isEnabled()) {
-                    enabledCursors.add(inactiveCursor);
-                }
-            }
-
-            for (Cursor cursor : enabledCursors) {
-                if (cursor.getCursorType() == CursorType.OBJECT && cursor.getIoDevice() == null) {
-                    otherCursor = cursor;
-                } else if (cursor.getCursorType() == CursorType.LASER) {
-                    laserCursor = cursor;
-                }
-            }
-
-            if (laserCursor == null) {
-                for (Cursor cursor : cursorManager.getInactiveCursors()) {
-                    if (cursor.getCursorType() == CursorType.LASER) {
-                        laserCursor = cursor;
-                        break;
-                    }
-                }
-                if (laserCursor == null) {
-                    Log.d(TAG, "No Laser cursor found");
-                    return;
-                }
-            }
-
-            if (!laserCursor.getCompatibleIoDevices().contains(targetIoDevice)) {
-                Log.d(TAG, "Target IoDevice is not compatible with the laser cursor");
-                return;
-            }
-
-            if (otherCursor != null) {
-                otherCursor.setEnable(false);
-            }
-            currentCursor.setEnable(false);
-            if (!laserCursor.isEnabled()) {
-                laserCursor.setEnable(true);
-            }
-
-            if (laserCursor.getIoDevice() == targetIoDevice) {
-                return;
-            }
-
-            if (!laserCursor.getAvailableIoDevices().contains(targetIoDevice)) {
-                Log.d(TAG, "IoDevice not available in for the laser cursor");
-                currentCursor.setEnable(true);
-                if (otherCursor != null) {
-                    otherCursor.setEnable(true);
-                }
-                return;
-            }
-
-            try {
-                laserCursor.attachIoDevice(targetIoDevice);
-            } catch (IOException e) {
-                Log.e(TAG, "IO Device " + targetIoDevice.getName() + "cannot be attached");
-            }
-            if (otherCursor != null) {
-                otherCursor.setEnable(true);
-            }
+            cursorManager.replaceCursor(laserCursor, c);
         }
     }
 
@@ -883,58 +820,28 @@ public class CursorMain extends GVRMain {
         }
 
         @Override
-        public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit) {
+        public void onTouchEnd(Cursor c, GVRPicker.GVRPickedObject hit)
+        {
             Cursor currentCursor = c;
-            Cursor targetCursor = null;
-            CursorTheme crystalTheme = null;
-            setOffsetPositionFromCursor(cursorPosition, currentCursor);
+            Cursor targetCursor = cursorManager.findCursorByDevice(gearWearableDevice);
 
-            for (CursorTheme theme : cursorManager.getCursorThemes()) {
-                if (theme.getId().equals(CRYSTAL_THEME)) {
-                    crystalTheme = theme;
-                }
-            }
-
-            if (currentCursor.getIoDevice().equals(gearWearableDevice)) {
-                if(currentCursor.getCursorType() == CursorType.OBJECT) {
-                    currentCursor.setCursorTheme(crystalTheme);
-                }
+            if (targetCursor == null)
+            {
                 return;
             }
-
-            List<Cursor> activeCursors;
-            synchronized (cursors) {
-                activeCursors = new ArrayList<Cursor>(cursors);
-            }
-
-            for (Cursor cursor : activeCursors) {
-                if (cursor.isEnabled() && cursor.getCursorType() == CursorType.OBJECT &&
-                        targetCursor == null) {
-                    targetCursor = cursor;
-                } else {
-                    cursor.setEnable(false);
+            setOffsetPositionFromCursor(cursorPosition, currentCursor);
+            for (CursorTheme theme : cursorManager.getCursorThemes())
+            {
+                if (theme.getId().equals(CRYSTAL_THEME))
+                {
+                    targetCursor.setCursorTheme(theme);
                 }
             }
-
-            if (targetCursor == null) {
-                for (Cursor cursor : cursorManager.getInactiveCursors()) {
-                    if (cursor.getCursorType() == CursorType.OBJECT) {
-                        targetCursor = cursor;
-                        targetCursor.setEnable(true);
-                        break;
-                    }
-                }
+            if (currentCursor == targetCursor)
+            {
+                return;
             }
-
-            if (targetCursor.getIoDevice() != gearWearableDevice && targetCursor
-                    .getAvailableIoDevices().contains(gearWearableDevice)) {
-                try {
-                    targetCursor.attachIoDevice(gearWearableDevice);
-                } catch (IOException e) {
-                    Log.e(TAG, "IO Device " + gearWearableDevice.getName() + "cannot be attached");
-                }
-            }
-            targetCursor.setCursorTheme(crystalTheme);
+            cursorManager.replaceCursor(targetCursor, currentCursor);
             setCursorPosition(cursorPosition, targetCursor);
         }
     }
@@ -954,26 +861,18 @@ public class CursorMain extends GVRMain {
                 spaceObject.reset();
             }
 
-            CursorTheme crystalTheme = null;
+            Cursor resetCursor = cursorManager.findCursorByName(RESET_CURSOR_NAME);
 
+            if (resetCursor == null)
+            {
+                return;
+            }
             for (CursorTheme theme : cursorManager.getCursorThemes()) {
                 if (theme.getId().equals(CRYSTAL_THEME)) {
-                    crystalTheme = theme;
+                    resetCursor.setCursorTheme(theme);
                 }
             }
-
-            for (Cursor cursor : cursorManager.getActiveCursors()) {
-                cursor.setEnable(false);
-            }
-
-            for (Cursor cursor : cursorManager.getInactiveCursors()) {
-                if (cursor.getCursorType() == CursorType.OBJECT && cursor.getName().equals
-                        (RESET_CURSOR_NAME)) {
-                    cursor.setEnable(true);
-                    cursor.setCursorTheme(crystalTheme);
-                    break;
-                }
-            }
+            cursorManager.replaceCursor(resetCursor, c);
         }
     }
 
@@ -1070,7 +969,7 @@ public class CursorMain extends GVRMain {
                 R.mipmap.ic_launcher);
         GVRTexture splashScreen = new GVRTexture(gvrContext);
         // return the correct splash screen bitmap
-        splashScreen.setImage(new GVRBitmapTexture(gvrContext, bitmap));
+        splashScreen.setImage(new GVRBitmapImage(gvrContext, bitmap));
         return splashScreen;
     }
 }

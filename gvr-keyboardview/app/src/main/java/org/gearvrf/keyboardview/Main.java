@@ -24,10 +24,9 @@ import android.widget.TextView;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRCursorController;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IKeyboardEvents;
@@ -87,8 +86,7 @@ public class Main extends GVRMain {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
                 GVRPicker picker = newController.getPicker();
-                Log.d("CONTROLLER", "selected " + newController.getClass().getSimpleName());
-                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+                newController.sendEventsToActivity(false);
                 mKeyboardSceneObject.setPicker(picker);
             }
         });

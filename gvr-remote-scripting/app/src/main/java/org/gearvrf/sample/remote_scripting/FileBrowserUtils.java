@@ -17,27 +17,16 @@ package org.gearvrf.sample.remote_scripting;
 
 import org.gearvrf.GVRContext;
 
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.scene_objects.view.GVRFrameLayout;
-import org.gearvrf.GVRBaseSensor;
+import org.gearvrf.GVRSensor;
 import org.gearvrf.SensorEvent;
 import org.gearvrf.ISensorEvents;
 
-import org.gearvrf.GVRContext;
-import org.gearvrf.debug.cli.LineProcessor;
-import org.gearvrf.script.GVRScriptManager;
-
-import android.app.ProgressDialog;
-import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.Display;
 import android.view.InputDevice;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -47,7 +36,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -55,14 +43,10 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.StringWriter;
 import java.lang.Runnable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 
 public class FileBrowserUtils {
     private GVRContext gvrContext;
@@ -154,7 +138,7 @@ public class FileBrowserUtils {
         frameWidth = frameLayout.getWidth();
         frameHeight = frameLayout.getHeight();
 
-        GVRBaseSensor sensor = new GVRBaseSensor(gvrContext);
+        GVRSensor sensor = new GVRSensor(gvrContext);
         layoutSceneObject.getEventReceiver().addListener(sensorEvents);
         //@todo broken functionality
         //layoutSceneObject.setSensor(sensor);
