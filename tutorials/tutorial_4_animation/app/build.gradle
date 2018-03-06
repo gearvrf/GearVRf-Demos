@@ -14,6 +14,7 @@ allprojects {
 
 android {
     compileSdkVersion 25
+    buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "com.samsung.gearvr.tutorial_3_2"
         minSdkVersion 21
