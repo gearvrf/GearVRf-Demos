@@ -14,6 +14,7 @@ allprojects {
 
 android {
     compileSdkVersion 25
+    buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.example.org.gvrfapplication"
         minSdkVersion 21
