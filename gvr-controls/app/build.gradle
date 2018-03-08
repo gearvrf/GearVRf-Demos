@@ -24,6 +24,6 @@ android {
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:+'
+    compile 'com.android.support:support-v4:26.+'
     compile files('src/main/libs/commons-math3-3.6.1.jar')
 }
