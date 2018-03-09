@@ -110,7 +110,7 @@ public class Main extends GVRMain {
         }
 
         @Override
-        public void onStartDraw(GVRViewSceneObject gvrViewSceneObject, View view) {
+        public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
         }
     }
 
