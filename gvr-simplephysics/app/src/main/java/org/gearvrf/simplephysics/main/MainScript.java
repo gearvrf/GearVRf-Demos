@@ -1,11 +1,5 @@
 package org.gearvrf.simplephysics.main;
 
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.simplephysics.entity.Countdown;
-import org.gearvrf.simplephysics.util.MathUtils;
-import org.gearvrf.simplephysics.R;
-
 import android.graphics.Color;
 import android.os.SystemClock;
 import android.view.Gravity;
@@ -14,22 +8,26 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTransform;
-
 import org.gearvrf.io.GVRControllerType;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
+import org.gearvrf.simplephysics.R;
+import org.gearvrf.simplephysics.entity.Countdown;
+import org.gearvrf.simplephysics.util.MathUtils;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+
 import java.io.IOException;
 
 public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisitor {
@@ -49,7 +47,6 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     private GVRCursorController mController;
     private GVRSceneObject mCursor;
     private GVRSceneObject mBallProto;
-    private GVRContext mContext;
     private GVRSceneObject mCurrentBall = null;
 
 
@@ -130,15 +127,13 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
     @Override
     public void onInit(GVRContext gvrContext) throws Throwable {
         mScene = gvrContext.getMainScene();
-        mContext = gvrContext;
         mCamera = mScene.getMainCameraRig();
+        mCamera.getTransform().setPosition(0.0f, 6.0f, 20f);
+
         mCursor = MainHelper.createGaze(gvrContext, 0.0f, 0.0f, 0.0f);
         mBallProto = new GVRSphereSceneObject(gvrContext, true, new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID));
 
-        initCamera(gvrContext, mCamera);
-
         initScene(gvrContext, mScene);
-
         initLabels(gvrContext, mScene);
 
         addPhysicsWorld(gvrContext, mScene);
@@ -147,14 +142,10 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         gvrContext.getInputManager().selectController(mControllerSelector);
     }
 
-    private static void initCamera(GVRContext context, GVRCameraRig camera) {
-        float intensity = 1.0f;
-        camera.getLeftCamera().setBackgroundColor(1.0f * intensity, 0.956f * intensity, 0.84f * intensity, 1f);
-        camera.getRightCamera().setBackgroundColor(1.0f * intensity, 0.956f * intensity, 0.84f * intensity, 1f);
-        camera.getTransform().setPosition(0.0f, 6.0f, 20f);
-    }
-
     private void initScene(GVRContext context, GVRScene scene) {
+        final float intensity = 1.0f;
+        mScene.setBackgroundColor(1.0f * intensity, 0.956f * intensity, 0.84f * intensity, 1f);
+
         if (!GVRShader.isVulkanInstance())
         {
             addLights(context, scene);
@@ -235,6 +226,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         scene.addSceneObject(MainHelper.createCylinder(context, x, y, z, drawable));
     }
 
+    @Override
     public void onSwipe(GVRTouchPadGestureListener.Action action, float velocityX) {
 
         if (gameStopped() || (mController.getControllerType() == GVRControllerType.CONTROLLER)) {

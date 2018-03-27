@@ -18,26 +18,19 @@ package org.gearvrf.keyboardview;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.IKeyboardEvents;
 import org.gearvrf.IViewEvents;
-import org.gearvrf.io.GVRControllerType;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRKeyboardSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.utility.Log;
-
-import java.util.EnumSet;
 
 public class Main extends GVRMain {
     private final MainActivity mActivity;
@@ -48,9 +41,6 @@ public class Main extends GVRMain {
     private GVRViewSceneObject mFrameLayoutFormSceneObject;
     private EditText mFocusedEdit;
     final float DEPTH = -2f;
-    private TextView mInputEdit;
-    private Button mButtonOk;
-    private Button mButtonCancel;
 
 
     public Main(MainActivity activity) {
@@ -66,9 +56,8 @@ public class Main extends GVRMain {
         mFrameLayoutFormSceneObject = new GVRViewSceneObject(gvrContext, R.layout.main_form, new ViewEventsHandler());
         mFrameLayoutFormSceneObject.getTransform().setPosition(0.0f, -0.3f, DEPTH);
         mFrameLayoutFormSceneObject.setName("frame");
-        // Handle key events sent to main form.
-        mFrameLayoutFormSceneObject.getEventReceiver().addListener(mKeyboardEventHandler);
         mScene.addSceneObject(mFrameLayoutFormSceneObject);
+
         mKeyboardSceneObject = new GVRKeyboardSceneObject.Builder()
                 .setKeyboardTexture(gvrContext.getAssetLoader().loadTexture(
                         new GVRAndroidResource(gvrContext, R.drawable.keyboard_background)))
@@ -86,7 +75,6 @@ public class Main extends GVRMain {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
             {
                 GVRPicker picker = newController.getPicker();
-                newController.sendEventsToActivity(false);
                 mKeyboardSceneObject.setPicker(picker);
             }
         });
@@ -213,26 +201,5 @@ public class Main extends GVRMain {
             }
         }
     };
-
-    private IKeyboardEvents mKeyboardEventHandler = new IKeyboardEvents() {
-
-        @Override
-        public void onKey(GVRKeyboardSceneObject gvrKeyboardSceneObject, int primaryCode, int[] keyCodes) {
-            switch (primaryCode) {
-                // Add code here to handle key sent to the view
-            }
-        }
-
-        @Override
-        public void onStartInput(GVRKeyboardSceneObject gvrKeyboardSceneObject) {
-
-        }
-
-        @Override
-        public void onStopInput(GVRKeyboardSceneObject gvrKeyboardSceneObject) {
-
-        }
-    };
-
 }
 
