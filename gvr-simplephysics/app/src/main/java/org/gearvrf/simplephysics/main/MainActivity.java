@@ -14,6 +14,6 @@ public class MainActivity extends GVRActivity
         main = new MainScript();
         setMain(main, "gvr.xml");
 
-        enableSwipeEvent();
+        enableGestureDetector();
     }
 }

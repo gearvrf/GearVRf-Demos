@@ -16,6 +16,7 @@
 package org.gearvrf.immersivepedia;
 
 import android.media.MediaPlayer;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
@@ -29,6 +30,7 @@ import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class Main extends GVRMain {
 
@@ -98,13 +100,16 @@ public class Main extends GVRMain {
         }
     }
 
-    public void onSingleTapConfirmed() {
+    @Override
+    public void onSingleTapUp(MotionEvent event) {
         if (null != mGvrContext) {
             FocusableController.clickProcess(mGvrContext, pickHandler);
         }
     }
 
-    public void onSwipe() {
+    @Override
+    public void onSwipe(GVRTouchPadGestureListener.Action action, float vx) {
+        TouchPadInput.onSwipe(action);
         FocusableController.swipeProcess(mGvrContext, pickHandler);
     }
 
