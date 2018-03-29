@@ -10,27 +10,6 @@
  */
 package com.samsung.accessibility.main;
 
-import java.util.EnumSet;
-import java.util.Locale;
-
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.GVREventListeners;
-import org.gearvrf.GVRImportSettings;
-import org.gearvrf.GVRMesh;
-import org.gearvrf.GVRMeshCollider;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRSphereCollider;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.ITouchEvents;
-import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
-import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.utility.Log;
-
 import android.view.MotionEvent;
 
 import com.samsung.accessibility.R;
@@ -44,6 +23,26 @@ import com.samsung.accessibility.shortcut.ShortcutMenuItem;
 import com.samsung.accessibility.shortcut.ShortcutMenuItem.TypeItem;
 import com.samsung.accessibility.util.AccessibilityManager;
 import com.samsung.accessibility.util.AccessibilityTexture;
+
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRImportSettings;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
+import org.gearvrf.GVRTexture;
+import org.gearvrf.ITouchEvents;
+import org.gearvrf.accessibility.GVRAccessibilityTalkBack;
+import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.io.GVRInputManager;
+
+import java.util.EnumSet;
+import java.util.Locale;
 
 public class Main extends GVRMain {
 
@@ -210,10 +209,6 @@ public class Main extends GVRMain {
     }
 
 
-    public void onSingleTap(MotionEvent e) {
-        FocusableController.clickProcess(pickedObject);
-    }
-
     private void activeTalkBack() {
         GVRAccessibilityTalkBack talkBackDinossaur = new GVRAccessibilityTalkBack(Locale.US, gvrContext.getContext(), "Dinossaur");
         trex.setTalkBack(talkBackDinossaur);
@@ -252,5 +247,10 @@ public class Main extends GVRMain {
                 bookObject.getTalkBack().speak();
             }
         });
+    }
+
+    @Override
+    public void onSingleTapUp(MotionEvent e) {
+        FocusableController.clickProcess(pickedObject);
     }
 }

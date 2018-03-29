@@ -10,42 +10,24 @@
  */
 package com.samsung.accessibility.main;
 
-import org.gearvrf.GVRActivity;
-import org.gearvrf.io.GVRTouchPadGestureListener;
-
 import android.os.Bundle;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
+
+import org.gearvrf.GVRActivity;
 
 public class MainActivity extends GVRActivity
 {
 
     private static final int BUTTON_INTERVAL = 500;
-    private static final int TAP_INTERVAL = 300;
     private long mLatestButton = 0;
-    private long mLatestTap = 0;
     private Main mMain = null;
-    private GestureDetector mDetector = null;
-    private GVRTouchPadGestureListener swipeListener = new GVRTouchPadGestureListener()
-    {
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            Log.d(MainActivity.class.getSimpleName(), "onSingleTap");
-            if (System.currentTimeMillis() > mLatestTap + TAP_INTERVAL) {
-                mLatestTap = System.currentTimeMillis();
-                mMain.onSingleTap(e);
-            }
-            return false;
-        }
-    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMain = new Main();
-        mDetector = new GestureDetector(getBaseContext(), swipeListener);
         setMain(mMain, "gvr.xml");
+        enableGestureDetector();
     }
 
     @Override
@@ -61,12 +43,6 @@ public class MainActivity extends GVRActivity
             mLatestButton = System.currentTimeMillis();
         }
         return super.onKeyLongPress(keyCode, event);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        mDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
     }
 
 }
