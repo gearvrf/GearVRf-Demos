@@ -77,11 +77,11 @@ public class SampleMain extends GVRMain {
                     new GVRAndroidResource(mGVRContext, "bunny.obj"),
                     settings);
 
-            final int OBJECTS_CNT = 5;
+            final int OBJECTS_CNT = 8;
             for (int x=-OBJECTS_CNT; x<=OBJECTS_CNT; ++x) {
                 for (int y=-OBJECTS_CNT; y<=OBJECTS_CNT; ++y) {
                     GVRSceneObject sceneObject = getColorMesh(1.0f, mesh);
-                    sceneObject.getTransform().setPosition(1.0f*x, 1.0f*y, -5.0f);
+                    sceneObject.getTransform().setPosition(1.0f*x, 1.0f*y, -7.5f);
                     sceneObject.getTransform().setScale(0.5f, 0.5f, 1.0f);
                     scene.addSceneObject(sceneObject);
                 }
