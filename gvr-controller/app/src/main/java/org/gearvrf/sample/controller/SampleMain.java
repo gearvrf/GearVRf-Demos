@@ -103,7 +103,6 @@ public class SampleMain extends GVRMain
                 newController.setCursorDepth(DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 newController.getPicker().setEventOptions(eventOptions);
-                newController.sendEventsToActivity(false);
             }
         });
 

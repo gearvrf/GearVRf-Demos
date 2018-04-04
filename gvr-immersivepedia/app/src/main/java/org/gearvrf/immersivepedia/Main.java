@@ -15,12 +15,12 @@
 
 package org.gearvrf.immersivepedia;
 
+import android.media.MediaPlayer;
+import android.view.MotionEvent;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.GVREventListeners;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
-import org.gearvrf.IActivityEvents;
+import org.gearvrf.GVRScene;
 import org.gearvrf.immersivepedia.focus.FocusableController;
 import org.gearvrf.immersivepedia.focus.PickHandler;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
@@ -28,10 +28,9 @@ import org.gearvrf.immersivepedia.scene.DinosaurScene;
 import org.gearvrf.immersivepedia.scene.MenuScene;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.FPSCounter;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
-
-import android.media.MediaPlayer;
-import android.view.MotionEvent;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 
 public class Main extends GVRMain {
 
@@ -42,19 +41,6 @@ public class Main extends GVRMain {
     private static MediaPlayer mediaPlayer;
     private GVRCursorController mController;
     private PickHandler pickHandler;
-    /*
- * This listener routes touch events on the screen to the MainActivity
- * so the Android gesture detector can process them.
- * It is only used with the Gaze cursor controller which does not
- * generate its own touch events.
- */
-    private IActivityEvents activityTouchHandler = new GVREventListeners.ActivityEvents()
-    {
-        public void dispatchTouchEvent(MotionEvent event)
-        {
-            mGvrContext.getActivity().onTouchEvent(event);
-        }
-    };
 
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
@@ -114,13 +100,16 @@ public class Main extends GVRMain {
         }
     }
 
-    public void onSingleTapConfirmed() {
+    @Override
+    public void onSingleTapUp(MotionEvent event) {
         if (null != mGvrContext) {
             FocusableController.clickProcess(mGvrContext, pickHandler);
         }
     }
 
-    public void onSwipe() {
+    @Override
+    public void onSwipe(GVRTouchPadGestureListener.Action action, float vx) {
+        TouchPadInput.onSwipe(action);
         FocusableController.swipeProcess(mGvrContext, pickHandler);
     }
 
