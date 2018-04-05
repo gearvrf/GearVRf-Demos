@@ -15,12 +15,12 @@
 
 package org.gearvrf.immersivepedia.util;
 
-import org.gearvrf.immersivepedia.R;
-
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
+
+import org.gearvrf.immersivepedia.R;
 
 public class AudioClip {
 
@@ -95,10 +95,6 @@ public class AudioClip {
 
     public void autoPause() {
         soundPool.autoPause();
-    }
-
-    public void autoResume() {
-        soundPool.autoResume();
     }
 
     private void loadinSounds() {

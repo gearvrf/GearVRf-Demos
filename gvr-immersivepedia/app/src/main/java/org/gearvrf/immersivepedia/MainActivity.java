@@ -21,29 +21,28 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 
-public class MainActivity extends GVRActivity
-{
-	private Main main;
+public class MainActivity extends GVRActivity {
+    private Main main;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		main = new Main();
-		setMain(main, "gvr.xml");
-		enableGestureDetector();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        main = new Main();
+        setMain(main, "gvr.xml");
+        enableGestureDetector();
+    }
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		TouchPadInput.input(event);
-		return super.onTouchEvent(event);
-	}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        TouchPadInput.input(event);
+        return super.onTouchEvent(event);
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		main.onPause();
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        main.onPause();
+    }
 
     @Override
     public void onBackPressed() {

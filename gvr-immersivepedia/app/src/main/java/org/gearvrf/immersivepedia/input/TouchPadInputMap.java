@@ -27,7 +27,6 @@ public class TouchPadInputMap {
     public void resetIntermadiateState() {
         buttonState.down = false;
         buttonState.up = false;
-
     }
 
 }
