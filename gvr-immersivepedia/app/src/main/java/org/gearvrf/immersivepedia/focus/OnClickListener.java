@@ -16,6 +16,5 @@
 package org.gearvrf.immersivepedia.focus;
 
 public interface OnClickListener {
-
-    public void onClick();
+    void onClick();
 }

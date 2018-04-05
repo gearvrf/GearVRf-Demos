@@ -32,10 +32,8 @@ import org.gearvrf.immersivepedia.focus.FocusListener;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 import org.gearvrf.immersivepedia.shader.MenuImageShader;
 import org.gearvrf.immersivepedia.util.AudioClip;
-import org.gearvrf.immersivepedia.util.MathUtils;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRTextViewSceneObject;
-import org.gearvrf.utility.Log;
 
 public class MenuItem extends FocusableSceneObject {
 
@@ -99,38 +97,31 @@ public class MenuItem extends FocusableSceneObject {
 
             @Override
             public void lostFocus(FocusableSceneObject object) {
-                Log.e("PICKER", "lostFocus " + object.getName());
                 frontObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
                 backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
                 hideText();
                 scaleSmaller();
-
             }
 
             private void scaleBiger() {
                 frontObj.getTransform().setScale(scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET, scale+SCALE_BIGER_OFFSET);
-
             }
 
             @Override
             public void inFocus(FocusableSceneObject object) {
-                Log.e("PICKER", "inFocus " + object.getName());
             }
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-                Log.e("PICKER", "gainedFocus " + object.getName());
                 AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIMenuHoverSoundID(), 1.0f, 1.0f);
                 frontObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
                 backgroundObj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, HOVER_STATE);
                 showText();
                 scaleBiger();
-
             }
 
             private void scaleSmaller() {
                 frontObj.getTransform().setScale(scale, scale, scale);
-
             }
         };
     }

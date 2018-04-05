@@ -17,14 +17,14 @@ package org.gearvrf.immersivepedia.focus;
 
 public interface OnGestureListener {
 
-    public void onSwipeUp();
+    void onSwipeUp();
 
-    public void onSwipeDown();
+    void onSwipeDown();
 
-    public void onSwipeForward();
+    void onSwipeForward();
 
-    public void onSwipeBack();
+    void onSwipeBack();
 
-    public void onSwipeIgnore();
+    void onSwipeIgnore();
 
 }

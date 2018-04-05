@@ -136,26 +136,17 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
     public void disableListener() {
         gvrContext.unregisterDrawFrameListener(drawFrameListener);
     }
-
-    public void removeLoadComponent() {
-        gvrContext.unregisterDrawFrameListener(drawFrameListener);
-        gvrContext.getMainScene().removeSceneObject(this);
-    }
-
     @Override
     public void gainedFocus(FocusableSceneObject object) {
-
     }
 
     @Override
     public void lostFocus(FocusableSceneObject object) {
         finishLoadComponent();
-
     }
 
     @Override
     public void inFocus(FocusableSceneObject object) {
-
     }
 
     public boolean isLoading() {

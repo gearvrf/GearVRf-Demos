@@ -17,8 +17,8 @@ package org.gearvrf.immersivepedia.props;
 
 public interface TotemEventListener {
 
-    public void onFinishLoadingTotem(Totem totem);
+    void onFinishLoadingTotem(Totem totem);
 
-    public boolean shouldTotemAppear(Totem totem);
+    boolean shouldTotemAppear(Totem totem);
 
 }

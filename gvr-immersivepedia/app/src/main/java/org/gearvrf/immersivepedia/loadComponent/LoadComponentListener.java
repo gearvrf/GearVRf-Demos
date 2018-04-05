@@ -17,6 +17,6 @@ package org.gearvrf.immersivepedia.loadComponent;
 
 public interface LoadComponentListener {
 
-    public void onFinishLoadComponent();
+    void onFinishLoadComponent();
 
 }
