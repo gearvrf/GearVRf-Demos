@@ -376,8 +376,4 @@ public class MyMenu extends GVRWidget {
     public void dispose() {
         mStage.dispose();
     }
-
-    public boolean needsGL20() {
-        return false;
-    }
 }
