@@ -16,7 +16,6 @@
 package org.gearvrf.modelviewer2;
 
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -71,10 +70,7 @@ public class ModelViewer2Activity extends GVRActivity
         mDetector = new GestureDetector(getBaseContext(), swipeListener);
         mWidget = new MyMenu();
         mPlugin = new GVRWidgetPlugin(this, mWidget);
-
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        mPlugin.setViewSize(displaymetrics.widthPixels, displaymetrics.heightPixels);
+        mPlugin.setViewSize(2560, 1440);
 
         //SkyBox List
         mManager = new ModelViewer2Manager(this, mPlugin);
