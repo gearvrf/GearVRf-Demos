@@ -23,6 +23,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass.GVRCullFaceEnum;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -166,7 +167,6 @@ public class Main extends GVRMain {
     private void createApple() {
 
         apple = new Apple(mGVRContext);
-        apple.setName("apple");
         mGVRContext.getMainScene().addSceneObject(apple);
         apple.setAppleRandomPosition(mGVRContext);
         apple.getTransform().setPositionY(Constants.APPLE_INICIAL_YPOS);
@@ -193,7 +193,6 @@ public class Main extends GVRMain {
         fence.getTransform().setPositionY(GROUND_Y_POSITION);
         fence.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         fence.getRenderData().setCullFace(GVRCullFaceEnum.None);
-        fence.getRenderData().setRenderingOrder(RenderingOrder.FENCE);
         fence.setName("fence");
         scene.addSceneObject(fence);
     }
@@ -225,7 +224,7 @@ public class Main extends GVRMain {
         ground.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         ground.getTransform().setRotationByAxis(-45, 0, 0, 1);
         ground.getTransform().setRotationByAxis(-90, 1, 0, 0);
-        ground.getRenderData().setRenderingOrder(RenderingOrder.GROUND);
+//        ground.getRenderData().setRenderingOrder(RenderingOrder.GROUND);
 
        // ground.getRenderData().getMaterial().setFloat(TileShader.TILE_COUNT, GROUND_TILES);
         ground.getRenderData().getMaterial().setTexture(TileShader.TEXTURE_KEY, texture);
@@ -242,7 +241,7 @@ public class Main extends GVRMain {
 
         skybox = new GVRSceneObject(mGVRContext, mesh, texture);
         skybox.getTransform().setScale(SKYBOX_SIZE, SKYBOX_SIZE, SKYBOX_SIZE);
-        skybox.getRenderData().setRenderingOrder(RenderingOrder.SKYBOX);
+        skybox.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         skybox.setName("skybox");
         scene.addSceneObject(skybox);
     }
@@ -263,8 +262,9 @@ public class Main extends GVRMain {
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
         surroundings.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         surroundings.getTransform().setPositionY(SCENE_Y);
-        surroundings.getRenderData().setRenderingOrder(RenderingOrder.FLOWERS);
+//        surroundings.getRenderData().setRenderingOrder(RenderingOrder.FLOWERS);
         scene.addSceneObject(surroundings);
+        surroundings.setName("flowers");
         // ground.addChildObject(surroundings);
 
         mesh = mGVRContext.getAssetLoader().loadMesh(
@@ -275,9 +275,10 @@ public class Main extends GVRMain {
         surroundings = new GVRSceneObject(mGVRContext, mesh, texture);
         surroundings.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         surroundings.getTransform().setPositionY(SCENE_Y);
+        surroundings.setName("grass");
         scene.addSceneObject(surroundings);
         // ground.addChildObject(surroundings);
-        surroundings.getRenderData().setRenderingOrder(RenderingOrder.GRASS);
+//        surroundings.getRenderData().setRenderingOrder(RenderingOrder.GRASS);
 
         mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.flowers));
@@ -288,8 +289,9 @@ public class Main extends GVRMain {
         surroundings.getTransform().setScale(SCENE_SIZE, SCENE_SIZE, SCENE_SIZE);
         surroundings.getTransform().setPositionY(SCENE_Y);
         scene.addSceneObject(surroundings);
+        surroundings.setName("flowers");
         // ground.addChildObject(surroundings);
-        surroundings.getRenderData().setRenderingOrder(RenderingOrder.FLOWERS);
+//        surroundings.getRenderData().setRenderingOrder(RenderingOrder.FLOWERS);
 
         mesh = mGVRContext.getAssetLoader().loadMesh(
                 new GVRAndroidResource(mGVRContext, R.raw.wood));
@@ -300,9 +302,9 @@ public class Main extends GVRMain {
         surroundings.getTransform().setPositionY(SCENE_Y);
         surroundings.getRenderData().setCullFace(GVRCullFaceEnum.None);
         scene.addSceneObject(surroundings);
-        surroundings.setName("surroundings");
+        surroundings.setName("wood");
         // ground.addChildObject(surroundings);
-        surroundings.getRenderData().setRenderingOrder(RenderingOrder.WOOD);
+ //       surroundings.getRenderData().setRenderingOrder(RenderingOrder.WOOD);
     }
 
     private void createSun() {
@@ -314,7 +316,6 @@ public class Main extends GVRMain {
         sun.getTransform().setRotationByAxis(90, 1, 0, 0);
         sun.getTransform().setPositionY(SUN_Y_POSITION);
         sun.getTransform().rotateByAxisWithPivot(SUN_ANGLE_POSITION, 1, 0, 0, 0, 0, 0);
-        sun.getRenderData().setRenderingOrder(RenderingOrder.SUN);
         sun.setName("sun");
         scene.addSceneObject(sun);
     }

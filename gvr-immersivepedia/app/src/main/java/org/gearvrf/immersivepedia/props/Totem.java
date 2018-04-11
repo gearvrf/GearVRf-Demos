@@ -122,17 +122,20 @@ public class Totem extends FocusableSceneObject implements FocusListener {
         GVRTextViewSceneObject textTitle = new GVRTextViewSceneObject(gvrContext, TEXT_WIDTH, TEXT_HEIGHT, text);
         textTitle.setTextSize(7);
         textTitle.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
-        textTitle.getTransform().setPosition(0f, .6f, -0.1f);
+        textTitle.getTransform().setPosition(0f, .6f, -0.2f);
         textTitle.getTransform().rotateByAxis(-180, 0, 1, 0);
+        textTitle.setName(text);
+        textTitle.getRenderData().setRenderingOrder(RenderingOrderApplication.TEXT);
         addChildObject(textTitle);
     }
 
     public void setIcon(int iconPath) {
         icon = new PlayPauseButton(gvrContext, .3f, .3f,
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, iconPath)));
-        icon.getTransform().setPosition(0f, 1f, -0.11f);
+        icon.getTransform().setPosition(0f, 1f, -0.5f);
         icon.getTransform().rotateByAxis(-180, 0, 1, 0);
         this.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+        icon.setName("PlayPauseButton");
         addChildObject(icon);
     }
 

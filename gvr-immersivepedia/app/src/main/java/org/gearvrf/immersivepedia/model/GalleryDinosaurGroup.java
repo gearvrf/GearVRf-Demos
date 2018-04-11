@@ -112,6 +112,7 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
         galleryGroup.getTransform().rotateByAxis(180.0f, 0f, 1f, 0f);
         galleryGroup.getTransform().rotateByAxisWithPivot(
                 DinosaurFactory.APATOSAURUS_ANGLE_AROUND_CAMERA - 35.0f, 0f, 1f, 0f, 0f, 0f, 0f);
+        galleryGroup.setName("GalleryGroup");
     }
 
     private void createDinosaur() throws IOException {

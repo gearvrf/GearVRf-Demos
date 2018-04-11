@@ -71,11 +71,11 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
 
         plus.getRenderData().getMaterial().setMainTexture(plusTexture);
         plus.getRenderData().setRenderingOrder(RenderingOrderApplication.LOADING_COMPONENT);
-
+        plus.setName("LoadingPlus");
         circle.getRenderData().getMaterial().setMainTexture(circleTexture);
         circle.getRenderData().setRenderingOrder(RenderingOrderApplication.LOADING_COMPONENT);
         circle.focusListener = this;
-
+        circle.setName("LoadingCircle");
         circleAlpha.getRenderData().setMaterial(new GVRMaterial(gvrContext, new GVRShaderId(CutoutShader.class)));
         circleAlpha.getRenderData().getMaterial()
                 .setTexture(CutoutShader.TEXTURE_KEY, circleAlphaTexture);
@@ -83,7 +83,7 @@ public class LoadComponent extends GVRSceneObject implements FocusListener {
                 .setFloat(CutoutShader.CUTOUT, valueFloatTexture);
         circleAlpha.getRenderData().setRenderingOrder(RenderingOrderApplication.LOADING_COMPONENT);
         circleAlpha.getRenderData().getMaterial().setMainTexture(circleAlphaTexture);
-        circle.setName("circle");
+        circleAlpha.setName("LoadingCircleAlpha");
         addChildObject(circleAlpha);
         addChildObject(plus);
         addChildObject(circle);

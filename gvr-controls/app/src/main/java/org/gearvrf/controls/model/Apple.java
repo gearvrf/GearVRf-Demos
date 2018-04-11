@@ -73,11 +73,12 @@ public class Apple extends GVRSceneObject {
 
     public Apple(GVRContext gvrContext) {
         super(gvrContext);
+        setName("Apple");
         this.getTransform().setScale(APPLE_SCALE, APPLE_SCALE, APPLE_SCALE);
         setAppleRenderData(gvrContext);
         setAppleShaderParameters(gvrContext);
         star = new Star(gvrContext);
-        shadow = new WormShadow(gvrContext, 0.27f, 0.27f, RenderingOrder.APPLE_SHADOW);
+        shadow = new WormShadow(gvrContext, 0.27f, 0.27f);
         shadow.getTransform().setScale(2, 2, 2);
         gvrContext.getMainScene().addSceneObject(star);
     }
@@ -92,7 +93,7 @@ public class Apple extends GVRSceneObject {
         renderData.setMaterial(material);
         this.attachRenderData(renderData);
 
-        getRenderData().setRenderingOrder(RenderingOrder.APPLE);
+//        getRenderData().setRenderingOrder(RenderingOrder.APPLE);
     }
 
     public void setAppleShaderParameters(GVRContext gvrContext) {

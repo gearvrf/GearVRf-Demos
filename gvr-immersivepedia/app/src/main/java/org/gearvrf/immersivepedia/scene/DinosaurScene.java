@@ -174,13 +174,15 @@ public class DinosaurScene extends GVRScene {
         GVRTexture textureGround = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.raw.environment_ground_tex_diffuse));
         final GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(), meshGround, textureGround);
 
-        skyboxGround.getRenderData().setRenderingOrder(0);
+        skyboxGround.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
 
         GVRMesh meshFx =loader.loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
         GVRTexture textureFx = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx, textureFx);
-        skyboxGround.getRenderData().setRenderingOrder(0);
-
+        skyboxGround.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+        skyboxFx.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND + 1);
+        skyboxGround.setName("SkyBoxGround");
+        skyboxFx.setName("SkyBoxFX");
         skybox.addChildObject(skyboxFx);
         skybox.addChildObject(skyboxGround);
 
@@ -194,7 +196,8 @@ public class DinosaurScene extends GVRScene {
                 GVRAndroidResource(getGVRContext(), R.drawable.dino_skybox_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().setScale(1, 1, 1);
-        skybox.getRenderData().setRenderingOrder(0);
+        skybox.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+        skybox.setName("BlueSkyBox");
         return skybox;
     }
 

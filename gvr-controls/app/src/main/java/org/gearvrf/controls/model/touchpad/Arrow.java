@@ -22,7 +22,6 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.animation.GVRScaleAnimation;
-import org.gearvrf.controls.util.RenderingOrder;
 
 public class Arrow extends GVRSceneObject {
 
@@ -42,18 +41,16 @@ public class Arrow extends GVRSceneObject {
 
     public Arrow(GVRContext gvrContext, float width, float height, GVRTexture texture, float angle) {
         super(gvrContext, width, height, texture);
-        createAroow(angle);
+        createArrow(angle);
 
     }
 
-    private void createAroow(float angle) {
+    private void createArrow(float angle) {
 
         this.getTransform().setScale(SCALE_ARROW, SCALE_ARROW, SCALE_ARROW);
         this.getTransform().setPosition(-0.35f, 0f, 0.2f);
         this.getTransform().rotateByAxisWithPivot(angle, 0, 0, 1, 0, 0, 0);
         this.getRenderData().getMaterial().setOpacity(0);
-        this.getRenderData().setRenderingOrder(RenderingOrder.ORDER_RENDERING_TOUCHPAD_AROOWS);
-
     }
 
     public void animateArrowOn() {

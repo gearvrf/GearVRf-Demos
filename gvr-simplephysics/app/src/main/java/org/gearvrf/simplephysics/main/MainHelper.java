@@ -157,7 +157,7 @@ public class MainHelper {
 
         gaze.getTransform().setPosition(x, y, z);
         gaze.getRenderData().setDepthTest(false);
-        gaze.getRenderData().setRenderingOrder(100000);
+        gaze.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY + 10);
         gaze.getRenderData().disableLight();
 
         return gaze;
@@ -168,6 +168,8 @@ public class MainHelper {
         textObject.setTextColor(Color.BLACK);
         textObject.setGravity(Gravity.CENTER);
         textObject.setTextSize(20);
+        textObject.getRenderData().disableLight();
+        textObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         textObject.setRefreshFrequency(GVRTextViewSceneObject.IntervalFrequency.LOW);
         textObject.getTransform().setPosition(x, y, z);
         return textObject;

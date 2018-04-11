@@ -101,6 +101,7 @@ public class DinosaurFactory {
         GVRMesh baseMesh = gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext, baseMeshId), settings);
         GVRTexture baseTexture = gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.base_tex_diffuse));
         FocusableSceneObject dinosaurBase = new FocusableSceneObject(gvrContext, baseMesh, baseTexture);
+        dinosaurBase.getTransform().setPositionZ(-0.01f);
         return dinosaurBase;
     }
 

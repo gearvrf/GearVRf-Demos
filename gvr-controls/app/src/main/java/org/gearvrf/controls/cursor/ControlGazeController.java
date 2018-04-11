@@ -47,7 +47,7 @@ public class ControlGazeController {
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
         context.getMainScene().getMainCameraRig().addChildObject(cursor);
-
+        cursor.setName("cursor");
         highlightCursor = new GVRSceneObject(context,
                 context.createQuad(HIGHLIGHT_CURSOR_SIZE, HIGHLIGHT_CURSOR_SIZE),
                 context.getAssetLoader().loadTexture(new GVRAndroidResource(context,
@@ -60,7 +60,7 @@ public class ControlGazeController {
         context.getMainScene().getMainCameraRig().addChildObject(highlightCursor);
 
         highlightCursor.getRenderData().getMaterial().setOpacity(0f);
-
+        highlightCursor.setName("HighlightCursor");
         cursor.getTransform().setScale(.35f, .35f, .35f);
         highlightCursor.getTransform().setScale(.35f, .35f, .3f);
     }

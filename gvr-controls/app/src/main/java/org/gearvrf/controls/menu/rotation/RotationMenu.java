@@ -28,7 +28,7 @@ import org.gearvrf.controls.input.GamepadMap;
 import org.gearvrf.controls.menu.ItemSelectedListener;
 import org.gearvrf.controls.menu.MenuWindow;
 import org.gearvrf.controls.menu.RadioButtonSceneObject;
-import org.gearvrf.controls.menu.RadioGrupoSceneObject;
+import org.gearvrf.controls.menu.RadioGroupSceneObject;
 import org.gearvrf.controls.menu.TouchableButton;
 
 import java.util.ArrayList;
@@ -43,17 +43,18 @@ public class RotationMenu extends MenuWindow {
     private RotationGroup rotationGroup;
     private TouchableButton leftButton;
     private TouchableButton rightButton;
-    private RadioGrupoSceneObject radioGroup;
+    private RadioGroupSceneObject radioGroup;
 
     public RotationMenu(GVRContext gvrContext) {
         super(gvrContext);
-        addRotaionGroup(gvrContext);
+        setName("RotationMenu");
+        addRotationGroup(gvrContext);
 
         addRotationButtons(gvrContext);
         attachRadioGroup();
     }
 
-    private void addRotaionGroup(GVRContext gvrContext) {
+    private void addRotationGroup(GVRContext gvrContext) {
         rotationGroup = new RotationGroup(gvrContext);
 
         rotationGroup.getTransform().setRotationByAxis(10, 1, 0, 0);
@@ -63,7 +64,7 @@ public class RotationMenu extends MenuWindow {
 
     private void attachRadioGroup() {
 
-        radioGroup =  new RadioGrupoSceneObject(getGVRContext(), new ItemSelectedListener() {
+        radioGroup =  new RadioGroupSceneObject(getGVRContext(), new ItemSelectedListener() {
 
             @Override
             public void selected(ControlSceneObject object) {

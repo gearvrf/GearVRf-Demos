@@ -42,7 +42,7 @@ public class AnimButtonPlay extends ControlSceneObject {
         createTextures(gvrContext);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
-        getRenderData().setRenderingOrder(RenderingOrder.MOVE_BUTON);
+        getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         attachComponent(new GVRMeshCollider(gvrContext, false));
 

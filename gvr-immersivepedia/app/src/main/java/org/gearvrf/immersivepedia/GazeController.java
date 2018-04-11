@@ -32,7 +32,7 @@ public class GazeController {
     private static float HIGHLIGHT_CURSOR_SIZE = 0.6f;
     private static float CURSOR_Z_POSITION = -9.0f;
 
-    private static int CURSOR_RENDER_ORDER = 100000;
+    private static int CURSOR_RENDER_ORDER = GVRRenderData.GVRRenderingOrder.OVERLAY + 10;
     private static GazeController mSingleton = null;
 
     public  GazeController(GVRCursorController controller) {
@@ -48,10 +48,11 @@ public class GazeController {
                                             new GVRAndroidResource(gvrContext,
                                                                    R.drawable.head_tracker)));
         cursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
-        cursor.getRenderData().setRenderingOrder(
-                GVRRenderData.GVRRenderingOrder.OVERLAY);
         cursor.getRenderData().setDepthTest(false);
+        cursor.getRenderData().disableLight();
         cursor.getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
+        cursor.getRenderData().setAlphaBlend(true);
+        cursor.setName("CursorModel");
         cursorRoot.addChildObject(cursor);
         highlightCursor = new GVRSceneObject(gvrContext,
                                              gvrContext.createQuad(HIGHLIGHT_CURSOR_SIZE,
@@ -60,13 +61,14 @@ public class GazeController {
                                                      new GVRAndroidResource(gvrContext,
                                                                             R.drawable.highlightcursor)));
         highlightCursor.getTransform().setPositionZ(CURSOR_Z_POSITION);
-        highlightCursor.getRenderData().setRenderingOrder(
-                GVRRenderData.GVRRenderingOrder.OVERLAY);
-        highlightCursor.getRenderData().setDepthTest(false);
         highlightCursor.getRenderData().setRenderingOrder(CURSOR_RENDER_ORDER);
-
+        highlightCursor.getRenderData().setDepthTest(false);
+        highlightCursor.getRenderData().setAlphaBlend(true);
+        highlightCursor.getRenderData().disableLight();
+        highlightCursor.setName("Highlight");
         highlightCursor.getRenderData().getMaterial().setOpacity(0f);
         cursorRoot.addChildObject(highlightCursor);
+        cursorRoot.setName("CursorRoot");
         controller.setCursor(cursorRoot);
         mSingleton = this;
     }

@@ -36,7 +36,6 @@ public class IndicatorTap extends GVRSceneObject {
 
         this.getTransform().setPositionZ(0.2f);
         this.getTransform().setScale(SCALE_OBJECT, SCALE_OBJECT, SCALE_OBJECT);
-        this.getRenderData().setRenderingOrder(RenderingOrder.ORDER_RENDERING_GAMEPAD_BUTTONS_EVENT);
         this.getRenderData().getMaterial().setOpacity(0);
     }
 

@@ -57,7 +57,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
         videoComponent.getTransform().rotateByAxisWithPivot(
                 DinosaurFactory.TREX_ANGLE_AROUND_CAMERA, 0f, 1f, 0f, 0f, 0f, 0f);
         scene.addSceneObject(videoComponent);
-
+        videoComponent.setName("Video");
     }
 
     private void createDinosaur() throws IOException {

@@ -104,6 +104,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
         icon.getTransform().rotateByAxis(-90, 1, 0, 0);
         icon.getTransform().rotateByAxisWithPivot(245, 0, 1, 0, 0, 0, 0);
         icon.getRenderData().setRenderingOrder(GVRRenderingOrder.OVERLAY);
+        icon.setName(typeItem.name());
         addChildObject(icon);
         getRenderData().getMaterial().setMainTexture(textures.getSpaceTexture());
         this.typeItem = typeItem;

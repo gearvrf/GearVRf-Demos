@@ -18,6 +18,7 @@ package org.gearvrf.immersivepedia.focus;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
@@ -93,7 +94,7 @@ public class SwipeIndicator extends GVRSceneObject {
     }
 
     private void setAttribute() {
-        hand.getRenderData().setRenderingOrder(1000008);
+        hand.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         hand.getTransform().setPosition(HAND_X, HAND_Y, HAND_Z);
     }
 

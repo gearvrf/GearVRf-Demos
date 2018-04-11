@@ -56,7 +56,7 @@ public class WormBasePart extends GVRSceneObject {
 
         segment = new GVRSceneObject(gvrContext, mesh, texture, new GVRShaderId(ColorSwapShader.class));
 
-        segment.getRenderData().setRenderingOrder(RenderingOrder.WORM);
+//        segment.getRenderData().setRenderingOrder(RenderingOrder.WORM);
 
         applyShader(gvrContext, segment, color);
         addChildObject(segment);

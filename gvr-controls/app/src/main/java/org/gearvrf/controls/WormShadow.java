@@ -25,13 +25,13 @@ import org.gearvrf.GVRTexture;
 
 public class WormShadow extends GVRSceneObject {
 
-    public WormShadow(GVRContext gvrContext, float width, float height, int renderingOrder) {
+    public WormShadow(GVRContext gvrContext, float width, float height) {
         super(gvrContext);
-
-        createShadowObject(width, height, renderingOrder);
+        setName("WormShadow");
+        createShadowObject(width, height);
     }
 
-    private void createShadowObject(float width, float height, int renderingOrder) {
+    private void createShadowObject(float width, float height) {
 
         GVRMesh checkMesh = getGVRContext().createQuad(width, height);
 
@@ -40,8 +40,7 @@ public class WormShadow extends GVRSceneObject {
 
         GVRSceneObject shadowObject = new GVRSceneObject(getGVRContext(), checkMesh, checkTexture);
         shadowObject.getTransform().rotateByAxis(90, 1, 0, 0);
-        shadowObject.getRenderData().setRenderingOrder(renderingOrder);
-
+        shadowObject.setName("WormShadow");
         shadowObject.getRenderData().setCullFace(GVRCullFaceEnum.None);
 
         addChildObject(shadowObject);

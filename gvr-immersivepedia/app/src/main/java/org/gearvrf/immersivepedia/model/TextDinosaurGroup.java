@@ -166,6 +166,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
         title.setGravity(android.view.Gravity.CENTER_HORIZONTAL);
         title.getTransform().setPosition(-2f, 2.6f, 3f);
         addChildObject(title);
+        title.setName("DinosaurTitle");
         title.getRenderData().getMaterial().setOpacity(0);
     }
 
@@ -181,6 +182,7 @@ public class TextDinosaurGroup extends GVRSceneObject implements TotemEventListe
         description.getTransform().setScale(0.3f, 0.3f, 0.3f);
         description.getTransform().setPosition(-.3f, 1.7f, 3f);
         addChildObject(description);
+        description.setName("DinosaurDescription");
         description.getRenderData().getMaterial().setOpacity(0);
     }
 

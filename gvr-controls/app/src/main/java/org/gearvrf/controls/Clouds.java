@@ -46,14 +46,14 @@ public class Clouds extends GVRSceneObject {
         TypedArray cloudArray = res.obtainTypedArray(R.array.clouds);
         TypedArray cloudTypeValues;
 
-        for (int i = 0; i < numberOfClouds; i++) {
+        for (Integer i = 0; i < numberOfClouds; i++) {
             float angle = FULL_ROTATION / numberOfClouds;
             int currentCloudIndex = i % NUMBER_OF_CLOUDS;
 
             cloudTypeValues = res.obtainTypedArray(cloudArray.getResourceId(currentCloudIndex, 0));
 
             clouds[i] = new Cloud(gvrContext, mesh, -cloudDistance, cloudTypeValues, angle * i);
-
+            clouds[i].setName("Cloud" + i.toString());
             gvrContext.getMainScene().addSceneObject(clouds[i]);
 
             rotateCloudsAroundCameraAnimation(gvrContext, clouds[i]);

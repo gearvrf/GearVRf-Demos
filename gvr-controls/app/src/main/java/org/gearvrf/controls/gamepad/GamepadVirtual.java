@@ -55,8 +55,6 @@ public class GamepadVirtual extends GVRSceneObject {
         sceneObject.setName("gamepad");
         addChildObject(sceneObject);
 
-        sceneObject.getRenderData().setRenderingOrder(RenderingOrder.ORDER_RENDERING_GAMEPAD);
-
         attachButtons();
     }
 

@@ -13,6 +13,7 @@ package com.samsung.accessibility.scene;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
@@ -39,7 +40,7 @@ public class SceneItem extends FocusableSceneObject {
         final GVRSceneObject onFocusSceneObject = new GVRSceneObject(gvrContext, gvrContext.getAssetLoader().loadMesh(new GVRAndroidResource(gvrContext,
                 R.raw.edge_box_normal)), gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.edge_box)));
         onFocusSceneObject.getTransform().setPositionZ(-.1f);
-        onFocusSceneObject.getRenderData().setRenderingOrder(getRenderData().getRenderingOrder() + 1);
+        onFocusSceneObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         onFocusSceneObject.getRenderData().setDepthTest(false);
 
         setOnFocusListener(new OnFocusListener() {

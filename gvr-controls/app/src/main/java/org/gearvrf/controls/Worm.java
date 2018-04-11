@@ -79,7 +79,7 @@ public class Worm extends GVRSceneObject {
 
     public Worm(GVRContext gvrContext) {
         super(gvrContext);
-
+        setName("Worm");
         ColorControls gvrColor = new ColorControls(gvrContext.getContext());
         Color color = gvrColor.parseColor(R.color.color10);
 
@@ -111,7 +111,9 @@ public class Worm extends GVRSceneObject {
         head.getTransform().setPosition(0, 0, 0);
 
         wormParent.addChildObject(head);
-
+        head.setName("WormHead");
+        middle.setName("WormMiddle");
+        end.setName("WormEnd");
         addChildObject(middle);
         addChildObject(end);
     }
@@ -119,9 +121,9 @@ public class Worm extends GVRSceneObject {
     public void enableShadow() {
 
         float factor = 3f;
-        shadowHead = new WormShadow(getGVRContext(), 0.27f * factor, 0.27f * factor, RenderingOrder.WORM_SHADOW_HEADER);
-        shadowMiddle = new WormShadow(getGVRContext(), 0.2f * factor, 0.2f * factor, RenderingOrder.WORM_SHADOW_MIDDLE);
-        shadowEnd = new WormShadow(getGVRContext(), 0.18f * factor, 0.18f * factor, RenderingOrder.WORM_SHADOW_END);
+        shadowHead = new WormShadow(getGVRContext(), 0.27f * factor, 0.27f * factor);
+        shadowMiddle = new WormShadow(getGVRContext(), 0.2f * factor, 0.2f * factor);
+        shadowEnd = new WormShadow(getGVRContext(), 0.18f * factor, 0.18f * factor);
 
         head.addChildObject(shadowHead);
         middle.addChildObject(shadowMiddle);

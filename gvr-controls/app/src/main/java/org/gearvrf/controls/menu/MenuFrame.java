@@ -18,6 +18,7 @@ package org.gearvrf.controls.menu;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
@@ -58,7 +59,7 @@ public class MenuFrame extends GVRSceneObject {
 
         mMenuFrame = new GVRSceneObject(getGVRContext(), mesh, texture);
         mMenuFrame.getRenderData().getMaterial().setOpacity(0);
-        mMenuFrame.getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_BG);
+        mMenuFrame.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         getTransform().setPosition(0f, MenuBox.FRAME_INITITAL_POSITION_Y, FRAME_POSITION_Z);
 

@@ -33,6 +33,7 @@ public class GalleryArrow extends GVRSceneObject {
 
     public GalleryArrow(GVRContext gvrContext, float width, float height, GVRTexture texture) {
         super(gvrContext, width, height, texture);
+        setName("GalleryArrow");
         this.currentState = GalleryArrow.Invisible;
     }
 

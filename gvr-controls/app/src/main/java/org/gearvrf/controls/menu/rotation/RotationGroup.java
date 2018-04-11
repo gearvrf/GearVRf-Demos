@@ -33,7 +33,7 @@ public class RotationGroup extends GVRSceneObject {
 
     public RotationGroup(GVRContext gvrContext) {
         super(gvrContext);
-
+        setName("RotationGroup");
         place = new GVRSceneObject(gvrContext);
 
         addChildObject(place);

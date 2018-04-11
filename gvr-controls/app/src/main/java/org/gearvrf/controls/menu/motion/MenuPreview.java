@@ -39,7 +39,7 @@ public class MenuPreview extends GVRSceneObject {
 
     public MenuPreview(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
-
+        setName("MotionMenuPreview");
         apple = new Apple(gvrContext);
         apple.getRenderData().getMaterial().setOpacity(0f);
         apple.getTransform().setPositionY(APPLE_INITIAL_POSITION_Y);

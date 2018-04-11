@@ -35,7 +35,7 @@ public class MenuColorsPreview extends GVRSceneObject {
 
     public MenuColorsPreview(GVRContext gvrContext, GVRMesh mesh, GVRTexture texture) {
         super(gvrContext, mesh, texture);
-
+        setName("MenuColorsPreview");
         worm = new Worm(gvrContext);
         
         worm.getHead().getParent().getTransform().setPositionY(WORM_Y_POSITION);

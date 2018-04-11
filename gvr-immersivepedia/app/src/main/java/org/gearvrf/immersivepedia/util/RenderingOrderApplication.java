@@ -15,21 +15,23 @@
 
 package org.gearvrf.immersivepedia.util;
 
+import org.gearvrf.GVRRenderData;
+
 public class RenderingOrderApplication {
 
-    public static final int BUTTON_BOARD = 11110000;
-    public static final int CLOSING_VIDEO = 11110000;
-    public static int LOADING_COMPONENT = 111100000;
-    public static int GALLERY = 2000;
-    public static int GALLERY_PHOTO = 1000;
-    public static int TEXT = 1000;
-    public static int TEXT_BACKGROUND = 1000;
-    public static int DINOSAUR = 800;
-    public static int GALLERY_SCROLLBAR = 1000;
-    public static int TOTEM = 800;
+    public static final int BUTTON_BOARD = GVRRenderData.GVRRenderingOrder.OVERLAY;
+    public static final int VIDEO = GVRRenderData.GVRRenderingOrder.OVERLAY + 1;
+    public static int LOADING_COMPONENT = GVRRenderData.GVRRenderingOrder.TRANSPARENT;
+    public static int GALLERY = GVRRenderData.GVRRenderingOrder.GEOMETRY;
+    public static int GALLERY_PHOTO = GVRRenderData.GVRRenderingOrder.TRANSPARENT;
+    public static int TEXT = GVRRenderData.GVRRenderingOrder.TRANSPARENT + 2;
+    public static int TEXT_BACKGROUND = GVRRenderData.GVRRenderingOrder.TRANSPARENT;
+    public static int DINOSAUR = GVRRenderData.GVRRenderingOrder.GEOMETRY;
+    public static int GALLERY_SCROLLBAR = GVRRenderData.GVRRenderingOrder.GEOMETRY;
+    public static int TOTEM = GVRRenderData.GVRRenderingOrder.GEOMETRY;
 
-    public static final int BACKGROUND_IMAGE = 1;
-    public static final int MAIN_IMAGE = 2;
-    public static final int IMAGE_TEXT_BACKGROUND = 3;
-    public static final int IMAGE_TEXT = 4;
+    public static final int BACKGROUND_IMAGE = GVRRenderData.GVRRenderingOrder.TRANSPARENT;
+    public static final int MAIN_IMAGE = GVRRenderData.GVRRenderingOrder.TRANSPARENT;
+    public static final int IMAGE_TEXT_BACKGROUND = GVRRenderData.GVRRenderingOrder.TRANSPARENT;
+    public static final int IMAGE_TEXT = GVRRenderData.GVRRenderingOrder.TRANSPARENT + 1;
 }

@@ -95,8 +95,6 @@ public class TouchPad extends GVRSceneObject {
         touchPad.getTransform().setPositionX(-0.895f);
         touchPad.getTransform().rotateByAxis(-90, 0, 1, 0);
         touchPad.getTransform().setScale(SCALE_OBJECT, SCALE_OBJECT, SCALE_OBJECT);
-        touchPad.getRenderData().setRenderingOrder(RenderingOrder.ORDER_RENDERING_GAMEPAD);
-        
     }
 
     public void updateIndicator() {
