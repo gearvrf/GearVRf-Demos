@@ -27,6 +27,7 @@ import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.keyboard.model.CharList;
 import org.gearvrf.keyboard.textField.TextFieldItem;
+import org.gearvrf.keyboard.util.SceneObjectNames;
 import org.gearvrf.keyboard.util.Util;
 
 public class Spinner extends GVRSceneObject {
@@ -44,7 +45,7 @@ public class Spinner extends GVRSceneObject {
 
     public Spinner(GVRContext gvrContext, int initialCharacterPosition, int mode) {
         super(gvrContext);
-
+        setName(SceneObjectNames.SPINNER);
         spinnerRoulette = new SpinnerRoulette(gvrContext, initialCharacterPosition, mode);
         spinnerSkeleton = new SpinnerSkeleton(gvrContext);
 

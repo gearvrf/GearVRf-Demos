@@ -80,7 +80,7 @@ public class SphereFlag extends GVRSceneObject {
         GVRRenderData renderData = getRenderData(material);
         //renderData.setShaderTemplate(SphereShader.class);
         attachRenderData(renderData);
-        
+        setName("SphereFlag");
         updateMaterial();
     }
 

@@ -98,6 +98,7 @@ public class SphereStaticList {
             parent.getTransform().setPosition((float) parentPosition.getX(),
                     (float) parentPosition.getY(), (float) parentPosition.getZ());
             parent.addChildObject(objectSphere);
+            objectSphere.setName("Sphere" + i);
             listFlag.add(parent);
         }
     }

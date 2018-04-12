@@ -35,6 +35,7 @@ public class SceneObjectNames {
     public static final String SPHERE_FLAG_PARENT = "sphereFlagParent";
     public static final String SOUND_WAVE = "soundWave";
     public static final String SPINNER = "spinner";
+    public static final String SPINNER_ROUTLETTE = "spinnerRoulette";
     public static final String SPINNER_SKELETON = "spinnerSkeleton";
     public static final String TEXT_FIELD = "textField";
     public static final String TEXT_FIELD_ITEM = "textFieldItem";
