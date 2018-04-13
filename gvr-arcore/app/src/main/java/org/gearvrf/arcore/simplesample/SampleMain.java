@@ -167,6 +167,10 @@ public class SampleMain extends GVRMain {
         mARCoreHandler = new ARCoreHandler();
         gvrContext.registerDrawFrameListener(mARCoreHandler);
 
+        mGVRCamMatrix = mVRScene.getMainCameraRig().getHeadTransform().getModelMatrix();
+
+        updateAR2GVRMatrices(mLastARFrame.getCamera(), mVRScene.getMainCameraRig());
+
         Log.d(TAG, "ARCore configured for display (["
                 + mDisplayGeometry.x + ", " + mDisplayGeometry.y + "], "
                 + mDisplayGeometry.z + ")");
@@ -251,20 +255,26 @@ public class SampleMain extends GVRMain {
             Camera arCamera = arFrame.getCamera();
 
             if (arFrame.getTimestamp() == mLastARFrame.getTimestamp()) {
-                //FIXME: FPS issue. AR is 30fps and VR is 60fps
-                updateAR2GVRMatrices(arCamera, mVRScene.getMainCameraRig());
                 return;
             }
 
-            updatePassThroughObject(mARPassThroughObject);
-
             if (arCamera.getTrackingState() != TrackingState.TRACKING) {
+                // Put passthrough object in from of current VR cam at paused states.
+                updateAR2GVRMatrices(arCamera, mVRScene.getMainCameraRig());
+                updatePassThroughObject(mARPassThroughObject);
+
                 if (mVirtObjCount != 0) {
                     disableVirtualObjects();
                 }
                 mSelectedPlaneObject.setEnable(false);
                 return;
             }
+
+            // Update current AR cam's view matrix.
+            arCamera.getViewMatrix(mARViewMatrix, 0);
+
+            // Update passthrough object with last VR cam matrix
+            updatePassThroughObject(mARPassThroughObject);
 
             List<HitResult> hitResult = null;
 
@@ -283,8 +293,10 @@ public class SampleMain extends GVRMain {
             updateVirtualObjects();
 
             mLastARFrame = arFrame;
-            // AR is 30fps and VR is 60fps
-            updateAR2GVRMatrices(arCamera, mVRScene.getMainCameraRig());
+
+            // Update current VR cam's matrix to next update of passtrhough and virtual objects.
+            // AR/30fps vs VR/60fps
+            mGVRCamMatrix = mVRScene.getMainCameraRig().getHeadTransform().getModelMatrix();
         }
 
         @Override
