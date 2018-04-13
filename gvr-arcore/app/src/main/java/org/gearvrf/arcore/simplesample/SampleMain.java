@@ -146,9 +146,11 @@ public class SampleMain extends GVRMain {
 
         mARCoreSession.setCameraTextureName(passThroughTexture.getId());
 
-        mARCoreSession.setDisplayGeometry(Surface.ROTATION_90 , 2960, 1440);
+        // FIXME: detect VR screen aspect ratio.
+        mARCoreSession.setDisplayGeometry(Surface.ROTATION_90 , 160, 90);
         mLastARFrame = mARCoreSession.update();
         mDisplayGeometry = configDisplayGeometry(mLastARFrame.getCamera());
+
         mARCoreSession.setDisplayGeometry(Surface.ROTATION_90 ,
                     (int)mDisplayGeometry.x, (int)mDisplayGeometry.y);
 
@@ -170,10 +172,6 @@ public class SampleMain extends GVRMain {
         mGVRCamMatrix = mVRScene.getMainCameraRig().getHeadTransform().getModelMatrix();
 
         updateAR2GVRMatrices(mLastARFrame.getCamera(), mVRScene.getMainCameraRig());
-
-        Log.d(TAG, "ARCore configured for display (["
-                + mDisplayGeometry.x + ", " + mDisplayGeometry.y + "], "
-                + mDisplayGeometry.z + ")");
     }
 
     private boolean initVirtualModels(GVRContext gvrContext) {
@@ -365,9 +363,6 @@ public class SampleMain extends GVRMain {
         float near = 0.1f;
         float far = 100.0f;
 
-        //final float scalex = 0.96f; // empirical constant
-        //final float scaley = 1.06f; // empirical constant
-
         // Get phones' cam projection matrix.
         float[] m = new float[16];
         arCamera.getProjectionMatrix(m, 0, near, far);
@@ -377,12 +372,18 @@ public class SampleMain extends GVRMain {
         float aspectRatio = projmtx.m11()/projmtx.m00();
         float arCamFOV = projmtx.perspectiveFov();
 
-        //float widthY = 2 * (float) Math.tan(arCamFOV / 2);
-        //float widthX = widthY * aspectRatio;
+        /*
+        float widthY = 2 * (float) Math.tan(arCamFOV * 0.5f);
+        float widthX = widthY * aspectRatio;
+        */
 
         float quadDistance = PASSTHROUGH_DISTANCE;
         float quadHeight = new Float(2 * quadDistance * Math.tan(arCamFOV * 0.5f));
         float quadWidth = quadHeight * aspectRatio;
+
+        Log.d(TAG, "ARCore configured to: passthrough[w: "
+                + quadWidth + ", h: " + quadHeight +", z: " + quadDistance
+                + "], cam fov: " +Math.toDegrees(arCamFOV) + ", aspect ratio: " + aspectRatio);
 
         return new Vector3f(quadWidth, quadHeight, -PASSTHROUGH_DISTANCE);
     }
