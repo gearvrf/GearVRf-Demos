@@ -51,7 +51,7 @@ public class SampleActivity extends GVRActivity {
 
         Log.d(TAG, "onCreate");
 
-        mMain = new SampleMain(this);
+        mMain = new SampleMain();
 
         setMain(mMain, "gvr.xml");
     }
@@ -113,14 +113,12 @@ public class SampleActivity extends GVRActivity {
         }
 
         showLoadingMessage();
-        // Note that order matters - see the note in onPause(), the reverse applies here.
+
         try {
             mARCoreSession.resume();
         } catch (CameraNotAvailableException e) {
             e.printStackTrace();
         }
-
-        //mDisplayRotationHelper.onResume();
 
         mMain.setARCoreSession(mARCoreSession);
     }
@@ -132,10 +130,6 @@ public class SampleActivity extends GVRActivity {
         Log.d(TAG, "onPause");
 
         if (mARCoreSession != null) {
-            // Note that the order matters - GLSurfaceView is paused first so that it does not try
-            // to query the session. If Session is paused before GLSurfaceView, GLSurfaceView may
-            // still call session.update() and get a SessionPausedException.
-            //mDisplayRotationHelper.onPause();
             mARCoreSession.pause();
             mMain.setARCoreSession(null);
         }
