@@ -88,10 +88,9 @@ public class SampleMain extends GVRMain {
 
         mARCoreHelper = new ARCoreHelper(gvrContext, mVRScene);
 
-        gvrContext.registerDrawFrameListener(new GVRDrawFrameListener() {
+        gvrContext.runOnGlThread(new Runnable() {
             @Override
-            public void onDrawFrame(float v) {
-                gvrContext.unregisterDrawFrameListener(this);
+            public void run() {
                 try {
                     onInitARCoreSession(gvrContext);
                      /* Cursor controller */
