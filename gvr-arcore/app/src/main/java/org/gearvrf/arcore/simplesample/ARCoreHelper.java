@@ -52,10 +52,6 @@ public class ARCoreHelper {
     private final GVRContext mGvrContext;
     private final GVRScene mScene;
 
-    /* Model shaded mesh */
-    private GVRMesh mSharedMesh;
-    private GVRTexture mSharedTexture;
-
     // Cache of virtual objects
     private List<GVRAnchorObject> mVirtualObjects;
     private Map<Plane, GVRPlaneObject> mVirtualPlanes;
@@ -68,15 +64,6 @@ public class ARCoreHelper {
         mVirtualPlanes = new HashMap<>();
         mVirtualObjects = new ArrayList<GVRAnchorObject>();
         mVirtObjCount = 0;
-
-        try {
-            mSharedTexture = gvrContext.getAssetLoader().loadTexture(
-                    new GVRAndroidResource(gvrContext, "objects/andy.png"));
-            mSharedMesh = gvrContext.getAssetLoader().loadMesh(
-                    new GVRAndroidResource(gvrContext, "objects/andy.obj"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void updateVirtualObjects(List<HitResult> hitResult,
@@ -100,7 +87,7 @@ public class ARCoreHelper {
 
         if (mVirtObjCount < MAX_VIRTUAL_OBJECTS) {
             GVRAnchorObject gvrAnchor = new GVRAnchorObject(mGvrContext);
-            GVRSceneObject sceneObject = new GVRSceneObject(mGvrContext, mSharedMesh, mSharedTexture);
+            GVRSceneObject sceneObject = mGvrContext.getAssetLoader().loadModel("objects/andy.obj");
             gvrAnchor.addChildObject(sceneObject);
 
             mScene.addSceneObject(gvrAnchor);
