@@ -103,7 +103,7 @@ if (project.hasProperty("backend_monoscopic") && project.property("backend_monos
 }
 if (!hasBackend) {
     project.ext.backend_oculus = true
-    project.ext.backend_daydream = false
+    project.ext.backend_daydream = true
 }
 
 dependencies {
