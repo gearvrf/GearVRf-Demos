@@ -51,6 +51,7 @@ public class SampleActivity extends GVRActivity {
 
         Log.d(TAG, "onCreate");
 
+
         mMain = new SampleMain();
 
         setMain(mMain, "gvr.xml");

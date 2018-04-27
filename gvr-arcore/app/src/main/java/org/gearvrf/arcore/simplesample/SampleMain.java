@@ -19,9 +19,9 @@ import android.opengl.Matrix;
 import android.util.Log;
 import android.view.Surface;
 
+import com.google.ar.core.Anchor;
 import com.google.ar.core.Camera;
 import com.google.ar.core.Frame;
-import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.core.Session;
 import com.google.ar.core.TrackingState;
@@ -49,7 +49,6 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import java.util.EnumSet;
-import java.util.List;
 
 public class SampleMain extends GVRMain {
     private static String TAG = "GVR_ARCORE";
@@ -188,7 +187,7 @@ public class SampleMain extends GVRMain {
      */
     public class ARCoreHandler extends GVREventListeners.TouchEvents
             implements GVRDrawFrameListener {
-        private Vector2f mSingleTapPos = null;
+        private GVRSceneObject mDraggingObject = null;
 
         @Override
         public void onDrawFrame(float v) {
@@ -224,15 +223,7 @@ public class SampleMain extends GVRMain {
             // Update passthrough object with last VR cam matrix
             updatePassThroughObject(mARPassThroughObject);
 
-            List<HitResult> hitResult = null;
-
-            if (mSingleTapPos != null) {
-                hitResult = arFrame.hitTest(mSingleTapPos.x, mSingleTapPos.y);
-                mSingleTapPos = null;
-            }
-
-            mARCoreHelper.updateVirtualObjects(hitResult,
-                    mARViewMatrix, mGVRCamMatrix, AR2VR_SCALE);
+            mARCoreHelper.updateVirtualObjects(mARViewMatrix, mGVRCamMatrix, AR2VR_SCALE);
 
             mARCoreHelper.updateVirtualPlanes(mARCoreSession.getAllTrackables(Plane.class),
                     mARViewMatrix, mGVRCamMatrix, AR2VR_SCALE);
@@ -245,13 +236,103 @@ public class SampleMain extends GVRMain {
         }
 
         @Override
-        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
-            super.onTouchEnd(sceneObj, collision);
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onEnter(sceneObj, pickInfo);
 
-            if (sceneObj != mARPassThroughObject)
+			if (sceneObj == mARPassThroughObject || mDraggingObject != null)
+				return;
+
+            ((VirtualObject)sceneObj).onPickEnter();
+        }
+
+        @Override
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onExit(sceneObj, pickInfo);
+
+			if (sceneObj == mARPassThroughObject) {
+			    if (mDraggingObject != null) {
+                    ((VirtualObject) mDraggingObject).onPickExit();
+                    mDraggingObject = null;
+                }
+                return;
+            }
+
+            if (mDraggingObject == null) {
+                ((VirtualObject) sceneObj).onPickExit();
+            }
+        }
+
+        @Override
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onTouchStart(sceneObj, pickInfo);
+
+			if (sceneObj == mARPassThroughObject)
+				return;
+
+			if (mDraggingObject == null) {
+                mDraggingObject = sceneObj;
+                Log.d(TAG, "onStartDragging");
+                ((VirtualObject)sceneObj).onTouchStart();
+            }
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onTouchEnd(sceneObj, pickInfo);
+
+            if (mDraggingObject != null) {
+                Log.d(TAG, "onStopDragging");
+
+                if (pickSceneObject(mDraggingObject) == null) {
+                    ((VirtualObject) mDraggingObject).onPickExit();
+                } else {
+                    ((VirtualObject)mDraggingObject).onTouchEnd();
+                }
+                mDraggingObject = null;
+            } else if (sceneObj == mARPassThroughObject) {
+                final Vector2f singleTapPos = convertToDisplayGeometrySpace(pickInfo.getHitLocation());
+                onSingleTap(singleTapPos);
+            }
+        }
+
+        @Override
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onInside(sceneObj, pickInfo);
+
+            if (mDraggingObject == null)
                 return;
 
-            mSingleTapPos = convertToDisplayGeometrySpace(collision.getHitLocation());
+            pickInfo = pickSceneObject(mARPassThroughObject);
+            if (pickInfo != null) {
+                final Vector2f singleTapPos = convertToDisplayGeometrySpace(pickInfo.getHitLocation());
+                final Anchor anchor = mARCoreHelper.createARCoreAnchor(
+                        mLastARFrame.hitTest(singleTapPos.x, singleTapPos.y));
+
+                if (anchor != null) {
+                    ((VirtualObject)mDraggingObject).setARAnchor(anchor);
+                }
+            }
+        }
+
+        private GVRPicker.GVRPickedObject pickSceneObject(GVRSceneObject sceneObject) {
+            Vector3f origin = new Vector3f();
+            Vector3f direction = new Vector3f();
+
+            mCursorController.getPicker().getWorldPickRay(origin, direction);
+
+            return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
+                    direction.x, direction.y, direction.z);
+        }
+
+        private void onSingleTap(Vector2f singleTapPos) {
+            if (mLastARFrame == null)
+                return;
+
+            mARCoreHelper.addVirtualObject(
+                    mARCoreHelper.createARCoreAnchor(
+                            mLastARFrame.hitTest(singleTapPos.x, singleTapPos.y)
+                    )
+            );
         }
 
         public Vector2f convertToDisplayGeometrySpace(float[] hitPoint) {

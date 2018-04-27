@@ -15,7 +15,6 @@
 
 package org.gearvrf.arcore.simplesample;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import com.google.ar.core.Anchor;
@@ -24,18 +23,12 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Trackable;
 import com.google.ar.core.TrackingState;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arcore.simplesample.arobjects.GVRAnchorObject;
 import org.gearvrf.arcore.simplesample.arobjects.GVRPlaneObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,29 +59,18 @@ public class ARCoreHelper {
         mVirtObjCount = 0;
     }
 
-    public void updateVirtualObjects(List<HitResult> hitResult,
-                                     float[] arViewMatrix, float[] vrCamMatrix, float scale) {
-        if (hitResult != null) {
-            try {
-                addVirtualObject(createARCoreAnchor(hitResult));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
+    public void updateVirtualObjects(float[] arViewMatrix, float[] vrCamMatrix, float scale) {
         for (GVRAnchorObject obj: mVirtualObjects) {
             obj.update(arViewMatrix, vrCamMatrix, scale);
         }
     }
 
-    private void addVirtualObject(Anchor anchor) throws IOException {
+    public void addVirtualObject(Anchor anchor) {
         if (anchor == null)
             return;
 
         if (mVirtObjCount < MAX_VIRTUAL_OBJECTS) {
-            GVRAnchorObject gvrAnchor = new GVRAnchorObject(mGvrContext);
-            GVRSceneObject sceneObject = mGvrContext.getAssetLoader().loadModel("objects/andy.obj");
-            gvrAnchor.addChildObject(sceneObject);
+            GVRAnchorObject gvrAnchor = new VirtualObject(mGvrContext);
 
             mScene.addSceneObject(gvrAnchor);
             mVirtualObjects.add(gvrAnchor);
@@ -114,7 +96,7 @@ public class ARCoreHelper {
         mVirtObjCount = 0;
     }
 
-    private Anchor createARCoreAnchor(List<HitResult> hitResult) {
+    public Anchor createARCoreAnchor(List<HitResult> hitResult) {
         for (HitResult hit : hitResult) {
             // Check if any plane was hit, and if it was hit inside the plane polygon
             Trackable trackable = hit.getTrackable();
@@ -157,13 +139,7 @@ public class ARCoreHelper {
     }
 
     private void addVirtualPlane(Plane plane) {
-        GVRSceneObject planeObject = createQuadPlane(mGvrContext);
-
-        if (planeObject == null)
-            return;
-
-        GVRPlaneObject gvrPlane = new GVRPlaneObject(mGvrContext);
-        gvrPlane.addChildObject(planeObject);
+        GVRPlaneObject gvrPlane = new VirtualPlane(mGvrContext);
         gvrPlane.setARPlane(plane);
 
         mScene.addSceneObject(gvrPlane);
@@ -188,28 +164,5 @@ public class ARCoreHelper {
         gvrPlane.setARPlane(null);
     }
 
-    private int hsvHUE = 0;
-    private GVRSceneObject createQuadPlane(GVRContext gvrContext) {
-        GVRMesh mesh = GVRMesh.createQuad(gvrContext,
-                "float3 a_position", 1.0f, 1.0f);
 
-        GVRMaterial mat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
-
-        GVRSceneObject polygonObject = new GVRSceneObject(gvrContext, mesh, mat);
-
-        hsvHUE += 35;
-        float[] hsv = new float[3];
-        hsv[0] = hsvHUE % 360;
-        hsv[1] = 1f; hsv[2] = 1f;
-
-        int c =  Color.HSVToColor(50, hsv);
-        mat.setDiffuseColor(Color.red(c) / 255f,Color.green(c) / 255f,
-                Color.blue(c) / 255f, 0.2f);
-
-        polygonObject.getRenderData().setMaterial(mat);
-        polygonObject.getRenderData().setAlphaBlend(true);
-        polygonObject.getTransform().setRotationByAxis(-90, 1, 0, 0);
-
-        return polygonObject;
-    }
 }
