@@ -21,17 +21,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRLight;
-import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRDirectLight;
 
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRShader;
-import org.gearvrf.io.GVRControllerType;
-import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -82,7 +79,6 @@ public class X3DparserScript extends GVRMain
     try
     {
       GVRCameraRig mainCameraRig = scene.getMainCameraRig();
-
       model = gvrContext.getAssetLoader().loadModel(filename, scene);
 
       // check if a headlight was attached to the model's camera rig
@@ -97,15 +93,6 @@ public class X3DparserScript extends GVRMain
           GVRSceneObject owner = l.getOwnerObject();
           owner.getParent().removeChildObject(owner);
         }
-      }
-      else if (model.getCameraRig().getChildrenCount() > 3)
-      {
-        GVRSceneObject headlightSceneObject = new GVRSceneObject(gvrContext);
-        headlightSceneObject.setName("headlightSceneObject");
-        GVRDirectLight headLight = new GVRDirectLight(gvrContext);
-        headlightSceneObject.attachLight(headLight);
-        headLight.setDiffuseIntensity(1, 1, 1, 1);
-        mainCameraRig.addChildObject(headlightSceneObject);
       }
     }
     catch (FileNotFoundException e)

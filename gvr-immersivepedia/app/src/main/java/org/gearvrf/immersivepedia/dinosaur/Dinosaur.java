@@ -14,32 +14,18 @@
  */
 
 package org.gearvrf.immersivepedia.dinosaur;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 
 
 public class Dinosaur extends FocusableSceneObject {
 
-    private GVRSceneObject base;
-    private GVRSceneObject dino;
-    private GVRSceneObject ground;
-
-    private Dinosaur(GVRContext context, GVRMesh mesh, GVRTexture texture) {
-        super(context, mesh, texture);
-    }
-
     public Dinosaur(GVRContext context, GVRSceneObject dino, GVRSceneObject base,
             GVRSceneObject ground) {
-        this(context, dino.getRenderData().getMesh(), dino.getRenderData().getMaterial()
-                .getMainTexture());
-
-        this.base = base;
-        this.dino = dino;
-        this.ground = ground;
+        super(context, dino.getRenderData().getMesh(), dino.getRenderData().getMaterial().getMainTexture());
 
         if (dino != null && dino.getRenderData() != null
                 && dino.getRenderData().getMaterial() != null) {
@@ -58,18 +44,5 @@ public class Dinosaur extends FocusableSceneObject {
             ground.getRenderData().setRenderingOrder(RenderingOrderApplication.DINOSAUR);
             this.addChildObject(ground);
         }
-
-    }
-
-    public GVRSceneObject getBase() {
-        return base;
-    }
-
-    public GVRSceneObject getDino() {
-        return dino;
-    }
-
-    public GVRSceneObject getGround() {
-        return ground;
     }
 }

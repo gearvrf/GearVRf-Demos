@@ -55,6 +55,6 @@ dependencies {
             releaseCompile(name: 'ResonanceAudio-release', ext: 'aar')
         }
     } else {
-        compile "org.gearvrf:resonanceaudio:$gearvrfVersion"
+        compile "org.gearvrf:ResonanceAudio:$gearvrfVersion"
     }
 }

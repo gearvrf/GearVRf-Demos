@@ -15,7 +15,7 @@
 
 package org.gearvrf.immersivepedia.model;
 
-import java.io.IOException;
+import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -35,66 +35,65 @@ import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.PlayPauseButton;
 
-import android.util.Log;
+import java.io.IOException;
 
 public class RotateDinosaurGroup extends GVRSceneObject implements
-		OnGestureListener {
+        OnGestureListener {
 
-	private FocusableSceneObject styrocosaurus;
-	private GVRContext gvrContext;
-	private GVRScene scene;
-	private Totem totem;
-	public boolean isPlayed;
-	private GVRAnimation animation;
-	private SwipeIndicator swipeIndicator;
-	private int streamID;
-	
+    private FocusableSceneObject styrocosaurus;
+    private GVRContext gvrContext;
+    private GVRScene scene;
+    private Totem totem;
+    public boolean isPlayed;
+    private GVRAnimation animation;
+    private SwipeIndicator swipeIndicator;
+    private int streamID;
 
-	public RotateDinosaurGroup(GVRContext gvrContext, GVRScene scene)
-			throws IOException {
-		super(gvrContext);
 
-		this.gvrContext = gvrContext;
-		this.scene = scene;
+    public RotateDinosaurGroup(GVRContext gvrContext, GVRScene scene)
+            throws IOException {
+        super(gvrContext);
 
-		createDinosaur();
-		createTotem();
-		createDinoAnimation();
-		createSwipeIndicator();
+        this.gvrContext = gvrContext;
+        this.scene = scene;
 
-	}
+        createDinosaur();
+        createTotem();
+        createDinoAnimation();
+        createSwipeIndicator();
+    }
 
-	private void createSwipeIndicator() {
-		swipeIndicator = new SwipeIndicator(gvrContext, styrocosaurus);
-		swipeIndicator.getTransform().setPosition(0, 1.5f, -3f);
-		swipeIndicator.init();
-		addChildObject(swipeIndicator);
-	}
+    private void createSwipeIndicator() {
+        swipeIndicator = new SwipeIndicator(gvrContext, styrocosaurus);
+        swipeIndicator.getTransform().setPosition(0, 1.5f, -3f);
+        swipeIndicator.init();
+        addChildObject(swipeIndicator);
+    }
 
-	private void createTotem() {
+    private void createTotem() {
 
-		totem = new Totem(this.gvrContext,
-				this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
-						R.drawable.totem_tex_diffuse)));
-		totem.setTotemEventListener(null);
-		scene.addSceneObject(totem);
-		totem.getTransform().setPosition(-.3f, 0f, -5.0f);
-		totem.getTransform().rotateByAxis(180.0f, 0f, 1f, 0f);
-		totem.getTransform().setScale(1f, 1f, 1f);
-		totem.setText(gvrContext.getActivity().getResources()
-				.getString(R.string.rotate_totem));
-		totem.getTransform().rotateByAxisWithPivot(
-				DinosaurFactory.STYRACOSAURUS_ANGLE_AROUND_CAMERA - 35.0f, 0f,
-				1f, 0f, 0f, 0f, 0f);
-		totem.setIcon(R.drawable.play);
-		totem.setName("totem_styracosaurus");
-	}
+        totem = new Totem(this.gvrContext,
+                this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                        R.drawable.totem_tex_diffuse)));
+        totem.setTotemEventListener(null);
+        scene.addSceneObject(totem);
+        totem.getTransform().setPosition(-.3f, 0f, -5.0f);
+        totem.getTransform().rotateByAxis(180.0f, 0f, 1f, 0f);
+        totem.getTransform().setScale(1f, 1f, 1f);
+        totem.setText(gvrContext.getActivity().getResources()
+                .getString(R.string.rotate_totem));
+        totem.getTransform().rotateByAxisWithPivot(
+                DinosaurFactory.STYRACOSAURUS_ANGLE_AROUND_CAMERA - 35.0f, 0f,
+                1f, 0f, 0f, 0f, 0f);
+        totem.setIcon(R.drawable.play);
+        totem.setName("totem_styracosaurus");
+    }
 
-	private void createDinoAnimation() {
+    private void createDinoAnimation() {
         final PlayPauseButton playPause = totem.getIcon();
 
-		playPause.attachCollider(new GVRMeshCollider(getGVRContext(), false));
-		playPause.setOnClickListener(new OnClickListener() {
+        playPause.attachCollider(new GVRMeshCollider(getGVRContext(), false));
+        playPause.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick() {
@@ -102,16 +101,15 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
                 if (animation == null) {
                     startAnimation();
                     streamID = AudioClip.getInstance(getGVRContext().getContext()).playLoop(AudioClip.getUiLoopRotateSoundID(), 1.0f, 1.0f);
-                    Log.e("test","start code: "+streamID);
+                    Log.e("test", "start code: " + streamID);
                 } else {
-                	pauseAnimation();
+                    pauseAnimation();
                 }
             }
 
         });
 
         playPause.focusListener = new FocusListener() {
-
             @Override
             public void lostFocus(FocusableSceneObject object) {
                 if (isPlayed) {
@@ -132,89 +130,85 @@ public class RotateDinosaurGroup extends GVRSceneObject implements
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-
             }
         };
-
     }
 
-	private void startAnimation() {
-		animation = new GVRRotationByAxisAnimation(styrocosaurus, 25, 360, 0,
-				1, 0).start(gvrContext.getAnimationEngine());
-		animation.setRepeatMode(1);
-		animation.setRepeatCount(-1);
-		isPlayed = true;
-		swipeIndicator.setStop(true);
+    private void startAnimation() {
+        animation = new GVRRotationByAxisAnimation(styrocosaurus, 25, 360, 0,
+                1, 0).start(gvrContext.getAnimationEngine());
+        animation.setRepeatMode(1);
+        animation.setRepeatCount(-1);
+        isPlayed = true;
+        swipeIndicator.setStop(true);
+    }
 
-	}
-
-	private void stopAnimation() {
-		gvrContext.getAnimationEngine().stop(animation);
+    private void stopAnimation() {
+        gvrContext.getAnimationEngine().stop(animation);
         AudioClip.getInstance(getGVRContext().getContext())
                 .pauseSound(streamID);
-		animation = null;
-		isPlayed = false;
-	}
+        animation = null;
+        isPlayed = false;
+    }
 
-	private void createDinosaur() throws IOException {
-		styrocosaurus = DinosaurFactory.getInstance(gvrContext)
-				.getStyracosaurus();
-		styrocosaurus.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0,
-				0);
-		styrocosaurus.getTransform().setPosition(0, 0, -8);
-		styrocosaurus.setOnGestureListener(this);
-		styrocosaurus.setName("styrocosaurus");
-		addChildObject(styrocosaurus);
-	}
+    private void createDinosaur() {
+        styrocosaurus = DinosaurFactory.getInstance(gvrContext)
+                .getStyracosaurus();
+        styrocosaurus.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0,
+                0);
+        styrocosaurus.getTransform().setPosition(0, 0, -8);
+        styrocosaurus.setOnGestureListener(this);
+        styrocosaurus.setName("styrocosaurus");
+        addChildObject(styrocosaurus);
+    }
 
-	public void renderTextureButton(String textureID, GVRSceneObject sceneObject) {
-		sceneObject
-				.getRenderData()
-				.getMaterial()
-				.setMainTexture(
-						sceneObject.getRenderData().getMaterial()
-								.getTexture(textureID));
-	}
+    public void renderTextureButton(String textureID, GVRSceneObject sceneObject) {
+        sceneObject
+                .getRenderData()
+                .getMaterial()
+                .setMainTexture(
+                        sceneObject.getRenderData().getMaterial()
+                                .getTexture(textureID));
+    }
 
-	@Override
-	public void onSwipeUp() {
-	}
+    @Override
+    public void onSwipeUp() {
+    }
 
-	@Override
-	public void onSwipeDown() {
-	}
+    @Override
+    public void onSwipeDown() {
+    }
 
-	@Override
-	public void onSwipeForward() {
-		if (!isPlayed) {
-			AudioClip.getInstance(getGVRContext().getContext()).playSound(
-					AudioClip.getUIRotateSoundID(), 1.0f, 1.0f);
-			new GVRRotationByAxisAnimation(styrocosaurus, 4f, 45, 0, 1, 0)
-					.start(gvrContext.getAnimationEngine());
-			swipeIndicator.setStop(true);
-		}
-	}
+    @Override
+    public void onSwipeForward() {
+        if (!isPlayed) {
+            AudioClip.getInstance(getGVRContext().getContext()).playSound(
+                    AudioClip.getUIRotateSoundID(), 1.0f, 1.0f);
+            new GVRRotationByAxisAnimation(styrocosaurus, 4f, 45, 0, 1, 0)
+                    .start(gvrContext.getAnimationEngine());
+            swipeIndicator.setStop(true);
+        }
+    }
 
-	@Override
-	public void onSwipeBack() {
-		if (!isPlayed) {
-			AudioClip.getInstance(getGVRContext().getContext()).playSound(
-					AudioClip.getUIRotateSoundID(), 1.0f, 1.0f);
-			new GVRRotationByAxisAnimation(styrocosaurus, 4f, -45, 0, 1, 0)
-					.start(gvrContext.getAnimationEngine());
-			swipeIndicator.setStop(true);
-		}
-	}
+    @Override
+    public void onSwipeBack() {
+        if (!isPlayed) {
+            AudioClip.getInstance(getGVRContext().getContext()).playSound(
+                    AudioClip.getUIRotateSoundID(), 1.0f, 1.0f);
+            new GVRRotationByAxisAnimation(styrocosaurus, 4f, -45, 0, 1, 0)
+                    .start(gvrContext.getAnimationEngine());
+            swipeIndicator.setStop(true);
+        }
+    }
 
-	@Override
-	public void onSwipeIgnore() {
-	}
+    @Override
+    public void onSwipeIgnore() {
+    }
 
-	public void pauseAnimation() {
-		stopAnimation();
+    public void pauseAnimation() {
+        stopAnimation();
         final PlayPauseButton playPause = totem.getIcon();
         renderTextureButton(PlayPauseButton.PLAY_NORMAL, playPause);
-		Log.e("test","pause: "+streamID);
-	}
-
+        Log.e("test", "pause: " + streamID);
+    }
 }

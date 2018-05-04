@@ -22,7 +22,6 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
 import org.gearvrf.io.GVRTouchPadGestureListener.Action;
-import org.gearvrf.utility.Log;
 
 public class FocusableSceneObject extends GVRSceneObject {
 
@@ -90,10 +89,6 @@ public class FocusableSceneObject extends GVRSceneObject {
     public void dispatchInClick() {
         if (this.onClickListener != null)
             this.onClickListener.onClick();
-    }
-
-    public boolean hasFocus() {
-        return focus;
     }
 
     public void setOnClickListener(OnClickListener onClickListener) {

@@ -20,6 +20,7 @@ dependencies {
     } else {
         compile "org.gearvrf:x3d:$gearvrfVersion"
     }
+    compile 'com.google.android.exoplayer:exoplayer:2.6.0'
 }
 
 android {
@@ -29,9 +30,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-
     sourceSets.main {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
 }
