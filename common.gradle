@@ -180,11 +180,14 @@ dependencies {
             if (findProject(':backend_cpp')) {
                 compile project(':backend_cpp')
                 compile project(':backend_cpp_library')
+                compile project(':backend_cpp_config')
             } else {
                 debugCompile(name: 'backend_cpp-debug', ext: 'aar')
                 releaseCompile(name: 'backend_cpp-release', ext: 'aar')
                 debugCompile(name: 'backend_cpp_library-debug', ext: 'aar')
                 releaseCompile(name: 'backend_cpp_library-release', ext: 'aar')
+                debugCompile(name: 'backend_cpp_config-debug', ext: 'aar')
+                releaseCompile(name: 'backend_cpp_config-release', ext: 'aar')
             }
         } else {
             throw new GradleException("backend_cpp not available from maven")
