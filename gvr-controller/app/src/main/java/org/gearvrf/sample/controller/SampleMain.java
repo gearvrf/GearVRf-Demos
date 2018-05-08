@@ -100,7 +100,7 @@ public class SampleMain extends GVRMain
                 controller = newController;
                 newController.addPickEventListener(mPickHandler);
                 newController.setCursor(cursor);
-                newController.setCursorDepth(DEPTH);
+                newController.setCursorDepth(DEPTH * 2);
                 newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 newController.getPicker().setEventOptions(eventOptions);
             }
