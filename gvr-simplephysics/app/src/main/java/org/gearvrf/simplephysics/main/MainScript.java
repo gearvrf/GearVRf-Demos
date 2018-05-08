@@ -146,10 +146,7 @@ public class MainScript extends GVRMain implements GVRSceneObject.ComponentVisit
         final float intensity = 1.0f;
         mScene.setBackgroundColor(1.0f * intensity, 0.956f * intensity, 0.84f * intensity, 1f);
 
-        if (!GVRShader.isVulkanInstance())
-        {
-            addLights(context, scene);
-        }
+        addLights(context, scene);
         addGround(context, scene);
         addCylinderGroup(context, scene);
     }
