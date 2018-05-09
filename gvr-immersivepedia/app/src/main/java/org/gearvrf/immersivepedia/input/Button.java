@@ -21,16 +21,8 @@ public class Button {
     protected boolean up;
     protected boolean pressed;
 
-    public boolean isDown() {
-        return down;
-    }
-
     public boolean isUp() {
         return up;
-    }
-
-    public boolean isPressed() {
-        return pressed;
     }
 
     protected void replicateValues(Button button) {

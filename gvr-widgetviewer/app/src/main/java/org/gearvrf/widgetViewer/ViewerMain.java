@@ -20,8 +20,6 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
@@ -33,9 +31,9 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSharedTexture;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRSwitch;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
 import org.gearvrf.widgetplugin.GVRWidgetPlugin;
@@ -45,7 +43,6 @@ import org.gearvrf.widgetplugin.GVRWidgetSceneObjectMeshInfo;
 import java.io.IOException;
 
 public class ViewerMain extends GVRMain {
-    private static final int THUMBNAIL_RENDER_ORDER = GVRRenderData.GVRRenderingOrder.TRANSPARENT + 50;
     private static final String TAG = "ViewerMain";
 
     private GVRWidgetPlugin mPlugin = null;
@@ -75,21 +72,9 @@ public class ViewerMain extends GVRMain {
     private GVRMaterial mLeafBodyMaterial = null;
     private GVRMaterial mLeafBoxMaterial = null;
     private final float EYE_TO_OBJECT = 2.4f;
-    private final int THUMBNAIL_NUM = 5;
-    private GVRSceneObject[] ThumbnailObject = new GVRSceneObject[THUMBNAIL_NUM];
-    private GVRSceneObject[] ThumbnailRotation = new GVRSceneObject[THUMBNAIL_NUM];
-    private GVRRenderData[] ThumbnailGlasses = new GVRRenderData[THUMBNAIL_NUM];
-    private GVRSceneObject[] Thumbnails = new GVRSceneObject[THUMBNAIL_NUM];
-    private float[][] ThumbnailTargetPosition = new float[THUMBNAIL_NUM][3];
-    private int[] ThumbnailTargetIndex = new int[THUMBNAIL_NUM];
-    private float[][] ThumbnailCurrentPosition = new float[THUMBNAIL_NUM][3];
-    private int[] ThumbnailOrder = new int[THUMBNAIL_NUM];
     public int ThumbnailSelected = 2;
-    public boolean mUseThumbnails = false;
     private GVRSceneObject mWidgetButtonObject;
     private GVRSceneObject mWdgetButtonObject2;
-
-    private boolean mSelectionActive = false;
     public boolean mButtonPointed = false;
     public boolean mObjectPointed = true;
 
@@ -122,6 +107,11 @@ public class ViewerMain extends GVRMain {
     GVRMaterial mWidgetMaterial;
     GVRMaterial mWidgetMaterial2;
 
+    @Override
+    public SplashMode getSplashMode() {
+        return SplashMode.MANUAL;
+    }
+
     public class PickHandler extends GVREventListeners.TouchEvents
     {
         public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
@@ -131,7 +121,6 @@ public class ViewerMain extends GVRMain {
                 mButtonPointed = false;
             }
             mObjectPointed = true;
-            mSelectionActive = false;
         }
 
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
@@ -142,7 +131,6 @@ public class ViewerMain extends GVRMain {
                 mObjectPointed = false;
                 mButtonPointed = true;
             }
-            mSelectionActive = true;
         }
 
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
@@ -185,10 +173,6 @@ public class ViewerMain extends GVRMain {
         {
             makeMaterials();
             mScene.addSceneObject(makeObjects(gvrContext));
-            if (mUseThumbnails)
-            {
-                makeThumbnails();
-            }
             makeWidgetButtons();
 
             GVRTexture m360 = assetLoader.loadTexture(new GVRAndroidResource(mGVRContext, "env.jpg"));
@@ -204,6 +188,13 @@ public class ViewerMain extends GVRMain {
             Log.e(TAG, "Assets were not loaded. Stopping application!");
             gvrContext.getActivity().finish();
         }
+        gvrContext.runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                updateState();
+                closeSplashScreen();
+            }
+        });
     }
 
     public void selectObject()
@@ -214,14 +205,9 @@ public class ViewerMain extends GVRMain {
 
     private void updateState()
     {
-        if (mUseThumbnails)
-        {
-            moveThumbnails();
-        }
         if (mRotateY - mLastRotateY != 0.0f)
         {
             mObjectRot.getTransform().setRotationByAxis(mRotateY, 0.0f, 1.0f, 0.0f);
-            Log.d("NOLA", "updateState rotateY = %f", mRotateY);
             mLastRotateZ = mRotateZ;
             mLastRotateX = mRotateX;
             mLastRotateY = mRotateY;
@@ -279,49 +265,6 @@ public class ViewerMain extends GVRMain {
     {
         if (ThumbnailSelected == 3 && mLookInside)
             mLookInside = false;
-    }
-
-    private void moveThumbnails()
-    {
-        boolean MoveActive = false;
-        if (Math.abs(ThumbnailTargetPosition[ThumbnailTargetIndex[0]][0]
-                     - ThumbnailCurrentPosition[0][0]) < 0.2f)
-            MoveActive = true;
-
-        if ((mSelectionActive && MoveActive)) {
-            if (ThumbnailCurrentPosition[ThumbnailSelected][0] < -0.5f) {
-                for (int i = 0; i < THUMBNAIL_NUM; i++) {
-                    ThumbnailTargetIndex[i]++;
-                    if (ThumbnailTargetIndex[i] >= THUMBNAIL_NUM)
-                        ThumbnailTargetIndex[i] = ThumbnailTargetIndex[i]
-                                                  - THUMBNAIL_NUM;
-                    if (ThumbnailTargetIndex[i] < 0)
-                        ThumbnailTargetIndex[i] = ThumbnailTargetIndex[i]
-                                                  + THUMBNAIL_NUM;
-                }
-            } else if (ThumbnailCurrentPosition[ThumbnailSelected][0] > 0.5f) {
-                for (int i = 0; i < THUMBNAIL_NUM; i++) {
-                    ThumbnailTargetIndex[i]--;
-                    if (ThumbnailTargetIndex[i] >= THUMBNAIL_NUM)
-                        ThumbnailTargetIndex[i] = ThumbnailTargetIndex[i]
-                                                  - THUMBNAIL_NUM;
-                    if (ThumbnailTargetIndex[i] < 0)
-                        ThumbnailTargetIndex[i] = ThumbnailTargetIndex[i]
-                                                  + THUMBNAIL_NUM;
-                }
-            }
-        }
-
-        for (int i = 0; i < THUMBNAIL_NUM; i++) {
-            float speed = 0.08f;
-            for (int j = 0; j < 3; j++)
-                ThumbnailCurrentPosition[i][j] += speed
-                                                  * (ThumbnailTargetPosition[ThumbnailTargetIndex[i]][j] - ThumbnailCurrentPosition[i][j]);
-            ThumbnailObject[i].getTransform().setPosition(
-                    ThumbnailCurrentPosition[i][0],
-                    ThumbnailCurrentPosition[i][1],
-                    ThumbnailCurrentPosition[i][2]);
-        }
     }
 
     private void makeMaterials() throws IOException
@@ -424,10 +367,7 @@ public class ViewerMain extends GVRMain {
         mRobotRubberMaterial.setVec4(DiffuseShader2.COLOR_KEY, 0.3f, 0.3f, 0.3f, 1.0f);
         mRobotRubberMaterial.setTexture(DiffuseShader2.TEXTURE_KEY, default_tex);
 
-        GVRTexture leaf_box_tex;
-
-        leaf_box_tex = assetLoader.loadTexture(new GVRAndroidResource(mGVRContext, "leaf/box.jpg"));
-
+        final GVRTexture leaf_box_tex = assetLoader.loadTexture(new GVRAndroidResource(mGVRContext, "leaf/box.jpg"));
         mLeafBoxMaterial = new GVRMaterial(mGVRContext, new GVRShaderId(PhongShader3.class));
         mLeafBoxMaterial.setFloat(PhongShader3.RADIUS_KEY, 10.0f);
         mLeafBoxMaterial.setTexture(PhongShader3.ENV_KEY, env_tex);
@@ -456,23 +396,13 @@ public class ViewerMain extends GVRMain {
         mObjectRot.attachComponent(selector);
         mObjectPos.addChildObject(mObjectRot);
 
-
         // leaf
-        GVRSceneObject leafRoot = new GVRSceneObject(ctx);
-        GVRSceneObject obj20 = new GVRSceneObject(ctx);
-        GVRRenderData renderData20 = new GVRRenderData(ctx);
+        final GVRSceneObject leafRoot = new GVRSceneObject(ctx);
         GVRMesh mesh20 = loader.loadMesh(new GVRAndroidResource(ctx, "leaf/leaf.obj"));
-        renderData20.setMesh(mesh20);
-        renderData20.setMaterial(mLeafBodyMaterial);
-        obj20.attachRenderData(renderData20);
+        GVRSceneObject obj20 = new GVRSceneObject(ctx, mesh20, mLeafBodyMaterial);
         leafRoot.addChildObject(obj20);
-
-        GVRSceneObject obj21 = new GVRSceneObject(ctx);
-        GVRRenderData renderData21 = new GVRRenderData(ctx);
         GVRMesh mesh21 = loader.loadMesh(new GVRAndroidResource(ctx, "leaf/box.obj"));
-        renderData21.setMesh(mesh21);
-        renderData21.setMaterial(mLeafBoxMaterial);
-        obj21.attachRenderData(renderData21);
+        GVRSceneObject obj21 = new GVRSceneObject(ctx, mesh21, mLeafBoxMaterial);
         leafRoot.addChildObject(obj21);
         bv = leafRoot.getBoundingVolume();
         leafRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
@@ -480,43 +410,26 @@ public class ViewerMain extends GVRMain {
 
         // --------------bike
         GVRSceneObject bikeRoot = new GVRSceneObject(ctx);
-        GVRSceneObject obj5 = new GVRSceneObject(ctx);
-        GVRRenderData renderData5 = new GVRRenderData(ctx);
         GVRMesh mesh5 = loader.loadMesh(new GVRAndroidResource(ctx, "bike/bike.obj"));
-        renderData5.setMesh(mesh5);
-        renderData5.setMaterial(mPhongMaterial);
-        obj5.attachRenderData(renderData5);
+        GVRSceneObject obj5 = new GVRSceneObject(ctx, mesh5, mPhongMaterial);
         bikeRoot.addChildObject(obj5);
         bv = bikeRoot.getBoundingVolume();
-        //bikeRoot.getTransform().setPosition(0.7f - bv.center.x, -1.0f - bv.center.y, -2.0f - bv.center.z);
-
         bikeRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
+        bikeRoot.getTransform().setScale(0.6f, 0.6f, 0.6f);
         mObjectRot.addChildObject(bikeRoot);
 
         // --------------watch
         GVRSceneObject watchRoot = new GVRSceneObject(ctx);
-        GVRSceneObject obj1 = new GVRSceneObject(ctx);
-        GVRRenderData renderData1 = new GVRRenderData(ctx);
         GVRMesh mesh1 = loader.loadMesh(new GVRAndroidResource(ctx, "watch/frame.obj"));
-        renderData1.setMesh(mesh1);
-        renderData1.setMaterial(mMetalMaterial);
-        obj1.attachRenderData(renderData1);
+        GVRSceneObject obj1 = new GVRSceneObject(ctx, mesh1, mMetalMaterial);
         watchRoot.addChildObject(obj1);
 
-        GVRSceneObject obj2 = new GVRSceneObject(ctx);
-        GVRRenderData renderData2 = new GVRRenderData(ctx);
         GVRMesh mesh2 = loader.loadMesh(new GVRAndroidResource(ctx, "watch/board.obj"));
-        renderData2.setMesh(mesh2);
-        renderData2.setMaterial(mDiffuseMaterial);
-        obj2.attachRenderData(renderData2);
+        GVRSceneObject obj2 = new GVRSceneObject(ctx, mesh2, mDiffuseMaterial);
         watchRoot.addChildObject(obj2);
 
-        GVRSceneObject obj3 = new GVRSceneObject(ctx);
-        GVRRenderData renderData3 = new GVRRenderData(ctx);
         GVRMesh mesh3 = loader.loadMesh(new GVRAndroidResource(ctx, "watch/glass.obj"));
-        renderData3.setMesh(mesh3);
-        renderData3.setMaterial(mGlassMaterial);
-        obj3.attachRenderData(renderData3);
+        GVRSceneObject obj3 = new GVRSceneObject(ctx, mesh3, mGlassMaterial);
         obj3.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         watchRoot.addChildObject(obj3);
         bv = watchRoot.getBoundingVolume();
@@ -525,73 +438,41 @@ public class ViewerMain extends GVRMain {
 
         // --------------car
         GVRSceneObject carRoot = new GVRSceneObject(ctx);
-        GVRSceneObject obj6 = new GVRSceneObject(ctx);
-        GVRRenderData renderData6 = new GVRRenderData(ctx);
         GVRMesh mesh6 = loader.loadMesh(new GVRAndroidResource(ctx, "car/body.obj"));
-        renderData6.setMesh(mesh6);
-        renderData6.setMaterial(mCarBodyMaterial);
-        obj6.attachRenderData(renderData6);
+        GVRSceneObject obj6 = new GVRSceneObject(ctx, mesh6, mCarBodyMaterial);
         obj6.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         carRoot.addChildObject(obj6);
 
-        GVRSceneObject obj9 = new GVRSceneObject(ctx);
-        GVRRenderData renderData9 = new GVRRenderData(ctx);
         GVRMesh mesh9 = loader.loadMesh(new GVRAndroidResource(ctx, "car/tire.obj"));
-        renderData9.setMesh(mesh9);
-        renderData9.setMaterial(mCarTireMaterial);
-        obj9.attachRenderData(renderData9);
+        GVRSceneObject obj9 = new GVRSceneObject(ctx, mesh9, mCarTireMaterial);
         carRoot.addChildObject(obj9);
 
-        GVRSceneObject obj10 = new GVRSceneObject(ctx);
-        GVRRenderData renderData10 = new GVRRenderData(ctx);
         GVRMesh mesh10 = loader.loadMesh(new GVRAndroidResource(ctx, "car/glass.obj"));
-        renderData10.setMesh(mesh10);
-        renderData10.setMaterial(mCarGlassMaterial);
-        obj10.attachRenderData(renderData10);
+        GVRSceneObject obj10 = new GVRSceneObject(ctx, mesh10, mCarGlassMaterial);
         obj10.getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
         obj10.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         carRoot.addChildObject(obj10);
 
-        GVRSceneObject obj11 = new GVRSceneObject(ctx);
-        GVRRenderData renderData11 = new GVRRenderData(ctx);
         GVRMesh mesh11 = loader.loadMesh(new GVRAndroidResource(ctx, "car/wheel.obj"));
-        renderData11.setMesh(mesh11);
-        renderData11.setMaterial(mCarWheelMaterial);
-        obj11.attachRenderData(renderData11);
+        GVRSceneObject obj11 = new GVRSceneObject(ctx, mesh11, mCarWheelMaterial);
         carRoot.addChildObject(obj11);
 
-        GVRSceneObject obj12 = new GVRSceneObject(ctx);
-        GVRRenderData renderData12 = new GVRRenderData(ctx);
         GVRMesh mesh12 = loader.loadMesh(new GVRAndroidResource(ctx, "car/back.obj"));
-        renderData12.setMesh(mesh12);
-        renderData12.setMaterial(mCarBackMaterial);
-        obj12.attachRenderData(renderData12);
+        GVRSceneObject obj12 = new GVRSceneObject(ctx, mesh12, mCarBackMaterial);
         carRoot.addChildObject(obj12);
 
-        GVRSceneObject obj13 = new GVRSceneObject(mGVRContext);
-        GVRRenderData renderData13 = new GVRRenderData(mGVRContext);
         GVRMesh mesh13 = loader.loadMesh(new GVRAndroidResource(ctx, "car/grill.obj"));
-        renderData13.setMesh(mesh13);
-        renderData13.setMaterial(mCarGrillMaterial);
-        obj13.attachRenderData(renderData13);
+        GVRSceneObject obj13 = new GVRSceneObject(mGVRContext, mesh13, mCarGrillMaterial);
         obj10.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         carRoot.addChildObject(obj13);
 
-        GVRSceneObject obj14 = new GVRSceneObject(mGVRContext);
-        GVRRenderData renderData14 = new GVRRenderData(mGVRContext);
         GVRMesh mesh14 = loader.loadMesh(new GVRAndroidResource(ctx, "car/glass2.obj"));
-        renderData14.setMesh(mesh14);
-        renderData14.setMaterial(mCarLightMaterial);
-        obj14.attachRenderData(renderData14);
+        GVRSceneObject obj14 = new GVRSceneObject(mGVRContext, mesh14, mCarLightMaterial);
         obj14.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT + 1);
         carRoot.addChildObject(obj14);
 
-        GVRSceneObject obj19 = new GVRSceneObject(ctx);
-        GVRRenderData renderData19 = new GVRRenderData(ctx);
         GVRMesh mesh19 = loader.loadMesh(new GVRAndroidResource(ctx, "car/inside.obj"));
-        renderData19.setMesh(mesh19);
-        renderData19.setMaterial(mCarInsideMaterial);
-        obj19.attachRenderData(renderData19);
+        GVRSceneObject obj19 = new GVRSceneObject(ctx, mesh19, mCarInsideMaterial);
         carRoot.addChildObject(obj19);
         bv = carRoot.getBoundingVolume();
         carRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
@@ -599,37 +480,21 @@ public class ViewerMain extends GVRMain {
         mObjectRot.addChildObject(carRoot);
 
         GVRSceneObject robotRoot = new GVRSceneObject(ctx);
-        GVRSceneObject obj15 = new GVRSceneObject(ctx);
-        GVRRenderData renderData15 = new GVRRenderData(ctx);
         GVRMesh mesh15 = loader.loadMesh(new GVRAndroidResource(ctx, "robot/body.obj"));
-        renderData15.setMesh(mesh15);
-        renderData15.setMaterial(mRobotBodyMaterial);
-        obj15.attachRenderData(renderData15);
+        GVRSceneObject obj15 = new GVRSceneObject(ctx, mesh15, mRobotBodyMaterial);
         robotRoot.addChildObject(obj15);
 
-        GVRSceneObject obj16 = new GVRSceneObject(ctx);
-        GVRRenderData renderData16 = new GVRRenderData(ctx);
         GVRMesh mesh16 = loader.loadMesh(new GVRAndroidResource(ctx, "robot/head.obj"));
-        renderData16.setMesh(mesh16);
-        renderData16.setMaterial(mRobotHeadMaterial);
-        obj16.attachRenderData(renderData16);
+        GVRSceneObject obj16 = new GVRSceneObject(ctx, mesh16, mRobotHeadMaterial);
         robotRoot.addChildObject(obj16);
 
-        GVRSceneObject obj17 = new GVRSceneObject(ctx);
-        GVRRenderData renderData17 = new GVRRenderData(ctx);
         GVRMesh mesh17 = loader.loadMesh(new GVRAndroidResource(ctx, "robot/metal.obj"));
-        renderData17.setMesh(mesh17);
-        renderData17.setMaterial(mRobotMetalMaterial);
-        obj17.attachRenderData(renderData17);
+        GVRSceneObject obj17 = new GVRSceneObject(ctx, mesh17, mRobotMetalMaterial);
         obj17.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         robotRoot.addChildObject(obj17);
 
-        GVRSceneObject obj18 = new GVRSceneObject(ctx);
-        GVRRenderData renderData18 = new GVRRenderData(ctx);
         GVRMesh mesh18 = loader.loadMesh(new GVRAndroidResource(ctx, "robot/rubber.obj"));
-        renderData18.setMesh(mesh18);
-        renderData18.setMaterial(mRobotRubberMaterial);
-        obj18.attachRenderData(renderData18);
+        GVRSceneObject obj18 = new GVRSceneObject(ctx, mesh18, mRobotRubberMaterial);
         robotRoot.addChildObject(obj18);
         bv = robotRoot.getBoundingVolume();
         robotRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
@@ -798,21 +663,6 @@ public class ViewerMain extends GVRMain {
         eye[1] = 0.0f;
         eye[2] = EYE_TO_OBJECT;
         eye[3] = 1.0f;
-
-        if (mUseThumbnails)
-        {
-            float[] matT = ThumbnailRotation[0].getTransform().getModelMatrix();
-            mReflectionMaterial.setVec4(ReflectionShader.MAT1_KEY, matT[0], matT[4], matT[8],
-                                        matT[12]);
-            mReflectionMaterial.setVec4(ReflectionShader.MAT2_KEY, matT[1], matT[5], matT[9],
-                                        matT[13]);
-            mReflectionMaterial.setVec4(ReflectionShader.MAT3_KEY, matT[2], matT[6], matT[10],
-                                        matT[14]);
-            mReflectionMaterial.setVec4(ReflectionShader.MAT4_KEY, matT[3], matT[7], matT[11],
-                                        matT[15]);
-            mReflectionMaterial.setVec3(ReflectionShader.LIGHT_KEY, light[0], light[1], light[2]);
-            mReflectionMaterial.setVec3(ReflectionShader.EYE_KEY, eye[0], eye[1], eye[2]);
-        }
     }
 
     private void makeWidgetButtons() throws IOException
@@ -864,7 +714,6 @@ public class ViewerMain extends GVRMain {
         mWidgetMaterial.setVec3(PhongShader3.LIGHT_KEY, light[0], light[1], light[2]);
         mWidgetMaterial.setVec3(PhongShader3.EYE_KEY, eye[0], eye[1], eye[2]);
 
-        //mWidgetMaterial2 = new GVRMaterial(gvrContext);
         mWidgetMaterial2 = new GVRMaterial(mGVRContext, new GVRShaderId(PhongShader3.class));
         mWidgetMaterial2.setMainTexture(mWidgetTexture);
         mWidgetMaterial2.setVec4(PhongShader3.MAT1_KEY, matO[0], matO[4], matO[8], matO[12]);
@@ -882,78 +731,11 @@ public class ViewerMain extends GVRMain {
         mWdgetButtonObject2.getTransform().rotateByAxis(-40.0f, 0.0f, 1.0f, 0.0f);
         mWdgetButtonObject2.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         mScene.addSceneObject(mWidgetButtonObject);
+
+        //@todo currently nothing shown in the second pane; the demo needs rework to actually take
+        //advantage of a second panel
+        mWdgetButtonObject2.setEnable(false);
         mScene.addSceneObject(mWdgetButtonObject2);
     }
 
-    private void makeThumbnails() throws IOException
-    {
-        GVRAssetLoader assetLoader = mGVRContext.getAssetLoader();
-        GVRMesh glass_mesh = assetLoader.loadMesh(new GVRAndroidResource(mGVRContext, "glass.obj"));
-        GVRMesh board_mesh = assetLoader.loadMesh(new GVRAndroidResource(mGVRContext, "board.obj"));
-
-        int i;
-        ThumbnailTargetPosition[0][0] = -2.2f;
-        ThumbnailTargetPosition[0][1] = 0.0f;
-        ThumbnailTargetPosition[0][2] = -EYE_TO_OBJECT - 2.8f;
-        ThumbnailTargetPosition[1][0] = -1.0f;
-        ThumbnailTargetPosition[1][1] = 0.0f;
-        ThumbnailTargetPosition[1][2] = -EYE_TO_OBJECT - 1.5f;
-        ThumbnailTargetPosition[2][0] = 0.0f;
-        ThumbnailTargetPosition[2][1] = 0.0f;
-        ThumbnailTargetPosition[2][2] = -EYE_TO_OBJECT - 0.0f;
-        ThumbnailTargetPosition[3][0] = 1.0f;
-        ThumbnailTargetPosition[3][1] = 0.0f;
-        ThumbnailTargetPosition[3][2] = -EYE_TO_OBJECT - 1.5f;
-        ThumbnailTargetPosition[4][0] = 2.4f;
-        ThumbnailTargetPosition[4][1] = 0.0f;
-        ThumbnailTargetPosition[4][2] = -EYE_TO_OBJECT - 2.8f;
-
-        for (i = 0; i < THUMBNAIL_NUM; i++)
-        {
-            for (int j = 0; j < 3; j++)
-            {
-                ThumbnailCurrentPosition[i][j] = ThumbnailTargetPosition[i][j];
-            }
-        }
-        for (i = 0; i < THUMBNAIL_NUM; i++)
-        {
-            ThumbnailTargetIndex[i] = i;
-        }
-        ThumbnailOrder[0] = THUMBNAIL_RENDER_ORDER;
-        ThumbnailOrder[1] = THUMBNAIL_RENDER_ORDER + 1;
-        ThumbnailOrder[2] = THUMBNAIL_RENDER_ORDER + 2;
-        ThumbnailOrder[3] = THUMBNAIL_RENDER_ORDER + 3;
-        ThumbnailOrder[4] = THUMBNAIL_RENDER_ORDER + 4;
-        for (i = 0; i < THUMBNAIL_NUM; i++)
-        {
-            ThumbnailObject[i] = new GVRSceneObject(mGVRContext);
-            ThumbnailRotation[i] = new GVRSceneObject(mGVRContext);
-            GVRSceneObject obj = new GVRSceneObject(mGVRContext, glass_mesh, mReflectionMaterial);
-            ThumbnailGlasses[i] = obj.getRenderData();
-            obj.getRenderData().setRenderingOrder(ThumbnailOrder[i] + 10);
-            ThumbnailRotation[i].addChildObject(obj);
-            ThumbnailObject[i].addChildObject(ThumbnailRotation[i]);
-
-            Thumbnails[i] = new GVRSceneObject(mGVRContext, board_mesh /*ThumbnailTextures[i]*/);
-            Thumbnails[i].getRenderData().setRenderingOrder(ThumbnailOrder[i]);
-            Thumbnails[i].getRenderData().setCullFace(GVRRenderPass.GVRCullFaceEnum.None);
-            Thumbnails[i].getTransform().setScale(1.0f, 1.2f, 1.0f);
-            ThumbnailRotation[i].addChildObject(Thumbnails[i]);
-
-            ThumbnailObject[i].getTransform().setPosition(
-                    ThumbnailTargetPosition[i][0],
-                    ThumbnailTargetPosition[i][1],
-                    ThumbnailTargetPosition[i][2]);
-            mScene.addSceneObject(ThumbnailObject[i]);
-
-            GVRSphereCollider sphereCollider = new GVRSphereCollider(mGVRContext);
-            sphereCollider.setRadius(0.5f);
-            ThumbnailObject[i].attachComponent(sphereCollider);
-        }
-        for (i = 0; i < THUMBNAIL_NUM; ++i)
-        {
-            ThumbnailGlasses[i].setRenderMask(0);
-            Thumbnails[i].getRenderData().setRenderMask(0);
-        }
-    }
 }

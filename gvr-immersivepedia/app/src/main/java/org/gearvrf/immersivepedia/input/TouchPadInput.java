@@ -32,11 +32,9 @@ public class TouchPadInput {
         Button newButton = newTouchPadMap.buttonState;
 
         updateIntermediateStates(newButton, oldButton);
-
     }
 
     public static TouchPadInputMap getCurrent() {
-
         return newTouchPadMap;
     }
 
@@ -69,13 +67,10 @@ public class TouchPadInput {
         }
         if (event.getAction() == KeyEvent.ACTION_UP) {
             newTouchPadMap.buttonState.pressed = false;
-
         }
-
     }
 
     public static void onSwipe(GVRTouchPadGestureListener.Action swipeDirection) {
         newTouchPadMap.swipeDirection = swipeDirection;
     }
-
 }

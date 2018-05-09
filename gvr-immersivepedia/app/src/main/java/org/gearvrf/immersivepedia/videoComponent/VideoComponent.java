@@ -152,29 +152,12 @@ public class VideoComponent extends GVRSceneObject {
         mediaPlayer.pause();
     }
 
-    public void stopVideo() {
-        mediaPlayer.stop();
-    }
-
-    public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
-    }
-
     public Seekbar getSeekbar() {
         return seekbar;
     }
 
     public ButtonBoard getButtonbar() {
         return buttonBoard;
-    }
-
-    public void slowingBack() {
-        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() - 10000);
-
-    }
-
-    public void fastForward() {
-        mediaPlayer.seekTo(mediaPlayer.getCurrentPosition() + 10000);
     }
 
     public boolean isPlaying() {

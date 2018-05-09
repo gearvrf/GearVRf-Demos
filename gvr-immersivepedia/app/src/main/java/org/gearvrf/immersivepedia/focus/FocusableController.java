@@ -18,15 +18,9 @@ package org.gearvrf.immersivepedia.focus;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.immersivepedia.GazeController;
 import org.gearvrf.immersivepedia.Main;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.input.TouchPadInput;
-
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class FocusableController {
 

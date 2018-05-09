@@ -15,10 +15,7 @@
 
 package org.gearvrf.immersivepedia.scene;
 
-import java.io.IOException;
-
 import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRAndroidResource.TextureCallback;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
@@ -38,18 +35,18 @@ import org.gearvrf.immersivepedia.model.TextDinosaurGroup;
 import org.gearvrf.immersivepedia.model.VideoDinosaurGroup;
 import org.gearvrf.immersivepedia.util.FPSCounter;
 
+import java.io.IOException;
+
 public class DinosaurScene extends GVRScene {
 
     public static final float CAMERA_Y = 1.6f;
-
-    GVRScene scene;
 
     private VideoDinosaurGroup videoDinosaur;
     private GalleryDinosaurGroup galleryDinosaur = null;
     private GVRContext gvrContext;
     private TextDinosaurGroup textDinosaur;
 
-	private RotateDinosaurGroup rotateDinosaur;
+    private RotateDinosaurGroup rotateDinosaur;
 
     public DinosaurScene(GVRContext gvrContext) throws IOException {
         super(gvrContext);
@@ -83,7 +80,6 @@ public class DinosaurScene extends GVRScene {
                 DinosaurFactory.ANKYLOSAURUS_ANGLE_AROUND_CAMERA, 0, 1, 0, 0, 0, 0);
 
         addSceneObject(textDinosaur);
-
     }
 
     private void createVideoDinosauGroup() throws IOException {
@@ -110,40 +106,29 @@ public class DinosaurScene extends GVRScene {
         }
     }
 
-    private GVRSceneObject.ComponentVisitor showAnimator = new GVRSceneObject.ComponentVisitor()
-    {
+    private GVRSceneObject.ComponentVisitor showAnimator = new GVRSceneObject.ComponentVisitor() {
         @Override
-        public boolean visit(GVRComponent comp)
-        {
+        public boolean visit(GVRComponent comp) {
             GVRRenderData rd = (GVRRenderData) comp;
-            GVRMaterial mtl = rd.getMaterial();
             GVRSceneObject owner = rd.getOwnerObject();
-            try
-            {
+            try {
                 new GVROpacityAnimation(owner, 1f, 1f).start(getGVRContext().getAnimationEngine());
-            }
-            catch (UnsupportedOperationException ex)
-            {
+            } catch (UnsupportedOperationException ex) {
                 // shader doesn't support opacity
             }
             return true;
         }
     };
 
-    private GVRSceneObject.ComponentVisitor hideAll = new GVRSceneObject.ComponentVisitor()
-    {
+    private GVRSceneObject.ComponentVisitor hideAll = new GVRSceneObject.ComponentVisitor() {
         @Override
-        public boolean visit(GVRComponent comp)
-        {
+        public boolean visit(GVRComponent comp) {
             GVRRenderData rd = (GVRRenderData) comp;
             GVRMaterial mtl = rd.getMaterial();
 
-            if (mtl.hasUniform("u_opacity"))
-            {
+            if (mtl.hasUniform("u_opacity")) {
                 rd.getMaterial().setOpacity(0.0f);
-            }
-            else if (mtl.hasUniform("diffuse_color"))
-            {
+            } else if (mtl.hasUniform("diffuse_color")) {
                 float[] c = mtl.getDiffuseColor();
                 mtl.setDiffuseColor(c[0], c[1], c[2], 0.0f);
             }
@@ -176,7 +161,7 @@ public class DinosaurScene extends GVRScene {
 
         skyboxGround.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
 
-        GVRMesh meshFx =loader.loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
+        GVRMesh meshFx = loader.loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.windows_fx_mesh));
         GVRTexture textureFx = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.windows_fx_tex_diffuse));
         GVRSceneObject skyboxFx = new GVRSceneObject(getGVRContext(), meshFx, textureFx);
         skyboxGround.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
@@ -213,12 +198,12 @@ public class DinosaurScene extends GVRScene {
         }
     }
 
-	public void onPause() {
-		if (rotateDinosaur.isPlayed) {
-			rotateDinosaur.pauseAnimation();
-		}
+    public void onPause() {
+        if (rotateDinosaur.isPlayed) {
+            rotateDinosaur.pauseAnimation();
+        }
         if (null != videoDinosaur) {
             videoDinosaur.pauseVideo();
         }
-	}
+    }
 }

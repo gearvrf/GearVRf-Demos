@@ -217,23 +217,6 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
 
     }
 
-    protected void changeTexture(int resource) {
-        if (this.photoId == resource)
-            return;
-        this.getRenderData().getMaterial()
-                .setMainTexture(gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(this.gvrContext,
-                        resource)));
-        this.photoId = resource;
-    }
-
-    private void closeActionWithoutAnimation() {
-        AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIImageCloseSoundID(), 1.0f, 1.0f);
-        currentState = PHOTO_VIEW_CLOSED;
-        this.getTransform().setScale(1.0f, 1.0f, 1.0f);
-        this.getTransform().setPosition(gridItem.x, gridItem.y, gridItem.z);
-        this.applyOpacityConstrants();
-    }
-
     private void closeActionWithFadeAnimation(int animationId) {
         AudioClip.getInstance(getGVRContext().getContext()).playSound(AudioClip.getUIImageCloseSoundID(), 1.0f, 1.0f);
         currentState = PHOTO_VIEW_ANIMATING;
@@ -366,7 +349,6 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
         new GVROpacityAnimation(this, PHOTO_VIEW_FADE_ANIMATION_TIME, PHOTO_VIEW_OPACITY_HIDE)
                 .start(this.gvrContext
                         .getAnimationEngine());
-
     }
 
     private void fadeOut() {

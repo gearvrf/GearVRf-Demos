@@ -15,12 +15,13 @@
 
 package org.gearvrf.immersivepedia.shader;
 
+import android.content.Context;
+
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.utility.TextFile;
-import android.content.Context;
 
 public class MenuImageShader extends GVRShader {
 

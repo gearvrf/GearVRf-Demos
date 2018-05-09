@@ -17,10 +17,10 @@ package org.gearvrf.immersivepedia.focus;
 
 public interface FocusListener {
 
-    public void gainedFocus(FocusableSceneObject object);
+    void gainedFocus(FocusableSceneObject object);
 
-    public void lostFocus(FocusableSceneObject object);
+    void lostFocus(FocusableSceneObject object);
 
-    public void inFocus(FocusableSceneObject object);
+    void inFocus(FocusableSceneObject object);
 
 }

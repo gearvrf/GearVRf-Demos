@@ -15,8 +15,6 @@
 
 package org.gearvrf.immersivepedia.model;
 
-import java.io.IOException;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMeshCollider;
@@ -31,6 +29,8 @@ import org.gearvrf.immersivepedia.focus.OnGestureListener;
 import org.gearvrf.immersivepedia.gallery.Gallery;
 import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.util.AudioClip;
+
+import java.io.IOException;
 
 public class GalleryDinosaurGroup extends GVRSceneObject {
     private int photos[] = new int[] {
@@ -125,7 +125,6 @@ public class GalleryDinosaurGroup extends GVRSceneObject {
     }
 
     private void createTotem() {
-
         Totem totem = new Totem(getGVRContext(),
                 getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(),
                         R.drawable.totem_tex_diffuse)));

@@ -15,8 +15,6 @@
 
 package org.gearvrf.immersivepedia.model;
 
-import java.io.IOException;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMeshCollider;
@@ -31,6 +29,8 @@ import org.gearvrf.immersivepedia.props.Totem;
 import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.videoComponent.VideoComponent;
+
+import java.io.IOException;
 
 public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventListener, OnGestureListener {
 
@@ -50,7 +50,6 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
     }
 
     private void createVideoComponent() {
-
         videoComponent = new VideoComponent(getGVRContext(), VideoComponent.WIDTH, VideoComponent.HEIGHT);
         videoComponent.getTransform().setPosition(0f, 0f, 0f);
         videoComponent.getTransform().setPosition(0f, 2.0f, -3.0f);
@@ -60,7 +59,7 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
         videoComponent.setName("Video");
     }
 
-    private void createDinosaur() throws IOException {
+    private void createDinosaur() {
 
         trex = DinosaurFactory.getInstance(getGVRContext()).getTRex();
         trex.attachCollider(new GVRMeshCollider(getGVRContext(), true));
@@ -68,7 +67,6 @@ public class VideoDinosaurGroup extends GVRSceneObject implements TotemEventList
         trex.getTransform().setRotationByAxis(-90, 1, 0, 0);
         trex.setName("trex");
         addChildObject(trex);
-
     }
 
     private void createTotem() {

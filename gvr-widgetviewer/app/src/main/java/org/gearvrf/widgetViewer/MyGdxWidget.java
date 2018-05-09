@@ -16,18 +16,18 @@
 package org.gearvrf.widgetViewer;
 
 
-import org.gearvrf.utility.Log;
-import org.gearvrf.widgetplugin.GVRWidget;
-
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
-import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -36,12 +36,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+
+import org.gearvrf.widgetplugin.GVRWidget;
 
 public class MyGdxWidget extends GVRWidget {
 
@@ -57,8 +56,6 @@ public class MyGdxWidget extends GVRWidget {
     public ViewerMain mMain;
     Button mNextButton;
     Button mPreviousButton;
-    Button mColorButton;
-    Button mResetButton;
     Button mLookInsideButton;
     public CheckBox mCheckBox;
     float mFontScale = 4.0f;
@@ -186,7 +183,6 @@ public class MyGdxWidget extends GVRWidget {
                 }
                 table.add(slider).height(120).width(500);
             }
-
         }
 
         table.row();
@@ -206,9 +202,7 @@ public class MyGdxWidget extends GVRWidget {
         table.add(button).height(120).width(450);
         table.row();
 
-        Slider slider = null;
-
-        slider = new Slider(0, 100, 1, false, skin);
+        final Slider slider = new Slider(0, 100, 1, false, skin);
         slider.setName("Zoom");
         slider.addListener(stopTouchDown);
         Label zoom = new Label("  Zoom  ", skin);
@@ -248,7 +242,6 @@ public class MyGdxWidget extends GVRWidget {
         });
         mContainer.add(scroll).expand().fill().colspan(4);
         mContainer.row().space(10).padBottom(10);
-
     }
 
     public void render() {
@@ -280,14 +273,14 @@ public class MyGdxWidget extends GVRWidget {
             mResetSlider = false;
         }
         if (mMain.ThumbnailSelected == 1 || mMain.ThumbnailSelected == 3) {
-            ((SelectBox) mColorButtonActor).setVisible(true);
+            mColorButtonActor.setVisible(true);
 
         } else
-            ((SelectBox) mColorButtonActor).setVisible(false);
+            mColorButtonActor.setVisible(false);
         if (mMain.ThumbnailSelected == 3)
-            ((Button) mLookInsideButtonActor).setVisible(true);
+            mLookInsideButtonActor.setVisible(true);
         else
-            ((Button) mLookInsideButtonActor).setVisible(false);
+            mLookInsideButtonActor.setVisible(false);
         mStage.draw();
 
     }
@@ -299,10 +292,6 @@ public class MyGdxWidget extends GVRWidget {
 
     public void dispose() {
         mStage.dispose();
-    }
-
-    public boolean needsGL20() {
-        return false;
     }
 
 }

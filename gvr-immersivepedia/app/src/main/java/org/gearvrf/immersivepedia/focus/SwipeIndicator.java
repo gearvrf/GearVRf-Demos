@@ -58,12 +58,8 @@ public class SwipeIndicator extends GVRSceneObject {
         addChildObject(swipeIndicator);
         addChildObject(hand);
         dino.focusListener = new FocusListener() {
-
-            
             @Override
             public void lostFocus(FocusableSceneObject object) {
-                // TODO Auto-generated method stub
-
             }
 
             @Override
@@ -74,15 +70,12 @@ public class SwipeIndicator extends GVRSceneObject {
                        restartSwipeIndicator();
                     }
                 }
-
             }
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-
             }
         };
-
     }
 
     private void restartSwipeIndicator() {
@@ -110,8 +103,6 @@ public class SwipeIndicator extends GVRSceneObject {
             public void finished(GVRAnimation arg0) {
                 new GVROpacityAnimation(swipeIndicator, 1, 0).start(gvrContext.getAnimationEngine());
                 new GVROpacityAnimation(hand, 1, 0).start(gvrContext.getAnimationEngine());
-              //  gvrContext.getMainScene().removeSceneObject(SwipeIndicator.this);
-
             }
         }).start(gvrContext.getAnimationEngine());
 
@@ -120,5 +111,4 @@ public class SwipeIndicator extends GVRSceneObject {
     public void setStop(boolean isStoping) {
         this.isStoping = isStoping;
     }
-
 }

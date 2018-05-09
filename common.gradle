@@ -57,6 +57,8 @@ android {
     // ignore the x86 files from the google vr libraries
     packagingOptions {
         exclude 'lib/x86/libgvr.so'
+        pickFirst 'lib/*/libc++_shared.so'
+        pickFirst 'lib/*/libgnustl_shared.so'
         if (!project.hasProperty("ARM64")) {
             exclude 'lib/arm64-v8a/*.so'
         } else {
@@ -85,7 +87,7 @@ useLocalDependencies=true
 
  */
 ext.gearvrfVersion = '4.0.1-SNAPSHOT'
-project.ext.daydreamVersion = '1.120.0'
+project.ext.daydreamVersion = '1.130.0'
 project.ext.jomlVersion = "1.9.3-SNAPSHOT"
 project.ext.gsonVersion = '2.8.2'
 
@@ -178,11 +180,14 @@ dependencies {
             if (findProject(':backend_cpp')) {
                 compile project(':backend_cpp')
                 compile project(':backend_cpp_library')
+                compile project(':backend_cpp_config')
             } else {
                 debugCompile(name: 'backend_cpp-debug', ext: 'aar')
                 releaseCompile(name: 'backend_cpp-release', ext: 'aar')
                 debugCompile(name: 'backend_cpp_library-debug', ext: 'aar')
                 releaseCompile(name: 'backend_cpp_library-release', ext: 'aar')
+                debugCompile(name: 'backend_cpp_config-debug', ext: 'aar')
+                releaseCompile(name: 'backend_cpp_config-release', ext: 'aar')
             }
         } else {
             throw new GradleException("backend_cpp not available from maven")

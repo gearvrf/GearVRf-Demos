@@ -31,7 +31,6 @@ import org.gearvrf.immersivepedia.props.TotemEventListener;
 import org.gearvrf.immersivepedia.util.AudioClip;
 import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.io.GVRTouchPadGestureListener.Action;
-import org.gearvrf.utility.Log;
 
 import java.util.ArrayList;
 
@@ -83,8 +82,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
     protected boolean locked = false;
 
-    protected static final float PHOTO_OFFSET_X = (PhotoView.WIDTH * Gallery.COLS + 1) / 2.0f;
-
     protected static final float PHOTO_VIEW_DISTANCE_BETWEEN_PHOTOS = 1.0f + (PhotoView.HEIGHT / 2.0f);
 
     protected static final float PHOTO_VIEW_HORIZONTAL_SPACING = 1.5f;
@@ -96,8 +93,8 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
     private GVRCollider galleryCollider;
     private int[] photoIds;
 
-    private GalleryArrow leftArrow;
-    private GalleryArrow rightArrow;
+    private GVRSceneObject leftArrow;
+    private GVRSceneObject rightArrow;
 
     public Gallery(GVRContext gvrContext, int[] resources) {
         this(gvrContext);
@@ -146,7 +143,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         } else {
             this.scrollbar.getTransform().setPositionY(newYPosition);
         }
-
     }
 
     public void closeThis() {
@@ -183,7 +179,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         for (PhotoView view : this.photos) {
             view.disappear();
         }
-
     }
 
     public Gallery(GVRContext gvrContext) {
@@ -203,18 +198,15 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
             @Override
             public void inFocus(FocusableSceneObject object) {
                 Gallery.this.process();
-
             }
 
             @Override
             public void gainedFocus(FocusableSceneObject object) {
-
             }
         };
     }
 
     private void createAllGridItems() {
-
         int cell = 0;
 
         for (int r = 0; r < this.getNumberOfPages(); r++) {
@@ -239,11 +231,9 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
                 gridItems.add(item);
             }
         }
-
     }
 
     private void createHighlightGridItem() {
-
         this.highlightPhotoView = new GVRSceneObject(this.gvrContext);
         this.highlightLeftPhotoView = new GVRSceneObject(this.gvrContext);
         this.highlightRightPhotoView = new GVRSceneObject(this.gvrContext);
@@ -266,7 +256,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         this.addChildObject(this.highlightPhotoView);
         this.addChildObject(this.highlightLeftPhotoView);
         this.addChildObject(this.highlightRightPhotoView);
-
     }
 
     private void createInitialPhotos() {
@@ -310,7 +299,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
             photo.gridItem.page++;
             index++;
         }
-
     }
 
     private void lockAllPhotoViewExcept(PhotoView view) {
@@ -339,25 +327,15 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
     @Override
     public void itemSelected(PhotoView view) {
-
         lockAllPhotoViewExcept(view);
-        if (leftArrow != null)
-            leftArrow.show();
-        rightArrow.show();
     }
 
     @Override
     public void itemUnselected(PhotoView view) {
-        if (leftArrow != null && rightArrow != null) {
-            leftArrow.hide();
-            rightArrow.hide();
-        }
     }
 
     @Override
     public void itemSelectedAnimationFinished(PhotoView view) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -391,7 +369,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
             if (this.checkIfThereIsAnyPhotoWIthStatus(PhotoView.PHOTO_VIEW_OPENED) == false)
                 scrollDown(true);
         }
-
     }
 
     private void scrollUp(boolean animated) {
@@ -418,7 +395,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         for (PhotoView view : this.photos) {
             view.slideDown(animated);
         }
-
     }
 
     @Override
@@ -467,7 +443,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
         syncGrid();
         nextPhoto.openActionWithAnimation(PhotoView.PHOTO_VIEW_ANIMATION_LEFT_TO_RIGHT);
-
     }
 
     @Override
@@ -488,7 +463,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
 
         syncGrid();
         nextPhoto.openActionWithAnimation(PhotoView.PHOTO_VIEW_ANIMATION_RIGHT_TO_LEFT);
-
     }
 
     public void syncGrid() {
@@ -539,11 +513,11 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
     }
 
     private void createArrows() {
-        this.leftArrow = new GalleryArrow(this.gvrContext, GALLERY_ARROW_WIDTH,
+        this.leftArrow = new GVRSceneObject(this.gvrContext, GALLERY_ARROW_WIDTH,
                 GALLERY_ARROW_HEIGHT, this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         this.gvrContext, R.drawable.arrowleft)));
 
-        this.rightArrow = new GalleryArrow(this.gvrContext, GALLERY_ARROW_WIDTH,
+        this.rightArrow = new GVRSceneObject(this.gvrContext, GALLERY_ARROW_WIDTH,
                 GALLERY_ARROW_HEIGHT, this.gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                         this.gvrContext, R.drawable.arrowright)));
 
@@ -555,13 +529,6 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         this.rightArrow.getTransform().setPosition(GALLERY_ARROWS_POSITION_X,
                 GALLERY_ARROWS_POSITION_Y, GALLERY_ARROWS_POSITION_Z);
 
-    }
-
-    public void onStep() {
-        if (this.leftArrow != null && this.rightArrow != null) {
-            this.leftArrow.process();
-            this.rightArrow.process();
-        }
     }
 
     public boolean isOpen() {

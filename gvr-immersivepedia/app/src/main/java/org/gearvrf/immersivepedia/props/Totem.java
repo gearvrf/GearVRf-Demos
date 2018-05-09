@@ -57,7 +57,6 @@ public class Totem extends FocusableSceneObject implements FocusListener {
                 }
             }
         });
-
     }
 
     private void prepareTotem(GVRContext gvrContext) {

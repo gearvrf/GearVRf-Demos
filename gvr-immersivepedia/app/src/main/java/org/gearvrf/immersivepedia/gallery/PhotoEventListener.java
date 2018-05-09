@@ -17,28 +17,27 @@ package org.gearvrf.immersivepedia.gallery;
 
 public interface PhotoEventListener {
 
-    public boolean isLocked();
+    boolean isLocked();
 
-    public void dispatchLockRequest();
+    void dispatchLockRequest();
 
-    public void dispatchUnlockRequest();
+    void dispatchUnlockRequest();
 
-    public void itemSwipedToLeft(PhotoView view);
+    void itemSwipedToLeft(PhotoView view);
 
-    public void itemSwipedToRight(PhotoView view);
+    void itemSwipedToRight(PhotoView view);
 
-    public boolean shouldHoverItem(PhotoView view);
+    boolean shouldHoverItem(PhotoView view);
 
-    public void itemSelected(PhotoView view);
+    void itemSelected(PhotoView view);
 
-    public boolean shouldOpenItem(PhotoView view);
+    boolean shouldOpenItem(PhotoView view);
 
-    public boolean shouldCloseItem(PhotoView view);
+    boolean shouldCloseItem(PhotoView view);
 
-    public void itemUnselected(PhotoView view);
+    void itemUnselected(PhotoView view);
 
-    public void itemSelectedAnimationFinished(PhotoView view);
+    void itemSelectedAnimationFinished(PhotoView view);
 
-    public void itemUnselectedAnimationFinished(PhotoView view);
-
+    void itemUnselectedAnimationFinished(PhotoView view);
 }

@@ -85,13 +85,7 @@ public class Main extends GVRMain {
     }
 
     @Override
-    public SplashMode getSplashMode() {
-        return SplashMode.AUTOMATIC;
-    }
-
-    @Override
     public void onStep() {
-
         TouchPadInput.process();
         FPSCounter.tick();
 
@@ -141,7 +135,7 @@ public class Main extends GVRMain {
         getGVRContext().setMainScene(newScene);
     }
 
-    //@Override
+    @Override
     public boolean onBackPress() {
         final GVRScene mainScene = getGVRContext().getMainScene();
         if (dinosaurScene == mainScene) {

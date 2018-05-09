@@ -61,10 +61,7 @@ public class GVRWidgetViewer extends GVRActivity
         mWidget = new MyGdxWidget();
         mPlugin = new GVRWidgetPlugin(this, mWidget);
 
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        mPlugin.setViewSize(displaymetrics.widthPixels,
-                displaymetrics.heightPixels);
+        mPlugin.setViewSize(2560, 1440);
         mDetector = new GestureDetector(getBaseContext(), mSwipeListener);
 
         mMain = new ViewerMain(mPlugin);
@@ -127,7 +124,6 @@ public class GVRWidgetViewer extends GVRActivity
                 } else {
                     mMain.mRotateY = (dx / 2 + mYangle - mMoveoffset) % 360;
                 }
-                Log.d("NOLA", "onTouchEvent rotateY = %f", mMain.mRotateY);
             }
         }
         return true;
