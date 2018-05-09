@@ -15,10 +15,9 @@
 
 package org.gearvrf.complexscene;
 
-import org.gearvrf.GVRActivity;
-
 import android.os.Bundle;
-import android.view.KeyEvent;
+
+import org.gearvrf.GVRActivity;
 
 public class SampleActivity extends GVRActivity {
 
@@ -30,20 +29,5 @@ public class SampleActivity extends GVRActivity {
         mMain = new SampleMain();
         setMain(mMain);
     }
-    
-    @Override
-    public boolean dispatchKeyEvent(android.view.KeyEvent event) {
-        boolean handled = false;
 
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            handled = mMain.processKeyEvent(event.getKeyCode());
-        }
-
-        if (handled) {
-            return true;
-        } else {
-            return super.dispatchKeyEvent(event);
-        }
-    }
-    
 }
