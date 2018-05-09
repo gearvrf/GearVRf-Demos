@@ -15,7 +15,9 @@
 
 package org.gearvrf.widgets;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MotionEvent;
 
 import com.samsung.smcl.vr.widgetlib.main.WidgetLib;
 import com.samsung.smcl.vr.widgetlib.widget.GroupWidget;
@@ -40,8 +42,13 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
 
+import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static android.opengl.GLES20.GL_LINES;
 import static android.opengl.GLES20.GL_TRIANGLES;
@@ -54,93 +61,158 @@ public class WidgetActivity extends GVRActivity {
         setMain(new WidgetMain());
     }
 
-    private Widget.OnFocusListener mFocusHandler = new  Widget.OnFocusListener() {
-        public boolean onFocus(Widget widget, boolean focused)
-        {
-            GVRSceneObject sceneObj = widget.getOwnerObject();
-            GVRRenderData rdata = sceneObj.getRenderData();
-            if (focused)
-            {
-                rdata.setDrawMode(GL_LINES);
-            }
-            else
-            {
-                rdata.setDrawMode(GL_TRIANGLES);
-            }
-            return true;
-        }
-
-        public boolean onLongFocus(Widget widget)
-        {
-           return false;
-        }
-    };
-
-    private static class WidgetPickHandler implements IPickEvents
+    private static class WidgetPickHandler implements IPickEvents, ITouchEvents
     {
-        private final List<GVRSceneObject> mSelected = new ArrayList<GVRSceneObject>();
+        static class Selection
+        {
+            GVRPicker.GVRPickedObject Hit;
+            Widget  FocusWidget;
+
+            public Selection(GVRPicker.GVRPickedObject hit, Widget widget)
+            {
+                Hit = hit;
+                FocusWidget = widget;
+            }
+        }
+
+        private final List<Selection> mSelected = new ArrayList<Selection>();
+        private final List<Widget> mTouched = new ArrayList<Widget>();
 
         public WidgetPickHandler()
         {
         }
 
+        private Selection findSelected(GVRSceneObject hitObject)
+        {
+            for (Selection sel : mSelected)
+            {
+                if (sel.Hit.hitObject == hitObject)
+                {
+                    return sel;
+                }
+            }
+            return null;
+        }
+
+        private Selection removeSelected(GVRSceneObject hitObject)
+        {
+            Iterator<Selection> iter = mSelected.iterator();
+            while (iter.hasNext())
+            {
+                Selection sel = iter.next();
+                if (sel.Hit.hitObject == hitObject)
+                {
+                    iter.remove();
+                    return sel;
+                }
+            }
+            return null;
+        }
+
         public void onPick(GVRPicker picker)
         {
+            if (!picker.HasPickListChanged())
+            {
+                return;
+            }
             GVRPicker.GVRPickedObject[] picked = picker.getPicked();
 
             for (GVRPicker.GVRPickedObject hit : picked)
             {
                 GVRSceneObject hitObj = hit.hitObject;
-                Widget widget = (Widget) hitObj.getComponent(Widget.getComponentType());
-                if (widget != null)
+
+                Selection sel = findSelected(hitObj);
+                if (sel == null)
                 {
-                    if (mSelected.contains(widget))
-                    {
-                        if (widget.doOnFocus(true))
-                        {
-                            break;
-                        }
-                        if (widget.doOnTouch(hit.hitLocation))
-                        {
-                            break;
-                        }
-                    }
+                    continue;
                 }
-                mSelected.clear();
+                Widget widget = sel.FocusWidget;
+
+                if (widget.isFocused() || widget.doOnFocus(true))
+                {
+                    Log.e(TAG, "%s widget focused", widget.getName());
+                    break;
+                }
             }
-        }
+         }
 
         public void onNoPick(GVRPicker picker)
         {
-            mSelected.clear();
+            if (picker.HasPickListChanged())
+            {
+                Log.e(TAG, "%s", "selection cleared");
+                mSelected.clear();
+            }
         }
 
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision)
         {
             Widget widget = (Widget) sceneObj.getComponent(Widget.getComponentType());
 
-            if ((widget != null) && widget.isFocusEnabled())
+            while (widget != null)
             {
-                mSelected.add(sceneObj);
+                if (widget.isFocusEnabled())
+                {
+                    Selection sel = findSelected(sceneObj);
+                    if (sel == null)
+                    {
+                        Log.e(TAG, "%s select widget %s", sceneObj.getName(), widget.getName());
+                        mSelected.add(new Selection(collision, widget));
+                    }
+                    return;
+                }
+                widget = widget.getParent();
             }
         }
 
-        public void onExit(GVRSceneObject sceneObj)
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision)
         {
             Widget widget = (Widget) sceneObj.getComponent(Widget.getComponentType());
 
-            if ((widget != null) && widget.isFocusEnabled())
+            while (widget != null)
             {
-                widget.doOnFocus(false);
-                mSelected.remove(sceneObj);
+                if (widget.isFocused() && widget.isTouchable() && !mTouched.contains(widget))
+                {
+                    Log.e(TAG, "%s start touch widget %s", sceneObj.getName(), widget.getName());
+                    mTouched.add(widget);
+                    return;
+                }
+                widget = widget.getParent();
             }
         }
 
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision)
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision)
         {
+            Widget widget = (Widget) sceneObj.getComponent(Widget.getComponentType());
 
+            while (widget != null)
+            {
+                if (widget.isFocused() &&
+                    widget.isTouchable() &&
+                    mTouched.contains(widget) &&
+                    widget.doOnTouch(collision.hitLocation))
+                {
+                    Log.e(TAG, "%s end touch widget %s", sceneObj.getName(), widget.getName());
+                    mTouched.remove(widget);
+                    return;
+                }
+                widget = widget.getParent();
+            }
         }
 
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision)
+        {
+            Selection sel = removeSelected(sceneObj);
+            if (sel != null)
+            {
+                sel.FocusWidget.doOnFocus(false);
+                Log.e(TAG, "%s deselect", sceneObj.getName());
+            }
+        }
+
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) { }
+        public void onExit(GVRSceneObject sceneObj) { }
+        public void onMotionOutside(GVRPicker picker, MotionEvent event) {}
     }
 
     private static class WidgetMain extends GVRMain
@@ -169,6 +241,8 @@ public class WidgetActivity extends GVRActivity {
                     {
                         oldController.removePickEventListener(mPickHandler);
                     }
+                    GVRPicker picker = newController.getPicker();
+                    picker.setPickClosest(false);
                     newController.addPickEventListener(mPickHandler);
                 }
             });
@@ -179,27 +253,31 @@ public class WidgetActivity extends GVRActivity {
         {
             GVRContext context = scene.getGVRContext();
             GVRMaterial backmtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
-            GVRMaterial redmtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
-            GVRMaterial bluemtl = new GVRMaterial(context, GVRMaterial.GVRShaderType.Phong.ID);
-            GVRSceneObject background = new GVRSceneObject(context, 4.5f, 2.5f, "float3 a_position", backmtl);
-            GVRSceneObject redthing = new GVRSceneObject(context, 2.0f, 2.0f, "float3 a_position", redmtl);
-            GVRSceneObject bluething = new GVRSceneObject(context, 2.0f, 2.0f, "float3 a_position", bluemtl);
 
             backmtl.setDiffuseColor(0.7f, 0.6f, 0.3f, 1);
-            redmtl.setDiffuseColor(1, 0.2f, 0, 1);
-            bluemtl.setDiffuseColor(0.2f, 0, 1, 1.0f);
-            background.getTransform().setPosition(0.0f, 0.0f, -3);
-            redthing.getTransform().setPosition(1, 0, 0.01f);
-            bluething.getTransform().setPosition(-1, 0, 0.01f);
-            background.addChildObject(redthing);
-            background.addChildObject(bluething);
-            scene.addSceneObject(background);
 
-            GroupWidget group = new GroupWidget(context, background);
-            RadioButton redbutton = new RadioButton(context, redthing);
-            RadioButton bluebutton = new RadioButton(context, bluething);
+            GroupWidget group = new GroupWidget(context, 4.5f, 2.5f);
+            GVRSceneObject background = group.getOwnerObject();
+            background.getRenderData().setMaterial(backmtl);
+            background.getTransform().setPositionZ(-3.0f);
+
+            RadioButton redbutton = new RadioButton(context, 2.0f, 2.0f);
+            GVRSceneObject redthing = redbutton.getOwnerObject();
+            redthing.getTransform().setPosition(1, 0, 0.01f);
+
+            RadioButton bluebutton = new RadioButton(context, 2.0f, 2.0f);
+            GVRSceneObject bluething = bluebutton.getOwnerObject();
+            bluething.getTransform().setPosition(-1, 0, 0.01f);
             group.addChild(redbutton);
             group.addChild(bluebutton);
+            redbutton.setName("RedButton");
+            bluebutton.setName("BlueButton");
+            background.setName("Background");
+            redbutton.setGraphicColor(1, 0, 0);
+            redbutton.setFocusEnabled(true);
+            bluebutton.setGraphicColor(0, 0, 1);
+            bluebutton.setFocusEnabled(true);
+            scene.addSceneObject(background);
         }
     }
 }
