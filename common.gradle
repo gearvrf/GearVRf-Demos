@@ -1,3 +1,5 @@
+project.ext.hasBackend = false
+
 if (file("../../../extra_properties.gradle").exists()) {
     apply from: '../../../extra_properties.gradle'
 }
@@ -79,6 +81,14 @@ task copyOculusSignature(type: Copy) {
 
 preBuild {}.dependsOn copyOculusSignature
 
+file("../../..").eachDir {
+    def fn = it.toString() + "/GearVRf-Demos_build.gradle"
+    if (file(fn).exists()) {
+        apply from: fn
+        println "importing build file from " + it.toString()
+    }
+}
+
 /*
 To use local dependencies add the following line in a global gradle properties file
 eg. ~/.gradle/gradle.properties:
@@ -91,19 +101,17 @@ project.ext.daydreamVersion = '1.130.0'
 project.ext.jomlVersion = "1.9.3-SNAPSHOT"
 project.ext.gsonVersion = '2.8.2'
 
-def hasBackend = false
-if (project.hasProperty("backend_monoscopic") && project.property("backend_monoscopic")) {
-    hasBackend = true
-} else if (project.hasProperty("backend_daydream") && project.property("backend_daydream")) {
-    hasBackend = true
-} else if (project.hasProperty("backend_oculus") && project.property("backend_oculus")) {
-    hasBackend = true
-} else if (project.hasProperty("backend") && project.property("backend")) {
-    hasBackend = true
-}
-if (!hasBackend) {
+if (!project.ext.hasBackend) {
     project.ext.backend_oculus = true
     project.ext.backend_daydream = true
+}
+
+if (project.hasProperty("backend_monoscopic")) {
+    project.ext.backend_monoscopic = project.property("backend_monoscopic")
+} else if (project.hasProperty("backend_daydream")) {
+    project.ext.backend_daydream = project.property("backend_daydream")
+} else if (project.hasProperty("backend_oculus")) {
+    project.ext.backend_oculus = project.property("backend_oculus")
 }
 
 dependencies {
@@ -161,36 +169,5 @@ dependencies {
             compile "org.gearvrf:backend_oculus:$gearvrfVersion"
         }
     }
-
-    if (project.hasProperty("backend_java") && project.property("backend_java")) {
-        if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-            if (findProject(':backend_java')) {
-                compile project(':backend_java')
-            } else {
-                debugCompile(name: 'backend_java-debug', ext: 'aar')
-                releaseCompile(name: 'backend_java-release', ext: 'aar')
-            }
-        } else {
-            throw new GradleException("backend_java not available from maven")
-        }
-    }
-
-    if (project.hasProperty("backend_cpp") && project.property("backend_cpp")) {
-        if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-            if (findProject(':backend_cpp')) {
-                compile project(':backend_cpp')
-                compile project(':backend_cpp_library')
-                compile project(':backend_cpp_config')
-            } else {
-                debugCompile(name: 'backend_cpp-debug', ext: 'aar')
-                releaseCompile(name: 'backend_cpp-release', ext: 'aar')
-                debugCompile(name: 'backend_cpp_library-debug', ext: 'aar')
-                releaseCompile(name: 'backend_cpp_library-release', ext: 'aar')
-                debugCompile(name: 'backend_cpp_config-debug', ext: 'aar')
-                releaseCompile(name: 'backend_cpp_config-release', ext: 'aar')
-            }
-        } else {
-            throw new GradleException("backend_cpp not available from maven")
-        }
-    }
 }
+
