@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+System.setProperty("appName", "gvr-ragdoll")
+
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] // no auto generation of Android.mk
+        jniLibs.srcDir 'jniLibs' // pre-compiled libraries
+    }
+}
+
+dependencies {
+    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        if (findProject(':gvrf-physics')) {
+            compile project(':gvrf-physics')
+        } else {
+            debugCompile(name: 'gvrf-physics-debug', ext: 'aar')
+            releaseCompile(name: 'gvrf-physics-release', ext: 'aar')
+        }
+    } else {
+        compile "org.gearvrf:gvrf-physics:$gearvrfVersion"
+    }
+}
