@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!--/* Copyright 2015 Samsung Electronics Co., LTD
+<!--/* Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */-->
-<vr-app-settings showLoadingIcon="true" useControllerTypes="gaze,controller">
-    <performance-parms cpuLevel="2" gpuLevel="2" />
-    <eye-buffer-parms colorFormat="COLOR_8888" depthFormat="DEPTH_24" multiSamples="2" />
-</vr-app-settings>
+
+<resources>
+</resources>
