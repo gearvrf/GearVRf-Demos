@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRAssetLoader;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
@@ -379,6 +380,23 @@ public class ViewerMain extends GVRMain {
         mLeafBodyMaterial.setTexture(MetalShader2.TEXTURE_KEY, env_tex);
     }
 
+    class MaterialUpdater implements GVRSceneObject.ComponentVisitor
+    {
+        private GVRMaterial mMaterial;
+
+        public void setMaterial(GVRMaterial mtl)
+        {
+            mMaterial = mtl;
+        }
+
+        public boolean visit(GVRComponent comp)
+        {
+            GVRRenderData rdata = (GVRRenderData) comp;
+            rdata.setMaterial(mMaterial);
+            return true;
+        }
+
+    }
     /*
      * This demo was created before the asset loader could import OBJ materials
      * from an MTL file. The proper way to do this now would be to include an MTL
@@ -395,24 +413,25 @@ public class ViewerMain extends GVRMain {
         GVRSwitch selector = new GVRSwitch(ctx);
         mObjectRot.attachComponent(selector);
         mObjectPos.addChildObject(mObjectRot);
+        MaterialUpdater changeMaterial = new MaterialUpdater();
 
         // leaf
-        final GVRSceneObject leafRoot = new GVRSceneObject(ctx);
-        GVRMesh mesh20 = loader.loadMesh(new GVRAndroidResource(ctx, "leaf/leaf.obj"));
-        GVRSceneObject obj20 = new GVRSceneObject(ctx, mesh20, mLeafBodyMaterial);
-        leafRoot.addChildObject(obj20);
-        GVRMesh mesh21 = loader.loadMesh(new GVRAndroidResource(ctx, "leaf/box.obj"));
-        GVRSceneObject obj21 = new GVRSceneObject(ctx, mesh21, mLeafBoxMaterial);
-        leafRoot.addChildObject(obj21);
+        GVRSceneObject leafRoot = loader.loadModel("leaf/leaf.obj");
+        changeMaterial.setMaterial(mLeafBodyMaterial);
+        leafRoot.forAllComponents(changeMaterial, GVRRenderData.getComponentType());
+
+        GVRSceneObject leafbox = loader.loadModel("leaf/box.obj");
+        changeMaterial.setMaterial(mLeafBoxMaterial);
+        leafbox.forAllComponents(changeMaterial, GVRRenderData.getComponentType());
+        leafRoot.addChildObject(leafbox);
         bv = leafRoot.getBoundingVolume();
         leafRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
         mObjectRot.addChildObject(leafRoot);
 
         // --------------bike
-        GVRSceneObject bikeRoot = new GVRSceneObject(ctx);
-        GVRMesh mesh5 = loader.loadMesh(new GVRAndroidResource(ctx, "bike/bike.obj"));
-        GVRSceneObject obj5 = new GVRSceneObject(ctx, mesh5, mPhongMaterial);
-        bikeRoot.addChildObject(obj5);
+        GVRSceneObject bikeRoot = loader.loadModel("bike/bike.obj");
+        changeMaterial.setMaterial(mPhongMaterial);
+        bikeRoot.forAllComponents(changeMaterial, GVRRenderData.getComponentType());
         bv = bikeRoot.getBoundingVolume();
         bikeRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
         bikeRoot.getTransform().setScale(0.6f, 0.6f, 0.6f);
