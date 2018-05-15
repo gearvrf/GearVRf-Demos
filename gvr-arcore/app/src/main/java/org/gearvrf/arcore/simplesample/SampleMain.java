@@ -67,15 +67,16 @@ public class SampleMain extends GVRMain implements IPlaneEventsListener, IAnchor
     @Override
     public void onPlaneDetection(GVRPlane gvrPlane) {
         gvrPlane.setSceneObject(createQuadPlane(getGVRContext()));
+        mainScene.addSceneObject(gvrPlane);
     }
 
     @Override
     public void onPlaneStateChange(GVRPlane gvrPlane, GVRTrackingState gvrTrackingState) {
         if (gvrTrackingState != GVRTrackingState.TRACKING) {
-            gvrPlane.getSceneObject().setEnable(false);
+            gvrPlane.setEnable(false);
         }
         else {
-            gvrPlane.getSceneObject().setEnable(true);
+            gvrPlane.setEnable(true);
         }
     }
 
@@ -197,7 +198,8 @@ public class SampleMain extends GVRMain implements IPlaneEventsListener, IAnchor
                 return;
             }
 
-            mixedReality.createAnchor(gvrHitResult.getPose(), andy);
+            GVRAnchor anchor = mixedReality.createAnchor(gvrHitResult.getPose(), andy);
+            mainScene.addSceneObject(anchor);
         }
     }
 
