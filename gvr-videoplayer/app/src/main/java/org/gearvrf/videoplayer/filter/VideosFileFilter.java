@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer;
+package org.gearvrf.videoplayer.filter;
 
 import java.io.File;
 import java.io.FileFilter;

@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.videoplayer;
+package org.gearvrf.videoplayer.component;
 
 import android.net.Uri;
 
@@ -50,7 +50,7 @@ public class VideoComponent extends GVRSceneObject {
     private DataSource.Factory mFileDataSourceFactory;
     private DataSource.Factory mAssetDataSourceFactory;
 
-    VideoComponent(final GVRContext gvrContext, float width, float height) {
+    public VideoComponent(final GVRContext gvrContext, float width, float height) {
         super(gvrContext, 0, 0);
 
         this.mGvrContext = gvrContext;

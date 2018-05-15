@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer;
+package org.gearvrf.videoplayer.component;
 
 import android.view.Surface;
 
