@@ -15,46 +15,55 @@
 
 package org.gearvrf.videoplayer;
 
+import android.os.Environment;
+import android.view.MotionEvent;
+
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.scene_objects.GVRVideoSceneObject;
-import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
-import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 
-public class VideoPlayerMain extends GVRMain
-{
-    VideoPlayerMain(GVRVideoSceneObjectPlayer<?> player) {
-        mPlayer = player;
-    }
+import java.io.File;
 
-    /** Called when the activity is first created. */
+public class VideoPlayerMain extends GVRMain {
+
+    private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
+    private VideoComponent mVideoComponent;
+
+    /**
+     * Called when the activity is first created.
+     */
     @Override
     public void onInit(GVRContext gvrContext) {
-
         GVRScene scene = gvrContext.getMainScene();
-
-        // set up camerarig position (default)
-        scene.getMainCameraRig().getTransform().setPosition( 0.0f, 0.0f, 0.0f );
-
-        // create sphere / mesh
-        GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false);
-        GVRMesh mesh = sphere.getRenderData().getMesh();
-
-        // create video scene
-        GVRVideoSceneObject video = new GVRVideoSceneObject( gvrContext, mesh, mPlayer, GVRVideoType.MONO );
-        video.getTransform().setScale(100f, 100f, 100f);
-        video.setName( "video" );
-
-        // apply video to scene
-        scene.addSceneObject( video );
+        scene.addSceneObject(mVideoComponent = createVideoComponent(gvrContext));
+        File videosDirPath = new File(Environment.getExternalStorageDirectory(), VIDEOS_DIR_NAME);
+        if (videosDirPath.exists() && videosDirPath.isDirectory()) {
+            File[] files = videosDirPath.listFiles(new VideosFileFilter());
+            if (files.length > 0) {
+                mVideoComponent.playFiles(files);
+            }
+        } else {
+            mVideoComponent.playDefault(); // from assets folder
+        }
     }
 
     @Override
     public void onStep() {
     }
 
-    private final GVRVideoSceneObjectPlayer<?> mPlayer;
+    private VideoComponent createVideoComponent(GVRContext gvrContext) {
+        VideoComponent videoComponent = new VideoComponent(gvrContext, 8f, 4f);
+        videoComponent.getTransform().setPosition(0.0f, 0.0f, -9.0f);
+        return videoComponent;
+    }
+
+    @Override
+    public void onSingleTapUp(MotionEvent event) {
+        if (mVideoComponent.isPlaying()) {
+            mVideoComponent.pauseVideo();
+        } else {
+            mVideoComponent.playVideo();
+        }
+    }
+
 }
