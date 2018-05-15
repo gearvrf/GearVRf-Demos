@@ -16,6 +16,7 @@
 package org.gearvrf.arcore.simplesample;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -36,11 +37,12 @@ import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.joml.Vector3f;
 
-import java.io.IOException;
 import java.util.EnumSet;
 
 public class SampleMain extends GVRMain implements IPlaneEventsListener, IAnchorEventsListener {
+    private static String TAG = "GVR_ARCORE";
     GVRMixedReality mixedReality;
     GVRContext mGVRContext;
     GVRScene mainScene;
@@ -59,6 +61,7 @@ public class SampleMain extends GVRMain implements IPlaneEventsListener, IAnchor
         mixedReality = new GVRMixedReality(gvrContext, mainScene);
         mixedReality.registerPlaneListener(this);
         mixedReality.registerAnchorListener(this);
+
     }
 
     @Override
@@ -83,32 +86,117 @@ public class SampleMain extends GVRMain implements IPlaneEventsListener, IAnchor
     @Override
     public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState) {
         if (gvrTrackingState != GVRTrackingState.TRACKING) {
-            gvrAnchor.getSceneObject().setEnable(false);
+            gvrAnchor.setEnable(false);
         }
         else {
-            gvrAnchor.getSceneObject().setEnable(true);
+            gvrAnchor.setEnable(true);
         }
     }
 
 
     private class TouchHandler extends GVREventListeners.TouchEvents {
-        @Override
-        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
-            super.onTouchEnd(sceneObj, collision);
+        private GVRSceneObject mDraggingObject = null;
 
+
+        @Override
+        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onEnter(sceneObj, pickInfo);
+
+            if (sceneObj == mixedReality.getPassThroughObject() || mDraggingObject != null) {
+                return;
+            }
+
+            ((VirtualObject)sceneObj).onPickEnter();
+        }
+
+        @Override
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onExit(sceneObj, pickInfo);
+
+            if (sceneObj == mixedReality.getPassThroughObject()) {
+                if (mDraggingObject != null) {
+                    ((VirtualObject) mDraggingObject).onPickExit();
+                    mDraggingObject = null;
+                }
+                return;
+            }
+
+            if (mDraggingObject == null) {
+                ((VirtualObject) sceneObj).onPickExit();
+            }
+        }
+
+        @Override
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onTouchStart(sceneObj, pickInfo);
+
+            if (sceneObj == mixedReality.getPassThroughObject()) {
+                return;
+            }
+
+            if (mDraggingObject == null) {
+                mDraggingObject = sceneObj;
+                Log.d(TAG, "onStartDragging");
+                ((VirtualObject)sceneObj).onTouchStart();
+            }
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onTouchEnd(sceneObj, pickInfo);
+
+
+            if (mDraggingObject != null) {
+                Log.d(TAG, "onStopDragging");
+
+                if (pickSceneObject(mDraggingObject) == null) {
+                    ((VirtualObject) mDraggingObject).onPickExit();
+                } else {
+                    ((VirtualObject)mDraggingObject).onTouchEnd();
+                }
+                mDraggingObject = null;
+            } else if (sceneObj == mixedReality.getPassThroughObject()) {
+                onSingleTap(sceneObj, pickInfo);
+            }
+        }
+
+        @Override
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
+            super.onInside(sceneObj, pickInfo);
+
+            if (mDraggingObject == null)
+                return;
+
+            pickInfo = pickSceneObject(mixedReality.getPassThroughObject());
+            if (pickInfo != null) {
+                GVRHitResult gvrHitResult = mixedReality.hitTest(
+                        mixedReality.getPassThroughObject(), pickInfo);
+
+                if (gvrHitResult != null) {
+                    mixedReality.updateAnchorPose((GVRAnchor)mDraggingObject.getParent(),
+                            gvrHitResult.getPose());
+                }
+            }
+        }
+
+        private GVRPicker.GVRPickedObject pickSceneObject(GVRSceneObject sceneObject) {
+            Vector3f origin = new Vector3f();
+            Vector3f direction = new Vector3f();
+
+            mCursorController.getPicker().getWorldPickRay(origin, direction);
+
+            return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
+                    direction.x, direction.y, direction.z);
+        }
+
+        private void onSingleTap(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
             GVRHitResult gvrHitResult = mixedReality.hitTest(sceneObj, collision);
-            GVRSceneObject andy = null;
+            VirtualObject andy = new VirtualObject(mGVRContext);
 
             if (gvrHitResult == null) {
                 return;
             }
 
-            try {
-                andy = mGVRContext.getAssetLoader().loadModel("objects/andy.obj");
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
             mixedReality.createAnchor(gvrHitResult.getPose(), andy);
         }
     }
