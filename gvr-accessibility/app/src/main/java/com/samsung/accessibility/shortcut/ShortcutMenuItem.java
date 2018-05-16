@@ -96,8 +96,9 @@ public class ShortcutMenuItem extends FocusableSceneObject {
     }
 
     public void createIcon(GVRTexture iconMenu, TypeItem typeItem) {
-        if (icon != null)
+        if (icon != null) {
             removeIcon();
+        }
         iconTexture = iconMenu;
         icon = new GVRSceneObject(gvrContext, gvrContext.createQuad(.60f, .20f), iconMenu);
         icon.getTransform().setPosition(-0f, 0.02f, -0.7f);
@@ -231,7 +232,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     public void removeIcon() {
         typeItem = TypeItem.EMPTY;
-        icon.getRenderData().getMaterial().setMainTexture(AccessibilityTexture.getInstance(gvrContext).getEmptyIcon());
+        removeChildObject(icon);
     }
 
     public GVRSceneObject getIcon() {

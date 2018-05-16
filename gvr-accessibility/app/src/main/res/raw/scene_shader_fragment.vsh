@@ -3,7 +3,7 @@
 precision mediump float;
 
 layout(location = 0) in vec2  coord;
-layout(set = 0, binding = 4) uniform sampler2D u_texture;
+layout(set = 0, binding = 5) uniform sampler2D u_texture;
 @MATERIAL_UNIFORMS
 
 layout (location = 0) out vec4 outColor;
