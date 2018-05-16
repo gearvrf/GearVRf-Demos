@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="need_permission_media">For this application to work properly, you must grant the necessary permissions.</string>
+    <string name="common_text_settings">Settings</string>
+    <string name="common_text_cancel">Cancel</string>
+</resources>

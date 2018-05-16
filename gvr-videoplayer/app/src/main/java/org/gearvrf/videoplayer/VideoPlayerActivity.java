@@ -15,9 +15,15 @@
 
 package org.gearvrf.videoplayer;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.videoplayer.manager.permission.OnCheckAllPermissionsListener;
+import org.gearvrf.videoplayer.manager.permission.PermissionManager;
 
 public class VideoPlayerActivity extends GVRActivity {
 
@@ -27,6 +33,49 @@ public class VideoPlayerActivity extends GVRActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkPermissions();
+    }
+
+    private void checkPermissions() {
+        PermissionManager.INSTANCE.checkAllPermissions(this, new OnCheckAllPermissionsListener() {
+            @Override
+            public void onPositiveAction() {
+                launchPermissionSettings();
+            }
+
+            @Override
+            public void onNegativeAction() {
+                Toast.makeText(getBaseContext(), "Permission not granted", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (PermissionManager.INSTANCE.isAllPermissionsGranted()) {
+            showMainGVRF();
+        }
+    }
+
+    public void launchPermissionSettings() {
+        Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        intent.setData(Uri.parse("package:" + getPackageName()));
+        startActivityForResult(intent, PermissionManager.PERMISSIONS_REQUEST_ALL_PERMISSIONS);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PermissionManager.PERMISSIONS_REQUEST_ALL_PERMISSIONS) {
+            if (PermissionManager.INSTANCE.isAllPermissionsGranted()) {
+                showMainGVRF();
+            } else {
+                Toast.makeText(getBaseContext(), "Permission not granted", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void showMainGVRF() {
         setMain(new VideoPlayerMain(), "gvr.xml");
     }
 }
