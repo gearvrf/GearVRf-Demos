@@ -68,6 +68,7 @@ public class SampleMain extends GVRMain {
         mixedReality = new GVRMixedReality(gvrContext, mainScene);
         mixedReality.registerPlaneListener(planeEventsListener);
         mixedReality.registerAnchorListener(anchorEventsListener);
+        mixedReality.resume();
 
     }
 
