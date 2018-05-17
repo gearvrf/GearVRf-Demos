@@ -16,6 +16,7 @@
 package org.gearvrf.videoplayer;
 
 import android.os.Environment;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -30,6 +31,8 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.videoplayer.component.OnVideoControllerListener;
+import org.gearvrf.videoplayer.component.OnVideoPlayerListener;
 import org.gearvrf.videoplayer.component.VideoComponent;
 import org.gearvrf.videoplayer.component.VideoControllerComponent;
 import org.gearvrf.videoplayer.filter.VideosFileFilter;
@@ -39,6 +42,7 @@ import java.util.EnumSet;
 
 public class VideoPlayerMain extends GVRMain {
 
+    private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
     private static float PASSTHROUGH_DISTANCE = 100.0f;
     private static final float SCALE = 200.0f;
@@ -47,9 +51,10 @@ public class VideoPlayerMain extends GVRMain {
     private GVRScene mScene;
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
-    protected GVRCursorController mCursorController;
+    private GVRCursorController mCursorController;
     private GVRSphereSceneObject sphereObject = null;
     private GVRSceneObject configuringScene = null;
+
     /**
      * Called when the activity is first created.
      */
@@ -69,7 +74,7 @@ public class VideoPlayerMain extends GVRMain {
         playFiles();
     }
 
-    private void addSkyBoxSphere(){
+    private void addSkyBoxSphere() {
         GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.photosphere));
 
         sphereObject = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
@@ -78,10 +83,8 @@ public class VideoPlayerMain extends GVRMain {
 
         mScene.addSceneObject(sphereObject);
 
-    }
-
-    @Override
-    public void onStep() {
+        initPlayerComponents();
+        playFiles();
     }
 
     private void playFiles() {
@@ -90,7 +93,7 @@ public class VideoPlayerMain extends GVRMain {
             // Filter mp4 files
             File[] files = videosDirPath.listFiles(new VideosFileFilter());
             if (files.length > 0) {
-                mVideoComponent.playFiles(files);
+                mVideoComponent.prepare(files);
             }
         } else {
             mVideoComponent.playDefault(); // from assets folder
@@ -108,15 +111,6 @@ public class VideoPlayerMain extends GVRMain {
         mVideoControllerComponent.getTransform().setPosition(0.0f, -2.5f, -6.5f);
         mVideoControllerComponent.getTransform().rotateByAxis(-15, 1, 0, 0);
 
-    }
-
-    @Override
-    public void onSingleTapUp(MotionEvent event) {
-        if (mVideoComponent.isPlaying()) {
-            mVideoComponent.pauseVideo();
-        } else {
-            mVideoComponent.playVideo();
-        }
     }
 
     private void initCursorController() {
@@ -179,12 +173,80 @@ public class VideoPlayerMain extends GVRMain {
         }
     };
 
-    private void rotationPlayer(){
+    private void rotationPlayer() {
         final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
         final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
         final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
 
         configuringScene.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+    }
+
+    private void initPlayerComponents() {
+
+        mVideoComponent.setOnVideoPlayerListener(new OnVideoPlayerListener() {
+            @Override
+            public void onProgress(long progress) {
+                mVideoControllerComponent.setProgress((int) progress);
+            }
+
+            @Override
+            public void onPrepare(String title, long duration) {
+                Log.d(TAG, "Video prepared: {title: " + title + ", duration: " + duration + "}");
+                mVideoControllerComponent.setPlayPauseButtonEnabled(true);
+                mVideoControllerComponent.setTitle(title);
+                mVideoControllerComponent.setMaxProgress((int) duration);
+                mVideoControllerComponent.setProgress((int) mVideoComponent.getProgress());
+                mVideoControllerComponent.showPlay();
+            }
+
+            @Override
+            public void onStart() {
+                mVideoControllerComponent.setPlayPauseButtonEnabled(true);
+                Log.d(TAG, "Video started");
+                mVideoControllerComponent.showPause();
+            }
+
+            @Override
+            public void onLoading() {
+                Log.d(TAG, "Video loading");
+                mVideoControllerComponent.setPlayPauseButtonEnabled(false);
+            }
+
+            @Override
+            public void onEnd() {
+                Log.d(TAG, "Video ended");
+            }
+
+            @Override
+            public void onAllEnd() {
+                Log.d(TAG, "All videos ended");
+            }
+        });
+
+        mVideoControllerComponent.setOnVideoControllerListener(new OnVideoControllerListener() {
+            @Override
+            public void onPlay() {
+                Log.d(TAG, "onPlay: ");
+                mVideoComponent.playVideo();
+            }
+
+            @Override
+            public void onPause() {
+                Log.d(TAG, "onPause: ");
+                mVideoComponent.pauseVideo();
+            }
+
+            @Override
+            public void onBack() {
+                Log.d(TAG, "onBack: ");
+            }
+
+            @Override
+            public void onSeek(long progress) {
+                Log.d(TAG, "onSeek: ");
+                mVideoComponent.setProgress(progress);
+            }
+        });
     }
 }

@@ -15,7 +15,12 @@
 
 package org.gearvrf.videoplayer.component;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -43,12 +48,60 @@ public class VideoComponent extends GVRSceneObject {
     private static final float ANIM_OPACITY_DURATION = 0.5f;
 
     private GVRContext mGvrContext;
-    private VideoSceneObjectPlayer mediaPlayer;
+    private VideoSceneObjectPlayer mMediaPlayer;
     private float mWidth, mHeight;
     private boolean mActive;
-    private LinkedList<File> mFiles;
+    private File[] mFiles;
+    private LinkedList<File> mPlayingNowQueue;
     private DataSource.Factory mFileDataSourceFactory;
     private DataSource.Factory mAssetDataSourceFactory;
+    private File mPlayingNow;
+    private OnVideoPlayerListener mOnVideoPlayerListener;
+    private ProgressHandler mProgressHandler = new ProgressHandler();
+    private boolean mIsPlaying;
+
+    private Player.EventListener mPlayerListener = new Player.DefaultEventListener() {
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+            mIsPlaying = playbackState == Player.STATE_READY && playWhenReady;
+
+            if (playbackState == Player.STATE_READY) {
+
+                if (playWhenReady) {
+                    logd("Video started " + mPlayingNow.getName());
+                    notifyVideoStarted();
+                    mProgressHandler.start();
+                } else {
+                    logd("Video prepared: " + mPlayingNow.getName());
+                    notifyVideoPrepared(mPlayingNow.getName(), mMediaPlayer.getDuration());
+                }
+
+            } else if (playbackState == Player.STATE_ENDED) {
+
+                logd("Video ended: " + mPlayingNow.getName());
+                notifyVideoEnded();
+
+                if (mPlayingNowQueue.isEmpty()) {
+                    logd("All videos ended: " + mPlayingNow.getName());
+                    resetQueue();
+                    notifyAllVideosEnded();
+                }
+
+                // Goes to IDLE state
+                mMediaPlayer.stop();
+
+            } else if (playbackState == Player.STATE_IDLE) {
+
+                prepareNextFile();
+
+            } else if (playbackState == Player.STATE_BUFFERING) {
+
+                logd("Loading video: " + mPlayingNow.getName());
+                notifyVideoLoading();
+            }
+        }
+    };
 
     public VideoComponent(final GVRContext gvrContext, float width, float height) {
         super(gvrContext, 0, 0);
@@ -56,7 +109,6 @@ public class VideoComponent extends GVRSceneObject {
         this.mGvrContext = gvrContext;
         this.mWidth = width;
         this.mHeight = height;
-        this.mFiles = new LinkedList<>();
 
         this.mFileDataSourceFactory = new DataSource.Factory() {
             @Override
@@ -64,47 +116,52 @@ public class VideoComponent extends GVRSceneObject {
                 return new FileDataSource();
             }
         };
+
         this.mAssetDataSourceFactory = new DataSource.Factory() {
             @Override
             public DataSource createDataSource() {
                 return new AssetDataSource(gvrContext.getContext());
             }
         };
+
         createVideoSceneObject();
     }
 
     private void createVideoSceneObject() {
-        mediaPlayer = new VideoSceneObjectPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
-        mediaPlayer.getPlayer().addListener(new Player.DefaultEventListener() {
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                if (playbackState == Player.STATE_ENDED) {
-                    logd("The player has finished playing the media");
-                    playNext();
-                }
-            }
-        });
-        addChildObject(new GVRVideoSceneObject(mGvrContext, mWidth, mHeight, mediaPlayer, GVRVideoType.MONO));
+        mMediaPlayer = new VideoSceneObjectPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
+        mMediaPlayer.getPlayer().setRepeatMode(Player.REPEAT_MODE_OFF);
+        mMediaPlayer.getPlayer().addListener(mPlayerListener);
+        addChildObject(new GVRVideoSceneObject(mGvrContext, mWidth, mHeight, mMediaPlayer, GVRVideoType.MONO));
     }
 
     public void playVideo() {
-        mediaPlayer.start();
+        logd("Request play video");
+        playCurrentPrepared();
     }
 
     public void pauseVideo() {
-        mediaPlayer.pause();
+        mMediaPlayer.pause();
+        logd("Video paused");
     }
 
     public boolean isPlaying() {
-        return mediaPlayer.getPlayer().getPlayWhenReady();
+        return mIsPlaying;
     }
 
     public long getDuration() {
-        return mediaPlayer.getPlayer().getDuration();
+        return mMediaPlayer.getDuration();
     }
 
-    public long getCurrentPosition() {
-        return mediaPlayer.getPlayer().getCurrentPosition();
+    public long getProgress() {
+        return mMediaPlayer.getCurrentPosition();
+    }
+
+    public File getPlayingNow() {
+        return mPlayingNow;
+    }
+
+    public void setProgress(long progress) {
+        mMediaPlayer.seekTo(progress);
     }
 
     public void showVideo() {
@@ -114,9 +171,8 @@ public class VideoComponent extends GVRSceneObject {
 
     public void hideVideoComponent() {
         mActive = false;
-        mediaPlayer.getPlayer().stop();
-        mediaPlayer.release();
-        mediaPlayer = null;
+        mMediaPlayer.stop();
+        mMediaPlayer.release();
         new GVROpacityAnimation(this, .1f, 0).start(mGvrContext.getAnimationEngine());
         mGvrContext.getMainScene().removeSceneObject(this);
     }
@@ -125,40 +181,108 @@ public class VideoComponent extends GVRSceneObject {
         return mActive;
     }
 
-    public void playFiles(File[] files) {
-        mediaPlayer.getPlayer().stop();
-        this.mFiles.clear();
-        if (files != null) {
-            this.mFiles.addAll(Arrays.asList(files));
+    public void prepare(@NonNull File[] files) {
+        mMediaPlayer.stop();
+        if (files.length > 0) {
+            mFiles = files;
+            mPlayingNowQueue = new LinkedList<>(Arrays.asList(mFiles));
+            prepareNextFile();
+        } else {
+            logd("Files array is empty");
         }
-        playNext();
     }
 
-    private void playNext() {
-        logd("Playing next file. Queue size: " + mFiles.size());
-        if (!mFiles.isEmpty()) {
+    private void resetQueue() {
+        mPlayingNowQueue = new LinkedList<>(Arrays.asList(mFiles));
+    }
+
+    private void prepareNextFile() {
+        mMediaPlayer.stop();
+        if (!mPlayingNowQueue.isEmpty()) {
             MediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.fromFile(mFiles.pop()),
+                    Uri.fromFile(mPlayingNow = mPlayingNowQueue.pop()),
                     mFileDataSourceFactory,
                     new DefaultExtractorsFactory(), null, null
             );
-            mediaPlayer.getPlayer().prepare(mediaSource);
-            mediaPlayer.start();
+            mMediaPlayer.prepare(mediaSource);
         }
+    }
+
+    private void playCurrentPrepared() {
+        mMediaPlayer.start();
     }
 
     public void playDefault() {
         logd("Playing default file " + Uri.parse("asset:///dinos.mp4"));
-        mediaPlayer.getPlayer().stop();
+        mMediaPlayer.stop();
         MediaSource mediaSource = new ExtractorMediaSource(
                 Uri.parse("asset:///dinos.mp4"),
                 mAssetDataSourceFactory,
                 new DefaultExtractorsFactory(), null, null);
-        mediaPlayer.getPlayer().prepare(mediaSource);
-        mediaPlayer.start();
+        mMediaPlayer.prepare(mediaSource);
+        playCurrentPrepared();
+    }
+
+    public void setOnVideoPlayerListener(OnVideoPlayerListener listener) {
+        this.mOnVideoPlayerListener = listener;
+    }
+
+    private void notifyVideoPrepared(String title, long duration) {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onPrepare(title, duration);
+        }
+    }
+
+    private void notifyVideoStarted() {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onStart();
+        }
+    }
+
+    private void notifyVideoEnded() {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onEnd();
+        }
+    }
+
+    private void notifyAllVideosEnded() {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onAllEnd();
+        }
+    }
+
+    private void notifyVideoLoading() {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onLoading();
+        }
     }
 
     private static void logd(String text) {
         android.util.Log.d(TAG, text);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private class ProgressHandler extends Handler {
+
+        ProgressHandler() {
+            super(Looper.getMainLooper());
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (mOnVideoPlayerListener != null && mIsPlaying) {
+                mOnVideoPlayerListener.onProgress(mMediaPlayer.getCurrentPosition());
+                sendEmptyMessageDelayed(0, 100);
+            } else {
+                logd("Progress stopped");
+            }
+        }
+
+        void start() {
+            logd("Progress started");
+            if (!hasMessages(0)) {
+                sendEmptyMessage(0);
+            }
+        }
     }
 }

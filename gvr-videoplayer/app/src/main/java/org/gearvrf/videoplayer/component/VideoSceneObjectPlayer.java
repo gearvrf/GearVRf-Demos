@@ -1,10 +1,12 @@
 package org.gearvrf.videoplayer.component;
 
+import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.source.MediaSource;
 
 import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 
@@ -12,7 +14,7 @@ public class VideoSceneObjectPlayer implements GVRVideoSceneObjectPlayer<ExoPlay
 
     private SimpleExoPlayer mSimpleExoPlayer;
 
-    public VideoSceneObjectPlayer(SimpleExoPlayer mSimpleExoPlayer) {
+    VideoSceneObjectPlayer(SimpleExoPlayer mSimpleExoPlayer) {
         this.mSimpleExoPlayer = mSimpleExoPlayer;
     }
 
@@ -29,13 +31,16 @@ public class VideoSceneObjectPlayer implements GVRVideoSceneObjectPlayer<ExoPlay
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_BUFFERING:
+                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_BUFFERING");
                         break;
                     case Player.STATE_ENDED:
-                        mSimpleExoPlayer.seekTo(0);
+                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_ENDED");
                         break;
                     case Player.STATE_IDLE:
+                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_IDLE");
                         break;
                     case Player.STATE_READY:
+                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_READY");
                         break;
                     default:
                         break;
@@ -64,5 +69,26 @@ public class VideoSceneObjectPlayer implements GVRVideoSceneObjectPlayer<ExoPlay
     @Override
     public void start() {
         mSimpleExoPlayer.setPlayWhenReady(true);
+    }
+
+    public long getDuration() {
+        return mSimpleExoPlayer.getDuration();
+    }
+
+    public long getCurrentPosition() {
+        return mSimpleExoPlayer.getCurrentPosition();
+    }
+
+    public void stop() {
+        mSimpleExoPlayer.setPlayWhenReady(false);
+        mSimpleExoPlayer.stop();
+    }
+
+    public void seekTo(long position) {
+        mSimpleExoPlayer.seekTo(position);
+    }
+
+    public void prepare(MediaSource mediaSource) {
+        mSimpleExoPlayer.prepare(mediaSource);
     }
 }
