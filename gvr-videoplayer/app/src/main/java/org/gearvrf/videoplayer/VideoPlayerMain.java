@@ -50,18 +50,15 @@ public class VideoPlayerMain extends GVRMain {
     protected GVRCursorController mCursorController;
     private GVRSphereSceneObject sphereObject = null;
     private GVRSceneObject configuringScene = null;
-
-
     /**
      * Called when the activity is first created.
      */
     @Override
     public void onInit(GVRContext gvrContext) {
-
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
 
-        addSphere();
+        addSkyBoxSphere();
         initCursorController();
         createVideoComponent();
         createVideoControllerComponent();
@@ -72,8 +69,7 @@ public class VideoPlayerMain extends GVRMain {
         playFiles();
     }
 
-    public void addSphere(){
-
+    private void addSkyBoxSphere(){
         GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.photosphere));
 
         sphereObject = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
@@ -179,7 +175,16 @@ public class VideoPlayerMain extends GVRMain {
 
         @Override
         public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
-
+            rotationPlayer();
         }
     };
+
+    private void rotationPlayer(){
+        final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
+        final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
+        final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
+        final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
+
+        configuringScene.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+    }
 }
