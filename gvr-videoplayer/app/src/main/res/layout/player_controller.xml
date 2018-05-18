@@ -16,13 +16,20 @@
         android:layout_height="wrap_content">
 
         <Button
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:background="@android:color/transparent"
+            tools:ignore="ContentDescription" />
+
+        <Button
             android:id="@+id/backButton"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:background="@drawable/bg_player_button_back"
             android:enabled="false"
-            android:text="VOLTAR"
+            android:text="BACK"
             android:textColor="@android:color/white"
             android:textSize="11dp"
             android:visibility="gone"
