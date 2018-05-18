@@ -1,18 +1,15 @@
 package org.gearvrf.videoplayer.component.video;
 
-import android.os.Environment;
 import android.util.Log;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.videoplayer.filter.VideosFileFilter;
 
 import java.io.File;
 
 public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
-    private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
 
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
@@ -22,22 +19,23 @@ public class VideoPlayer extends GVRSceneObject {
 
         addVideoComponent();
         addVideoControllerComponent();
-
         initComponents();
-        playFiles();
     }
 
-    private void playFiles() {
-        File videosDirPath = new File(Environment.getExternalStorageDirectory(), VIDEOS_DIR_NAME);
-        if (videosDirPath.exists() && videosDirPath.isDirectory()) {
-            // Filter mp4 files
-            File[] files = videosDirPath.listFiles(new VideosFileFilter());
-            if (files.length > 0) {
-                mVideoComponent.prepare(files);
-            }
+    public void prepare(File... files) {
+        if (files != null && files.length > 0) {
+            mVideoComponent.prepare(files);
         } else {
             mVideoComponent.prepareDefault(); // from assets folder
         }
+    }
+
+    public void play() {
+        mVideoComponent.pauseVideo();
+    }
+
+    public void pause() {
+        mVideoComponent.playVideo();
     }
 
     private void addVideoComponent() {

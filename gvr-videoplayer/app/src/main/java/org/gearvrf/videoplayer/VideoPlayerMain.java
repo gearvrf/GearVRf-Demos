@@ -15,6 +15,7 @@
 
 package org.gearvrf.videoplayer;
 
+import android.os.Environment;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -31,17 +32,21 @@ import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
+import org.gearvrf.videoplayer.filter.VideosFileFilter;
+
+import java.io.File;
 
 public class VideoPlayerMain extends GVRMain {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
+    private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
     private static float PASSTHROUGH_DISTANCE = 5.0f;
     private static final float SCALE = 200.0f;
 
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRCursorController mCursorController;
-    private GVRSceneObject mVideoPlayer;
+    private VideoPlayer mVideoPlayer;
 
     /**
      * Called when the activity is first created.
@@ -54,9 +59,26 @@ public class VideoPlayerMain extends GVRMain {
 
         addSkyBoxSphere();
         initCursorController();
+        addVideoPlayer();
+        prepareVideos();
+    }
 
-        mVideoPlayer = new VideoPlayer(gvrContext);
+    private void addVideoPlayer() {
+        mVideoPlayer = new VideoPlayer(getGVRContext());
         mScene.addSceneObject(mVideoPlayer);
+    }
+
+    private void prepareVideos() {
+        mVideoPlayer.prepare(getVideos());
+    }
+
+    private File[] getVideos() {
+        File videosDirPath = new File(Environment.getExternalStorageDirectory(), VIDEOS_DIR_NAME);
+        if (videosDirPath.exists() && videosDirPath.isDirectory()) {
+            // Filter mp4 files
+            return videosDirPath.listFiles(new VideosFileFilter());
+        }
+        return null;
     }
 
     private void addSkyBoxSphere() {
