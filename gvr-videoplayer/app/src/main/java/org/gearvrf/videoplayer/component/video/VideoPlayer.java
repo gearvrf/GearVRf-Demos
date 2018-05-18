@@ -1,22 +1,28 @@
 package org.gearvrf.videoplayer.component.video;
 
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.animation.GVROpacityAnimation;
 
 import java.io.File;
 
 public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
+    private static final int CONTROLLER_AUTO_HIDE_DELAY = 5000;
 
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
+    private boolean mIsControllerActive = true;
+    private boolean mIsAutoHideController;
+    private ControllerAutoHideHandler mControllerAutoHideHandler = new ControllerAutoHideHandler();
 
     public VideoPlayer(GVRContext gvrContext) {
         super(gvrContext);
-
         addVideoComponent();
         addVideoControllerComponent();
         initComponents();
@@ -38,6 +44,37 @@ public class VideoPlayer extends GVRSceneObject {
     public void pause() {
         mVideoComponent.pauseVideo();
         mVideoControllerComponent.showPlay();
+    }
+
+    private void hideController() {
+        Log.d(TAG, "hideController: ");
+        if (mIsControllerActive) {
+            new GVROpacityAnimation(mVideoControllerComponent, .1f, 0).start(getGVRContext().getAnimationEngine());
+            removeChildObject(mVideoControllerComponent);
+        }
+    }
+
+    public void showController() {
+        Log.d(TAG, "showController: ");
+        showController(mIsAutoHideController);
+    }
+
+    private void showController(boolean autoHide) {
+        Log.d(TAG, "showController: ");
+        if (!mIsControllerActive) {
+            new GVROpacityAnimation(mVideoControllerComponent, .1f, 1).start(getGVRContext().getAnimationEngine());
+            addChildObject(mVideoControllerComponent);
+        }
+        if (autoHide) {
+            mControllerAutoHideHandler.start();
+        }
+    }
+
+    public void setIsAutoHideController(boolean autoHide) {
+        mIsAutoHideController = autoHide;
+        if (autoHide) {
+            mControllerAutoHideHandler.start();
+        }
     }
 
     private void addVideoComponent() {
@@ -73,9 +110,10 @@ public class VideoPlayer extends GVRSceneObject {
 
             @Override
             public void onStart() {
-                mVideoControllerComponent.setPlayPauseButtonEnabled(true);
                 Log.d(TAG, "Video started");
+                mVideoControllerComponent.setPlayPauseButtonEnabled(true);
                 mVideoControllerComponent.showPause();
+                showController();
             }
 
             @Override
@@ -87,6 +125,7 @@ public class VideoPlayer extends GVRSceneObject {
             @Override
             public void onEnd() {
                 Log.d(TAG, "Video ended");
+                showController(false);
             }
 
             @Override
@@ -119,5 +158,27 @@ public class VideoPlayer extends GVRSceneObject {
                 mVideoComponent.setProgress(progress);
             }
         });
+    }
+
+    private class ControllerAutoHideHandler extends Handler {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            hideController();
+        }
+
+        public void start() {
+            if (!hasMessages(0)) {
+                sendEmptyMessageDelayed(0, CONTROLLER_AUTO_HIDE_DELAY);
+            } else {
+                removeMessages(0);
+                sendEmptyMessageDelayed(0, CONTROLLER_AUTO_HIDE_DELAY);
+            }
+        }
+
+        public void cancel() {
+            removeMessages(0);
+        }
     }
 }

@@ -65,6 +65,7 @@ public class VideoPlayerMain extends GVRMain {
 
     private void addVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext());
+        mVideoPlayer.setIsAutoHideController(false);
         mScene.addSceneObject(mVideoPlayer);
     }
 

@@ -127,14 +127,6 @@ public class VideoComponent extends GVRSceneObject {
         mActive = true;
     }
 
-    public void hideVideoComponent() {
-        mActive = false;
-        mMediaPlayer.stop();
-        mMediaPlayer.release();
-        new GVROpacityAnimation(this, .1f, 0).start(mGvrContext.getAnimationEngine());
-        mGvrContext.getMainScene().removeSceneObject(this);
-    }
-
     public boolean isActive() {
         return mActive;
     }
