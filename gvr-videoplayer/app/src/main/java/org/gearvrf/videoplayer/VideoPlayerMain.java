@@ -95,12 +95,6 @@ public class VideoPlayerMain extends GVRMain {
 
         mScene.getEventReceiver().addListener(mVideoPlayerHandle);
 
-        final GVRSceneObject cursor = new GVRSceneObject(mContext,
-                mContext.createQuad(0.2f * PASSTHROUGH_DISTANCE, 0.2f * PASSTHROUGH_DISTANCE),
-                mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor)));
-        cursor.getRenderData().setDepthTest(true);
-        cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-
         GVRInputManager inputManager = mContext.getInputManager();
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
@@ -109,11 +103,22 @@ public class VideoPlayerMain extends GVRMain {
                 }
                 mCursorController = newController;
                 newController.addPickEventListener(mVideoPlayerHandle);
-                newController.setCursor(cursor);
+                newController.setCursor(createCursor());
                 newController.setCursorDepth(-PASSTHROUGH_DISTANCE);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
             }
         });
+    }
+
+    private GVRSceneObject createCursor() {
+        GVRSceneObject cursor = new GVRSceneObject(
+                mContext,
+                mContext.createQuad(0.2f * PASSTHROUGH_DISTANCE, 0.2f * PASSTHROUGH_DISTANCE),
+                mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
+        );
+        cursor.getRenderData().setDepthTest(true);
+        cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        return cursor;
     }
 
     private ITouchEvents mVideoPlayerHandle = new DefaultTouchEvent() {
