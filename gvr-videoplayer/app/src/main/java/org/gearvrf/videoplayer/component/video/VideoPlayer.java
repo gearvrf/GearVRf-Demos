@@ -31,11 +31,13 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public void play() {
-        mVideoComponent.pauseVideo();
+        mVideoComponent.playVideo();
+        mVideoControllerComponent.showPause();
     }
 
     public void pause() {
-        mVideoComponent.playVideo();
+        mVideoComponent.pauseVideo();
+        mVideoControllerComponent.showPlay();
     }
 
     private void addVideoComponent() {
