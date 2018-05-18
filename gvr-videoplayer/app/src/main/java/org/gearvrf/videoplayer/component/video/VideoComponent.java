@@ -46,6 +46,7 @@ public class VideoComponent extends GVRSceneObject {
 
     private static final String TAG = VideoComponent.class.getSimpleName();
     private static final float ANIM_OPACITY_DURATION = 0.5f;
+    private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
     private DefaultExoPlayer mMediaPlayer;
@@ -60,50 +61,7 @@ public class VideoComponent extends GVRSceneObject {
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
 
-    private Player.EventListener mPlayerListener = new Player.DefaultEventListener() {
-        @Override
-        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
-            mIsPlaying = playbackState == Player.STATE_READY && playWhenReady;
-
-            if (playbackState == Player.STATE_READY) {
-
-                if (playWhenReady) {
-                    logd("Video started " + mPlayingNow.getName());
-                    notifyVideoStarted();
-                    mProgressHandler.start();
-                } else {
-                    logd("Video prepared: " + mPlayingNow.getName());
-                    notifyVideoPrepared(mPlayingNow.getName(), mMediaPlayer.getDuration());
-                }
-
-            } else if (playbackState == Player.STATE_ENDED) {
-
-                logd("Video ended: " + mPlayingNow.getName());
-                notifyVideoEnded();
-
-                if (mPlayingNowQueue.isEmpty()) {
-                    logd("All videos ended: " + mPlayingNow.getName());
-                    resetQueue();
-                    notifyAllVideosEnded();
-                }
-
-                // Goes to IDLE state
-                mMediaPlayer.stop();
-
-            } else if (playbackState == Player.STATE_IDLE) {
-
-                prepareNextFile();
-
-            } else if (playbackState == Player.STATE_BUFFERING) {
-
-                logd("Loading video: " + mPlayingNow.getName());
-                notifyVideoLoading();
-            }
-        }
-    };
-
-    public VideoComponent(final GVRContext gvrContext, float width, float height) {
+    VideoComponent(final GVRContext gvrContext, float width, float height) {
         super(gvrContext, 0, 0);
 
         this.mGvrContext = gvrContext;
@@ -197,8 +155,8 @@ public class VideoComponent extends GVRSceneObject {
     }
 
     private void prepareNextFile() {
-        mMediaPlayer.stop();
-        if (!mPlayingNowQueue.isEmpty()) {
+        if (mPlayingNowQueue != null && !mPlayingNowQueue.isEmpty()) {
+            mMediaPlayer.stop();
             MediaSource mediaSource = new ExtractorMediaSource(
                     Uri.fromFile(mPlayingNow = mPlayingNowQueue.pop()),
                     mFileDataSourceFactory,
@@ -212,15 +170,14 @@ public class VideoComponent extends GVRSceneObject {
         mMediaPlayer.start();
     }
 
-    public void playDefault() {
-        logd("Playing default file " + Uri.parse("asset:///dinos.mp4"));
+    public void prepareDefault() {
+        logd("Preparing default file " + DEFAULT_FILE);
         mMediaPlayer.stop();
         MediaSource mediaSource = new ExtractorMediaSource(
-                Uri.parse("asset:///dinos.mp4"),
+                Uri.parse(DEFAULT_FILE),
                 mAssetDataSourceFactory,
                 new DefaultExtractorsFactory(), null, null);
         mMediaPlayer.prepare(mediaSource);
-        playCurrentPrepared();
     }
 
     public void setOnVideoPlayerListener(OnVideoPlayerListener listener) {
@@ -257,6 +214,10 @@ public class VideoComponent extends GVRSceneObject {
         }
     }
 
+    private String getPlayingNowName() {
+        return mPlayingNow != null ? mPlayingNow.getName() : DEFAULT_FILE;
+    }
+
     private static void logd(String text) {
         android.util.Log.d(TAG, text);
     }
@@ -285,4 +246,53 @@ public class VideoComponent extends GVRSceneObject {
             }
         }
     }
+
+    private Player.EventListener mPlayerListener = new Player.DefaultEventListener() {
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+            mIsPlaying = playbackState == Player.STATE_READY && playWhenReady;
+
+            if (playbackState == Player.STATE_READY) {
+
+                if (playWhenReady) {
+                    logd("Video started " + getPlayingNowName());
+                    notifyVideoStarted();
+                    mProgressHandler.start();
+                } else {
+                    logd("Video prepared: " + getPlayingNowName());
+                    notifyVideoPrepared(getPlayingNowName(), mMediaPlayer.getDuration());
+                }
+
+            } else if (playbackState == Player.STATE_ENDED) {
+
+                logd("Video ended: " + getPlayingNowName());
+                notifyVideoEnded();
+
+                if (mPlayingNowQueue != null && mPlayingNowQueue.isEmpty()) {
+                    logd("All videos ended: " + getPlayingNowName());
+                    resetQueue();
+                    notifyAllVideosEnded();
+                }
+
+                // Goes to IDLE state
+                mMediaPlayer.stop();
+
+                if (mPlayingNowQueue == null) {
+                    // Reset default
+                    prepareDefault();
+                }
+
+            } else if (playbackState == Player.STATE_IDLE) {
+
+                prepareNextFile();
+
+            } else if (playbackState == Player.STATE_BUFFERING) {
+
+                logd("Loading video: " + getPlayingNowName());
+                notifyVideoLoading();
+            }
+        }
+    };
 }
+

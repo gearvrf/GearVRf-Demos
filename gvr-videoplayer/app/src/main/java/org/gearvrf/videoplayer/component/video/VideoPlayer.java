@@ -36,7 +36,7 @@ public class VideoPlayer extends GVRSceneObject {
                 mVideoComponent.prepare(files);
             }
         } else {
-            mVideoComponent.playDefault(); // from assets folder
+            mVideoComponent.prepareDefault(); // from assets folder
         }
     }
 

@@ -41,7 +41,7 @@ public class VideoPlayerMain extends GVRMain {
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRCursorController mCursorController;
-    private GVRSceneObject configuringScene = null;
+    private GVRSceneObject mVideoPlayer;
 
     /**
      * Called when the activity is first created.
@@ -55,8 +55,8 @@ public class VideoPlayerMain extends GVRMain {
         addSkyBoxSphere();
         initCursorController();
 
-        configuringScene = new VideoPlayer(gvrContext);
-        mScene.addSceneObject(configuringScene);
+        mVideoPlayer = new VideoPlayer(gvrContext);
+        mScene.addSceneObject(mVideoPlayer);
     }
 
     private void addSkyBoxSphere() {
@@ -68,16 +68,15 @@ public class VideoPlayerMain extends GVRMain {
         mScene.addSceneObject(sphereObject);
     }
 
-
     private void initCursorController() {
 
         mScene.getEventReceiver().addListener(mVideoPlayerHandle);
 
-        configuringScene = new GVRSceneObject(mContext,
+        final GVRSceneObject cursor = new GVRSceneObject(mContext,
                 mContext.createQuad(0.2f * PASSTHROUGH_DISTANCE, 0.2f * PASSTHROUGH_DISTANCE),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor)));
-        configuringScene.getRenderData().setDepthTest(true);
-        configuringScene.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        cursor.getRenderData().setDepthTest(true);
+        cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         GVRInputManager inputManager = mContext.getInputManager();
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
@@ -87,7 +86,7 @@ public class VideoPlayerMain extends GVRMain {
                 }
                 mCursorController = newController;
                 newController.addPickEventListener(mVideoPlayerHandle);
-                newController.setCursor(configuringScene);
+                newController.setCursor(cursor);
                 newController.setCursorDepth(-PASSTHROUGH_DISTANCE);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
             }
@@ -107,6 +106,6 @@ public class VideoPlayerMain extends GVRMain {
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
         final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
 
-        configuringScene.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+        mVideoPlayer.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
     }
 }
