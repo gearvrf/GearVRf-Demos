@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.videoplayer.component;
+package org.gearvrf.videoplayer.component.video;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -48,7 +48,7 @@ public class VideoComponent extends GVRSceneObject {
     private static final float ANIM_OPACITY_DURATION = 0.5f;
 
     private GVRContext mGvrContext;
-    private VideoSceneObjectPlayer mMediaPlayer;
+    private DefaultExoPlayer mMediaPlayer;
     private float mWidth, mHeight;
     private boolean mActive;
     private File[] mFiles;
@@ -128,7 +128,7 @@ public class VideoComponent extends GVRSceneObject {
     }
 
     private void createVideoSceneObject() {
-        mMediaPlayer = new VideoSceneObjectPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
+        mMediaPlayer = new DefaultExoPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
         mMediaPlayer.getPlayer().setRepeatMode(Player.REPEAT_MODE_OFF);
         mMediaPlayer.getPlayer().addListener(mPlayerListener);
         addChildObject(new GVRVideoSceneObject(mGvrContext, mWidth, mHeight, mMediaPlayer, GVRVideoType.MONO));

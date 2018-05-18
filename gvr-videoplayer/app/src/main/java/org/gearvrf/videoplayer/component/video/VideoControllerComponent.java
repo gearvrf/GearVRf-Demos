@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer.component;
+package org.gearvrf.videoplayer.component.video;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.DrawableRes;
@@ -24,7 +24,7 @@ public class VideoControllerComponent extends GVRSceneObject implements View.OnC
     private int mStateResource;
 
     @SuppressLint("InflateParams")
-    public VideoControllerComponent(GVRContext gvrContext, float width, float height) {
+    VideoControllerComponent(GVRContext gvrContext, float width, float height) {
         super(gvrContext, 0, 0);
 
         mMainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.player_controller, null);

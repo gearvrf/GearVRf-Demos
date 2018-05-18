@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer.component;
+package org.gearvrf.videoplayer.component.video;
 
 import android.util.Log;
 import android.view.Surface;
@@ -10,11 +10,11 @@ import com.google.android.exoplayer2.source.MediaSource;
 
 import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 
-public class VideoSceneObjectPlayer implements GVRVideoSceneObjectPlayer<ExoPlayer> {
+public class DefaultExoPlayer implements GVRVideoSceneObjectPlayer<ExoPlayer> {
 
     private SimpleExoPlayer mSimpleExoPlayer;
 
-    VideoSceneObjectPlayer(SimpleExoPlayer mSimpleExoPlayer) {
+    DefaultExoPlayer(SimpleExoPlayer mSimpleExoPlayer) {
         this.mSimpleExoPlayer = mSimpleExoPlayer;
     }
 
@@ -31,16 +31,16 @@ public class VideoSceneObjectPlayer implements GVRVideoSceneObjectPlayer<ExoPlay
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 switch (playbackState) {
                     case Player.STATE_BUFFERING:
-                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_BUFFERING");
+                        Log.d("DefaultExoPlayer", "onPlayerStateChanged: STATE_BUFFERING");
                         break;
                     case Player.STATE_ENDED:
-                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_ENDED");
+                        Log.d("DefaultExoPlayer", "onPlayerStateChanged: STATE_ENDED");
                         break;
                     case Player.STATE_IDLE:
-                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_IDLE");
+                        Log.d("DefaultExoPlayer", "onPlayerStateChanged: STATE_IDLE");
                         break;
                     case Player.STATE_READY:
-                        Log.d("VideoSceneObjectPlayer", "onPlayerStateChanged: STATE_READY");
+                        Log.d("DefaultExoPlayer", "onPlayerStateChanged: STATE_READY");
                         break;
                     default:
                         break;

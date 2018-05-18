@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer.component;
+package org.gearvrf.videoplayer.component.video;
 
 public interface OnVideoPlayerListener {
 
