@@ -25,7 +25,7 @@ android {
 
 dependencies {
     // ARCore library
-    implementation "com.google.ar:core:1.1.0"
+    implementation "com.google.ar:core:1.2.0"
     implementation 'com.android.support:support-v4:27.0.2'
 
     debugCompile(name: 'MixedReality-debug', ext: 'aar')
