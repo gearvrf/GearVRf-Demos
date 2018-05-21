@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.upstream.AssetDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 
+import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
@@ -58,7 +59,7 @@ public class VideoComponent extends GVRSceneObject {
     private boolean mIsPlaying;
 
     VideoComponent(final GVRContext gvrContext, float width, float height) {
-        super(gvrContext, 0, 0);
+        super(gvrContext);
 
         this.mGvrContext = gvrContext;
 
@@ -77,6 +78,11 @@ public class VideoComponent extends GVRSceneObject {
         };
 
         createVideoSceneObject(width, height);
+
+        GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
+        collider.setHalfExtents(width / 2.0f, height / 2.0f, 1);
+        attachCollider(collider);
+
     }
 
     private void createVideoSceneObject(float width, float height) {

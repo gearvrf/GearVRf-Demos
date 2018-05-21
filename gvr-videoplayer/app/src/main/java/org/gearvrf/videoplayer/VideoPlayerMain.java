@@ -16,6 +16,7 @@
 package org.gearvrf.videoplayer;
 
 import android.os.Environment;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -47,6 +48,8 @@ public class VideoPlayerMain extends GVRMain {
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
     private GVRSceneObject sceneObject;
+    private GVRSphereSceneObject mSphereObject;
+
 
     /**
      * Called when the activity is first created.
@@ -72,6 +75,7 @@ public class VideoPlayerMain extends GVRMain {
         mScene.addSceneObject(sceneObject);
     }
 
+
     private void prepareVideos() {
         mVideoPlayer.prepare(getVideos());
     }
@@ -86,12 +90,10 @@ public class VideoPlayerMain extends GVRMain {
     }
 
     private void addSkyBoxSphere() {
-
         GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.photosphere));
-        GVRSphereSceneObject sphereObject = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
-        sphereObject.getTransform().setScale(SCALE, SCALE, SCALE);
-
-        mScene.addSceneObject(sphereObject);
+        mSphereObject = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
+        mSphereObject.getTransform().setScale(SCALE, SCALE, SCALE);
+        mScene.addSceneObject(mSphereObject);
     }
 
     private void initCursorController() {
@@ -127,12 +129,21 @@ public class VideoPlayerMain extends GVRMain {
     private ITouchEvents mTouchHandler = new DefaultTouchEvent() {
         @Override
         public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
-            rotationPlayer();
+            repositionPlayer();
+        }
+
+        @Override
+        public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+            Log.d(getClass().getSimpleName(), "Log onTouchStart");
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+            Log.d(getClass().getSimpleName(), "Log onTouchEnd");
         }
     };
 
-    private void rotationPlayer() {
-
+    private void repositionPlayer() {
         final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
         final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();

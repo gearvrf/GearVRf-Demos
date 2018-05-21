@@ -16,6 +16,7 @@ public class VideoPlayer extends GVRSceneObject {
     private static final int CONTROLLER_AUTO_HIDE_DELAY = 5000;
     private static final float CONTROLLER_WIDGET_FACTOR = .75f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
+    private static final float DURATION = 5000.0f;
 
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
@@ -197,5 +198,14 @@ public class VideoPlayer extends GVRSceneObject {
         public void cancel() {
             removeMessages(0);
         }
+    }
+
+    private void showVideoController(GVRContext gvrContext) {
+        new GVROpacityAnimation(mVideoControllerComponent, DURATION, 1).start(gvrContext.getAnimationEngine());
+    }
+
+    private void hideVideoController(GVRContext gvrContext) {
+        new GVROpacityAnimation(mVideoControllerComponent, 1.0f, 0).start(gvrContext.getAnimationEngine());
+        removeChildObject(mVideoControllerComponent);
     }
 }
