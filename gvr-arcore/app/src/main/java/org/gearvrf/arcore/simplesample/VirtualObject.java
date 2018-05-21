@@ -24,20 +24,10 @@ import org.gearvrf.GVRSceneObject;
 import java.io.IOException;
 
 public class VirtualObject extends GVRSceneObject {
-    private static final float UNPICKED_COLOR_R = 0.7f;
-    private static final float UNPICKED_COLOR_G = 0.7f;
-    private static final float UNPICKED_COLOR_B = 0.7f;
-    private static final float UNPICKED_COLOR_A = 1.0f;
-
-    private static final float PICKED_COLOR_R = 1.0f;
-    private static final float PICKED_COLOR_G = 0.0f;
-    private static final float PICKED_COLOR_B = 0.0f;
-    private static final float PICKED_COLOR_A = 1.0f;
-
-    private static final float CLICKED_COLOR_R = 0.5f;
-    private static final float CLICKED_COLOR_G = 0.5f;
-    private static final float CLICKED_COLOR_B = 1.0f;
-    private static final float CLICKED_COLOR_A = 1.0f;
+    private static final float[] UNPICKED_COLOR = {0.7f, 0.7f, 0.7f, 1.0f};
+    private static final float[] PICKED_COLOR = {1.0f, 0.0f, 0.0f, 1.0f};
+    private static final float[] CLICKED_COLOR = {0.5f, 0.5f, 1.0f, 1.0f};
+    private float[] current_color = UNPICKED_COLOR;
 
     private GVRSceneObject m3dModel;
 
@@ -75,35 +65,39 @@ public class VirtualObject extends GVRSceneObject {
         });
     }
 
+
+    public void reactToLightEnvironment(float lightEstimate) {
+        m3dModel.getRenderData().getMaterial().setDiffuseColor(
+                current_color[0] * lightEstimate, current_color[1] * lightEstimate,
+                current_color[2] * lightEstimate, current_color[3]);
+    }
+
+
     public void onPickEnter() {
         if (m3dModel == null)
             return;
 
-        m3dModel.getRenderData().getMaterial().setDiffuseColor(PICKED_COLOR_R,
-                PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
+        current_color = PICKED_COLOR;
     }
 
     public void onPickExit() {
         if (m3dModel == null)
             return;
 
-        m3dModel.getRenderData().getMaterial().setDiffuseColor(UNPICKED_COLOR_R,
-                UNPICKED_COLOR_G, UNPICKED_COLOR_B, UNPICKED_COLOR_A);
+        current_color = UNPICKED_COLOR;
     }
 
     public void onTouchStart() {
         if (m3dModel == null)
             return;
 
-        m3dModel.getRenderData().getMaterial().setDiffuseColor(CLICKED_COLOR_R,
-                CLICKED_COLOR_G, CLICKED_COLOR_B, CLICKED_COLOR_A);
+        current_color = CLICKED_COLOR;
     }
 
     public void onTouchEnd() {
         if (m3dModel == null)
             return;
 
-        m3dModel.getRenderData().getMaterial().setDiffuseColor(PICKED_COLOR_R,
-                PICKED_COLOR_G, PICKED_COLOR_B, PICKED_COLOR_A);
+        current_color = PICKED_COLOR;
     }
 }

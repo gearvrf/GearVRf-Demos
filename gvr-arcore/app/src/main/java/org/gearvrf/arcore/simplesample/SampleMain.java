@@ -72,6 +72,16 @@ public class SampleMain extends GVRMain {
 
     }
 
+    @Override
+    public void onStep() {
+        super.onStep();
+        for (GVRAnchor anchor: mVirtualObjects) {
+            for (GVRSceneObject obj: anchor.getChildren()) {
+                ((VirtualObject)obj).reactToLightEnvironment(
+                        mixedReality.getLightEstimate().getPixelIntensity());
+            }
+        }
+    }
 
     private IPlaneEventsListener planeEventsListener = new IPlaneEventsListener() {
         @Override
