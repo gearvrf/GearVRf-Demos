@@ -28,8 +28,8 @@ public class VideoControllerComponent extends GVRSceneObject implements View.OnC
         super(gvrContext, 0, 0);
 
         mMainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.player_controller, null);
-        GVRViewSceneObject sceneObject = new GVRViewSceneObject(gvrContext, mMainView, width, height);
-        addChildObject(sceneObject);
+        addChildObject(new GVRViewSceneObject(gvrContext, mMainView, width, height));
+        //addChildObject(new GVRViewSceneObject(gvrContext, R.layout.player_controller));
         initView();
     }
 

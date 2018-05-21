@@ -34,7 +34,6 @@ import com.google.android.exoplayer2.upstream.FileDataSource;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 
@@ -45,13 +44,10 @@ import java.util.LinkedList;
 public class VideoComponent extends GVRSceneObject {
 
     private static final String TAG = VideoComponent.class.getSimpleName();
-    private static final float ANIM_OPACITY_DURATION = 0.5f;
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
     private DefaultExoPlayer mMediaPlayer;
-    private float mWidth, mHeight;
-    private boolean mActive;
     private File[] mFiles;
     private LinkedList<File> mPlayingNowQueue;
     private DataSource.Factory mFileDataSourceFactory;
@@ -65,8 +61,6 @@ public class VideoComponent extends GVRSceneObject {
         super(gvrContext, 0, 0);
 
         this.mGvrContext = gvrContext;
-        this.mWidth = width;
-        this.mHeight = height;
 
         this.mFileDataSourceFactory = new DataSource.Factory() {
             @Override
@@ -82,14 +76,13 @@ public class VideoComponent extends GVRSceneObject {
             }
         };
 
-        createVideoSceneObject();
+        createVideoSceneObject(width, height);
     }
 
-    private void createVideoSceneObject() {
+    private void createVideoSceneObject(float width, float height) {
         mMediaPlayer = new DefaultExoPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
-        mMediaPlayer.getPlayer().setRepeatMode(Player.REPEAT_MODE_OFF);
         mMediaPlayer.getPlayer().addListener(mPlayerListener);
-        addChildObject(new GVRVideoSceneObject(mGvrContext, mWidth, mHeight, mMediaPlayer, GVRVideoType.MONO));
+        addChildObject(new GVRVideoSceneObject(mGvrContext, width, height, mMediaPlayer, GVRVideoType.MONO));
     }
 
     public void playVideo() {
@@ -120,15 +113,6 @@ public class VideoComponent extends GVRSceneObject {
 
     public void setProgress(long progress) {
         mMediaPlayer.seekTo(progress);
-    }
-
-    public void showVideo() {
-        new GVROpacityAnimation(this, ANIM_OPACITY_DURATION, 1).start(mGvrContext.getAnimationEngine());
-        mActive = true;
-    }
-
-    public boolean isActive() {
-        return mActive;
     }
 
     public void prepare(@NonNull File[] files) {

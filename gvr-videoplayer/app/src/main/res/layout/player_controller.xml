@@ -35,7 +35,7 @@
             android:visibility="gone"
             tools:ignore="ButtonStyle,HardcodedText,SpUsage" />
 
-        <ImageView
+        <Button
             android:id="@+id/playPauseButton"
             android:layout_width="50dp"
             android:layout_height="50dp"

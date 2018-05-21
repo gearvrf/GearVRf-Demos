@@ -38,7 +38,6 @@ import java.io.File;
 
 public class VideoPlayerMain extends GVRMain {
 
-    private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
     private static float PASSTHROUGH_DISTANCE = 5.0f;
     private static final float SCALE = 200.0f;
@@ -47,6 +46,7 @@ public class VideoPlayerMain extends GVRMain {
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
+    private GVRSceneObject sceneObject;
 
     /**
      * Called when the activity is first created.
@@ -64,9 +64,12 @@ public class VideoPlayerMain extends GVRMain {
     }
 
     private void addVideoPlayer() {
-        mVideoPlayer = new VideoPlayer(getGVRContext());
-        mVideoPlayer.setIsAutoHideController(false);
-        mScene.addSceneObject(mVideoPlayer);
+        mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
+        mVideoPlayer.getTransform().setPositionZ(-8);
+        mVideoPlayer.setAutoHideController(true);
+        sceneObject = new GVRSceneObject(getGVRContext());
+        sceneObject.addChildObject(mVideoPlayer);
+        mScene.addSceneObject(sceneObject);
     }
 
     private void prepareVideos() {
@@ -93,16 +96,16 @@ public class VideoPlayerMain extends GVRMain {
 
     private void initCursorController() {
 
-        mScene.getEventReceiver().addListener(mVideoPlayerHandle);
+        mScene.getEventReceiver().addListener(mTouchHandler);
 
         GVRInputManager inputManager = mContext.getInputManager();
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
                 if (oldController != null) {
-                    oldController.removePickEventListener(mVideoPlayerHandle);
+                    oldController.removePickEventListener(mTouchHandler);
                 }
                 mCursorController = newController;
-                newController.addPickEventListener(mVideoPlayerHandle);
+                newController.addPickEventListener(mTouchHandler);
                 newController.setCursor(createCursor());
                 newController.setCursorDepth(-PASSTHROUGH_DISTANCE);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
@@ -116,12 +119,12 @@ public class VideoPlayerMain extends GVRMain {
                 mContext.createQuad(0.2f * PASSTHROUGH_DISTANCE, 0.2f * PASSTHROUGH_DISTANCE),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
         );
-        cursor.getRenderData().setDepthTest(true);
+        cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         return cursor;
     }
 
-    private ITouchEvents mVideoPlayerHandle = new DefaultTouchEvent() {
+    private ITouchEvents mTouchHandler = new DefaultTouchEvent() {
         @Override
         public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
             rotationPlayer();
@@ -129,11 +132,13 @@ public class VideoPlayerMain extends GVRMain {
     };
 
     private void rotationPlayer() {
+
         final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
         final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
         final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
 
-        mVideoPlayer.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+        sceneObject.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+        mVideoPlayer.showController();
     }
 }
