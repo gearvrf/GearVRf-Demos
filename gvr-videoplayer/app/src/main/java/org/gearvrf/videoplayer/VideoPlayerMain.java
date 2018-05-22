@@ -30,7 +30,6 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.filter.VideosFileFilter;
@@ -131,17 +130,11 @@ public class VideoPlayerMain extends GVRMain {
         @Override
         public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
             repositionPlayer();
-            Log.d("XXXX", "Log onMotionOutside");
         }
 
         @Override
         public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-            Log.d("XXXX", "Log onTouchStart");
-        }
-
-        @Override
-        public void onTouchEnd(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-            Log.d("XXXX", "Log onTouchEnd");
+            mVideoPlayer.showController();
         }
     };
 
