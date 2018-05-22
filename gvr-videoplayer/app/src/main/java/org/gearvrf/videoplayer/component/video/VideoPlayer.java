@@ -2,11 +2,12 @@ package org.gearvrf.videoplayer.component.video;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.animation.GVROpacityAnimation;
+import org.gearvrf.utility.Log;
+import org.gearvrf.videoplayer.focus.FocusListener;
+import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
 import java.io.File;
 
@@ -16,17 +17,16 @@ public class VideoPlayer extends GVRSceneObject {
     private static final int CONTROLLER_AUTO_HIDE_DELAY = 5000;
     private static final float CONTROLLER_WIDGET_FACTOR = .75f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
-    private static final float DURATION = 5000.0f;
 
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
     private boolean mIsControllerActive = true;
     private boolean mAutoHideController;
-    private ControllerAutoHideHandler mControllerAutoHideHandler;
+    private WidgetAutoHideTimer mWidgetAutoHideTimer;
 
     public VideoPlayer(GVRContext gvrContext, float width, float height) {
         super(gvrContext);
-        mControllerAutoHideHandler = new ControllerAutoHideHandler(this);
+        mWidgetAutoHideTimer = new WidgetAutoHideTimer(this);
         addVideoComponent(width, height);
         addVideoControllerComponent(CONTROLLER_WIDGET_FACTOR * width, CONTROLLER_HEIGHT_FACTOR * height);
     }
@@ -39,23 +39,11 @@ public class VideoPlayer extends GVRSceneObject {
         }
     }
 
-    public void play() {
-        mVideoComponent.playVideo();
-        mVideoControllerComponent.showPause();
-    }
-
-    public void pause() {
-        mVideoComponent.pauseVideo();
-        mVideoControllerComponent.showPlay();
-    }
-
     public void hideController() {
         Log.d(TAG, "hideController: ");
         if (mIsControllerActive) {
             mIsControllerActive = false;
-            new GVROpacityAnimation(mVideoControllerComponent, .1f, 0)
-                    .start(getGVRContext().getAnimationEngine());
-            removeChildObject(mVideoControllerComponent);
+            mVideoControllerComponent.hide();
         }
     }
 
@@ -68,19 +56,17 @@ public class VideoPlayer extends GVRSceneObject {
         Log.d(TAG, "showController: ");
         if (!mIsControllerActive) {
             mIsControllerActive = true;
-            new GVROpacityAnimation(mVideoControllerComponent, .1f, 1)
-                    .start(getGVRContext().getAnimationEngine());
-            addChildObject(mVideoControllerComponent);
+            mVideoControllerComponent.show();
         }
         if (autoHide) {
-            mControllerAutoHideHandler.start();
+            mWidgetAutoHideTimer.start();
         }
     }
 
     public void setAutoHideController(boolean autoHide) {
         mAutoHideController = autoHide;
         if (autoHide) {
-            mControllerAutoHideHandler.start();
+            mWidgetAutoHideTimer.start();
         }
     }
 
@@ -102,8 +88,24 @@ public class VideoPlayer extends GVRSceneObject {
         // Adjust widget vision degree
         mVideoControllerComponent.getTransform().rotateByAxis(-15, 1, 0, 0);
 
+        mVideoControllerComponent.setFocusListener(mFocusListener);
+
         addChildObject(mVideoControllerComponent);
     }
+
+    private FocusListener<FocusableViewSceneObject> mFocusListener = new FocusListener<FocusableViewSceneObject>() {
+        @Override
+        public void onFocusGained(FocusableViewSceneObject focusable) {
+            Log.d(TAG, "onFocusGained: ");
+            mWidgetAutoHideTimer.cancel();
+        }
+
+        @Override
+        public void onFocusLost(FocusableViewSceneObject focusable) {
+            Log.d(TAG, "onFocusLost: ");
+            mWidgetAutoHideTimer.start();
+        }
+    };
 
     private OnVideoPlayerListener mOnVideoPlayerListener = new OnVideoPlayerListener() {
         @Override
@@ -172,11 +174,11 @@ public class VideoPlayer extends GVRSceneObject {
         }
     };
 
-    private static class ControllerAutoHideHandler extends Handler {
+    private static class WidgetAutoHideTimer extends Handler {
 
         private VideoPlayer mVideoPlayer;
 
-        ControllerAutoHideHandler(VideoPlayer videoPlayer) {
+        WidgetAutoHideTimer(VideoPlayer videoPlayer) {
             mVideoPlayer = videoPlayer;
         }
 
@@ -198,14 +200,5 @@ public class VideoPlayer extends GVRSceneObject {
         public void cancel() {
             removeMessages(0);
         }
-    }
-
-    private void showVideoController(GVRContext gvrContext) {
-        new GVROpacityAnimation(mVideoControllerComponent, DURATION, 1).start(gvrContext.getAnimationEngine());
-    }
-
-    private void hideVideoController(GVRContext gvrContext) {
-        new GVROpacityAnimation(mVideoControllerComponent, 1.0f, 0).start(gvrContext.getAnimationEngine());
-        removeChildObject(mVideoControllerComponent);
     }
 }

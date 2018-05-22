@@ -33,6 +33,7 @@ import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.filter.VideosFileFilter;
+import org.gearvrf.videoplayer.focus.PickEventHandler;
 
 import java.io.File;
 
@@ -48,7 +49,7 @@ public class VideoPlayerMain extends GVRMain {
     private VideoPlayer mVideoPlayer;
     private GVRSceneObject sceneObject;
     private GVRSphereSceneObject mSphereObject;
-
+    private PickEventHandler mPickHandler;
 
     /**
      * Called when the activity is first created.
@@ -58,6 +59,7 @@ public class VideoPlayerMain extends GVRMain {
 
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
+        mPickHandler = new PickEventHandler();
 
         addSkyBoxSphere();
         initCursorController();
@@ -108,6 +110,7 @@ public class VideoPlayerMain extends GVRMain {
                 }
                 mCursorController = newController;
                 newController.addPickEventListener(mTouchHandler);
+                newController.addPickEventListener(mPickHandler);
                 newController.setCursor(createCursor());
                 newController.setCursorDepth(-CURSOR_DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
