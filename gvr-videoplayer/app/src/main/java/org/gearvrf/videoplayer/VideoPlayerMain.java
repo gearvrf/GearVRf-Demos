@@ -16,7 +16,6 @@
 package org.gearvrf.videoplayer;
 
 import android.os.Environment;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -31,6 +30,7 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.filter.VideosFileFilter;
@@ -40,7 +40,7 @@ import java.io.File;
 public class VideoPlayerMain extends GVRMain {
 
     private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
-    private static float PASSTHROUGH_DISTANCE = 5.0f;
+    private static float CURSOR_DEPTH = 100.0f;
     private static final float SCALE = 200.0f;
 
     private GVRContext mContext;
@@ -73,6 +73,7 @@ public class VideoPlayerMain extends GVRMain {
         sceneObject = new GVRSceneObject(getGVRContext());
         sceneObject.addChildObject(mVideoPlayer);
         mScene.addSceneObject(sceneObject);
+
     }
 
 
@@ -109,7 +110,7 @@ public class VideoPlayerMain extends GVRMain {
                 mCursorController = newController;
                 newController.addPickEventListener(mTouchHandler);
                 newController.setCursor(createCursor());
-                newController.setCursorDepth(-PASSTHROUGH_DISTANCE);
+                newController.setCursorDepth(-CURSOR_DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
             }
         });
@@ -118,7 +119,7 @@ public class VideoPlayerMain extends GVRMain {
     private GVRSceneObject createCursor() {
         GVRSceneObject cursor = new GVRSceneObject(
                 mContext,
-                mContext.createQuad(0.2f * PASSTHROUGH_DISTANCE, 0.2f * PASSTHROUGH_DISTANCE),
+                mContext.createQuad(0.2f * CURSOR_DEPTH, 0.2f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
         );
         cursor.getRenderData().setDepthTest(false);
@@ -130,16 +131,17 @@ public class VideoPlayerMain extends GVRMain {
         @Override
         public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
             repositionPlayer();
+            Log.d("XXXX", "Log onMotionOutside");
         }
 
         @Override
         public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-            Log.d(getClass().getSimpleName(), "Log onTouchStart");
+            Log.d("XXXX", "Log onTouchStart");
         }
 
         @Override
         public void onTouchEnd(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-            Log.d(getClass().getSimpleName(), "Log onTouchEnd");
+            Log.d("XXXX", "Log onTouchEnd");
         }
     };
 
