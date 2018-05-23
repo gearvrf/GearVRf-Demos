@@ -188,6 +188,10 @@ public class SampleMain extends GVRMain {
     public class ARCoreHandler extends GVREventListeners.TouchEvents
             implements GVRDrawFrameListener {
         private GVRSceneObject mDraggingObject = null;
+        private float mHitX;
+        private float mHitY;
+        private float mYaw;
+        private float mScale;
 
         @Override
         public void onDrawFrame(float v) {
@@ -271,6 +275,14 @@ public class SampleMain extends GVRMain {
 
 			if (mDraggingObject == null) {
                 mDraggingObject = sceneObj;
+
+                // save off the current yaw and scale
+                mYaw = sceneObj.getTransform().getRotationYaw();
+                mScale = sceneObj.getTransform().getScaleX();
+
+                // save off the x,y hit location for use in onInside()
+                mHitX = pickInfo.motionEvent.getX();
+                mHitY = pickInfo.motionEvent.getY();
                 Log.d(TAG, "onStartDragging");
                 ((VirtualObject)sceneObj).onTouchStart();
             }
@@ -299,8 +311,30 @@ public class SampleMain extends GVRMain {
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             super.onInside(sceneObj, pickInfo);
 
-            if (mDraggingObject == null)
+            if (mDraggingObject == null) {
                 return;
+            } else {
+                // get the current x,y hit location
+                float hitLocationX = pickInfo.motionEvent.getX();
+                float hitLocationY = pickInfo.motionEvent.getY();
+
+                // find the diff from when we first touched down
+                float diffX = hitLocationX - mHitX;
+                float diffY = hitLocationY - mHitY;
+
+                // when we move along X, calculate an angle to rotate the model around the Y axis
+                float angle = mYaw + (diffX * 2);
+
+                // when we move along Y, calculate how much to scale the model
+                float scale = mScale + (diffY);
+                if(scale < 0.1f) {
+                    scale = 0.1f;
+                }
+
+                // set rotation and scale
+                mDraggingObject.getTransform().setRotationByAxis(angle, 0.0f, 1.0f, 0.0f);
+                mDraggingObject.getTransform().setScale(scale, scale, scale);
+            }
 
             pickInfo = pickSceneObject(mARPassThroughObject);
             if (pickInfo != null) {
