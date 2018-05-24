@@ -15,7 +15,8 @@
 
 package org.gearvrf.videoplayer;
 
-import android.os.Environment;
+import android.content.Loader;
+import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -32,14 +33,19 @@ import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
-import org.gearvrf.videoplayer.filter.VideosFileFilter;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
+import org.gearvrf.videoplayer.model.Album;
+import org.gearvrf.videoplayer.model.Video;
+import org.gearvrf.videoplayer.provider.loader.DefaultAlbumLoaderCallbacks;
+import org.gearvrf.videoplayer.provider.loader.DefaultVideoLoaderCallbacks;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 public class VideoPlayerMain extends GVRMain {
 
-    private static final String VIDEOS_DIR_NAME = "gvr-videoplayer";
+    private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = 100.0f;
     private static final float SCALE = 200.0f;
 
@@ -64,7 +70,7 @@ public class VideoPlayerMain extends GVRMain {
         addSkyBoxSphere();
         initCursorController();
         addVideoPlayer();
-        prepareVideos();
+        initLoaderCallbacks();
     }
 
     private void addVideoPlayer() {
@@ -74,21 +80,14 @@ public class VideoPlayerMain extends GVRMain {
         sceneObject = new GVRSceneObject(getGVRContext());
         sceneObject.addChildObject(mVideoPlayer);
         mScene.addSceneObject(sceneObject);
-
     }
 
-
-    private void prepareVideos() {
-        mVideoPlayer.prepare(getVideos());
-    }
-
-    private File[] getVideos() {
-        File videosDirPath = new File(Environment.getExternalStorageDirectory(), VIDEOS_DIR_NAME);
-        if (videosDirPath.exists() && videosDirPath.isDirectory()) {
-            // Filter mp4 files
-            return videosDirPath.listFiles(new VideosFileFilter());
+    private void prepareVideos(List<Video> videos) {
+        List<File> videoFiles = new LinkedList<>();
+        for (Video video : videos) {
+            videoFiles.add(new File(video.getPath()));
         }
-        return null;
+        mVideoPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
     }
 
     private void addSkyBoxSphere() {
@@ -149,5 +148,29 @@ public class VideoPlayerMain extends GVRMain {
 
         sceneObject.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
         mVideoPlayer.showController();
+    }
+
+    private void initLoaderCallbacks() {
+
+        DefaultVideoLoaderCallbacks videoLoaderCallbacks = new DefaultVideoLoaderCallbacks(mContext.getContext(), null) {
+            @Override
+            public void onLoadFinished(Loader<List<Video>> loader, List<Video> data) {
+                super.onLoadFinished(loader, data);
+                Log.d(TAG, "onLoadFinished: Videos= " + data);
+                prepareVideos(data);
+            }
+        };
+
+        DefaultAlbumLoaderCallbacks albumLoaderCallbacks = new DefaultAlbumLoaderCallbacks(getGVRContext().getContext()) {
+            @Override
+            public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
+                super.onLoadFinished(loader, data);
+                Log.d(TAG, "onLoadFinished: Albums= " + data);
+            }
+        };
+
+        mContext.getActivity().getLoaderManager().initLoader(101, null, albumLoaderCallbacks);
+        mContext.getActivity().getLoaderManager().initLoader(100, null, videoLoaderCallbacks);
+
     }
 }
