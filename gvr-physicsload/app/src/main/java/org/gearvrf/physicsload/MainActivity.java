@@ -16,8 +16,10 @@
 package org.gearvrf.physicsload;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRMain;
@@ -62,14 +64,14 @@ public class MainActivity extends GVRActivity {
     private final class Main extends GVRMain {
         @Override
         public void onInit(GVRContext gvrContext) {
-            initScene(gvrContext);
-            initPhysics(gvrContext);
-            loadBlenderAssets(gvrContext);
-            complementScene(gvrContext);
+            initScene();
+            initPhysics();
+            loadBlenderAssets();
+            complementScene();
         }
 
-        void initScene(GVRContext gvrContext) {
-            GVRScene mainScene = gvrContext.getMainScene();
+        void initScene() {
+            GVRScene mainScene = getGVRContext().getMainScene();
 
             // Camera and light settings were copied from Blender project available in 'extras'
             // directory
@@ -77,132 +79,148 @@ public class MainActivity extends GVRActivity {
             mainScene.getMainCameraRig().setFarClippingDistance(100f);
             mainScene.getMainCameraRig().setNearClippingDistance(0.1f);
 
-            GVRSceneObject sunObj = new GVRCubeSceneObject(gvrContext);
+            GVRSceneObject sunObj = new GVRCubeSceneObject(getGVRContext());
             sunObj.getTransform().setPosition(8f, 3.4f, 41.7f);
             sunObj.getTransform().setRotation(0.8683812142694567f, -0.3738122646181239f, -0.06100199997212902f, -0.32008938364834f);
-            GVRDirectLight sun = new GVRDirectLight(gvrContext);
+            GVRDirectLight sun = new GVRDirectLight(getGVRContext());
             sun.setDiffuseIntensity(1f, 1f, 1f, 1f);
             sun.setSpecularIntensity(1f, 1f, 1f, 1f);
             sunObj.attachComponent(sun);
 
-            GVRSceneObject sun1Obj = new GVRCubeSceneObject(gvrContext);
+            GVRSceneObject sun1Obj = new GVRCubeSceneObject(getGVRContext());
             sun1Obj.getTransform().setPosition(-15f, -1.38f, -32f);
             sun1Obj.getTransform().setRotation(0.7071067811865476f, -0.7071067811865476f, 0.0f, 0.0f);
-            GVRDirectLight sun1 = new GVRDirectLight(gvrContext);
+            GVRDirectLight sun1 = new GVRDirectLight(getGVRContext());
             sun1.setDiffuseIntensity(1f, 1f, 1f, 1f);
             sun1.setSpecularIntensity(1f, 1f, 1f, 1f);
             sun1Obj.attachComponent(sun1);
         }
 
-        void initPhysics(GVRContext gvrContext) {
-            GVRScene mainScene = gvrContext.getMainScene();
+        void initPhysics() {
+            GVRScene mainScene = getGVRContext().getMainScene();
 
-            GVRWorld world = new GVRWorld(gvrContext);
+            GVRWorld world = new GVRWorld(getGVRContext());
             world.setGravity(0f, -10f, 0f);
             mainScene.getRoot().attachComponent(world);
         }
 
-        void loadAndAddCollider(GVRContext gvrContext, String fname) throws IOException {
-            GVRSceneObject model = gvrContext.getAssetLoader().loadModel(fname, gvrContext.getMainScene());
+        // Will load the object from a FBX file, attach a collider and add it to the scene
+        void loadAndAddCollider(String fname) throws IOException {
+            GVRSceneObject sceneObject = getGVRContext().getAssetLoader().loadModel(fname);
 
-            // This approach works fine for simple objects exported as FBX
-            GVRSceneObject object = model.getChildByIndex(0).getChildByIndex(0);
-            object.attachComponent(new GVRMeshCollider(object.getGVRContext(), true));
+            // Will look for the actual object, i.e. the one that has a mesh
+            // This approach works fine for this case, in which all FBX file contains just one
+            // object.
+            while (sceneObject.getChildrenCount() != 0) {
+                if (sceneObject.getRenderData() != null) {
+                    break;
+                }
+
+                sceneObject = sceneObject.getChildByIndex(0);
+            }
+
+            sceneObject.attachComponent(new GVRMeshCollider(getGVRContext(), true));
+
+            // Will put this object at the root of the scene preserving world transform
+            float[] modelMatrix = sceneObject.getTransform().getModelMatrix();
+            sceneObject.getParent().removeChildObject(sceneObject);
+            sceneObject.getTransform().setModelMatrix(modelMatrix);
+            getGVRContext().getMainScene().addSceneObject(sceneObject);
         }
 
-        void loadBlenderAssets(GVRContext gvrContext) {
-            GVRScene mainScene = gvrContext.getMainScene();
+        void loadBlenderAssets() {
+            GVRScene mainScene = getGVRContext().getMainScene();
 
             try {
                 // 'Cone' and 'Cone.001' will be linked by a Hinge constraint
-                loadAndAddCollider(gvrContext,"Cone.fbx");
-                loadAndAddCollider(gvrContext,"Cone_001.fbx");
+                loadAndAddCollider("Cone.fbx");
+                loadAndAddCollider("Cone_001.fbx");
 
                 // 'Cube' and 'Cube.001' will be linked by a Cone-twist constraint
-                loadAndAddCollider(gvrContext,"Cube.fbx");
-                loadAndAddCollider(gvrContext,"Cube_001.fbx");
+                loadAndAddCollider("Cube.fbx");
+                loadAndAddCollider("Cube_001.fbx");
 
                 // 'Cube.002' and 'Cube.003' will be linked by a Generic 6DoF constraint
-                loadAndAddCollider(gvrContext,"Cube_002.fbx");
-                loadAndAddCollider(gvrContext,"Cube_003.fbx");
+                loadAndAddCollider("Cube_002.fbx");
+                loadAndAddCollider("Cube_003.fbx");
 
-                loadAndAddCollider(gvrContext,"Cube_004.fbx");
+                loadAndAddCollider("Cube_004.fbx");
 
                 // 'Cylinder' and 'Sphere' will be linked by a Point-to-point constraint
-                loadAndAddCollider(gvrContext,"Cylinder.fbx");
-                loadAndAddCollider(gvrContext,"Sphere.fbx");
+                loadAndAddCollider("Cylinder.fbx");
+                loadAndAddCollider("Sphere.fbx");
 
                 // Plane object is not being loaded due to an issue when exporting this kind of
                 // object from Blender to GVRf with physics properties
-//                loadAndAddCollider(gvrContext,"Plane.fbx");
+//                loadAndAddCollider("Plane.fbx");
 
                 // Up-axis must be ignored because scene objects were rotated when exported
-                GVRPhysicsLoader.loadPhysicsFile(gvrContext, "scene3.bullet", true, mainScene);
-            } catch (Exception e) {
+                GVRPhysicsLoader.loadPhysicsFile(getGVRContext(), "scene3.bullet", true, mainScene);
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        void complementScene(GVRContext gvrContext)
+        void complementScene()
         {
-            GVRScene mainScene = gvrContext.getMainScene();
+            GVRScene mainScene = getGVRContext().getMainScene();
 
             // 'bodyA' and 'bodyB' will be linked by a Fixed constraint
-            GVRMaterial redMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+            GVRMaterial redMat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Phong.ID);
             redMat.setDiffuseColor(1f, 0f, 0f, 1f);
-            GVRSceneObject box1 = new GVRCubeSceneObject(gvrContext, true, redMat);
+            GVRSceneObject box1 = new GVRCubeSceneObject(getGVRContext(), true, redMat);
             box1.getTransform().setPosition(5f, 5f, 10f);
             box1.setName("bodyA");
-            box1.attachComponent(new GVRMeshCollider(gvrContext, true));
+            box1.attachComponent(new GVRMeshCollider(getGVRContext(), true));
             mainScene.addSceneObject(box1);
 
-            GVRMaterial whiteMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+            GVRMaterial whiteMat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Phong.ID);
             whiteMat.setDiffuseColor(1f, 1f, 1f, 1f);
-            GVRSceneObject box2 = new GVRCubeSceneObject(gvrContext, true, whiteMat);
+            GVRSceneObject box2 = new GVRCubeSceneObject(getGVRContext(), true, whiteMat);
             box2.getTransform().setPosition(5f, 10f, 10f);
             box2.setName("bodyB");
-            box2.attachComponent(new GVRMeshCollider(gvrContext, true));
+            box2.attachComponent(new GVRMeshCollider(getGVRContext(), true));
             mainScene.addSceneObject(box2);
 
             // 'bodyP' and 'bodyQ' will be linked by a Slider constraint
-            GVRMaterial blueMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+            GVRMaterial blueMat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Phong.ID);
             blueMat.setDiffuseColor(0f, 0f, 1f, 1f);
-            GVRSceneObject box3 = new GVRCubeSceneObject(gvrContext, true, blueMat);
+            GVRSceneObject box3 = new GVRCubeSceneObject(getGVRContext(), true, blueMat);
             box3.getTransform().setPosition(-5f, 10f, 10f);
             box3.setName("bodyP");
-            box3.attachComponent(new GVRMeshCollider(gvrContext, true));
+            box3.attachComponent(new GVRMeshCollider(getGVRContext(), true));
             mainScene.addSceneObject(box3);
 
-            GVRMaterial greenMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+            GVRMaterial greenMat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Phong.ID);
             greenMat.setDiffuseColor(0f, 1f, 0f, 1f);
-            GVRSceneObject box4 = new GVRCubeSceneObject(gvrContext, true, greenMat);
+            GVRSceneObject box4 = new GVRCubeSceneObject(getGVRContext(), true, greenMat);
             box4.getTransform().setPosition(-10f, 10f, 10f);
             box4.setName("bodyQ");
-            box4.attachComponent(new GVRMeshCollider(gvrContext, true));
+            box4.attachComponent(new GVRMeshCollider(getGVRContext(), true));
             mainScene.addSceneObject(box4);
 
-            GVRMaterial yellowMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+            GVRMaterial yellowMat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Phong.ID);
             yellowMat.setDiffuseColor(1f, 1f, 0f, 1f);
-            GVRSceneObject box5 = new GVRCubeSceneObject(gvrContext, true, yellowMat);
+            GVRSceneObject box5 = new GVRCubeSceneObject(getGVRContext(), true, yellowMat);
             box5.getTransform().setPosition(-4.5f, 5f, 10.5f);
             box5.setName("barrier");
-            box5.attachComponent(new GVRMeshCollider(gvrContext, true));
+            box5.attachComponent(new GVRMeshCollider(getGVRContext(), true));
             mainScene.addSceneObject(box5);
 
             // This bullet file was created from a bullet application to add fixed and slider
             // constraints that are not available on Blender
-            GVRPhysicsLoader.loadPhysicsFile(gvrContext, "fixed_slider.bullet", mainScene);
+            GVRPhysicsLoader.loadPhysicsFile(getGVRContext(), "fixed_slider.bullet", mainScene);
 
             // This object will replace the "Plane" exported by Blender as the floor of this scene
-            GVRMaterial orangeMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+            GVRMaterial orangeMat = new GVRMaterial(getGVRContext(), GVRMaterial.GVRShaderType.Phong.ID);
             orangeMat.setDiffuseColor(0.7f, 0.3f, 0f, 1f);
-            GVRSceneObject floor = new GVRSceneObject(gvrContext, 100f, 100f);
+            GVRSceneObject floor = new GVRSceneObject(getGVRContext(), 100f, 100f);
             floor.getTransform().setPosition(0f, -10f, 0f);
             floor.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
             floor.getRenderData().setMaterial(orangeMat);
-            floor.attachComponent(new GVRMeshCollider(gvrContext, floor.getRenderData().getMesh()));
+            floor.attachComponent(new GVRMeshCollider(getGVRContext(), floor.getRenderData().getMesh()));
             mainScene.addSceneObject(floor);
-            GVRRigidBody floorRb = new GVRRigidBody(gvrContext, 0f);
+            GVRRigidBody floorRb = new GVRRigidBody(getGVRContext(), 0f);
             floor.attachComponent(floorRb);
         }
     }
