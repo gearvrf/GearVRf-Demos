@@ -45,7 +45,8 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
         String[] projection = new String[]{
                 VideoColumns._ID,
                 VideoColumns.TITLE,
-                VideoColumns.DATA
+                VideoColumns.DATA,
+                VideoColumns.DURATION
         };
 
         String selection = mAlbumTitleFilter != null ? VideoColumns.ALBUM + "=?" : null;
@@ -67,7 +68,8 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
                     String videoTitle = cursorWrapper.getTitle();
                     long videoId = cursorWrapper.getId();
-                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath()));
+
+                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration()));
 
                 } while (cursor.moveToNext());
             }
@@ -100,6 +102,10 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
         long getId() {
             return getLong(getColumnIndexOrThrow(VideoColumns._ID));
+        }
+
+        long getDuration() {
+            return getLong(getColumnIndexOrThrow(VideoColumns.DURATION));
         }
     }
 }
