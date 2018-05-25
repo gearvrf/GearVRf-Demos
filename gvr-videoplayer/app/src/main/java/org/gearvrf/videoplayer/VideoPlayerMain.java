@@ -31,6 +31,7 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.videoplayer.component.gallery.VideoGridSceneObject;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
@@ -56,6 +57,7 @@ public class VideoPlayerMain extends GVRMain {
     private GVRSceneObject sceneObject;
     private GVRSphereSceneObject mSphereObject;
     private PickEventHandler mPickHandler;
+    private VideoGridSceneObject mVideosGridSceneObject;
 
     /**
      * Called when the activity is first created.
@@ -67,9 +69,13 @@ public class VideoPlayerMain extends GVRMain {
         mScene = gvrContext.getMainScene();
         mPickHandler = new PickEventHandler();
 
+        sceneObject = new GVRSceneObject(getGVRContext());
+        mScene.addSceneObject(sceneObject);
+
         addSkyBoxSphere();
         initCursorController();
         addVideoPlayer();
+        createVideosGridSceneObject();
         initLoaderCallbacks();
     }
 
@@ -77,9 +83,7 @@ public class VideoPlayerMain extends GVRMain {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
         mVideoPlayer.getTransform().setPositionZ(-8);
         mVideoPlayer.setAutoHideController(true);
-        sceneObject = new GVRSceneObject(getGVRContext());
         sceneObject.addChildObject(mVideoPlayer);
-        mScene.addSceneObject(sceneObject);
     }
 
     private void prepareVideos(List<Video> videos) {
@@ -146,8 +150,17 @@ public class VideoPlayerMain extends GVRMain {
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
         final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
 
-        sceneObject.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+        if (sceneObject != null) {
+            sceneObject.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+        }
+
         mVideoPlayer.showController();
+    }
+
+    private void createVideosGridSceneObject() {
+        mVideosGridSceneObject = new VideoGridSceneObject(getGVRContext());
+        mVideosGridSceneObject.getTransform().setPositionZ(-5);
+        sceneObject.addChildObject(mVideosGridSceneObject);
     }
 
     private void initLoaderCallbacks() {
@@ -157,6 +170,7 @@ public class VideoPlayerMain extends GVRMain {
             public void onLoadFinished(Loader<List<Video>> loader, List<Video> data) {
                 super.onLoadFinished(loader, data);
                 Log.d(TAG, "onLoadFinished: Videos= " + data);
+                mVideosGridSceneObject.updateVideos(data);
                 prepareVideos(data);
             }
         };

@@ -2,8 +2,8 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="272dp"
-    android:layout_height="176dp"
+    android:layout_width="@dimen/grid_item_width"
+    android:layout_height="@dimen/grid_item_height"
     android:layout_gravity="center_horizontal"
     android:orientation="vertical"
     app:cardBackgroundColor="@android:color/white"
@@ -19,6 +19,7 @@
             android:id="@+id/background"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher"
             tools:ignore="ContentDescription" />
 
@@ -27,7 +28,8 @@
             android:layout_height="match_parent"
             android:alpha="0.75"
             android:background="#000000"
-            android:padding="20dp">
+            android:padding="20dp"
+            android:visibility="visible">
 
             <TextView
                 android:id="@+id/title"
