@@ -31,6 +31,7 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.VideoGridSceneObject;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
@@ -44,11 +45,13 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class VideoPlayerMain extends GVRMain {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = 100.0f;
     private static final float SCALE = 200.0f;
+    private static final float SCALE1 = 1.0f;
 
     private GVRContext mContext;
     private GVRScene mScene;
@@ -57,7 +60,9 @@ public class VideoPlayerMain extends GVRMain {
     private GVRSceneObject sceneObject;
     private GVRSphereSceneObject mSphereObject;
     private PickEventHandler mPickHandler;
+
     private VideoGridSceneObject mVideosGridSceneObject;
+    private Gallery mGallery;
 
     /**
      * Called when the activity is first created.
@@ -77,21 +82,20 @@ public class VideoPlayerMain extends GVRMain {
         addVideoPlayer();
         createVideosGridSceneObject();
         initLoaderCallbacks();
+        createGallery();
+    }
+
+    private void  createGallery(){
+        mGallery = new Gallery(getGVRContext());
+        mGallery.getTransform().setPositionZ(-1);
+        sceneObject.addChildObject(mGallery);
     }
 
     private void addVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
-        mVideoPlayer.getTransform().setPositionZ(-8);
+        mVideoPlayer.getTransform().setPositionZ(-9);
         mVideoPlayer.setAutoHideController(true);
         sceneObject.addChildObject(mVideoPlayer);
-    }
-
-    private void prepareVideos(List<Video> videos) {
-        List<File> videoFiles = new LinkedList<>();
-        for (Video video : videos) {
-            videoFiles.add(new File(video.getPath()));
-        }
-        mVideoPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
     }
 
     private void addSkyBoxSphere() {
@@ -162,6 +166,15 @@ public class VideoPlayerMain extends GVRMain {
         mVideosGridSceneObject.getTransform().setPositionZ(-5);
         sceneObject.addChildObject(mVideosGridSceneObject);
     }
+
+    private void prepareVideos(List<Video> videos) {
+        List<File> videoFiles = new LinkedList<>();
+        for (Video video : videos) {
+            videoFiles.add(new File(video.getPath()));
+        }
+        mVideoPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
+    }
+
 
     private void initLoaderCallbacks() {
 

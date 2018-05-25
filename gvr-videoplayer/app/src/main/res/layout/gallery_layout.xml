@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="446.6px"
+        android:layout_height="44px"
+        android:layout_gravity="center"
+        android:background="@drawable/ic_title"
+        android:textColor="#ffffff"
+        android:layout_marginBottom="90.5px"
+        android:textSize="20dp"
+        tools:ignore="SpUsage" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="64px">
+
+    <TextView
+        android:layout_width="159px"
+        android:includeFontPadding="false"
+        android:layout_height="match_parent"
+        android:background="@drawable/left_rounded"
+        android:fontFamily="sans-serif-medium"
+        android:text="HOME"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="24px"
+        tools:ignore="HardcodedText,PxUsage" />
+
+    <ImageView
+        android:layout_width="21.8px"
+        android:src="@drawable/ic_triangle"
+        android:background="#cceeeeee"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:includeFontPadding="false"
+        android:layout_width="159px"
+        android:layout_height="match_parent"
+        android:background="@drawable/right_rounded"
+        android:fontFamily="sans-serif-medium"
+        android:text="CAMERA"
+        android:gravity="center"
+        android:textColor="#212121"
+        android:alpha="0.8"
+        android:textSize="24px"
+        tools:ignore="HardcodedText,PxUsage"/>
+
+        </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="37px"
+        android:layout_height="560px"
+        android:background="@color/white_transparent"
+        />
+
+</LinearLayout>
+
