@@ -7,11 +7,11 @@ import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
-class ThumbnailLoader extends AsyncTask<Long, Void, Bitmap> {
+public class ThumbnailLoader extends AsyncTask<Long, Void, Bitmap> {
 
     private final WeakReference<ImageView> imageViewReference;
 
-    ThumbnailLoader(ImageView imageView) {
+    public ThumbnailLoader(ImageView imageView) {
         this.imageViewReference = new WeakReference<>(imageView);
     }
 
