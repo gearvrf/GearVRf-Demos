@@ -10,7 +10,7 @@ public final class TimeUtils {
 
     public static String formatDurationFull(long durationInMillis) {
         return String.format(Locale.getDefault(),
-                "%02d:%02d:%02d",
+                "%01d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(durationInMillis),
                 TimeUnit.MILLISECONDS.toMinutes(durationInMillis) % TimeUnit.HOURS.toMinutes(1),
                 TimeUnit.MILLISECONDS.toSeconds(durationInMillis) % TimeUnit.MINUTES.toSeconds(1));
