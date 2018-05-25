@@ -39,7 +39,9 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
         String[] projection = new String[]{
                 Video.VideoColumns._ID,
                 Video.VideoColumns.BUCKET_DISPLAY_NAME,
-                Video.VideoColumns.TITLE
+                Video.VideoColumns.TITLE,
+                Video.VideoColumns.DATA,
+                Video.VideoColumns.DURATION
         };
 
         String sortOrder = Video.VideoColumns.ALBUM + " ASC, " + Video.VideoColumns.TITLE + " ASC";
@@ -86,7 +88,8 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
             return new org.gearvrf.videoplayer.model.Video(
                     getLong(getColumnIndexOrThrow(Video.VideoColumns._ID)),
                     getString(getColumnIndexOrThrow(Video.VideoColumns.TITLE)),
-                    null
+                    getString(getColumnIndexOrThrow(Video.VideoColumns.DATA)),
+                    getLong(getColumnIndexOrThrow(Video.VideoColumns.DURATION))
             );
         }
     }
