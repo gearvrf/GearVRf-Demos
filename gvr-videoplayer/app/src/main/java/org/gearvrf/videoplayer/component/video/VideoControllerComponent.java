@@ -31,7 +31,7 @@ public class VideoControllerComponent extends GVRSceneObject implements View.OnC
     VideoControllerComponent(GVRContext gvrContext, float width, float height) {
         super(gvrContext);
 
-        mMainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.player_controller, null);
+        mMainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.layout_player_widget, null);
         mFocusableViewSceneObject = new FocusableViewSceneObject(gvrContext, mMainView, width, height);
         mFocusableViewSceneObject.setName("videoControlWidget");
         addChildObject(mFocusableViewSceneObject);
