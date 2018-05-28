@@ -45,7 +45,6 @@ public class VideoPlayerMain extends GVRMain {
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = -8.0f;
     private static final float SCALE = 200.0f;
-    private static final float SCALE1 = 1.0f;
 
     private GVRContext mContext;
     private GVRScene mScene;

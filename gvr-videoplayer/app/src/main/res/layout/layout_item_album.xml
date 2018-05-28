@@ -48,7 +48,6 @@
                 android:textSize="24px" />
 
         </LinearLayout>
-
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>
