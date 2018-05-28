@@ -17,17 +17,17 @@
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
+            android:id="@+id/thumbnail"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
             android:background="@drawable/all_sides_rounded"
+            android:scaleType="centerCrop"
             android:src="@drawable/example" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:alpha=".48"
-            android:background="#000"
+            android:background="#7c000000"
             android:gravity="center">
 
             <TextView

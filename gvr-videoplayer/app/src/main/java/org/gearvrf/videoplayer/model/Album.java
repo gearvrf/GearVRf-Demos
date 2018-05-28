@@ -1,11 +1,12 @@
 package org.gearvrf.videoplayer.model;
 
-public final class Album {
+public final class Album extends Media {
 
     private String title;
     private Video videoForThumbnail;
 
     public Album(String title, Video videoForThumbnail) {
+        super(Type.TYPE_ALBUM);
         this.title = title;
         this.videoForThumbnail = videoForThumbnail;
     }

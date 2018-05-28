@@ -1,6 +1,6 @@
 package org.gearvrf.videoplayer.model;
 
-public final class Video {
+public final class Video extends Media {
 
     private long id;
     private String title;
@@ -8,6 +8,7 @@ public final class Video {
     private long duration;
 
     public Video(long id, String title, String path, long duration) {
+        super(Type.TYPE_VIDEO);
         this.id = id;
         this.title = title;
         this.path = path;
@@ -53,6 +54,7 @@ public final class Video {
                 ", title='" + title + '\'' +
                 ", path='" + path + '\'' +
                 ", duration=" + duration +
-                '}';
+                ", type=" + type +
+                "} " + super.toString();
     }
 }

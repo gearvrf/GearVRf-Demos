@@ -15,8 +15,6 @@
 
 package org.gearvrf.videoplayer;
 
-import android.content.Loader;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -32,14 +30,10 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
-import org.gearvrf.videoplayer.component.gallery.VideoGridSceneObject;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
-import org.gearvrf.videoplayer.model.Album;
 import org.gearvrf.videoplayer.model.Video;
-import org.gearvrf.videoplayer.provider.loader.DefaultAlbumLoaderCallbacks;
-import org.gearvrf.videoplayer.provider.loader.DefaultVideoLoaderCallbacks;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -61,7 +55,6 @@ public class VideoPlayerMain extends GVRMain {
     private GVRSphereSceneObject mSphereObject;
     private PickEventHandler mPickHandler;
 
-    private VideoGridSceneObject mVideosGridSceneObject;
     private Gallery mGallery;
 
     /**
@@ -80,12 +73,10 @@ public class VideoPlayerMain extends GVRMain {
         addSkyBoxSphere();
         initCursorController();
         addVideoPlayer();
-        createVideosGridSceneObject();
-        initLoaderCallbacks();
         createGallery();
     }
 
-    private void  createGallery(){
+    private void createGallery() {
         mGallery = new Gallery(getGVRContext());
         mGallery.getTransform().setPositionZ(-1);
         sceneObject.addChildObject(mGallery);
@@ -161,43 +152,11 @@ public class VideoPlayerMain extends GVRMain {
         mVideoPlayer.showController();
     }
 
-    private void createVideosGridSceneObject() {
-        mVideosGridSceneObject = new VideoGridSceneObject(getGVRContext());
-        mVideosGridSceneObject.getTransform().setPositionZ(-5);
-        sceneObject.addChildObject(mVideosGridSceneObject);
-    }
-
     private void prepareVideos(List<Video> videos) {
         List<File> videoFiles = new LinkedList<>();
         for (Video video : videos) {
             videoFiles.add(new File(video.getPath()));
         }
         mVideoPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
-    }
-
-
-    private void initLoaderCallbacks() {
-
-        DefaultVideoLoaderCallbacks videoLoaderCallbacks = new DefaultVideoLoaderCallbacks(mContext.getContext(), null) {
-            @Override
-            public void onLoadFinished(Loader<List<Video>> loader, List<Video> data) {
-                super.onLoadFinished(loader, data);
-                Log.d(TAG, "onLoadFinished: Videos= " + data);
-                mVideosGridSceneObject.updateVideos(data);
-                prepareVideos(data);
-            }
-        };
-
-        DefaultAlbumLoaderCallbacks albumLoaderCallbacks = new DefaultAlbumLoaderCallbacks(getGVRContext().getContext()) {
-            @Override
-            public void onLoadFinished(Loader<List<Album>> loader, List<Album> data) {
-                super.onLoadFinished(loader, data);
-                Log.d(TAG, "onLoadFinished: Albums= " + data);
-            }
-        };
-
-        mContext.getActivity().getLoaderManager().initLoader(101, null, albumLoaderCallbacks);
-        mContext.getActivity().getLoaderManager().initLoader(100, null, videoLoaderCallbacks);
-
     }
 }
