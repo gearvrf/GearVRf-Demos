@@ -43,7 +43,7 @@ import java.util.List;
 public class VideoPlayerMain extends GVRMain {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
-    private static float CURSOR_DEPTH = 100.0f;
+    private static float CURSOR_DEPTH = -8.0f;
     private static final float SCALE = 200.0f;
     private static final float SCALE1 = 1.0f;
 
@@ -78,7 +78,7 @@ public class VideoPlayerMain extends GVRMain {
 
     private void createGallery() {
         mGallery = new Gallery(getGVRContext());
-        mGallery.getTransform().setPositionZ(-1);
+        mGallery.getTransform().setPositionZ(-7);
         sceneObject.addChildObject(mGallery);
     }
 

@@ -3,6 +3,7 @@ package org.gearvrf.videoplayer.component.gallery;
 import android.annotation.SuppressLint;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -20,8 +21,9 @@ import org.gearvrf.videoplayer.provider.asyntask.VideoAsyncTask;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Gallery extends GVRSceneObject {
+public class Gallery extends GVRSceneObject implements OnMediaSelectionListener {
 
+    private static final String TAG = Gallery.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private GVRViewSceneObject mObjectViewGallery;
     private View mMainViewGallery;
@@ -35,14 +37,16 @@ public class Gallery extends GVRSceneObject {
         mRecyclerView = mMainViewGallery.findViewById(R.id.recycler_view);
 
         MediaAdapter adapterGallery = new MediaAdapter<>(mMediaList);
+        adapterGallery.setOnMediaSelectionListener(this);
         mRecyclerView.setAdapter(adapterGallery);
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(gvrContext.getContext(), 3));
 
-        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mMainViewGallery, 1f, 1f);
+        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mMainViewGallery, 15f, 10f);
         addChildObject(mObjectViewGallery);
 
         loadAlbums();
+        new Breadcrumb(mMainViewGallery);
     }
 
     private void loadAlbums() {
@@ -67,6 +71,20 @@ public class Gallery extends GVRSceneObject {
         }).execute();
     }
 
+    @Override
+    public void onMediaSelected(Media media) {
+
+        switch (media.getType()) {
+            case Media.Type.TYPE_ALBUM:
+                loadVideos(((Album) media).getTitle());
+                break;
+            case Media.Type.TYPE_VIDEO:
+                break;
+            default:
+                Log.d(TAG, "Unknown type: " + media.getType());
+        }
+    }
+
     class Breadcrumb {
 
         View mHome;
@@ -75,6 +93,12 @@ public class Gallery extends GVRSceneObject {
         public Breadcrumb(View mainView) {
             mHome = mainView.findViewById(R.id.home);
             mAlbum = mainView.findViewById(R.id.album);
+            mHome.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    loadAlbums();
+                }
+            });
         }
 
         void showHome() {

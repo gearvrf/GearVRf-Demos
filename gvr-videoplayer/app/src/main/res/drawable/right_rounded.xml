@@ -5,8 +5,9 @@
     android:orientation="vertical"
     android:shape="rectangle">
 
-    <corners android:bottomRightRadius="32px"
-        android:topRightRadius="32px"/>
+    <corners
+        android:bottomRightRadius="150dp"
+        android:topRightRadius="150dp" />
 
     <solid android:color="#eeeeee" />
 

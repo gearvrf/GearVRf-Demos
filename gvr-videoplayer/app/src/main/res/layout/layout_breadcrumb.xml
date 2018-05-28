@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="64px">
+    android:layout_height="64dp">
 
     <TextView
         android:id="@+id/home"
-        android:layout_width="159px"
+        android:layout_width="159dp"
         android:layout_height="match_parent"
         android:background="@drawable/left_rounded"
         android:fontFamily="sans-serif-medium"
@@ -14,8 +14,8 @@
         android:includeFontPadding="false"
         android:text="HOME"
         android:textColor="#ffffff"
-        android:textSize="24px"
-        tools:ignore="HardcodedText,PxUsage" />
+        android:textSize="24dp"
+        tools:ignore="HardcodedText" />
 
     <LinearLayout
         android:id="@+id/album"
@@ -25,14 +25,14 @@
         tools:ignore="UseCompoundDrawables">
 
         <ImageView
-            android:layout_width="21.8px"
+            android:layout_width="21.8dp"
             android:layout_height="match_parent"
             android:background="#cceeeeee"
             android:src="@drawable/ic_triangle"
             tools:ignore="ContentDescription" />
 
         <TextView
-            android:layout_width="159px"
+            android:layout_width="159dp"
             android:layout_height="match_parent"
             android:alpha="0.8"
             android:background="@drawable/right_rounded"
@@ -41,8 +41,8 @@
             android:includeFontPadding="false"
             android:text="CAMERA"
             android:textColor="#212121"
-            android:textSize="24px"
-            tools:ignore="HardcodedText,PxUsage" />
+            android:textSize="24dp"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 

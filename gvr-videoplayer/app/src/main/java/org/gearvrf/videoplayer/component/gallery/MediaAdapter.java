@@ -2,6 +2,7 @@ package org.gearvrf.videoplayer.component.gallery;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,29 +18,30 @@ import org.gearvrf.videoplayer.util.TimeUtils;
 
 import java.util.List;
 
-public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<ViewHolder> {
 
     private List<T> mMedias;
+    private OnMediaSelectionListener mOnMediaSelectionListener;
 
-    public MediaAdapter(@NonNull List<T> mMedias) {
+    MediaAdapter(@NonNull List<T> mMedias) {
         this.mMedias = mMedias;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, @Media.Type int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, @Media.Type int viewType) {
 
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
 
         if (viewType == Media.Type.TYPE_VIDEO) {
             return new VideoViewHolder(inflater.inflate(R.layout.layout_item_video, viewGroup, false));
         } else {
-            return new AlbumViewHolder(inflater.inflate(R.layout.item_layout, viewGroup, false));
+            return new AlbumViewHolder(inflater.inflate(R.layout.layout_item_album, viewGroup, false));
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
         Media media = mMedias.get(position);
 
@@ -62,7 +64,22 @@ public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<Recycler
         return mMedias.size();
     }
 
-    static class VideoViewHolder extends RecyclerView.ViewHolder {
+    private void notifyMediaSelected(Media media) {
+        if (mOnMediaSelectionListener != null) {
+            mOnMediaSelectionListener.onMediaSelected(media);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mMedias.get(position).getType();
+    }
+
+    public void setOnMediaSelectionListener(OnMediaSelectionListener listener) {
+        this.mOnMediaSelectionListener = listener;
+    }
+
+    class VideoViewHolder extends ViewHolder implements View.OnClickListener {
 
         ImageView thumbnail;
         TextView title;
@@ -73,23 +90,30 @@ public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<Recycler
             thumbnail = itemView.findViewById(R.id.thumbnail);
             title = itemView.findViewById(R.id.title);
             duration = itemView.findViewById(R.id.duration);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            notifyMediaSelected(mMedias.get(getAdapterPosition()));
         }
     }
 
-    static class AlbumViewHolder extends RecyclerView.ViewHolder {
+    class AlbumViewHolder extends ViewHolder implements View.OnClickListener {
 
         ImageView mThumbnail;
         TextView mTextView;
 
-        AlbumViewHolder(View v) {
-            super(v);
-            mThumbnail = v.findViewById(R.id.thumbnail);
-            mTextView = v.findViewById(R.id.textView);
+        AlbumViewHolder(View itemView) {
+            super(itemView);
+            mThumbnail = itemView.findViewById(R.id.thumbnail);
+            mTextView = itemView.findViewById(R.id.textView);
+            itemView.setOnClickListener(this);
         }
-    }
 
-    @Override
-    public int getItemViewType(int position) {
-        return mMedias.get(position).getType();
+        @Override
+        public void onClick(View v) {
+            notifyMediaSelected(mMedias.get(getAdapterPosition()));
+        }
     }
 }
