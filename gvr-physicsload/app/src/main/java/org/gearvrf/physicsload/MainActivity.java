@@ -102,39 +102,31 @@ public class MainActivity extends GVRActivity {
             mainScene.getRoot().attachComponent(world);
         }
 
-        void loadAndAddCollider(GVRContext gvrContext, String fname) throws IOException {
-            GVRSceneObject model = gvrContext.getAssetLoader().loadModel(fname, gvrContext.getMainScene());
-
-            // This approach works fine for simple objects exported as FBX
-            GVRSceneObject object = model.getChildByIndex(0).getChildByIndex(0);
-            object.attachComponent(new GVRMeshCollider(object.getGVRContext(), true));
-        }
-
         void loadBlenderAssets(GVRContext gvrContext) {
             GVRScene mainScene = gvrContext.getMainScene();
 
             try {
                 // 'Cone' and 'Cone.001' will be linked by a Hinge constraint
-                loadAndAddCollider(gvrContext,"Cone.fbx");
-                loadAndAddCollider(gvrContext,"Cone_001.fbx");
+                gvrContext.getAssetLoader().loadModel("Cone.fbx", gvrContext.getMainScene());
+                gvrContext.getAssetLoader().loadModel("Cone_001.fbx", gvrContext.getMainScene());
 
                 // 'Cube' and 'Cube.001' will be linked by a Cone-twist constraint
-                loadAndAddCollider(gvrContext,"Cube.fbx");
-                loadAndAddCollider(gvrContext,"Cube_001.fbx");
+                gvrContext.getAssetLoader().loadModel("Cube.fbx", gvrContext.getMainScene());
+                gvrContext.getAssetLoader().loadModel("Cube_001.fbx", gvrContext.getMainScene());
 
                 // 'Cube.002' and 'Cube.003' will be linked by a Generic 6DoF constraint
-                loadAndAddCollider(gvrContext,"Cube_002.fbx");
-                loadAndAddCollider(gvrContext,"Cube_003.fbx");
+                gvrContext.getAssetLoader().loadModel("Cube_002.fbx", gvrContext.getMainScene());
+                gvrContext.getAssetLoader().loadModel("Cube_003.fbx", gvrContext.getMainScene());
 
-                loadAndAddCollider(gvrContext,"Cube_004.fbx");
+                gvrContext.getAssetLoader().loadModel("Cube_004.fbx", gvrContext.getMainScene());
 
                 // 'Cylinder' and 'Sphere' will be linked by a Point-to-point constraint
-                loadAndAddCollider(gvrContext,"Cylinder.fbx");
-                loadAndAddCollider(gvrContext,"Sphere.fbx");
+                gvrContext.getAssetLoader().loadModel("Cylinder.fbx", gvrContext.getMainScene());
+                gvrContext.getAssetLoader().loadModel("Sphere.fbx", gvrContext.getMainScene());
 
                 // Plane object is not being loaded due to an issue when exporting this kind of
                 // object from Blender to GVRf with physics properties
-//                loadAndAddCollider(gvrContext,"Plane.fbx");
+//                gvrContext.getAssetLoader().loadModel("Plane.fbx", gvrContext.getMainScene());
 
                 // Up-axis must be ignored because scene objects were rotated when exported
                 GVRPhysicsLoader.loadPhysicsFile(gvrContext, "scene3.bullet", true, mainScene);
@@ -153,7 +145,6 @@ public class MainActivity extends GVRActivity {
             GVRSceneObject box1 = new GVRCubeSceneObject(gvrContext, true, redMat);
             box1.getTransform().setPosition(5f, 5f, 10f);
             box1.setName("bodyA");
-            box1.attachComponent(new GVRMeshCollider(gvrContext, true));
             mainScene.addSceneObject(box1);
 
             GVRMaterial whiteMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
@@ -161,7 +152,6 @@ public class MainActivity extends GVRActivity {
             GVRSceneObject box2 = new GVRCubeSceneObject(gvrContext, true, whiteMat);
             box2.getTransform().setPosition(5f, 10f, 10f);
             box2.setName("bodyB");
-            box2.attachComponent(new GVRMeshCollider(gvrContext, true));
             mainScene.addSceneObject(box2);
 
             // 'bodyP' and 'bodyQ' will be linked by a Slider constraint
@@ -170,7 +160,6 @@ public class MainActivity extends GVRActivity {
             GVRSceneObject box3 = new GVRCubeSceneObject(gvrContext, true, blueMat);
             box3.getTransform().setPosition(-5f, 10f, 10f);
             box3.setName("bodyP");
-            box3.attachComponent(new GVRMeshCollider(gvrContext, true));
             mainScene.addSceneObject(box3);
 
             GVRMaterial greenMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
@@ -178,7 +167,6 @@ public class MainActivity extends GVRActivity {
             GVRSceneObject box4 = new GVRCubeSceneObject(gvrContext, true, greenMat);
             box4.getTransform().setPosition(-10f, 10f, 10f);
             box4.setName("bodyQ");
-            box4.attachComponent(new GVRMeshCollider(gvrContext, true));
             mainScene.addSceneObject(box4);
 
             GVRMaterial yellowMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
@@ -186,7 +174,6 @@ public class MainActivity extends GVRActivity {
             GVRSceneObject box5 = new GVRCubeSceneObject(gvrContext, true, yellowMat);
             box5.getTransform().setPosition(-4.5f, 5f, 10.5f);
             box5.setName("barrier");
-            box5.attachComponent(new GVRMeshCollider(gvrContext, true));
             mainScene.addSceneObject(box5);
 
             // This bullet file was created from a bullet application to add fixed and slider
