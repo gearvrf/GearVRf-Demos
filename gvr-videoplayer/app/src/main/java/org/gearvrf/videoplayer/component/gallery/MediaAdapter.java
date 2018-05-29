@@ -64,9 +64,9 @@ public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<ViewHold
         return mMedias.size();
     }
 
-    private void notifyMediaSelected(Media media) {
+    private void notifyMediaSelected(List<? extends Media> mediaList) {
         if (mOnMediaSelectionListener != null) {
-            mOnMediaSelectionListener.onMediaSelected(media);
+            mOnMediaSelectionListener.onMediaSelected(mediaList);
         }
     }
 
@@ -95,7 +95,7 @@ public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<ViewHold
 
         @Override
         public void onClick(View v) {
-            notifyMediaSelected(mMedias.get(getAdapterPosition()));
+            notifyMediaSelected(mMedias.subList(getAdapterPosition(), mMedias.size()));
         }
     }
 
@@ -113,7 +113,7 @@ public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<ViewHold
 
         @Override
         public void onClick(View v) {
-            notifyMediaSelected(mMedias.get(getAdapterPosition()));
+            notifyMediaSelected(mMedias.subList(getAdapterPosition(), mMedias.size()));
         }
     }
 }

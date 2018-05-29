@@ -5,12 +5,11 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.model.Album;
@@ -28,28 +27,28 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
     private static final String TAG = Gallery.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private GVRViewSceneObject mObjectViewGallery;
-    private View mMainViewGallery;
     private List<Media> mMediaList = new LinkedList<>();
     private Breadcrumb mBreadcrumb;
+    private OnGalleryEventListener mOnGalleryEventListener;
+    private boolean mActive = true;
 
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
         super(gvrContext);
 
-        mMainViewGallery = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.gallery_layout, null);
-        mRecyclerView = mMainViewGallery.findViewById(R.id.recycler_view);
+        View mainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.gallery_layout, null);
+        mRecyclerView = mainView.findViewById(R.id.recycler_view);
 
         MediaAdapter adapterGallery = new MediaAdapter<>(mMediaList);
         adapterGallery.setOnMediaSelectionListener(this);
         mRecyclerView.setAdapter(adapterGallery);
-
         mRecyclerView.setLayoutManager(new GridLayoutManager(gvrContext.getContext(), 3));
 
-        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mMainViewGallery, 1, 1);
+        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mainView, 1, 1);
         mObjectViewGallery.getTransform().setScale(6, 6, 1);
         addChildObject(mObjectViewGallery);
 
-        mBreadcrumb = new Breadcrumb(mMainViewGallery);
+        mBreadcrumb = new Breadcrumb(mainView);
         mBreadcrumb.showHome();
         mBreadcrumb.setOnBreadcrumbListener(new OnBreadcrumbListener() {
             @Override
@@ -57,6 +56,7 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
                 loadAlbums();
             }
         });
+
         loadAlbums();
     }
 
@@ -83,7 +83,9 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
     }
 
     @Override
-    public void onMediaSelected(Media media) {
+    public void onMediaSelected(List<? extends Media> mediaList) {
+
+        Media media = mediaList.get(0);
 
         switch (media.getType()) {
             case Media.Type.TYPE_ALBUM:
@@ -91,9 +93,40 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
                 mBreadcrumb.showAlbum(((Album) media).getTitle());
                 break;
             case Media.Type.TYPE_VIDEO:
+                if (mOnGalleryEventListener != null) {
+                    mOnGalleryEventListener.onVideosSelected((List<Video>) mediaList);
+                }
                 break;
             default:
                 Log.d(TAG, "Unknown type: " + media.getType());
+        }
+    }
+
+    public void setOnGalleryEventListener(OnGalleryEventListener listener) {
+        this.mOnGalleryEventListener = listener;
+    }
+
+    public void show() {
+        if (!mActive) {
+            addChildObject(this);
+            new GVROpacityAnimation(mObjectViewGallery, .2f, 1)
+                    .start(getGVRContext().getAnimationEngine());
+            mActive = true;
+            if (mOnGalleryEventListener != null) {
+                mOnGalleryEventListener.onGalleryShown();
+            }
+        }
+    }
+
+    public void hide() {
+        if (mActive) {
+            new GVROpacityAnimation(mObjectViewGallery, .2f, 0)
+                    .start(getGVRContext().getAnimationEngine());
+            getParent().removeChildObject(this);
+            mActive = false;
+            if (mOnGalleryEventListener != null) {
+                mOnGalleryEventListener.onGalleryHidden();
+            }
         }
     }
 }

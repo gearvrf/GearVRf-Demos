@@ -15,6 +15,7 @@
 
 package org.gearvrf.videoplayer;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRAndroidResource;
@@ -30,6 +31,7 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
+import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
@@ -40,7 +42,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class VideoPlayerMain extends GVRMain {
+public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = -8.0f;
@@ -50,8 +52,7 @@ public class VideoPlayerMain extends GVRMain {
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
-    private GVRSceneObject sceneObject;
-    private GVRSphereSceneObject mSphereObject;
+    private GVRSceneObject mMainSceneContainer;
     private PickEventHandler mPickHandler;
 
     private Gallery mGallery;
@@ -66,33 +67,35 @@ public class VideoPlayerMain extends GVRMain {
         mScene = gvrContext.getMainScene();
         mPickHandler = new PickEventHandler();
 
-        sceneObject = new GVRSceneObject(getGVRContext());
-        mScene.addSceneObject(sceneObject);
+        mMainSceneContainer = new GVRSceneObject(getGVRContext());
+        mScene.addSceneObject(mMainSceneContainer);
 
         addSkyBoxSphere();
         initCursorController();
         createGallery();
-        //addVideoPlayer();
+        createVideoPlayer();
     }
 
     private void createGallery() {
         mGallery = new Gallery(getGVRContext());
-        mGallery.getTransform().setPositionZ(-7);
-        sceneObject.addChildObject(mGallery);
+        mGallery.getTransform().setPositionZ(-8);
+        mGallery.setOnGalleryEventListener(this);
+        mMainSceneContainer.addChildObject(mGallery);
     }
 
-    private void addVideoPlayer() {
+    private void createVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
         mVideoPlayer.getTransform().setPositionZ(-9);
         mVideoPlayer.setAutoHideController(true);
-        sceneObject.addChildObject(mVideoPlayer);
+        mVideoPlayer.hide();
+        mMainSceneContainer.addChildObject(mVideoPlayer);
     }
 
     private void addSkyBoxSphere() {
         GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.skybox_gridroom));
-        mSphereObject = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
-        mSphereObject.getTransform().setScale(SCALE, SCALE, SCALE);
-        mScene.addSceneObject(mSphereObject);
+        GVRSphereSceneObject sphere = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
+        sphere.getTransform().setScale(SCALE, SCALE, SCALE);
+        mScene.addSceneObject(sphere);
     }
 
     private void initCursorController() {
@@ -134,7 +137,7 @@ public class VideoPlayerMain extends GVRMain {
 
         @Override
         public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-         //   mVideoPlayer.showController();
+            mVideoPlayer.showController();
         }
     };
 
@@ -144,11 +147,11 @@ public class VideoPlayerMain extends GVRMain {
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
         final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
 
-        if (sceneObject != null) {
-            sceneObject.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
+        if (mMainSceneContainer != null) {
+            mMainSceneContainer.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
         }
 
-      //  mVideoPlayer.showController();
+        mVideoPlayer.showController();
     }
 
     private void prepareVideos(List<Video> videos) {
@@ -157,5 +160,23 @@ public class VideoPlayerMain extends GVRMain {
             videoFiles.add(new File(video.getPath()));
         }
         mVideoPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
+    }
+
+    @Override
+    public void onVideosSelected(List<Video> videoList) {
+        prepareVideos(videoList);
+        mGallery.hide();
+        mVideoPlayer.show();
+    }
+
+    @Override
+    public void onGalleryShown() {
+        Log.d(TAG, "onGalleryShown: ");
+        mVideoPlayer.hide();
+    }
+
+    @Override
+    public void onGalleryHidden() {
+        Log.d(TAG, "onGalleryHidden: ");
     }
 }

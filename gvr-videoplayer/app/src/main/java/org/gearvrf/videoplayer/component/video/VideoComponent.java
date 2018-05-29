@@ -57,6 +57,7 @@ public class VideoComponent extends GVRSceneObject {
     private OnVideoPlayerListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
+    private GVRVideoSceneObject mVideo;
 
     VideoComponent(final GVRContext gvrContext, float width, float height) {
         super(gvrContext);
@@ -83,9 +84,9 @@ public class VideoComponent extends GVRSceneObject {
     private void createVideoSceneObject(float width, float height) {
         mMediaPlayer = new DefaultExoPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
         mMediaPlayer.getPlayer().addListener(mPlayerListener);
-        final GVRVideoSceneObject videoPlayer = new GVRVideoSceneObject(mGvrContext, width, height, mMediaPlayer, GVRVideoType.MONO);
-        videoPlayer.attachCollider(new GVRMeshCollider(getGVRContext(), true));
-        addChildObject(videoPlayer);
+        mVideo = new GVRVideoSceneObject(mGvrContext, width, height, mMediaPlayer, GVRVideoType.MONO);
+        mVideo.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        addChildObject(mVideo);
     }
 
     public void playVideo() {
@@ -195,6 +196,14 @@ public class VideoComponent extends GVRSceneObject {
 
     private String getPlayingNowName() {
         return mPlayingNow != null ? mPlayingNow.getName() : DEFAULT_FILE;
+    }
+
+    public void show() {
+        mVideo.getRenderData().getMaterial().setOpacity(1);
+    }
+
+    public void hide() {
+        mVideo.getRenderData().getMaterial().setOpacity(0);
     }
 
     private static void logd(String text) {

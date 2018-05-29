@@ -23,6 +23,7 @@ public class VideoPlayer extends GVRSceneObject {
     private boolean mIsControllerActive = true;
     private boolean mAutoHideController;
     private WidgetAutoHideTimer mWidgetAutoHideTimer;
+    private boolean mPlayerActive = true;
 
     public VideoPlayer(GVRContext gvrContext, float width, float height) {
         super(gvrContext);
@@ -41,15 +42,17 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void hideController() {
         Log.d(TAG, "hideController: ");
-        if (mIsControllerActive) {
+        if (mPlayerActive && mIsControllerActive) {
             mIsControllerActive = false;
             mVideoControllerComponent.hide();
         }
     }
 
     public void showController() {
-        Log.d(TAG, "showController: ");
-        showController(mAutoHideController);
+        if (mPlayerActive) {
+            Log.d(TAG, "showController: ");
+            showController(mAutoHideController);
+        }
     }
 
     private void showController(boolean autoHide) {
@@ -200,5 +203,22 @@ public class VideoPlayer extends GVRSceneObject {
         public void cancel() {
             removeMessages(0);
         }
+    }
+
+    public void show() {
+        mPlayerActive = true;
+        addChildObject(mVideoComponent);
+        addChildObject(mVideoControllerComponent);
+        mVideoComponent.show();
+        mVideoControllerComponent.show();
+
+    }
+
+    public void hide() {
+        mPlayerActive = false;
+        mVideoComponent.hide();
+        mVideoControllerComponent.hide();
+        removeChildObject(mVideoComponent);
+        removeChildObject(mVideoControllerComponent);
     }
 }
