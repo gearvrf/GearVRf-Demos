@@ -5,6 +5,12 @@
     android:layout_height="@dimen/breadcrumb_height"
     tools:ignore="HardcodedText,PxUsage,ContentDescription,UseCompoundDrawables">
 
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        tools:ignore="ContentDescription" />
+
     <TextView
         android:id="@+id/home"
         android:layout_width="@dimen/breadcrumb_item_width"
@@ -30,8 +36,8 @@
             android:src="@drawable/ic_triangle" />
 
         <TextView
-            android:layout_width="@dimen/breadcrumb_item_width"
             android:id="@+id/title"
+            android:layout_width="@dimen/breadcrumb_item_width"
             android:layout_height="match_parent"
             android:background="@drawable/right_rounded"
             android:fontFamily="sans-serif-medium"
