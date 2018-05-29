@@ -5,12 +5,12 @@
     android:orientation="vertical"
     android:shape="rectangle">
 
-    <corners android:radius="6px" />
+    <corners android:radius="2px" />
 
     <solid android:color="@android:color/transparent" />
 
     <stroke
-        android:width="5px"
+        android:width="2px"
         android:color="@android:color/white" />
 
 </shape>

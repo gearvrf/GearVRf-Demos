@@ -28,6 +28,7 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
     private GVRViewSceneObject mObjectViewGallery;
     private View mMainViewGallery;
     private List<Media> mMediaList = new LinkedList<>();
+    private Breadcrumb mBreadcrumb;
 
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
@@ -46,8 +47,15 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
         mObjectViewGallery.getTransform().setScale(6, 6, 1);
         addChildObject(mObjectViewGallery);
 
+        mBreadcrumb = new Breadcrumb(mMainViewGallery);
+        mBreadcrumb.showHome();
+        mBreadcrumb.setOnBreadcrumbListener(new OnBreadcrumbListener() {
+            @Override
+            public void onHomeClicked() {
+                loadAlbums();
+            }
+        });
         loadAlbums();
-        new Breadcrumb(mMainViewGallery);
     }
 
     private void loadAlbums() {
@@ -72,6 +80,7 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
         }).execute();
     }
 
+
     @Override
     public void onMediaSelected(Media media) {
 
@@ -86,23 +95,6 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
         }
     }
 
-    class Breadcrumb {
 
-        View mHome;
-        View mAlbum;
-
-        public Breadcrumb(View mainView) {
-            mHome = mainView.findViewById(R.id.home);
-            mAlbum = mainView.findViewById(R.id.album);
-        }
-
-        void showHome() {
-
-        }
-
-        void showAlbum(String albumTitle) {
-
-        }
-    }
 }
 

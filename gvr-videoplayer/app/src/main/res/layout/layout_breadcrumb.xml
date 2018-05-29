@@ -31,6 +31,7 @@
 
         <TextView
             android:layout_width="@dimen/breadcrumb_item_width"
+            android:id="@+id/title"
             android:layout_height="match_parent"
             android:background="@drawable/right_rounded"
             android:fontFamily="sans-serif-medium"

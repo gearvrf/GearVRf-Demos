@@ -71,8 +71,8 @@ public class VideoPlayerMain extends GVRMain {
 
         addSkyBoxSphere();
         initCursorController();
-        addVideoPlayer();
         createGallery();
+        //addVideoPlayer();
     }
 
     private void createGallery() {
@@ -134,7 +134,7 @@ public class VideoPlayerMain extends GVRMain {
 
         @Override
         public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-            mVideoPlayer.showController();
+         //   mVideoPlayer.showController();
         }
     };
 
@@ -148,7 +148,7 @@ public class VideoPlayerMain extends GVRMain {
             sceneObject.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
         }
 
-        mVideoPlayer.showController();
+      //  mVideoPlayer.showController();
     }
 
     private void prepareVideos(List<Video> videos) {
