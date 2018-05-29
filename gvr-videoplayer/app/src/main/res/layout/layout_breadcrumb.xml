@@ -2,11 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="64dp">
+    android:layout_height="@dimen/breadcrumb_height"
+    tools:ignore="HardcodedText,PxUsage,ContentDescription,UseCompoundDrawables">
 
     <TextView
         android:id="@+id/home"
-        android:layout_width="159dp"
+        android:layout_width="@dimen/breadcrumb_item_width"
         android:layout_height="match_parent"
         android:background="@drawable/left_rounded"
         android:fontFamily="sans-serif-medium"
@@ -14,35 +15,30 @@
         android:includeFontPadding="false"
         android:text="HOME"
         android:textColor="#ffffff"
-        android:textSize="24dp"
-        tools:ignore="HardcodedText" />
+        android:textSize="@dimen/breadcrumb_text_size" />
 
     <LinearLayout
         android:id="@+id/album"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        tools:ignore="UseCompoundDrawables">
+        android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="21.8dp"
+            android:layout_width="22px"
             android:layout_height="match_parent"
             android:background="#cceeeeee"
-            android:src="@drawable/ic_triangle"
-            tools:ignore="ContentDescription" />
+            android:src="@drawable/ic_triangle" />
 
         <TextView
-            android:layout_width="159dp"
+            android:layout_width="@dimen/breadcrumb_item_width"
             android:layout_height="match_parent"
-            android:alpha="0.8"
             android:background="@drawable/right_rounded"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:includeFontPadding="false"
-            android:text="CAMERA"
-            android:textColor="#212121"
-            android:textSize="24dp"
-            tools:ignore="HardcodedText" />
+            android:text="ALBUM"
+            android:textColor="#A5212121"
+            android:textSize="@dimen/breadcrumb_text_size" />
 
     </LinearLayout>
 

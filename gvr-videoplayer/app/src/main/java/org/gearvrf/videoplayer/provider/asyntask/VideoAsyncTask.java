@@ -49,7 +49,7 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                 VideoColumns.DURATION
         };
 
-        String selection = mAlbumTitleFilter != null ? VideoColumns.ALBUM + "=?" : null;
+        String selection = mAlbumTitleFilter != null ? VideoColumns.BUCKET_DISPLAY_NAME + "=?" : null;
         String[] selectionArgs = mAlbumTitleFilter != null ? new String[]{mAlbumTitleFilter} : null;
 
         String sortOrder = VideoColumns.TITLE + " ASC";

@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/grid_item_width"
     android:layout_height="@dimen/grid_item_height"
+    android:layout_margin="8.5px"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
-    app:cardCornerRadius="6dp"
-    app:cardMaxElevation="1dp"
-    app:cardUseCompatPadding="true"
-    tools:ignore="HardcodedText,SpUsage">
+    app:cardCornerRadius="6px"
+    app:cardMaxElevation="1px"
+    app:cardUseCompatPadding="false"
+    tools:ignore="HardcodedText,PxUsage,SpUsage">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -35,16 +36,16 @@
 
             <TextView
                 android:id="@+id/textView"
-                android:layout_width="200dp"
+                android:layout_width="200px"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
-                android:maxLines="1"
+                android:maxLines="2"
                 android:text="subtitles"
                 android:textAllCaps="true"
                 android:textColor="@android:color/white"
-                android:textSize="24dp" />
+                android:textSize="24px" />
 
         </LinearLayout>
 

@@ -42,7 +42,8 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(gvrContext.getContext(), 3));
 
-        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mMainViewGallery, 15f, 10f);
+        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mMainViewGallery, 1, 1);
+        mObjectViewGallery.getTransform().setScale(6, 6, 1);
         addChildObject(mObjectViewGallery);
 
         loadAlbums();
@@ -93,12 +94,6 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
         public Breadcrumb(View mainView) {
             mHome = mainView.findViewById(R.id.home);
             mAlbum = mainView.findViewById(R.id.album);
-            mHome.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    loadAlbums();
-                }
-            });
         }
 
         void showHome() {

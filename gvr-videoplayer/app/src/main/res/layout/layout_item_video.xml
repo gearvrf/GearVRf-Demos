@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/grid_item_width"
     android:layout_height="@dimen/grid_item_height"
+    android:layout_margin="8.5px"
     android:clickable="true"
     android:focusable="true"
     android:orientation="vertical"
     app:cardBackgroundColor="@android:color/white"
-    app:cardCornerRadius="6dp"
-    app:cardMaxElevation="1dp"
-    app:cardUseCompatPadding="true">
+    app:cardCornerRadius="6px"
+    app:cardMaxElevation="1px"
+    app:cardUseCompatPadding="false"
+    tools:ignore="PxUsage,ContentDescription,HardcodedText,SpUsage">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,14 +23,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher"
-            tools:ignore="ContentDescription" />
+            android:src="@drawable/ic_launcher" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#BF000000"
-            android:padding="20dp"
+            android:padding="20px"
             android:visibility="visible">
 
             <TextView
@@ -41,8 +42,7 @@
                 android:maxLines="2"
                 android:text="@string/lorem_ipsum"
                 android:textColor="#FFFFFF"
-                android:textSize="24dp"
-                tools:ignore="HardcodedText,SpUsage" />
+                android:textSize="24px" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -53,21 +53,19 @@
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
-                    android:layout_width="21dp"
-                    android:layout_height="21dp"
-                    android:src="@drawable/ic_time"
-                    tools:ignore="ContentDescription" />
+                    android:layout_width="21px"
+                    android:layout_height="21px"
+                    android:src="@drawable/ic_time" />
 
                 <TextView
                     android:id="@+id/duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="9dp"
+                    android:layout_marginStart="9px"
                     android:fontFamily="sans-serif"
                     android:text="00:00"
                     android:textColor="#FFFFFF"
-                    android:textSize="20dp"
-                    tools:ignore="HardcodedText,SpUsage" />
+                    android:textSize="20px" />
 
             </LinearLayout>
 

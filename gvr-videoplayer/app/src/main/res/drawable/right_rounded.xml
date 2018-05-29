@@ -9,6 +9,6 @@
         android:bottomRightRadius="150dp"
         android:topRightRadius="150dp" />
 
-    <solid android:color="#eeeeee" />
+    <solid android:color="#cceeeeee" />
 
 </shape>
