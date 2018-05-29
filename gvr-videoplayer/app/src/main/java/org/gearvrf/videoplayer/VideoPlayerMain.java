@@ -89,7 +89,7 @@ public class VideoPlayerMain extends GVRMain {
     }
 
     private void addSkyBoxSphere() {
-        GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.photosphere));
+        GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.skybox_gridroom));
         mSphereObject = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
         mSphereObject.getTransform().setScale(SCALE, SCALE, SCALE);
         mScene.addSceneObject(mSphereObject);
