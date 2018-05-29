@@ -32,6 +32,5 @@
         android:scrollbarStyle="outsideInset"
         android:paddingRight="16.5px"
         android:layout_marginTop="37px" />
-
 </LinearLayout>
 

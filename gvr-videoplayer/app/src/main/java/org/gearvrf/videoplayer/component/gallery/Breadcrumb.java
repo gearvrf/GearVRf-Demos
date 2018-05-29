@@ -18,7 +18,7 @@ class Breadcrumb implements View.OnClickListener {
     }
 
     void showHome() {
-        mAlbum.setVisibility(View.INVISIBLE);
+        mAlbum.setVisibility(View.GONE);
         mHome.setBackgroundResource(R.drawable.all_sides_rounded);
     }
 
@@ -37,7 +37,9 @@ class Breadcrumb implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.home) {
             if (onBreadcrumbListener != null) {
+                showHome();
                 onBreadcrumbListener.onHomeClicked();
+
             }
         }
     }

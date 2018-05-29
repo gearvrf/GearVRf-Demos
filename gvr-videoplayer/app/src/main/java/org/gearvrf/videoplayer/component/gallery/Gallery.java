@@ -5,7 +5,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
@@ -80,13 +82,13 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
         }).execute();
     }
 
-
     @Override
     public void onMediaSelected(Media media) {
 
         switch (media.getType()) {
             case Media.Type.TYPE_ALBUM:
                 loadVideos(((Album) media).getTitle());
+                mBreadcrumb.showAlbum(((Album) media).getTitle());
                 break;
             case Media.Type.TYPE_VIDEO:
                 break;
@@ -94,7 +96,5 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
                 Log.d(TAG, "Unknown type: " + media.getType());
         }
     }
-
-
 }
 
