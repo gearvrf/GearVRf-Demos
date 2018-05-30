@@ -32,6 +32,8 @@ import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
+import org.gearvrf.videoplayer.component.video.DefaultVideoPlayerListener;
+import org.gearvrf.videoplayer.component.video.OnVideoPlayerListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
@@ -87,6 +89,7 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
         mVideoPlayer.getTransform().setPositionZ(-9);
         mVideoPlayer.setAutoHideController(true);
+        mVideoPlayer.setVideoPlayerListener(mOnVideoPlayerListener);
         mVideoPlayer.hide();
         mMainSceneContainer.addChildObject(mVideoPlayer);
     }
@@ -141,6 +144,13 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
         }
     };
 
+    private OnVideoPlayerListener mOnVideoPlayerListener = new DefaultVideoPlayerListener() {
+        @Override
+        public void onPrepare(String title, long duration) {
+            mVideoPlayer.show();
+        }
+    };
+
     private void repositionPlayer() {
         final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
         final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
@@ -164,15 +174,14 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
 
     @Override
     public void onVideosSelected(List<Video> videoList) {
-        prepareVideos(videoList);
         mGallery.hide();
-        mVideoPlayer.show();
+        prepareVideos(videoList);
     }
 
     @Override
     public void onGalleryShown() {
         Log.d(TAG, "onGalleryShown: ");
-        mVideoPlayer.hide();
+        //mVideoPlayer.hide();
     }
 
     @Override

@@ -10,13 +10,13 @@ import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.component.FadeableComponent;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
-public class VideoControllerComponent extends GVRSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class VideoControllerComponent extends FadeableComponent implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private View mMainView;
     private SeekBar mSeekBar;
@@ -101,16 +101,6 @@ public class VideoControllerComponent extends GVRSceneObject implements View.OnC
         });
     }
 
-    public void show() {
-        new GVROpacityAnimation(mFocusableViewSceneObject, .2f, 1)
-                .start(getGVRContext().getAnimationEngine());
-    }
-
-    public void hide() {
-        new GVROpacityAnimation(mFocusableViewSceneObject, .2f, 0)
-                .start(getGVRContext().getAnimationEngine());
-    }
-
     public void setMaxProgress(final int maxProgress) {
         mSeekBar.post(new Runnable() {
             @Override
@@ -171,5 +161,11 @@ public class VideoControllerComponent extends GVRSceneObject implements View.OnC
 
     public void setFocusListener(@NonNull FocusListener<FocusableViewSceneObject> listener) {
         mFocusableViewSceneObject.setFocusListener(listener);
+    }
+
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mFocusableViewSceneObject;
     }
 }

@@ -37,12 +37,13 @@ import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
+import org.gearvrf.videoplayer.component.FadeableComponent;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class VideoComponent extends GVRSceneObject {
+public class VideoComponent extends FadeableComponent {
 
     private static final String TAG = VideoComponent.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
@@ -198,16 +199,14 @@ public class VideoComponent extends GVRSceneObject {
         return mPlayingNow != null ? mPlayingNow.getName() : DEFAULT_FILE;
     }
 
-    public void show() {
-        mVideo.getRenderData().getMaterial().setOpacity(1);
-    }
-
-    public void hide() {
-        mVideo.getRenderData().getMaterial().setOpacity(0);
-    }
-
     private static void logd(String text) {
         android.util.Log.d(TAG, text);
+    }
+
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mVideo;
     }
 
     @SuppressLint("HandlerLeak")

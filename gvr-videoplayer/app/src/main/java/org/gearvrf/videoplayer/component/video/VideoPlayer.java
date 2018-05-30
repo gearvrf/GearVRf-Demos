@@ -6,6 +6,7 @@ import android.os.Message;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.utility.Log;
+import org.gearvrf.videoplayer.component.FadeableComponent;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
@@ -14,7 +15,7 @@ import java.io.File;
 public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
-    private static final int CONTROLLER_AUTO_HIDE_DELAY = 5000;
+    private static final int CONTROLLER_AUTO_HIDE_DELAY = 3000;
     private static final float CONTROLLER_WIDGET_FACTOR = .75f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
 
@@ -44,7 +45,7 @@ public class VideoPlayer extends GVRSceneObject {
         Log.d(TAG, "hideController: ");
         if (mPlayerActive && mIsControllerActive) {
             mIsControllerActive = false;
-            mVideoControllerComponent.hide();
+            mVideoControllerComponent.fadeIn();
         }
     }
 
@@ -59,7 +60,7 @@ public class VideoPlayer extends GVRSceneObject {
         Log.d(TAG, "showController: ");
         if (!mIsControllerActive) {
             mIsControllerActive = true;
-            mVideoControllerComponent.show();
+            mVideoControllerComponent.fadeIn();
         }
         if (autoHide) {
             mWidgetAutoHideTimer.start();
@@ -75,7 +76,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void addVideoComponent(float width, float height) {
         mVideoComponent = new VideoComponent(getGVRContext(), width, height);
-        mVideoComponent.setOnVideoPlayerListener(mOnVideoPlayerListener);
+        mVideoComponent.setOnVideoPlayerListener(mInternalVideoPlayerListener);
         addChildObject(mVideoComponent);
     }
 
@@ -96,6 +97,10 @@ public class VideoPlayer extends GVRSceneObject {
         addChildObject(mVideoControllerComponent);
     }
 
+    public void setVideoPlayerListener(OnVideoPlayerListener listener) {
+        mInternalVideoPlayerListener.setOnVideoPlayerListener(listener);
+    }
+
     private FocusListener<FocusableViewSceneObject> mFocusListener = new FocusListener<FocusableViewSceneObject>() {
         @Override
         public void onFocusGained(FocusableViewSceneObject focusable) {
@@ -110,10 +115,11 @@ public class VideoPlayer extends GVRSceneObject {
         }
     };
 
-    private OnVideoPlayerListener mOnVideoPlayerListener = new OnVideoPlayerListener() {
+    private VideoPlayerListenerDispatcher mInternalVideoPlayerListener = new VideoPlayerListenerDispatcher() {
         @Override
         public void onProgress(long progress) {
             mVideoControllerComponent.setProgress((int) progress);
+            super.onProgress(progress);
         }
 
         @Override
@@ -124,6 +130,7 @@ public class VideoPlayer extends GVRSceneObject {
             mVideoControllerComponent.setMaxProgress((int) duration);
             mVideoControllerComponent.setProgress((int) mVideoComponent.getProgress());
             mVideoControllerComponent.showPlay();
+            super.onPrepare(title, duration);
         }
 
         @Override
@@ -132,23 +139,27 @@ public class VideoPlayer extends GVRSceneObject {
             mVideoControllerComponent.setPlayPauseButtonEnabled(true);
             mVideoControllerComponent.showPause();
             showController();
+            super.onStart();
         }
 
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
             mVideoControllerComponent.setPlayPauseButtonEnabled(false);
+            super.onLoading();
         }
 
         @Override
         public void onEnd() {
             Log.d(TAG, "Video ended");
             showController(false);
+            super.onEnd();
         }
 
         @Override
         public void onAllEnd() {
             Log.d(TAG, "All videos ended");
+            super.onAllEnd();
         }
     };
 
@@ -206,19 +217,29 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public void show() {
-        mPlayerActive = true;
-        addChildObject(mVideoComponent);
-        addChildObject(mVideoControllerComponent);
-        mVideoComponent.show();
-        mVideoControllerComponent.show();
-
+        if (!mPlayerActive) {
+            //getParent().addChildObject(this);
+            mVideoComponent.fadeIn(new FadeableComponent.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mPlayerActive = true;
+                }
+            });
+            mVideoControllerComponent.fadeIn();
+        }
     }
 
     public void hide() {
-        mPlayerActive = false;
-        mVideoComponent.hide();
-        mVideoControllerComponent.hide();
-        removeChildObject(mVideoComponent);
-        removeChildObject(mVideoControllerComponent);
+        if (mPlayerActive) {
+            mVideoComponent.pauseVideo();
+            mVideoControllerComponent.fadeOut();
+            mVideoComponent.fadeOut(new FadeableComponent.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    //getParent().removeChildObject(VideoPlayer.this);
+                    mPlayerActive = false;
+                }
+            });
+        }
     }
 }

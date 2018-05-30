@@ -1,6 +1,7 @@
 package org.gearvrf.videoplayer.component.gallery;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,9 +10,9 @@ import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.animation.GVROpacityAnimation;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.component.FadeableComponent;
 import org.gearvrf.videoplayer.model.Album;
 import org.gearvrf.videoplayer.model.Media;
 import org.gearvrf.videoplayer.model.Video;
@@ -22,7 +23,7 @@ import org.gearvrf.videoplayer.provider.asyntask.VideoAsyncTask;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Gallery extends GVRSceneObject implements OnMediaSelectionListener {
+public class Gallery extends FadeableComponent implements OnMediaSelectionListener {
 
     private static final String TAG = Gallery.class.getSimpleName();
     private RecyclerView mRecyclerView;
@@ -108,26 +109,38 @@ public class Gallery extends GVRSceneObject implements OnMediaSelectionListener 
 
     public void show() {
         if (!mActive) {
-            addChildObject(this);
-            new GVROpacityAnimation(mObjectViewGallery, .2f, 1)
-                    .start(getGVRContext().getAnimationEngine());
-            mActive = true;
-            if (mOnGalleryEventListener != null) {
-                mOnGalleryEventListener.onGalleryShown();
-            }
+            getParent().addChildObject(this);
+            fadeIn(new FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mActive = true;
+                    if (mOnGalleryEventListener != null) {
+                        mOnGalleryEventListener.onGalleryShown();
+                    }
+                }
+            });
         }
     }
 
     public void hide() {
         if (mActive) {
-            new GVROpacityAnimation(mObjectViewGallery, .2f, 0)
-                    .start(getGVRContext().getAnimationEngine());
-            getParent().removeChildObject(this);
-            mActive = false;
-            if (mOnGalleryEventListener != null) {
-                mOnGalleryEventListener.onGalleryHidden();
-            }
+            fadeOut(new FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    getParent().removeChildObject(Gallery.this);
+                    mActive = false;
+                    if (mOnGalleryEventListener != null) {
+                        mOnGalleryEventListener.onGalleryHidden();
+                    }
+                }
+            });
         }
+    }
+
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mObjectViewGallery;
     }
 }
 
