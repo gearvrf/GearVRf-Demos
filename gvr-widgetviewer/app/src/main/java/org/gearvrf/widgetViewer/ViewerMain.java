@@ -31,6 +31,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRSharedTexture;
+import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRSwitch;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRWidgetViewer.R;
@@ -244,8 +245,6 @@ public class ViewerMain extends GVRMain {
 
     private GVRSceneObject makeObjects(GVRContext ctx) throws IOException
     {
-        GVRSceneObject.BoundingVolume bv;
-        GVRAssetLoader loader = ctx.getAssetLoader();
         mObjectPos = new GVRSceneObject(ctx);
         mObjectPos.getTransform().setPositionZ(-EYE_TO_OBJECT);
         mObjectRot = new GVRSceneObject(ctx);
@@ -253,47 +252,28 @@ public class ViewerMain extends GVRMain {
         mObjectRot.attachComponent(selector);
         mObjectPos.addChildObject(mObjectRot);
 
-
-        // suzanne
-        GVRSceneObject sRoot = loader.loadModel("/Suzanne/glTF/Suzanne.gltf");
-        bv = sRoot.getBoundingVolume();
-        sRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
-        mObjectRot.addChildObject(sRoot);
-
-        //waterbottle
-        GVRSceneObject wbRoot = loader.loadModel("/WaterBottle/glTF-pbrSpecularGlossiness/WaterBottle.gltf");
-        setEnvironmentTex(wbRoot, mEnvTex);
-        wbRoot.getTransform().setScale(8,8,8);
-        bv = wbRoot.getBoundingVolume();
-        wbRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
-        mObjectRot.addChildObject(wbRoot);
-
-        //boombox
-        GVRSceneObject bbRoot = loader.loadModel("/BoomBox/glTF-pbrSpecularGlossiness/BoomBox.gltf");
-        setEnvironmentTex(bbRoot, mEnvTex);
-        bbRoot.getTransform().setScale(70,70,70);
-        bv = bbRoot.getBoundingVolume();
-        bbRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
-        mObjectRot.addChildObject(bbRoot);
-
-        //helmet
-        GVRSceneObject hRoot = loader.loadModel("/SciFiHelmet/glTF/SciFiHelmet.gltf");
-        setEnvironmentTex(hRoot, mEnvTex);
-        bv = hRoot.getBoundingVolume();
-        hRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
-        mObjectRot.addChildObject(hRoot);
-
-
-        //corset
-        GVRSceneObject cRoot = loader.loadModel("/Corset/glTF/Corset.gltf");
-        setEnvironmentTex(cRoot, mEnvTex);
-        cRoot.getTransform().setScale(50,50,50);
-        bv = cRoot.getBoundingVolume();
-        cRoot.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
-        mObjectRot.addChildObject(cRoot);
+        addModeltoScene("/Suzanne/glTF/Suzanne.gltf", 1,1,1, false);
+        addModeltoScene("/WaterBottle/glTF-pbrSpecularGlossiness/WaterBottle.gltf", 8,8,8, true);
+        addModeltoScene("/BoomBox/glTF-pbrSpecularGlossiness/BoomBox.gltf", 70,70,70, true);
+        addModeltoScene("/SciFiHelmet/glTF/SciFiHelmet.gltf", 1,1,1, true);
+        addModeltoScene("/Corset/glTF/Corset.gltf", 50,50,50, true);
 
         return mObjectPos;
     }
+
+    private void addModeltoScene(String filePath, float scaleX, float scaleY, float scaleZ, boolean hasSpecularEnv) throws IOException {
+
+        GVRSceneObject.BoundingVolume bv;
+        GVRAssetLoader loader = mGVRContext.getAssetLoader();
+        GVRSceneObject root = loader.loadModel(filePath);
+        if(hasSpecularEnv)
+            setEnvironmentTex(root, mEnvTex);
+        root.getTransform().setScale(scaleX,scaleY,scaleZ);
+        bv = root.getBoundingVolume();
+        root.getTransform().setPosition(-bv.center.x, -bv.center.y, -bv.center.z);
+        mObjectRot.addChildObject(root);
+    }
+
 
     private void setEnvironmentTex( GVRSceneObject obj, GVRTexture tex)
     {
@@ -308,13 +288,15 @@ public class ViewerMain extends GVRMain {
     private GVRSceneObject createLight(GVRContext context, float r, float g, float b, float y)
     {
         GVRSceneObject lightNode = new GVRSceneObject(context);
-        GVRPointLight light = new GVRPointLight(context);
+        GVRSpotLight light = new GVRSpotLight(context);
 
         lightNode.attachLight(light);
         lightNode.getTransform().setPosition(0, 0.5f, 0);
-        light.setAmbientIntensity(0.4f * r, 0.4f * g, 0.4f * b, 1);
-        light.setDiffuseIntensity(r * 0.5f, g * 0.5f, b * 0.5f, 1);
+        light.setAmbientIntensity(0.7f * r, 0.7f * g, 0.7f * b, 1);
+        light.setDiffuseIntensity(r , g , b , 1);
         light.setSpecularIntensity(r, g, b, 1);
+        light.setInnerConeAngle(20);
+        light.setOuterConeAngle(30);
         return lightNode;
     }
 
