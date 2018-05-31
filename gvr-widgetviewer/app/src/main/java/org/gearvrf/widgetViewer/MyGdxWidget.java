@@ -123,8 +123,8 @@ public class MyGdxWidget extends GVRWidget {
                         mMain.mTexColor = selectBox.getSelectedIndex() + 1;
                     }
                 });
-                selectBox.setItems("Maroon", "Black", "Blue", "Green", "Silver");
-                selectBox.setSelected("Maroon");
+                selectBox.setItems("White Light","Red Light", "Blue Light", "Green Light");
+                selectBox.setSelected("White Light");
                 selectBox.setVisible(false);
                 selectBox.setName("colorbutton");
 
@@ -272,15 +272,20 @@ public class MyGdxWidget extends GVRWidget {
             mMain.mObjectRot.getTransform().setRotation(1, 0, 0, 0);
             mResetSlider = false;
         }
-        if (mMain.ThumbnailSelected == 1 || mMain.ThumbnailSelected == 3) {
-            mColorButtonActor.setVisible(true);
+        mColorButtonActor.setVisible(true);
+//        if (mMain.ThumbnailSelected == 1 || mMain.ThumbnailSelected == 3) {
+//            mColorButtonActor.setVisible(true);
+//
+//        } else
+//            mColorButtonActor.setVisible(true);
 
-        } else
-            mColorButtonActor.setVisible(false);
-        if (mMain.ThumbnailSelected == 3)
-            mLookInsideButtonActor.setVisible(true);
-        else
-            mLookInsideButtonActor.setVisible(false);
+        //disabling the look inside feature
+        mLookInsideButtonActor.setVisible(false);
+//        if (mMain.ThumbnailSelected == 3)
+//
+//            mLookInsideButtonActor.setVisible(false);
+//        else
+//            mLookInsideButtonActor.setVisible(false);
         mStage.draw();
 
     }
