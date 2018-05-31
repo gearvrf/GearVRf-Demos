@@ -17,8 +17,15 @@ package org.gearvrf.arcore.simplesample.arobjects;
 
 import com.google.ar.core.Anchor;
 import com.google.ar.core.TrackingState;
+import com.google.ar.core.Pose;
 
 import org.gearvrf.GVRContext;
+
+import java.lang.Math;
+import org.joml.Quaternionf;
+import org.joml.AxisAngle4f;
+import org.joml.Vector3f;
+
 
 /**
  * Represents a ARCore anchor in the scene.
@@ -53,6 +60,44 @@ public class GVRAnchorObject extends GVRPoseObject {
         return mARAnchor;
     }
 
+    public void setRotation(float x, float y, float z, float w) {
+        mRotation = new Quaternionf(x, y, z, w);
+    }
+
+    public void setRotationByAxis(float angle, float x, float y, float z) {
+        AxisAngle4f axisAngle = new AxisAngle4f(angle, x, y, z);
+        mRotation = new Quaternionf(axisAngle);
+    }
+
+    public float getRotationYaw() {
+        Vector3f rotationAngles = new Vector3f();
+        mRotation.getEulerAnglesXYZ(rotationAngles);
+        return (float)Math.toDegrees(rotationAngles.y);
+    }
+
+    Quaternionf mRotation;
+    private float mScaleX = 1.0f;
+    private float mScaleY = 1.0f;
+    private float mScaleZ = 1.0f;
+
+    public void setScale(float x, float y, float z) {
+        mScaleX = x;
+        mScaleY = y;
+        mScaleZ = z;
+    }
+
+    public float getScaleX() {
+        return mScaleX;
+    }
+
+    public float getScaleY() {
+        return mScaleY;
+    }
+
+    public float getScaleZ() {
+        return mScaleZ;
+    }
+
     /**
      * Converts from ARCore world space to GVRf's world space.
      *
@@ -72,7 +117,26 @@ public class GVRAnchorObject extends GVRPoseObject {
             mARAnchor = null;
             setEnable(false);
         } else {
-            super.update(mARAnchor.getPose(), arViewMatrix, vrCamMatrix, scale);
+            Pose finalPose = mARAnchor.getPose();
+            /*
+            Pose objectPose = Pose.makeRotation(
+                    mRotation.x(),
+                    mRotation.y(),
+                    mRotation.z(),
+                    mRotation.w()
+                    );
+            //Pose finalPose = mARAnchor.getPose().compose(objectPose);
+            */
+
+            float finalScale = mScaleX * scale;
+        android.util.Log.d("taf", "transform scalex = " + mScaleX);
+        android.util.Log.d("taf", "scale = " + scale);
+        android.util.Log.d("taf", "finalScale = " + finalScale);
+        android.util.Log.d("taf", "===================== ");
+            /*
+            */
+
+            super.update(finalPose, arViewMatrix, vrCamMatrix, finalScale);
             setEnable(true);
         }
 

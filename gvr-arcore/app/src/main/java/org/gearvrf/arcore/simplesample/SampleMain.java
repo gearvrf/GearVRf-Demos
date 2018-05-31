@@ -277,8 +277,8 @@ public class SampleMain extends GVRMain {
                 mDraggingObject = sceneObj;
 
                 // save off the current yaw and scale
-                mYaw = sceneObj.getTransform().getRotationYaw();
-                mScale = sceneObj.getTransform().getScaleX();
+                mYaw = ((VirtualObject)sceneObj).getRotationYaw();
+                mScale = ((VirtualObject)sceneObj).getScaleX();
 
                 // save off the x,y hit location for use in onInside()
                 mHitX = pickInfo.motionEvent.getX();
@@ -320,7 +320,7 @@ public class SampleMain extends GVRMain {
 
                 // find the diff from when we first touched down
                 float diffX = hitLocationX - mHitX;
-                float diffY = hitLocationY - mHitY;
+                float diffY = (hitLocationY - mHitY) / 100.0f;
 
                 // when we move along X, calculate an angle to rotate the model around the Y axis
                 float angle = mYaw + (diffX * 2);
@@ -332,8 +332,8 @@ public class SampleMain extends GVRMain {
                 }
 
                 // set rotation and scale
-                mDraggingObject.getTransform().setRotationByAxis(angle, 0.0f, 1.0f, 0.0f);
-                mDraggingObject.getTransform().setScale(scale, scale, scale);
+                ((VirtualObject)mDraggingObject).setRotation(angle, 0.0f, 1.0f, 0.0f);
+                ((VirtualObject)mDraggingObject).setScale(scale, scale, scale);
             }
 
             pickInfo = pickSceneObject(mARPassThroughObject);
