@@ -19,14 +19,22 @@ import android.support.annotation.NonNull;
 import android.view.View;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
+import org.gearvrf.videoplayer.component.FadeableViewObject;
 
-public class FocusableViewSceneObject extends GVRViewSceneObject implements Focusable {
+public class FocusableViewSceneObject extends FadeableViewObject implements Focusable {
 
     private FocusListener<FocusableViewSceneObject> mFocusListener;
 
     public FocusableViewSceneObject(GVRContext gvrContext, View view, float width, float height) {
         super(gvrContext, view, width, height);
+    }
+
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return this;
     }
 
     @Override

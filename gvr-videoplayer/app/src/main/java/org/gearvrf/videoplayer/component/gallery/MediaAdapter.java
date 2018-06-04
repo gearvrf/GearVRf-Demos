@@ -49,7 +49,7 @@ public class MediaAdapter<T extends Media> extends RecyclerView.Adapter<ViewHold
             Video video = (Video) media;
             VideoViewHolder viewHolder = (VideoViewHolder) holder;
             viewHolder.title.setText(video.getTitle());
-            viewHolder.duration.setText(TimeUtils.formatDuration(video.getDuration()));
+            viewHolder.duration.setText(TimeUtils.formatDurationFull(video.getDuration()));
             new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
         } else {
             Album album = (Album) media;

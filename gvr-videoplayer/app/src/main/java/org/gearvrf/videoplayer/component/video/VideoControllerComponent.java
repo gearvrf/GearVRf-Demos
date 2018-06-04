@@ -2,39 +2,47 @@ package org.gearvrf.videoplayer.component.video;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.videoplayer.R;
-import org.gearvrf.videoplayer.component.FadeableComponent;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
-public class VideoControllerComponent extends FadeableComponent implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+@SuppressLint("InflateParams")
+public class VideoControllerComponent extends FocusableViewSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private View mMainView;
     private SeekBar mSeekBar;
-    private View mPlayPauseButton;
+    private LinearLayout mPlayPauseButton;
+    private ImageView mPlayPauseButtonImage;
     private TextView mElapsedTime, mDurationTime, mTitle;
     private OnVideoControllerListener mOnVideoControllerListener;
     @DrawableRes
     private int mStateResource;
-    private FocusableViewSceneObject mFocusableViewSceneObject;
 
-    @SuppressLint("InflateParams")
     VideoControllerComponent(GVRContext gvrContext, float width, float height) {
-        super(gvrContext);
+        super(gvrContext, getMainView(gvrContext, R.layout.layout_player_controller), width, height);
 
-        mMainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.layout_player_widget, null);
-        mFocusableViewSceneObject = new FocusableViewSceneObject(gvrContext, mMainView, width, height);
-        mFocusableViewSceneObject.setName("videoControlWidget");
-        addChildObject(mFocusableViewSceneObject);
+        mMainView = getRootView();
+        setName("videoControlWidget");
+    }
+
+    private static View getMainView(GVRContext gvrContext, @LayoutRes int layout) {
+        return LayoutInflater.from(gvrContext.getContext()).inflate(layout, null);
+    }
+
+    @Override
+    protected void onInitView() {
+        super.onInitView();
         initView();
     }
 
@@ -42,25 +50,26 @@ public class VideoControllerComponent extends FadeableComponent implements View.
 
         mSeekBar = mMainView.findViewById(R.id.progressBar);
         mPlayPauseButton = mMainView.findViewById(R.id.playPauseButton);
+        mPlayPauseButtonImage = mPlayPauseButton.findViewById(R.id.image);
         mElapsedTime = mMainView.findViewById(R.id.elapsedTimeText);
         mDurationTime = mMainView.findViewById(R.id.durationTimeText);
         mTitle = mMainView.findViewById(R.id.titleText);
 
         mPlayPauseButton.setOnClickListener(this);
-        mMainView.findViewById(R.id.backButton).setOnClickListener(this);
+        //mMainView.findViewById(R.id.backButton).setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
 
         showPlay();
     }
 
     public void showPause() {
-        mStateResource = R.drawable.selector_button_pause;
-        mPlayPauseButton.setBackgroundResource(mStateResource);
+        mStateResource = R.drawable.ic_pause;
+        mPlayPauseButtonImage.setImageResource(mStateResource);
     }
 
     public void showPlay() {
-        mStateResource = R.drawable.selector_button_play;
-        mPlayPauseButton.setBackgroundResource(mStateResource);
+        mStateResource = R.drawable.ic_play;
+        mPlayPauseButtonImage.setImageResource(mStateResource);
     }
 
     public void setTitle(final CharSequence title) {
@@ -76,7 +85,7 @@ public class VideoControllerComponent extends FadeableComponent implements View.
         mElapsedTime.post(new Runnable() {
             @Override
             public void run() {
-                mElapsedTime.setText(TimeUtils.formatDuration(progress));
+                mElapsedTime.setText(TimeUtils.formatDurationFull(progress));
             }
         });
     }
@@ -86,7 +95,7 @@ public class VideoControllerComponent extends FadeableComponent implements View.
         mDurationTime.post(new Runnable() {
             @Override
             public void run() {
-                mDurationTime.setText(TimeUtils.formatDuration(maxProgress));
+                mDurationTime.setText(TimeUtils.formatDurationFull(maxProgress));
             }
         });
     }
@@ -129,7 +138,7 @@ public class VideoControllerComponent extends FadeableComponent implements View.
 
         if (v.getId() == R.id.playPauseButton) {
             if (mOnVideoControllerListener != null) {
-                if (mStateResource == R.drawable.selector_button_play) {
+                if (mStateResource == R.drawable.ic_play) {
                     showPause();
                     mOnVideoControllerListener.onPlay();
                 } else {
@@ -137,11 +146,12 @@ public class VideoControllerComponent extends FadeableComponent implements View.
                     mOnVideoControllerListener.onPause();
                 }
             }
-        } else if (v.getId() == R.id.backButton) {
-            if (mOnVideoControllerListener != null) {
-                mOnVideoControllerListener.onBack();
-            }
         }
+//        else if (v.getId() == R.id.backButton) {
+//            if (mOnVideoControllerListener != null) {
+//                mOnVideoControllerListener.onBack();
+//            }
+//        }
     }
 
     @Override
@@ -160,12 +170,6 @@ public class VideoControllerComponent extends FadeableComponent implements View.
     }
 
     public void setFocusListener(@NonNull FocusListener<FocusableViewSceneObject> listener) {
-        mFocusableViewSceneObject.setFocusListener(listener);
-    }
-
-    @NonNull
-    @Override
-    protected GVRSceneObject getFadeable() {
-        return mFocusableViewSceneObject;
+        super.setFocusListener(listener);
     }
 }

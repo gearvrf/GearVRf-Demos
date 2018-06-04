@@ -6,7 +6,7 @@ import android.os.Message;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.utility.Log;
-import org.gearvrf.videoplayer.component.FadeableComponent;
+import org.gearvrf.videoplayer.component.FadeableViewObject;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
@@ -16,11 +16,13 @@ public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
     private static final int CONTROLLER_AUTO_HIDE_DELAY = 3000;
-    private static final float CONTROLLER_WIDGET_FACTOR = .75f;
+    private static final float CONTROLLER_WIDGET_FACTOR = .70f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
+    private static final float BACK_BUTTON_HEIGHT_FACTOR = .1f;
 
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
+    private BackButtonComponent mBackButtonComponent;
     private boolean mIsControllerActive = true;
     private boolean mAutoHideControllerEnabled;
     private WidgetAutoHideTimer mWidgetAutoHideTimer;
@@ -31,6 +33,7 @@ public class VideoPlayer extends GVRSceneObject {
         mWidgetAutoHideTimer = new WidgetAutoHideTimer(this);
         addVideoComponent(width, height);
         addVideoControllerComponent(CONTROLLER_WIDGET_FACTOR * width, CONTROLLER_HEIGHT_FACTOR * height);
+        addBackButtonComponent(BACK_BUTTON_HEIGHT_FACTOR * height, BACK_BUTTON_HEIGHT_FACTOR * height);
     }
 
     public void prepare(File... files) {
@@ -45,7 +48,18 @@ public class VideoPlayer extends GVRSceneObject {
         Log.d(TAG, "hideController: ");
         if (mPlayerActive && mIsControllerActive) {
             mIsControllerActive = false;
-            mVideoControllerComponent.fadeOut();
+            mVideoControllerComponent.fadeOut(new FadeableViewObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    removeChildObject(mVideoControllerComponent);
+                }
+            });
+            mBackButtonComponent.fadeOut(new FadeableViewObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    removeChildObject(mBackButtonComponent);
+                }
+            });
         }
     }
 
@@ -59,8 +73,15 @@ public class VideoPlayer extends GVRSceneObject {
     private void showController(boolean autoHide) {
         Log.d(TAG, "showController: ");
         if (!mIsControllerActive) {
-            mIsControllerActive = true;
-            mVideoControllerComponent.fadeIn();
+            addChildObject(mVideoControllerComponent);
+            addChildObject(mBackButtonComponent);
+            mVideoControllerComponent.fadeIn(new FadeableViewObject.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mIsControllerActive = true;
+                }
+            });
+            mBackButtonComponent.fadeIn();
         }
         if (autoHide) {
             mWidgetAutoHideTimer.start();
@@ -84,17 +105,29 @@ public class VideoPlayer extends GVRSceneObject {
 
         mVideoControllerComponent = new VideoControllerComponent(getGVRContext(), width, height);
         mVideoControllerComponent.setOnVideoControllerListener(mOnVideoControllerListener);
-
-        // Place video control widget below the video screen
-        float positionY = -((height / CONTROLLER_HEIGHT_FACTOR / 2f) + height / 2f);
-        mVideoControllerComponent.getTransform().setPositionY(positionY * 1.02f);
-
-        // Adjust widget vision degree
-        mVideoControllerComponent.getTransform().rotateByAxis(-15, 1, 0, 0);
-
         mVideoControllerComponent.setFocusListener(mFocusListener);
 
+        // Put video control widget below the video screen
+        float positionY = -(height / CONTROLLER_HEIGHT_FACTOR / 2f);
+        mVideoControllerComponent.getTransform().setPositionY(positionY * 1.02f);
+
+        mVideoControllerComponent.getTransform().setPositionZ(mVideoComponent.getTransform().getPositionZ() + .05f);
+
         addChildObject(mVideoControllerComponent);
+    }
+
+    private void addBackButtonComponent(float width, float height) {
+
+        mBackButtonComponent = new BackButtonComponent(getGVRContext(), width, height);
+        mBackButtonComponent.setFocusListener(mFocusListener);
+
+        // Put back button above the video screen
+        float positionY = (height / BACK_BUTTON_HEIGHT_FACTOR / 2f);
+        mBackButtonComponent.getTransform().setPositionY(positionY - (positionY * .08f));
+
+        mBackButtonComponent.getTransform().setPositionZ(mVideoComponent.getTransform().getPositionZ() + .05f);
+
+        addChildObject(mBackButtonComponent);
     }
 
     public void setVideoPlayerListener(OnVideoPlayerListener listener) {
@@ -105,13 +138,19 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onFocusGained(FocusableViewSceneObject focusable) {
             Log.d(TAG, "onFocusGained: ");
-            mWidgetAutoHideTimer.cancel();
+            if (focusable.getName().equals("videoControlWidget")
+                    || focusable.getName().equals("videoBackButton")) {
+                mWidgetAutoHideTimer.cancel();
+            }
         }
 
         @Override
         public void onFocusLost(FocusableViewSceneObject focusable) {
             Log.d(TAG, "onFocusLost: ");
-            mWidgetAutoHideTimer.start();
+            if (focusable.getName().equals("videoControlWidget")
+                    || focusable.getName().equals("videoBackButton")) {
+                mWidgetAutoHideTimer.start();
+            }
         }
     };
 
@@ -214,29 +253,19 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void show() {
         if (!mPlayerActive) {
-            mVideoComponent.fadeIn(new FadeableComponent.FadeInCallback() {
-                @Override
-                public void onFadeIn() {
-                    mPlayerActive = true;
-                }
-            });
-            addChildObject(mVideoControllerComponent);
-            mVideoControllerComponent.fadeIn();
+            mPlayerActive = true;
+            mVideoComponent.fadeIn();
+            showController();
         }
     }
 
     public void hide() {
         if (mPlayerActive) {
-            mPlayerActive = false;
             mWidgetAutoHideTimer.cancel();
             mVideoComponent.pauseVideo();
-            mVideoControllerComponent.fadeOut(new FadeableComponent.FadeOutCallback() {
-                @Override
-                public void onFadeOut() {
-                    removeChildObject(mVideoControllerComponent);
-                }
-            });
             mVideoComponent.fadeOut();
+            hideController();
+            mPlayerActive = false;
         }
     }
 }

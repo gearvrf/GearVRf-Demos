@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+    <item android:state_hovered="false">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <!-- normal -->
+                    <solid android:color="#7f000000" />
+                </shape>
+            </item>
+            <item android:width="36dp" android:height="36dp" tools:ignore="UnusedAttribute">
+                <bitmap android:src="@drawable/ic_back_normal" />
+            </item>
+        </layer-list>
+    </item>
+    <item android:state_hovered="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <!-- hover -->
+                    <solid android:color="#cc000000" />
+                </shape>
+            </item>
+            <item android:width="36dp" android:height="36dp" tools:ignore="UnusedAttribute">
+                <bitmap android:src="@drawable/ic_back_hover" />
+            </item>
+        </layer-list>
+    </item>
+</selector>

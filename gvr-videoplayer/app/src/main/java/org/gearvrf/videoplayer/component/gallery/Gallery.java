@@ -12,7 +12,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
-import org.gearvrf.videoplayer.component.FadeableComponent;
+import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.model.Album;
 import org.gearvrf.videoplayer.model.Media;
 import org.gearvrf.videoplayer.model.Video;
@@ -23,7 +23,7 @@ import org.gearvrf.videoplayer.provider.asyntask.VideoAsyncTask;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Gallery extends FadeableComponent implements OnMediaSelectionListener {
+public class Gallery extends FadeableObject implements OnMediaSelectionListener {
 
     private static final String TAG = Gallery.class.getSimpleName();
     private RecyclerView mRecyclerView;

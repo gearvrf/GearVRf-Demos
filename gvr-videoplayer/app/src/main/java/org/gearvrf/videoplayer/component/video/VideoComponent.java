@@ -37,13 +37,13 @@ import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
-import org.gearvrf.videoplayer.component.FadeableComponent;
+import org.gearvrf.videoplayer.component.FadeableObject;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class VideoComponent extends FadeableComponent {
+public class VideoComponent extends FadeableObject {
 
     private static final String TAG = VideoComponent.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
