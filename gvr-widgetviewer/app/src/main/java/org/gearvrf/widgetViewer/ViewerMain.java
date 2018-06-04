@@ -216,22 +216,28 @@ public class ViewerMain extends GVRMain {
             mObjectPos.getTransform().setPositionZ(-EYE_TO_OBJECT + mZoomLevel);
         }
 
-            switch (mTexColor)
-            {
-                case 1:
-                    setLightColor(mLightNode, 1,1,1);
-                    break;
-                case 2:
-                    setLightColor(mLightNode, 1,0,0);
-                    break;
-                case 3:
-                    setLightColor(mLightNode, 0,0,1);
-                    break;
-                case 4:
-                    setLightColor(mLightNode, 0,1,0);
-                    break;
-            }
+        updateTexColor();
     }
+
+    void updateTexColor()
+    {
+        switch (mTexColor)
+        {
+            case 1:
+                setLightColor(mLightNode, 1,1,1);
+                break;
+            case 2:
+                setLightColor(mLightNode, 1,0,0);
+                break;
+            case 3:
+                setLightColor(mLightNode, 0,0,1);
+                break;
+            case 4:
+                setLightColor(mLightNode, 0,1,0);
+                break;
+        }
+    }
+
 
     public void onButtonDown() {
         mGVRContext.getMainScene().getMainCameraRig().resetYaw();

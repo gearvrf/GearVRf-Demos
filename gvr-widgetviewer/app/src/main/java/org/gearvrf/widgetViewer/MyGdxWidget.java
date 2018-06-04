@@ -121,6 +121,7 @@ public class MyGdxWidget extends GVRWidget {
                 selectBox.addListener(new ChangeListener() {
                     public void changed(ChangeEvent event, Actor actor) {
                         mMain.mTexColor = selectBox.getSelectedIndex() + 1;
+                        mMain.updateTexColor();
                     }
                 });
                 selectBox.setItems("White Light","Red Light", "Blue Light", "Green Light");
