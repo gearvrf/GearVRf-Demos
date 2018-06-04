@@ -22,7 +22,7 @@ public class VideoPlayer extends GVRSceneObject {
     private VideoComponent mVideoComponent;
     private VideoControllerComponent mVideoControllerComponent;
     private boolean mIsControllerActive = true;
-    private boolean mAutoHideController;
+    private boolean mAutoHideControllerEnabled;
     private WidgetAutoHideTimer mWidgetAutoHideTimer;
     private boolean mPlayerActive = true;
 
@@ -45,14 +45,14 @@ public class VideoPlayer extends GVRSceneObject {
         Log.d(TAG, "hideController: ");
         if (mPlayerActive && mIsControllerActive) {
             mIsControllerActive = false;
-            mVideoControllerComponent.fadeIn();
+            mVideoControllerComponent.fadeOut();
         }
     }
 
     public void showController() {
+        Log.d(TAG, "showController: ");
         if (mPlayerActive) {
-            Log.d(TAG, "showController: ");
-            showController(mAutoHideController);
+            showController(mAutoHideControllerEnabled);
         }
     }
 
@@ -67,8 +67,8 @@ public class VideoPlayer extends GVRSceneObject {
         }
     }
 
-    public void setAutoHideController(boolean autoHide) {
-        mAutoHideController = autoHide;
+    public void setAutoHideControllerEnabled(boolean autoHide) {
+        mAutoHideControllerEnabled = autoHide;
         if (autoHide) {
             mWidgetAutoHideTimer.start();
         }
@@ -203,12 +203,8 @@ public class VideoPlayer extends GVRSceneObject {
         }
 
         void start() {
-            if (!hasMessages(0)) {
-                sendEmptyMessageDelayed(0, CONTROLLER_AUTO_HIDE_DELAY);
-            } else {
-                removeMessages(0);
-                sendEmptyMessageDelayed(0, CONTROLLER_AUTO_HIDE_DELAY);
-            }
+            removeMessages(0);
+            sendEmptyMessageDelayed(0, CONTROLLER_AUTO_HIDE_DELAY);
         }
 
         public void cancel() {
@@ -218,28 +214,29 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void show() {
         if (!mPlayerActive) {
-            //getParent().addChildObject(this);
             mVideoComponent.fadeIn(new FadeableComponent.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
                     mPlayerActive = true;
                 }
             });
+            addChildObject(mVideoControllerComponent);
             mVideoControllerComponent.fadeIn();
         }
     }
 
     public void hide() {
         if (mPlayerActive) {
+            mPlayerActive = false;
+            mWidgetAutoHideTimer.cancel();
             mVideoComponent.pauseVideo();
-            mVideoControllerComponent.fadeOut();
-            mVideoComponent.fadeOut(new FadeableComponent.FadeOutCallback() {
+            mVideoControllerComponent.fadeOut(new FadeableComponent.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
-                    //getParent().removeChildObject(VideoPlayer.this);
-                    mPlayerActive = false;
+                    removeChildObject(mVideoControllerComponent);
                 }
             });
+            mVideoComponent.fadeOut();
         }
     }
 }

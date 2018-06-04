@@ -1,6 +1,7 @@
 package org.gearvrf.videoplayer.component;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -60,15 +61,16 @@ public abstract class FadeableComponent extends GVRSceneObject {
     @NonNull
     protected abstract GVRSceneObject getFadeable();
 
-    public void fadeIn() {
+    public final void fadeIn() {
         fadeIn(null);
     }
 
-    public void fadeOut() {
+    public final void fadeOut() {
         fadeOut(null);
     }
 
-    public void fadeIn(final FadeInCallback callback) {
+    public final void fadeIn(final FadeInCallback callback) {
+        Log.d(getClass().getSimpleName(), "fadeIn: " + getClass().getSimpleName());
         GVROpacityAnimation animation = new GVROpacityAnimation(
                 getFadeable(), FADE_DURATION, 1);
         animation.setOnFinish(new GVROnFinish() {
@@ -82,7 +84,8 @@ public abstract class FadeableComponent extends GVRSceneObject {
         animation.start(getGVRContext().getAnimationEngine());
     }
 
-    public void fadeOut(final FadeOutCallback callback) {
+    public final void fadeOut(final FadeOutCallback callback) {
+        Log.d(getClass().getSimpleName(), "fadeOut: " + getClass().getSimpleName());
         GVROpacityAnimation animation = new GVROpacityAnimation(
                 getFadeable(), FADE_DURATION, 0);
         animation.setOnFinish(new GVROnFinish() {

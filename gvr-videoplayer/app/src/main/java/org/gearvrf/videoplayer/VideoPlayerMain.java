@@ -88,10 +88,10 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
     private void createVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
         mVideoPlayer.getTransform().setPositionZ(-9);
-        mVideoPlayer.setAutoHideController(true);
+        mVideoPlayer.setAutoHideControllerEnabled(true);
         mVideoPlayer.setVideoPlayerListener(mOnVideoPlayerListener);
-        mVideoPlayer.hide();
         mMainSceneContainer.addChildObject(mVideoPlayer);
+        mVideoPlayer.hide();
     }
 
     private void addSkyBoxSphere() {
@@ -160,8 +160,6 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
         if (mMainSceneContainer != null) {
             mMainSceneContainer.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
         }
-
-        mVideoPlayer.showController();
     }
 
     private void prepareVideos(List<Video> videos) {
@@ -181,7 +179,6 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
     @Override
     public void onGalleryShown() {
         Log.d(TAG, "onGalleryShown: ");
-        //mVideoPlayer.hide();
     }
 
     @Override

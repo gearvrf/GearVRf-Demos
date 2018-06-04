@@ -27,10 +27,12 @@
         android:id="@+id/recycler_view"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/grid_height"
-        android:scrollbars="vertical"
-        android:scrollbarThumbVertical="@drawable/scroollbar"
+        android:layout_marginTop="37px"
+        android:overScrollMode="never"
+        android:paddingEnd="16.5px"
+        android:paddingStart="0px"
         android:scrollbarStyle="outsideInset"
-        android:paddingRight="16.5px"
-        android:layout_marginTop="37px" />
+        android:scrollbarThumbVertical="@drawable/scroollbar"
+        android:scrollbars="vertical" />
 </LinearLayout>
 
