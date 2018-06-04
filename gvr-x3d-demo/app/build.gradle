@@ -35,5 +35,4 @@ android {
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
     compileSdkVersion 23
-    buildToolsVersion '23.0.3'
 }
