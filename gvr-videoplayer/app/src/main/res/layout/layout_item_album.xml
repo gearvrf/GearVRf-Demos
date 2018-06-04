@@ -25,7 +25,6 @@
             android:layout_height="match_parent"
             android:background="@drawable/all_sides_rounded"
             android:scaleType="centerCrop"
-            android:src="@drawable/example"
             tools:ignore="ContentDescription" />
 
         <LinearLayout
