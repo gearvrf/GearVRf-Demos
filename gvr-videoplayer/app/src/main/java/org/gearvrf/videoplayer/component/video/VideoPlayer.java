@@ -2,6 +2,7 @@ package org.gearvrf.videoplayer.component.video;
 
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import org.gearvrf.GVRContext;
@@ -9,38 +10,47 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
-import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.FadeableViewObject;
 import org.gearvrf.videoplayer.component.video.backbutton.BackButton;
 import org.gearvrf.videoplayer.component.video.control.ControlWidget;
 import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
+import org.gearvrf.videoplayer.component.video.dialog.OnPlayNextListener;
+import org.gearvrf.videoplayer.component.video.dialog.PlayNextDialog;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.component.video.player.PlayerListenerDispatcher;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
+import org.gearvrf.videoplayer.model.Video;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
-public class VideoPlayer extends GVRSceneObject implements View.OnClickListener {
+public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
-    private static final int CONTROLLER_AUTO_HIDE_DELAY = 3000;
+    private static final int WIDGET_AUTO_HIDE_DELAY = 3000;
     private static final float CONTROLLER_WIDGET_FACTOR = .70f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
-    private static final float BACK_BUTTON_HEIGHT_FACTOR = .1f;
+    private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
+    private static final float PLAY_NEXT_DIALOG_WIDTH_FACTOR = .19f;
+    private static final float PLAY_NEXT_DIALOG_HEIGHT_FACTOR = .34f;
 
-    private Player mVideoComponent;
+    private Player mPlayer;
     private ControlWidget mControl;
-    private BackButton mBackButtonComponent;
+    private BackButton mBackButton;
+    private PlayNextDialog mPlayNextDialog;
+
     private boolean mIsControllerActive = true;
     private boolean mAutoHideControllerEnabled;
     private WidgetAutoHideTimer mWidgetAutoHideTimer;
     private boolean mPlayerActive = true;
+    private List<Video> mVideos;
 
-    public VideoPlayer(GVRContext gvrContext, float width, float height) {
+    public VideoPlayer(GVRContext gvrContext, float playerWidth, float playerHeight) {
         super(gvrContext);
 
         mWidgetAutoHideTimer = new WidgetAutoHideTimer(this);
@@ -59,16 +69,22 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
             }
         });
 
-        addVideoComponent(width, height);
-        addVideoControllerComponent(CONTROLLER_WIDGET_FACTOR * width, CONTROLLER_HEIGHT_FACTOR * height);
-        addBackButtonComponent(BACK_BUTTON_HEIGHT_FACTOR * height, BACK_BUTTON_HEIGHT_FACTOR * height);
+        addPlayer(playerWidth, playerHeight);
+        addControlWidget(CONTROLLER_WIDGET_FACTOR * playerWidth, CONTROLLER_HEIGHT_FACTOR * playerHeight);
+        addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight, BACK_BUTTON_SIZE_FACTOR * playerHeight);
+        addPlayNextDialog(PLAY_NEXT_DIALOG_WIDTH_FACTOR * playerWidth, PLAY_NEXT_DIALOG_HEIGHT_FACTOR * playerHeight);
     }
 
-    public void prepare(File... files) {
-        if (files != null && files.length > 0) {
-            mVideoComponent.prepare(files);
+    public void prepare(@NonNull List<Video> videos) {
+        mVideos = videos;
+        List<File> videoFiles = new LinkedList<>();
+        for (Video video : mVideos) {
+            videoFiles.add(new File(video.getPath()));
+        }
+        if (videos.size() > 0) {
+            mPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
         } else {
-            mVideoComponent.prepareDefault(); // from assets folder
+            mPlayer.prepareDefault(); // from assets folder
         }
     }
 
@@ -82,10 +98,10 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
                     removeChildObject(mControl);
                 }
             });
-            mBackButtonComponent.fadeOut(new FadeableViewObject.FadeOutCallback() {
+            mBackButton.fadeOut(new FadeableViewObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
-                    removeChildObject(mBackButtonComponent);
+                    removeChildObject(mBackButton);
                 }
             });
         }
@@ -102,14 +118,14 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         Log.d(TAG, "showController: ");
         if (!mIsControllerActive) {
             addChildObject(mControl);
-            addChildObject(mBackButtonComponent);
+            addChildObject(mBackButton);
             mControl.fadeIn(new FadeableViewObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
                     mIsControllerActive = true;
                 }
             });
-            mBackButtonComponent.fadeIn();
+            mBackButton.fadeIn();
         }
         if (autoHide) {
             mWidgetAutoHideTimer.start();
@@ -123,13 +139,13 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         }
     }
 
-    private void addVideoComponent(float width, float height) {
-        mVideoComponent = new Player(getGVRContext(), width, height);
-        mVideoComponent.setOnVideoPlayerListener(mInternalVideoPlayerListener);
-        addChildObject(mVideoComponent);
+    private void addPlayer(float width, float height) {
+        mPlayer = new Player(getGVRContext(), width, height);
+        mPlayer.setOnVideoPlayerListener(mInternalVideoPlayerListener);
+        addChildObject(mPlayer);
     }
 
-    private void addVideoControllerComponent(float width, float height) {
+    private void addControlWidget(float width, float height) {
 
         mControl = new ControlWidget(getGVRContext(), width, height);
         mControl.setOnVideoControllerListener(mOnVideoControllerListener);
@@ -139,24 +155,31 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         float positionY = -(height / CONTROLLER_HEIGHT_FACTOR / 2f);
         mControl.getTransform().setPositionY(positionY * 1.02f);
 
-        mControl.getTransform().setPositionZ(mVideoComponent.getTransform().getPositionZ() + .05f);
+        mControl.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .05f);
 
         addChildObject(mControl);
     }
 
-    private void addBackButtonComponent(float width, float height) {
+    private void addBackButton(float width, float height) {
 
-        mBackButtonComponent = new BackButton(getGVRContext(), width, height);
-        mBackButtonComponent.setFocusListener(mFocusListener);
-        mBackButtonComponent.setOnClickListener(this);
+        mBackButton = new BackButton(getGVRContext(), width, height);
+        mBackButton.setFocusListener(mFocusListener);
 
         // Put back button above the video screen
-        float positionY = (height / BACK_BUTTON_HEIGHT_FACTOR / 2f);
-        mBackButtonComponent.getTransform().setPositionY(positionY - (positionY * .08f));
+        float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
+        mBackButton.getTransform().setPositionY(positionY - (positionY * .08f));
 
-        mBackButtonComponent.getTransform().setPositionZ(mVideoComponent.getTransform().getPositionZ() + .05f);
+        mBackButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .05f);
 
-        addChildObject(mBackButtonComponent);
+        addChildObject(mBackButton);
+    }
+
+    private void addPlayNextDialog(float width, float height) {
+
+        mPlayNextDialog = new PlayNextDialog(getGVRContext(), width, height, mOnPlayNextListener);
+        mPlayNextDialog.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .5f);
+        addChildObject(mPlayNextDialog);
+        hidePlayNextDialog();
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -164,31 +187,44 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
     }
 
     public void setBackButtonClickListener(View.OnClickListener listener) {
-        mBackButtonComponent.setOnClickListener(listener);
+        mBackButton.setOnClickListener(listener);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.backButton) {
+    private void showPlayNextDialog() {
+        mPlayer.fadeOut();
+        hideController();
+        addChildObject(mPlayNextDialog);
+        mPlayNextDialog.fadeIn(new FadeableViewObject.FadeInCallback() {
+            @Override
+            public void onFadeIn() {
+                mPlayNextDialog.startTimer();
+            }
+        });
+    }
 
-        }
+    private void hidePlayNextDialog() {
+        mPlayNextDialog.cancelTimer();
+        mPlayNextDialog.fadeOut(new FadeableViewObject.FadeOutCallback() {
+            @Override
+            public void onFadeOut() {
+                removeChildObject(mPlayNextDialog);
+            }
+        });
     }
 
     private FocusListener<FocusableViewSceneObject> mFocusListener = new FocusListener<FocusableViewSceneObject>() {
         @Override
         public void onFocusGained(FocusableViewSceneObject focusable) {
-            Log.d(TAG, "onFocusGained: ");
-            if (focusable.getName().equals("videoControlWidget")
-                    || focusable.getName().equals("videoBackButton")) {
+            Log.d(TAG, "onFocusGained: " + focusable.getClass().getSimpleName());
+            if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
                 mWidgetAutoHideTimer.cancel();
             }
         }
 
         @Override
         public void onFocusLost(FocusableViewSceneObject focusable) {
-            Log.d(TAG, "onFocusLost: ");
-            if (focusable.getName().equals("videoControlWidget")
-                    || focusable.getName().equals("videoBackButton")) {
+            if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
+                Log.d(TAG, "onFocusLost: " + focusable.getClass().getSimpleName());
                 mWidgetAutoHideTimer.start();
             }
         }
@@ -207,8 +243,17 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
             mControl.setPlayPauseButtonEnabled(true);
             mControl.setTitle(title);
             mControl.setMaxProgress((int) duration);
-            mControl.setProgress((int) mVideoComponent.getProgress());
+            mControl.setProgress((int) mPlayer.getProgress());
             mControl.showPlay();
+
+            mPlayer.fadeIn();
+            mControl.fadeIn(new FadeableViewObject.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mPlayer.playVideo();
+                }
+            });
+
             super.onPrepareFile(title, duration);
         }
 
@@ -231,7 +276,9 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         @Override
         public void onFileEnd() {
             Log.d(TAG, "Video ended");
-            showController(false);
+            if (mPlayer.hasNextToPlay()) {
+                showPlayNextDialog();
+            }
             super.onFileEnd();
         }
 
@@ -239,6 +286,14 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         public void onAllFilesEnd() {
             Log.d(TAG, "All videos ended");
             super.onAllFilesEnd();
+            final View view = mBackButton.getRootView();
+            // Force back to gallery
+            view.post(new Runnable() {
+                @Override
+                public void run() {
+                    view.performClick();
+                }
+            });
         }
     };
 
@@ -246,13 +301,13 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         @Override
         public void onPlay() {
             Log.d(TAG, "onPlay: ");
-            mVideoComponent.playVideo();
+            mPlayer.playVideo();
         }
 
         @Override
         public void onPause() {
             Log.d(TAG, "onPause: ");
-            mVideoComponent.pauseVideo();
+            mPlayer.pauseVideo();
         }
 
         @Override
@@ -263,7 +318,15 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         @Override
         public void onSeek(long progress) {
             Log.d(TAG, "onSeek: ");
-            mVideoComponent.setProgress(progress);
+            mPlayer.setProgress(progress);
+        }
+    };
+
+    private OnPlayNextListener mOnPlayNextListener = new OnPlayNextListener() {
+        @Override
+        public void onTimesUp() {
+            hidePlayNextDialog();
+            mPlayer.prepareNextFile();
         }
     };
 
@@ -283,7 +346,7 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
 
         void start() {
             removeMessages(0);
-            sendEmptyMessageDelayed(0, CONTROLLER_AUTO_HIDE_DELAY);
+            sendEmptyMessageDelayed(0, WIDGET_AUTO_HIDE_DELAY);
         }
 
         public void cancel() {
@@ -293,7 +356,7 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
 
     public void show() {
         if (!mPlayerActive) {
-            mVideoComponent.fadeIn();
+            mPlayer.fadeIn();
             mPlayerActive = true;
             showController();
         }
@@ -306,9 +369,10 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
     public void hide(FadeableObject.FadeOutCallback fadeOutCallback) {
         if (mPlayerActive) {
             mWidgetAutoHideTimer.cancel();
-            mVideoComponent.pauseVideo();
-            mVideoComponent.fadeOut(fadeOutCallback);
+            mPlayer.pauseVideo();
+            mPlayer.fadeOut(fadeOutCallback);
             hideController();
+            hidePlayNextDialog();
             mPlayerActive = false;
         }
     }

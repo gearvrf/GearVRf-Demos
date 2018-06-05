@@ -33,7 +33,7 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
         super(gvrContext, getMainView(gvrContext, R.layout.layout_player_controller), width, height);
 
         mMainView = getRootView();
-        setName("videoControlWidget");
+        setName(getClass().getSimpleName());
     }
 
     private static View getMainView(GVRContext gvrContext, @LayoutRes int layout) {
@@ -56,7 +56,6 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
         mTitle = mMainView.findViewById(R.id.titleText);
 
         mPlayPauseButton.setOnClickListener(this);
-        //mMainView.findViewById(R.id.backButton).setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
 
         showPlay();
@@ -147,11 +146,6 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
                 }
             }
         }
-//        else if (v.getId() == R.id.backButton) {
-//            if (mOnVideoControllerListener != null) {
-//                mOnVideoControllerListener.onBack();
-//            }
-//        }
     }
 
     @Override

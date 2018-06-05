@@ -26,9 +26,10 @@
             android:src="@drawable/ic_launcher" />
 
         <RelativeLayout
+            android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#BF000000"
+            android:background="@drawable/bg_item_video_overlay"
             android:padding="20px"
             android:visibility="visible">
 

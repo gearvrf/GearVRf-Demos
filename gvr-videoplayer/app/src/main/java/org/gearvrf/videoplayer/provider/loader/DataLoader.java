@@ -52,7 +52,7 @@ public abstract class DataLoader<T> extends AsyncTaskLoader<T> {
     }
 
     /**
-     * Handles a request to start the Loader.
+     * Handles a request to startTimer the Loader.
      */
     @Override
     protected void onStartLoading() {
@@ -70,7 +70,7 @@ public abstract class DataLoader<T> extends AsyncTaskLoader<T> {
 
         if (takeContentChanged() || mData == null) {
             // If the data has changed since the last time it was loaded
-            // or is not currently available, start a load.
+            // or is not currently available, startTimer a load.
             forceLoad();
         }
     }
@@ -80,12 +80,12 @@ public abstract class DataLoader<T> extends AsyncTaskLoader<T> {
      */
     @Override
     protected void onStopLoading() {
-        // Attempt to cancel the current load task if possible.
+        // Attempt to cancelTimer the current load task if possible.
         cancelLoad();
     }
 
     /**
-     * Handles a request to cancel a load.
+     * Handles a request to cancelTimer a load.
      */
     @Override
     public void onCanceled(T data) {

@@ -45,7 +45,7 @@ import java.util.LinkedList;
 
 public class Player extends FadeableObject {
 
-    private static final String TAG = "navequinha";//Player.class.getSimpleName();
+    private static final String TAG = Player.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
@@ -136,7 +136,7 @@ public class Player extends FadeableObject {
         mPlayingNowQueue = new LinkedList<>(Arrays.asList(mFiles));
     }
 
-    private void prepareNextFile() {
+    public void prepareNextFile() {
         if (mPlayingNowQueue != null && !mPlayingNowQueue.isEmpty()) {
             mMediaPlayer.pause();
             MediaSource mediaSource = new ExtractorMediaSource(
@@ -151,6 +151,16 @@ public class Player extends FadeableObject {
 
     private void playCurrentPrepared() {
         mMediaPlayer.start();
+    }
+
+    public boolean hasNextToPlay() {
+        return mPlayingNowQueue != null && mPlayingNowQueue.size() > 0;
+    }
+
+    public int getNextIndexToPlay() {
+        return mPlayingNowQueue != null && mPlayingNowQueue.size() > 0
+                ? mFiles.length - mPlayingNowQueue.size()
+                : 0;
     }
 
     public void prepareDefault() {
@@ -260,7 +270,7 @@ public class Player extends FadeableObject {
 
                 if (mPlayingNowQueue != null && mPlayingNowQueue.isEmpty()) {
                     logd("All videos ended: " + getPlayingNowName());
-                    resetQueue();
+                    // resetQueue();
                     notifyAllVideosEnded();
                 }
 
@@ -274,7 +284,7 @@ public class Player extends FadeableObject {
 
             } else if (playbackState == com.google.android.exoplayer2.Player.STATE_IDLE) {
 
-                prepareNextFile();
+                // prepareNextFile();
 
             } else if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
 

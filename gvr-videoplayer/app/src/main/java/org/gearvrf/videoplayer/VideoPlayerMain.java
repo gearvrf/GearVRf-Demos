@@ -40,8 +40,6 @@ import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.model.Video;
 
-import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -174,14 +172,6 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
         }
     }
 
-    private void prepareVideos(List<Video> videos) {
-        List<File> videoFiles = new LinkedList<>();
-        for (Video video : videos) {
-            videoFiles.add(new File(video.getPath()));
-        }
-        mVideoPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
-    }
-
     @Override
     public void onVideosSelected(final List<Video> videoList) {
         Log.d(TAG, "onVideosSelected: " + videoList);
@@ -189,7 +179,7 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
             @Override
             public void onFadeOut() {
                 mMainSceneContainer.removeChildObject(mGallery);
-                prepareVideos(videoList);
+                mVideoPlayer.prepare(videoList);
             }
         });
     }

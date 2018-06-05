@@ -15,7 +15,7 @@ public class BackButton extends FocusableViewSceneObject {
 
     public BackButton(GVRContext gvrContext, float width, float height) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_button_back), width, height);
-        setName("videoBackButton");
+        setName(getClass().getSimpleName());
     }
 
     private static View getMainView(GVRContext gvrContext, @LayoutRes int layout) {
