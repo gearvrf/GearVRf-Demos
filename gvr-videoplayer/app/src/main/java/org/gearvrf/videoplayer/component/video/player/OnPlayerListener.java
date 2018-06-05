@@ -1,6 +1,6 @@
-package org.gearvrf.videoplayer.component.video.screen;
+package org.gearvrf.videoplayer.component.video.player;
 
-public interface OnScreenListener {
+public interface OnPlayerListener {
 
     void onProgress(long progress);
 

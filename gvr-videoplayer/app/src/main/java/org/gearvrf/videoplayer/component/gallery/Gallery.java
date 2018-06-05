@@ -31,7 +31,6 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
     private List<Media> mMediaList = new LinkedList<>();
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
-    private boolean mActive = true;
 
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
@@ -105,36 +104,6 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
 
     public void setOnGalleryEventListener(OnGalleryEventListener listener) {
         this.mOnGalleryEventListener = listener;
-    }
-
-    public void show() {
-        if (!mActive) {
-            getParent().addChildObject(this);
-            fadeIn(new FadeInCallback() {
-                @Override
-                public void onFadeIn() {
-                    mActive = true;
-                    if (mOnGalleryEventListener != null) {
-                        mOnGalleryEventListener.onGalleryShown();
-                    }
-                }
-            });
-        }
-    }
-
-    public void hide() {
-        if (mActive) {
-            fadeOut(new FadeOutCallback() {
-                @Override
-                public void onFadeOut() {
-                    getParent().removeChildObject(Gallery.this);
-                    mActive = false;
-                    if (mOnGalleryEventListener != null) {
-                        mOnGalleryEventListener.onGalleryHidden();
-                    }
-                }
-            });
-        }
     }
 
     @NonNull

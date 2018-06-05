@@ -1,6 +1,6 @@
-package org.gearvrf.videoplayer.component.video.screen;
+package org.gearvrf.videoplayer.component.video.player;
 
-public class DefaultScreenListener implements OnScreenListener {
+public class DefaultPlayerListener implements OnPlayerListener {
 
     @Override
     public void onProgress(long progress) {

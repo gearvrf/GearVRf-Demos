@@ -15,8 +15,8 @@
 
 package org.gearvrf.videoplayer;
 
-import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -30,11 +30,12 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
-import org.gearvrf.videoplayer.component.video.screen.DefaultScreenListener;
-import org.gearvrf.videoplayer.component.video.screen.OnScreenListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
+import org.gearvrf.videoplayer.component.video.player.DefaultPlayerListener;
+import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
 import org.gearvrf.videoplayer.model.Video;
@@ -55,7 +56,6 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
     private GVRSceneObject mMainSceneContainer;
-    private PickEventHandler mPickHandler;
 
     private Gallery mGallery;
 
@@ -67,7 +67,6 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
 
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
-        mPickHandler = new PickEventHandler();
 
         mMainSceneContainer = new GVRSceneObject(getGVRContext());
         mScene.addSceneObject(mMainSceneContainer);
@@ -87,9 +86,10 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
 
     private void createVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
-        mVideoPlayer.getTransform().setPositionZ(-9);
+        mVideoPlayer.getTransform().setPositionZ(-8.1f);
         mVideoPlayer.setAutoHideControllerEnabled(true);
-        mVideoPlayer.setVideoPlayerListener(mOnVideoPlayerListener);
+        mVideoPlayer.setPlayerListener(mOnPlayerListener);
+        mVideoPlayer.setBackButtonClickListener(mBackButtonClickListener);
         mMainSceneContainer.addChildObject(mVideoPlayer);
         mVideoPlayer.hide();
     }
@@ -113,7 +113,6 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
                 }
                 mCursorController = newController;
                 newController.addPickEventListener(mTouchHandler);
-                newController.addPickEventListener(mPickHandler);
                 newController.setCursor(createCursor());
                 newController.setCursorDepth(-CURSOR_DEPTH);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
@@ -144,10 +143,23 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
         }
     };
 
-    private OnScreenListener mOnVideoPlayerListener = new DefaultScreenListener() {
+    private OnPlayerListener mOnPlayerListener = new DefaultPlayerListener() {
         @Override
         public void onPrepareFile(String title, long duration) {
             mVideoPlayer.show();
+        }
+    };
+
+    private View.OnClickListener mBackButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mVideoPlayer.hide(new FadeableObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    mMainSceneContainer.addChildObject(mGallery);
+                    mGallery.fadeIn();
+                }
+            });
         }
     };
 
@@ -171,18 +183,13 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
     }
 
     @Override
-    public void onVideosSelected(List<Video> videoList) {
-        mGallery.hide();
-        prepareVideos(videoList);
-    }
-
-    @Override
-    public void onGalleryShown() {
-        Log.d(TAG, "onGalleryShown: ");
-    }
-
-    @Override
-    public void onGalleryHidden() {
-        Log.d(TAG, "onGalleryHidden: ");
+    public void onVideosSelected(final List<Video> videoList) {
+        mGallery.fadeOut(new FadeableObject.FadeOutCallback() {
+            @Override
+            public void onFadeOut() {
+                mMainSceneContainer.removeChildObject(mGallery);
+                prepareVideos(videoList);
+            }
+        });
     }
 }

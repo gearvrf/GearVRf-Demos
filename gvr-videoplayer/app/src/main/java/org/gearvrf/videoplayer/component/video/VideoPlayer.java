@@ -6,17 +6,21 @@ import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.FadeableViewObject;
 import org.gearvrf.videoplayer.component.video.backbutton.BackButton;
-import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
 import org.gearvrf.videoplayer.component.video.control.ControlWidget;
-import org.gearvrf.videoplayer.component.video.screen.OnScreenListener;
-import org.gearvrf.videoplayer.component.video.screen.Screen;
-import org.gearvrf.videoplayer.component.video.screen.ScreenListenerDispatcher;
+import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
+import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
+import org.gearvrf.videoplayer.component.video.player.Player;
+import org.gearvrf.videoplayer.component.video.player.PlayerListenerDispatcher;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
+import org.gearvrf.videoplayer.focus.PickEventHandler;
 
 import java.io.File;
 
@@ -28,7 +32,7 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_HEIGHT_FACTOR = .1f;
 
-    private Screen mVideoComponent;
+    private Player mVideoComponent;
     private ControlWidget mControl;
     private BackButton mBackButtonComponent;
     private boolean mIsControllerActive = true;
@@ -38,7 +42,23 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
 
     public VideoPlayer(GVRContext gvrContext, float width, float height) {
         super(gvrContext);
+
         mWidgetAutoHideTimer = new WidgetAutoHideTimer(this);
+
+        GVRInputManager inputManager = gvrContext.getInputManager();
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
+
+            PickEventHandler mPickEventHandler = new PickEventHandler();
+
+            @Override
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
+                if (oldController != null) {
+                    oldController.removePickEventListener(mPickEventHandler);
+                }
+                newController.addPickEventListener(mPickEventHandler);
+            }
+        });
+
         addVideoComponent(width, height);
         addVideoControllerComponent(CONTROLLER_WIDGET_FACTOR * width, CONTROLLER_HEIGHT_FACTOR * height);
         addBackButtonComponent(BACK_BUTTON_HEIGHT_FACTOR * height, BACK_BUTTON_HEIGHT_FACTOR * height);
@@ -104,7 +124,7 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
     }
 
     private void addVideoComponent(float width, float height) {
-        mVideoComponent = new Screen(getGVRContext(), width, height);
+        mVideoComponent = new Player(getGVRContext(), width, height);
         mVideoComponent.setOnVideoPlayerListener(mInternalVideoPlayerListener);
         addChildObject(mVideoComponent);
     }
@@ -139,8 +159,19 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         addChildObject(mBackButtonComponent);
     }
 
-    public void setVideoPlayerListener(OnScreenListener listener) {
+    public void setPlayerListener(OnPlayerListener listener) {
         mInternalVideoPlayerListener.setOnVideoPlayerListener(listener);
+    }
+
+    public void setBackButtonClickListener(View.OnClickListener listener) {
+        mBackButtonComponent.setOnClickListener(listener);
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.backButton) {
+
+        }
     }
 
     private FocusListener<FocusableViewSceneObject> mFocusListener = new FocusListener<FocusableViewSceneObject>() {
@@ -163,7 +194,7 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         }
     };
 
-    private ScreenListenerDispatcher mInternalVideoPlayerListener = new ScreenListenerDispatcher() {
+    private PlayerListenerDispatcher mInternalVideoPlayerListener = new PlayerListenerDispatcher() {
         @Override
         public void onProgress(long progress) {
             mControl.setProgress((int) progress);
@@ -236,13 +267,6 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
         }
     };
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.backButton) {
-
-        }
-    }
-
     private static class WidgetAutoHideTimer extends Handler {
 
         private VideoPlayer mVideoPlayer;
@@ -269,17 +293,21 @@ public class VideoPlayer extends GVRSceneObject implements View.OnClickListener 
 
     public void show() {
         if (!mPlayerActive) {
-            mPlayerActive = true;
             mVideoComponent.fadeIn();
+            mPlayerActive = true;
             showController();
         }
     }
 
     public void hide() {
+        hide(null);
+    }
+
+    public void hide(FadeableObject.FadeOutCallback fadeOutCallback) {
         if (mPlayerActive) {
             mWidgetAutoHideTimer.cancel();
             mVideoComponent.pauseVideo();
-            mVideoComponent.fadeOut();
+            mVideoComponent.fadeOut(fadeOutCallback);
             hideController();
             mPlayerActive = false;
         }

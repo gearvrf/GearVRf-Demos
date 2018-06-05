@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.videoplayer.component.video.screen;
+package org.gearvrf.videoplayer.component.video.player;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -23,7 +23,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -44,9 +43,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class Screen extends FadeableObject {
+public class Player extends FadeableObject {
 
-    private static final String TAG = Screen.class.getSimpleName();
+    private static final String TAG = Player.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
@@ -56,12 +55,12 @@ public class Screen extends FadeableObject {
     private DataSource.Factory mFileDataSourceFactory;
     private DataSource.Factory mAssetDataSourceFactory;
     private File mPlayingNow;
-    private OnScreenListener mOnVideoPlayerListener;
+    private OnPlayerListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
     private GVRVideoSceneObject mVideo;
 
-    public Screen(final GVRContext gvrContext, float width, float height) {
+    public Player(final GVRContext gvrContext, float width, float height) {
         super(gvrContext);
 
         this.mGvrContext = gvrContext;
@@ -162,7 +161,7 @@ public class Screen extends FadeableObject {
         mMediaPlayer.prepare(mediaSource);
     }
 
-    public void setOnVideoPlayerListener(OnScreenListener listener) {
+    public void setOnVideoPlayerListener(OnPlayerListener listener) {
         this.mOnVideoPlayerListener = listener;
     }
 
@@ -235,13 +234,13 @@ public class Screen extends FadeableObject {
         }
     }
 
-    private Player.EventListener mPlayerListener = new Player.DefaultEventListener() {
+    private com.google.android.exoplayer2.Player.EventListener mPlayerListener = new com.google.android.exoplayer2.Player.DefaultEventListener() {
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-            mIsPlaying = playbackState == Player.STATE_READY && playWhenReady;
+            mIsPlaying = playbackState == com.google.android.exoplayer2.Player.STATE_READY && playWhenReady;
 
-            if (playbackState == Player.STATE_READY) {
+            if (playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
 
                 if (playWhenReady) {
                     logd("Video started " + getPlayingNowName());
@@ -252,7 +251,7 @@ public class Screen extends FadeableObject {
                     notifyVideoPrepared(getPlayingNowName(), mMediaPlayer.getDuration());
                 }
 
-            } else if (playbackState == Player.STATE_ENDED) {
+            } else if (playbackState == com.google.android.exoplayer2.Player.STATE_ENDED) {
 
                 logd("Video ended: " + getPlayingNowName());
                 notifyVideoEnded();
@@ -271,11 +270,11 @@ public class Screen extends FadeableObject {
                     prepareDefault();
                 }
 
-            } else if (playbackState == Player.STATE_IDLE) {
+            } else if (playbackState == com.google.android.exoplayer2.Player.STATE_IDLE) {
 
                 prepareNextFile();
 
-            } else if (playbackState == Player.STATE_BUFFERING) {
+            } else if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
 
                 logd("Loading video: " + getPlayingNowName());
                 notifyVideoLoading();

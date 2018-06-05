@@ -1,10 +1,10 @@
-package org.gearvrf.videoplayer.component.video.screen;
+package org.gearvrf.videoplayer.component.video.player;
 
 import android.support.annotation.CallSuper;
 
-public class ScreenListenerDispatcher implements OnScreenListener {
+public class PlayerListenerDispatcher implements OnPlayerListener {
 
-    private OnScreenListener mOnVideoPlayerListener;
+    private OnPlayerListener mOnVideoPlayerListener;
 
     @CallSuper
     @Override
@@ -55,7 +55,7 @@ public class ScreenListenerDispatcher implements OnScreenListener {
         }
     }
 
-    public void setOnVideoPlayerListener(OnScreenListener listener) {
+    public void setOnVideoPlayerListener(OnPlayerListener listener) {
         this.mOnVideoPlayerListener = listener;
     }
 }
