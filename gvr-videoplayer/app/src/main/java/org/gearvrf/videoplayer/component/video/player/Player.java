@@ -45,7 +45,7 @@ import java.util.LinkedList;
 
 public class Player extends FadeableObject {
 
-    private static final String TAG = Player.class.getSimpleName();
+    private static final String TAG = "navequinha";//Player.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
@@ -121,10 +121,11 @@ public class Player extends FadeableObject {
     }
 
     public void prepare(@NonNull File[] files) {
-        mMediaPlayer.stop();
+        mMediaPlayer.pause();
         if (files.length > 0) {
             mFiles = files;
             mPlayingNowQueue = new LinkedList<>(Arrays.asList(mFiles));
+            logd("preparedQueue: " + mPlayingNowQueue);
             prepareNextFile();
         } else {
             logd("Files array is empty");
@@ -137,13 +138,14 @@ public class Player extends FadeableObject {
 
     private void prepareNextFile() {
         if (mPlayingNowQueue != null && !mPlayingNowQueue.isEmpty()) {
-            mMediaPlayer.stop();
+            mMediaPlayer.pause();
             MediaSource mediaSource = new ExtractorMediaSource(
                     Uri.fromFile(mPlayingNow = mPlayingNowQueue.pop()),
                     mFileDataSourceFactory,
                     new DefaultExtractorsFactory(), null, null
             );
             mMediaPlayer.prepare(mediaSource);
+            logd("selectedFile: " + mPlayingNow);
         }
     }
 
@@ -153,7 +155,7 @@ public class Player extends FadeableObject {
 
     public void prepareDefault() {
         logd("Preparing default file " + DEFAULT_FILE);
-        mMediaPlayer.stop();
+        mMediaPlayer.pause();
         MediaSource mediaSource = new ExtractorMediaSource(
                 Uri.parse(DEFAULT_FILE),
                 mAssetDataSourceFactory,

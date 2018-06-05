@@ -15,6 +15,7 @@
 
 package org.gearvrf.videoplayer;
 
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -37,7 +38,6 @@ import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.component.video.player.DefaultPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
-import org.gearvrf.videoplayer.focus.PickEventHandler;
 import org.gearvrf.videoplayer.model.Video;
 
 import java.io.File;
@@ -184,6 +184,7 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
 
     @Override
     public void onVideosSelected(final List<Video> videoList) {
+        Log.d(TAG, "onVideosSelected: " + videoList);
         mGallery.fadeOut(new FadeableObject.FadeOutCallback() {
             @Override
             public void onFadeOut() {
