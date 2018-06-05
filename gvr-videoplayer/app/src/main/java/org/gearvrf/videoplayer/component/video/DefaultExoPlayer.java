@@ -14,7 +14,7 @@ public class DefaultExoPlayer implements GVRVideoSceneObjectPlayer<ExoPlayer> {
 
     private SimpleExoPlayer mSimpleExoPlayer;
 
-    DefaultExoPlayer(SimpleExoPlayer mSimpleExoPlayer) {
+    public DefaultExoPlayer(SimpleExoPlayer mSimpleExoPlayer) {
         this.mSimpleExoPlayer = mSimpleExoPlayer;
     }
 

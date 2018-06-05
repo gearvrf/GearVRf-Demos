@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer.component.video;
+package org.gearvrf.videoplayer.component.video.backbutton;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.LayoutRes;
@@ -11,9 +11,9 @@ import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
 @SuppressLint("InflateParams")
-public class VideoPlayerBackButton extends FocusableViewSceneObject {
+public class BackButton extends FocusableViewSceneObject {
 
-    VideoPlayerBackButton(GVRContext gvrContext, float width, float height) {
+    public BackButton(GVRContext gvrContext, float width, float height) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_button_back), width, height);
         setName("videoBackButton");
     }

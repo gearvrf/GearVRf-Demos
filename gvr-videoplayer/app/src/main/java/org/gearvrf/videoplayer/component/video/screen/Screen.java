@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.videoplayer.component.video;
+package org.gearvrf.videoplayer.component.video.screen;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
@@ -38,14 +38,15 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.videoplayer.component.FadeableObject;
+import org.gearvrf.videoplayer.component.video.DefaultExoPlayer;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class VideoPlayerScreen extends FadeableObject {
+public class Screen extends FadeableObject {
 
-    private static final String TAG = VideoPlayerScreen.class.getSimpleName();
+    private static final String TAG = Screen.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
@@ -55,12 +56,12 @@ public class VideoPlayerScreen extends FadeableObject {
     private DataSource.Factory mFileDataSourceFactory;
     private DataSource.Factory mAssetDataSourceFactory;
     private File mPlayingNow;
-    private OnVideoPlayerScreenListener mOnVideoPlayerListener;
+    private OnScreenListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
     private GVRVideoSceneObject mVideo;
 
-    VideoPlayerScreen(final GVRContext gvrContext, float width, float height) {
+    public Screen(final GVRContext gvrContext, float width, float height) {
         super(gvrContext);
 
         this.mGvrContext = gvrContext;
@@ -161,7 +162,7 @@ public class VideoPlayerScreen extends FadeableObject {
         mMediaPlayer.prepare(mediaSource);
     }
 
-    public void setOnVideoPlayerListener(OnVideoPlayerScreenListener listener) {
+    public void setOnVideoPlayerListener(OnScreenListener listener) {
         this.mOnVideoPlayerListener = listener;
     }
 

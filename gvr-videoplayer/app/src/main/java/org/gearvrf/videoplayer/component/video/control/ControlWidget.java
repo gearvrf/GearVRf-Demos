@@ -1,4 +1,4 @@
-package org.gearvrf.videoplayer.component.video;
+package org.gearvrf.videoplayer.component.video.control;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.DrawableRes;
@@ -18,18 +18,18 @@ import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
 @SuppressLint("InflateParams")
-public class VideoPlayerControlWidget extends FocusableViewSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class ControlWidget extends FocusableViewSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private View mMainView;
     private SeekBar mSeekBar;
     private LinearLayout mPlayPauseButton;
     private ImageView mPlayPauseButtonImage;
     private TextView mElapsedTime, mDurationTime, mTitle;
-    private OnVideoPlayerControlWidgetListener mOnVideoControllerListener;
+    private ControlWidgetListener mOnVideoControllerListener;
     @DrawableRes
     private int mStateResource;
 
-    VideoPlayerControlWidget(GVRContext gvrContext, float width, float height) {
+    public ControlWidget(GVRContext gvrContext, float width, float height) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_player_controller), width, height);
 
         mMainView = getRootView();
@@ -129,7 +129,7 @@ public class VideoPlayerControlWidget extends FocusableViewSceneObject implement
         });
     }
 
-    public void setOnVideoControllerListener(OnVideoPlayerControlWidgetListener listener) {
+    public void setOnVideoControllerListener(ControlWidgetListener listener) {
         this.mOnVideoControllerListener = listener;
     }
 
