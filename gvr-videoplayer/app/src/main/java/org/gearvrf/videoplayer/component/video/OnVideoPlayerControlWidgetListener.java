@@ -1,6 +1,6 @@
 package org.gearvrf.videoplayer.component.video;
 
-public interface OnVideoControllerListener {
+public interface OnVideoPlayerControlWidgetListener {
 
     void onPlay();
 

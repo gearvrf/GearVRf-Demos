@@ -32,8 +32,8 @@ import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
-import org.gearvrf.videoplayer.component.video.DefaultVideoPlayerListener;
-import org.gearvrf.videoplayer.component.video.OnVideoPlayerListener;
+import org.gearvrf.videoplayer.component.video.DefaultVideoPlayerScreenListener;
+import org.gearvrf.videoplayer.component.video.OnVideoPlayerScreenListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
@@ -144,9 +144,9 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
         }
     };
 
-    private OnVideoPlayerListener mOnVideoPlayerListener = new DefaultVideoPlayerListener() {
+    private OnVideoPlayerScreenListener mOnVideoPlayerListener = new DefaultVideoPlayerScreenListener() {
         @Override
-        public void onPrepare(String title, long duration) {
+        public void onPrepareFile(String title, long duration) {
             mVideoPlayer.show();
         }
     };

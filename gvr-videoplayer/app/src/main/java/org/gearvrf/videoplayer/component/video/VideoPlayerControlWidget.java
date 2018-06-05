@@ -25,7 +25,7 @@ public class VideoPlayerControlWidget extends FocusableViewSceneObject implement
     private LinearLayout mPlayPauseButton;
     private ImageView mPlayPauseButtonImage;
     private TextView mElapsedTime, mDurationTime, mTitle;
-    private OnVideoControllerListener mOnVideoControllerListener;
+    private OnVideoPlayerControlWidgetListener mOnVideoControllerListener;
     @DrawableRes
     private int mStateResource;
 
@@ -129,7 +129,7 @@ public class VideoPlayerControlWidget extends FocusableViewSceneObject implement
         });
     }
 
-    public void setOnVideoControllerListener(OnVideoControllerListener listener) {
+    public void setOnVideoControllerListener(OnVideoPlayerControlWidgetListener listener) {
         this.mOnVideoControllerListener = listener;
     }
 

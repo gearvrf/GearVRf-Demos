@@ -2,9 +2,9 @@ package org.gearvrf.videoplayer.component.video;
 
 import android.support.annotation.CallSuper;
 
-class VideoPlayerListenerDispatcher implements OnVideoPlayerListener {
+class VideoPlayerScreenListenerDispatcher implements OnVideoPlayerScreenListener {
 
-    private OnVideoPlayerListener mOnVideoPlayerListener;
+    private OnVideoPlayerScreenListener mOnVideoPlayerListener;
 
     @CallSuper
     @Override
@@ -16,9 +16,9 @@ class VideoPlayerListenerDispatcher implements OnVideoPlayerListener {
 
     @CallSuper
     @Override
-    public void onPrepare(String title, long duration) {
+    public void onPrepareFile(String title, long duration) {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onPrepare(title, duration);
+            mOnVideoPlayerListener.onPrepareFile(title, duration);
         }
     }
 
@@ -40,22 +40,22 @@ class VideoPlayerListenerDispatcher implements OnVideoPlayerListener {
 
     @CallSuper
     @Override
-    public void onEnd() {
+    public void onFileEnd() {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onEnd();
+            mOnVideoPlayerListener.onFileEnd();
         }
     }
 
     @CallSuper
     @Override
-    public void onAllEnd() {
+    public void onAllFilesEnd() {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onAllEnd(
+            mOnVideoPlayerListener.onAllFilesEnd(
             );
         }
     }
 
-    public void setOnVideoPlayerListener(OnVideoPlayerListener listener) {
+    public void setOnVideoPlayerListener(OnVideoPlayerScreenListener listener) {
         this.mOnVideoPlayerListener = listener;
     }
 }

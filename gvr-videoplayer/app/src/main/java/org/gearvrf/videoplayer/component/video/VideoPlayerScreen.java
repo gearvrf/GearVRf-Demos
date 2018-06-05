@@ -55,7 +55,7 @@ public class VideoPlayerScreen extends FadeableObject {
     private DataSource.Factory mFileDataSourceFactory;
     private DataSource.Factory mAssetDataSourceFactory;
     private File mPlayingNow;
-    private OnVideoPlayerListener mOnVideoPlayerListener;
+    private OnVideoPlayerScreenListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
     private GVRVideoSceneObject mVideo;
@@ -161,13 +161,13 @@ public class VideoPlayerScreen extends FadeableObject {
         mMediaPlayer.prepare(mediaSource);
     }
 
-    public void setOnVideoPlayerListener(OnVideoPlayerListener listener) {
+    public void setOnVideoPlayerListener(OnVideoPlayerScreenListener listener) {
         this.mOnVideoPlayerListener = listener;
     }
 
     private void notifyVideoPrepared(String title, long duration) {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onPrepare(title, duration);
+            mOnVideoPlayerListener.onPrepareFile(title, duration);
         }
     }
 
@@ -179,13 +179,13 @@ public class VideoPlayerScreen extends FadeableObject {
 
     private void notifyVideoEnded() {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onEnd();
+            mOnVideoPlayerListener.onFileEnd();
         }
     }
 
     private void notifyAllVideosEnded() {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onAllEnd();
+            mOnVideoPlayerListener.onAllFilesEnd();
         }
     }
 

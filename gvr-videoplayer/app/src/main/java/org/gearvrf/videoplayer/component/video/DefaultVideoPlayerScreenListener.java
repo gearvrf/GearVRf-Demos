@@ -1,13 +1,13 @@
 package org.gearvrf.videoplayer.component.video;
 
-public class DefaultVideoPlayerListener implements OnVideoPlayerListener {
+public class DefaultVideoPlayerScreenListener implements OnVideoPlayerScreenListener {
 
     @Override
     public void onProgress(long progress) {
     }
 
     @Override
-    public void onPrepare(String title, long duration) {
+    public void onPrepareFile(String title, long duration) {
     }
 
     @Override
@@ -19,10 +19,10 @@ public class DefaultVideoPlayerListener implements OnVideoPlayerListener {
     }
 
     @Override
-    public void onEnd() {
+    public void onFileEnd() {
     }
 
     @Override
-    public void onAllEnd() {
+    public void onAllFilesEnd() {
     }
 }
