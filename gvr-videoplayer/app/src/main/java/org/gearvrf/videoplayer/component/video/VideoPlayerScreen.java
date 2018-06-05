@@ -43,9 +43,9 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-public class VideoComponent extends FadeableObject {
+public class VideoPlayerScreen extends FadeableObject {
 
-    private static final String TAG = VideoComponent.class.getSimpleName();
+    private static final String TAG = VideoPlayerScreen.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
 
     private GVRContext mGvrContext;
@@ -60,7 +60,7 @@ public class VideoComponent extends FadeableObject {
     private boolean mIsPlaying;
     private GVRVideoSceneObject mVideo;
 
-    VideoComponent(final GVRContext gvrContext, float width, float height) {
+    VideoPlayerScreen(final GVRContext gvrContext, float width, float height) {
         super(gvrContext);
 
         this.mGvrContext = gvrContext;

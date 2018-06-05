@@ -20,9 +20,9 @@ public class VideoPlayer extends GVRSceneObject {
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_HEIGHT_FACTOR = .1f;
 
-    private VideoComponent mVideoComponent;
-    private VideoControllerComponent mVideoControllerComponent;
-    private BackButtonComponent mBackButtonComponent;
+    private VideoPlayerScreen mVideoComponent;
+    private VideoPlayerControlWidget mVideoControllerComponent;
+    private VideoPlayerBackButton mBackButtonComponent;
     private boolean mIsControllerActive = true;
     private boolean mAutoHideControllerEnabled;
     private WidgetAutoHideTimer mWidgetAutoHideTimer;
@@ -96,14 +96,14 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void addVideoComponent(float width, float height) {
-        mVideoComponent = new VideoComponent(getGVRContext(), width, height);
+        mVideoComponent = new VideoPlayerScreen(getGVRContext(), width, height);
         mVideoComponent.setOnVideoPlayerListener(mInternalVideoPlayerListener);
         addChildObject(mVideoComponent);
     }
 
     private void addVideoControllerComponent(float width, float height) {
 
-        mVideoControllerComponent = new VideoControllerComponent(getGVRContext(), width, height);
+        mVideoControllerComponent = new VideoPlayerControlWidget(getGVRContext(), width, height);
         mVideoControllerComponent.setOnVideoControllerListener(mOnVideoControllerListener);
         mVideoControllerComponent.setFocusListener(mFocusListener);
 
@@ -118,7 +118,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void addBackButtonComponent(float width, float height) {
 
-        mBackButtonComponent = new BackButtonComponent(getGVRContext(), width, height);
+        mBackButtonComponent = new VideoPlayerBackButton(getGVRContext(), width, height);
         mBackButtonComponent.setFocusListener(mFocusListener);
 
         // Put back button above the video screen

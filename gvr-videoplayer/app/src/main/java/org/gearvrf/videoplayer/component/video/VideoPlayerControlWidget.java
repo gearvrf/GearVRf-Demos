@@ -18,7 +18,7 @@ import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
 @SuppressLint("InflateParams")
-public class VideoControllerComponent extends FocusableViewSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+public class VideoPlayerControlWidget extends FocusableViewSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
     private View mMainView;
     private SeekBar mSeekBar;
@@ -29,7 +29,7 @@ public class VideoControllerComponent extends FocusableViewSceneObject implement
     @DrawableRes
     private int mStateResource;
 
-    VideoControllerComponent(GVRContext gvrContext, float width, float height) {
+    VideoPlayerControlWidget(GVRContext gvrContext, float width, float height) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_player_controller), width, height);
 
         mMainView = getRootView();

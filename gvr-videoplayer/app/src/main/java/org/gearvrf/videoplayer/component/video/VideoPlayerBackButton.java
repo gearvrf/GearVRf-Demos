@@ -11,9 +11,9 @@ import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
 @SuppressLint("InflateParams")
-public class BackButtonComponent extends FocusableViewSceneObject {
+public class VideoPlayerBackButton extends FocusableViewSceneObject {
 
-    BackButtonComponent(GVRContext gvrContext, float width, float height) {
+    VideoPlayerBackButton(GVRContext gvrContext, float width, float height) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_button_back), width, height);
         setName("videoBackButton");
     }
