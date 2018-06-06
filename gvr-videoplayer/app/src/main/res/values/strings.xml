@@ -4,5 +4,5 @@
     <string name="common_text_settings">Settings</string>
     <string name="common_text_cancel">Cancel</string>
     <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum interdum mi massa, eget vehicula libero rutrum ut. Suspendisse ultricies auctor augue quis rutrum. Donec malesuada a arcu eget rhoncus. Nam dictum quam vitae ipsum pellentesque varius. Sed lacinia tincidunt augue, sed imperdiet est ultricies vitae. Donec ipsum orci, vulputate et elit tempus, faucibus fermentum tortor. Aenean eu felis suscipit, egestas lorem id, faucibus enim. Nullam nibh nisi, maximus in orci ut, mollis convallis magna. Nam pellentesque nunc ac diam blandit, vitae mattis turpis elementum. Aenean dictum sem eget felis rhoncus ultricies at vitae orci. Ut molestie nulla dapibus leo scelerisque, pulvinar auctor ex ornare. In hac habitasse platea dictumst. Nunc vel laoreet leo. Donec felis erat, vulputate a justo non, blandit gravida nibh. Pellentesque rhoncus nunc id diam commodo mollis aliquam eu orci</string>
-    <string name="play_next_in">Next in:\u0020</string>
+    <string name="play_next_in">Next in\ </string>
 </resources>

@@ -27,6 +27,8 @@ import org.gearvrf.videoplayer.manager.permission.PermissionManager;
 
 public class VideoPlayerActivity extends GVRActivity {
 
+    private VideoPlayerMain mMain;
+
     /**
      * Called when the activity is first created.
      */
@@ -76,6 +78,22 @@ public class VideoPlayerActivity extends GVRActivity {
     }
 
     private void showMainGVRF() {
-        setMain(new VideoPlayerMain(), "gvr.xml");
+        setMain(mMain = new VideoPlayerMain(), "gvr.xml");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mMain != null) {
+            mMain.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mMain != null) {
+            mMain.onPause();
+        }
     }
 }

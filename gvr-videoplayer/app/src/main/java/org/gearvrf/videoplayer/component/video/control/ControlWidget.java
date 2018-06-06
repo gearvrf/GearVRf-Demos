@@ -22,7 +22,6 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
 
     private View mMainView;
     private SeekBar mSeekBar;
-    private LinearLayout mPlayPauseButton;
     private ImageView mPlayPauseButtonImage;
     private TextView mElapsedTime, mDurationTime, mTitle;
     private ControlWidgetListener mOnVideoControllerListener;
@@ -49,13 +48,13 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
     private void initView() {
 
         mSeekBar = mMainView.findViewById(R.id.progressBar);
-        mPlayPauseButton = mMainView.findViewById(R.id.playPauseButton);
-        mPlayPauseButtonImage = mPlayPauseButton.findViewById(R.id.image);
+        LinearLayout playPauseButton = mMainView.findViewById(R.id.playPauseButton);
+        mPlayPauseButtonImage = playPauseButton.findViewById(R.id.image);
         mElapsedTime = mMainView.findViewById(R.id.elapsedTimeText);
         mDurationTime = mMainView.findViewById(R.id.durationTimeText);
         mTitle = mMainView.findViewById(R.id.titleText);
 
-        mPlayPauseButton.setOnClickListener(this);
+        playPauseButton.setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
 
         showPlay();
@@ -115,15 +114,6 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
             public void run() {
                 mSeekBar.setMax(maxProgress);
                 updateDurationTimeText(maxProgress);
-            }
-        });
-    }
-
-    public void setPlayPauseButtonEnabled(final boolean enabled) {
-        mPlayPauseButton.post(new Runnable() {
-            @Override
-            public void run() {
-                mPlayPauseButton.setEnabled(enabled);
             }
         });
     }

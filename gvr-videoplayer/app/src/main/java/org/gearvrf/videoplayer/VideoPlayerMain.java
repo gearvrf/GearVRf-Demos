@@ -183,4 +183,16 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
             }
         });
     }
+
+    public void onResume() {
+        if (mVideoPlayer != null) {
+            mVideoPlayer.play();
+        }
+    }
+
+    public void onPause() {
+        if (mVideoPlayer != null) {
+            mVideoPlayer.pause();
+        }
+    }
 }

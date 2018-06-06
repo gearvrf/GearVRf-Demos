@@ -6,15 +6,22 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableViewObject;
+import org.gearvrf.videoplayer.model.Video;
+import org.gearvrf.videoplayer.provider.asyntask.ThumbnailLoader;
+import org.gearvrf.videoplayer.util.TimeUtils;
 
 public class PlayNextDialog extends FadeableViewObject {
 
+    private TextView mTitle;
+    private TextView mDuration;
+    private ImageView mThumbnail;
     private TextView mTime;
     private CountdownTimer mCountdownTimer;
     private OnPlayNextListener mOnPlayNextListener;
@@ -34,12 +41,14 @@ public class PlayNextDialog extends FadeableViewObject {
     protected void onInitView() {
         super.onInitView();
         View mainView = getRootView();
+        mTitle = mainView.findViewById(R.id.title);
+        mDuration = mainView.findViewById(R.id.duration);
+        mThumbnail = mainView.findViewById(R.id.thumbnail);
         mTime = mainView.findViewById(R.id.time);
     }
 
     private void setTime(final int time) {
-        View mainView = getRootView();
-        mainView.post(new Runnable() {
+        getRootView().post(new Runnable() {
             @Override
             public void run() {
                 mTime.setText(String.valueOf(time));
@@ -47,7 +56,7 @@ public class PlayNextDialog extends FadeableViewObject {
         });
     }
 
-    private void notifyTimesUp() {
+    private void showTime() {
         mOnPlayNextListener.onTimesUp();
     }
 
@@ -57,6 +66,17 @@ public class PlayNextDialog extends FadeableViewObject {
 
     public void cancelTimer() {
         mCountdownTimer.cancel();
+    }
+
+    public void setVideoData(final Video video) {
+        getRootView().post(new Runnable() {
+            @Override
+            public void run() {
+                mTitle.setText(video.getTitle());
+                mDuration.setText(TimeUtils.formatDurationFull(video.getDuration()));
+                new ThumbnailLoader(mThumbnail).execute(video.getId());
+            }
+        });
     }
 
     @NonNull
@@ -79,7 +99,8 @@ public class PlayNextDialog extends FadeableViewObject {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (count < 0) {
-                mPlayNextDialog.notifyTimesUp();
+                mPlayNextDialog.showTime();
+                reset();
             } else {
                 tick();
             }
@@ -97,12 +118,12 @@ public class PlayNextDialog extends FadeableViewObject {
         }
 
         void cancel() {
-            removeMessages(0);
-            count = MAX_COUNT;
+            reset();
         }
 
         private void reset() {
-            cancel();
+            removeMessages(0);
+            count = MAX_COUNT;
         }
     }
 }

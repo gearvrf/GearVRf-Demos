@@ -27,7 +27,6 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.upstream.AssetDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 
@@ -53,7 +52,6 @@ public class Player extends FadeableObject {
     private File[] mFiles;
     private LinkedList<File> mPlayingNowQueue;
     private DataSource.Factory mFileDataSourceFactory;
-    private DataSource.Factory mAssetDataSourceFactory;
     private File mPlayingNow;
     private OnPlayerListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
@@ -69,13 +67,6 @@ public class Player extends FadeableObject {
             @Override
             public DataSource createDataSource() {
                 return new FileDataSource();
-            }
-        };
-
-        this.mAssetDataSourceFactory = new DataSource.Factory() {
-            @Override
-            public DataSource createDataSource() {
-                return new AssetDataSource(gvrContext.getContext());
             }
         };
 
@@ -98,6 +89,11 @@ public class Player extends FadeableObject {
     public void pauseVideo() {
         mMediaPlayer.pause();
         logd("Video paused");
+    }
+
+    public void stop() {
+        mMediaPlayer.stop();
+        logd("Video stopped");
     }
 
     public boolean isPlaying() {
@@ -161,16 +157,6 @@ public class Player extends FadeableObject {
         return mPlayingNowQueue != null && mPlayingNowQueue.size() > 0
                 ? mFiles.length - mPlayingNowQueue.size()
                 : 0;
-    }
-
-    public void prepareDefault() {
-        logd("Preparing default file " + DEFAULT_FILE);
-        mMediaPlayer.pause();
-        MediaSource mediaSource = new ExtractorMediaSource(
-                Uri.parse(DEFAULT_FILE),
-                mAssetDataSourceFactory,
-                new DefaultExtractorsFactory(), null, null);
-        mMediaPlayer.prepare(mediaSource);
     }
 
     public void setOnVideoPlayerListener(OnPlayerListener listener) {
@@ -259,8 +245,10 @@ public class Player extends FadeableObject {
                     notifyVideoStarted();
                     mProgressHandler.start();
                 } else {
-                    logd("Video prepared: " + getPlayingNowName());
-                    notifyVideoPrepared(getPlayingNowName(), mMediaPlayer.getDuration());
+                    if (mMediaPlayer.getCurrentPosition() == 0) {
+                        logd("Video prepared: " + getPlayingNowName());
+                        notifyVideoPrepared(getPlayingNowName(), mMediaPlayer.getDuration());
+                    }
                 }
 
             } else if (playbackState == com.google.android.exoplayer2.Player.STATE_ENDED) {
@@ -276,15 +264,6 @@ public class Player extends FadeableObject {
 
                 // Goes to IDLE state
                 mMediaPlayer.stop();
-
-                if (mPlayingNowQueue == null) {
-                    // Reset default
-                    prepareDefault();
-                }
-
-            } else if (playbackState == com.google.android.exoplayer2.Player.STATE_IDLE) {
-
-                // prepareNextFile();
 
             } else if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
 

@@ -83,8 +83,6 @@ public class VideoPlayer extends GVRSceneObject {
         }
         if (videos.size() > 0) {
             mPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
-        } else {
-            mPlayer.prepareDefault(); // from assets folder
         }
     }
 
@@ -186,7 +184,7 @@ public class VideoPlayer extends GVRSceneObject {
         mInternalVideoPlayerListener.setOnVideoPlayerListener(listener);
     }
 
-    public void setBackButtonClickListener(View.OnClickListener listener) {
+    public void setBackButtonClickListener(@NonNull View.OnClickListener listener) {
         mBackButton.setOnClickListener(listener);
     }
 
@@ -194,6 +192,7 @@ public class VideoPlayer extends GVRSceneObject {
         mPlayer.fadeOut();
         hideController();
         addChildObject(mPlayNextDialog);
+        mPlayNextDialog.setVideoData(mVideos.get(mPlayer.getNextIndexToPlay()));
         mPlayNextDialog.fadeIn(new FadeableViewObject.FadeInCallback() {
             @Override
             public void onFadeIn() {
@@ -210,6 +209,16 @@ public class VideoPlayer extends GVRSceneObject {
                 removeChildObject(mPlayNextDialog);
             }
         });
+    }
+
+    public void play() {
+        mWidgetAutoHideTimer.start();
+        mPlayer.playVideo();
+    }
+
+    public void pause() {
+        mWidgetAutoHideTimer.cancel();
+        mPlayer.pauseVideo();
     }
 
     private FocusListener<FocusableViewSceneObject> mFocusListener = new FocusListener<FocusableViewSceneObject>() {
@@ -240,7 +249,6 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onPrepareFile(String title, long duration) {
             Log.d(TAG, "Video prepared: {title: " + title + ", duration: " + duration + "}");
-            mControl.setPlayPauseButtonEnabled(true);
             mControl.setTitle(title);
             mControl.setMaxProgress((int) duration);
             mControl.setProgress((int) mPlayer.getProgress());
@@ -260,7 +268,6 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onStart() {
             Log.d(TAG, "Video started");
-            mControl.setPlayPauseButtonEnabled(true);
             mControl.showPause();
             showController();
             super.onStart();
@@ -269,7 +276,6 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
-            mControl.setPlayPauseButtonEnabled(false);
             super.onLoading();
         }
 
@@ -284,16 +290,8 @@ public class VideoPlayer extends GVRSceneObject {
 
         @Override
         public void onAllFilesEnd() {
-            Log.d(TAG, "All videos ended");
             super.onAllFilesEnd();
-            final View view = mBackButton.getRootView();
-            // Force back to gallery
-            view.post(new Runnable() {
-                @Override
-                public void run() {
-                    view.performClick();
-                }
-            });
+            Log.d(TAG, "All videos ended");
         }
     };
 
@@ -369,7 +367,7 @@ public class VideoPlayer extends GVRSceneObject {
     public void hide(FadeableObject.FadeOutCallback fadeOutCallback) {
         if (mPlayerActive) {
             mWidgetAutoHideTimer.cancel();
-            mPlayer.pauseVideo();
+            mPlayer.stop();
             mPlayer.fadeOut(fadeOutCallback);
             hideController();
             hidePlayNextDialog();
