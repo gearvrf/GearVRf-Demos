@@ -85,7 +85,7 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
     private void createVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
         mVideoPlayer.getTransform().setPositionZ(-8.1f);
-        mVideoPlayer.setAutoHideControllerEnabled(true);
+        mVideoPlayer.setControlWidgetAutoHide(true);
         mVideoPlayer.setPlayerListener(mOnPlayerListener);
         mVideoPlayer.setBackButtonClickListener(mBackButtonClickListener);
         mMainSceneContainer.addChildObject(mVideoPlayer);
