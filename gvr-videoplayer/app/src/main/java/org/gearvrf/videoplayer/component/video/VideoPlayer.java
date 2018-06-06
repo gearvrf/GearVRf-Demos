@@ -292,6 +292,14 @@ public class VideoPlayer extends GVRSceneObject {
         public void onAllFilesEnd() {
             super.onAllFilesEnd();
             Log.d(TAG, "All videos ended");
+            final View view = mBackButton.getRootView();
+            // Force back to gallery
+            view.post(new Runnable() {
+                @Override
+                public void run() {
+                    view.performClick();
+                }
+            });
         }
     };
 
