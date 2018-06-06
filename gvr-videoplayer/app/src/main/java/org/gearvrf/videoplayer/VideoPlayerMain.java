@@ -15,7 +15,6 @@
 
 package org.gearvrf.videoplayer;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -30,7 +29,10 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+
+import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.FadeableObject;
+
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
@@ -46,14 +48,17 @@ import java.util.List;
 public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEventListener {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
-    private static float CURSOR_DEPTH = -8.0f;
+    private static float CURSOR_DEPTH = -10.0f;
     private static final float SCALE = 200.0f;
+    private static float CURSOR_HIGH_OPACITY = 1.0f;
+    private static float CURSOR_LOW_OPACITY = 0.0f;
 
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
-    private GVRSceneObject mMainSceneContainer;
+
+    private GVRSceneObject mMainSceneContainer, highlightCursor, cursor ;
 
     private Gallery mGallery;
 
@@ -66,6 +71,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
 
+
         mMainSceneContainer = new GVRSceneObject(getGVRContext());
         mScene.addSceneObject(mMainSceneContainer);
 
@@ -73,7 +79,8 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         initCursorController();
         createGallery();
         createVideoPlayer();
-    }
+
+        }
 
     private void createGallery() {
         mGallery = new Gallery(getGVRContext());
@@ -104,10 +111,8 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mScene.addSceneObject(sphere);
     }
 
-    private void initCursorController() {
-
+   private void initCursorController() {
         mScene.getEventReceiver().addListener(mTouchHandler);
-
         GVRInputManager inputManager = mContext.getInputManager();
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
@@ -123,16 +128,30 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         });
     }
 
+    @Override
+    public void onStep() {
+        super.onStep();
+        hideCursor();
+    }
+
     private GVRSceneObject createCursor() {
-        GVRSceneObject cursor = new GVRSceneObject(
+         highlightCursor = new GVRSceneObject(mContext,
+                mContext.createQuad(0.2f * CURSOR_DEPTH, 0.2f * CURSOR_DEPTH),
+                mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
+                        R.raw.cursor_hover)));
+        highlightCursor.getRenderData().setDepthTest(false);
+        highlightCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        getGVRContext().getMainScene().getMainCameraRig().addChildObject(highlightCursor);
+        cursor = new GVRSceneObject(
                 mContext,
                 mContext.createQuad(0.2f * CURSOR_DEPTH, 0.2f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
         );
         cursor.getRenderData().setDepthTest(false);
         cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-        return cursor;
-    }
+        highlightCursor.addChildObject(cursor);
+        return highlightCursor;
+   }
 
     private ITouchEvents mTouchHandler = new DefaultTouchEvent() {
         @Override
@@ -142,7 +161,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
 
         @Override
         public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
             mVideoPlayer.showAllControls();
+
         }
     };
 
@@ -168,6 +189,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
                     mGallery.fadeIn();
                 }
             });
+
         }
     };
 
@@ -180,6 +202,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         if (mMainSceneContainer != null) {
             mMainSceneContainer.getTransform().setRotation(rotationW, rotationX, rotationY, rotationZ);
         }
+
     }
 
     @Override
@@ -198,11 +221,41 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         if (mVideoPlayer != null) {
             mVideoPlayer.play();
         }
+
+        //  mVideoPlayer.showController();
+    }
+
+    private void hideCursor(){
+        final float axisXGallery = mMainSceneContainer.getTransform().getRotationPitch();
+        final float axisX =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationPitch();
+        final float axisYGallery = mMainSceneContainer.getTransform().getRotationYaw();
+        final float axisY =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationYaw();
+        final float operacaoX = Math.abs(axisX) - Math.abs(axisXGallery) ;
+        final float operacaoY = Math.abs(axisY) - Math.abs(axisYGallery) ;
+
+        if ((operacaoX > 45) || (operacaoX < - 35) ||  (operacaoY > 45) || (operacaoY < -35 ) ){
+            enableInteractiveCursor();
+        }else{
+            disableInteractiveCursor();
+        }
+
+            Log.d(TAG,"operacao Y : "+ operacaoY + " Operacao X :" + operacaoX);
+
     }
 
     public void onPause() {
         if (mVideoPlayer != null) {
             mVideoPlayer.pause();
         }
+    }
+
+    public void enableInteractiveCursor() {
+        highlightCursor.getRenderData().getMaterial().setOpacity(CURSOR_HIGH_OPACITY);
+        cursor.getRenderData().getMaterial().setOpacity(CURSOR_LOW_OPACITY);
+    }
+
+    public void disableInteractiveCursor() {
+        highlightCursor.getRenderData().getMaterial().setOpacity(CURSOR_LOW_OPACITY);
+        cursor.getRenderData().getMaterial().setOpacity(CURSOR_HIGH_OPACITY);
     }
 }

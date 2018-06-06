@@ -32,6 +32,7 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
 
+
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
         super(gvrContext);
@@ -101,7 +102,6 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
                 Log.d(TAG, "Unknown type: " + media.getType());
         }
     }
-
     public void setOnGalleryEventListener(OnGalleryEventListener listener) {
         this.mOnGalleryEventListener = listener;
     }

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="284px"
+    android:layout_height="28px">
+
+
+    <TextView
+        android:id="@+id/buttonReposition"
+        android:fontFamily="sans-serif-medium"
+        android:text="TAP TO REPOSITION VIEW"
+        android:textColor="#eeeeee"
+        android:textSize="24px"
+        android:layout_gravity="left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>
