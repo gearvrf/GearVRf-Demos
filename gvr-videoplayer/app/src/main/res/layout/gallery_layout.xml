@@ -23,16 +23,23 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="@dimen/grid_height"
         android:layout_marginTop="37px"
         android:overScrollMode="never"
-        android:paddingEnd="16.5px"
+        android:paddingEnd="17px"
         android:paddingStart="0px"
         android:scrollbarStyle="outsideInset"
-        android:scrollbarThumbVertical="@drawable/scroollbar"
-        android:scrollbars="vertical" />
+        android:scrollbarThumbVertical="@drawable/bg_media_container_scrollbar"
+        android:scrollbars="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </ScrollView>
+
 </LinearLayout>
 
