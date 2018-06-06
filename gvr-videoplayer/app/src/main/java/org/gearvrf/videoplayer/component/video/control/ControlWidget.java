@@ -62,12 +62,22 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
 
     public void showPause() {
         mStateResource = R.drawable.ic_pause;
-        mPlayPauseButtonImage.setImageResource(mStateResource);
+        mPlayPauseButtonImage.post(new Runnable() {
+            @Override
+            public void run() {
+                mPlayPauseButtonImage.setImageResource(mStateResource);
+            }
+        });
     }
 
     public void showPlay() {
         mStateResource = R.drawable.ic_play;
-        mPlayPauseButtonImage.setImageResource(mStateResource);
+        mPlayPauseButtonImage.post(new Runnable() {
+            @Override
+            public void run() {
+                mPlayPauseButtonImage.setImageResource(mStateResource);
+            }
+        });
     }
 
     public void setTitle(final CharSequence title) {
