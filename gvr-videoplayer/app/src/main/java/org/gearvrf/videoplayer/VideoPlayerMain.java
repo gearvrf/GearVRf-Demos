@@ -137,14 +137,19 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
 
         @Override
         public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-            mVideoPlayer.showController();
+            mVideoPlayer.showAllControls();
         }
     };
 
     private OnPlayerListener mOnPlayerListener = new DefaultPlayerListener() {
         @Override
         public void onPrepareFile(String title, long duration) {
-            mVideoPlayer.show();
+            mVideoPlayer.show(new FadeableObject.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mVideoPlayer.play();
+                }
+            });
         }
     };
 

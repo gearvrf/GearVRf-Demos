@@ -44,17 +44,18 @@ public class VideoPlayer extends GVRSceneObject {
     private BackButton mBackButton;
     private PlayNextDialog mPlayNextDialog;
 
-    private boolean mPlayerActive = true;
+    private boolean mVideoPlayerActive = true;
     private boolean mIsControlActive = true;
-    private boolean mIsPlayNextDialogActive;
-    private boolean mAutoHideControllerEnabled;
-    private WidgetAutoHideTimer mControlTimer;
+    private boolean mBackButtonActive = true;
+    private boolean mIsPlayNextDialogActive = true;
+    private boolean mHideControlWidgetTimerEnabled;
+    private HideControlWidgetTimer mHideControlTimer;
     private List<Video> mVideos;
 
     public VideoPlayer(GVRContext gvrContext, float playerWidth, float playerHeight) {
         super(gvrContext);
 
-        mControlTimer = new WidgetAutoHideTimer(this);
+        mHideControlTimer = new HideControlWidgetTimer(this);
 
         GVRInputManager inputManager = gvrContext.getInputManager();
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
@@ -87,83 +88,115 @@ public class VideoPlayer extends GVRSceneObject {
         }
     }
 
-    public void showController() {
-        if (mPlayerActive) {
-            showController(mAutoHideControllerEnabled);
-        }
+    private void showControlWidget() {
+        showControlWidget(mHideControlWidgetTimerEnabled);
+
     }
 
-    private void showController(boolean autoHide) {
-        Log.d(TAG, "showController: ");
-        if (!mIsControlActive && !mIsPlayNextDialogActive) {
+    private void showControlWidget(boolean autoHide) {
+        Log.d(TAG, "showControlWidget: ");
+        if (!mIsControlActive) {
             addChildObject(mControl);
-            addChildObject(mBackButton);
             mControl.fadeIn(new FadeableViewObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
                     mIsControlActive = true;
                 }
             });
-            mBackButton.fadeIn();
         }
         if (autoHide) {
-            mControlTimer.start();
+            mHideControlTimer.start();
         }
     }
 
-    public void hideController() {
-        Log.d(TAG, "hideController: ");
-        if (mPlayerActive && mIsControlActive) {
+    private void hideControlWidget() {
+        Log.d(TAG, "hideControlWidget: ");
+        mHideControlTimer.cancel();
+        if (mIsControlActive) {
             mIsControlActive = false;
-            mControlTimer.cancel();
             mControl.fadeOut(new FadeableViewObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
                     removeChildObject(mControl);
                 }
             });
-            if (!mIsPlayNextDialogActive) {
-                mBackButton.fadeOut(new FadeableViewObject.FadeOutCallback() {
-                    @Override
-                    public void onFadeOut() {
-                        removeChildObject(mBackButton);
-                    }
-                });
-            }
+        }
+    }
+
+    private void showBackButton() {
+        if (!mBackButtonActive) {
+            addChildObject(mBackButton);
+            mBackButton.fadeIn(new FadeableViewObject.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    Log.d(TAG, "showBackButton");
+                    mBackButtonActive = true;
+                }
+            });
+        }
+    }
+
+    private void hideBackButton() {
+        if (mBackButtonActive) {
+            mBackButton.fadeOut(new FadeableViewObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    mBackButtonActive = false;
+                    removeChildObject(mBackButton);
+                }
+            });
         }
     }
 
     private void showPlayNextDialog() {
-        mIsPlayNextDialogActive = true;
-        mPlayer.fadeOut();
-        hideController();
-        addChildObject(mPlayNextDialog);
-        mPlayNextDialog.setVideoData(mVideos.get(mPlayer.getNextIndexToPlay()));
-        mPlayNextDialog.fadeIn(new FadeableViewObject.FadeInCallback() {
-            @Override
-            public void onFadeIn() {
-                mPlayNextDialog.startTimer();
-            }
-        });
-        addChildObject(mBackButton);
-        mBackButton.fadeIn();
+        if (mVideoPlayerActive && !mIsPlayNextDialogActive) {
+            mHideControlTimer.cancel();
+            mPlayNextDialog.setVideoData(mVideos.get(mPlayer.getNextIndexToPlay()));
+            addChildObject(mPlayNextDialog);
+            mPlayNextDialog.fadeIn(new FadeableViewObject.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mIsPlayNextDialogActive = true;
+                    showBackButton();
+                    mPlayNextDialog.startTimer();
+                }
+            });
+        }
     }
 
     private void hidePlayNextDialog() {
-        mIsPlayNextDialogActive = false;
-        mPlayNextDialog.cancelTimer();
-        mPlayNextDialog.fadeOut(new FadeableViewObject.FadeOutCallback() {
-            @Override
-            public void onFadeOut() {
-                removeChildObject(mPlayNextDialog);
+        if (mIsPlayNextDialogActive) {
+            mPlayNextDialog.cancelTimer();
+            mPlayNextDialog.fadeOut(new FadeableViewObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    mIsPlayNextDialogActive = false;
+                    removeChildObject(mPlayNextDialog);
+                }
+            });
+        }
+    }
+
+    public void showAllControls() {
+        if (mVideoPlayerActive) {
+            if (!mIsPlayNextDialogActive) {
+                showControlWidget();
             }
-        });
+            showBackButton();
+        }
+    }
+
+    private void hideAllControls() {
+        if (!mIsPlayNextDialogActive) {
+            hideBackButton();
+        }
+        hideControlWidget();
     }
 
     public void setControlWidgetAutoHide(boolean autoHide) {
-        mAutoHideControllerEnabled = autoHide;
+        mHideControlWidgetTimerEnabled = autoHide;
         if (autoHide) {
-            mControlTimer.start();
+            mHideControlTimer.start();
         }
     }
 
@@ -219,12 +252,12 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public void play() {
-        mControlTimer.start();
+        mHideControlTimer.start();
         mPlayer.playVideo();
     }
 
     public void pause() {
-        mControlTimer.cancel();
+        mHideControlTimer.cancel();
         mPlayer.pauseVideo();
     }
 
@@ -233,7 +266,7 @@ public class VideoPlayer extends GVRSceneObject {
         public void onFocusGained(FocusableViewSceneObject focusable) {
             Log.d(TAG, "onFocusGained: " + focusable.getClass().getSimpleName());
             if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
-                mControlTimer.cancel();
+                mHideControlTimer.cancel();
             }
         }
 
@@ -241,7 +274,7 @@ public class VideoPlayer extends GVRSceneObject {
         public void onFocusLost(FocusableViewSceneObject focusable) {
             if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
                 Log.d(TAG, "onFocusLost: " + focusable.getClass().getSimpleName());
-                mControlTimer.start();
+                mHideControlTimer.start();
             }
         }
     };
@@ -256,18 +289,21 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onPrepareFile(String title, long duration) {
             Log.d(TAG, "Video prepared: {title: " + title + ", duration: " + duration + "}");
+
             mControl.setTitle(title);
             mControl.setMaxProgress((int) duration);
             mControl.setProgress((int) mPlayer.getProgress());
             mControl.showPlay();
 
-            mPlayer.fadeIn();
-            mControl.fadeIn(new FadeableViewObject.FadeInCallback() {
-                @Override
-                public void onFadeIn() {
-                    mPlayer.playVideo();
-                }
-            });
+            if (mVideoPlayerActive) {
+                mPlayer.fadeIn(new FadeableObject.FadeInCallback() {
+                    @Override
+                    public void onFadeIn() {
+                        showAllControls();
+                        mPlayer.playVideo();
+                    }
+                });
+            }
 
             super.onPrepareFile(title, duration);
         }
@@ -276,7 +312,7 @@ public class VideoPlayer extends GVRSceneObject {
         public void onStart() {
             Log.d(TAG, "Video started");
             mControl.showPause();
-            showController();
+            showAllControls();
             super.onStart();
         }
 
@@ -290,6 +326,8 @@ public class VideoPlayer extends GVRSceneObject {
         public void onFileEnd() {
             Log.d(TAG, "Video ended");
             if (mPlayer.hasNextToPlay()) {
+                mPlayer.fadeOut();
+                hideControlWidget();
                 showPlayNextDialog();
             }
             super.onFileEnd();
@@ -343,18 +381,18 @@ public class VideoPlayer extends GVRSceneObject {
         }
     };
 
-    private static class WidgetAutoHideTimer extends Handler {
+    private static class HideControlWidgetTimer extends Handler {
 
         private VideoPlayer mVideoPlayer;
 
-        WidgetAutoHideTimer(VideoPlayer videoPlayer) {
+        HideControlWidgetTimer(VideoPlayer videoPlayer) {
             mVideoPlayer = videoPlayer;
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            mVideoPlayer.hideController();
+            mVideoPlayer.hideAllControls();
         }
 
         void start() {
@@ -367,11 +405,18 @@ public class VideoPlayer extends GVRSceneObject {
         }
     }
 
-    public void show() {
-        if (!mPlayerActive) {
-            mPlayer.fadeIn();
-            mPlayerActive = true;
-            showController();
+    public void show(final FadeableObject.FadeInCallback fadeInCallback) {
+        if (!mVideoPlayerActive) {
+            mPlayer.fadeIn(new FadeableObject.FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    mVideoPlayerActive = true;
+                    showAllControls();
+                    if (fadeInCallback != null) {
+                        fadeInCallback.onFadeIn();
+                    }
+                }
+            });
         }
     }
 
@@ -379,14 +424,20 @@ public class VideoPlayer extends GVRSceneObject {
         hide(null);
     }
 
-    public void hide(FadeableObject.FadeOutCallback fadeOutCallback) {
-        if (mPlayerActive) {
-            mControlTimer.cancel();
-            mPlayer.stop();
-            mPlayer.fadeOut(fadeOutCallback);
-            hideController();
+    public void hide(final FadeableObject.FadeOutCallback fadeOutCallback) {
+        if (mVideoPlayerActive) {
+            hideAllControls();
             hidePlayNextDialog();
-            mPlayerActive = false;
+            mPlayer.stop();
+            mPlayer.fadeOut(new FadeableObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    mVideoPlayerActive = false;
+                    if (fadeOutCallback != null) {
+                        fadeOutCallback.onFadeOut();
+                    }
+                }
+            });
         }
     }
 }
