@@ -8,7 +8,7 @@
 
     <ImageView
         android:layout_width="447px"
-        android:layout_height="44dp"
+        android:layout_height="44px"
         android:layout_gravity="center"
         android:layout_marginBottom="41px"
         android:src="@drawable/ic_app_name_highlight" />
