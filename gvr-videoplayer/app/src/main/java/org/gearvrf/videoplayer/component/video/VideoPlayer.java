@@ -145,6 +145,8 @@ public class VideoPlayer extends GVRSceneObject {
                 mPlayNextDialog.startTimer();
             }
         });
+        addChildObject(mBackButton);
+        mBackButton.fadeIn();
     }
 
     private void hidePlayNextDialog() {
