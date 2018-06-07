@@ -32,7 +32,6 @@ import java.util.List;
 public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
-    private static final int WIDGET_AUTO_HIDE_DELAY = 3000;
     private static final float CONTROLLER_WIDGET_FACTOR = .70f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
@@ -392,6 +391,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     private static class HideControlWidgetTimer extends Handler {
 
+        private static final int HIDE_WIDGET_DELAY = 3000;
         private VideoPlayer mVideoPlayer;
 
         HideControlWidgetTimer(VideoPlayer videoPlayer) {
@@ -406,7 +406,7 @@ public class VideoPlayer extends GVRSceneObject {
 
         void start() {
             removeMessages(0);
-            sendEmptyMessageDelayed(0, WIDGET_AUTO_HIDE_DELAY);
+            sendEmptyMessageDelayed(0, HIDE_WIDGET_DELAY);
         }
 
         public void cancel() {
