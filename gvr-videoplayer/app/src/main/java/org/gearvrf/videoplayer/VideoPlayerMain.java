@@ -40,6 +40,7 @@ import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.model.Video;
 
+import java.security.SecureRandom;
 import java.util.List;
 
 
@@ -93,7 +94,12 @@ public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
     }
 
     private void addSkyBoxSphere() {
-        GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.skybox_gridroom));
+
+        // Select a skybox
+        int availableSkyboxes[] = {R.raw.skybox_a, R.raw.skybox_b, R.raw.skybox_c};
+        int selectedSkybox = availableSkyboxes[new SecureRandom().nextInt(2)];
+
+        GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, selectedSkybox));
         GVRSphereSceneObject sphere = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
         sphere.getTransform().setScale(SCALE, SCALE, SCALE);
         mScene.addSceneObject(sphere);
