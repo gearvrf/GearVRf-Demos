@@ -165,11 +165,11 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void hidePlayNextDialog() {
         if (mIsPlayNextDialogActive) {
+            mIsPlayNextDialogActive = false;
             mPlayNextDialog.cancelTimer();
             mPlayNextDialog.fadeOut(new FadeableViewObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
-                    mIsPlayNextDialogActive = false;
                     removeChildObject(mPlayNextDialog);
                 }
             });
@@ -239,7 +239,6 @@ public class VideoPlayer extends GVRSceneObject {
         mPlayNextDialog = new PlayNextDialog(getGVRContext(), width, height, mOnPlayNextListener);
         mPlayNextDialog.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .5f);
         addChildObject(mPlayNextDialog);
-        hidePlayNextDialog();
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -435,8 +434,8 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void hide(final FadeableObject.FadeOutCallback fadeOutCallback) {
         if (mVideoPlayerActive) {
-            hideAllControls();
             hidePlayNextDialog();
+            hideAllControls();
             mPlayer.stop();
             mPlayer.fadeOut(new FadeableObject.FadeOutCallback() {
                 @Override
