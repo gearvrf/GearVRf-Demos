@@ -376,6 +376,15 @@ public class VideoPlayer extends GVRSceneObject {
     private OnPlayNextListener mOnPlayNextListener = new OnPlayNextListener() {
         @Override
         public void onTimesUp() {
+            doPlayNext();
+        }
+
+        @Override
+        public void onThumbClicked() {
+            doPlayNext();
+        }
+
+        private void doPlayNext() {
             hidePlayNextDialog();
             mPlayer.prepareNextFile();
         }

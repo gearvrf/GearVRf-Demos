@@ -17,7 +17,7 @@ import org.gearvrf.videoplayer.model.Video;
 import org.gearvrf.videoplayer.provider.asyntask.ThumbnailLoader;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
-public class PlayNextDialog extends FadeableViewObject {
+public class PlayNextDialog extends FadeableViewObject implements View.OnClickListener {
 
     private TextView mTitle;
     private TextView mDuration;
@@ -45,6 +45,8 @@ public class PlayNextDialog extends FadeableViewObject {
         mDuration = mainView.findViewById(R.id.duration);
         mThumbnail = mainView.findViewById(R.id.thumbnail);
         mTime = mainView.findViewById(R.id.time);
+
+        mThumbnail.setOnClickListener(this);
     }
 
     private void setTime(final int time) {
@@ -83,6 +85,13 @@ public class PlayNextDialog extends FadeableViewObject {
     @Override
     protected GVRSceneObject getFadeable() {
         return this;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.thumbnail) {
+            mOnPlayNextListener.onThumbClicked();
+        }
     }
 
     private static class CountdownTimer extends Handler {
