@@ -56,7 +56,7 @@ public class PlayNextDialog extends FadeableViewObject {
         });
     }
 
-    private void showTime() {
+    private void notifyTimesUp() {
         mOnPlayNextListener.onTimesUp();
     }
 
@@ -99,7 +99,7 @@ public class PlayNextDialog extends FadeableViewObject {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (count < 0) {
-                mPlayNextDialog.showTime();
+                mPlayNextDialog.notifyTimesUp();
                 reset();
             } else {
                 tick();
