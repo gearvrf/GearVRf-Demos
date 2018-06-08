@@ -21,7 +21,6 @@ import android.view.View;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
@@ -44,7 +43,7 @@ import java.security.SecureRandom;
 import java.util.List;
 
 
-public class VideoPlayerMain extends GVRMain implements OnGalleryEventListener {
+public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEventListener {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = -8.0f;
