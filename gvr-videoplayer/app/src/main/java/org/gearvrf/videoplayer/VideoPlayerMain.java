@@ -62,6 +62,10 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private Vector3f ownerXaxis = new Vector3f(0, 0, 0);
     private Vector3f ownerYaxis = new Vector3f(0, 0, 0);
 
+    private Vector3f repositionScene = new Vector3f(0, 0, 0);
+    private Vector3f repositionCamera = new Vector3f(0, 0, 0);
+
+
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRCursorController mCursorController;
@@ -201,8 +205,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         }
     };
 
-
-
     private void repositionScene() {
         if (mMainSceneContainer == null) {
             Log.e(TAG, "Null scene container!");
@@ -257,22 +259,55 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void hideCursor(){
-        final float axisXScene = mMainSceneContainer.getTransform().getRotationPitch();
+        final float rotationXContainer = mMainSceneContainer.getTransform().getRotationX();
+        final float rotationYContainer = mMainSceneContainer.getTransform().getRotationY();
+        final float rotationZContainer = mMainSceneContainer.getTransform().getRotationZ();
+        final float rotationWContainer = mMainSceneContainer.getTransform().getRotationW();
+
+        final float rotationXCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationX();
+        final float rotationYCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationY();
+        final float rotationZCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationZ();
+        final float rotationWCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationW();
+
+        /*final float axisXScene = mMainSceneContainer.getTransform().getRotationPitch();
         final float axisXCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationPitch();
         final float axisYScene = mMainSceneContainer.getTransform().getRotationYaw();
         final float axisYCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationYaw();
-        final float operationXphi = (axisXCamera - axisXScene) % 360;
-        final float operationX = operationXphi > 180 ? 360 - operationXphi : operationXphi;
-        final float operationYphi = (axisYCamera - axisYScene) % 360;
-        final float operationY = operationYphi > 180 ? 360 - operationYphi : operationYphi;
+        final float operationX = axisXCamera - axisXScene;
+        final float operationY = axisYCamera - axisYScene;*/
 
-       if ((operationX > 45) || (operationX < - 45) ||  (operationY > 45) || (operationY < -45 ) ){
+
+        Quaternionf quaternionfScene = new Quaternionf(rotationXContainer, rotationYContainer,rotationZContainer,rotationWContainer);
+        quaternionfScene.angle();
+        repositionScene.set(0, 0, 1);
+        repositionScene.rotate(quaternionfScene);
+
+        Quaternionf quaternionfCamera = new Quaternionf(rotationXCamera,rotationYCamera,rotationZCamera,rotationWCamera);
+        quaternionfCamera.difference(quaternionfScene);
+        repositionCamera.set(quaternionfCamera.x, quaternionfCamera.y, quaternionfCamera.z);
+
+
+        if (repositionScene.x > 45 || repositionCamera.y > 45 || repositionCamera.x < -45 || repositionCamera.y < -45 ){
             enableInteractiveCursor();
         }else{
             disableInteractiveCursor();
         }
-            Log.d(TAG,"Operation Y : "+ operationY + " Operation X :" + operationX);
 
+        Log.d(TAG,"Operation X : "+ repositionCamera.x + " Operation Y :" + repositionCamera.y);
+
+        /*if ((operationX > 45) || (operationX < -45) ||  (operationY > 45) || (operationY < -45 ) ){
+            enableInteractiveCursor();
+        }else{
+            disableInteractiveCursor();
+        }
+            Log.d(TAG,"Operation Y : "+ operationY + " Operation X :" + operationX);*/
+
+       /*if ((operationX > 45) || (operationX < -45) ||  (operationY > 45) || (operationY < -45 ) ){
+            enableInteractiveCursor();
+        }else{
+            disableInteractiveCursor();
+        }
+            Log.d(TAG,"Operation Y : "+ operationY + " Operation X :" + operationX);*/
     }
 
     public void onPause() {
