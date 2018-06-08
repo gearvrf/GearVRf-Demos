@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.CursorWrapper;
 import android.os.AsyncTask;
 import android.provider.MediaStore.Video;
+import android.provider.MediaStore.Video.VideoColumns;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -37,18 +38,18 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
         List<Album> albums = new LinkedList<>();
 
         String[] projection = new String[]{
-                Video.VideoColumns._ID,
-                Video.VideoColumns.BUCKET_DISPLAY_NAME,
-                Video.VideoColumns.TITLE,
-                Video.VideoColumns.DATA,
-                Video.VideoColumns.DURATION
+                VideoColumns._ID,
+                VideoColumns.BUCKET_DISPLAY_NAME,
+                VideoColumns.TITLE,
+                VideoColumns.DATA,
+                VideoColumns.DURATION
         };
 
-        String sortOrder = Video.VideoColumns.ALBUM + " ASC, " + Video.VideoColumns.TITLE + " ASC";
+        String sortOrder = VideoColumns.BUCKET_DISPLAY_NAME + " ASC, " + VideoColumns.TITLE + " ASC";
 
         try (Cursor cursor = context.getContentResolver().query(
                 Video.Media.EXTERNAL_CONTENT_URI,
-                projection, "0 == 0) GROUP BY (" + Video.VideoColumns.ALBUM, null, sortOrder)) {
+                projection, "0 == 0) GROUP BY (" + VideoColumns.BUCKET_DISPLAY_NAME, null, sortOrder)) {
 
             if (cursor != null && cursor.moveToFirst()) {
 
@@ -81,15 +82,15 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
         }
 
         String getTitle() {
-            return getString(getColumnIndexOrThrow(Video.VideoColumns.BUCKET_DISPLAY_NAME));
+            return getString(getColumnIndexOrThrow(VideoColumns.BUCKET_DISPLAY_NAME));
         }
 
         org.gearvrf.videoplayer.model.Video getVideo() {
             return new org.gearvrf.videoplayer.model.Video(
-                    getLong(getColumnIndexOrThrow(Video.VideoColumns._ID)),
-                    getString(getColumnIndexOrThrow(Video.VideoColumns.TITLE)),
-                    getString(getColumnIndexOrThrow(Video.VideoColumns.DATA)),
-                    getLong(getColumnIndexOrThrow(Video.VideoColumns.DURATION))
+                    getLong(getColumnIndexOrThrow(VideoColumns._ID)),
+                    getString(getColumnIndexOrThrow(VideoColumns.TITLE)),
+                    getString(getColumnIndexOrThrow(VideoColumns.DATA)),
+                    getLong(getColumnIndexOrThrow(VideoColumns.DURATION))
             );
         }
     }
