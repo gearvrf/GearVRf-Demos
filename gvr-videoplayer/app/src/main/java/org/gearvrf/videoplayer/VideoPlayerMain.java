@@ -30,10 +30,8 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
-
 import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.FadeableObject;
-
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
@@ -41,7 +39,6 @@ import org.gearvrf.videoplayer.component.video.player.DefaultPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.model.Video;
-import org.joml.Quaterniond;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -54,23 +51,17 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = -10.0f;
     private static final float SCALE = 200.0f;
-    private static float CURSOR_HIGH_OPACITY = 1.0f;
-    private static float CURSOR_LOW_OPACITY = 0.0f;
 
     private Vector3f up = new Vector3f(0, 1, 0);
     private Vector3f lookat = new Vector3f(0, 0, 0);
     private Vector3f ownerXaxis = new Vector3f(0, 0, 0);
     private Vector3f ownerYaxis = new Vector3f(0, 0, 0);
 
-    private Vector3f repositionScene = new Vector3f(0, 0, 0);
-    private Vector3f repositionCamera = new Vector3f(0, 0, 0);
-
-
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
-    private GVRSceneObject mMainSceneContainer, highlightCursor, cursor ;
+    private GVRSceneObject mMainSceneContainer, mLabelCursor, mCurrentCursor , mParentCursor;
     private Gallery mGallery;
 
     /**
@@ -109,7 +100,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void addSkyBoxSphere() {
-
         // Select a skybox
         int availableSkyboxes[] = {R.raw.skybox_a, R.raw.skybox_b, R.raw.skybox_c};
         int selectedSkybox = availableSkyboxes[new SecureRandom().nextInt(2)];
@@ -143,26 +133,29 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         hideCursor();
     }
 
-    private GVRSceneObject createCursor() {
-         highlightCursor = new GVRSceneObject(mContext,
-                mContext.createQuad(0.33f * CURSOR_DEPTH, 0.1f * CURSOR_DEPTH),
+    private void createLabel() {
+        mLabelCursor = new GVRSceneObject(mContext,
+                mContext.createQuad(0.4f * CURSOR_DEPTH, 0.1f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
-                        R.raw.reposition)));
-        highlightCursor.getRenderData().setDepthTest(false);
-        highlightCursor.getTransform().rotateByAxis(180,0,0,1);
-        highlightCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+                        R.raw.label)));
+        mLabelCursor.getRenderData().setDepthTest(false);
+        mLabelCursor.getTransform().rotateByAxis(180,0,0,1);
+        mLabelCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+    }
 
-        getGVRContext().getMainScene().getMainCameraRig().addChildObject(highlightCursor);
-
-        cursor = new GVRSceneObject(
+    private GVRSceneObject createCursor() {
+        createLabel();
+        mCurrentCursor = new GVRSceneObject(
                 mContext,
                 mContext.createQuad(0.2f * CURSOR_DEPTH, 0.2f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
         );
-        cursor.getRenderData().setDepthTest(false);
-        cursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-        highlightCursor.addChildObject(cursor);
-        return highlightCursor;
+        mCurrentCursor.getRenderData().setDepthTest(false);
+        mCurrentCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        mParentCursor = new GVRSceneObject(mContext);
+        mParentCursor.addChildObject(mCurrentCursor);
+        mParentCursor.addChildObject(mLabelCursor);
+        return mParentCursor;
    }
 
     private ITouchEvents mTouchHandler = new DefaultTouchEvent() {
@@ -259,55 +252,26 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void hideCursor(){
-        final float rotationXContainer = mMainSceneContainer.getTransform().getRotationX();
-        final float rotationYContainer = mMainSceneContainer.getTransform().getRotationY();
-        final float rotationZContainer = mMainSceneContainer.getTransform().getRotationZ();
-        final float rotationWContainer = mMainSceneContainer.getTransform().getRotationW();
+        final float rotateXScene = mMainSceneContainer.getTransform().getRotationX();
+        final float rotateYScene = mMainSceneContainer.getTransform().getRotationY();
+        final float rotateZScene = mMainSceneContainer.getTransform().getRotationZ();
+        final float rotateWScene = mMainSceneContainer.getTransform().getRotationW();
+        final float rotateXCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationX();
+        final float rotateYCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationY();
 
-        final float rotationXCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationX();
-        final float rotationYCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationY();
-        final float rotationZCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationZ();
-        final float rotationWCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationW();
+        final float rotateZCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationZ();
+        final float rotateWCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationW();
 
-        /*final float axisXScene = mMainSceneContainer.getTransform().getRotationPitch();
-        final float axisXCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationPitch();
-        final float axisYScene = mMainSceneContainer.getTransform().getRotationYaw();
-        final float axisYCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationYaw();
-        final float operationX = axisXCamera - axisXScene;
-        final float operationY = axisYCamera - axisYScene;*/
+        Quaternionf quaternionfScene = new Quaternionf(rotateXScene, rotateYScene, rotateZScene, rotateWScene);
+        Quaternionf quaternionfCamera = new Quaternionf(rotateXCamera, rotateYCamera, rotateZCamera, rotateWCamera);
 
+        quaternionfScene.difference(quaternionfCamera);
 
-        Quaternionf quaternionfScene = new Quaternionf(rotationXContainer, rotationYContainer,rotationZContainer,rotationWContainer);
-        quaternionfScene.angle();
-        repositionScene.set(0, 0, 1);
-        repositionScene.rotate(quaternionfScene);
-
-        Quaternionf quaternionfCamera = new Quaternionf(rotationXCamera,rotationYCamera,rotationZCamera,rotationWCamera);
-        quaternionfCamera.difference(quaternionfScene);
-        repositionCamera.set(quaternionfCamera.x, quaternionfCamera.y, quaternionfCamera.z);
-
-
-        if (repositionScene.x > 45 || repositionCamera.y > 45 || repositionCamera.x < -45 || repositionCamera.y < -45 ){
+        if (quaternionfScene.angle() > Math.PI / 4.0f){
             enableInteractiveCursor();
         }else{
             disableInteractiveCursor();
         }
-
-        Log.d(TAG,"Operation X : "+ repositionCamera.x + " Operation Y :" + repositionCamera.y);
-
-        /*if ((operationX > 45) || (operationX < -45) ||  (operationY > 45) || (operationY < -45 ) ){
-            enableInteractiveCursor();
-        }else{
-            disableInteractiveCursor();
-        }
-            Log.d(TAG,"Operation Y : "+ operationY + " Operation X :" + operationX);*/
-
-       /*if ((operationX > 45) || (operationX < -45) ||  (operationY > 45) || (operationY < -45 ) ){
-            enableInteractiveCursor();
-        }else{
-            disableInteractiveCursor();
-        }
-            Log.d(TAG,"Operation Y : "+ operationY + " Operation X :" + operationX);*/
     }
 
     public void onPause() {
@@ -317,12 +281,12 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     public void enableInteractiveCursor() {
-        highlightCursor.getRenderData().getMaterial().setOpacity(CURSOR_HIGH_OPACITY);
-        cursor.getRenderData().getMaterial().setOpacity(CURSOR_LOW_OPACITY);
+        mParentCursor.addChildObject(mLabelCursor);
+        mParentCursor.removeChildObject(mCurrentCursor);
     }
 
     public void disableInteractiveCursor() {
-        highlightCursor.getRenderData().getMaterial().setOpacity(CURSOR_LOW_OPACITY);
-        cursor.getRenderData().getMaterial().setOpacity(CURSOR_HIGH_OPACITY);
+        mParentCursor.removeChildObject(mLabelCursor);
+        mParentCursor.addChildObject(mCurrentCursor);
     }
 }
