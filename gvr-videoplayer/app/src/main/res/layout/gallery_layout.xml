@@ -16,7 +16,7 @@
         android:src="@drawable/ic_app_name_highlight" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/grid_width"
         android:layout_height="wrap_content"
         android:paddingEnd="8.5px"
         android:paddingStart="8.5px">

@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
@@ -16,6 +18,10 @@ public abstract class FadeableObject extends GVRSceneObject {
 
     public FadeableObject(GVRContext gvrContext) {
         super(gvrContext);
+    }
+
+    public FadeableObject(GVRContext mContext, GVRMesh quad, GVRTexture gvrTexture) {
+        super(mContext, quad, gvrTexture);
     }
 
     @NonNull

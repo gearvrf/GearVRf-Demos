@@ -31,6 +31,7 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
+import org.gearvrf.videoplayer.component.DefaultFadeableObject;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
@@ -61,7 +62,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
-    private GVRSceneObject mMainSceneContainer, mLabelCursor, mCurrentCursor , mParentCursor;
+    private GVRSceneObject mMainSceneContainer;
+    private FadeableObject mLabelCursor, mCurrentCursor , mParentCursor;
+
     private Gallery mGallery;
 
     /**
@@ -134,7 +137,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void createLabel() {
-        mLabelCursor = new GVRSceneObject(mContext,
+        mLabelCursor = new DefaultFadeableObject(mContext,
                 mContext.createQuad(0.4f * CURSOR_DEPTH, 0.1f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
                         R.raw.label)));
@@ -145,14 +148,14 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
 
     private GVRSceneObject createCursor() {
         createLabel();
-        mCurrentCursor = new GVRSceneObject(
+        mCurrentCursor = new DefaultFadeableObject(
                 mContext,
                 mContext.createQuad(0.2f * CURSOR_DEPTH, 0.2f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
         );
         mCurrentCursor.getRenderData().setDepthTest(false);
         mCurrentCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
-        mParentCursor = new GVRSceneObject(mContext);
+        mParentCursor = new DefaultFadeableObject(mContext);
         mParentCursor.addChildObject(mCurrentCursor);
         mParentCursor.addChildObject(mLabelCursor);
         return mParentCursor;
@@ -247,8 +250,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         if (mVideoPlayer != null) {
             mVideoPlayer.play();
         }
-
-        //  mVideoPlayer.showController();
     }
 
     private void hideCursor(){
@@ -281,12 +282,12 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     public void enableInteractiveCursor() {
-        mParentCursor.addChildObject(mLabelCursor);
-        mParentCursor.removeChildObject(mCurrentCursor);
+        mLabelCursor.fadeIn();
+        mCurrentCursor.fadeOut();
     }
 
     public void disableInteractiveCursor() {
-        mParentCursor.removeChildObject(mLabelCursor);
-        mParentCursor.addChildObject(mCurrentCursor);
+        mCurrentCursor.fadeIn();
+        mLabelCursor.fadeOut();
     }
 }
