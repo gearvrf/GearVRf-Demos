@@ -1,6 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     repositories {
+	google()
         jcenter()
         // Gradle 4.1 and higher include support for Google's Maven repo using
         // the google() method. And you need to include this repo to download
@@ -14,7 +15,7 @@ buildscript {
 
 allprojects {
     repositories {
+	google()
         jcenter()
-        google()
     }
 }
