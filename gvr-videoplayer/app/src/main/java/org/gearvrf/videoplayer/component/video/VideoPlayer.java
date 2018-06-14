@@ -20,6 +20,7 @@ import org.gearvrf.videoplayer.component.video.dialog.PlayNextDialog;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.component.video.player.PlayerListenerDispatcher;
+import org.gearvrf.videoplayer.component.video.title.OverlayTitle;
 import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
@@ -35,6 +36,8 @@ public class VideoPlayer extends GVRSceneObject {
     private static final float CONTROLLER_WIDGET_FACTOR = .70f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
+    private static final float OVERLAY_TITLE_WIDTH_FACTOR = .34f;
+    private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
     private static final float PLAY_NEXT_DIALOG_WIDTH_FACTOR = .19f;
     private static final float PLAY_NEXT_DIALOG_HEIGHT_FACTOR = .34f;
 
@@ -42,6 +45,7 @@ public class VideoPlayer extends GVRSceneObject {
     private ControlWidget mControl;
     private BackButton mBackButton;
     private PlayNextDialog mPlayNextDialog;
+    private OverlayTitle mOverlayTitle;
 
     private boolean mVideoPlayerActive = true;
     private boolean mIsControlActive = true;
@@ -70,10 +74,12 @@ public class VideoPlayer extends GVRSceneObject {
             }
         });
 
+
         addPlayer(playerWidth, playerHeight);
         addControlWidget(CONTROLLER_WIDGET_FACTOR * playerWidth, CONTROLLER_HEIGHT_FACTOR * playerHeight);
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight, BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog(PLAY_NEXT_DIALOG_WIDTH_FACTOR * playerWidth, PLAY_NEXT_DIALOG_HEIGHT_FACTOR * playerHeight);
+        addTitleOverlay(OVERLAY_TITLE_WIDTH_FACTOR * playerWidth, OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
     }
 
     public void prepare(@NonNull List<Video> videos) {
@@ -235,10 +241,17 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void addPlayNextDialog(float width, float height) {
-
         mPlayNextDialog = new PlayNextDialog(getGVRContext(), width, height, mOnPlayNextListener);
         mPlayNextDialog.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .5f);
         addChildObject(mPlayNextDialog);
+    }
+
+    private void addTitleOverlay(float width, float height) {
+        mOverlayTitle = new OverlayTitle(getGVRContext(), width, height);
+
+        float positionY = (height / OVERLAY_TITLE_HEIGHT_FACTOR / 2f);
+        mOverlayTitle.getTransform().setPositionY(positionY + .5f);
+        addChildObject(mOverlayTitle);
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -425,6 +438,7 @@ public class VideoPlayer extends GVRSceneObject {
                     }
                 }
             });
+            addChildObject(mOverlayTitle);
         }
     }
 
@@ -446,6 +460,7 @@ public class VideoPlayer extends GVRSceneObject {
                     }
                 }
             });
+            removeChildObject(mOverlayTitle);
         }
     }
 }

@@ -50,7 +50,9 @@ import java.util.List;
 public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEventListener {
 
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
-    private static float CURSOR_DEPTH = -10.0f;
+    private static float CURSOR_DEPTH = -8.0f;
+    private static float WIDTH_VIDEO_PLAYER = 10.0f;
+    private static float HEIGHT_VIDEO_PLAYER = 5.f;
     private static final float SCALE = 200.0f;
 
     private Vector3f up = new Vector3f(0, 1, 0);
@@ -63,8 +65,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
     private GVRSceneObject mMainSceneContainer;
-    private FadeableObject mLabelCursor, mCurrentCursor , mParentCursor;
-
+    private FadeableObject mLabelCursor, mCurrentCursor, mParentCursor;
     private Gallery mGallery;
 
     /**
@@ -82,7 +83,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         initCursorController();
         createGallery();
         createVideoPlayer();
-
     }
 
     private void createGallery() {
@@ -93,7 +93,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void createVideoPlayer() {
-        mVideoPlayer = new VideoPlayer(getGVRContext(), 10, 5);
+        mVideoPlayer = new VideoPlayer(getGVRContext(), WIDTH_VIDEO_PLAYER, HEIGHT_VIDEO_PLAYER);
         mVideoPlayer.getTransform().setPositionZ(-8.1f);
         mVideoPlayer.setControlWidgetAutoHide(true);
         mVideoPlayer.setPlayerListener(mOnPlayerListener);
@@ -113,7 +113,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mScene.addSceneObject(sphere);
     }
 
-   private void initCursorController() {
+    private void initCursorController() {
         mScene.getEventReceiver().addListener(mTouchHandler);
         GVRInputManager inputManager = mContext.getInputManager();
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
@@ -138,11 +138,10 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
 
     private void createLabel() {
         mLabelCursor = new DefaultFadeableObject(mContext,
-                mContext.createQuad(0.4f * CURSOR_DEPTH, 0.1f * CURSOR_DEPTH),
+                mContext.createQuad(0.28f * WIDTH_VIDEO_PLAYER * 1.2f, 0.1f * 0.28f * WIDTH_VIDEO_PLAYER * 1.2f),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
                         R.raw.label)));
         mLabelCursor.getRenderData().setDepthTest(false);
-        mLabelCursor.getTransform().rotateByAxis(180,0,0,1);
         mLabelCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
     }
 
@@ -159,7 +158,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mParentCursor.addChildObject(mCurrentCursor);
         mParentCursor.addChildObject(mLabelCursor);
         return mParentCursor;
-   }
+    }
 
     private ITouchEvents mTouchHandler = new DefaultTouchEvent() {
         @Override
@@ -221,7 +220,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         lookat.rotate(cursorRotation);
         lookat = lookat.normalize();
 
-        Log.d(TAG,"LookAt: " + lookat.x + ", " + lookat.y + ", " + lookat.z);
+        Log.d(TAG, "LookAt: " + lookat.x + ", " + lookat.y + ", " + lookat.z);
 
         up.cross(lookat.x, lookat.y, lookat.z, ownerXaxis);
         ownerXaxis = ownerXaxis.normalize();
@@ -252,25 +251,24 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         }
     }
 
-    private void hideCursor(){
+    private void hideCursor() {
         final float rotateXScene = mMainSceneContainer.getTransform().getRotationX();
         final float rotateYScene = mMainSceneContainer.getTransform().getRotationY();
         final float rotateZScene = mMainSceneContainer.getTransform().getRotationZ();
         final float rotateWScene = mMainSceneContainer.getTransform().getRotationW();
-        final float rotateXCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationX();
-        final float rotateYCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationY();
-
-        final float rotateZCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationZ();
-        final float rotateWCamera =  getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationW();
+        final float rotateXCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationX();
+        final float rotateYCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationY();
+        final float rotateZCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationZ();
+        final float rotateWCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationW();
 
         Quaternionf quaternionfScene = new Quaternionf(rotateXScene, rotateYScene, rotateZScene, rotateWScene);
         Quaternionf quaternionfCamera = new Quaternionf(rotateXCamera, rotateYCamera, rotateZCamera, rotateWCamera);
 
         quaternionfScene.difference(quaternionfCamera);
 
-        if (quaternionfScene.angle() > Math.PI / 4.0f){
+        if (quaternionfScene.angle() > Math.PI / 4.0f) {
             enableInteractiveCursor();
-        }else{
+        } else {
             disableInteractiveCursor();
         }
     }

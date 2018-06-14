@@ -69,13 +69,12 @@
 
                 <SeekBar
                     android:id="@+id/progressBar"
-                    style="@android:style/Widget.ProgressBar.Horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="1"
-                    android:max="100"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="8dp"
                     android:progress="40"
-                    android:progressTint="#FF175EE1" />
+                    android:progressDrawable="@drawable/seekbar_style"
+                    android:thumb="@drawable/custom_thumb" />
 
             </LinearLayout>
 
