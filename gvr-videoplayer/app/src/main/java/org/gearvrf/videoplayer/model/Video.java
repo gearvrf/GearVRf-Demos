@@ -1,6 +1,6 @@
 package org.gearvrf.videoplayer.model;
 
-public final class Video extends Media {
+public final class Video extends GalleryItem {
 
     private long id;
     private String title;

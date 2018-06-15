@@ -14,7 +14,7 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.model.Album;
-import org.gearvrf.videoplayer.model.Media;
+import org.gearvrf.videoplayer.model.GalleryItem;
 import org.gearvrf.videoplayer.model.Video;
 import org.gearvrf.videoplayer.provider.asyntask.AlbumAsyncTask;
 import org.gearvrf.videoplayer.provider.asyntask.GetDataCallback;
@@ -23,12 +23,12 @@ import org.gearvrf.videoplayer.provider.asyntask.VideoAsyncTask;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Gallery extends FadeableObject implements OnMediaSelectionListener {
+public class Gallery extends FadeableObject implements OnItemsSelectionListener {
 
     private static final String TAG = Gallery.class.getSimpleName();
     private RecyclerView mRecyclerView;
     private GVRViewSceneObject mObjectViewGallery;
-    private List<Media> mMediaList = new LinkedList<>();
+    private List<GalleryItem> mItemList = new LinkedList<>();
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
 
@@ -40,8 +40,8 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
         View mainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.gallery_layout, null);
         mRecyclerView = mainView.findViewById(R.id.recycler_view);
 
-        MediaAdapter adapterGallery = new MediaAdapter<>(mMediaList);
-        adapterGallery.setOnMediaSelectionListener(this);
+        GalleryItemAdapter adapterGallery = new GalleryItemAdapter<>(mItemList);
+        adapterGallery.setOnItemSelectionListener(this);
         mRecyclerView.setAdapter(adapterGallery);
         mRecyclerView.setLayoutManager(new GridLayoutManager(gvrContext.getContext(), 3));
 
@@ -65,8 +65,8 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
         new AlbumAsyncTask(new GetDataCallback<List<Album>>() {
             @Override
             public void onResult(List<Album> data) {
-                mMediaList.clear();
-                mMediaList.addAll(data);
+                mItemList.clear();
+                mItemList.addAll(data);
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             }
         }).execute();
@@ -76,32 +76,36 @@ public class Gallery extends FadeableObject implements OnMediaSelectionListener 
         new VideoAsyncTask(albumTitle, new GetDataCallback<List<Video>>() {
             @Override
             public void onResult(List<Video> data) {
-                mMediaList.clear();
-                mMediaList.addAll(data);
+                mItemList.clear();
+                mItemList.addAll(data);
                 mRecyclerView.getAdapter().notifyDataSetChanged();
             }
         }).execute();
     }
 
     @Override
-    public void onMediaSelected(List<? extends Media> mediaList) {
+    public void onItemSelected(List<? extends GalleryItem> itemList) {
 
-        Media media = mediaList.get(0);
+        GalleryItem item = itemList.get(0);
 
-        switch (media.getType()) {
-            case Media.Type.TYPE_ALBUM:
-                loadVideos(((Album) media).getTitle());
-                mBreadcrumb.showAlbum(((Album) media).getTitle());
+        switch (item.getType()) {
+            case GalleryItem.Type.TYPE_HOME:
+                //TODO handle home item selected
                 break;
-            case Media.Type.TYPE_VIDEO:
+            case GalleryItem.Type.TYPE_ALBUM:
+                loadVideos(((Album) item).getTitle());
+                mBreadcrumb.showAlbum(((Album) item).getTitle());
+                break;
+            case GalleryItem.Type.TYPE_VIDEO:
                 if (mOnGalleryEventListener != null) {
-                    mOnGalleryEventListener.onVideosSelected((List<Video>) mediaList);
+                    mOnGalleryEventListener.onVideosSelected((List<Video>) itemList);
                 }
                 break;
             default:
-                Log.d(TAG, "Unknown type: " + media.getType());
+                Log.d(TAG, "Unknown type: " + item.getType());
         }
     }
+
     public void setOnGalleryEventListener(OnGalleryEventListener listener) {
         this.mOnGalleryEventListener = listener;
     }

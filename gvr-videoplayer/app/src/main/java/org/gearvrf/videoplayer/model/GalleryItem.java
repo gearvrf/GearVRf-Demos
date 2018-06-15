@@ -2,18 +2,19 @@ package org.gearvrf.videoplayer.model;
 
 import android.support.annotation.IntDef;
 
-public abstract class Media {
+public abstract class GalleryItem {
 
-    @IntDef({Type.TYPE_ALBUM, Type.TYPE_VIDEO})
+    @IntDef({Type.TYPE_HOME, Type.TYPE_ALBUM, Type.TYPE_VIDEO})
     public @interface Type {
-        int TYPE_ALBUM = 0;
-        int TYPE_VIDEO = 1;
+        int TYPE_HOME = 0;
+        int TYPE_ALBUM = 1;
+        int TYPE_VIDEO = 2;
     }
 
     @Type
     int type;
 
-    Media(@Type int type) {
+    GalleryItem(@Type int type) {
         this.type = type;
     }
 
@@ -24,7 +25,7 @@ public abstract class Media {
 
     @Override
     public String toString() {
-        return "Media{" +
+        return "GalleryItem{" +
                 "type=" + type +
                 '}';
     }
