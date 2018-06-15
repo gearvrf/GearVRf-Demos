@@ -5,12 +5,14 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.videoplayer.R;
 
-public class OverlayTitle extends GVRSceneObject{
-    public OverlayTitle(GVRContext gvrContext, float widht, float height) {
-        super(gvrContext,
-                gvrContext.createQuad(widht, .1f * widht),
-                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
-                        R.raw.ic_title)));
-    }
+public class OverlayTitle extends GVRSceneObject {
 
+    private static final float ASPECT_RATIO = .1f;
+
+    public OverlayTitle(GVRContext gvrContext, float width) {
+        super(gvrContext,
+                gvrContext.createQuad(width, ASPECT_RATIO * width),
+                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
+                        R.drawable.ic_app_name_normal)));
+    }
 }

@@ -247,8 +247,7 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void addTitleOverlay(float width, float height) {
-        mOverlayTitle = new OverlayTitle(getGVRContext(), width, height);
-
+        mOverlayTitle = new OverlayTitle(getGVRContext(), width);
         float positionY = (height / OVERLAY_TITLE_HEIGHT_FACTOR / 2f);
         mOverlayTitle.getTransform().setPositionY(positionY + .5f);
         addChildObject(mOverlayTitle);
