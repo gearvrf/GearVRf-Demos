@@ -106,9 +106,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         // Select a skybox
         int availableSkyboxes[] = {R.raw.skybox_a, R.raw.skybox_b, R.raw.skybox_c};
         int selectedSkybox = availableSkyboxes[new SecureRandom().nextInt(2)];
-
         GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, selectedSkybox));
         GVRSphereSceneObject sphere = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
+        sphere.setName("sphere");
         sphere.getTransform().setScale(SCALE, SCALE, SCALE);
         mScene.addSceneObject(sphere);
     }

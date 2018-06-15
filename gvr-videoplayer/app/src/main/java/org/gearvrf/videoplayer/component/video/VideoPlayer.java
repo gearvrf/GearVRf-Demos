@@ -17,6 +17,7 @@ import org.gearvrf.videoplayer.component.video.control.ControlWidget;
 import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
 import org.gearvrf.videoplayer.component.video.dialog.OnPlayNextListener;
 import org.gearvrf.videoplayer.component.video.dialog.PlayNextDialog;
+import org.gearvrf.videoplayer.component.video.light.LightScene;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.component.video.player.PlayerListenerDispatcher;
@@ -46,6 +47,8 @@ public class VideoPlayer extends GVRSceneObject {
     private BackButton mBackButton;
     private PlayNextDialog mPlayNextDialog;
     private OverlayTitle mOverlayTitle;
+    private LightScene mLightScene;
+    private GVRSceneObject mLightObj;
 
     private boolean mVideoPlayerActive = true;
     private boolean mIsControlActive = true;
@@ -80,6 +83,7 @@ public class VideoPlayer extends GVRSceneObject {
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight, BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog(PLAY_NEXT_DIALOG_WIDTH_FACTOR * playerWidth, PLAY_NEXT_DIALOG_HEIGHT_FACTOR * playerHeight);
         addTitleOverlay(OVERLAY_TITLE_WIDTH_FACTOR * playerWidth, OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
+        addLightScene();
     }
 
     public void prepare(@NonNull List<Video> videos) {
@@ -251,6 +255,13 @@ public class VideoPlayer extends GVRSceneObject {
         float positionY = (height / OVERLAY_TITLE_HEIGHT_FACTOR / 2f);
         mOverlayTitle.getTransform().setPositionY(positionY + .5f);
         addChildObject(mOverlayTitle);
+    }
+
+    private void addLightScene() {
+        mLightObj = new GVRSceneObject(getGVRContext());
+        mLightScene = new LightScene(getGVRContext());
+        mLightObj.attachComponent(mLightScene);
+        getGVRContext().getMainScene().getSceneObjectByName("sphere").addChildObject(mLightObj);
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -438,6 +449,7 @@ public class VideoPlayer extends GVRSceneObject {
                 }
             });
             addChildObject(mOverlayTitle);
+            getGVRContext().getMainScene().getSceneObjectByName("sphere").addChildObject(mLightObj);
         }
     }
 
@@ -460,6 +472,7 @@ public class VideoPlayer extends GVRSceneObject {
                 }
             });
             removeChildObject(mOverlayTitle);
+            getGVRContext().getMainScene().getSceneObjectByName("sphere").removeChildObject(mLightObj);
         }
     }
 }
