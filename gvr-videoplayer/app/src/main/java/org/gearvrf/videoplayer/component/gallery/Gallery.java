@@ -1,6 +1,7 @@
 package org.gearvrf.videoplayer.component.gallery;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.model.Album;
 import org.gearvrf.videoplayer.model.GalleryItem;
+import org.gearvrf.videoplayer.model.HomeItem;
 import org.gearvrf.videoplayer.model.Video;
 import org.gearvrf.videoplayer.provider.asyntask.AlbumAsyncTask;
 import org.gearvrf.videoplayer.provider.asyntask.GetDataCallback;
@@ -32,7 +34,6 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
 
-
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
         super(gvrContext);
@@ -49,16 +50,35 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         mObjectViewGallery.getTransform().setScale(6, 6, 1);
         addChildObject(mObjectViewGallery);
 
-        mBreadcrumb = new Breadcrumb(mainView);
+        mBreadcrumb = new Breadcrumb(mainView.findViewById(R.id.breadcrumb));
         mBreadcrumb.showHome();
         mBreadcrumb.setOnBreadcrumbListener(new OnBreadcrumbListener() {
             @Override
             public void onHomeClicked() {
-                loadAlbums();
+                loadHome();
+            }
+
+            @Override
+            public void onSourceClicked(@SourceType int sourceType) {
+                if (sourceType == SourceType.LOCAL) {
+                    loadAlbums();
+                } else if (sourceType == SourceType.EXTERNAL) {
+                    // loadExternal();
+                }
             }
         });
 
-        loadAlbums();
+        loadHome();
+    }
+
+    private void loadHome() {
+        mItemList.clear();
+        mItemList.addAll(createHomeItems());
+        mRecyclerView.getAdapter().notifyDataSetChanged();
+    }
+
+    private void loadSources() {
+
     }
 
     private void loadAlbums() {
@@ -90,7 +110,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
         switch (item.getType()) {
             case GalleryItem.Type.TYPE_HOME:
-                //TODO handle home item selected
+                //TODO loadSources();
                 break;
             case GalleryItem.Type.TYPE_ALBUM:
                 loadVideos(((Album) item).getTitle());
@@ -108,6 +128,14 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
     public void setOnGalleryEventListener(OnGalleryEventListener listener) {
         this.mOnGalleryEventListener = listener;
+    }
+
+    private List<HomeItem> createHomeItems() {
+        Context context = getGVRContext().getContext();
+        List<HomeItem> homeItems = new LinkedList<>();
+        homeItems.add(new HomeItem(context.getString(R.string.gallery_source_type_local), R.drawable.ic_folder_local_videos));
+        homeItems.add(new HomeItem(context.getString(R.string.gallery_source_type_external), R.drawable.ic_folder_external_videos));
+        return homeItems;
     }
 
     @NonNull

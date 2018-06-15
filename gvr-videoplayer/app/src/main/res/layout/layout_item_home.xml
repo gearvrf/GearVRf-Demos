@@ -27,6 +27,7 @@
         android:maxLines="1"
         android:maxWidth="250dp"
         android:text="@string/lorem_ipsum"
+        android:textAllCaps="true"
         android:textColor="#FFFFFF"
         android:textSize="24dp"
         tools:ignore="SpUsage" />

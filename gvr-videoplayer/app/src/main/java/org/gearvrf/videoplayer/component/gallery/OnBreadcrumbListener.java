@@ -1,5 +1,8 @@
 package org.gearvrf.videoplayer.component.gallery;
 
 public interface OnBreadcrumbListener {
-   void onHomeClicked();
+
+    void onHomeClicked();
+
+    void onSourceClicked(@SourceType int sourceType);
 }

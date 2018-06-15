@@ -6,8 +6,6 @@
     android:orientation="vertical"
     tools:ignore="ContentDescription,PxUsage,SpUsage">
 
-
-
     <ImageView
         android:layout_width="447px"
         android:layout_height="44px"
