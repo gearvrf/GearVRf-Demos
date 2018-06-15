@@ -24,11 +24,12 @@
             android:layout_height="match_parent"
             android:scaleType="centerCrop" />
 
+        <!-- OVERLAY -->
         <RelativeLayout
             android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_item_video_overlay"
+            android:background="@color/bg_gallery_item_video_hovered"
             android:padding="20px"
             android:visibility="visible">
 
