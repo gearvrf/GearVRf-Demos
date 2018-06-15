@@ -13,6 +13,7 @@ public class OverlayTitle extends GVRSceneObject {
         super(gvrContext,
                 gvrContext.createQuad(width, ASPECT_RATIO * width),
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
-                        R.drawable.ic_app_name_normal)));
+                        R.drawable.ic_app_name_highlight)));
+        getRenderData().getMaterial().setOpacity(0.8f);
     }
 }
