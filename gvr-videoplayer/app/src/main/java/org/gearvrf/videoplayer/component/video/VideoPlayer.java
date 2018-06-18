@@ -18,6 +18,7 @@ import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
 import org.gearvrf.videoplayer.component.video.dialog.OnPlayNextListener;
 import org.gearvrf.videoplayer.component.video.dialog.PlayNextDialog;
 import org.gearvrf.videoplayer.component.video.light.LightScene;
+import org.gearvrf.videoplayer.component.video.loading.LoadingAsset;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.component.video.player.PlayerListenerDispatcher;
@@ -37,6 +38,7 @@ public class VideoPlayer extends GVRSceneObject {
     private static final float CONTROLLER_WIDGET_FACTOR = .70f;
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
+    private static final float LOADING_ASSET_SIZE_FACTOR = .2f;
     private static final float OVERLAY_TITLE_WIDTH_FACTOR = .34f;
     private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
     private static final float PLAY_NEXT_DIALOG_WIDTH_FACTOR = .19f;
@@ -49,6 +51,7 @@ public class VideoPlayer extends GVRSceneObject {
     private OverlayTitle mOverlayTitle;
     private LightScene mLightScene;
     private GVRSceneObject mLightObj;
+    private LoadingAsset mLoadingAsset;
 
     private boolean mVideoPlayerActive = true;
     private boolean mIsControlActive = true;
@@ -57,6 +60,7 @@ public class VideoPlayer extends GVRSceneObject {
     private boolean mHideControlWidgetTimerEnabled;
     private HideControlWidgetTimer mHideControlTimer;
     private List<Video> mVideos;
+
 
     public VideoPlayer(GVRContext gvrContext, float playerWidth, float playerHeight) {
         super(gvrContext);
@@ -76,7 +80,6 @@ public class VideoPlayer extends GVRSceneObject {
                 newController.addPickEventListener(mPickEventHandler);
             }
         });
-
 
         addPlayer(playerWidth, playerHeight);
         addControlWidget(CONTROLLER_WIDGET_FACTOR * playerWidth, CONTROLLER_HEIGHT_FACTOR * playerHeight);
@@ -264,6 +267,12 @@ public class VideoPlayer extends GVRSceneObject {
         getGVRContext().getMainScene().getSceneObjectByName("sphere").addChildObject(mLightObj);
     }
 
+    private void addLoadingAsset(float width, float height) {
+        mLoadingAsset = new LoadingAsset(getGVRContext(), width, height);
+        mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1f);
+        addChildObject(mLoadingAsset);
+    }
+
     public void setPlayerListener(OnPlayerListener listener) {
         mInternalVideoPlayerListener.setOnVideoPlayerListener(listener);
     }
@@ -334,12 +343,14 @@ public class VideoPlayer extends GVRSceneObject {
             Log.d(TAG, "Video started");
             mControl.showPause();
             showAllControls();
+            removeChildObject(mLoadingAsset);
             super.onStart();
         }
 
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
+            addLoadingAsset(LOADING_ASSET_SIZE_FACTOR * 5.f, LOADING_ASSET_SIZE_FACTOR * 5.f);
             super.onLoading();
         }
 
@@ -351,6 +362,7 @@ public class VideoPlayer extends GVRSceneObject {
                 hideControlWidget();
                 showPlayNextDialog();
             }
+            removeChildObject(mLoadingAsset);
             super.onFileEnd();
         }
 
