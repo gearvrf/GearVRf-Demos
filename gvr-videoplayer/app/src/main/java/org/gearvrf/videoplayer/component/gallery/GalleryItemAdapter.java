@@ -56,6 +56,13 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
             viewHolder.mImage.setImageResource(homeItem.getImageResourceId());
             viewHolder.mLabel.setText(homeItem.getLabel());
 
+        } else if (item.getType() == GalleryItem.Type.TYPE_ALBUM) {
+
+            Album album = (Album) item;
+            AlbumViewHolder viewHolder = (AlbumViewHolder) holder;
+            viewHolder.mTextView.setText(album.getTitle());
+            new ThumbnailLoader(viewHolder.mThumbnail).execute(album.getVideoForThumbnail().getId());
+
         } else if (item.getType() == GalleryItem.Type.TYPE_VIDEO) {
 
             Video video = (Video) item;
@@ -63,13 +70,6 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
             viewHolder.title.setText(video.getTitle());
             viewHolder.duration.setText(TimeUtils.formatDurationFull(video.getDuration()));
             new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
-
-        } else if (item.getType() == GalleryItem.Type.TYPE_VIDEO) {
-
-            Album album = (Album) item;
-            AlbumViewHolder viewHolder = (AlbumViewHolder) holder;
-            viewHolder.mTextView.setText(album.getTitle());
-            new ThumbnailLoader(viewHolder.mThumbnail).execute(album.getVideoForThumbnail().getId());
 
         } else {
             Log.d(getClass().getSimpleName(), "Unknown type:" + item.getType());

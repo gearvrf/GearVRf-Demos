@@ -2,13 +2,13 @@ package org.gearvrf.videoplayer.model;
 
 import android.support.annotation.IdRes;
 
-public final class HomeItem extends GalleryItem {
+public abstract class HomeItem extends GalleryItem {
 
     private String label;
     @IdRes
     private int imageResourceId;
 
-    public HomeItem(String label, int imageResourceId) {
+    HomeItem(String label, int imageResourceId) {
         super(Type.TYPE_HOME);
         this.label = label;
         this.imageResourceId = imageResourceId;

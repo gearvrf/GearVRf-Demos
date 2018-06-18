@@ -14,11 +14,12 @@ class Breadcrumb implements View.OnClickListener {
     @SourceType
     private int mSourceType;
 
-    public Breadcrumb(View mainView) {
+    Breadcrumb(View mainView) {
         mHome = mainView.findViewById(R.id.home);
         mSource = mainView.findViewById(R.id.source);
         mAlbum = mainView.findViewById(R.id.album);
         mHome.setOnClickListener(this);
+        mSource.setOnClickListener(this);
         showHome();
     }
 
@@ -30,20 +31,21 @@ class Breadcrumb implements View.OnClickListener {
 
     void showSource(@SourceType int sourceType) {
         mSourceType = sourceType;
+        TextView sourceLabelTv = mSource.findViewById(R.id.label);
+        sourceLabelTv.setText(getSourceLabel(sourceType));
         mHome.setBackgroundResource(R.drawable.bg_breadcrumb_home_extended);
-        mSource.setBackgroundResource(R.drawable.bg_breadcrumb_home_normal);
+        sourceLabelTv.setBackgroundResource(R.drawable.bg_breadcrumb_source_normal);
         mAlbum.setVisibility(View.GONE);
         mSource.setVisibility(View.VISIBLE);
-        TextView label = mSource.findViewById(R.id.label);
-        label.setText(getSourceLabel(sourceType));
     }
 
     void showAlbum(String albumTitle) {
-        mSource.setBackgroundResource(R.drawable.bg_breadcrumb_source_extended);
-        mAlbum.setBackgroundResource(R.drawable.bg_breadcrumb_source_normal);
+        TextView sourceLabelTv = mSource.findViewById(R.id.label);
+        TextView albumTitleTv = mAlbum.findViewById(R.id.title);
+        sourceLabelTv.setBackgroundResource(R.drawable.bg_breadcrumb_source_extended);
+        albumTitleTv.setBackgroundResource(R.drawable.bg_breadcrumb_album_normal);
         mAlbum.setVisibility(View.VISIBLE);
-        TextView title = mAlbum.findViewById(R.id.title);
-        title.setText(albumTitle);
+        albumTitleTv.setText(albumTitle);
     }
 
     public void setOnBreadcrumbListener(OnBreadcrumbListener onBreadcrumbListener) {
