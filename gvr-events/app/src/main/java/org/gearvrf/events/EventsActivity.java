@@ -21,11 +21,10 @@ import java.util.List;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRMain;
 
-import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -34,9 +33,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class EventsActivity extends GVRActivity {
@@ -83,7 +80,9 @@ public class EventsActivity extends GVRActivity {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(itemClickListener);
         button1.setOnClickListener(clickListener);
+        button1.setOnHoverListener(buttonHoverListener);
         button2.setOnClickListener(clickListener);
+        button2.setOnHoverListener(buttonHoverListener);
         checkBox.setOnClickListener(clickListener);
         buttonPressed = getResources().getString(R.string.buttonPressed);
         listItemClicked = getResources().getString(R.string.listClicked);
@@ -121,6 +120,23 @@ public class EventsActivity extends GVRActivity {
                 long arg3) {
             listTextView.setText(String.format("%s %s", listItemClicked,
                     items.get(position)));
+        }
+    };
+
+    private View.OnHoverListener buttonHoverListener = new View.OnHoverListener() {
+        @Override
+        public boolean onHover(View v, MotionEvent event) {
+            switch(event.getAction()) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    ((Button)v).setTextColor(Color.WHITE);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    ((Button)v).setTextColor(Color.BLACK);
+                    break;
+                default:
+                    break;
+            }
+            return false;
         }
     };
 
