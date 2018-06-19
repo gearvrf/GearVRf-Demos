@@ -121,10 +121,11 @@ public class MyGdxWidget extends GVRWidget {
                 selectBox.addListener(new ChangeListener() {
                     public void changed(ChangeEvent event, Actor actor) {
                         mMain.mTexColor = selectBox.getSelectedIndex() + 1;
+                        mMain.updateTexColor();
                     }
                 });
-                selectBox.setItems("Maroon", "Black", "Blue", "Green", "Silver");
-                selectBox.setSelected("Maroon");
+                selectBox.setItems("White Light","Red Light", "Blue Light", "Green Light");
+                selectBox.setSelected("White Light");
                 selectBox.setVisible(false);
                 selectBox.setName("colorbutton");
 
@@ -272,15 +273,10 @@ public class MyGdxWidget extends GVRWidget {
             mMain.mObjectRot.getTransform().setRotation(1, 0, 0, 0);
             mResetSlider = false;
         }
-        if (mMain.ThumbnailSelected == 1 || mMain.ThumbnailSelected == 3) {
-            mColorButtonActor.setVisible(true);
+        mColorButtonActor.setVisible(true);
 
-        } else
-            mColorButtonActor.setVisible(false);
-        if (mMain.ThumbnailSelected == 3)
-            mLookInsideButtonActor.setVisible(true);
-        else
-            mLookInsideButtonActor.setVisible(false);
+        //disabling the look inside feature
+        mLookInsideButtonActor.setVisible(false);
         mStage.draw();
 
     }
