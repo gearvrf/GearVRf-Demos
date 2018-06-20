@@ -31,7 +31,6 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     private TextView mTime;
     private CountdownTimer mCountdownTimer;
     private OnPlayNextListener mOnPlayNextListener;
-    private View mLayoutOne;
 
     public PlayNextDialog(GVRContext gvrContext, float width, float height, @NonNull OnPlayNextListener listener) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_play_next), width, height);
@@ -107,8 +106,6 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     @Override
     public void gainFocus() {
         View mainView = getRootView();
-        mLayoutOne = mainView.findViewById(R.id.relativeLayoutOne);
-        mLayoutOne.setAlpha(.5f);
         mTitle = mainView.findViewById(R.id.title);
         mTitle.setVisibility(View.VISIBLE);
         mDuration = mainView.findViewById(R.id.duration);
@@ -120,8 +117,6 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     @Override
     public void loseFocus() {
         View mainView = getRootView();
-        mLayoutOne = mainView.findViewById(R.id.relativeLayoutOne);
-        mLayoutOne.setAlpha(1.0f);
         mTitle = mainView.findViewById(R.id.title);
         mTitle.setVisibility(View.INVISIBLE);
         mDuration = mainView.findViewById(R.id.duration);
