@@ -10,6 +10,7 @@ import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
@@ -39,19 +40,38 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     public Gallery(GVRContext gvrContext) {
         super(gvrContext);
 
-        View mainView = LayoutInflater.from(gvrContext.getContext()).inflate(R.layout.gallery_layout, null);
-        mRecyclerView = mainView.findViewById(R.id.recycler_view);
+        mObjectViewGallery = new GVRViewSceneObject(gvrContext, R.layout.gallery_layout,
+                new IViewEvents() {
+                    @Override
+                    public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+                        onInitRecyclerView(view);
+
+                        onInitBreadcrumb(view);
+                    }
+
+                    @Override
+                    public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+                        gvrViewSceneObject.getTransform().setScale(6, 6, 1);
+                        addChildObject(gvrViewSceneObject);
+                    }
+                });
+    }
+
+    // UI Thread
+    private void onInitRecyclerView(View galleryLayout) {
+        mRecyclerView = galleryLayout.findViewById(R.id.recycler_view);
 
         GalleryItemAdapter adapterGallery = new GalleryItemAdapter<>(mItemList);
         adapterGallery.setOnItemSelectionListener(this);
         mRecyclerView.setAdapter(adapterGallery);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(gvrContext.getContext(), 3));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getGVRContext().getActivity(), 3));
 
-        mObjectViewGallery = new GVRViewSceneObject(gvrContext, mainView, 1, 1);
-        mObjectViewGallery.getTransform().setScale(6, 6, 1);
-        addChildObject(mObjectViewGallery);
+        loadHome();
+    }
 
-        mBreadcrumb = new Breadcrumb(mainView.findViewById(R.id.breadcrumb));
+    // UI Thread
+    private void onInitBreadcrumb(View galleryLayout) {
+        mBreadcrumb = new Breadcrumb(galleryLayout.findViewById(R.id.breadcrumb));
         mBreadcrumb.showHome();
         mBreadcrumb.setOnBreadcrumbListener(new OnBreadcrumbListener() {
             @Override
@@ -68,10 +88,9 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                 }
             }
         });
-
-        loadHome();
     }
 
+    // UI Thread
     private void loadHome() {
         mItemList.clear();
         mItemList.addAll(createHomeItems());

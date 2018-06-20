@@ -30,8 +30,6 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
 
     public ControlWidget(GVRContext gvrContext, float width, float height) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_player_controller), width, height);
-
-        mMainView = getRootView();
         setName(getClass().getSimpleName());
     }
 
@@ -42,6 +40,7 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
     @Override
     protected void onInitView() {
         super.onInitView();
+        mMainView = getRootView();
         initView();
     }
 
