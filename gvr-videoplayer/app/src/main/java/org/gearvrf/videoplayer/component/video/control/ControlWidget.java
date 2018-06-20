@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -55,8 +57,31 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
 
         playPauseButton.setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
+        mSeekBar.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View v, MotionEvent event) {
+                setSeekTime(event.getX(), v.getWidth());
+                return false;
+            }
+        });
 
         showPlay();
+    }
+
+    private void setSeekTime(float x, int width) {
+        //Just to avoid handling negative values for X once the framework sends a negative
+        //value when the hover is outside the view even if we use its action (HOVER_MOVE, for
+        //example)
+        float eventX = x > 0 ? x : .0f;
+
+        int seekTime;
+        if (eventX == 0) {
+            seekTime = 0;
+        } else {
+            seekTime = (int) ((eventX / width) * mSeekBar.getMax());
+        }
+        //TODO: Show the seek time on UI
+        Log.d("SeekBar", "seekTime" + TimeUtils.formatDurationFull(seekTime));
     }
 
     public void showPause() {
