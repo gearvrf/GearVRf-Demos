@@ -107,7 +107,7 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
             thumbnail = itemView.findViewById(R.id.thumbnail);
             title = itemView.findViewById(R.id.title);
             duration = itemView.findViewById(R.id.duration);
-            itemView.setOnClickListener(this);
+            itemView.findViewById(R.id.overlay_video).setOnClickListener(this);
         }
 
         @Override
@@ -125,7 +125,7 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
             super(itemView);
             mThumbnail = itemView.findViewById(R.id.thumbnail);
             mTextView = itemView.findViewById(R.id.textView);
-            itemView.setOnClickListener(this);
+            itemView.findViewById(R.id.overlay).setOnClickListener(this);
         }
 
         @Override

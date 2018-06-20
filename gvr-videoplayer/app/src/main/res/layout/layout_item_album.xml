@@ -5,8 +5,6 @@
     android:layout_width="@dimen/grid_item_width"
     android:layout_height="@dimen/grid_item_height"
     android:layout_margin="8.5px"
-    android:clickable="true"
-    android:focusable="true"
     android:orientation="vertical"
     app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="6px"
@@ -28,9 +26,12 @@
             tools:ignore="ContentDescription" />
 
         <LinearLayout
+            android:id="@+id/overlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/button_with_border"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/bg_item_album"
             android:gravity="center">
 
             <TextView
@@ -38,7 +39,7 @@
                 android:layout_width="200px"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@string/font_roboto_medium"
                 android:gravity="center"
                 android:maxLines="2"
                 android:text="subtitles"

@@ -143,6 +143,7 @@ public class VideoPlayer extends GVRSceneObject {
                 public void onFadeIn() {
                     Log.d(TAG, "showBackButton");
                     mBackButtonActive = true;
+                    mBackButton.getRenderData().getMaterial().setOpacity(3.0f);
                 }
             });
         }
@@ -234,10 +235,8 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void addBackButton(float width, float height) {
-
         mBackButton = new BackButton(getGVRContext(), width, height);
         mBackButton.setFocusListener(mFocusListener);
-
         // Put back button above the video screen
         float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
         mBackButton.getTransform().setPositionY(positionY - (positionY * .08f));
@@ -254,17 +253,16 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void addTitleOverlay(float width, float height) {
-        mOverlayTitle = new OverlayTitle(getGVRContext(), width);
+        mOverlayTitle = new OverlayTitle(getGVRContext(), width, height);
         float positionY = (height / OVERLAY_TITLE_HEIGHT_FACTOR / 2f);
         mOverlayTitle.getTransform().setPositionY(positionY + .5f);
         addChildObject(mOverlayTitle);
     }
 
     private void addLightScene() {
-        mLightObj = new GVRSceneObject(getGVRContext());
-        mLightScene = new LightScene(getGVRContext());
-        mLightObj.attachComponent(mLightScene);
-        getGVRContext().getMainScene().getSceneObjectByName("sphere").addChildObject(mLightObj);
+       // mLightObj = new GVRSceneObject(getGVRContext());
+       // mLightScene = new LightScene(getGVRContext());
+       // mLightObj.attachComponent(mLightScene);
     }
 
     private void addLoadingAsset(float width, float height) {
@@ -461,8 +459,7 @@ public class VideoPlayer extends GVRSceneObject {
                 }
             });
             addChildObject(mOverlayTitle);
-            getGVRContext().getMainScene().getSceneObjectByName("sphere").addChildObject(mLightObj);
-        }
+      }
     }
 
     public void hide() {
@@ -484,7 +481,6 @@ public class VideoPlayer extends GVRSceneObject {
                 }
             });
             removeChildObject(mOverlayTitle);
-            getGVRContext().getMainScene().getSceneObjectByName("sphere").removeChildObject(mLightObj);
         }
     }
 }

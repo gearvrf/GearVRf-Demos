@@ -1,19 +1,31 @@
 package org.gearvrf.videoplayer.component.video.title;
 
-import org.gearvrf.GVRAndroidResource;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRSceneObject;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
-public class OverlayTitle extends GVRSceneObject {
+public class OverlayTitle extends FocusableViewSceneObject {
 
-    private static final float ASPECT_RATIO = .1f;
+    public OverlayTitle(GVRContext gvrContext, float width, float height) {
+        super(gvrContext, getMainView(gvrContext, R.layout.layout_title_image), width, height);
+    }
 
-    public OverlayTitle(GVRContext gvrContext, float width) {
-        super(gvrContext,
-                gvrContext.createQuad(width, ASPECT_RATIO * width),
-                gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
-                        R.drawable.ic_app_name_highlight)));
-        getRenderData().getMaterial().setOpacity(0.8f);
+    private static View getMainView(GVRContext gvrContext, int layout_title_image) {
+        return LayoutInflater.from(gvrContext.getContext()).inflate(layout_title_image, null);
+    }
+
+    @Override
+    public void gainFocus() {
+        super.gainFocus();
+        getRenderData().getMaterial().setOpacity(2f);
+    }
+
+    @Override
+    public void loseFocus() {
+        super.loseFocus();
+        getRenderData().getMaterial().setOpacity(0.5f);
     }
 }

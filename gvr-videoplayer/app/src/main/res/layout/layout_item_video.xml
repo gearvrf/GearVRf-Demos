@@ -26,10 +26,10 @@
 
         <!-- OVERLAY -->
         <RelativeLayout
-            android:id="@+id/overlay"
+            android:id="@+id/overlay_video"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/bg_gallery_item_video_hovered"
+            android:background="@drawable/bg_item_album"
             android:padding="20px"
             android:visibility="visible">
 
@@ -54,6 +54,7 @@
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
+                    android:id="@+id/ic_count"
                     android:layout_width="21px"
                     android:layout_height="21px"
                     android:src="@drawable/ic_time" />
