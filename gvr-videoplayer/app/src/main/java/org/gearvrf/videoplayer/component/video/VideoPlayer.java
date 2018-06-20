@@ -17,7 +17,6 @@ import org.gearvrf.videoplayer.component.video.control.ControlWidget;
 import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
 import org.gearvrf.videoplayer.component.video.dialog.OnPlayNextListener;
 import org.gearvrf.videoplayer.component.video.dialog.PlayNextDialog;
-import org.gearvrf.videoplayer.component.video.light.LightScene;
 import org.gearvrf.videoplayer.component.video.loading.LoadingAsset;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.Player;
@@ -49,8 +48,6 @@ public class VideoPlayer extends GVRSceneObject {
     private BackButton mBackButton;
     private PlayNextDialog mPlayNextDialog;
     private OverlayTitle mOverlayTitle;
-    private LightScene mLightScene;
-    private GVRSceneObject mLightObj;
     private LoadingAsset mLoadingAsset;
 
     private boolean mVideoPlayerActive = true;
