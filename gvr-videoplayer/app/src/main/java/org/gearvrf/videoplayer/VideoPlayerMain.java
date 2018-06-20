@@ -152,7 +152,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         createLabel();
         mCurrentCursor = new DefaultFadeableObject(
                 mContext,
-                mContext.createQuad(0.2f * CURSOR_DEPTH, 0.2f * CURSOR_DEPTH),
+                mContext.createQuad(0.1f * CURSOR_DEPTH, 0.1f * CURSOR_DEPTH),
                 mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.raw.cursor))
         );
         mCurrentCursor.getRenderData().setDepthTest(false);
