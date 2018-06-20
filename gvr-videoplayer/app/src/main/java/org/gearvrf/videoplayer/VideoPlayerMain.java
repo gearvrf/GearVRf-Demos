@@ -20,10 +20,12 @@ import android.view.View;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.ITouchEvents;
@@ -67,6 +69,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private GVRSceneObject mMainSceneContainer;
     private FadeableObject mLabelCursor, mCurrentCursor, mParentCursor;
     private Gallery mGallery;
+    private GVRSphereSceneObject mSkybox;
 
     /**
      * Called when the activity is first created.
@@ -107,10 +110,10 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         int availableSkyboxes[] = {R.raw.skybox_a, R.raw.skybox_b, R.raw.skybox_c};
         int selectedSkybox = availableSkyboxes[new SecureRandom().nextInt(2)];
         GVRTexture texture = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, selectedSkybox));
-        GVRSphereSceneObject sphere = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
-        sphere.setName("sphere");
-        sphere.getTransform().setScale(SCALE, SCALE, SCALE);
-        mScene.addSceneObject(sphere);
+        mSkybox = new GVRSphereSceneObject(mContext, 72, 144, false, texture);
+        mSkybox.setName("sphere");
+        mSkybox.getTransform().setScale(SCALE, SCALE, SCALE);
+        mScene.addSceneObject(mSkybox);
     }
 
     private void initCursorController() {
@@ -183,6 +186,8 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
                     mVideoPlayer.play();
                 }
             });
+
+            mSkybox.getRenderData().getMaterial().setColor(0.6f, 0.6f, 0.6f);
         }
     };
 
@@ -196,7 +201,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
                     mGallery.fadeIn();
                 }
             });
-
+            mSkybox.getRenderData().getMaterial().setColor(1.0f, 1.0f, 1.0f);
         }
     };
 
