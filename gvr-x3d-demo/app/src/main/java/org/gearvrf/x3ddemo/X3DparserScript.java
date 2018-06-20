@@ -15,31 +15,27 @@
 
 package org.gearvrf.x3ddemo;
 
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.util.Log;
+
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRLight;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRScreenshot3DCallback;
+import org.gearvrf.GVRScreenshotCallback;
+import org.gearvrf.GVRShader;
+import org.gearvrf.SystemPropertyUtil;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
+import org.gearvrf.utility.Threads;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-
-import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRContext;
-import org.gearvrf.GVRLight;
-import org.gearvrf.GVRDirectLight;
-
-import org.gearvrf.GVRMain;
-import org.gearvrf.GVRShader;
-import org.gearvrf.GVRTransform;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
-import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRScreenshot3DCallback;
-import org.gearvrf.GVRScreenshotCallback;
-import org.gearvrf.utility.Threads;
-
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.os.Environment;
-import android.util.Log;
 
 /**
  *
@@ -69,16 +65,17 @@ public class X3DparserScript extends GVRMain
     mGVRContext = gvrContext;
 
     scene = gvrContext.getMainScene();
-    scene.getMainCameraRig().getLeftCamera().setBackgroundColor(Color.BLACK);
-    scene.getMainCameraRig().getRightCamera().setBackgroundColor(Color.BLACK);
+    scene.setBackgroundColor(0, 0, 0, 1);
 
     GVRModelSceneObject model = new GVRModelSceneObject(mGVRContext);
     // X3D test files should be in the assets directory.
     // Replace 'filename' to view another .x3d file
-    String filename = "cylindersandplanes.x3d";
+    String filename = SystemPropertyUtil.getSystemPropertyString("debug.gearvrf.gvr-x3d-demo");
+    if (null == filename) {
+      filename = "cylindersandplanes.x3d";
+    }
     try
     {
-      GVRCameraRig mainCameraRig = scene.getMainCameraRig();
       model = gvrContext.getAssetLoader().loadModel(filename, scene);
 
       // check if a headlight was attached to the model's camera rig
