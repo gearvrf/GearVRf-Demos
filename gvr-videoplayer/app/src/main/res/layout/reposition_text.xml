@@ -6,7 +6,7 @@
 
     <TextView
         android:id="@+id/buttonReposition"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@string/font_roboto_medium"
         android:text="TAP TO REPOSITION VIEW"
         android:textColor="#eeeeee"
         android:textSize="24px"

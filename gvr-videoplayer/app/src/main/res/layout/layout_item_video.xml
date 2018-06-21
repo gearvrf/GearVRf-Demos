@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:ellipsize="end"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@string/font_roboto_medium"
                 android:maxLines="2"
                 android:text="@string/lorem_ipsum"
                 android:textColor="#FFFFFF"
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="9px"
-                    android:fontFamily="sans-serif"
+                    android:fontFamily="@string/font_roboto_medium"
                     android:text="00:00"
                     android:textColor="#FFFFFF"
                     android:textSize="20px" />

@@ -4,7 +4,7 @@
     <style name="playNextText">
         <item name="android:textSize" tools:ignore="PxUsage">24px</item>
         <item name="android:textColor">#FFFFFF</item>
-        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:fontFamily">@string/font_roboto_medium</item>
         <item name="android:textAllCaps">true</item>
     </style>
 
