@@ -4,8 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.text.Layout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,7 +15,6 @@ import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableViewObject;
 import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.focus.Focusable;
-import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 import org.gearvrf.videoplayer.model.Video;
 import org.gearvrf.videoplayer.provider.asyntask.ThumbnailLoader;
 import org.gearvrf.videoplayer.util.TimeUtils;
@@ -31,6 +28,7 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     private TextView mTime;
     private CountdownTimer mCountdownTimer;
     private OnPlayNextListener mOnPlayNextListener;
+    private View mViewHideandShow;
 
     public PlayNextDialog(GVRContext gvrContext, float width, float height, @NonNull OnPlayNextListener listener) {
         super(gvrContext, getMainView(gvrContext, R.layout.layout_play_next), width, height);
@@ -106,6 +104,8 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     @Override
     public void gainFocus() {
         View mainView = getRootView();
+        mViewHideandShow = mainView.findViewById(R.id.overlay_video);
+        mViewHideandShow.setVisibility(View.VISIBLE);
         mTitle = mainView.findViewById(R.id.title);
         mTitle.setVisibility(View.VISIBLE);
         mDuration = mainView.findViewById(R.id.duration);
@@ -117,13 +117,14 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     @Override
     public void loseFocus() {
         View mainView = getRootView();
+        mViewHideandShow = mainView.findViewById(R.id.overlay_video);
+        mViewHideandShow.setVisibility(View.INVISIBLE);
         mTitle = mainView.findViewById(R.id.title);
         mTitle.setVisibility(View.INVISIBLE);
         mDuration = mainView.findViewById(R.id.duration);
         mDuration.setVisibility(View.INVISIBLE);
         mIc_count = mainView.findViewById(R.id.ic_count);
         mIc_count.setVisibility(View.INVISIBLE);
-
     }
 
 
