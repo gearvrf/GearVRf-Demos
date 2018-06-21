@@ -83,7 +83,6 @@ public class VideoPlayer extends GVRSceneObject {
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight, BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog(PLAY_NEXT_DIALOG_WIDTH_FACTOR * playerWidth, PLAY_NEXT_DIALOG_HEIGHT_FACTOR * playerHeight);
         addTitleOverlay(OVERLAY_TITLE_WIDTH_FACTOR * playerWidth, OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
-        addLightScene();
     }
 
     public void prepare(@NonNull List<Video> videos) {
@@ -256,13 +255,7 @@ public class VideoPlayer extends GVRSceneObject {
         addChildObject(mOverlayTitle);
     }
 
-    private void addLightScene() {
-       // mLightObj = new GVRSceneObject(getGVRContext());
-       // mLightScene = new LightScene(getGVRContext());
-       // mLightObj.attachComponent(mLightScene);
-    }
-
-    private void addLoadingAsset(float width, float height) {
+   private void addLoadingAsset(float width, float height) {
         mLoadingAsset = new LoadingAsset(getGVRContext(), width, height);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1f);
         addChildObject(mLoadingAsset);
