@@ -6,13 +6,15 @@ public final class Video extends GalleryItem {
     private String title;
     private String path;
     private long duration;
+    private boolean isRatio21;
 
-    public Video(long id, String title, String path, long duration) {
+    public Video(long id, String title, String path, long duration, boolean isRatio21) {
         super(Type.TYPE_VIDEO);
         this.id = id;
         this.title = title;
         this.path = path;
         this.duration = duration;
+        this.isRatio21 = isRatio21;
     }
 
     public long getId() {
@@ -47,6 +49,14 @@ public final class Video extends GalleryItem {
         this.duration = duration;
     }
 
+    public boolean getIsRatio21() {
+        return this.isRatio21;
+    }
+
+    public void setIsRatio21(boolean isRatio21) {
+        this.isRatio21 = isRatio21;
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -55,6 +65,7 @@ public final class Video extends GalleryItem {
                 ", path='" + path + '\'' +
                 ", duration=" + duration +
                 ", type=" + type +
+                ", isRatio21=" + isRatio21 +
                 "} " + super.toString();
     }
 }

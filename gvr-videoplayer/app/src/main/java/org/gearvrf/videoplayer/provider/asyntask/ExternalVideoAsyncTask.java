@@ -69,7 +69,7 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                     String videoTitle = cursorWrapper.getTitle();
                     long videoId = cursorWrapper.getId();
 
-                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration()));
+                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration(), false));
 
                 } while (cursor.moveToNext());
             }

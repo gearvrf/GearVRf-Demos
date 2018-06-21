@@ -16,11 +16,13 @@
 package org.gearvrf.videoplayer.component.video.player;
 
 import android.annotation.SuppressLint;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.view.Surface;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -31,16 +33,20 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.FileDataSource;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRExternalTexture;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.video.DefaultExoPlayer;
+import org.gearvrf.videoplayer.model.Video;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Player extends FadeableObject {
 
@@ -49,14 +55,16 @@ public class Player extends FadeableObject {
 
     private GVRContext mGvrContext;
     private DefaultExoPlayer mMediaPlayer;
-    private File[] mFiles;
-    private LinkedList<File> mPlayingNowQueue;
+    private Video[] mFiles;
+    private LinkedList<Video> mPlayingNowQueue;
     private DataSource.Factory mFileDataSourceFactory;
     private File mPlayingNow;
     private OnPlayerListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
     private GVRVideoSceneObject mVideo;
+    private GVRVideoSceneObject mFlatVideo;
+    private GVRVideoSceneObject m360Video;
 
     public Player(final GVRContext gvrContext, float width, float height) {
         super(gvrContext);
@@ -74,11 +82,35 @@ public class Player extends FadeableObject {
     }
 
     private void createVideoSceneObject(float width, float height) {
+        GVRExternalTexture texture = new GVRExternalTexture(mGvrContext);
+        SurfaceTexture surfaceTexture = new SurfaceTexture(texture.getId());
+        Surface surface = new Surface(surfaceTexture);
+
         mMediaPlayer = new DefaultExoPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
         mMediaPlayer.getPlayer().addListener(mPlayerListener);
-        mVideo = new GVRVideoSceneObject(mGvrContext, width, height, mMediaPlayer, GVRVideoType.MONO);
-        mVideo.attachCollider(new GVRMeshCollider(getGVRContext(), true));
-        addChildObject(mVideo);
+
+        mFlatVideo = new GVRVideoSceneObject(mGvrContext, mGvrContext.createQuad(width, height), mMediaPlayer, texture, GVRVideoType.MONO);
+        mFlatVideo.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        addChildObject(mFlatVideo);
+
+        GVRSphereSceneObject sphere = new GVRSphereSceneObject(mGvrContext, 72, 144, false);
+        m360Video = new GVRVideoSceneObject(mGvrContext, sphere.getRenderData().getMesh(), mMediaPlayer, texture, GVRVideoType.MONO);
+        m360Video.getTransform().setScale(100f, 100f, 100f);
+        addChildObject(m360Video);
+
+        setFlatPlayer();
+    }
+
+    public void set360Player() {
+        mFlatVideo.setEnable(false);
+        m360Video.setEnable(true);
+        mVideo = m360Video;
+    }
+
+    public void setFlatPlayer() {
+        m360Video.setEnable(false);
+        mFlatVideo.setEnable(true);
+        mVideo = mFlatVideo;
     }
 
     public void playVideo() {
@@ -116,12 +148,17 @@ public class Player extends FadeableObject {
         mMediaPlayer.seekTo(progress);
     }
 
-    public void prepare(@NonNull File[] files) {
+    public void prepare(@NonNull List<Video> videos) {
         mMediaPlayer.pause();
-        if (files.length > 0) {
-            mFiles = files;
-            mPlayingNowQueue = new LinkedList<>(Arrays.asList(mFiles));
+        if (videos.size() > 0) {
+            mFiles = videos.toArray(new Video[videos.size()]);
+            mPlayingNowQueue = new LinkedList<>(videos);
             logd("preparedQueue: " + mPlayingNowQueue);
+            if (mPlayingNowQueue.getFirst().getIsRatio21()) {
+                set360Player();
+            } else {
+                setFlatPlayer();
+            }
             prepareNextFile();
         } else {
             logd("Files array is empty");
@@ -135,8 +172,9 @@ public class Player extends FadeableObject {
     public void prepareNextFile() {
         if (mPlayingNowQueue != null && !mPlayingNowQueue.isEmpty()) {
             mMediaPlayer.pause();
+            mPlayingNow = new File(mPlayingNowQueue.pop().getPath());
             MediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.fromFile(mPlayingNow = mPlayingNowQueue.pop()),
+                    Uri.fromFile(mPlayingNow),
                     mFileDataSourceFactory,
                     new DefaultExtractorsFactory(), null, null
             );

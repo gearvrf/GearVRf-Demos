@@ -46,7 +46,9 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                 VideoColumns._ID,
                 VideoColumns.TITLE,
                 VideoColumns.DATA,
-                VideoColumns.DURATION
+                VideoColumns.DURATION,
+                VideoColumns.WIDTH,
+                VideoColumns.HEIGHT
         };
 
         String selection = mAlbumTitleFilter != null ? VideoColumns.BUCKET_DISPLAY_NAME + "=?" : null;
@@ -69,7 +71,7 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                     String videoTitle = cursorWrapper.getTitle();
                     long videoId = cursorWrapper.getId();
 
-                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration()));
+                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration(), cursorWrapper.getIsRatio21()));
 
                 } while (cursor.moveToNext());
             }
@@ -106,6 +108,18 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
         long getDuration() {
             return getLong(getColumnIndexOrThrow(VideoColumns.DURATION));
+        }
+
+        String getWidth() {
+            return getString(getColumnIndexOrThrow(VideoColumns.WIDTH));
+        }
+
+        String getHeight() {
+            return getString(getColumnIndexOrThrow(VideoColumns.HEIGHT));
+        }
+
+        boolean getIsRatio21() {
+            return Float.parseFloat(getWidth()) / Float.parseFloat(getHeight()) == 2;
         }
     }
 }

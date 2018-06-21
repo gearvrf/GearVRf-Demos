@@ -87,12 +87,8 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void prepare(@NonNull List<Video> videos) {
         mVideos = videos;
-        List<File> videoFiles = new LinkedList<>();
-        for (Video video : mVideos) {
-            videoFiles.add(new File(video.getPath()));
-        }
         if (videos.size() > 0) {
-            mPlayer.prepare(videoFiles.toArray(new File[videoFiles.size()]));
+            mPlayer.prepare(videos);
         }
     }
 

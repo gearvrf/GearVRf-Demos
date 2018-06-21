@@ -42,7 +42,9 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
                 VideoColumns.BUCKET_DISPLAY_NAME,
                 VideoColumns.TITLE,
                 VideoColumns.DATA,
-                VideoColumns.DURATION
+                VideoColumns.DURATION,
+                VideoColumns.WIDTH,
+                VideoColumns.HEIGHT
         };
 
         String sortOrder = VideoColumns.BUCKET_DISPLAY_NAME + " ASC, " + VideoColumns.TITLE + " ASC";
@@ -86,11 +88,16 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
         }
 
         org.gearvrf.videoplayer.model.Video getVideo() {
+            float width = Float.parseFloat(getString(getColumnIndexOrThrow(VideoColumns.WIDTH)));
+            float height = Float.parseFloat(getString(getColumnIndexOrThrow(VideoColumns.HEIGHT)));
+            boolean isRatio21 =  width / height == 2;
+
             return new org.gearvrf.videoplayer.model.Video(
                     getLong(getColumnIndexOrThrow(VideoColumns._ID)),
                     getString(getColumnIndexOrThrow(VideoColumns.TITLE)),
                     getString(getColumnIndexOrThrow(VideoColumns.DATA)),
-                    getLong(getColumnIndexOrThrow(VideoColumns.DURATION))
+                    getLong(getColumnIndexOrThrow(VideoColumns.DURATION)),
+                    isRatio21
             );
         }
     }
