@@ -5,108 +5,97 @@
     android:layout_height="wrap_content"
     android:background="@drawable/bg_player_controller"
     android:gravity="center_vertical"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:paddingBottom="32dp"
     android:paddingEnd="42dp"
     android:paddingStart="42dp"
     android:paddingTop="32dp">
 
+    <LinearLayout
+        android:id="@+id/playPauseButton"
+        android:layout_width="77dp"
+        android:layout_height="77dp"
+        android:background="@drawable/bg_button_play"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:src="@drawable/ic_play"
+            tools:ignore="ButtonStyle,ContentDescription,HardcodedText" />
+
+    </LinearLayout>
+
     <Space
-        android:layout_width="1000dp"
+        android:layout_width="42dp"
         android:layout_height="0dp" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/playPauseButton"
-            android:layout_width="77dp"
-            android:layout_height="77dp"
-            android:background="@drawable/bg_button_play"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="43dp"
-                android:layout_height="43dp"
-                android:src="@drawable/ic_play"
-                tools:ignore="ButtonStyle,ContentDescription,HardcodedText" />
-
-        </LinearLayout>
-
-        <Space
-            android:layout_width="42dp"
-            android:layout_height="0dp" />
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="vertical">
+            android:layout_gravity="center_horizontal"
+            android:ellipsize="end"
+            android:fontFamily="@string/font_roboto_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="VideoTitle.mp4"
+            android:textColor="@android:color/white"
+            android:textSize="24dp"
+            tools:ignore="HardcodedText,SpUsage" />
+
+        <SeekBar
+            android:id="@+id/progressBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="14dp"
+            android:maxHeight="8dp"
+            android:paddingEnd="9dp"
+            android:paddingStart="9dp"
+            android:progress="40"
+            android:progressDrawable="@drawable/seekbar_style"
+            android:thumb="@drawable/custom_thumb" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp">
 
             <TextView
-                android:id="@+id/titleText"
-                android:layout_width="match_parent"
+                android:id="@+id/elapsedTimeText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:ellipsize="end"
+                android:layout_alignParentStart="true"
+                android:fontFamily="@string/font_roboto_medium"
                 android:gravity="center"
-                android:maxLines="1"
-                android:text="VideoTitle.mp4"
-                android:textColor="@android:color/white"
-                android:textSize="24dp"
+                android:text="0:00:00"
+                android:textColor="#006fcf"
+                android:textSize="20dp"
                 tools:ignore="HardcodedText,SpUsage" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/durationTimeText"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="22dp"
-                android:paddingTop="22dp">
+                android:layout_alignParentEnd="true"
+                android:fontFamily="@string/font_roboto_medium"
+                android:gravity="center"
+                android:text="0:00:00"
+                android:textColor="@android:color/white"
+                android:textSize="20dp"
+                tools:ignore="HardcodedText,SpUsage" />
 
-                <SeekBar
-                    android:id="@+id/progressBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxHeight="8dp"
-                    android:progress="40"
-                    android:progressDrawable="@drawable/seekbar_style"
-                    android:thumb="@drawable/custom_thumb" />
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/elapsedTimeText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:gravity="center"
-                    android:text="0:00:00"
-                    android:textColor="#006fcf"
-                    android:textSize="20dp"
-                    tools:ignore="HardcodedText,SpUsage" />
-
-                <TextView
-                    android:id="@+id/durationTimeText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:gravity="center"
-                    android:text="0:00:00"
-                    android:textColor="@android:color/white"
-                    android:textSize="20dp"
-                    tools:ignore="HardcodedText,SpUsage" />
-
-            </RelativeLayout>
-
-        </LinearLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 
