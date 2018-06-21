@@ -23,7 +23,7 @@ import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.component.video.player.PlayerListenerDispatcher;
 import org.gearvrf.videoplayer.component.video.title.OverlayTitle;
 import org.gearvrf.videoplayer.focus.FocusListener;
-import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
+import org.gearvrf.videoplayer.focus.Focusable;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
 import org.gearvrf.videoplayer.model.Video;
 
@@ -98,14 +98,13 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void showControlWidget() {
         showControlWidget(mHideControlWidgetTimerEnabled);
-
     }
 
     private void showControlWidget(boolean autoHide) {
         Log.d(TAG, "showControlWidget: ");
         if (!mIsControlActive) {
             addChildObject(mControl);
-            mControl.fadeIn(new FadeableViewObject.FadeInCallback() {
+            mControl.fadeIn(new FadeableObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
                     mIsControlActive = true;
@@ -122,7 +121,7 @@ public class VideoPlayer extends GVRSceneObject {
         mHideControlTimer.cancel();
         if (mIsControlActive) {
             mIsControlActive = false;
-            mControl.fadeOut(new FadeableViewObject.FadeOutCallback() {
+            mControl.fadeOut(new FadeableObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
                     removeChildObject(mControl);
@@ -217,7 +216,8 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void addControlWidget(float width, float height) {
 
-        mControl = new ControlWidget(getGVRContext(), width, height);
+        mControl = new ControlWidget(getGVRContext());
+        mControl.getTransform().setScale(6, 6, 1);
         mControl.setOnVideoControllerListener(mOnVideoControllerListener);
         mControl.setFocusListener(mFocusListener);
 
@@ -255,7 +255,7 @@ public class VideoPlayer extends GVRSceneObject {
         addChildObject(mOverlayTitle);
     }
 
-   private void addLoadingAsset(float width, float height) {
+    private void addLoadingAsset(float width, float height) {
         mLoadingAsset = new LoadingAsset(getGVRContext(), width, height);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1f);
         addChildObject(mLoadingAsset);
@@ -279,9 +279,9 @@ public class VideoPlayer extends GVRSceneObject {
         mPlayer.pauseVideo();
     }
 
-    private FocusListener<FocusableViewSceneObject> mFocusListener = new FocusListener<FocusableViewSceneObject>() {
+    private FocusListener mFocusListener = new FocusListener() {
         @Override
-        public void onFocusGained(FocusableViewSceneObject focusable) {
+        public void onFocusGained(Focusable focusable) {
             Log.d(TAG, "onFocusGained: " + focusable.getClass().getSimpleName());
             if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
                 mHideControlTimer.cancel();
@@ -289,7 +289,7 @@ public class VideoPlayer extends GVRSceneObject {
         }
 
         @Override
-        public void onFocusLost(FocusableViewSceneObject focusable) {
+        public void onFocusLost(Focusable focusable) {
             if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
                 Log.d(TAG, "onFocusLost: " + focusable.getClass().getSimpleName());
                 mHideControlTimer.start();
@@ -311,7 +311,7 @@ public class VideoPlayer extends GVRSceneObject {
             mControl.setTitle(title);
             mControl.setMaxProgress((int) duration);
             mControl.setProgress((int) mPlayer.getProgress());
-            mControl.showPlay();
+            mControl.setButtonState(ControlWidget.ButtonState.PLAYING);
 
             if (mVideoPlayerActive) {
                 mPlayer.fadeIn(new FadeableObject.FadeInCallback() {
@@ -329,7 +329,7 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onStart() {
             Log.d(TAG, "Video started");
-            mControl.showPause();
+            mControl.setButtonState(ControlWidget.ButtonState.PAUSED);
             showAllControls();
             removeChildObject(mLoadingAsset);
             super.onStart();
@@ -449,7 +449,7 @@ public class VideoPlayer extends GVRSceneObject {
                 }
             });
             addChildObject(mOverlayTitle);
-      }
+        }
     }
 
     public void hide() {

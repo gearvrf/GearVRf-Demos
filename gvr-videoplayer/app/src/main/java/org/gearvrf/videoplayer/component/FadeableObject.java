@@ -11,6 +11,7 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVROpacityAnimation;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public abstract class FadeableObject extends GVRSceneObject {
 
@@ -37,6 +38,33 @@ public abstract class FadeableObject extends GVRSceneObject {
 
     @CallSuper
     public final void fadeIn(final FadeInCallback callback) {
+        if (getFadeable() instanceof GVRViewSceneObject) {
+            getGVRContext().getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    doFadeIn(callback);
+                }
+            });
+        } else {
+            doFadeIn(callback);
+        }
+    }
+
+    @CallSuper
+    public final void fadeOut(final FadeOutCallback callback) {
+        if (getFadeable() instanceof GVRViewSceneObject) {
+            getGVRContext().getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    doFadeOut(callback);
+                }
+            });
+        } else {
+            doFadeOut(callback);
+        }
+    }
+
+    private void doFadeIn(final FadeInCallback callback) {
         Log.d(getClass().getSimpleName(), "fadeIn: " + getClass().getSimpleName());
         GVROpacityAnimation animation = new GVROpacityAnimation(
                 getFadeable(), FADE_DURATION, 1);
@@ -51,8 +79,7 @@ public abstract class FadeableObject extends GVRSceneObject {
         animation.start(getGVRContext().getAnimationEngine());
     }
 
-    @CallSuper
-    public final void fadeOut(final FadeOutCallback callback) {
+    private void doFadeOut(final FadeOutCallback callback) {
         Log.d(getClass().getSimpleName(), "fadeOut: " + getClass().getSimpleName());
         GVROpacityAnimation animation = new GVROpacityAnimation(
                 getFadeable(), FADE_DURATION, 0);

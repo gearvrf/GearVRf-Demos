@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="external_videos">
+        <item>"https://www.youtube.com/watch?v=pW2oWy-ePS8&amp;t=4s"</item>
+        <item>https://www.youtube.com/watch?v=b9fqqm_ffVw</item>
+        <item>https://www.youtube.com/watch?v=pW2oWy-ePS8&amp;t=4s</item>
+        <item>https://www.youtube.com/watch?v=iF5-aDJOr6U</item>
+        <item>https://www.youtube.com/watch?v=d2fIAEB1lGE</item>
+        <item>https://www.youtube.com/watch?v=iF5-aDJOr6U</item>
+        <item>https://www.youtube.com/watch?v=ErgCsVNC4Yw&amp;t=5s</item>
+        <item>https://www.youtube.com/watch?v=ErgCsVNC4Yw&amp;t=5s</item>
+        <item>https://www.youtube.com/watch?v=ErgCsVNC4Yw&amp;t=5s</item>
+    </string-array>
+</resources>

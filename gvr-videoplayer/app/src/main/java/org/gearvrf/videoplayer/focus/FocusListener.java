@@ -15,9 +15,9 @@
 
 package org.gearvrf.videoplayer.focus;
 
-public interface FocusListener<T extends Focusable> {
+public interface FocusListener {
 
-    void onFocusGained(T focusable);
+    void onFocusGained(Focusable focusable);
 
-    void onFocusLost(T focusable);
+    void onFocusLost(Focusable focusable);
 }

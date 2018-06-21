@@ -22,14 +22,6 @@ public abstract class FadeableViewObject extends GVRViewSceneObject {
     @NonNull
     protected abstract GVRSceneObject getFadeable();
 
-    public final void fadeIn() {
-        fadeIn(null);
-    }
-
-    public final void fadeOut() {
-        fadeOut(null);
-    }
-
     public final void fadeIn(final FadeInCallback callback) {
         Log.d(getClass().getSimpleName(), "fadeIn: " + getClass().getSimpleName());
         GVROpacityAnimation animation = new GVROpacityAnimation(

@@ -2,10 +2,9 @@ package org.gearvrf.videoplayer.component.video.control;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.DrawableRes;
-import android.support.annotation.LayoutRes;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,58 +13,46 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IViewEvents;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.focus.FocusListener;
-import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
+import org.gearvrf.videoplayer.focus.Focusable;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
-@SuppressLint("InflateParams")
-public class ControlWidget extends FocusableViewSceneObject implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    private View mMainView;
+public class ControlWidget extends FadeableObject implements Focusable, View.OnClickListener, SeekBar.OnSeekBarChangeListener, IViewEvents {
+
+    @IntDef({ButtonState.PLAYING, ButtonState.PAUSED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ButtonState {
+        int PLAYING = 0;
+        int PAUSED = 1;
+    }
+
     private SeekBar mSeekBar;
     private ImageView mPlayPauseButtonImage;
     private TextView mElapsedTime, mDurationTime, mTitle;
     private ControlWidgetListener mOnVideoControllerListener;
     @DrawableRes
     private int mStateResource;
+    private GVRSceneObject mMainSceneObject;
+    private FocusListener mFocusListener;
 
-    public ControlWidget(GVRContext gvrContext, float width, float height) {
-        super(gvrContext, getMainView(gvrContext, R.layout.layout_player_controller), width, height);
+    public ControlWidget(final GVRContext gvrContext) {
+        super(gvrContext);
+        mMainSceneObject = new GVRViewSceneObject(gvrContext, R.layout.layout_player_controller, this);
         setName(getClass().getSimpleName());
     }
 
-    private static View getMainView(GVRContext gvrContext, @LayoutRes int layout) {
-        return LayoutInflater.from(gvrContext.getContext()).inflate(layout, null);
-    }
-
+    @NonNull
     @Override
-    protected void onInitView() {
-        super.onInitView();
-        mMainView = getRootView();
-        initView();
-    }
-
-    private void initView() {
-
-        mSeekBar = mMainView.findViewById(R.id.progressBar);
-        LinearLayout playPauseButton = mMainView.findViewById(R.id.playPauseButton);
-        mPlayPauseButtonImage = playPauseButton.findViewById(R.id.image);
-        mElapsedTime = mMainView.findViewById(R.id.elapsedTimeText);
-        mDurationTime = mMainView.findViewById(R.id.durationTimeText);
-        mTitle = mMainView.findViewById(R.id.titleText);
-
-        playPauseButton.setOnClickListener(this);
-        mSeekBar.setOnSeekBarChangeListener(this);
-        mSeekBar.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                setSeekTime(event.getX(), v.getWidth());
-                return false;
-            }
-        });
-
-        showPlay();
+    protected GVRSceneObject getFadeable() {
+        return mMainSceneObject;
     }
 
     private void setSeekTime(float x, int width) {
@@ -84,7 +71,15 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
         Log.d("SeekBar", "seekTime" + TimeUtils.formatDurationFull(seekTime));
     }
 
-    public void showPause() {
+    public void setButtonState(@ButtonState int state) {
+        if (state == ButtonState.PLAYING) {
+            showPlayingState();
+        } else if (state == ButtonState.PAUSED) {
+            showPausedState();
+        }
+    }
+
+    private void showPausedState() {
         mStateResource = R.drawable.ic_pause;
         mPlayPauseButtonImage.post(new Runnable() {
             @Override
@@ -94,7 +89,7 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
         });
     }
 
-    public void showPlay() {
+    private void showPlayingState() {
         mStateResource = R.drawable.ic_play;
         mPlayPauseButtonImage.post(new Runnable() {
             @Override
@@ -162,10 +157,10 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
         if (v.getId() == R.id.playPauseButton) {
             if (mOnVideoControllerListener != null) {
                 if (mStateResource == R.drawable.ic_play) {
-                    showPause();
+                    showPausedState();
                     mOnVideoControllerListener.onPlay();
                 } else {
-                    showPlay();
+                    showPlayingState();
                     mOnVideoControllerListener.onPause();
                 }
             }
@@ -187,7 +182,54 @@ public class ControlWidget extends FocusableViewSceneObject implements View.OnCl
     public void onStopTrackingTouch(SeekBar seekBar) {
     }
 
-    public void setFocusListener(@NonNull FocusListener<FocusableViewSceneObject> listener) {
-        super.setFocusListener(listener);
+    public void setFocusListener(@NonNull FocusListener listener) {
+        mFocusListener = listener;
+    }
+
+    @Override
+    public void gainFocus() {
+        if (mFocusListener != null) {
+            mFocusListener.onFocusGained(this);
+        }
+    }
+
+    @Override
+    public void loseFocus() {
+        if (mFocusListener != null) {
+            mFocusListener.onFocusLost(this);
+        }
+    }
+
+    @Override
+    public void onInitView(GVRViewSceneObject sceneObject, View view) {
+        Log.d("naveca", "onInitView: ");
+        holdView(view);
+        showPlayingState();
+    }
+
+    @Override
+    public void onStartRendering(GVRViewSceneObject sceneObject, View view) {
+        Log.d("naveca", "onStartRendering: ");
+        addChildObject(mMainSceneObject);
+    }
+
+    private void holdView(View view) {
+
+        mSeekBar = view.findViewById(R.id.progressBar);
+        LinearLayout playPauseButton = view.findViewById(R.id.playPauseButton);
+        mPlayPauseButtonImage = playPauseButton.findViewById(R.id.image);
+        mElapsedTime = view.findViewById(R.id.elapsedTimeText);
+        mDurationTime = view.findViewById(R.id.durationTimeText);
+        mTitle = view.findViewById(R.id.titleText);
+
+        playPauseButton.setOnClickListener(this);
+        mSeekBar.setOnSeekBarChangeListener(this);
+        mSeekBar.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View v, MotionEvent event) {
+                setSeekTime(event.getX(), v.getWidth());
+                return false;
+            }
+        });
     }
 }

@@ -20,12 +20,11 @@ import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.component.FadeableViewObject;
 
 public class FocusableViewSceneObject extends FadeableViewObject implements Focusable {
 
-    private FocusListener<FocusableViewSceneObject> mFocusListener;
+    private FocusListener mFocusListener;
 
     public FocusableViewSceneObject(GVRContext gvrContext, View view, float width, float height) {
         super(gvrContext, view, width, height);
@@ -51,7 +50,7 @@ public class FocusableViewSceneObject extends FadeableViewObject implements Focu
         }
     }
 
-    public void setFocusListener(@NonNull FocusListener<FocusableViewSceneObject> mFocusListener) {
+    public void setFocusListener(@NonNull FocusListener mFocusListener) {
         this.mFocusListener = mFocusListener;
     }
 }
