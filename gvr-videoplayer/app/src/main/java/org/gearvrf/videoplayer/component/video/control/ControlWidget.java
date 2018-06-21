@@ -202,14 +202,12 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
 
     @Override
     public void onInitView(GVRViewSceneObject sceneObject, View view) {
-        Log.d("naveca", "onInitView: ");
         holdView(view);
         showPlayingState();
     }
 
     @Override
     public void onStartRendering(GVRViewSceneObject sceneObject, View view) {
-        Log.d("naveca", "onStartRendering: ");
         addChildObject(mMainSceneObject);
     }
 
