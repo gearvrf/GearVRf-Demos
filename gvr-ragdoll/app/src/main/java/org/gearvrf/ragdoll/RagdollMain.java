@@ -39,6 +39,7 @@ public class RagdollMain extends GVRMain {
     private GVRCursorController mCursorController = null;
     private GVRSceneObject mCursor = null;
     private TouchHandler mTouchHandler = null;
+    private GVRWorld mWorld = null;
 
     public RagdollMain() {}
 
@@ -56,9 +57,9 @@ public class RagdollMain extends GVRMain {
         model.getTransform().setPosition(0,0, -3);
         scene.addSceneObject(model);
 
-        GVRWorld world = new GVRWorld(gvrContext);
-        world.setGravity(0f, -1f, 0f);
-        scene.getRoot().attachComponent(world);
+        mWorld = new GVRWorld(gvrContext);
+        mWorld.setGravity(0f, -1f, 0f);
+        scene.getRoot().attachComponent(mWorld);
 
         Log.d(TAG, "Loading Rag Doll physics...");
         GVRPhysicsLoader.loadPhysicsFile(gvrContext,
@@ -110,11 +111,15 @@ public class RagdollMain extends GVRMain {
         @Override
         public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
             super.onTouchStart(sceneObj, collision);
-            GVRRigidBody rigidBody = (GVRRigidBody)sceneObj.getComponent(GVRRigidBody.getComponentType());
-            if (rigidBody != null) {
-                rigidBody.applyForce(0, 0, -50,
-                        collision.hitLocation[0], collision.hitLocation[1], collision.hitLocation[2]);
-            }
+
+            mWorld.startDrag(sceneObj,
+                    collision.hitLocation[0], collision.hitLocation[1], collision.hitLocation[2]);
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
+            super.onTouchEnd(sceneObj, collision);
+            mWorld.stopDrag();
         }
     }
 }
