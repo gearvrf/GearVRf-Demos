@@ -36,6 +36,6 @@ public class BackButton extends FocusableViewSceneObject {
     @Override
     public void loseFocus() {
         super.loseFocus();
-        getRenderData().getMaterial().setOpacity(.5f);
+        getRenderData().getMaterial().setOpacity(1.f);
     }
 }
