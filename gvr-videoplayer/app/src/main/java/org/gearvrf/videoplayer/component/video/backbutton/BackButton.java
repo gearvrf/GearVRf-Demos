@@ -1,41 +1,83 @@
 package org.gearvrf.videoplayer.component.video.backbutton;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IViewEvents;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.component.FadeableObject;
+import org.gearvrf.videoplayer.focus.FocusListener;
 import org.gearvrf.videoplayer.focus.Focusable;
-import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
 
 @SuppressLint("InflateParams")
-public class BackButton extends FocusableViewSceneObject {
+public class BackButton extends FadeableObject implements Focusable, IViewEvents {
 
-    public BackButton(GVRContext gvrContext, float width, float height) {
-        super(gvrContext, getMainView(gvrContext, R.layout.layout_button_back), width, height);
+    private GVRViewSceneObject mBackButtonObject;
+    private ImageView mBackButton;
+    private FocusListener mFocusListener;
+
+    public BackButton(final GVRContext gvrContext) {
+        super(gvrContext);
+        mBackButtonObject = new GVRViewSceneObject(gvrContext, R.layout.layout_button_back, this);
         setName(getClass().getSimpleName());
     }
 
-    private static View getMainView(GVRContext gvrContext, @LayoutRes int layout) {
-        return LayoutInflater.from(gvrContext.getContext()).inflate(layout, null);
+    public void setFocusListener(@NonNull FocusListener listener) {
+        mFocusListener = listener;
     }
 
-    public void setOnClickListener(@NonNull View.OnClickListener listener) {
-        getRootView().setOnClickListener(listener);
+    public void setOnClickListener(@NonNull final View.OnClickListener listener) {
+        getGVRContext().getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mBackButton.setOnClickListener(listener);
+            }
+        });
+    }
+
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mBackButtonObject;
     }
 
     @Override
     public void gainFocus() {
-        super.gainFocus();
-        getRenderData().getMaterial().setOpacity(2f);
+        if (mFocusListener != null) {
+            getRenderData().getMaterial().setOpacity(2f);
+        }
     }
 
     @Override
     public void loseFocus() {
-        super.loseFocus();
-        getRenderData().getMaterial().setOpacity(1.f);
+        if (mFocusListener != null) {
+            getRenderData().getMaterial().setOpacity(1.f);
+        }
+    }
+
+    @Override
+    public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+        mBackButton = view.findViewById(R.id.backButtonImage);
+    }
+
+    @Override
+    public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+        addChildObject(mBackButtonObject);
+    }
+
+    public void performClick() {
+
+        mBackButton.post(new Runnable() {
+            @Override
+            public void run() {
+                mBackButton.performClick();
+            }
+        });
+
     }
 }

@@ -27,8 +27,6 @@ import org.gearvrf.videoplayer.focus.Focusable;
 import org.gearvrf.videoplayer.focus.PickEventHandler;
 import org.gearvrf.videoplayer.model.Video;
 
-import java.io.File;
-import java.util.LinkedList;
 import java.util.List;
 
 public class VideoPlayer extends GVRSceneObject {
@@ -80,7 +78,7 @@ public class VideoPlayer extends GVRSceneObject {
 
         addPlayer(playerWidth, playerHeight);
         addControlWidget(CONTROLLER_WIDGET_FACTOR * playerWidth, CONTROLLER_HEIGHT_FACTOR * playerHeight);
-        addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight, BACK_BUTTON_SIZE_FACTOR * playerHeight);
+        addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog(PLAY_NEXT_DIALOG_WIDTH_FACTOR * playerWidth, PLAY_NEXT_DIALOG_HEIGHT_FACTOR * playerHeight);
         addTitleOverlay(OVERLAY_TITLE_WIDTH_FACTOR * playerWidth, OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
     }
@@ -129,12 +127,11 @@ public class VideoPlayer extends GVRSceneObject {
     private void showBackButton() {
         if (!mBackButtonActive) {
             addChildObject(mBackButton);
-            mBackButton.fadeIn(new FadeableViewObject.FadeInCallback() {
+            mBackButton.fadeIn(new FadeableObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
                     Log.d(TAG, "showBackButton");
                     mBackButtonActive = true;
-                    mBackButton.getRenderData().getMaterial().setOpacity(3.0f);
                 }
             });
         }
@@ -142,7 +139,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void hideBackButton() {
         if (mBackButtonActive) {
-            mBackButton.fadeOut(new FadeableViewObject.FadeOutCallback() {
+            mBackButton.fadeOut(new FadeableObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
                     mBackButtonActive = false;
@@ -226,8 +223,8 @@ public class VideoPlayer extends GVRSceneObject {
         addChildObject(mControl);
     }
 
-    private void addBackButton(float width, float height) {
-        mBackButton = new BackButton(getGVRContext(), width, height);
+    private void addBackButton(float height) {
+        mBackButton = new BackButton(getGVRContext());
         mBackButton.setFocusListener(mFocusListener);
         // Put back button above the video screen
         float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
@@ -354,14 +351,8 @@ public class VideoPlayer extends GVRSceneObject {
         public void onAllFilesEnd() {
             super.onAllFilesEnd();
             Log.d(TAG, "All videos ended");
-            final View view = mBackButton.getRootView();
             // Force back to gallery
-            view.post(new Runnable() {
-                @Override
-                public void run() {
-                    view.performClick();
-                }
-            });
+            mBackButton.performClick();
         }
     };
 

@@ -18,7 +18,7 @@ public abstract class FadeableViewObject extends GVRViewSceneObject {
     public FadeableViewObject(GVRContext gvrContext, View view, float width, float height) {
         super(gvrContext, view, width, height);
     }
-
+    
     @NonNull
     protected abstract GVRSceneObject getFadeable();
 
