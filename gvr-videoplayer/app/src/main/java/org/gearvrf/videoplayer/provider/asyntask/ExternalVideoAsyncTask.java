@@ -38,8 +38,9 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
             int arrayLength = jsonArray.length();
             for (int i = 0; i < arrayLength; i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                Log.d(TAG, ""+jsonObject.getString("name"));
-                videos.add(new Video(i, jsonObject.getString("name"), jsonObject.getString("uri"), 0, false, Video.VideoType.EXTERNAL));
+                videos.add(new Video(i, jsonObject.getString("name"), jsonObject.getString("uri"),
+                                     jsonObject.getInt("duration"), false, Video.VideoType.EXTERNAL)
+                );
             }
         } catch (JSONException e) {
             e.printStackTrace();
