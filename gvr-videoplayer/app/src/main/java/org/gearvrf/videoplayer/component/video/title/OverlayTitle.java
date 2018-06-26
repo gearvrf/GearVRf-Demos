@@ -1,31 +1,50 @@
 package org.gearvrf.videoplayer.component.video.title;
 
-import android.view.LayoutInflater;
+import android.support.annotation.NonNull;
+import android.view.MotionEvent;
 import android.view.View;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IViewEvents;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
-import org.gearvrf.videoplayer.focus.FocusableViewSceneObject;
+import org.gearvrf.videoplayer.component.FadeableObject;
 
-public class OverlayTitle extends FocusableViewSceneObject {
+public class OverlayTitle extends FadeableObject implements IViewEvents {
 
-    public OverlayTitle(GVRContext gvrContext, float width, float height) {
-        super(gvrContext, getMainView(gvrContext, R.layout.layout_title_image), width, height);
+    private GVRViewSceneObject mTitleObject;
+
+    public OverlayTitle(GVRContext gvrContext) {
+        super(gvrContext);
+        mTitleObject = new GVRViewSceneObject(gvrContext, R.layout.layout_title_image, this);
+        mTitleObject.waitFor();
     }
 
-    private static View getMainView(GVRContext gvrContext, int layout_title_image) {
-        return LayoutInflater.from(gvrContext.getContext()).inflate(layout_title_image, null);
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mTitleObject;
+    }
+
+
+    @Override
+    public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+        view.findViewById(R.id.titleImage).setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                    mTitleObject.getRenderData().getMaterial().setOpacity(2.f);
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                    mTitleObject.getRenderData().getMaterial().setOpacity(.5f);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
-    public void gainFocus() {
-        super.gainFocus();
-        getRenderData().getMaterial().setOpacity(2f);
-    }
-
-    @Override
-    public void loseFocus() {
-        super.loseFocus();
-        getRenderData().getMaterial().setOpacity(0.5f);
+    public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+        addChildObject(mTitleObject);
     }
 }

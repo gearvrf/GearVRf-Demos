@@ -2,6 +2,7 @@ package org.gearvrf.videoplayer.component.video.backbutton;
 
 import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -19,7 +20,7 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
 
     private GVRViewSceneObject mBackButtonObject;
     private ImageView mBackButton;
-    private FocusListener mFocusListener;
+    public FocusListener mFocusListener;
 
     public BackButton(final GVRContext gvrContext) {
         super(gvrContext);
@@ -47,22 +48,25 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
     }
 
     @Override
-    public void gainFocus() {
-        if (mFocusListener != null) {
-            getRenderData().getMaterial().setOpacity(2f);
-        }
-    }
-
-    @Override
-    public void loseFocus() {
-        if (mFocusListener != null) {
-            getRenderData().getMaterial().setOpacity(1.f);
-        }
-    }
-
-    @Override
     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
         mBackButton = view.findViewById(R.id.backButtonImage);
+        mBackButton.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                    mBackButtonObject.getRenderData().getMaterial().setOpacity(2.f);
+                    if (mFocusListener != null) {
+                        mFocusListener.onFocusGained(BackButton.this);
+                    }
+                } else if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                    mBackButtonObject.getRenderData().getMaterial().setOpacity(.5f);
+                    if (mFocusListener != null) {
+                        mFocusListener.onFocusLost(BackButton.this);
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -71,13 +75,20 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
     }
 
     public void performClick() {
-
         mBackButton.post(new Runnable() {
             @Override
             public void run() {
                 mBackButton.performClick();
             }
         });
+    }
 
+    @Override
+    public void gainFocus() {
+
+    }
+
+    @Override
+    public void loseFocus() {
     }
 }
