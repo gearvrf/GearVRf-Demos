@@ -11,7 +11,6 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.FadeableObject;
-import org.gearvrf.videoplayer.component.FadeableViewObject;
 import org.gearvrf.videoplayer.component.video.backbutton.BackButton;
 import org.gearvrf.videoplayer.component.video.control.ControlWidget;
 import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
@@ -34,10 +33,7 @@ public class VideoPlayer extends GVRSceneObject {
     private static final String TAG = VideoPlayer.class.getSimpleName();
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
-    private static final float LOADING_ASSET_SIZE_FACTOR = 2.f;
     private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
-    private static final float PLAY_NEXT_DIALOG_WIDTH_FACTOR = .19f;
-    private static final float PLAY_NEXT_DIALOG_HEIGHT_FACTOR = .34f;
 
     private Player mPlayer;
     private ControlWidget mControl;
@@ -77,7 +73,7 @@ public class VideoPlayer extends GVRSceneObject {
         addPlayer(playerWidth, playerHeight);
         addControlWidget(CONTROLLER_HEIGHT_FACTOR * playerHeight);
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight);
-        addPlayNextDialog(PLAY_NEXT_DIALOG_WIDTH_FACTOR * playerWidth, PLAY_NEXT_DIALOG_HEIGHT_FACTOR * playerHeight);
+        addPlayNextDialog();
         addTitleOverlay(OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
     }
 
@@ -152,7 +148,7 @@ public class VideoPlayer extends GVRSceneObject {
             mHideControlTimer.cancel();
             mPlayNextDialog.setVideoData(mVideos.get(mPlayer.getNextIndexToPlay()));
             addChildObject(mPlayNextDialog);
-            mPlayNextDialog.fadeIn(new FadeableViewObject.FadeInCallback() {
+            mPlayNextDialog.fadeIn(new FadeableObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
                     mIsPlayNextDialogActive = true;
@@ -167,7 +163,7 @@ public class VideoPlayer extends GVRSceneObject {
         if (mIsPlayNextDialogActive) {
             mIsPlayNextDialogActive = false;
             mPlayNextDialog.cancelTimer();
-            mPlayNextDialog.fadeOut(new FadeableViewObject.FadeOutCallback() {
+            mPlayNextDialog.fadeOut(new FadeableObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
                     removeChildObject(mPlayNextDialog);
@@ -228,8 +224,9 @@ public class VideoPlayer extends GVRSceneObject {
         addChildObject(mBackButton);
     }
 
-    private void addPlayNextDialog(float width, float height) {
-        mPlayNextDialog = new PlayNextDialog(getGVRContext(), width, height, mOnPlayNextListener);
+    private void addPlayNextDialog() {
+        mPlayNextDialog = new PlayNextDialog(getGVRContext(), mOnPlayNextListener);
+        mPlayNextDialog.getTransform().setScale(2.0f, 2.0f, 1.0f);
         mPlayNextDialog.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .5f);
         addChildObject(mPlayNextDialog);
     }

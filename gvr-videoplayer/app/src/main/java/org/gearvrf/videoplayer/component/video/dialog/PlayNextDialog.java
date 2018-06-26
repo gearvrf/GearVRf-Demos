@@ -2,62 +2,81 @@ package org.gearvrf.videoplayer.component.video.dialog;
 
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
-import android.view.LayoutInflater;
+import android.support.v7.widget.CardView;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IViewEvents;
+import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
-import org.gearvrf.videoplayer.component.FadeableViewObject;
+import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.video.player.Player;
 import org.gearvrf.videoplayer.focus.Focusable;
 import org.gearvrf.videoplayer.model.Video;
 import org.gearvrf.videoplayer.provider.asyntask.ThumbnailLoader;
 import org.gearvrf.videoplayer.util.TimeUtils;
 
-public class PlayNextDialog extends FadeableViewObject implements View.OnClickListener, Focusable {
+public class PlayNextDialog extends FadeableObject implements View.OnClickListener, Focusable, IViewEvents {
     private static final String TAG = Player.class.getSimpleName();
     private TextView mTitle;
     private TextView mDuration;
     private ImageView mThumbnail;
-    private ImageView mIc_count;
     private TextView mTime;
     private CountdownTimer mCountdownTimer;
     private OnPlayNextListener mOnPlayNextListener;
-    private View mViewHideandShow;
+    private RelativeLayout OverlayScene;
+    private CardView cardView;
+    private LinearLayout mPlayNextLinear;
+    private GVRViewSceneObject mPlayNextObject;
 
-    public PlayNextDialog(GVRContext gvrContext, float width, float height, @NonNull OnPlayNextListener listener) {
-        super(gvrContext, getMainView(gvrContext, R.layout.layout_play_next), width, height);
+    public PlayNextDialog(GVRContext gvrContext, @NonNull OnPlayNextListener listener) {
+        super(gvrContext);
+        mPlayNextObject = new GVRViewSceneObject(gvrContext, R.layout.layout_play_next, this);
         setName(getClass().getSimpleName());
         mOnPlayNextListener = listener;
         mCountdownTimer = new CountdownTimer(this);
     }
 
-    private static View getMainView(GVRContext gvrContext, @LayoutRes int layout) {
-        return LayoutInflater.from(gvrContext.getContext()).inflate(layout, null);
-    }
-
     @Override
-    protected void onInitView() {
-        super.onInitView();
-        View mainView = getRootView();
-        mTitle = mainView.findViewById(R.id.title);
-        mTitle.setVisibility(View.INVISIBLE);
-        mDuration = mainView.findViewById(R.id.duration);
-        mDuration.setVisibility(View.INVISIBLE);
-        mThumbnail = mainView.findViewById(R.id.thumbnail);
-        mTime = mainView.findViewById(R.id.time);
-        mIc_count = mainView.findViewById(R.id.ic_count);
-        mIc_count.setVisibility(View.INVISIBLE);
+    public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+        mThumbnail = view.findViewById(R.id.thumbnail);
+        mTime = view.findViewById(R.id.time);
+        mTitle = view.findViewById(R.id.title);
+        mDuration = view.findViewById(R.id.duration);
+        OverlayScene = view.findViewById(R.id.overlay_video);
+        mPlayNextLinear = view.findViewById(R.id.playNext);
+        cardView = view.findViewById(R.id.cardView);
+        mThumbnail.setOnHoverListener(new View.OnHoverListener() {
+            @Override
+            public boolean onHover(View view, MotionEvent motionEvent) {
+                if(motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER){
+                    cardView.setVisibility(View.VISIBLE);
+                    OverlayScene.setVisibility(View.VISIBLE);
+                }else{
+                    if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                        OverlayScene.setVisibility(View.INVISIBLE);
+                    }
+                }
+                return false;
+            }
+        });
         mThumbnail.setOnClickListener(this);
     }
 
+    @Override
+    public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+        addChildObject(mPlayNextObject);
+    }
+
     private void setTime(final int time) {
-        getRootView().post(new Runnable() {
+        OverlayScene.post(new Runnable() {
             @Override
             public void run() {
                 mTime.setText(String.valueOf(time));
@@ -78,7 +97,7 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     }
 
     public void setVideoData(final Video video) {
-        getRootView().post(new Runnable() {
+        OverlayScene.post(new Runnable() {
             @Override
             public void run() {
                 mTitle.setText(video.getTitle());
@@ -91,7 +110,7 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
     @NonNull
     @Override
     protected GVRSceneObject getFadeable() {
-        return this;
+        return mPlayNextObject;
     }
 
     @Override
@@ -103,30 +122,13 @@ public class PlayNextDialog extends FadeableViewObject implements View.OnClickLi
 
     @Override
     public void gainFocus() {
-        View mainView = getRootView();
-        mViewHideandShow = mainView.findViewById(R.id.overlay_video);
-        mViewHideandShow.setVisibility(View.VISIBLE);
-        mTitle = mainView.findViewById(R.id.title);
-        mTitle.setVisibility(View.VISIBLE);
-        mDuration = mainView.findViewById(R.id.duration);
-        mDuration.setVisibility(View.VISIBLE);
-        mIc_count = mainView.findViewById(R.id.ic_count);
-        mIc_count.setVisibility(View.VISIBLE);
+
     }
 
     @Override
     public void loseFocus() {
-        View mainView = getRootView();
-        mViewHideandShow = mainView.findViewById(R.id.overlay_video);
-        mViewHideandShow.setVisibility(View.INVISIBLE);
-        mTitle = mainView.findViewById(R.id.title);
-        mTitle.setVisibility(View.INVISIBLE);
-        mDuration = mainView.findViewById(R.id.duration);
-        mDuration.setVisibility(View.INVISIBLE);
-        mIc_count = mainView.findViewById(R.id.ic_count);
-        mIc_count.setVisibility(View.INVISIBLE);
-    }
 
+    }
 
     private static class CountdownTimer extends Handler {
 
