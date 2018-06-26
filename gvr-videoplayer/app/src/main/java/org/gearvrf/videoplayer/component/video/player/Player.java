@@ -16,6 +16,7 @@
 package org.gearvrf.videoplayer.component.video.player;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Handler;
@@ -28,9 +29,15 @@ import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.dash.DashChunkSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
+import com.google.android.exoplayer2.util.Util;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
@@ -39,11 +46,11 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
+import org.gearvrf.videoplayer.VideoPlayerApp;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.video.DefaultExoPlayer;
 import org.gearvrf.videoplayer.model.Video;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,13 +59,16 @@ public class Player extends FadeableObject {
 
     private static final String TAG = Player.class.getSimpleName();
     private static final String DEFAULT_FILE = "asset:///dinos.mp4";
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
     private GVRContext mGvrContext;
     private DefaultExoPlayer mMediaPlayer;
     private Video[] mFiles;
     private LinkedList<Video> mPlayingNowQueue;
     private DataSource.Factory mFileDataSourceFactory;
-    private File mPlayingNow;
+    private DataSource.Factory mManifestDataSourceFactory;
+    private DashChunkSource.Factory mDashChunkSourceFactory;
+    private Video mPlayingNow;
     private OnPlayerListener mOnVideoPlayerListener;
     private ProgressHandler mProgressHandler = new ProgressHandler();
     private boolean mIsPlaying;
@@ -78,6 +88,7 @@ public class Player extends FadeableObject {
             }
         };
 
+        createDashFactories();
         createVideoSceneObject(width, height);
     }
 
@@ -140,7 +151,7 @@ public class Player extends FadeableObject {
         return mMediaPlayer.getCurrentPosition();
     }
 
-    public File getPlayingNow() {
+    public Video getPlayingNow() {
         return mPlayingNow;
     }
 
@@ -172,15 +183,36 @@ public class Player extends FadeableObject {
     public void prepareNextFile() {
         if (mPlayingNowQueue != null && !mPlayingNowQueue.isEmpty()) {
             mMediaPlayer.pause();
-            mPlayingNow = new File(mPlayingNowQueue.pop().getPath());
-            MediaSource mediaSource = new ExtractorMediaSource(
-                    Uri.fromFile(mPlayingNow),
-                    mFileDataSourceFactory,
-                    new DefaultExtractorsFactory(), null, null
-            );
+            mPlayingNow = mPlayingNowQueue.pop();
+            MediaSource mediaSource = null;
+            if (mPlayingNow.getVideoType() == Video.VideoType.LOCAL) {
+                mediaSource = fileMediaSource(mPlayingNow);
+            } else {
+                mediaSource = dashMediaSource(mPlayingNow);
+            }
             mMediaPlayer.prepare(mediaSource);
             logd("selectedFile: " + mPlayingNow);
         }
+    }
+
+    private void createDashFactories() {
+        Context context = VideoPlayerApp.getInstance().getApplicationContext();
+        String userAgent = Util.getUserAgent(context, "videoplayer");
+        mManifestDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
+        mDashChunkSourceFactory = new DefaultDashChunkSource.Factory(new DefaultHttpDataSourceFactory(userAgent, BANDWIDTH_METER));
+    }
+
+    private MediaSource dashMediaSource(Video video) {
+        Uri uri = Uri.parse(video.getPath());
+        return new DashMediaSource.Factory(mDashChunkSourceFactory, mManifestDataSourceFactory).createMediaSource(uri);
+    }
+
+    private MediaSource fileMediaSource(Video video) {
+        return new ExtractorMediaSource(
+                Uri.parse(video.getPath()),
+                mFileDataSourceFactory,
+                new DefaultExtractorsFactory(), null, null
+        );
     }
 
     private void playCurrentPrepared() {
@@ -232,7 +264,7 @@ public class Player extends FadeableObject {
     }
 
     private String getPlayingNowName() {
-        return mPlayingNow != null ? mPlayingNow.getName() : DEFAULT_FILE;
+        return mPlayingNow != null ? mPlayingNow.getTitle() : "";
     }
 
     private static void logd(String text) {

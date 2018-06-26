@@ -3,7 +3,7 @@ package org.gearvrf.videoplayer.provider.loader;
 import android.content.Context;
 
 import org.gearvrf.videoplayer.model.Video;
-import org.gearvrf.videoplayer.provider.asyntask.VideoAsyncTask;
+import org.gearvrf.videoplayer.provider.asyntask.LocalVideoAsyncTask;
 
 import java.util.List;
 
@@ -18,6 +18,6 @@ public class VideoDataLoader extends DataLoader<List<Video>> {
 
     @Override
     public List<Video> loadInBackground() {
-        return new VideoAsyncTask(mAlbumTitleFilter).loadVideos();
+        return new LocalVideoAsyncTask(mAlbumTitleFilter).loadVideos();
     }
 }

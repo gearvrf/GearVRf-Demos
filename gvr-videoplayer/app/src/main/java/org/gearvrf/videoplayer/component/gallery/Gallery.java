@@ -20,8 +20,9 @@ import org.gearvrf.videoplayer.model.HomeItem;
 import org.gearvrf.videoplayer.model.LocalHomeItem;
 import org.gearvrf.videoplayer.model.Video;
 import org.gearvrf.videoplayer.provider.asyntask.AlbumAsyncTask;
+import org.gearvrf.videoplayer.provider.asyntask.ExternalVideoAsyncTask;
 import org.gearvrf.videoplayer.provider.asyntask.GetDataCallback;
-import org.gearvrf.videoplayer.provider.asyntask.VideoAsyncTask;
+import org.gearvrf.videoplayer.provider.asyntask.LocalVideoAsyncTask;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -108,7 +109,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     }
 
     private void loadLocalVideos(String albumTitle) {
-        new VideoAsyncTask(albumTitle, new GetDataCallback<List<Video>>() {
+        new LocalVideoAsyncTask(albumTitle, new GetDataCallback<List<Video>>() {
             @Override
             public void onResult(List<Video> data) {
                 mItemList.clear();
@@ -119,6 +120,14 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     }
 
     private void loadExternalVideos() {
+        new ExternalVideoAsyncTask(new GetDataCallback<List<Video>>() {
+            @Override
+            public void onResult(List<Video> data) {
+                mItemList.clear();
+                mItemList.addAll(data);
+                mRecyclerView.getAdapter().notifyDataSetChanged();
+            }
+        }).execute();
 
     }
 

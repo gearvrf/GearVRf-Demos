@@ -97,7 +97,8 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
                     getString(getColumnIndexOrThrow(VideoColumns.TITLE)),
                     getString(getColumnIndexOrThrow(VideoColumns.DATA)),
                     getLong(getColumnIndexOrThrow(VideoColumns.DURATION)),
-                    isRatio21
+                    isRatio21,
+                    org.gearvrf.videoplayer.model.Video.VideoType.LOCAL
             );
         }
     }

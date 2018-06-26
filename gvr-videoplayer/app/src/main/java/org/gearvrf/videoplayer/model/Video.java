@@ -1,20 +1,30 @@
 package org.gearvrf.videoplayer.model;
 
+import android.support.annotation.IntDef;
+
 public final class Video extends GalleryItem {
+
+    @IntDef({VideoType.LOCAL, VideoType.EXTERNAL})
+    public @interface VideoType {
+        int LOCAL = 0;
+        int EXTERNAL = 1;
+    }
 
     private long id;
     private String title;
     private String path;
     private long duration;
     private boolean isRatio21;
+    private @VideoType int videoType;
 
-    public Video(long id, String title, String path, long duration, boolean isRatio21) {
+    public Video(long id, String title, String path, long duration, boolean isRatio21, @VideoType int videoType) {
         super(Type.TYPE_VIDEO);
         this.id = id;
         this.title = title;
         this.path = path;
         this.duration = duration;
         this.isRatio21 = isRatio21;
+        this.videoType = videoType;
     }
 
     public long getId() {
@@ -57,6 +67,11 @@ public final class Video extends GalleryItem {
         this.isRatio21 = isRatio21;
     }
 
+    @VideoType
+    public int getVideoType() {
+        return videoType;
+    }
+
     @Override
     public String toString() {
         return "Video{" +
@@ -66,6 +81,7 @@ public final class Video extends GalleryItem {
                 ", duration=" + duration +
                 ", type=" + type +
                 ", isRatio21=" + isRatio21 +
+                ", videoType=" + videoType +
                 "} " + super.toString();
     }
 }

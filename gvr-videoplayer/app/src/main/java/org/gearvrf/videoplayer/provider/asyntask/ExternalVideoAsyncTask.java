@@ -1,35 +1,28 @@
 package org.gearvrf.videoplayer.provider.asyntask;
 
-import android.content.Context;
-import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.videoplayer.VideoPlayerApp;
 import org.gearvrf.videoplayer.model.Video;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-
-import static android.provider.MediaStore.Video.Media;
-import static android.provider.MediaStore.Video.VideoColumns;
 
 public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
     private static final String TAG = ExternalVideoAsyncTask.class.getSimpleName();
 
     private GetDataCallback<List<Video>> mGetDataCallback;
-    private String mAlbumTitleFilter;
 
-    public ExternalVideoAsyncTask(String albumTitleFilter, @NonNull GetDataCallback<List<Video>> mGetDataCallback) {
-        this.mAlbumTitleFilter = albumTitleFilter;
+    public ExternalVideoAsyncTask(@NonNull GetDataCallback<List<Video>> mGetDataCallback) {
         this.mGetDataCallback = mGetDataCallback;
-    }
-
-    public ExternalVideoAsyncTask(String albumTitle) {
-        this.mAlbumTitleFilter = albumTitle;
     }
 
     @Override
@@ -38,41 +31,18 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
     }
 
     public List<Video> loadVideos() {
-
-        Context context = VideoPlayerApp.getInstance().getApplicationContext();
         List<Video> videos = new LinkedList<>();
-
-        String[] projection = new String[]{
-                VideoColumns._ID,
-                VideoColumns.TITLE,
-                VideoColumns.DATA,
-                VideoColumns.DURATION
-        };
-
-        String selection = mAlbumTitleFilter != null ? VideoColumns.BUCKET_DISPLAY_NAME + "=?" : null;
-        String[] selectionArgs = mAlbumTitleFilter != null ? new String[]{mAlbumTitleFilter} : null;
-
-        String sortOrder = VideoColumns.TITLE + " ASC";
-
-        try (Cursor cursor = context.getContentResolver().query(
-                Media.EXTERNAL_CONTENT_URI,
-                projection, selection, selectionArgs, sortOrder)) {
-
-            if (cursor != null && cursor.moveToFirst()) {
-
-                Log.d(TAG, "Result count = " + cursor.getCount());
-
-                VideoCursorWrapper cursorWrapper = new VideoCursorWrapper(cursor);
-
-                do {
-
-                    String videoTitle = cursorWrapper.getTitle();
-                    long videoId = cursorWrapper.getId();
-
-                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration(), false));
-
-                } while (cursor.moveToNext());
+        JSONObject videosJSON = loadJSONFromFile();
+        try {
+            JSONArray jsonArray = videosJSON.getJSONArray("videos");
+            int arrayLength = jsonArray.length();
+            for (int i = 0; i < arrayLength; i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Log.d(TAG, ""+jsonObject.getString("name"));
+                videos.add(new Video(i, jsonObject.getString("name"), jsonObject.getString("uri"), 0, false, Video.VideoType.EXTERNAL));
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return videos;
@@ -86,26 +56,22 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
         }
     }
 
-    private static class VideoCursorWrapper extends CursorWrapper {
-
-        VideoCursorWrapper(Cursor cursor) {
-            super(cursor);
+    private JSONObject loadJSONFromFile() {
+        String jsonFile;
+        JSONObject json = null;
+        try {
+            InputStream is = VideoPlayerApp.getInstance().getAssets().open("external_videos.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            jsonFile = new String(buffer, "UTF-8");
+            json = new JSONObject(jsonFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-
-        String getTitle() {
-            return getString(getColumnIndexOrThrow(VideoColumns.TITLE));
-        }
-
-        String getPath() {
-            return getString(getColumnIndexOrThrow(VideoColumns.DATA));
-        }
-
-        long getId() {
-            return getLong(getColumnIndexOrThrow(VideoColumns._ID));
-        }
-
-        long getDuration() {
-            return getLong(getColumnIndexOrThrow(VideoColumns.DURATION));
-        }
+        return json;
     }
 }

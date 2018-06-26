@@ -16,19 +16,19 @@ import java.util.List;
 import static android.provider.MediaStore.Video.Media;
 import static android.provider.MediaStore.Video.VideoColumns;
 
-public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
+public class LocalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
-    private static final String TAG = VideoAsyncTask.class.getSimpleName();
+    private static final String TAG = LocalVideoAsyncTask.class.getSimpleName();
 
     private GetDataCallback<List<Video>> mGetDataCallback;
     private String mAlbumTitleFilter;
 
-    public VideoAsyncTask(String albumTitleFilter, @NonNull GetDataCallback<List<Video>> mGetDataCallback) {
+    public LocalVideoAsyncTask(String albumTitleFilter, @NonNull GetDataCallback<List<Video>> mGetDataCallback) {
         this.mAlbumTitleFilter = albumTitleFilter;
         this.mGetDataCallback = mGetDataCallback;
     }
 
-    public VideoAsyncTask(String albumTitle) {
+    public LocalVideoAsyncTask(String albumTitle) {
         this.mAlbumTitleFilter = albumTitle;
     }
 
@@ -71,7 +71,7 @@ public class VideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                     String videoTitle = cursorWrapper.getTitle();
                     long videoId = cursorWrapper.getId();
 
-                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration(), cursorWrapper.getIsRatio21()));
+                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration(), cursorWrapper.getIsRatio21(), Video.VideoType.LOCAL));
 
                 } while (cursor.moveToNext());
             }
