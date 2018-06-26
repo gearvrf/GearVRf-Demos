@@ -34,7 +34,7 @@ public class VideoPlayer extends GVRSceneObject {
     private static final String TAG = VideoPlayer.class.getSimpleName();
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
-    private static final float LOADING_ASSET_SIZE_FACTOR = .2f;
+    private static final float LOADING_ASSET_SIZE_FACTOR = 2.f;
     private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
     private static final float PLAY_NEXT_DIALOG_WIDTH_FACTOR = .19f;
     private static final float PLAY_NEXT_DIALOG_HEIGHT_FACTOR = .34f;
@@ -242,8 +242,9 @@ public class VideoPlayer extends GVRSceneObject {
         addChildObject(mOverlayTitle);
     }
 
-    private void addLoadingAsset(float width, float height) {
-        mLoadingAsset = new LoadingAsset(getGVRContext(), width, height);
+    private void addLoadingAsset() {
+        mLoadingAsset = new LoadingAsset(getGVRContext());
+        mLoadingAsset.getTransform().setScale(1.f, 1.f, 1.f);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1f);
         addChildObject(mLoadingAsset);
     }
@@ -325,7 +326,7 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
-            addLoadingAsset(LOADING_ASSET_SIZE_FACTOR * 5.f, LOADING_ASSET_SIZE_FACTOR * 5.f);
+            addLoadingAsset();
             super.onLoading();
         }
 
