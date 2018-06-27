@@ -75,6 +75,7 @@ public class VideoPlayer extends GVRSceneObject {
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog();
         addTitleOverlay(OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
+        addLoadingAsset();
     }
 
     public void prepare(@NonNull List<Video> videos) {
@@ -243,7 +244,6 @@ public class VideoPlayer extends GVRSceneObject {
         mLoadingAsset = new LoadingAsset(getGVRContext());
         mLoadingAsset.getTransform().setScale(1.f, 1.f, 1.f);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1f);
-        addChildObject(mLoadingAsset);
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -323,7 +323,7 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
-            addLoadingAsset();
+            addChildObject(mLoadingAsset);
             super.onLoading();
         }
 
