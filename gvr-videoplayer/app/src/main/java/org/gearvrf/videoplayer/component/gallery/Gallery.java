@@ -9,6 +9,7 @@ import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
@@ -175,6 +176,20 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     @Override
     protected GVRSceneObject getFadeable() {
         return mObjectViewGallery;
+    }
+
+    public void reposition(float[] newModelMatrix) {
+        GVRTransform ownerTrans = getTransform();
+
+        float scaleX = ownerTrans.getScaleX();
+        float scaleY = ownerTrans.getScaleY();
+        float scaleZ = ownerTrans.getScaleZ();
+
+
+        ownerTrans.setModelMatrix(newModelMatrix);
+        ownerTrans.setScale(scaleX, scaleY, scaleZ);
+
+        ownerTrans.setPosition(newModelMatrix[8] * -8, newModelMatrix[9] * -8, newModelMatrix[10] * -8);
     }
 }
 

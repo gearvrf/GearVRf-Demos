@@ -57,16 +57,12 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private static float HEIGHT_VIDEO_PLAYER = 5.f;
     private static final float SCALE = 200.0f;
 
-    private Vector3f up = new Vector3f(0, 1, 0);
-    private Vector3f lookat = new Vector3f(0, 0, 0);
-    private Vector3f ownerXaxis = new Vector3f(0, 0, 0);
-    private Vector3f ownerYaxis = new Vector3f(0, 0, 0);
-
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
     private GVRSceneObject mMainSceneContainer;
+    private GVRSceneObject mCurrentContainer;
     private FadeableObject mLabelCursor, mCurrentCursor, mParentCursor;
     private Gallery mGallery;
     private GVRSphereSceneObject mSkybox;
@@ -93,11 +89,11 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mGallery.getTransform().setPositionZ(-8);
         mGallery.setOnGalleryEventListener(this);
         mMainSceneContainer.addChildObject(mGallery);
+        mCurrentContainer = mGallery;
     }
 
     private void createVideoPlayer() {
         mVideoPlayer = new VideoPlayer(getGVRContext(), WIDTH_VIDEO_PLAYER, HEIGHT_VIDEO_PLAYER);
-        mVideoPlayer.getTransform().setPositionZ(-8.1f);
         mVideoPlayer.setControlWidgetAutoHide(true);
         mVideoPlayer.setPlayerListener(mOnPlayerListener);
         mVideoPlayer.setBackButtonClickListener(mBackButtonClickListener);
@@ -166,6 +162,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private ITouchEvents mTouchHandler = new DefaultTouchEvent() {
         @Override
         public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
+            if (mVideoPlayer.is360VideoPlaying()) {
+                mVideoPlayer.showAllControls();
+            }
             repositionScene();
         }
 
@@ -199,6 +198,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
                 public void onFadeOut() {
                     mMainSceneContainer.addChildObject(mGallery);
                     mGallery.fadeIn();
+                    mCurrentContainer = mGallery;
                 }
             });
             mSkybox.getRenderData().getMaterial().setColor(1.0f, 1.0f, 1.0f);
@@ -211,31 +211,36 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
             return;
         }
 
-        GVRTransform ownerTrans = mMainSceneContainer.getTransform();
         final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
         final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
         final float rotationW = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationW();
-        float scaleX = ownerTrans.getScaleX();
-        float scaleY = ownerTrans.getScaleY();
-        float scaleZ = ownerTrans.getScaleZ();
 
         Quaternionf cursorRotation = new Quaternionf(rotationX, rotationY, rotationZ, rotationW);
-        lookat.set(0, 0, 1);
+        Vector3f lookat = new Vector3f(0, 0, 1);
         lookat.rotate(cursorRotation);
         lookat = lookat.normalize();
 
-        Log.d(TAG, "LookAt: " + lookat.x + ", " + lookat.y + ", " + lookat.z);
+        org.gearvrf.utility.Log.d(TAG, "LookAt: " + lookat.x + ", " + lookat.y + ", " + lookat.z);
+
+        Vector3f up = new Vector3f(0, 1, 0);
+        Vector3f ownerXaxis = new Vector3f(0, 0, 0);
+        Vector3f ownerYaxis = new Vector3f(0, 0, 0);
 
         up.cross(lookat.x, lookat.y, lookat.z, ownerXaxis);
         ownerXaxis = ownerXaxis.normalize();
         lookat.cross(ownerXaxis.x, ownerXaxis.y, ownerXaxis.z, ownerYaxis);
         ownerYaxis = ownerYaxis.normalize();
-        ownerTrans.setModelMatrix(new float[]{ownerXaxis.x, ownerXaxis.y, ownerXaxis.z, 0.0f,
+
+        float[] newModelMatrix = new float[] {
+                ownerXaxis.x, ownerXaxis.y, ownerXaxis.z, 0.0f,
                 ownerYaxis.x, ownerYaxis.y, ownerYaxis.z, 0.0f,
                 lookat.x, lookat.y, lookat.z, 0.0f,
-                0, 0, 0, 1.0f});
-        ownerTrans.setScale(scaleX, scaleY, scaleZ);
+                0, 0, 0, 1.0f
+        };
+
+        mGallery.reposition(newModelMatrix);
+        mVideoPlayer.reposition(newModelMatrix);
     }
 
     @Override
@@ -245,6 +250,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
             @Override
             public void onFadeOut() {
                 mMainSceneContainer.removeChildObject(mGallery);
+                mCurrentContainer = mVideoPlayer.getWidgetsContainer();
                 mVideoPlayer.prepare(videoList);
             }
         });
@@ -257,10 +263,10 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void hideCursor() {
-        final float rotateXScene = mMainSceneContainer.getTransform().getRotationX();
-        final float rotateYScene = mMainSceneContainer.getTransform().getRotationY();
-        final float rotateZScene = mMainSceneContainer.getTransform().getRotationZ();
-        final float rotateWScene = mMainSceneContainer.getTransform().getRotationW();
+        final float rotateXScene = mCurrentContainer.getTransform().getRotationX();
+        final float rotateYScene = mCurrentContainer.getTransform().getRotationY();
+        final float rotateZScene = mCurrentContainer.getTransform().getRotationZ();
+        final float rotateWScene = mCurrentContainer.getTransform().getRotationW();
         final float rotateXCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationX();
         final float rotateYCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationY();
         final float rotateZCamera = getGVRContext().getMainScene().getMainCameraRig().getHeadTransform().getRotationZ();
@@ -285,7 +291,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     public void enableInteractiveCursor() {
-        mLabelCursor.fadeIn();
+        if (!mVideoPlayer.is360VideoPlaying()) {
+            mLabelCursor.fadeIn();
+        }
         mCurrentCursor.fadeOut();
     }
 

@@ -43,6 +43,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRExternalTexture;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
@@ -102,6 +103,7 @@ public class Player extends FadeableObject {
 
         mFlatVideo = new GVRVideoSceneObject(mGvrContext, mGvrContext.createQuad(width, height), mMediaPlayer, texture, GVRVideoType.MONO);
         mFlatVideo.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        mFlatVideo.getTransform().setPositionZ(-8.1f);
         addChildObject(mFlatVideo);
 
         GVRSphereSceneObject sphere = new GVRSphereSceneObject(mGvrContext, 72, 144, false);
@@ -139,6 +141,10 @@ public class Player extends FadeableObject {
         logd("Video stopped");
     }
 
+    public boolean is360PlayerActive() {
+        return mVideo == m360Video;
+    }
+
     public boolean isPlaying() {
         return mIsPlaying;
     }
@@ -165,11 +171,6 @@ public class Player extends FadeableObject {
             mFiles = videos.toArray(new Video[videos.size()]);
             mPlayingNowQueue = new LinkedList<>(videos);
             logd("preparedQueue: " + mPlayingNowQueue);
-            if (mPlayingNowQueue.getFirst().getIsRatio21()) {
-                set360Player();
-            } else {
-                setFlatPlayer();
-            }
             prepareNextFile();
         } else {
             logd("Files array is empty");
@@ -190,6 +191,7 @@ public class Player extends FadeableObject {
             } else {
                 mediaSource = dashMediaSource(mPlayingNow);
             }
+
             mMediaPlayer.prepare(mediaSource);
             logd("selectedFile: " + mPlayingNow);
         }
@@ -216,6 +218,11 @@ public class Player extends FadeableObject {
     }
 
     private void playCurrentPrepared() {
+        if (mPlayingNow.getIsRatio21()) {
+            set360Player();
+        } else {
+            setFlatPlayer();
+        }
         mMediaPlayer.start();
     }
 
@@ -342,5 +349,18 @@ public class Player extends FadeableObject {
             }
         }
     };
+
+    public void reposition(float[] newModelMatrix) {
+        GVRTransform ownerTrans = mFlatVideo.getTransform();
+
+        float scaleX = ownerTrans.getScaleX();
+        float scaleY = ownerTrans.getScaleY();
+        float scaleZ = ownerTrans.getScaleZ();
+
+        ownerTrans.setModelMatrix(newModelMatrix);
+        ownerTrans.setScale(scaleX, scaleY, scaleZ);
+
+        ownerTrans.setPosition(newModelMatrix[8] * -8.1f, newModelMatrix[9] * -8.1f, newModelMatrix[10] * -8.1f);
+    }
 }
 

@@ -7,6 +7,7 @@ import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
@@ -42,6 +43,8 @@ public class VideoPlayer extends GVRSceneObject {
     private OverlayTitle mOverlayTitle;
     private LoadingAsset mLoadingAsset;
 
+    private GVRSceneObject mWidgetsContainer;
+
     private boolean mVideoPlayerActive = true;
     private boolean mIsControlActive = true;
     private boolean mBackButtonActive = true;
@@ -70,12 +73,19 @@ public class VideoPlayer extends GVRSceneObject {
             }
         });
 
+        mWidgetsContainer = new GVRSceneObject(gvrContext);
+        mWidgetsContainer.getTransform().setPositionZ(-8.1f);
+        addChildObject(mWidgetsContainer);
         addPlayer(playerWidth, playerHeight);
         addControlWidget(CONTROLLER_HEIGHT_FACTOR * playerHeight);
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog();
         addTitleOverlay(OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
         addLoadingAsset();
+    }
+
+    public boolean is360VideoPlaying() {
+        return mPlayer.isPlaying() && mPlayer.is360PlayerActive();
     }
 
     public void prepare(@NonNull List<Video> videos) {
@@ -92,7 +102,7 @@ public class VideoPlayer extends GVRSceneObject {
     private void showControlWidget(boolean autoHide) {
         Log.d(TAG, "showControlWidget: ");
         if (!mIsControlActive) {
-            addChildObject(mControl);
+            mWidgetsContainer.addChildObject(mControl);
             mControl.fadeIn(new FadeableObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
@@ -113,7 +123,7 @@ public class VideoPlayer extends GVRSceneObject {
             mControl.fadeOut(new FadeableObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
-                    removeChildObject(mControl);
+                    mWidgetsContainer.removeChildObject(mControl);
                 }
             });
         }
@@ -121,7 +131,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void showBackButton() {
         if (!mBackButtonActive) {
-            addChildObject(mBackButton);
+            mWidgetsContainer.addChildObject(mBackButton);
             mBackButton.fadeIn(new FadeableObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
@@ -138,7 +148,7 @@ public class VideoPlayer extends GVRSceneObject {
                 @Override
                 public void onFadeOut() {
                     mBackButtonActive = false;
-                    removeChildObject(mBackButton);
+                    mWidgetsContainer.removeChildObject(mBackButton);
                 }
             });
         }
@@ -148,7 +158,7 @@ public class VideoPlayer extends GVRSceneObject {
         if (mVideoPlayerActive && !mIsPlayNextDialogActive) {
             mHideControlTimer.cancel();
             mPlayNextDialog.setVideoData(mVideos.get(mPlayer.getNextIndexToPlay()));
-            addChildObject(mPlayNextDialog);
+            mWidgetsContainer.addChildObject(mPlayNextDialog);
             mPlayNextDialog.fadeIn(new FadeableObject.FadeInCallback() {
                 @Override
                 public void onFadeIn() {
@@ -167,7 +177,7 @@ public class VideoPlayer extends GVRSceneObject {
             mPlayNextDialog.fadeOut(new FadeableObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
-                    removeChildObject(mPlayNextDialog);
+                    mWidgetsContainer.removeChildObject(mPlayNextDialog);
                 }
             });
         }
@@ -210,8 +220,8 @@ public class VideoPlayer extends GVRSceneObject {
         // Put video control widget below the video screen
         float positionY = -(height / CONTROLLER_HEIGHT_FACTOR / 2f);
         mControl.getTransform().setPositionY(positionY * 1.02f);
-        mControl.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .05f);
-        addChildObject(mControl);
+        mControl.getTransform().setPositionZ(.05f);
+        mWidgetsContainer.addChildObject(mControl);
     }
 
     private void addBackButton(float height) {
@@ -221,15 +231,16 @@ public class VideoPlayer extends GVRSceneObject {
         // Put back button above the video screen
         float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
         mBackButton.getTransform().setPositionY(positionY - (positionY * .08f));
-        mBackButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .05f);
-        addChildObject(mBackButton);
+        mBackButton.getTransform().setPositionZ(.05f);
+        mWidgetsContainer.addChildObject(mBackButton);
+
     }
 
     private void addPlayNextDialog() {
         mPlayNextDialog = new PlayNextDialog(getGVRContext(), mOnPlayNextListener);
         mPlayNextDialog.getTransform().setScale(2.0f, 2.0f, 1.0f);
-        mPlayNextDialog.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + .5f);
-        addChildObject(mPlayNextDialog);
+        mPlayNextDialog.getTransform().setPositionZ(.5f);
+        mWidgetsContainer.addChildObject(mPlayNextDialog);
     }
 
     private void addTitleOverlay(float height) {
@@ -237,13 +248,13 @@ public class VideoPlayer extends GVRSceneObject {
         mOverlayTitle.getTransform().setScale(3, 3, 1);
         float positionY = (height / OVERLAY_TITLE_HEIGHT_FACTOR / 2f);
         mOverlayTitle.getTransform().setPositionY(positionY + .5f);
-        addChildObject(mOverlayTitle);
+        mWidgetsContainer.addChildObject(mOverlayTitle);
     }
 
     private void addLoadingAsset() {
         mLoadingAsset = new LoadingAsset(getGVRContext());
         mLoadingAsset.getTransform().setScale(1.f, 1.f, 1.f);
-        mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1f);
+        mLoadingAsset.getTransform().setPositionZ(1f);
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -316,14 +327,14 @@ public class VideoPlayer extends GVRSceneObject {
             Log.d(TAG, "Video started");
             mControl.setButtonState(ControlWidget.ButtonState.PAUSED);
             showAllControls();
-            removeChildObject(mLoadingAsset);
+            mWidgetsContainer.removeChildObject(mLoadingAsset);
             super.onStart();
         }
 
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
-            addChildObject(mLoadingAsset);
+            mWidgetsContainer.addChildObject(mLoadingAsset);
             super.onLoading();
         }
 
@@ -335,7 +346,7 @@ public class VideoPlayer extends GVRSceneObject {
                 hideControlWidget();
                 showPlayNextDialog();
             }
-            removeChildObject(mLoadingAsset);
+            mWidgetsContainer.removeChildObject(mLoadingAsset);
             super.onFileEnd();
         }
 
@@ -427,7 +438,7 @@ public class VideoPlayer extends GVRSceneObject {
                     }
                 }
             });
-            addChildObject(mOverlayTitle);
+            mWidgetsContainer.addChildObject(mOverlayTitle);
         }
     }
 
@@ -449,7 +460,26 @@ public class VideoPlayer extends GVRSceneObject {
                     }
                 }
             });
-            removeChildObject(mOverlayTitle);
+            mWidgetsContainer.removeChildObject(mOverlayTitle);
         }
+    }
+
+    public GVRSceneObject getWidgetsContainer() {
+        return mWidgetsContainer;
+    }
+
+    public void reposition(float[] newModelMatrix) {
+        mPlayer.reposition(newModelMatrix);
+
+        GVRTransform ownerTrans = mWidgetsContainer.getTransform();
+
+        float scaleX = ownerTrans.getScaleX();
+        float scaleY = ownerTrans.getScaleY();
+        float scaleZ = ownerTrans.getScaleZ();
+
+        ownerTrans.setModelMatrix(newModelMatrix);
+        ownerTrans.setScale(scaleX, scaleY, scaleZ);
+
+        ownerTrans.setPosition(newModelMatrix[8] * -8.05f, newModelMatrix[9] * -8.05f, newModelMatrix[10] * -8.05f);
     }
 }
