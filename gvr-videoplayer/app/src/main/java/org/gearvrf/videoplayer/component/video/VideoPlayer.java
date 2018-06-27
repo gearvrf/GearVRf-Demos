@@ -29,11 +29,14 @@ import org.gearvrf.videoplayer.model.Video;
 
 import java.util.List;
 
+import static org.gearvrf.videoplayer.component.video.VideoPlayer.ConfigureVideoPlayer.SCALE_FACTOR;
+
 public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
+    private static final float LOADING_SIZE_FACTOR = .1f;
     private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
 
     private Player mPlayer;
@@ -82,10 +85,12 @@ public class VideoPlayer extends GVRSceneObject {
         addPlayNextDialog();
         addTitleOverlay(OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
         addLoadingAsset();
+
     }
 
     public boolean is360VideoPlaying() {
         return mPlayer.isPlaying() && mPlayer.is360PlayerActive();
+
     }
 
     public void prepare(@NonNull List<Video> videos) {
@@ -227,7 +232,7 @@ public class VideoPlayer extends GVRSceneObject {
     private void addBackButton(float height) {
         mBackButton = new BackButton(getGVRContext());
         mBackButton.setFocusListener(mFocusListener);
-        mBackButton.getTransform().setScale(1f, 1f, 1f);
+        mBackButton.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1f);
         // Put back button above the video screen
         float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
         mBackButton.getTransform().setPositionY(positionY - (positionY * .08f));
@@ -253,8 +258,11 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void addLoadingAsset() {
         mLoadingAsset = new LoadingAsset(getGVRContext());
-        mLoadingAsset.getTransform().setScale(1.f, 1.f, 1.f);
-        mLoadingAsset.getTransform().setPositionZ(1f);
+
+        mLoadingAsset.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1.f);
+        mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
+        addChildObject(mLoadingAsset);
+
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -334,6 +342,7 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
+
             mWidgetsContainer.addChildObject(mLoadingAsset);
             super.onLoading();
         }
@@ -464,6 +473,7 @@ public class VideoPlayer extends GVRSceneObject {
         }
     }
 
+
     public GVRSceneObject getWidgetsContainer() {
         return mWidgetsContainer;
     }
@@ -482,4 +492,10 @@ public class VideoPlayer extends GVRSceneObject {
 
         ownerTrans.setPosition(newModelMatrix[8] * -8.05f, newModelMatrix[9] * -8.05f, newModelMatrix[10] * -8.05f);
     }
+
+    public static class ConfigureVideoPlayer{
+        static final float SCALE_FACTOR = .4f;
+
+    }
+
 }

@@ -213,6 +213,7 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         mTimelineHoverLayout = view.findViewById(R.id.timelineHoverLayout);
         mTimelineHoverText = view.findViewById(R.id.timelineHoverText);
         View seekBarOverlay = view.findViewById(R.id.seekBarOverlay);
+
         LinearLayout playPauseButton = view.findViewById(R.id.playPauseButton);
         mPlayPauseButtonImage = playPauseButton.findViewById(R.id.image);
         mElapsedTime = view.findViewById(R.id.elapsedTimeText);
@@ -247,6 +248,7 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
             if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
                 if (mFocusListener != null) {
                     mFocusListener.onFocusLost(ControlWidget.this);
+
                 }
             }
         }
@@ -294,5 +296,6 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         @Override
         public void onAnimationRepeat(Animation animation) {
         }
+
     }
 }
