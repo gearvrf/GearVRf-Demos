@@ -25,7 +25,7 @@ import org.gearvrf.videoplayer.util.TimeUtils;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class ControlWidget extends FadeableObject implements Focusable, View.OnClickListener, SeekBar.OnSeekBarChangeListener, IViewEvents {
+public class ControlWidget extends FadeableObject implements Focusable, View.OnClickListener, SeekBar.OnSeekBarChangeListener, IViewEvents, View.OnHoverListener {
 
     @IntDef({ButtonState.PLAYING, ButtonState.PAUSED})
     @Retention(RetentionPolicy.SOURCE)
@@ -218,24 +218,29 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
 
         playPauseButton.setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
-
-        view.setOnHoverListener(new View.OnHoverListener() {
-            @Override
-            public boolean onHover(View v, MotionEvent event) {
-                setSeekTime(event.getX(), v.getWidth());
-                if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                    if (mFocusListener != null) {
-                        mFocusListener.onFocusGained(ControlWidget.this);
-                    }
-                } else {
-                    if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-                        if (mFocusListener != null) {
-                            mFocusListener.onFocusLost(ControlWidget.this);
-                        }
-                    }
-                }
-                return false;
-            }
-        });
+        mSeekBar.setOnHoverListener(this);
+        view.setOnHoverListener(this);
     }
+
+    @Override
+    public boolean onHover(View v, MotionEvent event) {
+
+        if (v.getId() == R.id.progressBar) {
+            setSeekTime(event.getX(), v.getWidth());
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+            if (mFocusListener != null) {
+                mFocusListener.onFocusGained(ControlWidget.this);
+            }
+        } else {
+            if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                if (mFocusListener != null) {
+                    mFocusListener.onFocusLost(ControlWidget.this);
+                }
+            }
+        }
+        return false;
+    }
+
 }
