@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -35,6 +34,8 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
     }
 
     private SeekBar mSeekBar;
+    private View mTimelineHoverLayout;
+    private TextView mTimelineHoverText;
     private ImageView mPlayPauseButtonImage;
     private TextView mElapsedTime, mDurationTime, mTitle;
     private ControlWidgetListener mOnVideoControllerListener;
@@ -53,22 +54,6 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
     @Override
     protected GVRSceneObject getFadeable() {
         return mMainSceneObject;
-    }
-
-    private void setSeekTime(float x, int width) {
-        //Just to avoid handling negative values for X once the framework sends a negative
-        //value when the hover is outside the view even if we use its action (HOVER_MOVE, for
-        //example)
-        float eventX = x > 0 ? x : .0f;
-
-        int seekTime;
-        if (eventX == 0) {
-            seekTime = 0;
-        } else {
-            seekTime = (int) ((eventX / width) * mSeekBar.getMax());
-        }
-        //TODO: Show the seek time on UI
-        Log.d("SeekBar", "seekTime" + TimeUtils.formatDurationFull(seekTime));
     }
 
     public void setButtonState(@ButtonState int state) {
@@ -209,7 +194,9 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
 
     private void holdView(View view) {
 
-        mSeekBar = view.findViewById(R.id.progressBar);
+        mSeekBar = view.findViewById(R.id.seekBar);
+        mTimelineHoverLayout = view.findViewById(R.id.timelineHoverLayout);
+        mTimelineHoverText = view.findViewById(R.id.timelineHoverText);
         LinearLayout playPauseButton = view.findViewById(R.id.playPauseButton);
         mPlayPauseButtonImage = playPauseButton.findViewById(R.id.image);
         mElapsedTime = view.findViewById(R.id.elapsedTimeText);
@@ -225,7 +212,12 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
     @Override
     public boolean onHover(View v, MotionEvent event) {
 
-        if (v.getId() == R.id.progressBar) {
+        if (v.getId() == R.id.seekBar) {
+            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                mTimelineHoverLayout.setVisibility(View.VISIBLE);
+            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                mTimelineHoverLayout.setVisibility(View.GONE);
+            }
             setSeekTime(event.getX(), v.getWidth());
         }
 
@@ -243,4 +235,20 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         return false;
     }
 
+    private void setSeekTime(float x, int width) {
+        //Just to avoid handling negative values for X once the framework sends a negative
+        //value when the hover is outside the view even if we use its action (HOVER_MOVE, for
+        //example)
+        float eventX = x > 0 ? x : .0f;
+
+        int seekTime;
+        if (eventX == 0) {
+            seekTime = 0;
+        } else {
+            seekTime = (int) ((eventX / width) * mSeekBar.getMax());
+        }
+
+        mTimelineHoverText.setText(TimeUtils.formatDurationFull(seekTime));
+        mTimelineHoverLayout.setX(mTimelineHoverLayout.getX() + eventX);
+    }
 }

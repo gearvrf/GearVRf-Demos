@@ -1,102 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="@drawable/bg_player_controller"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:paddingBottom="32px"
-    android:paddingEnd="42px"
-    android:paddingStart="42px"
-    android:paddingTop="32px"
-    tools:ignore="PxUsage">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:id="@+id/playPauseButton"
-        android:layout_width="77px"
-        android:layout_height="77px"
-        android:background="@drawable/bg_button_play"
-        android:gravity="center">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_player_controller"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="32px"
+        android:paddingEnd="42px"
+        android:paddingStart="42px"
+        android:paddingTop="32px"
+        tools:ignore="PxUsage">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="43px"
-            android:layout_height="43px"
-            android:src="@drawable/ic_play"
-            tools:ignore="ButtonStyle,ContentDescription,HardcodedText" />
+        <LinearLayout
+            android:id="@+id/playPauseButton"
+            android:layout_width="77px"
+            android:layout_height="77px"
+            android:background="@drawable/bg_button_play"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="43px"
+                android:layout_height="43px"
+                android:src="@drawable/ic_play"
+                tools:ignore="ButtonStyle,ContentDescription,HardcodedText" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="42px"
+            android:layout_height="0px" />
+
+        <LinearLayout
+            android:layout_width="533px"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:ellipsize="end"
+                android:fontFamily="@string/font_roboto_medium"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="VideoTitle.mp4"
+                android:textColor="@android:color/white"
+                android:textSize="24px"
+                tools:ignore="HardcodedText,SpUsage" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="12px"
+                    android:layout_marginTop="14px"
+                    android:maxHeight="8px"
+                    android:paddingEnd="20px"
+                    android:paddingStart="20px"
+                    android:progress="0"
+                    android:progressDrawable="@drawable/seekbar_style"
+                    android:thumb="@drawable/custom_thumb" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingEnd="8px"
+                android:paddingStart="8px">
+
+                <TextView
+                    android:id="@+id/elapsedTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:fontFamily="@string/font_roboto_medium"
+                    android:gravity="center"
+                    android:text="0:00:00"
+                    android:textColor="#006fcf"
+                    android:textSize="20px"
+                    tools:ignore="HardcodedText,SpUsage" />
+
+                <TextView
+                    android:id="@+id/durationTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="@string/font_roboto_medium"
+                    android:gravity="center"
+                    android:text="0:00:00"
+                    android:textColor="@android:color/white"
+                    android:textSize="20px"
+                    tools:ignore="HardcodedText,SpUsage" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <Space
-        android:layout_width="42px"
-        android:layout_height="0px" />
-
     <LinearLayout
-        android:layout_width="533px"
+        android:id="@+id/timelineHoverLayout"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="vertical">
+        android:layout_marginStart="145px"
+        android:layout_marginTop="88px"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="visible"
+        tools:ignore="HardcodedText,PxUsage,SpUsage">
+
+        <View
+            android:layout_width="18px"
+            android:layout_height="18px"
+            android:layout_marginEnd="6px"
+            android:layout_marginStart="6px"
+            android:background="@drawable/bg_bullet_timeline_hover" />
 
         <TextView
-            android:id="@+id/titleText"
-            android:layout_width="match_parent"
+            android:id="@+id/timelineHoverText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:ellipsize="end"
+            android:layout_marginTop="22px"
             android:fontFamily="@string/font_roboto_medium"
             android:gravity="center"
-            android:maxLines="1"
-            android:text="VideoTitle.mp4"
+            android:text="0:00:00"
             android:textColor="@android:color/white"
-            android:textSize="24px"
-            tools:ignore="HardcodedText,SpUsage" />
-
-        <SeekBar
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12px"
-            android:layout_marginTop="14px"
-            android:maxHeight="8px"
-            android:paddingEnd="20px"
-            android:paddingStart="20px"
-            android:progress="0"
-            android:progressDrawable="@drawable/seekbar_style"
-            android:thumb="@drawable/custom_thumb" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingEnd="8px"
-            android:paddingStart="8px">
-
-            <TextView
-                android:id="@+id/elapsedTimeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:fontFamily="@string/font_roboto_medium"
-                android:gravity="center"
-                android:text="0:00:00"
-                android:textColor="#006fcf"
-                android:textSize="20px"
-                tools:ignore="HardcodedText,SpUsage" />
-
-            <TextView
-                android:id="@+id/durationTimeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:fontFamily="@string/font_roboto_medium"
-                android:gravity="center"
-                android:text="0:00:00"
-                android:textColor="@android:color/white"
-                android:textSize="20px"
-                tools:ignore="HardcodedText,SpUsage" />
-
-        </RelativeLayout>
+            android:textSize="20px" />
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>
