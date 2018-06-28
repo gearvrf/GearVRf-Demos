@@ -36,6 +36,11 @@ import com.google.android.exoplayer2.upstream.AssetDataSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRScene;
+import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObjectPlayer;
 
@@ -45,10 +50,6 @@ import java.io.IOException;
 import static android.view.MotionEvent.ACTION_DOWN;
 
 public class Minimal360VideoActivity extends GVRActivity {
-
-    /**
-     * Called when the activity is first created.
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,36 +63,6 @@ public class Minimal360VideoActivity extends GVRActivity {
         if (null != videoSceneObjectPlayer) {
             final Minimal360Video main = new Minimal360Video(videoSceneObjectPlayer);
             setMain(main, "gvr.xml");
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (null != videoSceneObjectPlayer) {
-            final Object player = videoSceneObjectPlayer.getPlayer();
-            if (!USE_EXO_PLAYER) {
-                MediaPlayer mediaPlayer = (MediaPlayer) player;
-                mediaPlayer.pause();
-            } else {
-                ExoPlayer exoPlayer = (ExoPlayer) player;
-                exoPlayer.setPlayWhenReady(false);
-            }
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (null != videoSceneObjectPlayer) {
-            final Object player = videoSceneObjectPlayer.getPlayer();
-            if (!USE_EXO_PLAYER) {
-                MediaPlayer mediaPlayer = (MediaPlayer) player;
-                mediaPlayer.start();
-            } else {
-                ExoPlayer exoPlayer = (ExoPlayer) player;
-                exoPlayer.setPlayWhenReady(true);
-            }
         }
     }
 
@@ -189,6 +160,11 @@ public class Minimal360VideoActivity extends GVRActivity {
             public void start() {
                 player.setPlayWhenReady(true);
             }
+
+            @Override
+            public boolean isPlaying() {
+                return player.getPlayWhenReady();
+            }
         };
     }
 
@@ -211,4 +187,29 @@ public class Minimal360VideoActivity extends GVRActivity {
     private GVRVideoSceneObjectPlayer<?> videoSceneObjectPlayer;
 
     static final boolean USE_EXO_PLAYER = false;
+
+    private final static class Minimal360Video extends GVRMain
+    {
+        Minimal360Video(GVRVideoSceneObjectPlayer<?> player) {
+            mPlayer = player;
+        }
+
+        @Override
+        public void onInit(GVRContext gvrContext) {
+
+            GVRScene scene = gvrContext.getMainScene();
+
+            GVRSphereSceneObject sphere = new GVRSphereSceneObject(gvrContext, 72, 144, false);
+            GVRMesh mesh = sphere.getRenderData().getMesh();
+
+            GVRVideoSceneObject video = new GVRVideoSceneObject( gvrContext, mesh, mPlayer, GVRVideoSceneObject.GVRVideoType.MONO );
+            video.getTransform().setScale(100f, 100f, 100f);
+            video.setName( "video" );
+
+            scene.addSceneObject( video );
+            video.getMediaPlayer().start();
+        }
+
+        private final GVRVideoSceneObjectPlayer<?> mPlayer;
+    }
 }
