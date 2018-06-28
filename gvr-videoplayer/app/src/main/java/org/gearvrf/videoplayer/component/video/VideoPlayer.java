@@ -84,7 +84,6 @@ public class VideoPlayer extends GVRSceneObject {
         addPlayNextDialog();
         addTitleOverlay(OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
         addLoadingAsset();
-
     }
 
     public boolean is360VideoPlaying() {
@@ -260,7 +259,7 @@ public class VideoPlayer extends GVRSceneObject {
 
         mLoadingAsset.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1.f);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
-        mWidgetsContainer.addChildObject(mLoadingAsset);
+
 
     }
 
@@ -341,7 +340,6 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onLoading() {
             Log.d(TAG, "Video loading");
-
             mWidgetsContainer.addChildObject(mLoadingAsset);
             super.onLoading();
         }
@@ -491,7 +489,7 @@ public class VideoPlayer extends GVRSceneObject {
         ownerTrans.setPosition(newModelMatrix[8] * -8.05f, newModelMatrix[9] * -8.05f, newModelMatrix[10] * -8.05f);
     }
 
-    public static class ConfigureVideoPlayer{
+    public static class ConfigureVideoPlayer {
 
         static final float SCALE_FACTOR = .4f;
 
