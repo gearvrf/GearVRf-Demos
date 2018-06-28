@@ -59,7 +59,6 @@ import java.util.List;
 public class Player extends FadeableObject {
 
     private static final String TAG = Player.class.getSimpleName();
-    private static final String DEFAULT_FILE = "asset:///dinos.mp4";
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
     private GVRContext mGvrContext;
@@ -77,7 +76,7 @@ public class Player extends FadeableObject {
     private GVRVideoSceneObject mFlatVideo;
     private GVRVideoSceneObject m360Video;
 
-    public Player(final GVRContext gvrContext, float width, float height) {
+    public Player(final GVRContext gvrContext) {
         super(gvrContext);
 
         this.mGvrContext = gvrContext;
@@ -90,10 +89,10 @@ public class Player extends FadeableObject {
         };
 
         createDashFactories();
-        createVideoSceneObject(width, height);
+        createVideoSceneObject();
     }
 
-    private void createVideoSceneObject(float width, float height) {
+    private void createVideoSceneObject() {
         GVRExternalTexture texture = new GVRExternalTexture(mGvrContext);
         SurfaceTexture surfaceTexture = new SurfaceTexture(texture.getId());
         Surface surface = new Surface(surfaceTexture);
@@ -101,8 +100,9 @@ public class Player extends FadeableObject {
         mMediaPlayer = new DefaultExoPlayer(ExoPlayerFactory.newSimpleInstance(mGvrContext.getContext(), new DefaultTrackSelector()));
         mMediaPlayer.getPlayer().addListener(mPlayerListener);
 
-        mFlatVideo = new GVRVideoSceneObject(mGvrContext, mGvrContext.createQuad(width, height), mMediaPlayer, texture, GVRVideoType.MONO);
+        mFlatVideo = new GVRVideoSceneObject(mGvrContext, mGvrContext.createQuad(1, .6f), mMediaPlayer, texture, GVRVideoType.MONO);
         mFlatVideo.attachCollider(new GVRMeshCollider(getGVRContext(), true));
+        mFlatVideo.getTransform().setScale(10, 10, 1);
         mFlatVideo.getTransform().setPositionZ(-8.1f);
         addChildObject(mFlatVideo);
 
@@ -114,13 +114,13 @@ public class Player extends FadeableObject {
         setFlatPlayer();
     }
 
-    public void set360Player() {
+    private void set360Player() {
         mFlatVideo.setEnable(false);
         m360Video.setEnable(true);
         mVideo = m360Video;
     }
 
-    public void setFlatPlayer() {
+    private void setFlatPlayer() {
         m360Video.setEnable(false);
         mFlatVideo.setEnable(true);
         mVideo = mFlatVideo;

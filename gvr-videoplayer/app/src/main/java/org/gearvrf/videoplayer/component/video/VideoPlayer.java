@@ -79,7 +79,7 @@ public class VideoPlayer extends GVRSceneObject {
         mWidgetsContainer = new GVRSceneObject(gvrContext);
         mWidgetsContainer.getTransform().setPositionZ(-8.1f);
         addChildObject(mWidgetsContainer);
-        addPlayer(playerWidth, playerHeight);
+        addPlayer();
         addControlWidget(CONTROLLER_HEIGHT_FACTOR * playerHeight);
         addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight);
         addPlayNextDialog();
@@ -213,8 +213,9 @@ public class VideoPlayer extends GVRSceneObject {
         }
     }
 
-    private void addPlayer(float width, float height) {
-        mPlayer = new Player(getGVRContext(), width, height);
+    private void addPlayer() {
+        mPlayer = new Player(getGVRContext());
+        //mPlayer.getTransform().setScale(6, 6, 1);
         mPlayer.setOnVideoPlayerListener(mInternalVideoPlayerListener);
         addChildObject(mPlayer);
     }
