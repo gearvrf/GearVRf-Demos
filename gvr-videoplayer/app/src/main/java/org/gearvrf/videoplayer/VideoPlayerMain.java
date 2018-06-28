@@ -98,7 +98,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mVideoPlayer.setPlayerListener(mOnPlayerListener);
         mVideoPlayer.setBackButtonClickListener(mBackButtonClickListener);
         mMainSceneContainer.addChildObject(mVideoPlayer);
+        mVideoPlayer.setCursorObject(mParentCursor);
         mVideoPlayer.hide();
+        mParentCursor.setEnable(true);
     }
 
     private void addSkyBoxSphere() {
@@ -199,6 +201,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
                     mMainSceneContainer.addChildObject(mGallery);
                     mGallery.fadeIn();
                     mCurrentContainer = mGallery;
+                    mParentCursor.setEnable(true);
                 }
             });
             mSkybox.getRenderData().getMaterial().setColor(1.0f, 1.0f, 1.0f);

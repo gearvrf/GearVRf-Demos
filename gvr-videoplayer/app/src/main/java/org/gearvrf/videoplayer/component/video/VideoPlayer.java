@@ -46,6 +46,7 @@ public class VideoPlayer extends GVRSceneObject {
     private LoadingAsset mLoadingAsset;
 
     private GVRSceneObject mWidgetsContainer;
+    private FadeableObject mCursor;
 
     private boolean mVideoPlayerActive = true;
     private boolean mIsControlActive = true;
@@ -167,6 +168,7 @@ public class VideoPlayer extends GVRSceneObject {
                 public void onFadeIn() {
                     mIsPlayNextDialogActive = true;
                     showBackButton();
+                    mCursor.setEnable(true);
                     mPlayNextDialog.startTimer();
                 }
             });
@@ -192,12 +194,14 @@ public class VideoPlayer extends GVRSceneObject {
                 showControlWidget();
             }
             showBackButton();
+            mCursor.setEnable(true);
         }
     }
 
     private void hideAllControls() {
         if (!mIsPlayNextDialogActive) {
             hideBackButton();
+            mCursor.setEnable(false);
         }
         hideControlWidget();
     }
@@ -472,6 +476,10 @@ public class VideoPlayer extends GVRSceneObject {
 
     public GVRSceneObject getWidgetsContainer() {
         return mWidgetsContainer;
+    }
+
+    public void setCursorObject(FadeableObject cursor) {
+        mCursor = cursor;
     }
 
     public void reposition(float[] newModelMatrix) {
