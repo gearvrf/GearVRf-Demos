@@ -6,6 +6,10 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -43,9 +47,20 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
     private int mStateResource;
     private GVRSceneObject mMainSceneObject;
     private FocusListener mFocusListener;
+    private final AlphaAnimation mFadeOut;
+    private final AlphaAnimation mFadeIn;
 
     public ControlWidget(final GVRContext gvrContext) {
         super(gvrContext);
+
+        mFadeIn = new AlphaAnimation(0, 1);
+        mFadeIn.setInterpolator(new DecelerateInterpolator());
+        mFadeIn.setDuration(200);
+
+        mFadeOut = new AlphaAnimation(1, 0);
+        mFadeOut.setInterpolator(new AccelerateInterpolator());
+        mFadeOut.setDuration(200);
+
         mMainSceneObject = new GVRViewSceneObject(gvrContext, R.layout.layout_player_controller, this);
         setName(getClass().getSimpleName());
     }
@@ -197,28 +212,31 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         mSeekBar = view.findViewById(R.id.seekBar);
         mTimelineHoverLayout = view.findViewById(R.id.timelineHoverLayout);
         mTimelineHoverText = view.findViewById(R.id.timelineHoverText);
+        View seekBarOverlay = view.findViewById(R.id.seekBarOverlay);
         LinearLayout playPauseButton = view.findViewById(R.id.playPauseButton);
         mPlayPauseButtonImage = playPauseButton.findViewById(R.id.image);
         mElapsedTime = view.findViewById(R.id.elapsedTimeText);
         mDurationTime = view.findViewById(R.id.durationTimeText);
         mTitle = view.findViewById(R.id.titleText);
 
+        mFadeOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mTimelineHoverLayout.setVisibility(View.GONE);
+            }
+        });
+
         playPauseButton.setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
-        mSeekBar.setOnHoverListener(this);
+        seekBarOverlay.setOnHoverListener(this);
         view.setOnHoverListener(this);
     }
 
     @Override
     public boolean onHover(View v, MotionEvent event) {
 
-        if (v.getId() == R.id.seekBar) {
-            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                mTimelineHoverLayout.setVisibility(View.VISIBLE);
-            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-                mTimelineHoverLayout.setVisibility(View.GONE);
-            }
-            setSeekTime(event.getX(), v.getWidth());
+        if (v.getId() == R.id.seekBarOverlay) {
+            updateTimelineHoverText(event.getX(), v.getWidth(), event);
         }
 
         if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
@@ -235,11 +253,11 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         return false;
     }
 
-    private void setSeekTime(float x, int width) {
+    private void updateTimelineHoverText(float x, int width, MotionEvent event) {
         //Just to avoid handling negative values for X once the framework sends a negative
         //value when the hover is outside the view even if we use its action (HOVER_MOVE, for
         //example)
-        float eventX = x > 0 ? x : .0f;
+        float eventX = x > 0 ? x : 0;
 
         int seekTime;
         if (eventX == 0) {
@@ -249,6 +267,32 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         }
 
         mTimelineHoverText.setText(TimeUtils.formatDurationFull(seekTime));
-        mTimelineHoverLayout.setX(mTimelineHoverLayout.getX() + eventX);
+        mTimelineHoverLayout.setY(mTimelineHoverLayout.getTop() + 9);
+        mTimelineHoverLayout.setX(mTimelineHoverLayout.getLeft() + eventX);
+
+        if (event.getAction() != MotionEvent.ACTION_HOVER_EXIT) {
+            if (mTimelineHoverLayout.getVisibility() != View.VISIBLE) {
+                mTimelineHoverLayout.setVisibility(View.VISIBLE);
+                mTimelineHoverLayout.startAnimation(mFadeIn);
+            }
+        } else {
+            if (mTimelineHoverLayout.getVisibility() == View.VISIBLE) {
+                mTimelineHoverLayout.startAnimation(mFadeOut);
+            }
+        }
+    }
+
+    private static class DefaultAnimationListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
     }
 }
