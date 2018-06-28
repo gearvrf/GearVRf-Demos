@@ -37,6 +37,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
 
+
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
         super(gvrContext);
@@ -46,13 +47,12 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                     @Override
                     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
                         onInitRecyclerView(view);
-
                         onInitBreadcrumb(view);
                     }
 
                     @Override
                     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-                        gvrViewSceneObject.getTransform().setScale(6, 6, 1);
+                        gvrViewSceneObject.getTransform().setScale(6f, 6, 1);
                         addChildObject(gvrViewSceneObject);
                     }
                 });
@@ -61,12 +61,10 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     // UI Thread
     private void onInitRecyclerView(View galleryLayout) {
         mRecyclerView = galleryLayout.findViewById(R.id.recycler_view);
-
         GalleryItemAdapter adapterGallery = new GalleryItemAdapter<>(mItemList);
         adapterGallery.setOnItemSelectionListener(this);
         mRecyclerView.setAdapter(adapterGallery);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getGVRContext().getActivity(), 3));
-
+        mRecyclerView.setLayoutManager(new GridLayoutManager(getGVRContext().getContext(), 2));
         loadHome();
     }
 
@@ -77,6 +75,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         mBreadcrumb.setOnBreadcrumbListener(new OnBreadcrumbListener() {
             @Override
             public void onHomeClicked() {
+                numColumns(2);
                 loadHome();
             }
 
@@ -139,6 +138,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
         switch (item.getType()) {
             case GalleryItem.Type.TYPE_HOME:
+                numColumns(3);
                 if (item instanceof LocalHomeItem) {
                     mBreadcrumb.showSource(SourceType.LOCAL);
                     loadLocalAlbums();
@@ -148,6 +148,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                 }
                 break;
             case GalleryItem.Type.TYPE_ALBUM:
+                numColumns(3);
                 loadLocalVideos(((Album) item).getTitle());
                 mBreadcrumb.showAlbum(((Album) item).getTitle());
                 break;
@@ -178,6 +179,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         return mObjectViewGallery;
     }
 
+
     public void reposition(float[] newModelMatrix) {
         GVRTransform ownerTrans = getTransform();
 
@@ -191,5 +193,11 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
         ownerTrans.setPosition(newModelMatrix[8] * -8, newModelMatrix[9] * -8, newModelMatrix[10] * -8);
     }
-}
+    
+    private void numColumns(int numColumns) {
+        mItemList.clear();
+        mRecyclerView.getAdapter().notifyDataSetChanged();
+        ((GridLayoutManager) mRecyclerView.getLayoutManager()).setSpanCount(numColumns);
+    }
 
+}

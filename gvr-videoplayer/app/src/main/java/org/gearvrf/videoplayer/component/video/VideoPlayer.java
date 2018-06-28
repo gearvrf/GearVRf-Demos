@@ -36,7 +36,6 @@ public class VideoPlayer extends GVRSceneObject {
     private static final String TAG = VideoPlayer.class.getSimpleName();
     private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
     private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
-    private static final float LOADING_SIZE_FACTOR = .1f;
     private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
 
     private Player mPlayer;
@@ -494,6 +493,7 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public static class ConfigureVideoPlayer{
+
         static final float SCALE_FACTOR = .4f;
 
     }

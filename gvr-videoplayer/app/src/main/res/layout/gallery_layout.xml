@@ -24,7 +24,7 @@
     </LinearLayout>
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/grid_width"
         android:layout_height="@dimen/grid_height"
         android:layout_marginTop="37px"
         android:overScrollMode="never"
