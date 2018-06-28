@@ -234,8 +234,8 @@ public class VideoPlayer extends GVRSceneObject {
         mBackButton.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1f);
         // Put back button above the video screen
         float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
-        mBackButton.getTransform().setPositionY(positionY - (positionY * .08f));
-        mBackButton.getTransform().setPositionZ(.05f);
+        mBackButton.getTransform().setPositionY(positionY - (positionY * .23f));
+        mBackButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1.5f);
         mWidgetsContainer.addChildObject(mBackButton);
 
     }
@@ -260,7 +260,7 @@ public class VideoPlayer extends GVRSceneObject {
 
         mLoadingAsset.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1.f);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
-        addChildObject(mLoadingAsset);
+        mWidgetsContainer.addChildObject(mLoadingAsset);
 
     }
 
@@ -471,7 +471,6 @@ public class VideoPlayer extends GVRSceneObject {
             mWidgetsContainer.removeChildObject(mOverlayTitle);
         }
     }
-
 
     public GVRSceneObject getWidgetsContainer() {
         return mWidgetsContainer;

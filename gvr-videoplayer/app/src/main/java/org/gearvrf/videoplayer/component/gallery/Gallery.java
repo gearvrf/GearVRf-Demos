@@ -193,7 +193,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
         ownerTrans.setPosition(newModelMatrix[8] * -8, newModelMatrix[9] * -8, newModelMatrix[10] * -8);
     }
-    
+
     private void numColumns(int numColumns) {
         mItemList.clear();
         mRecyclerView.getAdapter().notifyDataSetChanged();
