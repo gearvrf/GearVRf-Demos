@@ -42,7 +42,6 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
     private int mStateResource;
     private GVRSceneObject mMainSceneObject;
     private FocusListener mFocusListener;
-    private LinearLayout mLinearControlWidget;
 
     public ControlWidget(final GVRContext gvrContext) {
         super(gvrContext);
@@ -216,11 +215,11 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         mElapsedTime = view.findViewById(R.id.elapsedTimeText);
         mDurationTime = view.findViewById(R.id.durationTimeText);
         mTitle = view.findViewById(R.id.titleText);
-        mLinearControlWidget = view.findViewById(R.id.LinearControlWidget);
 
         playPauseButton.setOnClickListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
-        mLinearControlWidget.setOnHoverListener(new View.OnHoverListener() {
+
+        view.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View v, MotionEvent event) {
                 setSeekTime(event.getX(), v.getWidth());

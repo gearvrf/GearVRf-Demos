@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LinearControlWidget"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_player_controller"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="32dp"
-    android:paddingEnd="42dp"
-    android:paddingStart="42dp"
-    android:paddingTop="32dp">
+    android:paddingBottom="32px"
+    android:paddingEnd="42px"
+    android:paddingStart="42px"
+    android:paddingTop="32px"
+    tools:ignore="PxUsage">
 
     <LinearLayout
         android:id="@+id/playPauseButton"
-        android:layout_width="77dp"
-        android:layout_height="77dp"
+        android:layout_width="77px"
+        android:layout_height="77px"
         android:background="@drawable/bg_button_play"
         android:gravity="center">
 
         <ImageView
             android:id="@+id/image"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
+            android:layout_width="43px"
+            android:layout_height="43px"
             android:src="@drawable/ic_play"
             tools:ignore="ButtonStyle,ContentDescription,HardcodedText" />
 
     </LinearLayout>
 
     <Space
-        android:layout_width="42dp"
-        android:layout_height="0dp" />
+        android:layout_width="42px"
+        android:layout_height="0px" />
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="533px"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
@@ -50,27 +49,27 @@
             android:maxLines="1"
             android:text="VideoTitle.mp4"
             android:textColor="@android:color/white"
-            android:textSize="24dp"
+            android:textSize="24px"
             tools:ignore="HardcodedText,SpUsage" />
 
         <SeekBar
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:layout_marginTop="14dp"
-            android:maxHeight="8dp"
-            android:paddingEnd="9dp"
-            android:paddingStart="9dp"
-            android:progress="40"
+            android:layout_marginBottom="12px"
+            android:layout_marginTop="14px"
+            android:maxHeight="8px"
+            android:paddingEnd="20px"
+            android:paddingStart="20px"
+            android:progress="0"
             android:progressDrawable="@drawable/seekbar_style"
             android:thumb="@drawable/custom_thumb" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp">
+            android:paddingEnd="8px"
+            android:paddingStart="8px">
 
             <TextView
                 android:id="@+id/elapsedTimeText"
@@ -81,7 +80,7 @@
                 android:gravity="center"
                 android:text="0:00:00"
                 android:textColor="#006fcf"
-                android:textSize="20dp"
+                android:textSize="20px"
                 tools:ignore="HardcodedText,SpUsage" />
 
             <TextView
@@ -93,7 +92,7 @@
                 android:gravity="center"
                 android:text="0:00:00"
                 android:textColor="@android:color/white"
-                android:textSize="20dp"
+                android:textSize="20px"
                 tools:ignore="HardcodedText,SpUsage" />
 
         </RelativeLayout>
