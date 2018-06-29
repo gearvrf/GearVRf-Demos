@@ -50,7 +50,7 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
     @Override
     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
         mBackButton = view.findViewById(R.id.backButtonImage);
-        view.setOnHoverListener(new View.OnHoverListener() {
+        mBackButton.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {

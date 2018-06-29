@@ -20,14 +20,11 @@ import android.view.View;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShader;
 import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -54,7 +51,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private static final String TAG = VideoPlayerMain.class.getSimpleName();
     private static float CURSOR_DEPTH = -8.0f;
     private static float WIDTH_VIDEO_PLAYER = 10.0f;
-    private static float HEIGHT_VIDEO_PLAYER = 5.f;
     private static final float SCALE = 200.0f;
 
     private GVRContext mContext;
@@ -93,7 +89,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void createVideoPlayer() {
-        mVideoPlayer = new VideoPlayer(getGVRContext(), WIDTH_VIDEO_PLAYER, HEIGHT_VIDEO_PLAYER);
+        mVideoPlayer = new VideoPlayer(getGVRContext());
         mVideoPlayer.setControlWidgetAutoHide(true);
         mVideoPlayer.setPlayerListener(mOnPlayerListener);
         mVideoPlayer.setBackButtonClickListener(mBackButtonClickListener);
@@ -235,7 +231,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         lookat.cross(ownerXaxis.x, ownerXaxis.y, ownerXaxis.z, ownerYaxis);
         ownerYaxis = ownerYaxis.normalize();
 
-        float[] newModelMatrix = new float[] {
+        float[] newModelMatrix = new float[]{
                 ownerXaxis.x, ownerXaxis.y, ownerXaxis.z, 0.0f,
                 ownerYaxis.x, ownerYaxis.y, ownerYaxis.z, 0.0f,
                 lookat.x, lookat.y, lookat.z, 0.0f,

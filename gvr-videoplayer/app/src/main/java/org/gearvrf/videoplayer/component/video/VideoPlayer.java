@@ -29,14 +29,14 @@ import org.gearvrf.videoplayer.model.Video;
 
 import java.util.List;
 
+import static org.gearvrf.videoplayer.component.video.VideoPlayer.ConfigureVideoPlayer.POSITION_BACK_BUTTON;
+import static org.gearvrf.videoplayer.component.video.VideoPlayer.ConfigureVideoPlayer.POSITION_CONTROL_WIDGET;
+import static org.gearvrf.videoplayer.component.video.VideoPlayer.ConfigureVideoPlayer.POSITION_TITLE;
 import static org.gearvrf.videoplayer.component.video.VideoPlayer.ConfigureVideoPlayer.SCALE_FACTOR;
 
 public class VideoPlayer extends GVRSceneObject {
 
     private static final String TAG = VideoPlayer.class.getSimpleName();
-    private static final float CONTROLLER_HEIGHT_FACTOR = .25f;
-    private static final float BACK_BUTTON_SIZE_FACTOR = .1f;
-    private static final float OVERLAY_TITLE_HEIGHT_FACTOR = .06f;
 
     private Player mPlayer;
     private ControlWidget mControl;
@@ -57,7 +57,7 @@ public class VideoPlayer extends GVRSceneObject {
     private List<Video> mVideos;
 
 
-    public VideoPlayer(GVRContext gvrContext, float playerWidth, float playerHeight) {
+    public VideoPlayer(GVRContext gvrContext) {
         super(gvrContext);
 
         mHideControlTimer = new HideControlWidgetTimer(this);
@@ -80,10 +80,10 @@ public class VideoPlayer extends GVRSceneObject {
         mWidgetsContainer.getTransform().setPositionZ(-8.1f);
         addChildObject(mWidgetsContainer);
         addPlayer();
-        addControlWidget(CONTROLLER_HEIGHT_FACTOR * playerHeight);
-        addBackButton(BACK_BUTTON_SIZE_FACTOR * playerHeight);
+        addControlWidget();
+        addBackButton();
         addPlayNextDialog();
-        addTitleOverlay(OVERLAY_TITLE_HEIGHT_FACTOR * playerHeight);
+        addTitleOverlay();
         addLoadingAsset();
     }
 
@@ -215,31 +215,28 @@ public class VideoPlayer extends GVRSceneObject {
 
     private void addPlayer() {
         mPlayer = new Player(getGVRContext());
-        //mPlayer.getTransform().setScale(6, 6, 1);
         mPlayer.setOnVideoPlayerListener(mInternalVideoPlayerListener);
         addChildObject(mPlayer);
     }
 
-    private void addControlWidget(float height) {
+    private void addControlWidget() {
         mControl = new ControlWidget(getGVRContext());
         mControl.getTransform().setScale(6, 6, 1);
         mControl.setOnVideoControllerListener(mOnVideoControllerListener);
         mControl.setFocusListener(mFocusListener);
         // Put video control widget below the video screen
-        float positionY = -(height / CONTROLLER_HEIGHT_FACTOR / 2f);
-        mControl.getTransform().setPositionY(positionY * 1.02f);
+        mControl.getTransform().setPositionY(mPlayer.getTransform().getPositionY() - POSITION_CONTROL_WIDGET);
         mControl.getTransform().setPositionZ(.05f);
         mWidgetsContainer.addChildObject(mControl);
     }
 
-    private void addBackButton(float height) {
+    private void addBackButton() {
         mBackButton = new BackButton(getGVRContext());
         mBackButton.setFocusListener(mFocusListener);
         mBackButton.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1f);
         // Put back button above the video screen
-        float positionY = (height / BACK_BUTTON_SIZE_FACTOR / 2f);
-        mBackButton.getTransform().setPositionY(positionY - (positionY * .23f));
-        mBackButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 1.5f);
+        mBackButton.getTransform().setPositionY(mPlayer.getTransform().getPositionY() + POSITION_BACK_BUTTON);
+        mBackButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
         mWidgetsContainer.addChildObject(mBackButton);
 
     }
@@ -251,20 +248,17 @@ public class VideoPlayer extends GVRSceneObject {
         mWidgetsContainer.addChildObject(mPlayNextDialog);
     }
 
-    private void addTitleOverlay(float height) {
+    private void addTitleOverlay() {
         mOverlayTitle = new OverlayTitle(getGVRContext());
         mOverlayTitle.getTransform().setScale(3, 3, 1);
-        float positionY = (height / OVERLAY_TITLE_HEIGHT_FACTOR / 2f);
-        mOverlayTitle.getTransform().setPositionY(positionY + .5f);
+        mOverlayTitle.getTransform().setPositionY(mPlayer.getTransform().getPositionY() + POSITION_TITLE);
         mWidgetsContainer.addChildObject(mOverlayTitle);
     }
 
     private void addLoadingAsset() {
         mLoadingAsset = new LoadingAsset(getGVRContext());
-
         mLoadingAsset.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1.f);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
-
 
     }
 
@@ -499,9 +493,10 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public static class ConfigureVideoPlayer {
-
         static final float SCALE_FACTOR = .4f;
-
+        static final float POSITION_CONTROL_WIDGET = 3.02f;
+        static final float POSITION_BACK_BUTTON = 2.1f;
+        static final float POSITION_TITLE = 3.3f;
     }
 
 }
