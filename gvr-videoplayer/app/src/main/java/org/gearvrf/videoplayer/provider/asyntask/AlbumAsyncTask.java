@@ -14,6 +14,7 @@ import org.gearvrf.videoplayer.model.Album;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
 
@@ -44,7 +45,8 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
                 VideoColumns.DATA,
                 VideoColumns.DURATION,
                 VideoColumns.WIDTH,
-                VideoColumns.HEIGHT
+                VideoColumns.HEIGHT,
+                "is_360_video"
         };
 
         String sortOrder = VideoColumns.BUCKET_DISPLAY_NAME + " ASC, " + VideoColumns.TITLE + " ASC";
@@ -98,6 +100,8 @@ public class AlbumAsyncTask extends AsyncTask<Void, Void, List<Album>> {
                     getString(getColumnIndexOrThrow(VideoColumns.DATA)),
                     getLong(getColumnIndexOrThrow(VideoColumns.DURATION)),
                     isRatio21,
+                    getInt(getColumnIndexOrThrow("is_360_video")) == 1,
+                    Pattern.matches(".*360.*", getString(getColumnIndexOrThrow(VideoColumns.TITLE))),
                     org.gearvrf.videoplayer.model.Video.VideoType.LOCAL
             );
         }

@@ -2,7 +2,6 @@ package org.gearvrf.videoplayer.provider.asyntask;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import org.gearvrf.videoplayer.VideoPlayerApp;
 import org.gearvrf.videoplayer.model.Video;
@@ -39,7 +38,7 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
             for (int i = 0; i < arrayLength; i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 videos.add(new Video(i, jsonObject.getString("name"), jsonObject.getString("uri"),
-                                     jsonObject.getInt("duration"), false, Video.VideoType.EXTERNAL)
+                                     jsonObject.getInt("duration"), false, false, false, Video.VideoType.EXTERNAL)
                 );
             }
         } catch (JSONException e) {

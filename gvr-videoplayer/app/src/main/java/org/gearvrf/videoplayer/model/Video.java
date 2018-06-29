@@ -15,15 +15,20 @@ public final class Video extends GalleryItem {
     private String path;
     private long duration;
     private boolean isRatio21;
+    private boolean is360tag;
+    private boolean has360onTitle;
     private @VideoType int videoType;
 
-    public Video(long id, String title, String path, long duration, boolean isRatio21, @VideoType int videoType) {
+    public Video(long id, String title, String path, long duration, boolean isRatio21,
+                 boolean is360tag, boolean has360onTitle, @VideoType int videoType) {
         super(Type.TYPE_VIDEO);
         this.id = id;
         this.title = title;
         this.path = path;
         this.duration = duration;
         this.isRatio21 = isRatio21;
+        this.is360tag = is360tag;
+        this.has360onTitle = has360onTitle;
         this.videoType = videoType;
     }
 
@@ -67,6 +72,22 @@ public final class Video extends GalleryItem {
         this.isRatio21 = isRatio21;
     }
 
+    public boolean getIs360tag() {
+        return is360tag;
+    }
+
+    public void setIs360tag(boolean is360tag) {
+        this.is360tag = is360tag;
+    }
+
+    public boolean getHas360onTitle() {
+        return has360onTitle;
+    }
+
+    public void setHas360onTitle(boolean has360onTitle) {
+        this.has360onTitle = has360onTitle;
+    }
+
     @VideoType
     public int getVideoType() {
         return videoType;
@@ -81,6 +102,8 @@ public final class Video extends GalleryItem {
                 ", duration=" + duration +
                 ", type=" + type +
                 ", isRatio21=" + isRatio21 +
+                ", is360taq=" + is360tag +
+                ", has360onTitle=" + has360onTitle +
                 ", videoType=" + videoType +
                 "} " + super.toString();
     }

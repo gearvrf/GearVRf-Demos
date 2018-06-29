@@ -218,7 +218,7 @@ public class Player extends FadeableObject {
     }
 
     private void playCurrentPrepared() {
-        if (mPlayingNow.getIsRatio21()) {
+        if (mPlayingNow.getIsRatio21() || mPlayingNow.getIs360tag() || mPlayingNow.getHas360onTitle()) {
             set360Player();
         } else {
             setFlatPlayer();

@@ -12,6 +12,7 @@ import org.gearvrf.videoplayer.model.Video;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static android.provider.MediaStore.Video.Media;
 import static android.provider.MediaStore.Video.VideoColumns;
@@ -48,7 +49,8 @@ public class LocalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                 VideoColumns.DATA,
                 VideoColumns.DURATION,
                 VideoColumns.WIDTH,
-                VideoColumns.HEIGHT
+                VideoColumns.HEIGHT,
+                "is_360_video"
         };
 
         String selection = mAlbumTitleFilter != null ? VideoColumns.BUCKET_DISPLAY_NAME + "=?" : null;
@@ -71,7 +73,10 @@ public class LocalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
                     String videoTitle = cursorWrapper.getTitle();
                     long videoId = cursorWrapper.getId();
 
-                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(), cursorWrapper.getDuration(), cursorWrapper.getIsRatio21(), Video.VideoType.LOCAL));
+                    videos.add(new Video(videoId, videoTitle, cursorWrapper.getPath(),
+                            cursorWrapper.getDuration(), cursorWrapper.getIsRatio21(),
+                            cursorWrapper.getIs360Video(), cursorWrapper.has360onTitle(),
+                            Video.VideoType.LOCAL));
 
                 } while (cursor.moveToNext());
             }
@@ -120,6 +125,14 @@ public class LocalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
 
         boolean getIsRatio21() {
             return Float.parseFloat(getWidth()) / Float.parseFloat(getHeight()) == 2;
+        }
+
+        boolean getIs360Video() {
+            return getInt(getColumnIndexOrThrow("is_360_video")) == 1;
+        }
+
+        boolean has360onTitle() {
+            return Pattern.matches(".*360.*", getTitle());
         }
     }
 }
