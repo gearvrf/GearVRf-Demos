@@ -1,7 +1,10 @@
 package org.gearvrf.videoplayer.provider.asyntask;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.gearvrf.videoplayer.VideoPlayerApp;
 import org.gearvrf.videoplayer.model.Video;
@@ -37,11 +40,15 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
             int arrayLength = jsonArray.length();
             for (int i = 0; i < arrayLength; i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                videos.add(new Video(i, jsonObject.getString("name"), jsonObject.getString("uri"),
-                                     jsonObject.getInt("duration"), false, false, false, Video.VideoType.EXTERNAL)
-                );
+                Video video = new Video(jsonObject.getInt("id"), jsonObject.getString("name"),
+                                        jsonObject.getString("uri"), jsonObject.getInt("duration"),
+                                        false, false, false, Video.VideoType.EXTERNAL);
+
+                video.setThumbnail(loadBitmap(jsonObject.getString("thumbnail")));
+                videos.add(video);
             }
         } catch (JSONException e) {
+            Log.e(TAG, "Could not load videos info from JSON file");
             e.printStackTrace();
         }
 
@@ -68,10 +75,24 @@ public class ExternalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
             jsonFile = new String(buffer, "UTF-8");
             json = new JSONObject(jsonFile);
         } catch (IOException e) {
+            Log.e(TAG, "Could not load JSON file");
             e.printStackTrace();
         } catch (JSONException e) {
+            Log.e(TAG, "Could not load JSON file");
             e.printStackTrace();
         }
         return json;
+    }
+
+    private Bitmap loadBitmap(String thumbnailPath) {
+        Bitmap bitmap = null;
+        try {
+            InputStream is = VideoPlayerApp.getInstance().getAssets().open(thumbnailPath);
+            bitmap = BitmapFactory.decodeStream(is);
+        } catch (IOException e) {
+            Log.e(TAG, "Could not load thumbnail");
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }

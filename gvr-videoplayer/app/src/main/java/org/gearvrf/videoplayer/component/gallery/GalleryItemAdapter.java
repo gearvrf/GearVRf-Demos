@@ -69,8 +69,11 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
             VideoViewHolder viewHolder = (VideoViewHolder) holder;
             viewHolder.title.setText(video.getTitle());
             viewHolder.duration.setText(TimeUtils.formatDurationFull(video.getDuration()));
-            new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
-
+            if (video.getVideoType() == Video.VideoType.LOCAL) {
+                new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
+            } else {
+                viewHolder.thumbnail.setImageBitmap(video.getThumbnail());
+            }
         } else {
             Log.d(getClass().getSimpleName(), "Unknown type:" + item.getType());
         }

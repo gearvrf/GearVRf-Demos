@@ -1,5 +1,6 @@
 package org.gearvrf.videoplayer.model;
 
+import android.graphics.Bitmap;
 import android.support.annotation.IntDef;
 
 public final class Video extends GalleryItem {
@@ -18,6 +19,7 @@ public final class Video extends GalleryItem {
     private boolean is360tag;
     private boolean has360onTitle;
     private @VideoType int videoType;
+    private Bitmap thumbnail;
 
     public Video(long id, String title, String path, long duration, boolean isRatio21,
                  boolean is360tag, boolean has360onTitle, @VideoType int videoType) {
@@ -86,6 +88,14 @@ public final class Video extends GalleryItem {
 
     public void setHas360onTitle(boolean has360onTitle) {
         this.has360onTitle = has360onTitle;
+    }
+
+    public void setThumbnail(Bitmap bitmap) {
+        this.thumbnail = bitmap;
+    }
+
+    public Bitmap getThumbnail() {
+        return thumbnail;
     }
 
     @VideoType
