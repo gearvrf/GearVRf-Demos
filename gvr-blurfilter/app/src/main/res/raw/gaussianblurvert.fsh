@@ -6,7 +6,7 @@
 precision highp float;
 
 @MATERIAL_UNIFORMS
-uniform samplerExternalOES u_texture;
+uniform sampler2D u_texture;
 
 
 layout (location = 0) in vec2 vTextureCoord;
