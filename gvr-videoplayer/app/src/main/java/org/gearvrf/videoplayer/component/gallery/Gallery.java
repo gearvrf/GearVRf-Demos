@@ -36,7 +36,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     private List<GalleryItem> mItemList = new LinkedList<>();
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
-
+    private boolean mIsConnected = false;
 
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
@@ -56,6 +56,11 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                         addChildObject(gvrViewSceneObject);
                     }
                 });
+    }
+
+    public void setIsConnected(boolean connected) {
+        mIsConnected = connected;
+        Log.d(TAG, "Network state changed: " + connected);
     }
 
     // UI Thread

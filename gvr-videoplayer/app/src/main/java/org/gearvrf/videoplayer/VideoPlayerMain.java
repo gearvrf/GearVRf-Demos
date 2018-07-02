@@ -39,6 +39,8 @@ import org.gearvrf.videoplayer.component.video.player.DefaultPlayerListener;
 import org.gearvrf.videoplayer.component.video.player.OnPlayerListener;
 import org.gearvrf.videoplayer.event.DefaultTouchEvent;
 import org.gearvrf.videoplayer.model.Video;
+import org.gearvrf.videoplayer.network.NetworkListener;
+import org.gearvrf.videoplayer.network.NetworkManager;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -62,6 +64,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private FadeableObject mLabelCursor, mCurrentCursor, mParentCursor;
     private Gallery mGallery;
     private GVRSphereSceneObject mSkybox;
+    private NetworkManager mNetworkManager;
 
     /**
      * Called when the activity is first created.
@@ -78,6 +81,14 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         initCursorController();
         createGallery();
         createVideoPlayer();
+        createNetworkManager();
+
+    }
+
+    private void createNetworkManager() {
+        mNetworkManager = new NetworkManager(mContext);
+        mNetworkManager.register(new NetworkStateHandler());
+        mNetworkManager.start();
     }
 
     private void createGallery() {
@@ -203,6 +214,15 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
             mSkybox.getRenderData().getMaterial().setColor(1.0f, 1.0f, 1.0f);
         }
     };
+
+    private class NetworkStateHandler implements NetworkListener {
+
+        @Override
+        public void onConnected(boolean isConnected) {
+            mGallery.setIsConnected(isConnected);
+            mVideoPlayer.setIsConnected(isConnected);
+        }
+    }
 
     private void repositionScene() {
         if (mMainSceneContainer == null) {

@@ -278,6 +278,7 @@ public class Player extends FadeableObject {
         android.util.Log.d(TAG, text);
     }
 
+
     @NonNull
     @Override
     protected GVRSceneObject getFadeable() {
@@ -348,6 +349,7 @@ public class Player extends FadeableObject {
                 notifyVideoLoading();
             }
         }
+
     };
 
     public void reposition(float[] newModelMatrix) {

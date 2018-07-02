@@ -55,6 +55,7 @@ public class VideoPlayer extends GVRSceneObject {
     private boolean mHideControlWidgetTimerEnabled;
     private HideControlWidgetTimer mHideControlTimer;
     private List<Video> mVideos;
+    private boolean mIsConnected = false;
 
 
     public VideoPlayer(GVRContext gvrContext) {
@@ -85,6 +86,11 @@ public class VideoPlayer extends GVRSceneObject {
         addPlayNextDialog();
         addTitleOverlay();
         addLoadingAsset();
+    }
+
+    public void setIsConnected(boolean connected) {
+        mIsConnected = connected;
+        android.util.Log.d(TAG, "Network state changed: " + connected);
     }
 
     public boolean is360VideoPlaying() {
@@ -362,6 +368,7 @@ public class VideoPlayer extends GVRSceneObject {
             // Force back to gallery
             mBackButton.performClick();
         }
+
     };
 
     private ControlWidgetListener mOnVideoControllerListener = new ControlWidgetListener() {
