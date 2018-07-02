@@ -26,6 +26,7 @@ import org.gearvrf.widgetplugin.GVRWidgetPlugin;
 
 public class ModelViewer2Activity extends GVRActivity
 {
+    private final static String TAG = "ModelViewer2Activity";
     MyMenu mWidget;
     private GVRWidgetPlugin mPlugin;
     private GestureDetector mDetector = null;

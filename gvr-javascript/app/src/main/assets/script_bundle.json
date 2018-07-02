@@ -7,7 +7,7 @@
 		language: "js"
     },
     {
-		target: "@GVRActivity",
+		target: "@GVRApplication",
 		script: "activity.js",
 		language: "js"
     }

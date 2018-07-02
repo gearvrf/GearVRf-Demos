@@ -15,12 +15,7 @@
 
 package org.gearvrf.events;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRMain;
-
+import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -36,8 +31,14 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class EventsActivity extends GVRActivity {
-    private static final String TAG = EventsActivity.class.getSimpleName();
+import org.gearvrf.GVRApplication;
+import org.gearvrf.GVRMain;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class EventsActivity extends Activity {
+    private GVRApplication application;
     private GVRMain main;
     private FrameLayout frameLayout;
     private TextView buttonTextView, keyTextView, listTextView;
@@ -61,22 +62,24 @@ public class EventsActivity extends GVRActivity {
         super.onCreate(savedInstanceState);
         frameLayout = new FrameLayout(this);
         frameLayout.setBackgroundColor(Color.WHITE);
-        registerView(frameLayout);
+
+        main = new EventsMain(this, frameLayout);
+        application = new GVRApplication(this, main, "gvr.xml");
+        application.registerView(frameLayout);
+
         frameLayout.getLayoutParams().height = frameLayout.getLayoutParams().width = 700;
         View.inflate(this, R.layout.activity_main, frameLayout);
 
-        button1 = (Button) frameLayout.findViewById(R.id.button1);
-        button2 = (Button) frameLayout.findViewById(R.id.button2);
-        checkBox = (CheckBox) frameLayout.findViewById(R.id.checkBox);
-        keyTextView = (TextView) frameLayout.findViewById(R.id.keyTextView);
-        buttonTextView = (TextView) frameLayout
-                .findViewById(R.id.buttonTextView);
-        listTextView = (TextView) frameLayout.findViewById(R.id.listTextView);
-        listView = (ListView) findViewById(R.id.listView);
+        button1 = frameLayout.findViewById(R.id.button1);
+        button2 = frameLayout.findViewById(R.id.button2);
+        checkBox = frameLayout.findViewById(R.id.checkBox);
+        keyTextView = frameLayout.findViewById(R.id.keyTextView);
+        buttonTextView = frameLayout.findViewById(R.id.buttonTextView);
+        listTextView = frameLayout.findViewById(R.id.listTextView);
+        listView = findViewById(R.id.listView);
         listView.setBackgroundColor(Color.LTGRAY);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                R.layout.list_item, items);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.list_item, items);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(itemClickListener);
         button1.setOnClickListener(clickListener);
@@ -86,8 +89,6 @@ public class EventsActivity extends GVRActivity {
         checkBox.setOnClickListener(clickListener);
         buttonPressed = getResources().getString(R.string.buttonPressed);
         listItemClicked = getResources().getString(R.string.listClicked);
-        main = new EventsMain(this, frameLayout);
-        setMain(main, "gvr.xml");
     }
 
     private OnClickListener clickListener = new OnClickListener() {
@@ -96,17 +97,17 @@ public class EventsActivity extends GVRActivity {
         public void onClick(View v) {
             String button = new String();
             switch (v.getId()) {
-            case R.id.button1:
-                button = "1";
-                break;
-            case R.id.button2:
-                button = "2";
-                break;
-            case R.id.checkBox:
-                button = "Check Box";
-                break;
-            default:
-                break;
+                case R.id.button1:
+                    button = "1";
+                    break;
+                case R.id.button2:
+                    button = "2";
+                    break;
+                case R.id.checkBox:
+                    button = "Check Box";
+                    break;
+                default:
+                    break;
             }
 
             buttonTextView
@@ -117,7 +118,7 @@ public class EventsActivity extends GVRActivity {
     private OnItemClickListener itemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-                long arg3) {
+                                long arg3) {
             listTextView.setText(String.format("%s %s", listItemClicked,
                     items.get(position)));
         }
@@ -126,12 +127,12 @@ public class EventsActivity extends GVRActivity {
     private View.OnHoverListener buttonHoverListener = new View.OnHoverListener() {
         @Override
         public boolean onHover(View v, MotionEvent event) {
-            switch(event.getAction()) {
+            switch (event.getAction()) {
                 case MotionEvent.ACTION_HOVER_ENTER:
-                    ((Button)v).setTextColor(Color.WHITE);
+                    ((Button) v).setTextColor(Color.WHITE);
                     break;
                 case MotionEvent.ACTION_HOVER_EXIT:
-                    ((Button)v).setTextColor(Color.BLACK);
+                    ((Button) v).setTextColor(Color.BLACK);
                     break;
                 default:
                     break;
@@ -141,10 +142,44 @@ public class EventsActivity extends GVRActivity {
     };
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
         keyTextView.setText(String.format("Key Pressed: %s ",
                 KeyEvent.keyCodeToString(keyCode)));
         return false;
     }
+
+    @Override
+    protected void onPause() {
+        application.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        application.resume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        application.destroy();
+        super.onDestroy();
+    }
+
+    @Override
+    public boolean dispatchGenericMotionEvent(MotionEvent event) {
+        if (application.dispatchGenericMotionEvent(event)) {
+            return true;
+        }
+        return super.dispatchGenericMotionEvent(event);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        if (application.dispatchTouchEvent(event)) {
+            return true;
+        }
+        return super.dispatchTouchEvent(event);
+    }
+
 }

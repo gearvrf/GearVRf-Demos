@@ -22,7 +22,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.scene_objects.view.GVRView;
 import org.gearvrf.scene_objects.view.GVRWebView;
 
 public class SceneObjectActivity extends GVRActivity {
@@ -42,7 +41,7 @@ public class SceneObjectActivity extends GVRActivity {
     }
 
     private void createWebView() {
-        webView = new GVRWebView(this);
+        webView = new GVRWebView(getGVRApplication());
         webView.setInitialScale(100);
         webView.measure(2000, 1000);
         webView.layout(0, 0, 2000, 1000);
