@@ -179,7 +179,7 @@ public class ShortcutMenuItem extends FocusableSceneObject {
 
     private void back() {
         final AccessibilityScene accessibilityScene = Main.accessibilityScene;
-        Main main = (Main) gvrContext.getActivity().getMain();
+        Main main = (Main) gvrContext.getMain();
 
         main.setScene(accessibilityScene.getMainApplicationScene());
         createIcon(textures.getAccessibilityIcon(), TypeItem.ACCESSIBILITY);

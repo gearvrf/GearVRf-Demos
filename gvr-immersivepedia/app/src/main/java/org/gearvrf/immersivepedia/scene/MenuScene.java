@@ -67,7 +67,7 @@ public class MenuScene extends GVRScene {
             {
                 totalRenderObject = 0;
                 finishCounter = 0;
-                Main main = (Main) getGVRContext().getActivity().getMain();
+                Main main = (Main) getGVRContext().getMain();
                 main.setMainScene(Main.dinosaurScene);
                 Main.dinosaurScene.show();
             }
