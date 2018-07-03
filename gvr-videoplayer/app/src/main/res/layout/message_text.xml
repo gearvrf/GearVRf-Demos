@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="492px"
+    android:layout_height="60px">
+
+    <TextView
+        android:id="@+id/message_text"
+        android:fontFamily="@string/font_roboto_medium"
+        android:text="Default message"
+        android:textColor="#ffffff"
+        android:background="@drawable/bg_message_text"
+        android:textSize="24px"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>
+

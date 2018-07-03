@@ -12,6 +12,7 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.FadeableObject;
+import org.gearvrf.videoplayer.component.MessageText;
 import org.gearvrf.videoplayer.component.video.backbutton.BackButton;
 import org.gearvrf.videoplayer.component.video.control.ControlWidget;
 import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
@@ -44,6 +45,7 @@ public class VideoPlayer extends GVRSceneObject {
     private PlayNextDialog mPlayNextDialog;
     private OverlayTitle mOverlayTitle;
     private LoadingAsset mLoadingAsset;
+    private MessageText mMessageText;
 
     private GVRSceneObject mWidgetsContainer;
     private FadeableObject mCursor;
@@ -86,11 +88,26 @@ public class VideoPlayer extends GVRSceneObject {
         addPlayNextDialog();
         addTitleOverlay();
         addLoadingAsset();
+        addMessageText();
     }
 
     public void setIsConnected(boolean connected) {
         mIsConnected = connected;
         android.util.Log.d(TAG, "Network state changed: " + connected);
+        handleNoNetworkMessage();
+    }
+
+    private void handleNoNetworkMessage() {
+        if (!mIsConnected && mPlayer.getPlayingNow().getVideoType() == Video.VideoType.EXTERNAL) {
+            mWidgetsContainer.addChildObject(mMessageText);
+            if (mPlayer.isPlaying()) {
+                mPlayer.stop();
+            }
+            hideControlWidget();
+            mHideControlWidgetTimerEnabled = false;
+            showBackButton();
+            mPlayer.shadow();
+        }
     }
 
     public boolean is360VideoPlaying() {
@@ -266,6 +283,12 @@ public class VideoPlayer extends GVRSceneObject {
         mLoadingAsset.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1.f);
         mLoadingAsset.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
 
+    }
+
+    private void addMessageText() {
+        mMessageText = new MessageText(getGVRContext(), "The video cannot be displayed.\nCheck your network connection and try again.");
+        mMessageText.getTransform().setScale(4.f, 4.f, 1.f);
+        mMessageText.getTransform().setPositionZ(2.f);
     }
 
     public void setPlayerListener(OnPlayerListener listener) {
@@ -473,6 +496,7 @@ public class VideoPlayer extends GVRSceneObject {
                 }
             });
             mWidgetsContainer.removeChildObject(mOverlayTitle);
+            mWidgetsContainer.removeChildObject(mMessageText);
         }
     }
 

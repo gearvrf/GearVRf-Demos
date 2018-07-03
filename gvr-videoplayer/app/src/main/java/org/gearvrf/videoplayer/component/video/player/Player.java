@@ -114,6 +114,12 @@ public class Player extends FadeableObject {
         setFlatPlayer();
     }
 
+    public void shadow() {
+        float[] color  = {0.4f, 0.4f, 0.4f};
+        mFlatVideo.getRenderData().getMaterial().setColor(color[0], color[1], color[2]);
+        m360Video.getRenderData().getMaterial().setColor(color[0], color[1], color[2]);
+    }
+
     private void set360Player() {
         mFlatVideo.setEnable(false);
         m360Video.setEnable(true);
