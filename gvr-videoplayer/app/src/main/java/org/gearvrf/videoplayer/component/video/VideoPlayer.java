@@ -98,7 +98,8 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void handleNoNetworkMessage() {
-        if (!mIsConnected && mPlayer.getPlayingNow().getVideoType() == Video.VideoType.EXTERNAL) {
+        if (!mIsConnected && mPlayer.getPlayingNow() != null && mVideoPlayerActive
+                && mPlayer.getPlayingNow().getVideoType() == Video.VideoType.EXTERNAL) {
             mWidgetsContainer.addChildObject(mMessageText);
             if (mPlayer.isPlaying()) {
                 mPlayer.stop();
