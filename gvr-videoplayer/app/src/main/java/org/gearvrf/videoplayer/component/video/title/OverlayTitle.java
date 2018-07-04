@@ -9,9 +9,8 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
-import org.gearvrf.videoplayer.component.FadeableObject;
 
-public class OverlayTitle extends FadeableObject implements IViewEvents {
+public class OverlayTitle extends GVRSceneObject implements IViewEvents {
 
     private GVRViewSceneObject mTitleObject;
 
@@ -20,13 +19,6 @@ public class OverlayTitle extends FadeableObject implements IViewEvents {
         mTitleObject = new GVRViewSceneObject(gvrContext, R.layout.layout_title_image, this);
         mTitleObject.waitFor();
     }
-
-    @NonNull
-    @Override
-    protected GVRSceneObject getFadeable() {
-        return mTitleObject;
-    }
-
 
     @Override
     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {

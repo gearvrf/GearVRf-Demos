@@ -10,7 +10,7 @@ import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
 
-public class MessageText extends FadeableObject implements IViewEvents {
+public class MessageText extends GVRSceneObject implements IViewEvents {
 
     private GVRViewSceneObject mMessageTextObject;
     private final boolean mHasBackground;
@@ -26,12 +26,6 @@ public class MessageText extends FadeableObject implements IViewEvents {
         mText = text;
         mMessageTextObject = new GVRViewSceneObject(gvrContext, R.layout.message_text, this);
         mMessageTextObject.waitFor();
-    }
-
-    @NonNull
-    @Override
-    protected GVRSceneObject getFadeable() {
-        return mMessageTextObject;
     }
 
     @Override

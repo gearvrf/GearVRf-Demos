@@ -59,7 +59,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private GVRScene mScene;
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
-    private GVRSceneObject mMainSceneContainer;
     private GVRSceneObject mCurrentContainer;
     private FadeableObject mLabelCursor, mCurrentCursor, mParentCursor;
     private Gallery mGallery;
@@ -74,15 +73,11 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
 
-        mMainSceneContainer = new GVRSceneObject(getGVRContext());
-        mScene.addSceneObject(mMainSceneContainer);
-
         addSkyBoxSphere();
         initCursorController();
         createGallery();
         createVideoPlayer();
         createNetworkManager();
-
     }
 
     private void createNetworkManager() {
@@ -95,7 +90,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mGallery = new Gallery(getGVRContext());
         mGallery.getTransform().setPositionZ(-8);
         mGallery.setOnGalleryEventListener(this);
-        mMainSceneContainer.addChildObject(mGallery);
+        mScene.addSceneObject(mGallery);
         mCurrentContainer = mGallery;
     }
 
@@ -104,7 +99,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mVideoPlayer.setControlWidgetAutoHide(true);
         mVideoPlayer.setPlayerListener(mOnPlayerListener);
         mVideoPlayer.setBackButtonClickListener(mBackButtonClickListener);
-        mMainSceneContainer.addChildObject(mVideoPlayer);
+        mScene.addSceneObject(mVideoPlayer);
         mVideoPlayer.setCursorObject(mParentCursor);
         mVideoPlayer.hide();
         mParentCursor.setEnable(true);
@@ -205,7 +200,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
             mVideoPlayer.hide(new FadeableObject.FadeOutCallback() {
                 @Override
                 public void onFadeOut() {
-                    mMainSceneContainer.addChildObject(mGallery);
+                    mGallery.setEnable(true);
                     mGallery.fadeIn();
                     mCurrentContainer = mGallery;
                     mParentCursor.setEnable(true);
@@ -225,11 +220,6 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void repositionScene() {
-        if (mMainSceneContainer == null) {
-            Log.e(TAG, "Null scene container!");
-            return;
-        }
-
         final float rotationX = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationX();
         final float rotationY = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationY();
         final float rotationZ = mCursorController.getCursor().getParent().getParent().getParent().getTransform().getRotationZ();
@@ -268,7 +258,7 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mGallery.fadeOut(new FadeableObject.FadeOutCallback() {
             @Override
             public void onFadeOut() {
-                mMainSceneContainer.removeChildObject(mGallery);
+                mGallery.setEnable(false);
                 mCurrentContainer = mVideoPlayer.getWidgetsContainer();
                 mVideoPlayer.prepare(videoList);
             }
