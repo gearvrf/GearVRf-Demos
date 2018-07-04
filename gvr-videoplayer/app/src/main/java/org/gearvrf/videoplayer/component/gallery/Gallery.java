@@ -1,6 +1,8 @@
 package org.gearvrf.videoplayer.component.gallery;
 
 import android.annotation.SuppressLint;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +16,7 @@ import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
+import org.gearvrf.videoplayer.component.MessageText;
 import org.gearvrf.videoplayer.model.Album;
 import org.gearvrf.videoplayer.model.ExternalHomeItem;
 import org.gearvrf.videoplayer.model.GalleryItem;
@@ -37,6 +40,8 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     private Breadcrumb mBreadcrumb;
     private OnGalleryEventListener mOnGalleryEventListener;
     private boolean mIsConnected = false;
+    private CountdownTimer mCountdownTimer;
+    private MessageText mMessageText;
 
     @SuppressLint("InflateParams")
     public Gallery(GVRContext gvrContext) {
@@ -48,6 +53,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
                         onInitRecyclerView(view);
                         onInitBreadcrumb(view);
+                        onInitMessageText();
                     }
 
                     @Override
@@ -56,6 +62,20 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                         addChildObject(gvrViewSceneObject);
                     }
                 });
+    }
+
+    private OnMessageListener mOnMessageListener = new OnMessageListener() {
+        @Override
+        public void onTimesUp() {
+            mObjectViewGallery.removeChildObject(mMessageText);
+        }
+    };
+
+    private void onInitMessageText() {
+        mMessageText = new MessageText(getGVRContext(), true, "Connect to a network to watch\n the content.", mOnMessageListener);
+        mMessageText.getTransform().setScale(0.3f, 0.3f, 1);
+        mMessageText.getTransform().setPositionZ(1.0f);
+        mCountdownTimer = new CountdownTimer(mMessageText);
     }
 
     public void setIsConnected(boolean connected) {
@@ -158,7 +178,13 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                 mBreadcrumb.showAlbum(((Album) item).getTitle());
                 break;
             case GalleryItem.Type.TYPE_VIDEO:
-                if (mOnGalleryEventListener != null) {
+                Video video = (Video) itemList.get(0);
+                if (video.getVideoType() == Video.VideoType.EXTERNAL && !mIsConnected) {
+                    if (!mCountdownTimer.isRunning()) {
+                        mObjectViewGallery.addChildObject(mMessageText);
+                        mCountdownTimer.start();
+                    }
+                } else if (mOnGalleryEventListener != null) {
                     mOnGalleryEventListener.onVideosSelected((List<Video>) itemList);
                 }
                 break;
@@ -205,4 +231,46 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         ((GridLayoutManager) mRecyclerView.getLayoutManager()).setSpanCount(numColumns);
     }
 
+    private static class CountdownTimer extends Handler {
+        static final int MAX_COUNT = 1;
+        int count = MAX_COUNT;
+        private boolean mIsRunning = false;
+        private MessageText mMessageText;
+
+        CountdownTimer(MessageText mMessageText) {
+            this.mMessageText = mMessageText;
+        }
+
+        public void start() {
+            mIsRunning = true;
+            reset();
+            tick();
+        }
+
+        private void reset() {
+            mIsRunning = false;
+            removeMessages(0);
+            count = MAX_COUNT;
+        }
+
+        private void tick() {
+            count--;
+            sendEmptyMessageDelayed(0, 1000);
+        }
+
+        public boolean isRunning() {
+            return mIsRunning;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (count < 0) {
+                mMessageText.notifyTimesUp();
+                reset();
+            } else {
+                tick();
+            }
+        }
+    }
 }
