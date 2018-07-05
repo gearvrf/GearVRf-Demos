@@ -1,6 +1,5 @@
 package org.gearvrf.videoplayer.component.video.title;
 
-import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 

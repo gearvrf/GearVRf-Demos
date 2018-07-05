@@ -5,9 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.gearvrf.videoplayer.R;
@@ -104,13 +106,28 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
         ImageView thumbnail;
         TextView title;
         TextView duration;
+        LinearLayout info_video;
 
         VideoViewHolder(View itemView) {
             super(itemView);
             thumbnail = itemView.findViewById(R.id.thumbnail);
             title = itemView.findViewById(R.id.title);
             duration = itemView.findViewById(R.id.duration);
+            info_video = itemView.findViewById(R.id.info_video);
             itemView.findViewById(R.id.overlay_video).setOnClickListener(this);
+            itemView.findViewById(R.id.overlay_video).setOnHoverListener(new View.OnHoverListener() {
+                @Override
+                public boolean onHover(View view, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                        title.setVisibility(View.VISIBLE);
+                        info_video.setVisibility(View.VISIBLE);
+                    } else if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                        title.setVisibility(View.INVISIBLE);
+                        info_video.setVisibility(View.INVISIBLE);
+                    }
+                    return false;
+                }
+            });
         }
 
         @Override

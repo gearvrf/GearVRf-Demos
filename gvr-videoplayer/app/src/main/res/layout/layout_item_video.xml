@@ -43,14 +43,17 @@
                 android:maxLines="2"
                 android:text="@string/lorem_ipsum"
                 android:textColor="#FFFFFF"
+                android:visibility="invisible"
                 android:textSize="24px" />
 
             <LinearLayout
+                android:id="@+id/info_video"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
+                android:visibility="invisible"
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
