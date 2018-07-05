@@ -11,6 +11,7 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.utility.Log;
+import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.MessageText;
 import org.gearvrf.videoplayer.component.video.backbutton.BackButton;
@@ -41,7 +42,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     private Player mPlayer;
     private ControlWidget mControl;
-    private BackButton mBackButton;
+    private BackButton mBackButton, mBackErrorButton;
     private PlayNextDialog mPlayNextDialog;
     private OverlayTitle mOverlayTitle;
     private LoadingAsset mLoadingAsset;
@@ -81,6 +82,7 @@ public class VideoPlayer extends GVRSceneObject {
         addPlayer();
         addControlWidget();
         addBackButton();
+        addBackErrorButton();
         addPlayNextDialog();
         addTitleOverlay();
         addLoadingAsset();
@@ -100,10 +102,11 @@ public class VideoPlayer extends GVRSceneObject {
             if (mPlayer.isPlaying()) {
                 mPlayer.stop();
             }
-            hideControlWidget();
-            mHideControlWidgetTimerEnabled = false;
-            showBackButton();
+            mControl.setEnable(false);
+            mBackButton.setEnable(false);
+            mBackErrorButton.setEnable(true);
             mPlayer.shadow();
+            mCursor.setEnable(true);
         }
     }
 
@@ -194,7 +197,7 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public void showAllControls() {
-        if (isEnabled() && !mPlayNextDialog.isEnabled()) {
+        if (isEnabled() && !mPlayNextDialog.isEnabled() && !mMessageText.isEnabled()) {
             showControlWidget();
             showBackButton();
             mCursor.setEnable(true);
@@ -262,14 +265,24 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void addBackButton() {
-        mBackButton = new BackButton(getGVRContext());
+        mBackButton = new BackButton(getGVRContext(), R.layout.layout_button_back);
         mBackButton.setFocusListener(mFocusListener);
         mBackButton.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1f);
         // Put back button above the video screen
         mBackButton.getTransform().setPositionY(mPlayer.getTransform().getPositionY() + POSITION_BACK_BUTTON);
         mBackButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
         mWidgetsContainer.addChildObject(mBackButton);
+    }
 
+    private void addBackErrorButton() {
+        mBackErrorButton = new BackButton(getGVRContext(), R.layout.layout_button_back_error);
+        mBackErrorButton.setFocusListener(mFocusListener);
+        mBackErrorButton.getTransform().setScale(1.f * SCALE_FACTOR, 1.f * SCALE_FACTOR, 1f);
+        // Put back button above the video screen
+        mBackErrorButton.getTransform().setPositionY(mPlayer.getTransform().getPositionY() + POSITION_BACK_BUTTON);
+        mBackErrorButton.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2f);
+        mWidgetsContainer.addChildObject(mBackErrorButton);
+        mBackErrorButton.setEnable(false);
     }
 
     private void addPlayNextDialog() {
@@ -316,6 +329,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void setBackButtonClickListener(@NonNull View.OnClickListener listener) {
         mBackButton.setOnClickListener(listener);
+        mBackErrorButton.setOnClickListener(listener);
     }
 
     public void play() {

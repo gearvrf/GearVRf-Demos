@@ -10,6 +10,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
+import org.gearvrf.scene_objects.view.GVRView;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.focus.FocusListener;
@@ -22,9 +23,9 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
     private ImageView mBackButton;
     public FocusListener mFocusListener;
 
-    public BackButton(final GVRContext gvrContext) {
+    public BackButton(final GVRContext gvrContext, int intViewId) {
         super(gvrContext);
-        mBackButtonObject = new GVRViewSceneObject(gvrContext, R.layout.layout_button_back, this);
+        mBackButtonObject = new GVRViewSceneObject(gvrContext, intViewId, this);
         setName(getClass().getSimpleName());
     }
 

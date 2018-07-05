@@ -1,0 +1,15 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_hovered="false">
+        <shape android:shape="oval">
+            <!-- normal -->
+            <solid android:color="#66ffffff" />
+        </shape>
+    </item>
+    <item android:state_hovered="true">
+        <shape android:shape="oval">
+            <!-- hover -->
+            <solid android:color="#b3ffffff" />
+
+        </shape>
+    </item>
+</selector>
