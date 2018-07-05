@@ -301,13 +301,13 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
 
     public void enableInteractiveCursor() {
         if (!mVideoPlayer.is360VideoPlaying()) {
-            mLabelCursor.fadeIn();
+            mLabelCursor.show();
         }
-        mCurrentCursor.fadeOut();
+        mCurrentCursor.hide();
     }
 
     public void disableInteractiveCursor() {
-        mCurrentCursor.fadeIn();
-        mLabelCursor.fadeOut();
+        mCurrentCursor.show();
+        mLabelCursor.hide();
     }
 }

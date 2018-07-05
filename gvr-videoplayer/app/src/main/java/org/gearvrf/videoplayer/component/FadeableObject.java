@@ -99,4 +99,40 @@ public abstract class FadeableObject extends GVRSceneObject {
         void onFadeOut();
     }
 
+
+    public void show() {
+        show(null);
+    }
+
+    public void show(final FadeInCallback fadeInCallback) {
+        if (!isEnabled()) {
+            setEnable(true);
+            fadeIn(new FadeInCallback() {
+                @Override
+                public void onFadeIn() {
+                    if (fadeInCallback != null) {
+                        fadeInCallback.onFadeIn();
+                    }
+                }
+            });
+        }
+    }
+
+    public void hide() {
+        hide(null);
+    }
+
+    public void hide(final  FadeOutCallback fadeOutCallback) {
+        if (isEnabled()) {
+            fadeOut(new FadeableObject.FadeOutCallback() {
+                @Override
+                public void onFadeOut() {
+                    setEnable(false);
+                    if (fadeOutCallback != null) {
+                        fadeOutCallback.onFadeOut();
+                    }
+                }
+            });
+        }
+    }
 }
