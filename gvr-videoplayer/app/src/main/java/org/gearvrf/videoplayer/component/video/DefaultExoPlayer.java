@@ -25,7 +25,6 @@ public class DefaultExoPlayer implements GVRVideoSceneObjectPlayer<ExoPlayer> {
 
     @Override
     public void setSurface(final Surface surface) {
-
         mSimpleExoPlayer.addListener(new Player.DefaultEventListener() {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
@@ -69,6 +68,11 @@ public class DefaultExoPlayer implements GVRVideoSceneObjectPlayer<ExoPlayer> {
     @Override
     public void start() {
         mSimpleExoPlayer.setPlayWhenReady(true);
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return mSimpleExoPlayer.getPlayWhenReady();
     }
 
     public long getDuration() {
