@@ -32,6 +32,7 @@ import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.component.DefaultFadeableObject;
 import org.gearvrf.videoplayer.component.FadeableObject;
+import org.gearvrf.videoplayer.component.OnFadeFinish;
 import org.gearvrf.videoplayer.component.gallery.Gallery;
 import org.gearvrf.videoplayer.component.gallery.OnGalleryEventListener;
 import org.gearvrf.videoplayer.component.video.VideoPlayer;
@@ -183,9 +184,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private OnPlayerListener mOnPlayerListener = new DefaultPlayerListener() {
         @Override
         public void onPrepareFile(String title, long duration) {
-            mVideoPlayer.show(new FadeableObject.FadeInCallback() {
+            mVideoPlayer.show(new OnFadeFinish() {
                 @Override
-                public void onFadeIn() {
+                public void onFadeFinished() {
                     mVideoPlayer.play();
                 }
             });
@@ -197,9 +198,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private View.OnClickListener mBackButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mVideoPlayer.hide(new FadeableObject.FadeOutCallback() {
+            mVideoPlayer.hide(new OnFadeFinish() {
                 @Override
-                public void onFadeOut() {
+                public void onFadeFinished() {
                     mGallery.setEnable(true);
                     mGallery.fadeIn();
                     mCurrentContainer = mGallery;
@@ -255,9 +256,9 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     @Override
     public void onVideosSelected(final List<Video> videoList) {
         Log.d(TAG, "onVideosSelected: " + videoList);
-        mGallery.fadeOut(new FadeableObject.FadeOutCallback() {
+        mGallery.fadeOut(new OnFadeFinish() {
             @Override
-            public void onFadeOut() {
+            public void onFadeFinished() {
                 mGallery.setEnable(false);
                 mCurrentContainer = mVideoPlayer.getWidgetsContainer();
                 mVideoPlayer.prepare(videoList);

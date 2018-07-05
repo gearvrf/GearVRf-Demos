@@ -14,6 +14,7 @@ import org.gearvrf.utility.Log;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.MessageText;
+import org.gearvrf.videoplayer.component.OnFadeFinish;
 import org.gearvrf.videoplayer.component.video.backbutton.BackButton;
 import org.gearvrf.videoplayer.component.video.control.ControlWidget;
 import org.gearvrf.videoplayer.component.video.control.ControlWidgetListener;
@@ -140,15 +141,15 @@ public class VideoPlayer extends GVRSceneObject {
         mCursor.setEnable(false);
     }
 
-    public void show(final FadeableObject.FadeInCallback fadeInCallback) {
+    public void show(final OnFadeFinish fadeInCallback) {
         if (!isEnabled()) {
             setEnable(true);
-            mPlayer.fadeIn(new FadeableObject.FadeInCallback() {
+            mPlayer.fadeIn(new OnFadeFinish() {
                 @Override
-                public void onFadeIn() {
+                public void onFadeFinished() {
                     showAllControls();
                     if (fadeInCallback != null) {
-                        fadeInCallback.onFadeIn();
+                        fadeInCallback.onFadeFinished();
                     }
                 }
             });
@@ -159,20 +160,20 @@ public class VideoPlayer extends GVRSceneObject {
         hide(null);
     }
 
-    public void hide(final FadeableObject.FadeOutCallback fadeOutCallback) {
+    public void hide(final OnFadeFinish fadeOutCallback) {
         if (isEnabled()) {
             mPlayNextDialog.cancelTimer();
             mPlayNextDialog.hide();
             mBackErrorButton.hide();
             hideAllControls();
             mPlayer.stop();
-            mPlayer.fadeOut(new FadeableObject.FadeOutCallback() {
+            mPlayer.fadeOut(new OnFadeFinish() {
                 @Override
-                public void onFadeOut() {
+                public void onFadeFinished() {
                     mMessageText.setEnable(false);
                     setEnable(false);
                     if (fadeOutCallback != null) {
-                        fadeOutCallback.onFadeOut();
+                        fadeOutCallback.onFadeFinished();
                     }
                 }
             });
@@ -309,9 +310,9 @@ public class VideoPlayer extends GVRSceneObject {
             mControl.setButtonState(ControlWidget.ButtonState.PLAYING);
 
             if (isEnabled()) {
-                mPlayer.fadeIn(new FadeableObject.FadeInCallback() {
+                mPlayer.fadeIn(new OnFadeFinish() {
                     @Override
-                    public void onFadeIn() {
+                    public void onFadeFinished() {
                         showAllControls();
                         mPlayer.playVideo();
                     }
@@ -346,9 +347,9 @@ public class VideoPlayer extends GVRSceneObject {
                 mControl.hide();
                 mHideControlTimer.cancel();
                 mPlayNextDialog.setVideoData(mVideos.get(mPlayer.getNextIndexToPlay()));
-                mPlayNextDialog.show(new FadeableObject.FadeInCallback() {
+                mPlayNextDialog.show(new OnFadeFinish() {
                     @Override
-                    public void onFadeIn() {
+                    public void onFadeFinished() {
                         mBackButton.show();
                         mCursor.setEnable(true);
                         mPlayNextDialog.startTimer();

@@ -36,7 +36,7 @@ public abstract class FadeableObject extends GVRSceneObject {
     }
 
     @CallSuper
-    public final void fadeIn(final FadeInCallback callback) {
+    public final void fadeIn(final OnFadeFinish callback) {
         if (getFadeable() instanceof GVRViewSceneObject) {
             getGVRContext().getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -50,7 +50,7 @@ public abstract class FadeableObject extends GVRSceneObject {
     }
 
     @CallSuper
-    public final void fadeOut(final FadeOutCallback callback) {
+    public final void fadeOut(final OnFadeFinish callback) {
         if (getFadeable() instanceof GVRViewSceneObject) {
             getGVRContext().getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -63,55 +63,46 @@ public abstract class FadeableObject extends GVRSceneObject {
         }
     }
 
-    private void doFadeIn(final FadeInCallback callback) {
+    private void doFadeIn(final OnFadeFinish callback) {
         GVROpacityAnimation animation = new GVROpacityAnimation(
                 getFadeable(), FADE_DURATION, 1);
         animation.setOnFinish(new GVROnFinish() {
             @Override
             public void finished(GVRAnimation gvrAnimation) {
                 if (callback != null) {
-                    callback.onFadeIn();
+                    callback.onFadeFinished();
                 }
             }
         });
         animation.start(getGVRContext().getAnimationEngine());
     }
 
-    private void doFadeOut(final FadeOutCallback callback) {
+    private void doFadeOut(final OnFadeFinish callback) {
         GVROpacityAnimation animation = new GVROpacityAnimation(
                 getFadeable(), FADE_DURATION, 0);
         animation.setOnFinish(new GVROnFinish() {
             @Override
             public void finished(GVRAnimation gvrAnimation) {
                 if (callback != null) {
-                    callback.onFadeOut();
+                    callback.onFadeFinished();
                 }
             }
         });
         animation.start(getGVRContext().getAnimationEngine());
     }
 
-    public interface FadeInCallback {
-        void onFadeIn();
-    }
-
-    public interface FadeOutCallback {
-        void onFadeOut();
-    }
-
-
     public void show() {
         show(null);
     }
 
-    public void show(final FadeInCallback fadeInCallback) {
+    public void show(final OnFadeFinish fadeInCallback) {
         if (!isEnabled()) {
             setEnable(true);
-            fadeIn(new FadeInCallback() {
+            fadeIn(new OnFadeFinish() {
                 @Override
-                public void onFadeIn() {
+                public void onFadeFinished() {
                     if (fadeInCallback != null) {
-                        fadeInCallback.onFadeIn();
+                        fadeInCallback.onFadeFinished();
                     }
                 }
             });
@@ -122,14 +113,14 @@ public abstract class FadeableObject extends GVRSceneObject {
         hide(null);
     }
 
-    public void hide(final  FadeOutCallback fadeOutCallback) {
+    public void hide(final OnFadeFinish fadeOutCallback) {
         if (isEnabled()) {
-            fadeOut(new FadeableObject.FadeOutCallback() {
+            fadeOut(new OnFadeFinish() {
                 @Override
-                public void onFadeOut() {
+                public void onFadeFinished() {
                     setEnable(false);
                     if (fadeOutCallback != null) {
-                        fadeOutCallback.onFadeOut();
+                        fadeOutCallback.onFadeFinished();
                     }
                 }
             });
