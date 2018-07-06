@@ -5,7 +5,7 @@
 #extension GL_OES_EGL_image_external_essl3 : enable
 precision highp float;
 @MATERIAL_UNIFORMS
-uniform samplerExternalOES main_texture;
+uniform samplerExternalOES u_texture;
 
 layout (location = 0) in vec2 vTextureCoord;
 layout (location = 0) out vec4 outColor;
@@ -19,11 +19,11 @@ vec4 horzBlur(vec2 texCoord, vec2 resolution)
     weight[0] = 0.2270270270;
     weight[1] = 0.3162162162;
     weight[2] = 0.0702702703;
-    vec3 tc = texture(main_texture, texCoord).rgb * weight[0];
+    vec3 tc = texture(u_texture, texCoord).rgb * weight[0];
     for (int i = 1; i < 3; i++)
     {
-      tc += texture(main_texture, texCoord + vec2(offset[i] / resolution.x, 0.0)).rgb * weight[i];
-      tc += texture(main_texture, texCoord - vec2(offset[i] / resolution.x, 0.0)).rgb * weight[i];
+      tc += texture(u_texture, texCoord + vec2(offset[i] / resolution.x, 0.0)).rgb * weight[i];
+      tc += texture(u_texture, texCoord - vec2(offset[i] / resolution.x, 0.0)).rgb * weight[i];
     }
     return vec4(tc, 1.0);
 }
@@ -31,5 +31,4 @@ vec4 horzBlur(vec2 texCoord, vec2 resolution)
 void main()
 {
     outColor = horzBlur(vTextureCoord, vec2(u_resolution, u_resolution));
-    outColor = vec4(1.0,0,0,1.0);
 }

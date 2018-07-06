@@ -100,17 +100,14 @@ public class TestMain extends GVRMain
     public GVRSceneObject createBlurScene(GVRScene scene, GVRTexture texture)
     {
         final GVRSceneObject blurryQuad = new GVRSceneObject(mContext, 2.0f, 2.0f, texture, GVRMaterial.GVRShaderType.OES.ID);
-        GVRRenderData rdata = blurryQuad.getRenderData();
-        GVRMaterial horzBlurMtl = new GVRMaterial(mContext, new GVRShaderId(HorzBlurShader.class));
-        horzBlurMtl.setFloat("u_resolution", 1024.0f);
-        horzBlurMtl.setTexture("u_texture", texture);
-        rdata.setMaterial(horzBlurMtl);
-
-        GVRMaterial vertBlurMtl = new GVRMaterial(mContext, new GVRShaderId(VertBlurShader.class));
         GVRCamera camera = scene.getMainCameraRig().getCenterCamera();
 
+        GVRMaterial horzBlurMtl = new GVRMaterial(mContext, new GVRShaderId(HorzBlurShader.class));
+        horzBlurMtl.setFloat("u_resolution", 1024.0f);
+        camera.addPostEffect(horzBlurMtl);
+
+        GVRMaterial vertBlurMtl = new GVRMaterial(mContext, new GVRShaderId(VertBlurShader.class));
         vertBlurMtl.setFloat("u_resolution", 1024.0f);
-        vertBlurMtl.setTexture("u_texture", texture);
         camera.addPostEffect(vertBlurMtl);
 
         blurryQuad.getTransform().setPositionZ(-0.1f);
