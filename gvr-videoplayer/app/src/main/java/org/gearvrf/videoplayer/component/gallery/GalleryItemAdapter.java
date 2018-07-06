@@ -73,6 +73,8 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
             if (video.getVideoType() == Video.VideoType.LOCAL) {
                 if (video.getIs360tag() || video.getHas360onTitle() || video.getIsRatio21()) {
                     viewHolder.is360 = true;
+                } else {
+                    viewHolder.is360 = false;
                 }
                 new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
             } else {
