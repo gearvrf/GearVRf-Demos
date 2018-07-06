@@ -135,10 +135,12 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void hideAllControls() {
-        mBackButton.hide();
-        mHideControlTimer.cancel();
-        mControl.hide();
-        mCursor.setEnable(false);
+        if (isEnabled()) {
+            mBackButton.hide();
+            mHideControlTimer.cancel();
+            mControl.hide();
+            mCursor.setEnable(false);
+        }
     }
 
     public void show(final OnFadeFinish fadeInCallback) {
