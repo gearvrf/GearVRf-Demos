@@ -268,13 +268,17 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public void play() {
-        mHideControlTimer.start();
-        mPlayer.playVideo();
+        if (mPlayer.getPlayingNow() != null) {
+            mHideControlTimer.start();
+            mPlayer.playVideo();
+        }
     }
 
     public void pause() {
-        mHideControlTimer.cancel();
-        mPlayer.pauseVideo();
+        if (mPlayer.getPlayingNow() != null) {
+            mHideControlTimer.cancel();
+            mPlayer.pauseVideo();
+        }
     }
 
     private FocusListener mFocusListener = new FocusListener() {
