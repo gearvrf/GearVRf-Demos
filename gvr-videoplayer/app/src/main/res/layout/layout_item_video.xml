@@ -43,8 +43,8 @@
                 android:maxLines="2"
                 android:text="@string/lorem_ipsum"
                 android:textColor="#FFFFFF"
-                android:visibility="invisible"
-                android:textSize="24px" />
+                android:textSize="24px"
+                android:visibility="invisible" />
 
             <LinearLayout
                 android:id="@+id/info_video"
@@ -53,14 +53,14 @@
                 android:layout_alignParentBottom="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:visibility="invisible"
                 tools:ignore="UseCompoundDrawables">
 
                 <ImageView
                     android:id="@+id/ic_count"
                     android:layout_width="21px"
                     android:layout_height="21px"
-                    android:src="@drawable/ic_time" />
+                    android:src="@drawable/ic_time"
+                    android:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/duration"
@@ -70,7 +70,16 @@
                     android:fontFamily="@string/font_roboto_medium"
                     android:text="00:00"
                     android:textColor="#FFFFFF"
-                    android:textSize="20px" />
+                    android:textSize="20px"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/ic_360"
+                    android:layout_width="48px"
+                    android:layout_height="36.7px"
+                    android:layout_marginStart="100px"
+                    android:src="@drawable/ic_video360"
+                    android:visibility="invisible" />
 
             </LinearLayout>
 

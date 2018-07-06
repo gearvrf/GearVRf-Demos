@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.gearvrf.videoplayer.R;
@@ -68,10 +67,13 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
         } else if (item.getType() == GalleryItem.Type.TYPE_VIDEO) {
 
             Video video = (Video) item;
-            VideoViewHolder viewHolder = (VideoViewHolder) holder;
+            final VideoViewHolder viewHolder = (VideoViewHolder) holder;
             viewHolder.title.setText(video.getTitle());
             viewHolder.duration.setText(TimeUtils.formatDurationFull(video.getDuration()));
             if (video.getVideoType() == Video.VideoType.LOCAL) {
+                if (video.getIs360tag() || video.getHas360onTitle() || video.getIsRatio21()) {
+                    viewHolder.is360 = true;
+                }
                 new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
             } else {
                 viewHolder.thumbnail.setImageBitmap(video.getThumbnail());
@@ -106,24 +108,34 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
         ImageView thumbnail;
         TextView title;
         TextView duration;
-        LinearLayout info_video;
+        ImageView ic_count;
+        ImageView ic_360;
+        boolean is360;
 
         VideoViewHolder(View itemView) {
             super(itemView);
             thumbnail = itemView.findViewById(R.id.thumbnail);
             title = itemView.findViewById(R.id.title);
             duration = itemView.findViewById(R.id.duration);
-            info_video = itemView.findViewById(R.id.info_video);
+            ic_count = itemView.findViewById(R.id.ic_count);
+            ic_360 = itemView.findViewById(R.id.ic_360);
+            is360 = false;
             itemView.findViewById(R.id.overlay_video).setOnClickListener(this);
             itemView.findViewById(R.id.overlay_video).setOnHoverListener(new View.OnHoverListener() {
                 @Override
                 public boolean onHover(View view, MotionEvent motionEvent) {
                     if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                         title.setVisibility(View.VISIBLE);
-                        info_video.setVisibility(View.VISIBLE);
+                        duration.setVisibility(View.VISIBLE);
+                        ic_count.setVisibility(View.VISIBLE);
+                        if (is360) {
+                            ic_360.setVisibility(View.VISIBLE);
+                        }
                     } else if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
                         title.setVisibility(View.INVISIBLE);
-                        info_video.setVisibility(View.INVISIBLE);
+                        duration.setVisibility(View.INVISIBLE);
+                        ic_count.setVisibility(View.INVISIBLE);
+                        ic_360.setVisibility(View.INVISIBLE);
                     }
                     return false;
                 }
