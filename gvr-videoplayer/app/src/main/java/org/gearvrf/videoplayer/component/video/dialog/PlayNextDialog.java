@@ -3,11 +3,9 @@ package org.gearvrf.videoplayer.component.video.dialog;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.CardView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,12 +26,11 @@ public class PlayNextDialog extends FadeableObject implements View.OnClickListen
     private TextView mTitle;
     private TextView mDuration;
     private ImageView mThumbnail;
+    private ImageView ic_time;
     private TextView mTime;
     private CountdownTimer mCountdownTimer;
     private OnPlayNextListener mOnPlayNextListener;
     private RelativeLayout OverlayScene;
-    private CardView cardView;
-    private LinearLayout mPlayNextLinear;
     private GVRViewSceneObject mPlayNextObject;
 
     public PlayNextDialog(GVRContext gvrContext, @NonNull OnPlayNextListener listener) {
@@ -51,16 +48,20 @@ public class PlayNextDialog extends FadeableObject implements View.OnClickListen
         mTitle = view.findViewById(R.id.title);
         mDuration = view.findViewById(R.id.duration);
         OverlayScene = view.findViewById(R.id.overlay_video);
-        mPlayNextLinear = view.findViewById(R.id.playNext);
-        cardView = view.findViewById(R.id.cardView);
+        ic_time = view.findViewById(R.id.ic_count);
         mThumbnail.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View view, MotionEvent motionEvent) {
-                if(motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER){
-                    cardView.setVisibility(View.VISIBLE);
+                if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+                    mTitle.setVisibility(View.VISIBLE);
+                    mDuration.setVisibility(View.VISIBLE);
+                    ic_time.setVisibility(View.VISIBLE);
                     OverlayScene.setVisibility(View.VISIBLE);
-                }else{
+                } else {
                     if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
+                        mTitle.setVisibility(View.INVISIBLE);
+                        mDuration.setVisibility(View.INVISIBLE);
+                        ic_time.setVisibility(View.INVISIBLE);
                         OverlayScene.setVisibility(View.INVISIBLE);
                     }
                 }
