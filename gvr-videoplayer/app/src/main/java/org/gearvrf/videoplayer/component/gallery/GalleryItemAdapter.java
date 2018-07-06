@@ -78,6 +78,7 @@ public class GalleryItemAdapter<T extends GalleryItem> extends RecyclerView.Adap
                 }
                 new ThumbnailLoader(viewHolder.thumbnail).execute(video.getId());
             } else {
+                viewHolder.is360 = false;
                 viewHolder.thumbnail.setImageBitmap(video.getThumbnail());
             }
         } else {
