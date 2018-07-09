@@ -69,7 +69,7 @@
                     android:layout_marginTop="14px"
                     android:maxHeight="8px"
                     android:paddingEnd="20px"
-                    android:paddingStart="20px"
+                    android:paddingStart="28px"
                     android:progress="40"
                     android:progressDrawable="@drawable/seekbar_style"
                     android:thumb="@drawable/custom_thumb" />
