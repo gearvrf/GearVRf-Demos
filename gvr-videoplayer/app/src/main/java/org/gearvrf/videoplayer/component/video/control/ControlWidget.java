@@ -274,7 +274,6 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         }
 
         mTimelineHoverText.setText(TimeUtils.formatDurationFull(seekTime));
-        mTimelineHoverLayout.setY(mTimelineHoverLayout.getTop() + 9);
         mTimelineHoverLayout.setX(mTimelineHoverLayout.getLeft() + eventX);
 
         if (event.getAction() != MotionEvent.ACTION_HOVER_EXIT) {
