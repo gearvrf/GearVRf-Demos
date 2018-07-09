@@ -127,6 +127,11 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void showAllControls() {
         if (isEnabled() && !mPlayNextDialog.isEnabled() && !mMessageText.isEnabled()) {
+            if (is360VideoPlaying()) {
+                mControl.getTransform().setPositionY(mPlayer.getTransform().getPositionY());
+            } else {
+                mControl.getTransform().setPositionY(mPlayer.getTransform().getPositionY() - POSITION_CONTROL_WIDGET);
+            }
             mControl.show();
             mHideControlTimer.start();
             mBackButton.show();
@@ -232,6 +237,7 @@ public class VideoPlayer extends GVRSceneObject {
         mOverlayTitle = new OverlayTitle(getGVRContext());
         mOverlayTitle.getTransform().setScale(3, 3, 1);
         mOverlayTitle.getTransform().setPositionY(mPlayer.getTransform().getPositionY() + POSITION_TITLE);
+        mOverlayTitle.getTransform().setPositionZ(mPlayer.getTransform().getPositionZ() + 2.1f);
         mWidgetsContainer.addChildObject(mOverlayTitle);
     }
 
@@ -471,7 +477,7 @@ public class VideoPlayer extends GVRSceneObject {
         static final float SCALE_FACTOR = .4f;
         static final float POSITION_CONTROL_WIDGET = 3.02f;
         static final float POSITION_BACK_BUTTON = 2.1f;
-        static final float POSITION_TITLE = 3.3f;
+        static final float POSITION_TITLE = 2.6f;
     }
 
 }
