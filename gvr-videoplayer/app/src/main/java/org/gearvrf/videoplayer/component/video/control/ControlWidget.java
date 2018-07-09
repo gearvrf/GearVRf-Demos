@@ -49,6 +49,7 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
     private FocusListener mFocusListener;
     private final AlphaAnimation mFadeOut;
     private final AlphaAnimation mFadeIn;
+    private FadeableObject mCursor;
 
     public ControlWidget(final GVRContext gvrContext) {
         super(gvrContext);
@@ -77,6 +78,10 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         } else if (state == ButtonState.PAUSED) {
             showPausedState();
         }
+    }
+
+    public void setCursor(FadeableObject cursor) {
+        mCursor = cursor;
     }
 
     private void showPausedState() {
@@ -276,10 +281,16 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
             if (mTimelineHoverLayout.getVisibility() != View.VISIBLE) {
                 mTimelineHoverLayout.setVisibility(View.VISIBLE);
                 mTimelineHoverLayout.startAnimation(mFadeIn);
+                if (mCursor.isEnabled()) {
+                    mCursor.setEnable(false);
+                }
             }
         } else {
             if (mTimelineHoverLayout.getVisibility() == View.VISIBLE) {
                 mTimelineHoverLayout.startAnimation(mFadeOut);
+                if (!mCursor.isEnabled()) {
+                    mCursor.setEnable(true);
+                }
             }
         }
     }

@@ -456,6 +456,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void setCursorObject(FadeableObject cursor) {
         mCursor = cursor;
+        mControl.setCursor(cursor);
     }
 
     public void reposition(float[] newModelMatrix) {
