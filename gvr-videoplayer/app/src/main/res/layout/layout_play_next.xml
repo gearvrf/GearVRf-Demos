@@ -20,6 +20,7 @@
             style="@style/playNextText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@string/font_roboto_regular"
             android:text="@string/play_next_in" />
 
         <TextView
@@ -27,6 +28,7 @@
             style="@style/playNextText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@string/font_roboto_regular"
             android:text="5"
             tools:ignore="HardcodedText" />
 

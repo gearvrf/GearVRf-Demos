@@ -53,7 +53,7 @@
                 android:maxLines="1"
                 android:text="VideoTitle.mp4"
                 android:textColor="@android:color/white"
-                android:textSize="24px"
+                android:textSize="26px"
                 tools:ignore="HardcodedText,SpUsage" />
 
             <RelativeLayout
@@ -94,11 +94,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:fontFamily="@string/font_roboto_regular"
+                    android:fontFamily="@string/font_roboto_medium"
                     android:gravity="center"
                     android:text="0:00:00"
-                    android:textColor="#006fcf"
-                    android:textSize="20px"
+                    android:textColor="#81c5ff"
+                    android:textSize="22px"
                     tools:ignore="HardcodedText,SpUsage" />
 
                 <TextView
@@ -106,11 +106,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:fontFamily="@string/font_roboto_regular"
+                    android:fontFamily="@string/font_roboto_medium"
                     android:gravity="center"
                     android:text="0:00:00"
                     android:textColor="@android:color/white"
-                    android:textSize="20px"
+                    android:textSize="22px"
                     tools:ignore="HardcodedText,SpUsage" />
 
             </RelativeLayout>
@@ -140,11 +140,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5px"
-            android:fontFamily="@string/font_roboto_regular"
+            android:fontFamily="@string/font_roboto_medium"
             android:gravity="center"
             android:text="0:00:00"
             android:textColor="@android:color/white"
-            android:textSize="20px" />
+            android:textSize="22px" />
 
     </LinearLayout>
 
