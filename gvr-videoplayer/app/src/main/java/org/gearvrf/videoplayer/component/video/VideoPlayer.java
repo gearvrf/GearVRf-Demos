@@ -56,6 +56,7 @@ public class VideoPlayer extends GVRSceneObject {
     private HideControlWidgetTimer mHideControlTimer;
     private List<Video> mVideos;
     private boolean mIsConnected = false;
+    private boolean mIsPaused = false;
 
 
     public VideoPlayer(GVRContext gvrContext) {
@@ -140,7 +141,7 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     private void hideAllControls() {
-        if (isEnabled()) {
+        if (isEnabled() && !mIsPaused) {
             mBackButton.hide();
             mHideControlTimer.cancel();
             mControl.hide();
@@ -277,6 +278,7 @@ public class VideoPlayer extends GVRSceneObject {
         if (mPlayer.getPlayingNow() != null) {
             mHideControlTimer.start();
             mPlayer.playVideo();
+            mIsPaused = false;
         }
     }
 
@@ -284,6 +286,7 @@ public class VideoPlayer extends GVRSceneObject {
         if (mPlayer.getPlayingNow() != null) {
             mHideControlTimer.cancel();
             mPlayer.pauseVideo();
+            mIsPaused = true;
         }
     }
 
@@ -386,13 +389,13 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onPlay() {
             Log.d(TAG, "onPlay: ");
-            mPlayer.playVideo();
+            play();
         }
 
         @Override
         public void onPause() {
             Log.d(TAG, "onPause: ");
-            mPlayer.pauseVideo();
+            pause();
         }
 
         @Override
@@ -436,8 +439,9 @@ public class VideoPlayer extends GVRSceneObject {
 
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            mVideoPlayer.hideAllControls();
+            if (msg.what == 0) {
+                mVideoPlayer.hideAllControls();
+            }
         }
 
         void start() {
