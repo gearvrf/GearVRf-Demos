@@ -1,0 +1,131 @@
+/* Copyright 2015 Samsung Electronics Co., LTD
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.gearvrf.arpet;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
+import android.os.SystemClock;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
+
+import org.gearvrf.GVRActivity;
+import org.gearvrf.utility.Log;
+
+public class PetActivity extends GVRActivity {
+    private static final String TAG = "GVR_ARPET";
+
+    private PetMain mMain;
+    private PetContext mPetContext;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Log.d(TAG, "onCreate");
+
+        mPetContext = new PetContext();
+        mMain = new PetMain(mPetContext);
+
+        setMain(mMain, "gvr.xml");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPetContext.resume();
+
+        Log.d(TAG, "onResume");
+    }
+
+    @Override
+    public void onPause() {
+        mPetContext.pause();
+        super.onPause();
+    }
+
+
+
+    public class PetContext {
+        private final HandlerThread mHandlerThread;
+        private final Handler mHandler;
+        private final Runnable mPauseTask;
+        private boolean mPaused;
+        private long mResumeTime;
+
+        private PetContext() {
+            mHandlerThread = new HandlerThread("arpet-main");
+            mHandlerThread.start();
+            mHandler = new Handler(mHandlerThread.getLooper());
+
+            mPaused = true;
+            mResumeTime = 0;
+
+            mPauseTask = new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mPauseTask.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+        }
+
+        public long getResumeTime() {
+            return mResumeTime;
+        }
+
+        public boolean runOnPetThread(Runnable r) {
+            return mHandler.post(r);
+        }
+
+        public boolean runDelayedOnPetThread(Runnable r, long delayMillis) {
+            return mHandler.postDelayed(r, delayMillis);
+        }
+
+        public void removeTask(Runnable r) {
+            mHandler.removeCallbacks(r);
+        }
+
+        void pause() {
+            mPaused = true;
+            mHandler.postAtFrontOfQueue(mPauseTask);
+        }
+
+        void resume() {
+            mPaused = false;
+            mResumeTime = SystemClock.uptimeMillis();
+            synchronized (mPauseTask) {
+                mHandler.removeCallbacks(mPauseTask);
+                mPauseTask.notify();
+            }
+        }
+
+        public boolean isPaused() {
+            return mPaused;
+        }
+    }
+
+}
