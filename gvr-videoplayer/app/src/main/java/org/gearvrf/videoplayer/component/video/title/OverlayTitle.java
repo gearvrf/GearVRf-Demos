@@ -17,6 +17,7 @@
 
 package org.gearvrf.videoplayer.component.video.title;
 
+import android.support.annotation.NonNull;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -25,8 +26,9 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
+import org.gearvrf.videoplayer.component.FadeableObject;
 
-public class OverlayTitle extends GVRSceneObject implements IViewEvents {
+public class OverlayTitle extends FadeableObject implements IViewEvents {
 
     private GVRViewSceneObject mTitleObject;
 
@@ -34,6 +36,12 @@ public class OverlayTitle extends GVRSceneObject implements IViewEvents {
         super(gvrContext);
         mTitleObject = new GVRViewSceneObject(gvrContext, R.layout.layout_title_image, this);
         mTitleObject.waitFor();
+    }
+
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mTitleObject;
     }
 
     @Override

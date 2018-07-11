@@ -154,6 +154,7 @@ public class VideoPlayer extends GVRSceneObject {
             mHideControlTimer.start();
             mBackButton.show();
             mCursor.setEnable(true);
+            mOverlayTitle.show();
         }
     }
 
@@ -163,6 +164,9 @@ public class VideoPlayer extends GVRSceneObject {
             mHideControlTimer.cancel();
             mControl.hide();
             mCursor.setEnable(false);
+            if (is360VideoPlaying()) {
+                mOverlayTitle.hide();
+            }
         }
     }
 
