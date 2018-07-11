@@ -30,6 +30,7 @@ import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.utility.Log;
+import org.gearvrf.videoplayer.component.LabelCursor;
 import org.gearvrf.videoplayer.component.DefaultFadeableObject;
 import org.gearvrf.videoplayer.component.FadeableObject;
 import org.gearvrf.videoplayer.component.OnFadeFinish;
@@ -61,7 +62,8 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     private GVRCursorController mCursorController;
     private VideoPlayer mVideoPlayer;
     private GVRSceneObject mCurrentContainer;
-    private FadeableObject mLabelCursor, mCurrentCursor, mParentCursor;
+    private FadeableObject mCurrentCursor, mParentCursor;
+    private LabelCursor mLabelCursor;
     private Gallery mGallery;
     private GVRSphereSceneObject mSkybox;
     private NetworkManager mNetworkManager;
@@ -141,12 +143,8 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
     }
 
     private void createLabel() {
-        mLabelCursor = new DefaultFadeableObject(mContext,
-                mContext.createQuad(0.28f * WIDTH_VIDEO_PLAYER * 1.2f, 0.1f * 0.28f * WIDTH_VIDEO_PLAYER * 1.2f),
-                mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
-                        R.raw.label)));
-        mLabelCursor.getRenderData().setDepthTest(false);
-        mLabelCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        String text = mContext.getActivity().getString(R.string.tap_to_reposition_view);
+        mLabelCursor = new LabelCursor(mContext, 0.45f * WIDTH_VIDEO_PLAYER * 1.2f, 0.2f * WIDTH_VIDEO_PLAYER, text);
     }
 
     private GVRSceneObject createCursor() {
