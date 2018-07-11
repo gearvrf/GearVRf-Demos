@@ -38,6 +38,7 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
+import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
@@ -53,6 +54,7 @@ public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
 
     private PetActivity.PetContext mPetContext;
+    private GVRMixedReality mMixedReality;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -61,6 +63,9 @@ public class PetMain extends GVRMain {
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
         super.onInit(gvrContext);
+
+        mMixedReality = new GVRMixedReality(gvrContext);
+        mMixedReality.resume();
     }
 
     private IPlaneEventsListener mPlaneEventsListener = new IPlaneEventsListener() {
