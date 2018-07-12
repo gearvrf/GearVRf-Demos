@@ -75,10 +75,10 @@
 
                 <ImageView
                     android:id="@+id/ic_360"
-                    android:layout_width="48px"
-                    android:layout_height="36.7px"
+                    android:layout_width="44.8px"
+                    android:layout_height="45.3px"
                     android:layout_marginStart="90px"
-                    android:src="@drawable/ic_video360_2"
+                    android:src="@drawable/ic_video360"
                     android:visibility="invisible" />
 
             </LinearLayout>
