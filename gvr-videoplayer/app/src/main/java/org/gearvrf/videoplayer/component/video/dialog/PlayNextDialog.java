@@ -120,7 +120,11 @@ public class PlayNextDialog extends FadeableObject implements View.OnClickListen
             public void run() {
                 mTitle.setText(video.getTitle());
                 mDuration.setText(TimeUtils.formatDurationFull(video.getDuration()));
-                new ThumbnailLoader(mThumbnail).execute(video.getId());
+                if (video.getVideoType() == Video.VideoType.LOCAL) {
+                    new ThumbnailLoader(mThumbnail).execute(video.getId());
+                } else {
+                    mThumbnail.setImageBitmap(video.getThumbnail());
+                }
             }
         });
     }
