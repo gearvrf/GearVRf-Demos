@@ -90,7 +90,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
     private void onInitMessageText() {
         mMessageText = new MessageText(getGVRContext(), true, "Connect to a network to watch\n the content.", mOnMessageListener);
-        mMessageText.getTransform().setScale(0.3f, 0.3f, 1);
+        mMessageText.getTransform().setScale(0.4f, 0.4f, 1.f);
         mMessageText.getTransform().setPositionZ(1.0f);
         mCountdownTimer = new CountdownTimer(mMessageText);
     }
