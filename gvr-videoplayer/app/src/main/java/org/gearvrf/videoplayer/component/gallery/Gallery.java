@@ -84,7 +84,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     private OnMessageListener mOnMessageListener = new OnMessageListener() {
         @Override
         public void onTimesUp() {
-            mObjectViewGallery.removeChildObject(mMessageText);
+            mMessageText.hide();
         }
     };
 
@@ -92,6 +92,8 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         mMessageText = new MessageText(getGVRContext(), true, "Connect to a network to watch\n the content.", mOnMessageListener);
         mMessageText.getTransform().setScale(0.4f, 0.4f, 1.f);
         mMessageText.getTransform().setPositionZ(1.0f);
+        mMessageText.setEnable(false);
+        mObjectViewGallery.addChildObject(mMessageText);
         mCountdownTimer = new CountdownTimer(mMessageText);
     }
 
@@ -198,7 +200,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                 Video video = (Video) itemList.get(0);
                 if (video.getVideoType() == Video.VideoType.EXTERNAL && !mIsConnected) {
                     if (!mCountdownTimer.isRunning()) {
-                        mObjectViewGallery.addChildObject(mMessageText);
+                        mMessageText.show();
                         mCountdownTimer.start();
                     }
                 } else if (mOnGalleryEventListener != null) {

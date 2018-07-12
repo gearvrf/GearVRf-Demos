@@ -17,6 +17,7 @@
 
 package org.gearvrf.videoplayer.component;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,7 +28,7 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.videoplayer.R;
 import org.gearvrf.videoplayer.component.gallery.OnMessageListener;
 
-public class MessageText extends GVRSceneObject implements IViewEvents {
+public class MessageText extends FadeableObject implements IViewEvents {
 
     private GVRViewSceneObject mMessageTextObject;
     private final boolean mHasBackground;
@@ -70,4 +71,9 @@ public class MessageText extends GVRSceneObject implements IViewEvents {
         addChildObject(mMessageTextObject);
     }
 
+    @NonNull
+    @Override
+    protected GVRSceneObject getFadeable() {
+        return mMessageTextObject;
+    }
 }

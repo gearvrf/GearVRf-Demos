@@ -128,12 +128,12 @@ public class VideoPlayer extends GVRSceneObject {
             mBackErrorButton.show();
             mPlayer.shadow();
             mCursor.setEnable(true);
+            mOverlayTitle.show();
         }
     }
 
     public boolean is360VideoPlaying() {
         return mPlayer.isPlaying() && mPlayer.is360PlayerActive();
-
     }
 
     public void prepare(@NonNull List<Video> videos) {
