@@ -241,9 +241,8 @@ public class BulletSampleMain extends GVRMain {
         cubeObject.attachCollider(boxCollider);
 
         // Physics body
-        GVRRigidBody body = new GVRRigidBody(mGVRContext);
+        GVRRigidBody body = new GVRRigidBody(mGVRContext, mass);
 
-        body.setMass(mass);
         body.setRestitution(0.5f);
         body.setFriction(1.0f);
 
@@ -269,9 +268,8 @@ public class BulletSampleMain extends GVRMain {
         sphereObject.attachCollider(sphereCollider);
 
         // Physics body
-        mSphereRigidBody = new GVRRigidBody(mGVRContext);
+        mSphereRigidBody = new GVRRigidBody(mGVRContext, mass);
 
-        mSphereRigidBody.setMass(mass);
         mSphereRigidBody.setRestitution(1.5f);
         mSphereRigidBody.setFriction(0.5f);
         sphereObject.getEventReceiver().addListener(mCollisionHandler);
