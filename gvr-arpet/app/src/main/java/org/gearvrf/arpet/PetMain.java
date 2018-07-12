@@ -15,46 +15,31 @@
 
 package org.gearvrf.arpet;
 
-import android.opengl.Matrix;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
 
-import org.gearvrf.GVRAndroidResource;
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRDrawFrameListener;
-import org.gearvrf.GVREventListeners;
-import org.gearvrf.GVRExternalTexture;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.ITouchEvents;
-import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
-import org.joml.Math;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-
-import java.util.EnumSet;
+import org.gearvrf.physics.GVRWorld;
 
 public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
 
+    private GVRScene mScene;
+    private GVRContext mContext;
     private PetActivity.PetContext mPetContext;
     private GVRMixedReality mMixedReality;
+
+    private BallThrowHandler ballThrowHandler;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -64,8 +49,18 @@ public class PetMain extends GVRMain {
     public void onInit(final GVRContext gvrContext) throws Throwable {
         super.onInit(gvrContext);
 
+        mContext = gvrContext;
+        mScene = gvrContext.getMainScene();
+
         mMixedReality = new GVRMixedReality(gvrContext);
         mMixedReality.resume();
+
+        GVRWorld world = new GVRWorld(gvrContext);
+        world.setGravity(0f, -10f, 0f);
+        mScene.getRoot().attachComponent(world);
+
+        ballThrowHandler = new BallThrowHandler(gvrContext);
+        ballThrowHandler.enable();
     }
 
     private IPlaneEventsListener mPlaneEventsListener = new IPlaneEventsListener() {
@@ -124,4 +119,5 @@ public class PetMain extends GVRMain {
 
         }
     }
+
 }

@@ -28,8 +28,11 @@ dependencies {
     implementation "com.google.ar:core:1.2.0"
     implementation 'com.android.support:support-v4:27.0.2'
 
-    debugCompile(name: 'MixedReality-debug', ext: 'aar')
-    releaseCompile(name: 'MixedReality-release', ext: 'aar')
+    debugImplementation(name: 'MixedReality-debug', ext: 'aar')
+    releaseImplementation(name: 'MixedReality-release', ext: 'aar')
+
+    debugImplementation(name: 'gvrf-physics-debug', ext: 'aar')
+    releaseImplementation(name: 'gvrf-physics-release', ext: 'aar')
 
 //    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
 //        if (findProject(':gvrf-physics')) {
