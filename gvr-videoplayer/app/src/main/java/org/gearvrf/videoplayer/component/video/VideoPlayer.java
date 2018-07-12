@@ -382,6 +382,7 @@ public class VideoPlayer extends GVRSceneObject {
                 mPlayNextDialog.show(new OnFadeFinish() {
                     @Override
                     public void onFadeFinished() {
+                        mOverlayTitle.show();
                         mBackButton.show();
                         mCursor.setEnable(true);
                         mPlayNextDialog.startTimer();
