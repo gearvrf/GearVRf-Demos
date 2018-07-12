@@ -141,6 +141,10 @@ public class LocalVideoAsyncTask extends AsyncTask<Void, Void, List<Video>> {
         }
 
         boolean getIsRatio21() {
+            String width = getWidth();
+            String height = getHeight();
+            if (width == null || height == null)
+                return false;
             return Float.parseFloat(getWidth()) / Float.parseFloat(getHeight()) == 2;
         }
 
