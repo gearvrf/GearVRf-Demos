@@ -69,7 +69,6 @@ public class VideoPlayer extends GVRSceneObject {
     private GVRSceneObject mWidgetsContainer;
     private FadeableObject mCursor;
 
-    private boolean mHideControlWidgetTimerEnabled;
     private HideControlWidgetTimer mHideControlTimer;
     private List<Video> mVideos;
     private boolean mIsConnected = false;
@@ -278,7 +277,6 @@ public class VideoPlayer extends GVRSceneObject {
     }
 
     public void setControlWidgetAutoHide(boolean autoHide) {
-        mHideControlWidgetTimerEnabled = autoHide;
         if (autoHide) {
             mHideControlTimer.start();
         }
