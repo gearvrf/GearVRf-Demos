@@ -164,9 +164,7 @@ public class VideoPlayer extends GVRSceneObject {
             mHideControlTimer.cancel();
             mControl.hide();
             mCursor.setEnable(false);
-            if (is360VideoPlaying()) {
-                mOverlayTitle.hide();
-            }
+            mOverlayTitle.hide();
         }
     }
 
