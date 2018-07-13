@@ -87,7 +87,7 @@ public class FileBrowserUtils {
     }
 
     public void inflate() {
-        frameLayout = new GVRFrameLayout(activity);
+        frameLayout = new GVRFrameLayout(activity.getGVRApplication());
         frameLayout.setDrawingCacheEnabled(false);
         View.inflate(activity, R.layout.filebrowser, frameLayout);
 
