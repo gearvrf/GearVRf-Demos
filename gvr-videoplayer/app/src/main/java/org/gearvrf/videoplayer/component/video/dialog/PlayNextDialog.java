@@ -20,6 +20,7 @@ package org.gearvrf.videoplayer.component.video.dialog;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -66,26 +67,24 @@ public class PlayNextDialog extends FadeableObject implements View.OnClickListen
         mDuration = view.findViewById(R.id.duration);
         OverlayScene = view.findViewById(R.id.overlay_video);
         ic_time = view.findViewById(R.id.ic_count);
-        mThumbnail.setOnHoverListener(new View.OnHoverListener() {
+        OverlayScene.setOnClickListener(this);
+        OverlayScene.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View view, MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
                     mTitle.setVisibility(View.VISIBLE);
                     mDuration.setVisibility(View.VISIBLE);
                     ic_time.setVisibility(View.VISIBLE);
-                    OverlayScene.setVisibility(View.VISIBLE);
                 } else {
                     if (motionEvent.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
                         mTitle.setVisibility(View.INVISIBLE);
                         mDuration.setVisibility(View.INVISIBLE);
                         ic_time.setVisibility(View.INVISIBLE);
-                        OverlayScene.setVisibility(View.INVISIBLE);
                     }
                 }
                 return false;
             }
         });
-        mThumbnail.setOnClickListener(this);
     }
 
     @Override
@@ -137,7 +136,7 @@ public class PlayNextDialog extends FadeableObject implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.thumbnail) {
+        if (v.getId() == R.id.overlay_video) {
             mOnPlayNextListener.onThumbClicked();
         }
     }
