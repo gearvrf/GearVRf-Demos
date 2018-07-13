@@ -175,7 +175,6 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
 
     @Override
     public void onClick(View v) {
-
         if (v.getId() == R.id.playPauseButton) {
             if (mOnVideoControllerListener != null) {
                 if (mStateResource == R.drawable.ic_play) {
@@ -250,6 +249,7 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
         });
 
         playPauseButton.setOnClickListener(this);
+        playPauseButton.setOnHoverListener(this);
         mSeekBar.setOnSeekBarChangeListener(this);
         seekBarOverlay.setOnHoverListener(this);
         view.setOnHoverListener(this);
@@ -257,12 +257,11 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
 
     @Override
     public boolean onHover(View v, MotionEvent event) {
-
         if (v.getId() == R.id.seekBarOverlay) {
             updateTimelineHoverText(event.getX(), v.getWidth(), event);
         }
 
-        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
+        if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER || v.getId() == R.id.playPauseButton) {
             if (mFocusListener != null) {
                 mFocusListener.onFocusGained(ControlWidget.this);
             }
@@ -270,7 +269,6 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
             if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
                 if (mFocusListener != null) {
                     mFocusListener.onFocusLost(ControlWidget.this);
-
                 }
             }
         }
