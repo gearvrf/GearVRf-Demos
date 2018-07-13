@@ -141,7 +141,7 @@ A sample that shows a light source with shadowing.
 A simple sample that creates a quad and applies a texture to it.  
 
 ### gvr-solarsystem
-A sample that shows both heirarchy and animation.
+A sample that shows both hierarchy and animation.
 
 ### gvr-switch
 A sample that shows how to use the GVRSwitch node.
