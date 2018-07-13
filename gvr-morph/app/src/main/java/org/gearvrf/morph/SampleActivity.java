@@ -45,6 +45,7 @@ public class SampleActivity extends GVRActivity {
     }
 
     private  GVRSceneObject mObjectRoot;
+    private  int nBlendShapes = 15;
 
     private class SampleMain extends GVRMain
     {
@@ -75,7 +76,7 @@ public class SampleActivity extends GVRActivity {
             {
             }
 
-            GVRMeshMorph morph = addMorph(mObjectRoot);
+            GVRMeshMorph morph = addMorph(mObjectRoot, nBlendShapes);
 
             scene.addSceneObject(mObjectRoot);
 
@@ -83,14 +84,14 @@ public class SampleActivity extends GVRActivity {
             animator.start();
         }
 
-        private GVRMeshMorph addMorph(GVRSceneObject model)
+        private GVRMeshMorph addMorph(GVRSceneObject model, int nBlendShapes)
         {
             GVRSceneObject baseShape = model.getSceneObjectByName("Sloth_face");
 
-            GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), 15, false);
+            GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), nBlendShapes, false);
 
             baseShape.attachComponent(morph);
-            for (int i = 1; i <= 15; ++i)
+            for (int i = 1; i <= nBlendShapes; ++i)
             {
                 List<GVRVertexBuffer> vbuffs = baseShape.getRenderData().getMesh().getAnimationMeshInfo();
                 morph.setBlendShape(i - 1, vbuffs.get(i));
