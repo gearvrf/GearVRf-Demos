@@ -12,6 +12,6 @@
         android:id="@+id/titleImage"
         android:layout_width="337.7dp"
         android:layout_height="34dp"
-        android:src="@drawable/ic_app_name_highlight" />
+        android:src="@drawable/ic_app_name_normal" />
 
 </LinearLayout>

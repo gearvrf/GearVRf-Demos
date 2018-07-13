@@ -311,6 +311,10 @@ public class VideoPlayer extends GVRSceneObject {
         @Override
         public void onFocusGained(Focusable focusable) {
             Log.d(TAG, "onFocusGained: " + focusable.getClass().getSimpleName());
+            if (focusable instanceof OverlayTitle || focusable instanceof BackButton) {
+                mOverlayTitle.gainFocus();
+            }
+
             if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
                 mHideControlTimer.cancel();
             }
@@ -318,8 +322,12 @@ public class VideoPlayer extends GVRSceneObject {
 
         @Override
         public void onFocusLost(Focusable focusable) {
+            Log.d(TAG, "onFocusLost: " + focusable.getClass().getSimpleName());
+            if (focusable instanceof OverlayTitle || focusable instanceof BackButton) {
+                mOverlayTitle.loseFocus();
+            }
+
             if (focusable instanceof ControlWidget || focusable instanceof BackButton) {
-                Log.d(TAG, "onFocusLost: " + focusable.getClass().getSimpleName());
                 mHideControlTimer.start();
             }
         }
