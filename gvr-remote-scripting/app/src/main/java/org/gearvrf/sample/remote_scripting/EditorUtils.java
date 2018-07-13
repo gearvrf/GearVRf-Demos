@@ -87,7 +87,7 @@ public class EditorUtils {
 
     public void inflate() {
         mScriptHandler = new ScriptHandler(gvrContext);
-        frameLayout = new GVRFrameLayout(activity);
+        frameLayout = new GVRFrameLayout(activity.getGVRApplication());
         frameLayout.setDrawingCacheEnabled(false);
         View.inflate(activity, R.layout.main, frameLayout);
 
