@@ -25,10 +25,8 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
-import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRWorld;
 
 public class PetMain extends GVRMain {
@@ -40,6 +38,7 @@ public class PetMain extends GVRMain {
     private GVRMixedReality mMixedReality;
 
     private BallThrowHandler ballThrowHandler;
+    private PlaneHandler planeHandler;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -61,24 +60,10 @@ public class PetMain extends GVRMain {
 
         ballThrowHandler = new BallThrowHandler(gvrContext);
         ballThrowHandler.enable();
+
+        planeHandler = new PlaneHandler(gvrContext);
+        mMixedReality.registerPlaneListener(planeHandler);
     }
-
-    private IPlaneEventsListener mPlaneEventsListener = new IPlaneEventsListener() {
-        @Override
-        public void onPlaneDetection(GVRPlane plane) {
-
-        }
-
-        @Override
-        public void onPlaneStateChange(GVRPlane plane, GVRTrackingState trackingState) {
-
-        }
-
-        @Override
-        public void onPlaneMerging(GVRPlane childPlane, GVRPlane parentPlane) {
-
-        }
-    };
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {
         @Override
@@ -86,7 +71,6 @@ public class PetMain extends GVRMain {
 
         }
     };
-
 
     public class TouchEvents implements ITouchEvents {
         @Override
