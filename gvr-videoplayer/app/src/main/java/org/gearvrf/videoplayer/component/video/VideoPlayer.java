@@ -144,7 +144,7 @@ public class VideoPlayer extends GVRSceneObject {
 
     public void showAllControls() {
         if (isEnabled() && !mPlayNextDialog.isEnabled() && !mMessageText.isEnabled()) {
-            if (is360VideoPlaying()) {
+            if (mPlayer.is360PlayerActive()) {
                 mControl.getTransform().setPositionY(mPlayer.getTransform().getPositionY());
             } else {
                 mControl.getTransform().setPositionY(mPlayer.getTransform().getPositionY() - POSITION_CONTROL_WIDGET);
