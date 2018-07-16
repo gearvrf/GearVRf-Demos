@@ -76,6 +76,8 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                     @Override
                     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
                         gvrViewSceneObject.getTransform().setScale(6f, 6, 1);
+                        // Set the texture buffer to maximum value to avoid anti-aliasing issue
+                        gvrViewSceneObject.setTextureBufferSize(1024);
                         addChildObject(gvrViewSceneObject);
                     }
                 });
