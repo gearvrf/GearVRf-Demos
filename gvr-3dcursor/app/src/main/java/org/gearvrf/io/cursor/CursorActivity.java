@@ -20,13 +20,12 @@ import android.os.Bundle;
 import org.gearvrf.GVRActivity;
 
 public class CursorActivity extends GVRActivity {
-    private static final String TAG = CursorActivity.class.getSimpleName();
     private CursorMain cursorMain;
 
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
-        cursorMain = new CursorMain(this);
+        cursorMain = new CursorMain(getGVRApplication());
         setMain(cursorMain, "gvr.xml");
     }
 

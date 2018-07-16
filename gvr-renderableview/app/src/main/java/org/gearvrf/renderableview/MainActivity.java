@@ -46,14 +46,14 @@ public class MainActivity extends GVRActivity {
     }
 
     private void createView() {
-        mFrameLayoutLeft = new GVRFrameLayout(this);
+        mFrameLayoutLeft = new GVRFrameLayout(getGVRApplication());
         mFrameLayoutLeft.setLayoutParams(new FrameLayout.LayoutParams(
                     LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         mFrameLayoutLeft.setBackgroundColor(Color.CYAN);
 
         View.inflate(this, R.layout.activity_main, mFrameLayoutLeft);
 
-        mWebView = new GVRWebView(this);
+        mWebView = new GVRWebView(getGVRApplication());
         mWebView.loadUrl("https://resources.samsungdevelopers.com/Gear_VR/020_GearVR_Framework_Project");
         mWebView.setLayoutParams(new FrameLayout.LayoutParams(
                     LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
