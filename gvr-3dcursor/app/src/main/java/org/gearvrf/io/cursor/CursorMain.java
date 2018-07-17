@@ -25,11 +25,10 @@ import android.widget.TextView;
 
 import com.gearvrf.io.gearwear.GearWearableDevice;
 
-import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRApplication;
 import org.gearvrf.GVRBitmapImage;
 import org.gearvrf.GVRContext;
-import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
@@ -40,12 +39,13 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.ZipLoader;
+import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.io.cursor3d.Cursor;
-import org.gearvrf.io.cursor3d.ICursorActivationListener;
 import org.gearvrf.io.cursor3d.CursorManager;
 import org.gearvrf.io.cursor3d.CursorTheme;
 import org.gearvrf.io.cursor3d.CursorType;
+import org.gearvrf.io.cursor3d.ICursorActivationListener;
 import org.gearvrf.io.cursor3d.IoDevice;
 import org.gearvrf.io.cursor3d.MovableBehavior;
 import org.gearvrf.io.cursor3d.SelectableBehavior;
@@ -149,22 +149,22 @@ public class CursorMain extends GVRMain {
     private Map<String, GVRMaterial> materialMap;
     private GearWearableDevice gearWearableDevice;
 
-    public CursorMain(GVRActivity gvrActivity) {
-        Resources resources = gvrActivity.getResources();
+    public CursorMain(GVRApplication application) {
+        Resources resources = application.getActivity().getResources();
         LIGHT_BLUE_COLOR = resources.getColor(R.color.LIGHT_BLUE);
         objects = new HashMap<String, SpaceObject>();
         textViewList = new ArrayList<TextView>(NUM_TEXT_VIEWS);
         for (int i = 0; i < NUM_TEXT_VIEWS; i++) {
-            addGVRTextView(gvrActivity, i);
+            addGVRTextView(application, i);
         }
 
         circleTextViewList = new ArrayList<TextView>(NUM_TEXT_VIEWS);
-        addCircleGVRTextViews(gvrActivity, resources);
+        addCircleGVRTextViews(application, resources);
 
-        resetTextView = getTextView(gvrActivity, 0);
+        resetTextView = getTextView(application, 0);
         resetTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         resetTextView.setGravity(Gravity.CENTER);
-        settingsTextView = getTextView(gvrActivity, 0);
+        settingsTextView = getTextView(application, 0);
         settingsTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         settingsTextView.setGravity(Gravity.CENTER);
 
@@ -479,13 +479,13 @@ public class CursorMain extends GVRMain {
         }
     }
 
-    private void addGVRTextView(GVRActivity gvrActivity, int index) {
-        textViewList.add(getTextView(gvrActivity, index));
+    private void addGVRTextView(GVRApplication application, int index) {
+        textViewList.add(getTextView(application, index));
     }
 
-    private TextView getTextView(GVRActivity gvrActivity, int index) {
-        Resources resources = gvrActivity.getResources();
-        TextView textView = new GVRTextView(gvrActivity, TEXT_VIEW_WIDTH,
+    private TextView getTextView(GVRApplication application, int index) {
+        Resources resources = application.getActivity().getResources();
+        TextView textView = new GVRTextView(application, TEXT_VIEW_WIDTH,
                 getTextViewHeightFromIndex(index));
         textView.setTextSize(STANDARD_TEXT_SIZE);
         textView.setTextColor(LIGHT_BLUE_COLOR);
@@ -493,9 +493,9 @@ public class CursorMain extends GVRMain {
         return textView;
     }
 
-    private void addCircleGVRTextViews(GVRActivity gvrActivity, Resources resources) {
+    private void addCircleGVRTextViews(GVRApplication application, Resources resources) {
         for (int count = 0; count < NUM_TEXT_VIEWS; count++) {
-            GVRTextView textView = new GVRTextView(gvrActivity, CIRCLE_TEXT_VIEW_WIDTH,
+            GVRTextView textView = new GVRTextView(application, CIRCLE_TEXT_VIEW_WIDTH,
                     CIRCLE_TEXT_VIEW_HEIGHT);
             textView.setTextSize(CIRCLE_TEXT_SIZE);
             textView.setTextColor(Color.BLACK);

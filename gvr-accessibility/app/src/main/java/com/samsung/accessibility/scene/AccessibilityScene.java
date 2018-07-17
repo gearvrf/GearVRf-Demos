@@ -209,7 +209,7 @@ public class AccessibilityScene extends GVRScene {
     }
 
     public void show() {
-        Main main = (Main) gvrContext.getActivity().getMain();
+        Main main = (Main) gvrContext.getMain();
 
         main.setScene(this);
         mainApplicationScene.removeSceneObject(shortcutMenu);

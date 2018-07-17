@@ -15,18 +15,17 @@
 
 package org.gearvrf.sample.sceneobjects;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Future;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
+import android.util.Log;
+import android.view.Gravity;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.scene_objects.GVRCameraSceneObject;
 import org.gearvrf.scene_objects.GVRConeSceneObject;
@@ -39,11 +38,9 @@ import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.scene_objects.view.GVRWebView;
 
-import android.content.res.AssetFileDescriptor;
-import android.media.MediaPlayer;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SampleMain extends GVRMain {
     private static final String TAG = SampleMain.class.getSimpleName();
@@ -121,7 +118,7 @@ public class SampleMain extends GVRMain {
         // turn all objects off, except the first one
         int listSize = objectList.size();
         for (int i = 1; i < listSize; i++) {
-            objectList.get(i).getRenderData().setRenderMask(0);
+            objectList.get(i).setEnable(false);
         }
 
         quadObject.getRenderData().setMaterial(material);
@@ -183,9 +180,8 @@ public class SampleMain extends GVRMain {
     }
 
     public void onTap() {
-
         GVRSceneObject object = objectList.get(currentObject);
-        object.getRenderData().setRenderMask(0);
+        object.setEnable(false);
         if (object instanceof GVRVideoSceneObject) {
             GVRVideoSceneObject video = (GVRVideoSceneObject) object;
             video.getMediaPlayer().pause();
@@ -203,9 +199,6 @@ public class SampleMain extends GVRMain {
             video.getMediaPlayer().start();
         }
 
-        object.getRenderData().setRenderMask(
-                GVRRenderData.GVRRenderMaskBit.Left
-                        | GVRRenderData.GVRRenderMaskBit.Right);
-
+        object.setEnable(true);
     }
 }
