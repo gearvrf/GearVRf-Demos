@@ -67,14 +67,14 @@ public class BallThrowHandler {
     public void enable() {
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mScene.getMainCameraRig().addChildObject(mBall);
-        mContext.getActivity().getEventReceiver().addListener(mEventListener);
+        mContext.getApplication().getEventReceiver().addListener(mEventListener);
     }
 
     public void disable() {
         thrown = false;
         resetRigidBody();
         mBall.getParent().removeChildObject(mBall);
-        mContext.getActivity().getEventReceiver().removeListener(mEventListener);
+        mContext.getApplication().getEventReceiver().removeListener(mEventListener);
     }
 
     private void createBall() {
