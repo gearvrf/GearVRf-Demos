@@ -15,10 +15,15 @@
 
 package org.gearvrf.arpet;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
+import org.gearvrf.GVRBoxCollider;
+import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -27,7 +32,12 @@ import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
+import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
@@ -39,6 +49,10 @@ public class PetMain extends GVRMain {
 
     private BallThrowHandler ballThrowHandler;
     private PlaneHandler planeHandler;
+
+    private GVRSceneObject cube;
+    private float cubeX = 0f;
+    private float cubeZ = 0f;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -63,6 +77,53 @@ public class PetMain extends GVRMain {
 
         planeHandler = new PlaneHandler(gvrContext);
         mMixedReality.registerPlaneListener(planeHandler);
+
+//        cube = new GVRCubeSceneObject(gvrContext, true);
+        cube = new GVRSceneObject(gvrContext);
+//        GVRMaterial green = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Phong.ID);
+//        green.setDiffuseColor(0f, 1f, 0f, 1f);
+//        cube.getRenderData().setMaterial(green);
+//        cube.getRenderData().setAlphaBlend(true);
+        cube.getTransform().setPosition(0f, 0f, -10f);
+        mScene.addSceneObject(cube);
+
+        final Runnable planeSniffle = new Runnable() {
+            @Override
+            public void run() {
+                if (planeHandler.firstPlane != null) {
+                    Matrix4f mat = planeHandler.firstPlane.getSceneObject().getTransform().getModelMatrix4f();
+                    Vector3f scale = new Vector3f();
+                    mat.getScale(scale);
+                    mat.normalize3x3();
+                    Quaternionf q = new Quaternionf();
+                    q.setFromNormalized(mat);
+
+                    cube.getTransform().setPosition(mat.m30(), mat.m31(), mat.m32());
+                    cube.getTransform().setRotation(q.w, q.x, q.y, q.z);
+
+                    float dX = Math.abs(cubeX - planeHandler.firstPlane.getWidth());
+                    float dZ = Math.abs(cubeZ - planeHandler.firstPlane.getHeight());
+                    if (dX > 0.05f || dZ > 0.05f) {
+                        cube.detachComponent(GVRRigidBody.getComponentType());
+                        cube.detachComponent(GVRCollider.getComponentType());
+
+                        cubeX = planeHandler.firstPlane.getWidth();
+                        cubeZ = planeHandler.firstPlane.getHeight();
+
+                        cube.getTransform().setScale(scale.x, scale.y, 1f);
+
+                        GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
+                        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
+                        cube.attachComponent(collider);
+                        GVRRigidBody board = new GVRRigidBody(gvrContext, 0f);
+                        cube.attachComponent(board);
+                    }
+                }
+                mPetContext.runDelayedOnPetThread(this, 30);
+            }
+        };
+
+        mPetContext.runDelayedOnPetThread(planeSniffle, 30);
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {

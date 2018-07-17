@@ -38,11 +38,11 @@ import java.io.IOException;
 public class BallThrowHandler {
     private static final float defaultPositionX = 0f;
     private static final float defaultPositionY = 0f;
-    private static final float defaultPositionZ = -2f;
+    private static final float defaultPositionZ = -20f;
 
-    private static final float defaultScaleX = 0.25f;
-    private static final float defaultScaleY = 0.25f;
-    private static final float defaultScaleZ = 0.25f;
+    private static final float defaultScaleX = 2f;
+    private static final float defaultScaleY = 2f;
+    private static final float defaultScaleZ = 2f;
 
     private GVRContext mContext;
     private GVRScene mScene;

@@ -1,6 +1,7 @@
 package org.gearvrf.arpet;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -17,6 +18,8 @@ public final class PlaneHandler implements IPlaneEventsListener {
     private GVRScene mScene;
 
     private int hsvHUE = 0;
+
+    GVRPlane firstPlane = null;
 
     PlaneHandler(GVRContext gvrContext) {
         mContext = gvrContext;
@@ -51,6 +54,10 @@ public final class PlaneHandler implements IPlaneEventsListener {
     public void onPlaneDetection(GVRPlane plane) {
         plane.setSceneObject(createQuadPlane());
         mScene.addSceneObject(plane);
+
+        if (firstPlane == null) {
+            firstPlane = plane;
+        }
     }
 
     @Override
