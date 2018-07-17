@@ -15,19 +15,10 @@
 
 package org.gearvrf.arpet;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.widget.Toast;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.utility.Log;
@@ -60,8 +51,8 @@ public class PetActivity extends GVRActivity {
 
     @Override
     public void onPause() {
-        mPetContext.pause();
         super.onPause();
+        mPetContext.pause();
     }
 
 
@@ -85,7 +76,9 @@ public class PetActivity extends GVRActivity {
                 @Override
                 public void run() {
                     try {
-                        mPauseTask.wait();
+                        synchronized (mPauseTask) {
+                            mPauseTask.wait();
+                        }
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -111,7 +104,9 @@ public class PetActivity extends GVRActivity {
 
         void pause() {
             mPaused = true;
-            mHandler.postAtFrontOfQueue(mPauseTask);
+            synchronized (mPauseTask) {
+                mHandler.postAtFrontOfQueue(mPauseTask);
+            }
         }
 
         void resume() {
