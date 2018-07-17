@@ -15,9 +15,13 @@
 
 package org.gearvrf.arpet;
 
+import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
+import org.gearvrf.GVRSceneObject;
 
-public class Character implements GVRDrawFrameListener {
+import java.io.IOException;
+
+public class Character extends GVRSceneObject implements GVRDrawFrameListener {
 
     private enum PetAction {
         IDLE,
@@ -29,9 +33,15 @@ public class Character implements GVRDrawFrameListener {
     }
 
     private PetAction mCurrentAction;
+    private GVRContext mContext;
 
-    public Character() {
+    public Character(GVRContext gvrContext) {
+        super(gvrContext);
         mCurrentAction = PetAction.IDLE;
+        mContext = gvrContext;
+
+        load3DModel();
+
     }
 
     public void goToBall() {
@@ -60,6 +70,16 @@ public class Character implements GVRDrawFrameListener {
 
     private void moveToScreen() {
 
+    }
+
+    private void load3DModel() {
+        GVRSceneObject sceneObject;
+        try {
+            sceneObject = mContext.getAssetLoader().loadModel("objects/Fox_Pokemon.obj");
+            addChildObject(sceneObject);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
