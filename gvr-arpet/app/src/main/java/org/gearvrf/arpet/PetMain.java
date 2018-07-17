@@ -75,55 +75,16 @@ public class PetMain extends GVRMain {
         ballThrowHandler = new BallThrowHandler(gvrContext);
         ballThrowHandler.enable();
 
-        planeHandler = new PlaneHandler(gvrContext);
+        planeHandler = new PlaneHandler(gvrContext, mPetContext);
         mMixedReality.registerPlaneListener(planeHandler);
 
-//        cube = new GVRCubeSceneObject(gvrContext, true);
         cube = new GVRSceneObject(gvrContext);
-//        GVRMaterial green = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Phong.ID);
-//        green.setDiffuseColor(0f, 1f, 0f, 1f);
-//        cube.getRenderData().setMaterial(green);
-//        cube.getRenderData().setAlphaBlend(true);
         cube.getTransform().setPosition(0f, 0f, -10f);
+        GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
+        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
+        cube.attachComponent(collider);
+
         mScene.addSceneObject(cube);
-
-        final Runnable planeSniffle = new Runnable() {
-            @Override
-            public void run() {
-                if (planeHandler.firstPlane != null) {
-                    Matrix4f mat = planeHandler.firstPlane.getSceneObject().getTransform().getModelMatrix4f();
-                    Vector3f scale = new Vector3f();
-                    mat.getScale(scale);
-                    mat.normalize3x3();
-                    Quaternionf q = new Quaternionf();
-                    q.setFromNormalized(mat);
-
-                    cube.getTransform().setPosition(mat.m30(), mat.m31(), mat.m32());
-                    cube.getTransform().setRotation(q.w, q.x, q.y, q.z);
-
-                    float dX = Math.abs(cubeX - planeHandler.firstPlane.getWidth());
-                    float dZ = Math.abs(cubeZ - planeHandler.firstPlane.getHeight());
-                    if (dX > 0.05f || dZ > 0.05f) {
-                        cube.detachComponent(GVRRigidBody.getComponentType());
-                        cube.detachComponent(GVRCollider.getComponentType());
-
-                        cubeX = planeHandler.firstPlane.getWidth();
-                        cubeZ = planeHandler.firstPlane.getHeight();
-
-                        cube.getTransform().setScale(scale.x, scale.y, 1f);
-
-                        GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
-                        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
-                        cube.attachComponent(collider);
-                        GVRRigidBody board = new GVRRigidBody(gvrContext, 0f);
-                        cube.attachComponent(board);
-                    }
-                }
-                mPetContext.runDelayedOnPetThread(this, 30);
-            }
-        };
-
-        mPetContext.runDelayedOnPetThread(planeSniffle, 30);
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {
