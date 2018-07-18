@@ -18,7 +18,6 @@ package org.gearvrf.arpet;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRBoxCollider;
-import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
@@ -30,13 +29,9 @@ import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
-import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
@@ -50,8 +45,6 @@ public class PetMain extends GVRMain {
     private PlaneHandler planeHandler;
 
     private GVRSceneObject cube;
-    private float cubeX = 0f;
-    private float cubeZ = 0f;
 
     private Character mPet;
 
@@ -89,6 +82,18 @@ public class PetMain extends GVRMain {
         cube.attachComponent(collider);
 
         mScene.addSceneObject(cube);
+    }
+
+    public void resume() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    public void pause() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @Subscribe

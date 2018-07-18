@@ -45,7 +45,7 @@ public class PetActivity extends GVRActivity {
     protected void onResume() {
         super.onResume();
         mPetContext.resume();
-
+        mMain.resume();
         Log.d(TAG, "onResume");
     }
 
@@ -53,6 +53,7 @@ public class PetActivity extends GVRActivity {
     public void onPause() {
         super.onPause();
         mPetContext.pause();
+        mMain.pause();
     }
 
 
