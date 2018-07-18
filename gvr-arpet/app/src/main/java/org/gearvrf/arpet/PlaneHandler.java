@@ -1,7 +1,6 @@
 package org.gearvrf.arpet;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
@@ -17,7 +16,7 @@ import org.gearvrf.physics.GVRRigidBody;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.LinkedList;
 
@@ -117,6 +116,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         if (firstPlane == null) {
             firstPlane = plane;
+            EventBus.getDefault().post(firstPlane);
         }
 
         PlaneBoard b = new PlaneBoard(plane);

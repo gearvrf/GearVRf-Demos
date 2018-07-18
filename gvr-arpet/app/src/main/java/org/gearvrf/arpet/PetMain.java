@@ -15,26 +15,25 @@
 
 package org.gearvrf.arpet;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.GVRWorld;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -54,8 +53,11 @@ public class PetMain extends GVRMain {
     private float cubeX = 0f;
     private float cubeZ = 0f;
 
+    private Character mPet;
+
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -78,6 +80,8 @@ public class PetMain extends GVRMain {
         planeHandler = new PlaneHandler(gvrContext, mPetContext);
         mMixedReality.registerPlaneListener(planeHandler);
 
+        mPet = new Character(mContext);
+
         cube = new GVRSceneObject(gvrContext);
         cube.getTransform().setPosition(0f, 0f, -10f);
         GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
@@ -85,6 +89,12 @@ public class PetMain extends GVRMain {
         cube.attachComponent(collider);
 
         mScene.addSceneObject(cube);
+    }
+
+    @Subscribe
+    public void onPlaneDetected(GVRPlane plane) {
+        GVRAnchor anchor = mMixedReality.createAnchor(planeHandler.firstPlane.getCenterPose(), mPet);
+        mScene.addSceneObject(anchor);
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {

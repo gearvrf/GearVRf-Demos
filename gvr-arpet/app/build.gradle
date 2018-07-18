@@ -27,6 +27,7 @@ dependencies {
     // ARCore library
     implementation "com.google.ar:core:1.2.0"
     implementation 'com.android.support:support-v4:27.0.2'
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
     debugImplementation(name: 'MixedReality-debug', ext: 'aar')
     releaseImplementation(name: 'MixedReality-release', ext: 'aar')
