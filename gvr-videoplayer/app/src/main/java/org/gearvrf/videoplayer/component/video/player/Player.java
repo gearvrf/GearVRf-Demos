@@ -56,6 +56,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import static com.google.android.exoplayer2.Player.STATE_BUFFERING;
+import static com.google.android.exoplayer2.Player.STATE_READY;
+
 public class Player extends FadeableObject {
 
     private static final String TAG = Player.class.getSimpleName();
@@ -115,7 +118,7 @@ public class Player extends FadeableObject {
     }
 
     public void shadow() {
-        float[] color  = {0.4f, 0.4f, 0.4f};
+        float[] color = {0.4f, 0.4f, 0.4f};
         mFlatVideo.getRenderData().getMaterial().setColor(color[0], color[1], color[2]);
         m360Video.getRenderData().getMaterial().setColor(color[0], color[1], color[2]);
     }
@@ -270,9 +273,16 @@ public class Player extends FadeableObject {
         }
     }
 
-    private void notifyVideoLoading() {
+    private void notifyStartBuffering() {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onLoading();
+            mOnVideoPlayerListener.onStartBuffering();
+        }
+    }
+
+
+    private void notifyEndBuffering() {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onEndBuffering();
         }
     }
 
@@ -317,12 +327,19 @@ public class Player extends FadeableObject {
     }
 
     private com.google.android.exoplayer2.Player.EventListener mPlayerListener = new com.google.android.exoplayer2.Player.DefaultEventListener() {
+
+        private int mPreviousState = -1;
+
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-            mIsPlaying = playbackState == com.google.android.exoplayer2.Player.STATE_READY && playWhenReady;
+            mIsPlaying = playbackState == STATE_READY && playWhenReady;
 
-            if (playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
+            if (playbackState == STATE_READY) {
+
+                if (mPreviousState == STATE_BUFFERING) {
+                    notifyEndBuffering();
+                }
 
                 if (playWhenReady) {
                     logd("Video started " + getPlayingNowName());
@@ -352,8 +369,10 @@ public class Player extends FadeableObject {
             } else if (playbackState == com.google.android.exoplayer2.Player.STATE_BUFFERING) {
 
                 logd("Loading video: " + getPlayingNowName());
-                notifyVideoLoading();
+                notifyStartBuffering();
             }
+
+            mPreviousState = playbackState;
         }
 
     };

@@ -32,7 +32,11 @@ public class DefaultPlayerListener implements OnPlayerListener {
     }
 
     @Override
-    public void onLoading() {
+    public void onStartBuffering() {
+    }
+
+    @Override
+    public void onEndBuffering() {
     }
 
     @Override

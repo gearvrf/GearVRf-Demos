@@ -49,9 +49,17 @@ public class PlayerListenerDispatcher implements OnPlayerListener {
 
     @CallSuper
     @Override
-    public void onLoading() {
+    public void onStartBuffering() {
         if (mOnVideoPlayerListener != null) {
-            mOnVideoPlayerListener.onLoading();
+            mOnVideoPlayerListener.onStartBuffering();
+        }
+    }
+
+    @CallSuper
+    @Override
+    public void onEndBuffering() {
+        if (mOnVideoPlayerListener != null) {
+            mOnVideoPlayerListener.onEndBuffering();
         }
     }
 

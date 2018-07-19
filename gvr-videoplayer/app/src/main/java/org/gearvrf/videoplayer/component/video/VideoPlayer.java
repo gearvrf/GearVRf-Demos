@@ -367,15 +367,20 @@ public class VideoPlayer extends GVRSceneObject {
             Log.d(TAG, "Video started");
             mControl.setButtonState(ControlWidget.ButtonState.PAUSED);
             showAllControls();
-            mLoadingAsset.setEnable(false);
             super.onStart();
         }
 
-        @Override
-        public void onLoading() {
+        public void onStartBuffering() {
             Log.d(TAG, "Video loading");
             mLoadingAsset.setEnable(true);
-            super.onLoading();
+            super.onStartBuffering();
+        }
+
+        @Override
+        public void onEndBuffering() {
+            mLoadingAsset.setEnable(false);
+            mControl.setProgress((int) mPlayer.getProgress());
+            super.onEndBuffering();
         }
 
         @Override
