@@ -309,4 +309,12 @@ public class VideoPlayerMain extends BaseVideoPlayerMain implements OnGalleryEve
         mCurrentCursor.show();
         mLabelCursor.hide();
     }
+
+    @Override
+    public boolean onBackPress() {
+        if (mVideoPlayer.isEnabled()) {
+            return mVideoPlayer.onBackPressed();
+        }
+        return mGallery.onBackPressed();
+    }
 }

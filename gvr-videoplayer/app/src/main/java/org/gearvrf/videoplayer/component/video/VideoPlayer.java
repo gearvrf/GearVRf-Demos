@@ -411,6 +411,11 @@ public class VideoPlayer extends GVRSceneObject {
 
     };
 
+    public boolean onBackPressed() {
+        mBackButton.performClick();
+        return true;
+    }
+
     private ControlWidgetListener mOnVideoControllerListener = new ControlWidgetListener() {
         @Override
         public void onPlay() {

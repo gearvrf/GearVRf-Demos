@@ -29,7 +29,7 @@ class Breadcrumb implements View.OnClickListener {
     private View mAlbum;
     private OnBreadcrumbListener onBreadcrumbListener;
     @SourceType
-    private int mSourceType;
+    private int mSourceType = SourceType.LOCAL;
 
     Breadcrumb(View mainView) {
         mHome = mainView.findViewById(R.id.home);
@@ -54,6 +54,15 @@ class Breadcrumb implements View.OnClickListener {
         sourceLabelTv.setBackgroundResource(R.drawable.bg_breadcrumb_source_normal);
         mAlbum.setVisibility(View.GONE);
         mSource.setVisibility(View.VISIBLE);
+    }
+
+    void showSource() {
+        showSource(mSourceType);
+    }
+
+    @SourceType
+    int getSourceType() {
+        return mSourceType;
     }
 
     void showAlbum(String albumTitle) {
@@ -92,5 +101,15 @@ class Breadcrumb implements View.OnClickListener {
 
             }
         }
+    }
+
+    public int getLevel() {
+        if (mAlbum.getVisibility() == View.VISIBLE) {
+            return 2;
+        }
+        if (mSource.getVisibility() == View.VISIBLE) {
+            return 1;
+        }
+        return 0;
     }
 }

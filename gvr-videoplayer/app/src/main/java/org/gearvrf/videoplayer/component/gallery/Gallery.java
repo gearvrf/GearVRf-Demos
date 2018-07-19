@@ -121,7 +121,6 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         mBreadcrumb.setOnBreadcrumbListener(new OnBreadcrumbListener() {
             @Override
             public void onHomeClicked() {
-                numColumns(2);
                 loadHome();
             }
 
@@ -138,12 +137,14 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
     // UI Thread
     private void loadHome() {
+        setGridNumColumns(2);
         mItemList.clear();
         mItemList.addAll(createHomeItems());
         mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private void loadLocalAlbums() {
+        setGridNumColumns(3);
         new AlbumAsyncTask(new GetDataCallback<List<Album>>() {
             @Override
             public void onResult(List<Album> data) {
@@ -155,6 +156,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     }
 
     private void loadLocalVideos(String albumTitle) {
+        setGridNumColumns(3);
         new LocalVideoAsyncTask(albumTitle, new GetDataCallback<List<Video>>() {
             @Override
             public void onResult(List<Video> data) {
@@ -166,6 +168,7 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
     }
 
     private void loadExternalVideos() {
+        setGridNumColumns(3);
         new ExternalVideoAsyncTask(new GetDataCallback<List<Video>>() {
             @Override
             public void onResult(List<Video> data) {
@@ -184,7 +187,6 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
 
         switch (item.getType()) {
             case GalleryItem.Type.TYPE_HOME:
-                numColumns(3);
                 if (item instanceof LocalHomeItem) {
                     mBreadcrumb.showSource(SourceType.LOCAL);
                     loadLocalAlbums();
@@ -194,7 +196,6 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                 }
                 break;
             case GalleryItem.Type.TYPE_ALBUM:
-                numColumns(3);
                 loadLocalVideos(((Album) item).getTitle());
                 mBreadcrumb.showAlbum(((Album) item).getTitle());
                 break;
@@ -246,10 +247,31 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
         ownerTrans.setPosition(newModelMatrix[8] * -8, newModelMatrix[9] * -8, newModelMatrix[10] * -8);
     }
 
-    private void numColumns(int numColumns) {
+    private void setGridNumColumns(int numColumns) {
         mItemList.clear();
         mRecyclerView.getAdapter().notifyDataSetChanged();
         ((GridLayoutManager) mRecyclerView.getLayoutManager()).setSpanCount(numColumns);
+    }
+
+    public boolean onBackPressed() {
+
+        if (mBreadcrumb.getLevel() == 0) {
+            return false;
+        }
+
+        if (mBreadcrumb.getLevel() == 2) {
+            mBreadcrumb.showSource();
+            if (mBreadcrumb.getSourceType() == SourceType.LOCAL) {
+                loadLocalAlbums();
+            } else {
+                loadExternalVideos();
+            }
+            return true;
+        }
+
+        mBreadcrumb.showHome();
+        loadHome();
+        return true;
     }
 
     private static class CountdownTimer extends Handler {
