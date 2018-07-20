@@ -38,7 +38,7 @@ public class MainScene extends GVRMain {
         gvrContext.getMainScene().addSceneObject(dinoObj);
 
         //Load animated model
-//        GVRModelSceneObject character = gvrContext.getAssetLoader().loadModel("astro_boy.dae");
+//        GVRSceneObject character = gvrContext.getAssetLoader().loadModel("astro_boy.dae");
 //        character.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
 //        character.getTransform().setScale(3, 3, 3);
 //        character.getTransform().setPosition(0.0f, -0.4f, -0.5f);

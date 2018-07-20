@@ -10,14 +10,14 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
+import org.gearvrf.GVRSceneObject;
 
 import android.util.Log;
 
 public class MeshAnimationMain extends GVRMain {
 
     private GVRContext mGVRContext;
-    private GVRModelSceneObject mCharacter;
+    private GVRSceneObject mCharacter;
 
     private final String mModelPath = "TRex_NoGround.fbx";
 
@@ -44,8 +44,7 @@ public class MeshAnimationMain extends GVRMain {
         try {
             mCharacter = gvrContext.getAssetLoader().loadModel(mModelPath, mainScene);
             mCharacter.getTransform().setPosition(0.0f, -10.0f, -10.0f);
-            mCharacter.getTransform().setRotationByAxis(90.0f, 1.0f, 0.0f, 0.0f);
-            mCharacter.getTransform().setRotationByAxis(40.0f, 0.0f, 1.0f, 0.0f);
+            mCharacter.getTransform().setRotationByAxis(40.0f, 1.0f, 0.0f, 0.0f);
             mCharacter.getTransform().setScale(1.5f, 1.5f, 1.5f);
 
             mAssimpAnimation = (GVRAnimator) mCharacter.getComponent(GVRAnimator.getComponentType());
