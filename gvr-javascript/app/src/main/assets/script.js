@@ -1,6 +1,7 @@
 importPackage(org.gearvrf)
 importPackage(org.gearvrf.scene_objects)
 importPackage(org.gearvrf.script)
+importPackage(org.gearvrf.animation)
 
 function onInit(gvrf) {
   var mainScene = gvrf.getMainScene();
@@ -29,11 +30,12 @@ function onInit(gvrf) {
   mainScene.addSceneObject(textView);
 
   // Animation
-  var animationEngine = gvrf.getAnimationEngine();
-  var animations = boat.getAnimations();
-  if (animations.size() != 0) {
-      animations.get(0).setRepeatMode(1).setRepeatCount(-1);
-      animations.get(0).start(animationEngine);
+  var animation = boat.getComponent(GVRAnimator.getComponentType());
+  if (animation)
+  {
+      animation.setRepeatMode(1);
+      animation.setRepeatCount(-1);
+      animation.start();
   }
 
   mainScene.setFrustumCulling(false);

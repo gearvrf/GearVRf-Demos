@@ -28,7 +28,6 @@ import org.gearvrf.GVRScreenshot3DCallback;
 import org.gearvrf.GVRScreenshotCallback;
 import org.gearvrf.GVRShader;
 import org.gearvrf.SystemPropertyUtil;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Threads;
 
 import java.io.File;
@@ -67,7 +66,7 @@ public class X3DparserScript extends GVRMain
     scene = gvrContext.getMainScene();
     scene.setBackgroundColor(0, 0, 0, 1);
 
-    GVRModelSceneObject model = new GVRModelSceneObject(mGVRContext);
+    GVRSceneObject model = new GVRSceneObject(mGVRContext);
     // X3D test files should be in the assets directory.
     // Replace 'filename' to view another .x3d file
     String filename = SystemPropertyUtil.getSystemPropertyString("debug.gearvrf.gvr-x3d-demo");
