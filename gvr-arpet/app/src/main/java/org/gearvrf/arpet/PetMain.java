@@ -98,8 +98,11 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onPlaneDetected(GVRPlane plane) {
-        GVRAnchor anchor = mMixedReality.createAnchor(planeHandler.firstPlane.getCenterPose(), mPet);
+        float[] pose = plane.getCenterPose();
+        GVRAnchor anchor = mMixedReality.createAnchor(pose, mPet);
         mScene.addSceneObject(anchor);
+
+        mPet.lookAt(ballThrowHandler.getBall());
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {

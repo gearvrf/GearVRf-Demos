@@ -18,22 +18,18 @@ package org.gearvrf.arpet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
-import java.io.IOException;
 
 public class BallThrowHandler {
     private static final float defaultPositionX = 0f;
@@ -158,5 +154,9 @@ public class BallThrowHandler {
         mRigidBody.setLinearVelocity(0f, 0f, 0f);
         mRigidBody.setAngularVelocity(0f, 0f, 0f);
         mRigidBody.setEnable(false);
+    }
+
+    public GVRSceneObject getBall() {
+        return mBall;
     }
 }
