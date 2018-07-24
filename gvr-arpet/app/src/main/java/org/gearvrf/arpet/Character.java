@@ -32,7 +32,8 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
         TO_SCREEN,
         TO_FOOD,
         TO_TOILET,
-        TO_BED
+        TO_BED,
+        LOOK_AT
     }
 
     private PetAction mCurrentAction;
@@ -68,6 +69,9 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
     }
 
     public void lookAt(GVRSceneObject object) {
+
+        mCurrentAction = PetAction.LOOK_AT;
+
         if (object == null)
             return;
 
