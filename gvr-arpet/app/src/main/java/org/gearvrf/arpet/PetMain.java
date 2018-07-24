@@ -105,6 +105,14 @@ public class PetMain extends GVRMain {
         mPet.lookAt(ballThrowHandler.getBall());
     }
 
+    @Override
+    public void onStep() {
+        super.onStep();
+        if (ballThrowHandler.canBeReseted()) {
+            ballThrowHandler.reset();
+        }
+    }
+
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {
         @Override
         public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState) {

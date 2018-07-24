@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -42,6 +41,8 @@ public class BallThrowHandler {
     private static final float defaultScaleX = 2f;
     private static final float defaultScaleY = 2f;
     private static final float defaultScaleZ = 2f;
+
+    private static final float MIN_Y_OFFSET = -100;
 
     private GVRContext mContext;
     private GVRScene mScene;
@@ -126,12 +127,7 @@ public class BallThrowHandler {
                 }
 
                 if (thrown) {
-                    resetRigidBody();
-                    mBall.getParent().removeChildObject(mBall);
-                    mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
-                    mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
-                    mScene.getMainCameraRig().addChildObject(mBall);
-                    thrown = false;
+                    reset();
                 } else {
                     Matrix4f rootMatrix = physicsRoot.getTransform().getModelMatrix4f();
                     rootMatrix.invert();
@@ -189,5 +185,18 @@ public class BallThrowHandler {
 
     public GVRSceneObject getBall() {
         return mBall;
+    }
+
+    public void reset() {
+        resetRigidBody();
+        mBall.getParent().removeChildObject(mBall);
+        mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
+        mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
+        mScene.getMainCameraRig().addChildObject(mBall);
+        thrown = false;
+    }
+
+    public boolean canBeReseted() {
+        return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
     }
 }
