@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
 import org.gearvrf.GVRResourceVolume;
 import org.gearvrf.GVRMain;
 import org.gearvrf.script.GVRScriptBundle;
@@ -49,7 +50,7 @@ public class GearVRJavascriptActivity extends GVRActivity {
         GearVRJavascriptMain main = new GearVRJavascriptMain();
         setMain(main, "gvr.xml");
 
-        GVRScriptManager sm = getGVRContext().getScriptManager();
+        GVRScriptManager sm = (GVRScriptManager)getGVRContext().getScriptManager();
 
         // Add utils for scripts
         sm.addVariable("utils", new ScriptUtils());
@@ -59,7 +60,7 @@ public class GearVRJavascriptActivity extends GVRActivity {
                 // Attach a script file directly (without using a GVRScriptBundle)
                 GVRScriptFile scriptFile;
                 try {
-                    scriptFile = sm.loadScript(
+                    scriptFile = (GVRScriptFile)sm.loadScript(
                             new GVRAndroidResource(getGVRContext(), "script.js"),
                             GVRScriptManager.LANG_JAVASCRIPT);
                     sm.attachScriptFile(main, scriptFile);

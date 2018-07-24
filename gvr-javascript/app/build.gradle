@@ -26,3 +26,8 @@ android {
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
 }
+
+dependencies {
+    debugCompile(name: 'script-debug', ext: 'aar')
+    releaseCompile(name: 'script-release', ext: 'aar')
+}
