@@ -15,6 +15,7 @@
 
 package org.gearvrf.arpet;
 
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -27,6 +28,8 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -50,12 +53,16 @@ public class BallThrowHandler {
 
     private float[] mForce = {0f, 50f, -50f};
 
+    GVRSceneObject physicsRoot = null;
+
     BallThrowHandler(GVRContext gvrContext) {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
 
         createBall();
         initController();
+
+        EventBus.getDefault().register(this);
     }
 
     public void setForceVector(float x, float y, float z) {
@@ -105,28 +112,52 @@ public class BallThrowHandler {
         mRigidBody.setEnable(false);
     }
 
+    @Subscribe
+    public void onGVRWorldReady(GVRSceneObject physicsRoot) {
+        this.physicsRoot = physicsRoot;
+    }
+
     private void initController() {
         final GVRTouchPadGestureListener gestureListener = new GVRTouchPadGestureListener() {
             @Override
             public boolean onDown(MotionEvent arg0) {
+                if (physicsRoot == null) {
+                    return true; // or false?
+                }
+
                 if (thrown) {
                     resetRigidBody();
-                    mScene.removeSceneObject(mBall);
+                    mBall.getParent().removeChildObject(mBall);
                     mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
+                    mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
                     mScene.getMainCameraRig().addChildObject(mBall);
                     thrown = false;
                 } else {
-                    Matrix4f ballMatrix = mBall.getTransform().getModelMatrix4f();
-                    mBall.getParent().removeChildObject(mBall);
+                    Matrix4f rootMatrix = physicsRoot.getTransform().getModelMatrix4f();
+                    rootMatrix.invert();
 
+                    // Calculating the new model matrix (T') for the ball: T' = iP x T
+                    Matrix4f ballMatrix = mBall.getTransform().getModelMatrix4f();
+                    rootMatrix.mul(ballMatrix, ballMatrix);
+
+                    // Add the ball as physics root child...
+                    mBall.getParent().removeChildObject(mBall);
+                    physicsRoot.addChildObject(mBall);
+
+                    // ... And set its model matrix to keep the same world matrix
+                    mBall.getTransform().setModelMatrix(ballMatrix);
+
+                    Vector3f force = new Vector3f(mForce[0], mForce[1], mForce[2]);
+
+                    // Force vector will be based on camera head rotation...
                     Matrix4f cameraMatrix = mScene.getMainCameraRig().getHeadTransform().getModelMatrix4f();
+
+                    // ... And same transformation is required
+                    rootMatrix.mul(cameraMatrix, cameraMatrix);
                     Quaternionf q = new Quaternionf();
                     q.setFromNormalized(cameraMatrix);
-                    Vector3f force = new Vector3f(mForce[0], mForce[1], mForce[2]);
                     force.rotate(q);
 
-                    mBall.getTransform().setModelMatrix(ballMatrix);
-                    mScene.addSceneObject(mBall);
                     mRigidBody.setEnable(true);
                     mRigidBody.applyCentralForce(force.x(), force.y(), force.z());
                     thrown = true;

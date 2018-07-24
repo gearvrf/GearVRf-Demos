@@ -9,10 +9,13 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.mixedreality.GVRAnchor;
+import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.physics.GVRWorld;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -77,10 +80,15 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private LinkedList<PlaneBoard> mBoards = new LinkedList<>();
 
-    PlaneHandler(GVRContext gvrContext, PetActivity.PetContext petContext) {
+    private GVRMixedReality mixedReality;
+    private GVRSceneObject physicsRoot;
+
+    PlaneHandler(GVRContext gvrContext, PetActivity.PetContext petContext, GVRMixedReality mixedReality) {
         mContext = gvrContext;
         mScene = mContext.getMainScene();
         mPetContext = petContext;
+
+        this.mixedReality = mixedReality;
 
         mContext.registerDrawFrameListener(this);
     }
@@ -117,6 +125,13 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         if (firstPlane == null) {
             firstPlane = plane;
             EventBus.getDefault().post(firstPlane);
+
+            physicsRoot = new GVRSceneObject(mContext);
+            physicsRoot.getTransform().setScale(0.01f, 0.01f, 0.01f);
+            GVRAnchor anchor = mixedReality.createAnchor(plane.getCenterPose(), physicsRoot);
+            mScene.addSceneObject(anchor);
+
+            EventBus.getDefault().post(physicsRoot);
         }
 
         PlaneBoard b = new PlaneBoard(plane);

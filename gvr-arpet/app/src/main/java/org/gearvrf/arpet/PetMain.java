@@ -70,7 +70,7 @@ public class PetMain extends GVRMain {
         ballThrowHandler = new BallThrowHandler(gvrContext);
         ballThrowHandler.enable();
 
-        planeHandler = new PlaneHandler(gvrContext, mPetContext);
+        planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
 
         mPet = new Character(mContext);
