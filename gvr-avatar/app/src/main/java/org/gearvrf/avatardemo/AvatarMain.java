@@ -18,7 +18,7 @@ import android.util.Log;
 public class AvatarMain extends GVRMain
 {
     //private final String mModelPath = "TRex_NoGround.fbx";
-    private final String mModelPath = "Mike_BellyDance.dae";
+    private final String mModelPath = "JazzDance/JazzDance.dae";
     private static final String TAG = "AVATAR";
 
     private GVRContext mGVRContext;
@@ -39,7 +39,7 @@ public class AvatarMain extends GVRMain
         float sf = 1 / bv.radius;
         model.getTransform().setScale(sf, sf, sf);
         bv = model.getBoundingVolume();
-        model.getTransform().setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - bv.radius);
+        model.getTransform().setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - 1.5f * bv.radius);
     }
 
     @Override
