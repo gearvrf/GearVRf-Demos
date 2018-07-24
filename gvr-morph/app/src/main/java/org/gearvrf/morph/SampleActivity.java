@@ -22,6 +22,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMeshMorph;
 import org.gearvrf.GVRPointLight;
@@ -34,6 +35,7 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.List;
 
 public class SampleActivity extends GVRActivity {
@@ -45,7 +47,8 @@ public class SampleActivity extends GVRActivity {
     }
 
     private  GVRSceneObject mObjectRoot;
-    private  int nBlendShapes = 15;
+    private  int animDuration = 50;
+    private GVRScene mScene = null;
 
     private class SampleMain extends GVRMain
     {
@@ -53,6 +56,7 @@ public class SampleActivity extends GVRActivity {
         public void onInit(GVRContext gvrContext)
         {
             GVRScene scene = gvrContext.getMainScene();
+            mScene = scene;
 
             GVRCameraRig rig = scene.getMainCameraRig();
             mObjectRoot = new GVRSceneObject(gvrContext);
@@ -70,55 +74,27 @@ public class SampleActivity extends GVRActivity {
 
             try
             {
-                addModeltoScene(filePath, new Vector3f(0.05f,0.05f,0.05f), new Vector3f(0, -8.5f, -6.5f));
+                addModeltoScene(filePath, new Vector3f(0.05f,0.05f,0.05f),
+                        new Vector3f(0, -8.5f, -6.5f));
             }
             catch (IOException ex)
             {
             }
 
-            GVRMeshMorph morph = addMorph(mObjectRoot, nBlendShapes);
-
             scene.addSceneObject(mObjectRoot);
 
-            GVRAnimator animator = setupAnimation(mObjectRoot, morph);
+            GVRAnimator animator = setupAnimation(mObjectRoot);
             animator.start();
         }
 
-        private GVRMeshMorph addMorph(GVRSceneObject model, int nBlendShapes)
+        private GVRAnimator setupAnimation(GVRSceneObject root)
         {
-            GVRSceneObject baseShape = model.getSceneObjectByName("Sloth_face");
 
-            GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), nBlendShapes, false);
+            GVRSceneObject baseObject = mObjectRoot.getSceneObjectByName("Sloth_face");
+            GVRMeshMorph morph = (GVRMeshMorph)baseObject.getComponent(GVRMeshMorph.getComponentType());
+            int numBlendShapes = morph.getBlendShapeCount();
 
-            baseShape.attachComponent(morph);
-            for (int i = 1; i <= nBlendShapes; ++i)
-            {
-                List<GVRVertexBuffer> vbuffs = baseShape.getRenderData().getMesh().getAnimationMeshInfo();
-                morph.setBlendShape(i - 1, vbuffs.get(i));
-            }
-            morph.update();
-            return morph;
-        }
-
-        private GVRAnimator setupAnimation(GVRSceneObject root, GVRMeshMorph morph)
-        {
-            float[] keys = new float[]{ 0, 0, 0, 0 ,0 ,0, 0, 0, 0 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    1, 1, 0, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    2, 0, 1, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    3, 0, 0, 1, 0, 0, 0, 0, 0 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    4, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0, 0, 1, 0 ,0 ,0,
-                    5, 0, 0, 0, 0, 0, 0, 0, 0 ,1 ,0, 0, 0, 0 ,0 ,0,
-                    6, 0, 0, 0, 0, 0, 0, 0, 1 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    7, 0, 0, 0, 0, 0, 0, 1, 0 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    8, 0, 0, 0, 0, 0, 0, 0, 1 ,0 ,0, 0, 0, 0 ,0 ,0,
-                    9, 0, 0, 0, 0, 0, 0, 0, 0 ,1 ,0, 0, 0, 0 ,0 ,0,
-                    10, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,1,0, 0, 0 ,0 ,0,
-                    11, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0,1, 0, 0 ,0 ,0,
-                    12, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0,0, 1, 0 ,0 ,0,
-                    13, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0,0, 0, 1 ,0 ,0,
-                    14, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0,0, 0, 0 ,1 ,0,
-                    15, 0, 0, 0, 0, 0, 0, 0, 0 ,0 ,0,0, 0, 0 ,0 ,1
-            };
+            float [] keys = generateAnimationKeys(numBlendShapes, animDuration);
 
             GVRAnimator animator = (GVRAnimator) root.getComponent(GVRAnimator.getComponentType());
             if (animator == null)
@@ -126,14 +102,45 @@ public class SampleActivity extends GVRActivity {
                 animator = new GVRAnimator(root.getGVRContext());
                 root.attachComponent(animator);
             }
-            GVRMorphAnimation morphAnim = new GVRMorphAnimation(morph, keys, 16);
+
+            GVRMorphAnimation morphAnim = new GVRMorphAnimation(morph, keys, numBlendShapes + 1);
             animator.addAnimation(morphAnim);
             animator.setRepeatMode(GVRRepeatMode.PINGPONG);
             animator.setRepeatCount(1000);
             return animator;
         }
 
-        private void addModeltoScene(String filePath, Vector3f scale, Vector3f position ) throws IOException {
+
+        /*
+
+        create animation keys in the format:
+        t1, 0, 0, 0, 0, .....0, 0, 0
+        t2, 0, 1, 0, 0, .....0, 0, 0
+        t3, 0, 0, 1, 0, .....0, 0, 0
+        t4, 0, 0, 0, 1, .....0, 0, 0
+        .
+        .
+
+        t1, t2, ... tn are timestamps in the range [0,animDuration]
+
+         */
+        private float[] generateAnimationKeys(int numBlendShapes, int timeTicks)
+        {
+            timeTicks ++;
+            int keyArraySize = numBlendShapes * timeTicks + timeTicks;
+            float [] keys = new float[keyArraySize];
+            int timeCounter = 0;
+            for(int i = 0; i < keyArraySize; i += (numBlendShapes + 1) )
+            {
+                keys[i] = timeCounter;
+                for(int j = i + 1; j <= i + numBlendShapes; j ++)
+                    keys[j] = (timeCounter == (j % (numBlendShapes + 1)) ) ? 1 : 0;
+                timeCounter ++;
+            }
+            return keys;
+        }
+
+        private void addModeltoScene(String filePath, Vector3f scale, Vector3f position) throws IOException {
 
             GVRAssetLoader loader = getGVRContext().getAssetLoader();
             GVRSceneObject root = loader.loadModel(filePath);
