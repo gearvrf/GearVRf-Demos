@@ -29,8 +29,12 @@ android {
 }
 
 dependencies {
-    debugCompile(name: 'script-debug', ext: 'aar')
-    releaseCompile(name: 'script-release', ext: 'aar')
+    if (findProject(':script')) {
+        implementation project (':script')
+    } else {
+        debugCompile(name: 'script-debug', ext: 'aar')
+        releaseCompile(name: 'script-release', ext: 'aar')
+    }
 
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':debugwebserver')) {

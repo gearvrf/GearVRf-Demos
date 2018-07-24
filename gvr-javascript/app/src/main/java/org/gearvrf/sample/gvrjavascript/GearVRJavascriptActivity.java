@@ -26,6 +26,9 @@ import org.gearvrf.script.GVRScriptBundle;
 import org.gearvrf.script.GVRScriptException;
 import org.gearvrf.script.GVRScriptFile;
 import org.gearvrf.script.GVRScriptManager;
+import org.gearvrf.script.IScriptFile;
+import org.gearvrf.script.IScriptBundle;
+import org.gearvrf.script.IScriptManager;
 
 import android.os.Bundle;
 
@@ -50,7 +53,7 @@ public class GearVRJavascriptActivity extends GVRActivity {
         GearVRJavascriptMain main = new GearVRJavascriptMain();
         setMain(main, "gvr.xml");
 
-        GVRScriptManager sm = (GVRScriptManager)getGVRContext().getScriptManager();
+        IScriptManager sm = getGVRContext().getScriptManager();
 
         // Add utils for scripts
         sm.addVariable("utils", new ScriptUtils());
@@ -58,11 +61,11 @@ public class GearVRJavascriptActivity extends GVRActivity {
         switch (mode) {
             case USE_SINGLE_SCRIPT: {
                 // Attach a script file directly (without using a GVRScriptBundle)
-                GVRScriptFile scriptFile;
+                IScriptFile scriptFile;
                 try {
                     scriptFile = (GVRScriptFile)sm.loadScript(
                             new GVRAndroidResource(getGVRContext(), "script.js"),
-                            GVRScriptManager.LANG_JAVASCRIPT);
+                            IScriptManager.LANG_JAVASCRIPT);
                     sm.attachScriptFile(main, scriptFile);
                 } catch (IOException | GVRScriptException e) {
                     e.printStackTrace();
@@ -72,7 +75,7 @@ public class GearVRJavascriptActivity extends GVRActivity {
 
             case USE_SCRIPT_BUNDLE: {
                 // Load a script bundle
-                GVRScriptBundle scriptBundle;
+                IScriptBundle scriptBundle;
                 try {
                     scriptBundle = sm.loadScriptBundle("script_bundle.json",
                             new GVRResourceVolume(getGVRContext(), GVRResourceVolume.VolumeType.ANDROID_ASSETS));
