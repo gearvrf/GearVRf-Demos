@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardView"
+    android:layout_width="@dimen/grid_item_width"
+    android:layout_height="@dimen/grid_item_height"
+    android:layout_margin="8.5px"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:cardCornerRadius="6px"
+    app:cardMaxElevation="1px"
+    app:cardUseCompatPadding="false"
+    tools:ignore="PxUsage,ContentDescription,HardcodedText,SpUsage">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
+
+        <!-- OVERLAY -->
+        <RelativeLayout
+            android:id="@+id/overlay_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_item_album"
+            android:padding="20px">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:ellipsize="end"
+                android:fontFamily="@string/font_roboto_medium"
+                android:maxLines="2"
+                android:text="@string/lorem_ipsum"
+                android:textColor="#FFFFFF"
+                android:textSize="24px"
+                android:visibility="invisible" />
+
+            <LinearLayout
+                android:id="@+id/info_video"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                tools:ignore="UseCompoundDrawables">
+
+                <ImageView
+                    android:id="@+id/ic_count"
+                    android:layout_width="21px"
+                    android:layout_height="21px"
+                    android:src="@drawable/ic_time"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="9px"
+                    android:fontFamily="@string/font_roboto_medium"
+                    android:text="00:00"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20px"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/ic_360"
+                    android:layout_width="44.8px"
+                    android:layout_height="45.3px"
+                    android:layout_marginStart="90px"
+                    android:src="@drawable/ic_video360"
+                    android:visibility="invisible" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
