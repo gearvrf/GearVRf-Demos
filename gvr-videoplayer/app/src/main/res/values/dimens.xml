@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="grid_item_width">272px</dimen>
+    <dimen name="grid_item_height">176px</dimen>
+    <dimen name="grid_width">877px</dimen>
+    <dimen name="grid_height">516px</dimen>
+    <dimen name="breadcrumb_height">64px</dimen>
+    <dimen name="breadcrumb_item_width">159px</dimen>
+    <dimen name="breadcrumb_text_size">24px</dimen>
+</resources>

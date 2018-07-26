@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg_gallery_item_home_normal">#8C000000</color>
+    <color name="bg_gallery_item_home_hovered">#B3000000</color>
+    <color name="bg_gallery_item_album_normal">#7A000000</color>
+    <color name="bg_gallery_item_album_hovered">#BF000000</color>
+    <color name="bg_gallery_item_video_hovered">#BF000000</color>
+</resources>
