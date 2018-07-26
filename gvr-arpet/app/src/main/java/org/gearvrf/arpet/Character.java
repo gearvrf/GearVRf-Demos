@@ -19,6 +19,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -74,11 +75,11 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
         Vector3f vectorOrig = new Vector3f();
         Vector3f direction = new Vector3f();
 
-        vectorDest.set(object.getTransform().getPositionX(), object.getTransform().getPositionY(),
-                object.getTransform().getPositionZ());
+        float[] modelMatrix = object.getTransform().getModelMatrix();
+        vectorDest.set(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 
-        vectorOrig.set(getTransform().getPositionX(), getTransform().getPositionY(),
-                getTransform().getPositionZ());
+        float[] originModelMatrix = getTransform().getModelMatrix();
+        vectorOrig.set(originModelMatrix[12], originModelMatrix[13], originModelMatrix[14]);
 
         vectorDest.sub(vectorOrig, direction);
         direction.normalize();
@@ -107,7 +108,17 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
                 right.x, right.y, right.z, 0.0f,
                 up.x, up.y, up.z, 0.0f,
                 direction.x, direction.y, direction.z, 0.0f,
-                vectorOrig.x, vectorOrig.y, vectorOrig.z, 1.0f);
+                0.0f, 0.0f, 0.0f, 1.0f);
+
+        if (getParent() != null) {
+            float rotationX = getParent().getTransform().getRotationX();
+            float rotationY = getParent().getTransform().getRotationY();
+            float rotationZ = getParent().getTransform().getRotationZ();
+            float rotationW = getParent().getTransform().getRotationW();
+            Quaternionf parentQuaternion = new Quaternionf(rotationX, rotationY, rotationZ, rotationW);
+            parentQuaternion = parentQuaternion.invert();
+            matrix = matrix.rotate(parentQuaternion);
+        }
 
         getTransform().setModelMatrix(matrix);
     }
