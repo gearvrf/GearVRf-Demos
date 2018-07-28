@@ -32,7 +32,7 @@ public class AvatarMain extends GVRMain
 {
     //private final String mModelPath = "TRex_NoGround.fbx";
     private final String mModelPath = "Andromeda/Andromeda.dae";
-    private final String mAnimationPath = "JazzDance/JazzDance.dae";
+    private final String mAnimationPath = "Boxing.dae";
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
@@ -193,13 +193,7 @@ public class AvatarMain extends GVRMain
             mAnimator = (GVRAnimator) animRoot.getComponent(GVRAnimator.getComponentType());
             GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) mAnimator.getAnimation(0);
             GVRPoseMapper poseMapper = new GVRPoseMapper(mAvatarSkeleton, skelAnim.getSkeleton());
-            int[] bonemap = new int[mAvatarSkeleton.getNumBones()];
 
-            for (int i = 0; i < bonemap.length; ++i)
-            {
-                bonemap[i] = i;
-            }
-            poseMapper.setBoneMap(bonemap);
             mAvatar.getChildByIndex(0).detachComponent(GVRAnimator.getComponentType());
             mAnimator.addAnimation(poseMapper);
             mAvatar.getChildByIndex(0).attachComponent(mAnimator);
