@@ -82,6 +82,8 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
         vectorOrig.set(originModelMatrix[12], originModelMatrix[13], originModelMatrix[14]);
 
         vectorDest.sub(vectorOrig, direction);
+        // Make the object be rotated in Y axis only
+        direction.y = 0;
         direction.normalize();
 
         // From: http://mmmovania.blogspot.com/2014/03/making-opengl-object-look-at-another.html
