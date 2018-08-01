@@ -24,8 +24,10 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.physics.ICollisionEvents;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,7 +35,7 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class BallThrowHandler {
+public class BallThrowHandler implements ICollisionEvents {
     private static final float defaultPositionX = 0f;
     private static final float defaultPositionY = 0f;
     private static final float defaultPositionZ = -20f;
@@ -111,6 +113,7 @@ public class BallThrowHandler {
         mRigidBody = new GVRRigidBody(mContext, 1.0f);
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
+        mBall.getEventReceiver().addListener(this);
     }
 
     @Subscribe
@@ -199,4 +202,17 @@ public class BallThrowHandler {
     public boolean canBeReseted() {
         return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
     }
+
+    @Override
+    public void onEnter(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
+        CollisionEvent event = new CollisionEvent(gvrSceneObject1, CollisionEvent.Type.ENTER);
+        EventBus.getDefault().post(event);
+    }
+
+    @Override
+    public void onExit(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
+        CollisionEvent event = new CollisionEvent(gvrSceneObject1, CollisionEvent.Type.EXIT);
+        EventBus.getDefault().post(event);
+    }
+
 }

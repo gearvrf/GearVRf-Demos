@@ -24,6 +24,7 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
+import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -101,8 +102,6 @@ public class PetMain extends GVRMain {
         float[] pose = plane.getCenterPose();
         GVRAnchor anchor = mMixedReality.createAnchor(pose, mPet);
         mScene.addSceneObject(anchor);
-
-        mPet.lookAt(ballThrowHandler.getBall());
     }
 
     @Override
@@ -111,6 +110,12 @@ public class PetMain extends GVRMain {
         if (ballThrowHandler.canBeReseted()) {
             ballThrowHandler.reset();
         }
+        mPet.lookAt(ballThrowHandler.getBall());
+    }
+
+    @Subscribe
+    public void onCollisionDetected(CollisionEvent event) {
+        // TODO: Handle here the collision event according to its type
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {
