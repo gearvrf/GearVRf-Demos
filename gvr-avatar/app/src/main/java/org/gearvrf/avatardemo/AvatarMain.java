@@ -32,7 +32,9 @@ public class AvatarMain extends GVRMain
 {
     //private final String mModelPath = "TRex_NoGround.fbx";
     private final String mModelPath = "Andromeda/Andromeda.dae";
-    private final String mAnimationPath = "Boxing.dae";
+//    private final String mAnimationPath = "Andromeda/HipHopDancing.dae";
+    private final String mAnimationPath = "Andromeda/Bellydancing.dae";
+//    private final String mAnimationPath = "Andromeda/Boxing.dae";
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
@@ -41,7 +43,6 @@ public class AvatarMain extends GVRMain
     private GVRAnimator     mAnimator = null;
     private GVRActivity     mActivity;
     private GVRSkeleton     mAvatarSkeleton;
-    private GVRPoseMapper   mPoseMapper = null;
     private GVRSkeleton     mDeepMotionSkeleton;
 
     private String[] mDeepMotionBoneNames =
@@ -169,12 +170,16 @@ public class AvatarMain extends GVRMain
     public void centerModel(GVRSceneObject model, GVRTransform camTrans)
     {
         GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-        float x = camTrans.getPositionX();
-        float y = camTrans.getPositionY();
-        float z = camTrans.getPositionZ();
+        float x = 0;
+        float y = 0;
+        float z = 0;
+        if (camTrans != null)
+        {
+            x = camTrans.getPositionX();
+            y = camTrans.getPositionY();
+            z = camTrans.getPositionZ();
+        }
         float sf = 1 / bv.radius;
-        model.getTransform().setScale(sf, sf, sf);
-        bv = model.getBoundingVolume();
         model.getTransform().setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - 1.5f * bv.radius);
     }
 
@@ -188,17 +193,12 @@ public class AvatarMain extends GVRMain
 
         try
         {
+            GVRSceneObject avatarRoot = new GVRSceneObject(mContext);
+            avatarRoot.setName("AvatarRoot");
             loadAvatar(mContext, mModelPath);
-            GVRSceneObject animRoot = mContext.getAssetLoader().loadModel(mAnimationPath);
-            mAnimator = (GVRAnimator) animRoot.getComponent(GVRAnimator.getComponentType());
-            GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) mAnimator.getAnimation(0);
-            GVRPoseMapper poseMapper = new GVRPoseMapper(mAvatarSkeleton, skelAnim.getSkeleton());
-
-            mAvatar.getChildByIndex(0).detachComponent(GVRAnimator.getComponentType());
-            mAnimator.addAnimation(poseMapper);
-            mAvatar.getChildByIndex(0).attachComponent(mAnimator);
-            mAnimator.setRepeatMode(GVRRepeatMode.REPEATED);
-            mAnimator.setRepeatCount(-1);
+            centerModel(mAvatar, mScene.getMainCameraRig().getTransform());
+            avatarRoot.addChildObject(mAvatar);
+            mScene.addSceneObject(avatarRoot);
         }
         catch (IOException e)
         {
@@ -216,10 +216,11 @@ public class AvatarMain extends GVRMain
 
         settings.add(GVRImportSettings.NO_ANIMATION);
         mAvatar = new GVRSceneObject(ctx);
+        mAvatar.setName("Avatar");
         GVRSceneObject avatar = ctx.getAssetLoader().loadModel(avatarFile, settings, false, null);
         mAvatar.addChildObject(avatar);
-        centerModel(mAvatar, mScene.getMainCameraRig().getTransform());
-        mScene.addSceneObject(mAvatar);
+        avatar.detachComponent(GVRAnimator.getComponentType());
+
         List<GVRComponent> components = avatar.getAllComponents(GVRSkeleton.getComponentType());
         String[] boneNames = null;
 
@@ -238,9 +239,26 @@ public class AvatarMain extends GVRMain
         else
         {
             Log.e(TAG, "Avatar skeleton not found");
-            mAvatarSkeleton = new GVRSkeleton(ctx, mMixamoBoneParents);
-            mAvatarSkeleton.setBoneNames(mMixamoBoneNames);
         }
+    }
+
+    private void loadAnimation(String animPath) throws IOException
+    {
+        GVRSceneObject animRoot = mContext.getAssetLoader().loadModel(animPath);
+        mAnimator = (GVRAnimator) animRoot.getComponent(GVRAnimator.getComponentType());
+        GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) mAnimator.getAnimation(0);
+        GVRPoseMapper poseMapper = new GVRPoseMapper(mAvatarSkeleton, skelAnim.getSkeleton());
+        GVRPose bindpose = skelAnim.getSkeleton().getBindPose();
+        Vector3f v = new Vector3f();
+
+        bindpose.setScale(1, 1, 1);
+        bindpose.getLocalPosition( 1, v);
+        mAvatarSkeleton.getBindPose().setPosition(v.x, v.y, v.z);
+        poseMapper.animate(mAvatarSkeleton, 0);
+        mAnimator.addAnimation(poseMapper);
+        mAvatar.getChildByIndex(0).attachComponent(mAnimator);
+        mAnimator.setRepeatMode(GVRRepeatMode.REPEATED);
+        mAnimator.setRepeatCount(-1);
     }
 
     private GVRSkeletonAnimation loadTRSAnimation(String animFile) throws IOException
@@ -257,7 +275,18 @@ public class AvatarMain extends GVRMain
 
     public void onSingleTapUp(MotionEvent event)
     {
-        if (mAnimator != null)
+        if (mAnimator == null)
+        {
+            try
+            {
+                loadAnimation(mAnimationPath);
+            }
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+            }
+        }
+        else
         {
             if (mAnimator.isRunning())
             {
