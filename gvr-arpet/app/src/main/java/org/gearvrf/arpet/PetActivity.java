@@ -35,7 +35,7 @@ public class PetActivity extends GVRActivity {
 
         Log.d(TAG, "onCreate");
 
-        mPetContext = new PetContext();
+        mPetContext = PetContext.INSTANCE;
         mMain = new PetMain(mPetContext);
 
         setMain(mMain, "gvr.xml");
@@ -56,9 +56,10 @@ public class PetActivity extends GVRActivity {
         mMain.pause();
     }
 
+    public enum PetContext {
 
+        INSTANCE;
 
-    public class PetContext {
         private final HandlerThread mHandlerThread;
         private final Handler mHandler;
         private final Runnable mPauseTask;

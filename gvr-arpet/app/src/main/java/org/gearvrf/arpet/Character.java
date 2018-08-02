@@ -15,37 +15,81 @@
 
 package org.gearvrf.arpet;
 
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
+import android.util.Log;
+
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.mixedreality.GVRMixedReality;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.IOException;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public class Character extends GVRSceneObject implements GVRDrawFrameListener {
+public class Character extends AnchoredObject implements GVRDrawFrameListener {
 
-    private enum PetAction {
-        IDLE,
-        TO_BALL,
-        TO_SCREEN,
-        TO_FOOD,
-        TO_TOILET,
-        TO_BED,
-        LOOK_AT
+    @IntDef({PetAction.IDLE, PetAction.TO_BALL,
+            PetAction.TO_SCREEN, PetAction.TO_FOOD,
+            PetAction.TO_TOILET, PetAction.TO_BED,
+            PetAction.LOOK_AT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PetAction {
+        int IDLE = 0;
+        int TO_BALL = 1;
+        int TO_SCREEN = 2;
+        int TO_FOOD = 3;
+        int TO_TOILET = 4;
+        int TO_BED = 5;
+        int LOOK_AT = 6;
     }
 
-    private PetAction mCurrentAction;
+    @PetAction
+    private int mCurrentAction; // default action IDLE
     private GVRContext mContext;
+    private float[] mCurrentPose;
+    private ToScreenMovement mToScreenMovement;
 
-    public Character(GVRContext gvrContext) {
-        super(gvrContext);
+    Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
+        super(gvrContext, mixedReality, pose);
+
         mCurrentAction = PetAction.IDLE;
         mContext = gvrContext;
-
+        mCurrentPose = pose;
         load3DModel();
 
+        mToScreenMovement = new ToScreenMovement<>(this, mixedReality);
+        mToScreenMovement.setPetMovementListener(new OnPetMovementListener() {
+            @Override
+            public void onStartMove() {
+                Log.d(TAG, "onStartMove: ");
+            }
+
+            @Override
+            public void onMove(float x, float y, float z) {
+                Log.d(TAG, "onMove: ");
+
+                // Keep the pet looking for the GVR camera
+                lookAt(mContext.getMainScene().getMainCameraRig().getHeadTransform().getModelMatrix());
+
+                // Update current position. The onDrawFrame() method uses this point to update
+                // position of this character
+                mCurrentPose[12] = x;
+                mCurrentPose[13] = y;
+                mCurrentPose[14] = z;
+            }
+
+            @Override
+            public void onStopMove() {
+                Log.d(TAG, "onStopMove: ");
+                mCurrentAction = PetAction.IDLE;
+                setMovementEnabled(false);
+            }
+        });
     }
 
     public void goToBall() {
@@ -54,6 +98,8 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
 
     public void goToScreen() {
         mCurrentAction = PetAction.TO_SCREEN;
+        setMovementEnabled(true);
+        mToScreenMovement.move();
     }
 
     public void goToFood() {
@@ -70,16 +116,28 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
 
     public void lookAt(GVRSceneObject object) {
 
-        mCurrentAction = PetAction.LOOK_AT;
+        //mCurrentAction = PetAction.LOOK_AT;
 
         if (object == null)
             return;
+
+        lookAt(object.getTransform().getModelMatrix());
+    }
+
+    private void moveToBall() {
+
+    }
+
+    private void moveToScreen() {
+
+    }
+
+    private void lookAt(float[] modelMatrix) {
 
         Vector3f vectorDest = new Vector3f();
         Vector3f vectorOrig = new Vector3f();
         Vector3f direction = new Vector3f();
 
-        float[] modelMatrix = object.getTransform().getModelMatrix();
         vectorDest.set(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
 
         float[] originModelMatrix = getTransform().getModelMatrix();
@@ -127,13 +185,6 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
         }
 
         getTransform().setModelMatrix(matrix);
-    }
-
-    private void moveToBall() {
-
-    }
-
-    private void moveToScreen() {
 
     }
 
@@ -149,6 +200,46 @@ public class Character extends GVRSceneObject implements GVRDrawFrameListener {
 
     @Override
     public void onDrawFrame(float v) {
+        if (mCurrentAction == PetAction.TO_SCREEN) {
+            Log.d("", "onDrawFrame: " + mCurrentPose[12] + ", " + mCurrentPose[13] + ", " + mCurrentPose[14]);
+            try {
+                updatePose(mCurrentPose);
+            } catch (Throwable throwable) {
+                setMovementEnabled(false);
+                throwable.printStackTrace();
+            }
+        }
+    }
 
+    /**
+     * Enable calling for {@link #onDrawFrame(float)}
+     */
+    private void registerDrawFrameListener() {
+        getGVRContext().registerDrawFrameListener(this);
+    }
+
+    /**
+     * Disable calling for {@link #onDrawFrame(float)}
+     */
+    private void unregisterDrawFrameListener() {
+        getGVRContext().unregisterDrawFrameListener(this);
+    }
+
+    /**
+     * Whether the pet should move or not
+     *
+     * @param enabled whether the pet should move or not
+     */
+    private void setMovementEnabled(boolean enabled) {
+        if (enabled) {
+            registerDrawFrameListener();
+        } else {
+            unregisterDrawFrameListener();
+        }
+    }
+
+    @PetAction
+    public int getCurrentAction() {
+        return mCurrentAction;
     }
 }

@@ -25,6 +25,8 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
+import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -74,8 +76,6 @@ public class PetMain extends GVRMain {
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
 
-        mPet = new Character(mContext);
-
         cube = new GVRSceneObject(gvrContext);
         cube.getTransform().setPosition(0f, 0f, -10f);
         GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
@@ -83,6 +83,8 @@ public class PetMain extends GVRMain {
         cube.attachComponent(collider);
 
         mScene.addSceneObject(cube);
+
+        disableCursor();
     }
 
     public void resume() {
@@ -99,9 +101,16 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onPlaneDetected(GVRPlane plane) {
-        float[] pose = plane.getCenterPose();
-        GVRAnchor anchor = mMixedReality.createAnchor(pose, mPet);
-        mScene.addSceneObject(anchor);
+        mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
+        mScene.addSceneObject(mPet.getAnchor());
+        mPet.lookAt(ballThrowHandler.getBall());
+
+        mPetContext.runDelayedOnPetThread(new Runnable() {
+            @Override
+            public void run() {
+                mPet.goToScreen();
+            }
+        }, 2000);
     }
 
     @Override
@@ -110,7 +119,10 @@ public class PetMain extends GVRMain {
         if (ballThrowHandler.canBeReseted()) {
             ballThrowHandler.reset();
         }
-        mPet.lookAt(ballThrowHandler.getBall());
+
+        if (mPet != null && mPet.getCurrentAction() != Character.PetAction.TO_SCREEN) {
+            mPet.lookAt(ballThrowHandler.getBall());
+        }
     }
 
     @Subscribe
@@ -124,6 +136,15 @@ public class PetMain extends GVRMain {
 
         }
     };
+
+    private void disableCursor() {
+        GVRInputManager inputManager = mContext.getInputManager();
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
+                newController.setCursor(null);
+            }
+        });
+    }
 
     public class TouchEvents implements ITouchEvents {
         @Override
