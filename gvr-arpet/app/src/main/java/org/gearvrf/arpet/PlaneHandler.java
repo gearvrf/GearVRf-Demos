@@ -1,7 +1,6 @@
 package org.gearvrf.arpet;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
@@ -142,7 +141,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         plane.setSceneObject(createQuadPlane());
         mScene.addSceneObject(plane);
 
-        if (firstPlane == null) {
+        if (firstPlane == null && plane.getPlaneType() != GVRPlane.Type.VERTICAL) {
             firstPlane = plane;
             EventBus.getDefault().post(firstPlane);
 
