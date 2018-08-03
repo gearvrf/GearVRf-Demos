@@ -38,4 +38,8 @@ public class CollisionEvent {
     public GVRSceneObject getObject() {
         return mObject;
     }
+
+    public void setType(Type type) {
+        mType = type;
+    }
 }

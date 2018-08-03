@@ -50,6 +50,7 @@ public class BallThrowHandler implements ICollisionEvents {
     private GVRScene mScene;
     private GVRSceneObject mBall;
     private GVRRigidBody mRigidBody;
+    private CollisionEvent mCollisionEvent;
 
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
@@ -205,14 +206,14 @@ public class BallThrowHandler implements ICollisionEvents {
 
     @Override
     public void onEnter(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
-        CollisionEvent event = new CollisionEvent(gvrSceneObject1, CollisionEvent.Type.ENTER);
-        EventBus.getDefault().post(event);
+        mCollisionEvent = new CollisionEvent(gvrSceneObject1, CollisionEvent.Type.ENTER);
+        EventBus.getDefault().post(mCollisionEvent);
     }
 
     @Override
     public void onExit(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
-        CollisionEvent event = new CollisionEvent(gvrSceneObject1, CollisionEvent.Type.EXIT);
-        EventBus.getDefault().post(event);
+        mCollisionEvent.setType(CollisionEvent.Type.EXIT);
+        EventBus.getDefault().post(mCollisionEvent);
     }
 
 }
