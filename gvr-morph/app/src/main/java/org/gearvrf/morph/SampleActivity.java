@@ -143,7 +143,7 @@ public class SampleActivity extends GVRActivity {
         private void addModeltoScene(String filePath, Vector3f scale, Vector3f position) throws IOException {
 
             GVRAssetLoader loader = getGVRContext().getAssetLoader();
-            GVRSceneObject root = loader.loadModel(filePath);
+            GVRSceneObject root = loader.loadModel(filePath,GVRImportSettings.getRecommendedMorphSettings(), false, null);
             root.getTransform().setScale(scale.x,scale.y,scale.z);
             root.getTransform().setPosition(position.x, position.y, position.z);
 
