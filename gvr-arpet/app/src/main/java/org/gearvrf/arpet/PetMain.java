@@ -67,7 +67,7 @@ public class PetMain extends GVRMain {
         mMixedReality.resume();
 
         GVRWorld world = new GVRWorld(gvrContext);
-        world.setGravity(0f, -10f, 0f);
+        world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
 
         ballThrowHandler = new BallThrowHandler(gvrContext);

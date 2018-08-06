@@ -88,6 +88,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
                 oldHeight = plane.getHeight();
                 oldWidth = plane.getWidth();
                 GVRRigidBody board = new GVRRigidBody(mContext, 0f);
+                board.setRestitution(0.5f);
+                board.setFriction(1.0f);
                 box.attachComponent(board);
             }
         }

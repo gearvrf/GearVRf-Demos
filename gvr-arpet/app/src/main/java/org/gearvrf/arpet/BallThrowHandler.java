@@ -20,7 +20,6 @@ import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
-import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -28,7 +27,6 @@ import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.ICollisionEvents;
-import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
@@ -57,7 +55,7 @@ public class BallThrowHandler implements ICollisionEvents {
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
 
-    private float[] mForce = {0f, 50f, -50f};
+    private float[] mForce = {0f, 80f, -80f};
 
     GVRSceneObject physicsRoot = null;
 
@@ -99,6 +97,8 @@ public class BallThrowHandler implements ICollisionEvents {
         mBall.attachComponent(new GVRMeshCollider(mContext, false));
 
         mRigidBody = new GVRRigidBody(mContext, 0.2f);
+        mRigidBody.setRestitution(1.0f);
+        mRigidBody.setFriction(0.5f);
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
         mBall.getEventReceiver().addListener(this);
