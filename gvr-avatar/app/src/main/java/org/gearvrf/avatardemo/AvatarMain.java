@@ -195,6 +195,7 @@ public class AvatarMain extends GVRMain
         mDeepMotionSkeleton.setBoneNames(mDeepMotionBoneNames);
         mAvatar = new GVRAvatar(gvrContext, "Andromeda");
 
+        mAvatar.getEventReceiver().addListener(mAvatarListener);
         try
         {
             mScene.addSceneObject(mAvatar.getModel());
