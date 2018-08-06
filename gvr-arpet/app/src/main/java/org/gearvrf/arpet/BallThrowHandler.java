@@ -35,14 +35,16 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.io.IOException;
+
 public class BallThrowHandler implements ICollisionEvents {
     private static final float defaultPositionX = 0f;
     private static final float defaultPositionY = 0f;
     private static final float defaultPositionZ = -20f;
 
-    private static final float defaultScaleX = 2f;
-    private static final float defaultScaleY = 2f;
-    private static final float defaultScaleZ = 2f;
+    private static final float defaultScaleX = 20f;
+    private static final float defaultScaleY = 20f;
+    private static final float defaultScaleZ = 20f;
 
     private static final float MIN_Y_OFFSET = -100;
 
@@ -89,29 +91,14 @@ public class BallThrowHandler implements ICollisionEvents {
     }
 
     private void createBall() {
-        mBall = new GVRSphereSceneObject(mContext, true);
+        load3DModel();
 
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
 
-//        try {
-//            GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, "TX_tennisball_DIF.png"));
-//            GVRMaterial mat = new GVRMaterial(mContext);
-//            mat.setMainTexture(tex);
-//            mBall.getRenderData().setMaterial(mat);
-//            mBall.getRenderData().setAlphaBlend(true);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-        GVRMaterial red = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Phong.ID);
-        red.setDiffuseColor(1f, 0f, 0f, 1f);
-        mBall.getRenderData().setMaterial(red);
-        mBall.getRenderData().setAlphaBlend(true);
-
         mBall.attachComponent(new GVRMeshCollider(mContext, false));
 
-        mRigidBody = new GVRRigidBody(mContext, 1.0f);
+        mRigidBody = new GVRRigidBody(mContext, 0.2f);
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
         mBall.getEventReceiver().addListener(this);
@@ -202,6 +189,18 @@ public class BallThrowHandler implements ICollisionEvents {
 
     public boolean canBeReseted() {
         return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
+    }
+
+    private void load3DModel() {
+        GVRSceneObject sceneObject;
+        try {
+            sceneObject = mContext.getAssetLoader().loadModel("objects/ball.fbx");
+            GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
+            ball.getParent().removeChildObject(ball);
+            mBall = ball;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
