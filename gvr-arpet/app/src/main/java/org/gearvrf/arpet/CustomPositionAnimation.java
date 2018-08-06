@@ -76,7 +76,7 @@ public class CustomPositionAnimation<T extends AnchoredObject> extends GVRTransf
         this.mOnAnimationListener = listener;
     }
 
-    public void setEndPosition(Vector3f end) {
+    private void setEndPosition(Vector3f end) {
 
         mStartX = mCurrentPose[POSE_X];
         mStartY = mCurrentPose[POSE_Y];

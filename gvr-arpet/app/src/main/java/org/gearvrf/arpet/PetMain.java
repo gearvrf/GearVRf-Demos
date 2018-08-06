@@ -100,14 +100,19 @@ public class PetMain extends GVRMain {
     }
 
     @Subscribe
-    public void onPlaneDetected(GVRPlane plane) {
+    public void onPlaneDetected(final GVRPlane plane) {
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
         mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(ballThrowHandler.getBall());
 
+        //movePetToScreen(plane);
+    }
+
+    private void movePetToScreen(final GVRPlane boundary) {
         mPetContext.runDelayedOnPetThread(new Runnable() {
             @Override
             public void run() {
+                mPet.setBoundaryPlane(boundary);
                 mPet.goToScreen();
             }
         }, 2000);

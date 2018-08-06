@@ -22,6 +22,7 @@ import android.util.Log;
 
 import org.gearvrf.animation.GVRAccelerateDecelerateInterpolator;
 import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Vector3f;
 
 /**
@@ -43,17 +44,23 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
     private OnPetMovementListener mPetMovementListener;
     private CustomPositionAnimation mAnimation;
     private GVRMixedReality mMixedReality;
+    private GVRPlane mBoundaryPlane;
 
-    private float mStartY; // Holds object's Y position fixed during animation
     private float mCameraDisplacement;
     private float mDistanceToTarget;
     private float mAnimationDuration;
     private float[] mCameraPose;
+    private float[] mObjectPose;
+    private float[] mBoundaryPlaneCenterPose = new float[16];
 
     private Vector3f mObjectPosition = new Vector3f();
     private Vector3f mPreviousCameraPosition = new Vector3f();
     private Vector3f mCameraPosition = new Vector3f();
 
+    /**
+     * @param objectToMove The object to be moved.
+     * @param mixedReality The mixed reality session.
+     */
     ToScreenMovement(@NonNull T objectToMove, @NonNull final GVRMixedReality mixedReality) {
 
         mObjectToMove = objectToMove;
@@ -67,20 +74,24 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
         this.mPetMovementListener = listener;
     }
 
+    /**
+     * Stops running movement then starts a new movement.
+     */
     @Override
     public void move() {
-        PetActivity.PetContext.INSTANCE.runOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mAnimation != null) {
-                    mAnimation.stop();
-                }
-                initializeAnimation();
-                Log.d(TAG, "run: Movement stopped!");
-                mStartY = mObjectPosition.y;
-                startMoveDelayed();
-            }
-        });
+        if (mAnimation != null) {
+            mAnimation.stop();
+        }
+        initializeAnimation();
+        Log.d(TAG, "run: Movement stopped!");
+        startMoveDelayed();
+    }
+
+    public void stop() {
+        if (mAnimation != null) {
+            mAnimation.stop();
+            mAnimation = null;
+        }
     }
 
     private void startMoveDelayed() {
@@ -111,9 +122,10 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
     private void updatePositionHolders() {
 
         mCameraPose = mMixedReality.getCameraPoseMatrix();
+        mObjectPose = mObjectToMove.getPoseMatrix();
 
         getPositionFromPose(mCameraPosition, mCameraPose);
-        getPositionFromPose(mObjectPosition, mObjectToMove.getPoseMatrix());
+        getPositionFromPose(mObjectPosition, mObjectPose);
 
         mCameraDisplacement = mCameraPosition.distance(mPreviousCameraPosition);
         mDistanceToTarget = mCameraPosition.distance(mObjectPosition);
@@ -130,8 +142,24 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
         }
     }
 
+    private void checkBoundaryPlane() {
+
+        if (mBoundaryPlane != null) {
+
+            mBoundaryPlane.getCenterPose(mBoundaryPlaneCenterPose);
+            mObjectPose[POSE_Y] = mBoundaryPlaneCenterPose[POSE_Y];
+
+            if (!mBoundaryPlane.isPoseInPolygon(mObjectPose)) {
+                mAnimation.stop();
+                if (mPetMovementListener != null) {
+                    mPetMovementListener.onStopMove();
+                }
+            }
+        }
+    }
+
     private void resetMovement() {
-        mAnimation.stop();
+        stop();
         initializeAnimation();
         mAnimation.start();
     }
@@ -147,8 +175,17 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
     }
 
     private void printStatus() {
-        Log.d(TAG, String.format("onAnimate / ObjectPosition: %s / CameraPosition= %s / DistanceToTarget= %.3f / CameraDisplacement= %.3f / AnimDuration= %.3f",
+        Log.d(TAG, String.format("ObjectPosition: %s / CameraPosition= %s / DistanceToTarget= %.3f / CameraDisplacement= %.3f / AnimDuration= %.3f",
                 mObjectPosition, mCameraPosition, mDistanceToTarget, mCameraDisplacement, mAnimationDuration));
+    }
+
+    /**
+     * Sets the boundary for moving the object
+     *
+     * @param boundary the movement boundary.
+     */
+    public void setBoundaryPlane(GVRPlane boundary) {
+        this.mBoundaryPlane = boundary;
     }
 
     private OnPositionAnimationListener mAnimationListener = new OnPositionAnimationListener() {
@@ -165,9 +202,10 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
             updatePositionHolders();
             checkCameraDisplacementThreshold();
             printStatus();
+            checkBoundaryPlane();
             if (mPetMovementListener != null) {
                 // Move keeping Y value fixed in mStartY
-                mPetMovementListener.onMove(x, mStartY, z);
+                mPetMovementListener.onMove(x, mObjectPosition.y, z);
             }
         }
 

@@ -23,6 +23,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -63,33 +64,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener {
         load3DModel();
 
         mToScreenMovement = new ToScreenMovement<>(this, mixedReality);
-        mToScreenMovement.setPetMovementListener(new OnPetMovementListener() {
-            @Override
-            public void onStartMove() {
-                Log.d(TAG, "onStartMove: ");
-            }
-
-            @Override
-            public void onMove(float x, float y, float z) {
-                Log.d(TAG, "onMove: ");
-
-                // Keep the pet looking for the GVR camera
-                lookAt(mContext.getMainScene().getMainCameraRig().getHeadTransform().getModelMatrix());
-
-                // Update current position. The onDrawFrame() method uses this point to update
-                // position of this character
-                mCurrentPose[12] = x;
-                mCurrentPose[13] = y;
-                mCurrentPose[14] = z;
-            }
-
-            @Override
-            public void onStopMove() {
-                Log.d(TAG, "onStopMove: ");
-                mCurrentAction = PetAction.IDLE;
-                setMovementEnabled(false);
-            }
-        });
+        mToScreenMovement.setPetMovementListener(mOnPetMovementListener);
     }
 
     public void goToBall() {
@@ -242,4 +217,36 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener {
     public int getCurrentAction() {
         return mCurrentAction;
     }
+
+    public void setBoundaryPlane(GVRPlane boundary) {
+        mToScreenMovement.setBoundaryPlane(boundary);
+    }
+
+    private OnPetMovementListener mOnPetMovementListener = new OnPetMovementListener() {
+        @Override
+        public void onStartMove() {
+            Log.d(TAG, "onStartMove: ");
+        }
+
+        @Override
+        public void onMove(float x, float y, float z) {
+            Log.d(TAG, "onMove: ");
+
+            // Keep the pet looking for the GVR camera
+            lookAt(mContext.getMainScene().getMainCameraRig().getHeadTransform().getModelMatrix());
+
+            // Update current position. The onDrawFrame() method uses this point to update
+            // position of this character
+            mCurrentPose[12] = x;
+            mCurrentPose[13] = y;
+            mCurrentPose[14] = z;
+        }
+
+        @Override
+        public void onStopMove() {
+            Log.d(TAG, "onStopMove: ");
+            mCurrentAction = PetAction.IDLE;
+            setMovementEnabled(false);
+        }
+    };
 }
