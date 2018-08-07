@@ -22,6 +22,8 @@ import android.util.Log;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.movement.OnPetMovementListener;
+import org.gearvrf.arpet.movement.ToScreenMovement;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Matrix4f;

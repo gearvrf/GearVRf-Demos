@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet;
+package org.gearvrf.arpet.animation;
 
 import android.support.annotation.NonNull;
 
@@ -24,6 +24,7 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.GVRTransformAnimation;
+import org.gearvrf.arpet.AnchoredObject;
 import org.joml.Vector3f;
 
 /**
@@ -43,7 +44,7 @@ public class CustomPositionAnimation<T extends AnchoredObject> extends GVRTransf
     private float[] mCurrentPose;
     private boolean mIsRunning;
 
-    CustomPositionAnimation(@NonNull T objectToMove, Vector3f endPosition, final float duration) {
+    public CustomPositionAnimation(@NonNull T objectToMove, Vector3f endPosition, final float duration) {
         super(objectToMove, duration);
 
         mObjectToMove = objectToMove;

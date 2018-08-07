@@ -15,14 +15,12 @@
  *
  */
 
-package org.gearvrf.arpet;
+package org.gearvrf.arpet.movement;
 
-/**
- * Interface representing a movement of the pet
- */
-public interface PetMovement {
-    /**
-     * Moves the pet
-     */
-    void move();
+public interface OnPetMovementListener {
+    void onStartMove();
+
+    void onMove(float x, float y, float z);
+
+    void onStopMove();
 }

@@ -15,9 +15,9 @@
  *
  */
 
-package org.gearvrf.arpet;
+package org.gearvrf.arpet.animation;
 
-interface OnPositionAnimationListener {
+public interface OnPositionAnimationListener {
 
     void onAnimationStart();
 

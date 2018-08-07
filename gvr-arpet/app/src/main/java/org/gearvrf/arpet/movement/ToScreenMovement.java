@@ -15,12 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet;
+package org.gearvrf.arpet.movement;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.animation.GVRAccelerateDecelerateInterpolator;
+import org.gearvrf.arpet.AnchoredObject;
+import org.gearvrf.arpet.PetActivity;
+import org.gearvrf.arpet.animation.CustomPositionAnimation;
+import org.gearvrf.arpet.animation.OnPositionAnimationListener;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Vector3f;
@@ -61,7 +65,7 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
      * @param objectToMove The object to be moved.
      * @param mixedReality The mixed reality session.
      */
-    ToScreenMovement(@NonNull T objectToMove, @NonNull final GVRMixedReality mixedReality) {
+    public ToScreenMovement(@NonNull T objectToMove, @NonNull final GVRMixedReality mixedReality) {
 
         mObjectToMove = objectToMove;
         mMixedReality = mixedReality;
