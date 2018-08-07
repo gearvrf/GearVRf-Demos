@@ -1,8 +1,10 @@
 package org.gearvrf.arpet;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import org.gearvrf.GVRBoxCollider;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRMaterial;
@@ -32,27 +34,58 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private int hsvHUE = 0;
 
-    // FIXME: is this really necessary? This plane is stored at the head of PlaneBoard list anyway
     private GVRPlane firstPlane = null;
 
+    // FIXME: move this to a utils or helper class
+    private static long newComponentType(Class<? extends GVRComponent> clazz) {
+        long hash = (long)clazz.hashCode() << 32;
+        long t = System.currentTimeMillis() & 0xfffffff;
+        return t | hash;
+    }
+
+    private static long PLANEBOARD_COMP_TYPE = newComponentType(PlaneBoard.class);
+
     // This will create an invisible board in which the static body will be attached. This board
-    // will "follow" the referenced A.R. plane so that it will work as if this plane has physics
+    // will "follow" the A.R. plane that owns it so that it will work as if this plane has physics
     // attached to it.
-    private final class PlaneBoard {
+    private final class PlaneBoard extends GVRComponent {
         private GVRPlane plane;
         private float oldHeight = 0f;
         private float oldWidth = 0f;
         private GVRSceneObject box;
+        private Vector3f scale = new Vector3f();
+        private Vector3f pos = new Vector3f();
+        private Quaternionf rot = new Quaternionf();
 
-        PlaneBoard(GVRPlane plane) {
-            this.plane = plane;
-            box = new GVRSceneObject(mContext);
+        PlaneBoard(GVRContext gvrContext) {
+            super(gvrContext, 0);
 
-            GVRBoxCollider collider = new GVRBoxCollider(mContext);
+            mType = PLANEBOARD_COMP_TYPE;
+
+            box = new GVRSceneObject(gvrContext);
+
+            GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
             collider.setHalfExtents(0.5f, 0.5f, 0.5f);
             box.attachComponent(collider);
+        }
 
+        @Override
+        public void onAttach(GVRSceneObject newOwner) {
+            if (!GVRPlane.class.isInstance(newOwner)) {
+                throw new RuntimeException("PlaneBoard can only be attached to a GVRPlane object");
+            }
+
+            super.onAttach(newOwner);
+            plane = (GVRPlane)newOwner;
             physicsRoot.addChildObject(box);
+        }
+
+        @Override
+        public void onDetach(GVRSceneObject oldOwner) {
+            super.onDetach(oldOwner);
+
+            plane = null;
+            physicsRoot.removeChildObject(box);
         }
 
         private void setBoxTransform() {
@@ -63,9 +96,6 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             //box.getTransform().setModelMatrix(targetMtx);
 
             // ... That's why I'm using the solution below
-            Vector3f scale = new Vector3f();
-            Vector3f pos = new Vector3f();
-            Quaternionf rot = new Quaternionf();
             targetMtx.getScale(scale);
             targetMtx.getTranslation(pos);
             targetMtx.normalize3x3();
@@ -76,6 +106,10 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         }
 
         void update() {
+            if (!isEnabled()) {
+                return;
+            }
+
             // TODO: check if this should also be done only when plane grows too much
             setBoxTransform();
 
@@ -95,7 +129,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         }
     }
 
-    private LinkedList<PlaneBoard> mBoards = new LinkedList<>();
+    private LinkedList<GVRPlane> mPlanes = new LinkedList<>();
 
     private GVRMixedReality mixedReality;
 
@@ -158,8 +192,9 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             mContext.registerDrawFrameListener(this);
         }
 
-        PlaneBoard b = new PlaneBoard(plane);
-        mBoards.add(b);
+        PlaneBoard board = new PlaneBoard(mContext);
+        plane.attachComponent(board);
+        mPlanes.add(plane);
     }
 
     @Override
@@ -174,7 +209,11 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     @Override
     public void onPlaneMerging(GVRPlane childPlane, GVRPlane parentPlane) {
+        // Will remove PlaneBoard from childPlane because this plane is not needed anymore now
+        // that parentPlane "contains" childPlane
+        childPlane.detachComponent(PLANEBOARD_COMP_TYPE);
 
+        mPlanes.remove(childPlane);
     }
 
 
@@ -190,8 +229,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         rootInvMat.set(physicsRoot.getTransform().getModelMatrix());
         rootInvMat.invert();
-        for (PlaneBoard b : mBoards) {
-            b.update();
+        for (GVRPlane plane : mPlanes) {
+            ((PlaneBoard)plane.getComponent(PLANEBOARD_COMP_TYPE)).update();
         }
     }
 }
