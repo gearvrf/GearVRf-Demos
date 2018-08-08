@@ -21,7 +21,7 @@ import android.view.MotionEvent;
 
 public class RotationGestureDetector {
 
-    private Rotation mRotation1 = new Rotation(), mRotation2 = new Rotation();
+    private Line mLine1 = new Line(), mLine2 = new Line();
     private float mAngle;
     private boolean mEnabled;
 
@@ -29,7 +29,7 @@ public class RotationGestureDetector {
         void onRotate(RotationGestureDetector detector);
     }
 
-    private static class Pointer {
+    private static class Point {
 
         private static final int INVALID_ID = -1;
 
@@ -50,14 +50,14 @@ public class RotationGestureDetector {
         }
     }
 
-    private class Rotation {
+    private class Line {
 
-        Pointer pointer1 = new Pointer(), pointer2 = new Pointer();
+        Point point1 = new Point(), point2 = new Point();
 
-        float angle(Rotation other) {
+        float angle(Line other) {
 
-            float angle1 = (float) Math.atan2((pointer1.y - pointer2.y), (pointer1.x - pointer2.x));
-            float angle2 = (float) Math.atan2((other.pointer1.y - other.pointer2.y), (other.pointer1.x - other.pointer2.x));
+            float angle1 = (float) Math.atan2((point1.y - point2.y), (point1.x - point2.x));
+            float angle2 = (float) Math.atan2((other.point1.y - other.point2.y), (other.point1.x - other.point2.x));
 
             float angle = ((float) Math.toDegrees(angle1 - angle2)) % 360;
             if (angle < -180.f) angle += 360.0f;
@@ -67,12 +67,12 @@ public class RotationGestureDetector {
         }
 
         void setPositions(MotionEvent event) {
-            pointer1.setPosition(event);
-            pointer2.setPosition(event);
+            point1.setPosition(event);
+            point2.setPosition(event);
         }
 
         boolean isValid() {
-            return pointer1.isValid() && pointer2.isValid();
+            return point1.isValid() && point2.isValid();
         }
     }
 
@@ -91,20 +91,20 @@ public class RotationGestureDetector {
         switch (event.getActionMasked()) {
             // Detect first touch
             case MotionEvent.ACTION_DOWN:
-                mRotation1.pointer1.id = event.getPointerId(event.getActionIndex());
-                mRotation2.pointer1.id = mRotation1.pointer1.id;
+                mLine1.point1.id = event.getPointerId(event.getActionIndex());
+                mLine2.point1.id = mLine1.point1.id;
                 break;
             // Detect second touch
             case MotionEvent.ACTION_POINTER_DOWN:
-                mRotation1.pointer2.id = event.getPointerId(event.getActionIndex());
-                mRotation2.pointer2.id = mRotation1.pointer2.id;
-                mRotation1.setPositions(event);
+                mLine1.point2.id = event.getPointerId(event.getActionIndex());
+                mLine2.point2.id = mLine1.point2.id;
+                mLine1.setPositions(event);
                 break;
             // Detect rotation angle
             case MotionEvent.ACTION_MOVE:
-                if (mRotation1.isValid()) {
-                    mRotation2.setPositions(event);
-                    mAngle = mRotation1.angle(mRotation2);
+                if (mLine1.isValid()) {
+                    mLine2.setPositions(event);
+                    mAngle = mLine1.angle(mLine2);
                     if (mListener != null) {
                         mListener.onRotate(this);
                     }
@@ -112,16 +112,16 @@ public class RotationGestureDetector {
                 break;
 
             case MotionEvent.ACTION_UP:
-                mRotation1.pointer1.reset();
+                mLine1.point1.reset();
                 break;
 
             case MotionEvent.ACTION_POINTER_UP:
-                mRotation1.pointer2.reset();
+                mLine1.point2.reset();
                 break;
 
             case MotionEvent.ACTION_CANCEL:
-                mRotation1.pointer1.reset();
-                mRotation1.pointer2.reset();
+                mLine1.point1.reset();
+                mLine1.point2.reset();
                 break;
         }
     }
