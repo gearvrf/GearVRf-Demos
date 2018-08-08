@@ -239,7 +239,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
 
     @Override
     public void onRotate(RotationGestureDetector detector) {
-        getTransform().rotateByAxis(mRotationDetector.getAngle(), 0, 1, 0);
+        getTransform().rotateByAxis(mRotationDetector.getAngle() * 0.05f, 0, 1, 0);
     }
 
     public void setRotationEnabled(boolean enabled) {
@@ -249,12 +249,10 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
     private OnPetMovementListener mOnPetMovementListener = new OnPetMovementListener() {
         @Override
         public void onStartMove() {
-            Log.d(TAG, "onStartMove: ");
         }
 
         @Override
         public void onMove(float x, float y, float z) {
-            Log.d(TAG, "onMove: ");
 
             // Keep the pet looking for the GVR camera
             lookAt(mContext.getMainScene().getMainCameraRig().getHeadTransform().getModelMatrix());
@@ -268,7 +266,6 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
 
         @Override
         public void onStopMove() {
-            Log.d(TAG, "onStopMove: ");
             mCurrentAction = PetAction.IDLE;
             setMovementEnabled(false);
         }
