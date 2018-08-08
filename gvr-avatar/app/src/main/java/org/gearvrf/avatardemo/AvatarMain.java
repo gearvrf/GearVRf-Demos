@@ -29,11 +29,12 @@ import android.view.MotionEvent;
 public class AvatarMain extends GVRMain
 {
     //private final String mModelPath = "TRex_NoGround.fbx";
-//    private final String mModelPath = "DeepMotion/DeepMotionSkeleton.fbx";
-    private final String mModelPath = "Andromeda/Andromeda.dae";
+    private final String mModelPath = "DeepMotion/DeepMotionSkeleton.fbx";
+//    private final String mModelPath = "Andromeda/Andromeda.dae";
 //    private final String mAnimationPath = "Andromeda/HipHopDancing.dae";
-    private final String mAnimationPath = "Andromeda/Bellydancing.dae";
+//    private final String mAnimationPath = "Andromeda/Bellydancing.dae";
 //    private final String mAnimationPath = "Andromeda/Boxing.dae";
+    private final String mAnimationPath = "bodyturn.txt";
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
@@ -168,11 +169,18 @@ public class AvatarMain extends GVRMain
     private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents()
     {
         @Override
-        public void onAvatarLoaded(GVRSceneObject avatarRoot, String filePath, String errors)
+        public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors)
         {
             if (avatarRoot.getParent() == null)
             {
-                mScene.addSceneObject(avatarRoot);
+                mContext.runOnGlThread(new Runnable()
+                {
+                    public void run()
+                    {
+                        mScene.addSceneObject(avatarRoot);
+                        mAvatar.centerModel(avatarRoot);
+                    }
+                });
             }
         }
 
@@ -198,7 +206,6 @@ public class AvatarMain extends GVRMain
         mAvatar.getEventReceiver().addListener(mAvatarListener);
         try
         {
-            mScene.addSceneObject(mAvatar.getModel());
             mAvatar.loadModel(new GVRAndroidResource(gvrContext, mModelPath));
         }
         catch (IOException e)
