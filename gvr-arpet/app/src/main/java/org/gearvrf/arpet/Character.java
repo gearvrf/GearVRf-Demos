@@ -18,10 +18,13 @@ package org.gearvrf.arpet;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
+import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.gesture.RotationGestureDetector;
 import org.gearvrf.arpet.movement.OnPetMovementListener;
 import org.gearvrf.arpet.movement.ToScreenMovement;
 import org.gearvrf.mixedreality.GVRMixedReality;
@@ -34,7 +37,7 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class Character extends AnchoredObject implements GVRDrawFrameListener {
+public class Character extends AnchoredObject implements GVRDrawFrameListener, RotationGestureDetector.OnRotationGestureListener {
 
     @IntDef({PetAction.IDLE, PetAction.TO_BALL,
             PetAction.TO_SCREEN, PetAction.TO_FOOD,
@@ -56,6 +59,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener {
     private GVRContext mContext;
     private float[] mCurrentPose;
     private ToScreenMovement mToScreenMovement;
+    private RotationGestureDetector mRotationDetector = new RotationGestureDetector(this);
 
     Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
         super(gvrContext, mixedReality, pose);
@@ -67,6 +71,15 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener {
 
         mToScreenMovement = new ToScreenMovement<>(this, mixedReality);
         mToScreenMovement.setPetMovementListener(mOnPetMovementListener);
+
+        mContext.getApplication().getEventReceiver().addListener(new GVREventListeners.ActivityEvents() {
+            @Override
+            public void dispatchTouchEvent(MotionEvent event) {
+                if (mRotationDetector.isEnabled()) {
+                    mRotationDetector.onTouchEvent(event);
+                }
+            }
+        });
     }
 
     public void goToBall() {
@@ -222,6 +235,15 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener {
 
     public void setBoundaryPlane(GVRPlane boundary) {
         mToScreenMovement.setBoundaryPlane(boundary);
+    }
+
+    @Override
+    public void onRotate(RotationGestureDetector detector) {
+        getTransform().rotateByAxis(mRotationDetector.getAngle(), 0, 1, 0);
+    }
+
+    public void setRotationEnabled(boolean enabled) {
+        mRotationDetector.setEnabled(enabled);
     }
 
     private OnPetMovementListener mOnPetMovementListener = new OnPetMovementListener() {
