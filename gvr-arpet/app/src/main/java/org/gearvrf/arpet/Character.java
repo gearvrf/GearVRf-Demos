@@ -280,7 +280,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
         mCurrentAction = PetAction.IDLE;
     }
 
-    public void pauseMoviment() {
+    public void pauseMovement() {
         unregisterDrawFrameListener();
         if (mCurrentAction == PetAction.TO_SCREEN) {
             mToScreenMovement.stop();
