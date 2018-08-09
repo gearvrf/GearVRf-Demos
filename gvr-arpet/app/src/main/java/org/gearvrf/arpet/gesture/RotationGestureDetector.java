@@ -60,6 +60,7 @@ public class RotationGestureDetector {
             float angle2 = (float) Math.atan2((other.point1.y - other.point2.y), (other.point1.x - other.point2.x));
 
             float angle = ((float) Math.toDegrees(angle1 - angle2)) % 360;
+
             if (angle < -180.f) angle += 360.0f;
             if (angle > 180.f) angle -= 360.0f;
 
@@ -87,6 +88,10 @@ public class RotationGestureDetector {
     }
 
     public void onTouchEvent(MotionEvent event) {
+
+        if (!mEnabled) {
+            return;
+        }
 
         switch (event.getActionMasked()) {
             // Detect first touch
