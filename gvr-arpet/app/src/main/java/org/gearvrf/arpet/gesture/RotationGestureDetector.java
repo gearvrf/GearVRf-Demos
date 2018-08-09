@@ -19,11 +19,10 @@ package org.gearvrf.arpet.gesture;
 
 import android.view.MotionEvent;
 
-public class RotationGestureDetector {
+public class RotationGestureDetector extends GestureDetector{
 
     private Line mLine1 = new Line(), mLine2 = new Line();
     private float mAngle;
-    private boolean mEnabled;
 
     public interface OnRotationGestureListener {
         void onRotate(RotationGestureDetector detector);
@@ -89,7 +88,7 @@ public class RotationGestureDetector {
 
     public void onTouchEvent(MotionEvent event) {
 
-        if (!mEnabled) {
+        if (!isEnabled()) {
             return;
         }
 
@@ -129,13 +128,5 @@ public class RotationGestureDetector {
                 mLine1.point2.reset();
                 break;
         }
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.mEnabled = enabled;
-    }
-
-    public boolean isEnabled() {
-        return mEnabled;
     }
 }

@@ -22,7 +22,7 @@ import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 
-public class ScaleGestureDetector {
+public class ScaleGestureDetector extends GestureDetector {
 
     private static final float MIN_FACTOR = 1.f;
     private static final float MAX_FACTOR = 3.f;
@@ -32,7 +32,6 @@ public class ScaleGestureDetector {
 
     private float mFactor = MIN_FACTOR;
     private float mMinFactor = MIN_FACTOR, mMaxFactor = MAX_FACTOR;
-    private boolean mEnabled;
     private GVRContext mContext;
 
     public ScaleGestureDetector(GVRContext context, OnScaleGestureListener listener) {
@@ -64,7 +63,7 @@ public class ScaleGestureDetector {
     }
 
     public void onTouchEvent(MotionEvent event) {
-        if (mEnabled) {
+        if (isEnabled()) {
             mScaleGestureDetector.onTouchEvent(event);
         }
     }
@@ -75,14 +74,6 @@ public class ScaleGestureDetector {
 
     public void setMaxFactor(@FloatRange(from = MIN_FACTOR, to = MAX_FACTOR) float factor) {
         this.mMaxFactor = Math.max(MIN_FACTOR, Math.min(factor, MAX_FACTOR));
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.mEnabled = enabled;
-    }
-
-    public boolean isEnabled() {
-        return mEnabled;
     }
 
     public interface OnScaleGestureListener {
