@@ -17,14 +17,15 @@ package org.gearvrf.arpet;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.RotationGestureDetector;
+import org.gearvrf.arpet.gesture.ScaleGestureDetector;
 import org.gearvrf.arpet.movement.OnPetMovementListener;
 import org.gearvrf.arpet.movement.ToScreenMovement;
 import org.gearvrf.mixedreality.GVRMixedReality;
@@ -37,7 +38,9 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class Character extends AnchoredObject implements GVRDrawFrameListener, RotationGestureDetector.OnRotationGestureListener {
+public class Character extends AnchoredObject implements GVRDrawFrameListener,
+        RotationGestureDetector.OnRotationGestureListener,
+        ScaleGestureDetector.OnScaleGestureListener {
 
     @IntDef({PetAction.IDLE, PetAction.TO_BALL,
             PetAction.TO_SCREEN, PetAction.TO_FOOD,
@@ -59,7 +62,8 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
     private GVRContext mContext;
     private float[] mCurrentPose;
     private ToScreenMovement mToScreenMovement;
-    private RotationGestureDetector mRotationDetector = new RotationGestureDetector(this);
+    private RotationGestureDetector mRotationDetector;
+    private ScaleGestureDetector mScaleDetector;
 
     Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
         super(gvrContext, mixedReality, pose);
@@ -72,12 +76,14 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
         mToScreenMovement = new ToScreenMovement<>(this, mixedReality);
         mToScreenMovement.setPetMovementListener(mOnPetMovementListener);
 
+        mRotationDetector = new RotationGestureDetector(this);
+        mScaleDetector = new ScaleGestureDetector(mContext, this);
+
         mContext.getApplication().getEventReceiver().addListener(new GVREventListeners.ActivityEvents() {
             @Override
             public void dispatchTouchEvent(MotionEvent event) {
-                if (mRotationDetector.isEnabled()) {
-                    mRotationDetector.onTouchEvent(event);
-                }
+                mRotationDetector.onTouchEvent(event);
+                mScaleDetector.onTouchEvent(event);
             }
         });
     }
@@ -191,10 +197,10 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
     @Override
     public void onDrawFrame(float v) {
         if (mCurrentAction == PetAction.TO_SCREEN) {
-            Log.d("", "onDrawFrame: " + mCurrentPose[12] + ", " + mCurrentPose[13] + ", " + mCurrentPose[14]);
             try {
                 updatePose(mCurrentPose);
             } catch (Throwable throwable) {
+                mCurrentAction = PetAction.IDLE;
                 setMovementEnabled(false);
                 throwable.printStackTrace();
             }
@@ -242,8 +248,19 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener, R
         getTransform().rotateByAxis(mRotationDetector.getAngle() * 0.05f, 0, 1, 0);
     }
 
+    @Override
+    public void onScale(ScaleGestureDetector detector) {
+        GVRTransform t = getTransform();
+        float factor = detector.getFactor();
+        t.setScale(factor, factor, factor);
+    }
+
     public void setRotationEnabled(boolean enabled) {
         mRotationDetector.setEnabled(enabled);
+    }
+
+    public void setScaleEnabled(boolean enabled) {
+        mScaleDetector.setEnabled(enabled);
     }
 
     private OnPetMovementListener mOnPetMovementListener = new OnPetMovementListener() {

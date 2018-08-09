@@ -73,7 +73,7 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         ballThrowHandler = new BallThrowHandler(gvrContext);
-        ballThrowHandler.enable();
+        //ballThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -104,7 +104,8 @@ public class PetMain extends GVRMain {
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
-        //mPet.setRotationEnabled(true);
+        mPet.setRotationEnabled(true);
+        mPet.setScaleEnabled(true);
         mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(ballThrowHandler.getBall());
 
@@ -128,9 +129,9 @@ public class PetMain extends GVRMain {
             ballThrowHandler.reset();
         }
 
-        if (mPet != null && mPet.getCurrentAction() != Character.PetAction.TO_SCREEN) {
-            mPet.lookAt(ballThrowHandler.getBall());
-        }
+//        if (mPet != null && mPet.getCurrentAction() != Character.PetAction.TO_SCREEN) {
+//            mPet.lookAt(ballThrowHandler.getBall());
+//        }
     }
 
     @Subscribe
