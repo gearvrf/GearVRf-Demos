@@ -101,22 +101,28 @@ public class PetMain extends GVRMain {
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
-        //mPet.setRotationEnabled(true);
-        //mPet.setScaleEnabled(true);
         mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(ballThrowHandler.getBall());
 
-        //movePetToScreen(plane);
+        // setEditModeEnabled(true);
+        // movePetToScreen(plane, 3000);
     }
 
-    private void movePetToScreen(final GVRPlane boundary) {
+    private void setEditModeEnabled(boolean enabled) {
+        if (mPet != null) {
+            mPet.setRotationEnabled(enabled);
+            mPet.setScaleEnabled(enabled);
+        }
+    }
+
+    private void movePetToScreen(final GVRPlane boundary, int delayToStart) {
         mPetContext.runDelayedOnPetThread(new Runnable() {
             @Override
             public void run() {
                 mPet.setBoundaryPlane(boundary);
                 mPet.goToScreen();
             }
-        }, 2000);
+        }, delayToStart);
     }
 
     @Override
@@ -124,10 +130,6 @@ public class PetMain extends GVRMain {
         super.onStep();
         if (ballThrowHandler.canBeReseted()) {
             ballThrowHandler.reset();
-        }
-
-        if (mPet != null && mPet.getCurrentAction() != Character.PetAction.TO_SCREEN) {
-            mPet.lookAt(ballThrowHandler.getBall());
         }
     }
 

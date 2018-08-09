@@ -24,6 +24,7 @@ import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.RotationGestureDetector;
 import org.gearvrf.arpet.gesture.ScaleGestureDetector;
 import org.gearvrf.arpet.movement.OnPetMovementListener;
@@ -37,6 +38,8 @@ import org.joml.Vector3f;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Character extends AnchoredObject implements GVRDrawFrameListener,
         RotationGestureDetector.OnRotationGestureListener,
@@ -61,9 +64,17 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
     private int mCurrentAction; // default action IDLE
     private GVRContext mContext;
     private float[] mCurrentPose;
+    private GVRSceneObject mObjectToLookAt;
+
+    // Movement handlers
     private ToScreenMovement mToScreenMovement;
+    // ...
+
+    // Gesture detectors
+    private List<GestureDetector> mGestureDetectors = new ArrayList<>();
     private RotationGestureDetector mRotationDetector;
     private ScaleGestureDetector mScaleDetector;
+    // ...
 
     Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
         super(gvrContext, mixedReality, pose);
@@ -76,8 +87,8 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
         mToScreenMovement = new ToScreenMovement<>(this, mixedReality);
         mToScreenMovement.setPetMovementListener(mOnPetMovementListener);
 
-        mRotationDetector = new RotationGestureDetector(this);
-        mScaleDetector = new ScaleGestureDetector(mContext, this);
+        mGestureDetectors.add(mRotationDetector = new RotationGestureDetector(this));
+        mGestureDetectors.add(mScaleDetector = new ScaleGestureDetector(mContext, this));
 
         mContext.getApplication().getEventReceiver().addListener(new GVREventListeners.ActivityEvents() {
             @Override
@@ -93,8 +104,9 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
     }
 
     public void goToScreen() {
+        disableGestureDetectors();
         mCurrentAction = PetAction.TO_SCREEN;
-        setMovementEnabled(true);
+        registerDrawFrameListener();
         mToScreenMovement.move();
     }
 
@@ -110,14 +122,11 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
         mCurrentAction = PetAction.TO_BED;
     }
 
-    public void lookAt(GVRSceneObject object) {
-
-        //mCurrentAction = PetAction.LOOK_AT;
-
-        if (object == null)
-            return;
-
-        lookAt(object.getTransform().getModelMatrix());
+    public void lookAt(@NonNull GVRSceneObject object) {
+        mObjectToLookAt = object;
+        disableGestureDetectors();
+        mCurrentAction = PetAction.LOOK_AT;
+        registerDrawFrameListener();
     }
 
     private void moveToBall() {
@@ -125,7 +134,13 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
     }
 
     private void moveToScreen() {
-
+        try {
+            updatePose(mCurrentPose);
+        } catch (Throwable throwable) {
+            mCurrentAction = PetAction.IDLE;
+            unregisterDrawFrameListener();
+            throwable.printStackTrace();
+        }
     }
 
     private void lookAt(float[] modelMatrix) {
@@ -196,14 +211,18 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
 
     @Override
     public void onDrawFrame(float v) {
-        if (mCurrentAction == PetAction.TO_SCREEN) {
-            try {
-                updatePose(mCurrentPose);
-            } catch (Throwable throwable) {
-                mCurrentAction = PetAction.IDLE;
-                setMovementEnabled(false);
-                throwable.printStackTrace();
-            }
+
+        if (mCurrentAction == PetAction.IDLE) {
+
+            unregisterDrawFrameListener();
+
+        } else if (mCurrentAction == PetAction.LOOK_AT) {
+
+            lookAt(mObjectToLookAt.getTransform().getModelMatrix());
+
+        } else if (mCurrentAction == PetAction.TO_SCREEN) {
+
+            moveToScreen();
         }
     }
 
@@ -219,24 +238,6 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
      */
     private void unregisterDrawFrameListener() {
         getGVRContext().unregisterDrawFrameListener(this);
-    }
-
-    /**
-     * Whether the pet should move or not
-     *
-     * @param enabled whether the pet should move or not
-     */
-    private void setMovementEnabled(boolean enabled) {
-        if (enabled) {
-            registerDrawFrameListener();
-        } else {
-            unregisterDrawFrameListener();
-        }
-    }
-
-    @PetAction
-    public int getCurrentAction() {
-        return mCurrentAction;
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {
@@ -256,11 +257,34 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
     }
 
     public void setRotationEnabled(boolean enabled) {
+        if (enabled) {
+            stopMovement();
+        }
         mRotationDetector.setEnabled(enabled);
     }
 
     public void setScaleEnabled(boolean enabled) {
+        if (enabled) {
+            stopMovement();
+        }
         mScaleDetector.setEnabled(enabled);
+    }
+
+    private void disableGestureDetectors() {
+        for (GestureDetector gestureDetector : mGestureDetectors) {
+            gestureDetector.setEnabled(false);
+        }
+    }
+
+    public void stopMovement() {
+        mCurrentAction = PetAction.IDLE;
+    }
+
+    public void pauseMoviment() {
+        unregisterDrawFrameListener();
+        if (mCurrentAction == PetAction.TO_SCREEN) {
+            mToScreenMovement.stop();
+        }
     }
 
     private OnPetMovementListener mOnPetMovementListener = new OnPetMovementListener() {
@@ -283,8 +307,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
 
         @Override
         public void onStopMove() {
-            mCurrentAction = PetAction.IDLE;
-            setMovementEnabled(false);
+            stopMovement();
         }
     };
 }
