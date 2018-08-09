@@ -17,6 +17,7 @@ import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -67,6 +68,16 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
             collider.setHalfExtents(0.5f, 0.5f, 0.5f);
             box.attachComponent(collider);
+
+            // Uncomment if you want a green box to appear at the center of the invisible board.
+            // Notice this green box is smaller than the board
+//            GVRMaterial green = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+//            green.setDiffuseColor(0f, 1f, 0f, 1f);
+//            GVRSceneObject mark = new GVRCubeSceneObject(gvrContext, true);
+//            mark.getRenderData().setMaterial(green);
+//            mark.getRenderData().setAlphaBlend(true);
+//            mark.getTransform().setScale(0.3f, 0.3f, 1.1f);
+//            box.addChildObject(mark);
         }
 
         @Override
@@ -93,7 +104,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             rootInvMat.mul(targetMtx, targetMtx);
 
             // This should work, but it seems to have a problem at setModelMatrix method...
-            //box.getTransform().setModelMatrix(targetMtx);
+//            box.getTransform().setModelMatrix(targetMtx);
+//            box.getTransform().setScaleZ(1f);
 
             // ... That's why I'm using the solution below
             targetMtx.getScale(scale);
@@ -145,6 +157,15 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         physicsRoot = new GVRSceneObject(mContext);
         physicsRoot.getTransform().setScale(0.01f, 0.01f, 0.01f);
+
+        // Uncomment if you want a black box to visually mark where is the physics root
+//        GVRMaterial black = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
+//        black.setDiffuseColor(0f, 0f, 0f, 1f);
+//        GVRSceneObject cube = new GVRCubeSceneObject(gvrContext, true);
+//        cube.getRenderData().setMaterial(black);
+//        cube.getRenderData().setAlphaBlend(true);
+//        cube.getTransform().setScale(5f, 4f, 8f);
+//        physicsRoot.addChildObject(cube);
     }
 
     private GVRSceneObject createQuadPlane() {
