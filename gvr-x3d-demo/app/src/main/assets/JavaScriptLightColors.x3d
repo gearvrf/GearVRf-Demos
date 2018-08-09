@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Immersive' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <Scene>
+  
+    <Viewpoint position='0 0 0'/>
+    <PointLight DEF='PL1'/>
+
+      <Transform translation='-1 -.25 -6'>
+        <TouchSensor DEF='ButtonTouch' description='touch to toggle'/>
+        <Shape>
+          <Appearance>
+            <Material diffuseColor='1 1 1'/>
+          </Appearance>
+          <Sphere/>
+        </Shape>
+      </Transform>
+    
+
+    <Script DEF='ControlScript'>
+      <field accessType='inputOnly' name='buttonOver' type='SFBool'/>
+      <field accessType='outputOnly' name='lightColor' type='SFColor'/>
+
+      <![CDATA[
+      ecmascript:
+      function buttonOver (value)
+      {
+      	if (value) lightColor = new SFColor (.2, 1, 0.2); // green
+      	else lightColor = new SFColor (.5, .5, 1); // blue-ish
+      }
+	]]>
+    </Script>
+
+    <ROUTE fromField='isActive' fromNode='ButtonTouch' toField='buttonOver' toNode='ControlScript'/>
+    <ROUTE fromField='lightColor' fromNode='ControlScript' toField='color' toNode='PL1'/>
+  </Scene>
+</X3D>

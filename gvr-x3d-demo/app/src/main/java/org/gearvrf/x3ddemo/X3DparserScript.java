@@ -71,7 +71,7 @@ public class X3DparserScript extends GVRMain
     // Replace 'filename' to view another .x3d file
     String filename = SystemPropertyUtil.getSystemPropertyString("debug.gearvrf.gvr-x3d-demo");
     if (null == filename) {
-      filename = "cylindersandplanes.x3d";
+      filename = "JavaScriptLightColors.x3d";
     }
     try
     {
@@ -98,6 +98,7 @@ public class X3DparserScript extends GVRMain
     catch (IOException e)
     {
       Log.d(TAG, "Error IOException = " + e);
+      e.printStackTrace();
     }
     catch (Exception e)
     {

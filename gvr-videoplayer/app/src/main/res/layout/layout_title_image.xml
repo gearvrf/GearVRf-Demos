@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/titleLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:padding="14dp"
+    tools:ignore="ContentDescription">
+
+    <ImageView
+        android:id="@+id/titleImage"
+        android:layout_width="337.7dp"
+        android:layout_height="34dp"
+        android:src="@drawable/ic_app_name_normal" />
+
+</LinearLayout>
