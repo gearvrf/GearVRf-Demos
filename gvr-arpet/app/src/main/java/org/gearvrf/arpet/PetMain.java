@@ -82,6 +82,8 @@ public class PetMain extends GVRMain {
         cube.attachComponent(collider);
 
         mScene.addSceneObject(cube);
+
+        disableCursor();
     }
 
     public void resume() {
@@ -140,6 +142,15 @@ public class PetMain extends GVRMain {
 
         }
     };
+
+    private void disableCursor() {
+        GVRInputManager inputManager = mContext.getInputManager();
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
+                newController.setCursor(null);
+            }
+        });
+    }
 
     public class TouchEvents implements ITouchEvents {
         @Override
