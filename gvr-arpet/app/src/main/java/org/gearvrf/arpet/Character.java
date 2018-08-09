@@ -137,8 +137,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
         try {
             updatePose(mCurrentPose);
         } catch (Throwable throwable) {
-            mCurrentAction = PetAction.IDLE;
-            unregisterDrawFrameListener();
+            stopMovement();
             throwable.printStackTrace();
         }
     }
