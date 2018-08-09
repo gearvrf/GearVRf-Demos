@@ -25,7 +25,6 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
-import org.gearvrf.arpet.gesture.RotationGestureDetector;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -49,9 +48,7 @@ public class PetMain extends GVRMain {
     private PlaneHandler planeHandler;
 
     private GVRSceneObject cube;
-
     private Character mPet;
-    private RotationGestureDetector mRotationDetector;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
