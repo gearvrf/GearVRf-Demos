@@ -105,8 +105,8 @@ public class PetMain extends GVRMain {
         mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(new ObjectToLookAt(ballThrowHandler.getBall()));
 
-        //setEditModeEnabled(true);
-        movePetToScreen(plane, 1500);
+        // setEditModeEnabled(true);
+        // movePetToScreen(plane, 1500);
     }
 
     private void setEditModeEnabled(boolean enabled) {
