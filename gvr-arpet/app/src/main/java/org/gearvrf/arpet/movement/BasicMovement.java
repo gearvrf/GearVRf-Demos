@@ -17,12 +17,15 @@
 
 package org.gearvrf.arpet.movement;
 
-/**
- * Interface representing a movement of the pet
- */
-public interface PetMovement {
-    /**
-     * Moves the pet
-     */
-    void move();
+import android.support.annotation.NonNull;
+
+public abstract class BasicMovement<Movable extends MovableObject, Listener extends OnMovementListener> implements Movement {
+
+    protected Movable mMovable;
+    protected Listener mOnMovementListener;
+
+    public BasicMovement(@NonNull Movable movable, @NonNull Listener listener) {
+        this.mMovable = movable;
+        this.mOnMovementListener = listener;
+    }
 }

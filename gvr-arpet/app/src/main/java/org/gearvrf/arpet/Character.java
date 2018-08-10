@@ -27,13 +27,16 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.RotationGestureDetector;
 import org.gearvrf.arpet.gesture.ScaleGestureDetector;
-import org.gearvrf.arpet.movement.OnPetMovementListener;
-import org.gearvrf.arpet.movement.ToScreenMovement;
+import org.gearvrf.arpet.movement.BasicMovement;
+import org.gearvrf.arpet.movement.MovableObject;
+import org.gearvrf.arpet.movement.SimpleMovementListener;
+import org.gearvrf.arpet.movement.lookatobject.LookAtObjectMovement;
+import org.gearvrf.arpet.movement.lookatobject.LookAtObjectMovementPosition;
+import org.gearvrf.arpet.movement.lookatobject.ObjectToLookAt;
+import org.gearvrf.arpet.movement.toscreen.ToScreenMovement;
+import org.gearvrf.arpet.movement.toscreen.ToScreenMovementPosition;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -41,9 +44,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Character extends AnchoredObject implements GVRDrawFrameListener,
+public class Character extends MovableObject implements GVRDrawFrameListener,
         RotationGestureDetector.OnRotationGestureListener,
         ScaleGestureDetector.OnScaleGestureListener {
+
+    private GVRMixedReality mMixedReality;
 
     @IntDef({PetAction.IDLE, PetAction.TO_BALL,
             PetAction.TO_SCREEN, PetAction.TO_FOOD,
@@ -64,10 +69,11 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
     private int mCurrentAction; // default action IDLE
     private GVRContext mContext;
     private float[] mCurrentPose;
-    private GVRSceneObject mObjectToLookAt;
+    private GVRPlane mPetMovementBoundary;
 
     // Movement handlers
-    private ToScreenMovement mToScreenMovement;
+    private BasicMovement mToScreenMovement;
+    private BasicMovement mLookAtObjectMovement;
     // ...
 
     // Gesture detectors
@@ -81,11 +87,9 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
 
         mCurrentAction = PetAction.IDLE;
         mContext = gvrContext;
+        mMixedReality = mixedReality;
         mCurrentPose = pose;
         load3DModel();
-
-        mToScreenMovement = new ToScreenMovement<>(this, mixedReality);
-        mToScreenMovement.setPetMovementListener(mOnPetMovementListener);
 
         mGestureDetectors.add(mRotationDetector = new RotationGestureDetector(this));
         mGestureDetectors.add(mScaleDetector = new ScaleGestureDetector(mContext, this));
@@ -105,6 +109,8 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
 
     public void goToScreen() {
         disableGestureDetectors();
+        mToScreenMovement = new ToScreenMovement<>(this, mMixedReality, new TooScreenMovementListener(mContext));
+        ((ToScreenMovement) mToScreenMovement).setBoundaryPlane(mPetMovementBoundary);
         mCurrentAction = PetAction.TO_SCREEN;
         registerDrawFrameListener();
         mToScreenMovement.move();
@@ -122,11 +128,20 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
         mCurrentAction = PetAction.TO_BED;
     }
 
-    public void lookAt(@NonNull GVRSceneObject object) {
-        mObjectToLookAt = object;
+    public void lookAt(@NonNull ObjectToLookAt objectToLookAt) {
         disableGestureDetectors();
+        mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener());
         mCurrentAction = PetAction.LOOK_AT;
         registerDrawFrameListener();
+    }
+
+    private void lookAtObject() {
+        try {
+            mLookAtObjectMovement.move();
+        } catch (Throwable throwable) {
+            stopMovement();
+            throwable.printStackTrace();
+        }
     }
 
     private void moveToBall() {
@@ -140,62 +155,6 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
             stopMovement();
             throwable.printStackTrace();
         }
-    }
-
-    private void lookAt(float[] modelMatrix) {
-
-        Vector3f vectorDest = new Vector3f();
-        Vector3f vectorOrig = new Vector3f();
-        Vector3f direction = new Vector3f();
-
-        vectorDest.set(modelMatrix[12], modelMatrix[13], modelMatrix[14]);
-
-        float[] originModelMatrix = getTransform().getModelMatrix();
-        vectorOrig.set(originModelMatrix[12], originModelMatrix[13], originModelMatrix[14]);
-
-        vectorDest.sub(vectorOrig, direction);
-        // Make the object be rotated in Y axis only
-        direction.y = 0;
-        direction.normalize();
-
-        // From: http://mmmovania.blogspot.com/2014/03/making-opengl-object-look-at-another.html
-        Vector3f up;
-        if (Math.abs(direction.x) < 0.00001 && Math.abs(direction.z) < 0.00001) {
-            if (direction.y > 0) {
-                up = new Vector3f(0.0f, 0.0f, -1.0f); // if direction points in +y
-            } else {
-                up = new Vector3f(0.0f, 0.0f, 1.0f); // if direction points in -y
-            }
-        } else {
-            up = new Vector3f(0.0f, 1.0f, 0.0f); // y-axis is the general up
-        }
-
-        up.normalize();
-        Vector3f right = new Vector3f();
-        up.cross(direction, right);
-        right.normalize();
-        direction.cross(right, up);
-        up.normalize();
-
-        Matrix4f matrix = new Matrix4f();
-        matrix.set(
-                right.x, right.y, right.z, 0.0f,
-                up.x, up.y, up.z, 0.0f,
-                direction.x, direction.y, direction.z, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);
-
-        if (getParent() != null) {
-            float rotationX = getParent().getTransform().getRotationX();
-            float rotationY = getParent().getTransform().getRotationY();
-            float rotationZ = getParent().getTransform().getRotationZ();
-            float rotationW = getParent().getTransform().getRotationW();
-            Quaternionf parentQuaternion = new Quaternionf(rotationX, rotationY, rotationZ, rotationW);
-            parentQuaternion = parentQuaternion.invert();
-            matrix = matrix.rotate(parentQuaternion);
-        }
-
-        getTransform().setModelMatrix(matrix);
-
     }
 
     private void load3DModel() {
@@ -217,7 +176,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
 
         } else if (mCurrentAction == PetAction.LOOK_AT) {
 
-            lookAt(mObjectToLookAt.getTransform().getModelMatrix());
+            lookAtObject();
 
         } else if (mCurrentAction == PetAction.TO_SCREEN) {
 
@@ -240,7 +199,7 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {
-        mToScreenMovement.setBoundaryPlane(boundary);
+        mPetMovementBoundary = boundary;
     }
 
     @Override
@@ -286,27 +245,44 @@ public class Character extends AnchoredObject implements GVRDrawFrameListener,
         }
     }
 
-    private OnPetMovementListener mOnPetMovementListener = new OnPetMovementListener() {
-        @Override
-        public void onStartMove() {
+    public void resumeMovement() {
+        registerDrawFrameListener();
+        if (mCurrentAction == PetAction.TO_SCREEN) {
+            mToScreenMovement.move();
+        }
+    }
+
+    private class TooScreenMovementListener extends SimpleMovementListener<Character, ToScreenMovementPosition> {
+
+        private ObjectToLookAt mCamera;
+
+        TooScreenMovementListener(@NonNull GVRContext context) {
+            mCamera = new ObjectToLookAt(context.getMainScene().getMainCameraRig());
         }
 
         @Override
-        public void onMove(float x, float y, float z) {
+        public void onMove(Character pet, ToScreenMovementPosition position) {
 
-            // Keep the pet looking for the GVR camera
-            lookAt(mContext.getMainScene().getMainCameraRig().getHeadTransform().getModelMatrix());
+            // Keep the pet looking at GVR camera
+            pet.getTransform().setModelMatrix(LookAtObjectMovement.lookAt(Character.this, mCamera));
 
             // Update current position. The onDrawFrame() method uses this point to update
             // position of this character
-            mCurrentPose[12] = x;
-            mCurrentPose[13] = y;
-            mCurrentPose[14] = z;
+            mCurrentPose[12] = position.getValue().x;
+            mCurrentPose[13] = position.getValue().y;
+            mCurrentPose[14] = position.getValue().z;
         }
 
         @Override
         public void onStopMove() {
             stopMovement();
         }
-    };
+    }
+
+    private class LookAtObjectListener extends SimpleMovementListener<Character, LookAtObjectMovementPosition> {
+        @Override
+        public void onMove(Character pet, LookAtObjectMovementPosition position) {
+            pet.getTransform().setModelMatrix(position.getValue());
+        }
+    }
 }

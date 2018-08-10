@@ -15,37 +15,36 @@
  *
  */
 
-package org.gearvrf.arpet.movement;
+package org.gearvrf.arpet.movement.toscreen;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.animation.GVRAccelerateDecelerateInterpolator;
-import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetActivity;
 import org.gearvrf.arpet.animation.CustomPositionAnimation;
 import org.gearvrf.arpet.animation.OnPositionAnimationListener;
+import org.gearvrf.arpet.movement.BasicMovement;
+import org.gearvrf.arpet.movement.MovableObject;
+import org.gearvrf.arpet.movement.OnMovementListener;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Vector3f;
 
 /**
  * Class the represents a movement of given anchored object to the screen position.
- *
- * @param <T> The object type will be moved to screen position.
  */
-public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
+public class ToScreenMovement<Movable extends MovableObject>
+        extends BasicMovement<Movable, OnMovementListener<Movable, ToScreenMovementPosition>> {
 
     private static final String TAG = ToScreenMovement.class.getSimpleName();
 
-    private static final float CAMERA_SHIFT_THRESHOLD = 0.05f;
+    private static final float CAMERA_DISPLACEMENT_THRESHOLD = 0.04f;
 
     private static final int POSE_X = 12;
     private static final int POSE_Y = 13;
     private static final int POSE_Z = 14;
 
-    private T mObjectToMove;
-    private OnPetMovementListener mPetMovementListener;
     private CustomPositionAnimation mAnimation;
     private GVRMixedReality mMixedReality;
     private GVRPlane mBoundaryPlane;
@@ -65,17 +64,15 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
      * @param objectToMove The object to be moved.
      * @param mixedReality The mixed reality session.
      */
-    public ToScreenMovement(@NonNull T objectToMove, @NonNull final GVRMixedReality mixedReality) {
+    public ToScreenMovement(@NonNull Movable objectToMove,
+                            @NonNull final GVRMixedReality mixedReality,
+                            OnMovementListener<Movable, ToScreenMovementPosition> listener) {
+        super(objectToMove, listener);
 
-        mObjectToMove = objectToMove;
         mMixedReality = mixedReality;
 
         updatePositionHolders();
         getPositionFromPose(mPreviousCameraPosition, mCameraPose);
-    }
-
-    public void setPetMovementListener(OnPetMovementListener listener) {
-        this.mPetMovementListener = listener;
     }
 
     /**
@@ -91,11 +88,17 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
         startMoveDelayed();
     }
 
+    @Override
     public void stop() {
         if (mAnimation != null) {
             mAnimation.stop();
             mAnimation = null;
         }
+    }
+
+    @Override
+    public boolean isMoving() {
+        return mAnimation.isRunning();
     }
 
     private void startMoveDelayed() {
@@ -105,16 +108,12 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
             @Override
             public void run() {
                 mAnimation.start();
-                if (mPetMovementListener != null) {
-                    mPetMovementListener.onStartMove();
+                if (mOnMovementListener != null) {
+                    mOnMovementListener.onStartMove();
                 }
                 Log.d(TAG, "run: Movement started!");
             }
         }, 500);
-    }
-
-    public boolean isMoving() {
-        return mAnimation.isRunning();
     }
 
     private void getPositionFromPose(Vector3f out, float[] pose) {
@@ -126,7 +125,7 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
     private void updatePositionHolders() {
 
         mCameraPose = mMixedReality.getCameraPoseMatrix();
-        mObjectPose = mObjectToMove.getPoseMatrix();
+        mObjectPose = mMovable.getPoseMatrix();
 
         getPositionFromPose(mCameraPosition, mCameraPose);
         getPositionFromPose(mObjectPosition, mObjectPose);
@@ -137,7 +136,7 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
 
     private void checkCameraDisplacementThreshold() {
 
-        if (mCameraDisplacement > CAMERA_SHIFT_THRESHOLD) {
+        if (mCameraDisplacement > CAMERA_DISPLACEMENT_THRESHOLD) {
             Log.d(TAG, "checkCameraDisplacementThreshold: the camera's displacement threshold has been reached!");
             synchronized (this) {
                 mPreviousCameraPosition.set(mCameraPosition);
@@ -155,8 +154,8 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
 
             if (!mBoundaryPlane.isPoseInPolygon(mObjectPose)) {
                 mAnimation.stop();
-                if (mPetMovementListener != null) {
-                    mPetMovementListener.onStopMove();
+                if (mOnMovementListener != null) {
+                    mOnMovementListener.onStopMove();
                 }
             }
         }
@@ -169,7 +168,7 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
     }
 
     private void initializeAnimation() {
-        mAnimation = new CustomPositionAnimation<>(mObjectToMove, mCameraPosition, mAnimationDuration = calculateDuration());
+        mAnimation = new CustomPositionAnimation<>(mMovable, mCameraPosition, mAnimationDuration = calculateDuration());
         mAnimation.setInterpolator(GVRAccelerateDecelerateInterpolator.getInstance());
         mAnimation.setOnAnimationListener(mAnimationListener);
     }
@@ -193,11 +192,14 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
     }
 
     private OnPositionAnimationListener mAnimationListener = new OnPositionAnimationListener() {
+
+        ToScreenMovementPosition position = new ToScreenMovementPosition();
+
         @Override
         public void onAnimationStart() {
             Log.d(TAG, "onAnimationStart: ");
-            if (mPetMovementListener != null) {
-                mPetMovementListener.onStartMove();
+            if (mOnMovementListener != null) {
+                mOnMovementListener.onStartMove();
             }
         }
 
@@ -207,17 +209,18 @@ public class ToScreenMovement<T extends AnchoredObject> implements PetMovement {
             checkCameraDisplacementThreshold();
             printStatus();
             checkBoundaryPlane();
-            if (mPetMovementListener != null) {
+            if (mOnMovementListener != null) {
                 // Move keeping Y value fixed in mStartY
-                mPetMovementListener.onMove(x, mObjectPosition.y, z);
+                position.getValue().set(x, mObjectPosition.y, z);
+                mOnMovementListener.onMove(mMovable, position);
             }
         }
 
         @Override
         public void onAnimationEnd() {
             Log.d(TAG, "onAnimationEnd: ");
-            if (mPetMovementListener != null) {
-                mPetMovementListener.onStopMove();
+            if (mOnMovementListener != null) {
+                mOnMovementListener.onStopMove();
             }
         }
     };

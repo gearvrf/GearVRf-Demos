@@ -15,12 +15,22 @@
  *
  */
 
-package org.gearvrf.arpet.movement;
+package org.gearvrf.arpet.movement.lookatobject;
 
-public interface OnPetMovementListener {
-    void onStartMove();
+import org.gearvrf.arpet.movement.MovementPosition;
+import org.joml.Matrix4f;
 
-    void onMove(float x, float y, float z);
+public class LookAtObjectMovementPosition implements MovementPosition<Matrix4f> {
 
-    void onStopMove();
+    private Matrix4f mValue = new Matrix4f();
+
+    @Override
+    public Matrix4f getValue() {
+        return mValue;
+    }
+
+    @Override
+    public void setValue(Matrix4f value) {
+        this.mValue.set(value);
+    }
 }

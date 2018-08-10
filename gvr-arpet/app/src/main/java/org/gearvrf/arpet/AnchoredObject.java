@@ -35,14 +35,14 @@ public abstract class AnchoredObject extends GVRSceneObject {
     private float[] mPoseMatrix;
     private GVRMixedReality mMixedReality;
 
-    AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
+    public AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
         super(context);
         this.mMixedReality = mixedReality;
         this.mPoseMatrix = poseMatrix;
         this.mAnchor = mixedReality.createAnchor(poseMatrix, this);
     }
 
-    void updatePose(float[] poseMatrix) {
+    public void updatePose(float[] poseMatrix) {
         mPoseMatrix = poseMatrix;
         mMixedReality.updateAnchorPose(mAnchor, poseMatrix);
     }

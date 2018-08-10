@@ -25,6 +25,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
+import org.gearvrf.arpet.movement.lookatobject.ObjectToLookAt;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -102,10 +103,10 @@ public class PetMain extends GVRMain {
     public void onPlaneDetected(final GVRPlane plane) {
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
         mScene.addSceneObject(mPet.getAnchor());
-        mPet.lookAt(ballThrowHandler.getBall());
+        mPet.lookAt(new ObjectToLookAt(ballThrowHandler.getBall()));
 
-        // setEditModeEnabled(true);
-        // movePetToScreen(plane, 3000);
+        //setEditModeEnabled(true);
+        movePetToScreen(plane, 1500);
     }
 
     private void setEditModeEnabled(boolean enabled) {
