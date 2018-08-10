@@ -15,21 +15,9 @@
  *
  */
 
-package org.gearvrf.arpet.gesture;
+package org.gearvrf.arpet.gesture.scale;
 
-import android.view.MotionEvent;
+public interface OnScaleListener {
 
-public abstract class GestureDetector {
-
-    private boolean mEnabled;
-
-    public void setEnabled(boolean mEnabled) {
-        this.mEnabled = mEnabled;
-    }
-
-    public boolean isEnabled() {
-        return mEnabled;
-    }
-
-    public abstract void onTouchEvent(MotionEvent event);
+    void onScale(float factor);
 }

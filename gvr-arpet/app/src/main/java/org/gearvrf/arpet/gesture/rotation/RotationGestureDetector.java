@@ -15,11 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.gesture;
+package org.gearvrf.arpet.gesture.rotation;
 
 import android.view.MotionEvent;
 
-public class RotationGestureDetector extends GestureDetector{
+import org.gearvrf.arpet.gesture.GestureDetector;
+
+public class RotationGestureDetector extends GestureDetector {
 
     private Line mLine1 = new Line(), mLine2 = new Line();
     private float mAngle;
@@ -86,6 +88,7 @@ public class RotationGestureDetector extends GestureDetector{
         mListener = listener;
     }
 
+    @Override
     public void onTouchEvent(MotionEvent event) {
 
         if (!isEnabled()) {

@@ -20,7 +20,7 @@ package org.gearvrf.arpet.movement.lookatobject;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.arpet.movement.BasicMovement;
+import org.gearvrf.arpet.movement.BaseMovement;
 import org.gearvrf.arpet.movement.MovableObject;
 import org.gearvrf.arpet.movement.OnMovementListener;
 import org.joml.Matrix4f;
@@ -28,7 +28,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class LookAtObjectMovement<Movable extends MovableObject>
-        extends BasicMovement<Movable, OnMovementListener<Movable, LookAtObjectMovementPosition>> {
+        extends BaseMovement<Movable, OnMovementListener<Movable, LookAtObjectMovementPosition>> {
 
     private ObjectToLookAt mObjectToLookAt;
     private LookAtObjectMovementPosition mMovementPosition = new LookAtObjectMovementPosition();

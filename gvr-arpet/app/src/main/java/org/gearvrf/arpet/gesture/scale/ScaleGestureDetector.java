@@ -15,12 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.gesture;
+package org.gearvrf.arpet.gesture.scale;
 
 import android.support.annotation.FloatRange;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.arpet.gesture.GestureDetector;
 
 public class ScaleGestureDetector extends GestureDetector {
 
@@ -62,6 +63,7 @@ public class ScaleGestureDetector extends GestureDetector {
         return mFactor;
     }
 
+    @Override
     public void onTouchEvent(MotionEvent event) {
         if (isEnabled()) {
             mScaleGestureDetector.onTouchEvent(event);

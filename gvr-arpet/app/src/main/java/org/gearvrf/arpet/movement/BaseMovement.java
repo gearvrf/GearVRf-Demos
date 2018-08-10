@@ -15,21 +15,17 @@
  *
  */
 
-package org.gearvrf.arpet.gesture;
+package org.gearvrf.arpet.movement;
 
-import android.view.MotionEvent;
+import android.support.annotation.NonNull;
 
-public abstract class GestureDetector {
+public abstract class BaseMovement<Movable extends MovableObject, Listener extends OnMovementListener> implements Movement {
 
-    private boolean mEnabled;
+    protected Movable mMovable;
+    protected Listener mOnMovementListener;
 
-    public void setEnabled(boolean mEnabled) {
-        this.mEnabled = mEnabled;
+    public BaseMovement(@NonNull Movable movable, @NonNull Listener listener) {
+        this.mMovable = movable;
+        this.mOnMovementListener = listener;
     }
-
-    public boolean isEnabled() {
-        return mEnabled;
-    }
-
-    public abstract void onTouchEvent(MotionEvent event);
 }

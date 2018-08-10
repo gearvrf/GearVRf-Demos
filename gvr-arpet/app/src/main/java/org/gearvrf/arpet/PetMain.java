@@ -25,7 +25,13 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
+import org.gearvrf.arpet.gesture.scale.BaseScalableObject;
+import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
 import org.gearvrf.arpet.movement.lookatobject.ObjectToLookAt;
+import org.gearvrf.arpet.petobjects.Bed;
+import org.gearvrf.arpet.petobjects.Bowl;
+import org.gearvrf.arpet.petobjects.Hydrant;
+import org.gearvrf.arpet.petobjects.Toy;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -105,6 +111,7 @@ public class PetMain extends GVRMain {
         mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(new ObjectToLookAt(ballThrowHandler.getBall()));
 
+        // addPetObjectsToPlane(plane);
         // setEditModeEnabled(true);
         // movePetToScreen(plane, 1500);
     }
@@ -124,6 +131,22 @@ public class PetMain extends GVRMain {
                 mPet.goToScreen();
             }
         }, delayToStart);
+    }
+
+    private void addPetObjectsToPlane(GVRPlane plane) {
+
+        ScalableObjectManager.INSTANCE.addScalableObject(
+                new Bed(mContext, mMixedReality, plane.getCenterPose()),
+                new Bowl(mContext, mMixedReality, plane.getCenterPose()),
+                new Hydrant(mContext, mMixedReality, plane.getCenterPose()),
+                new Toy(mContext, mMixedReality, plane.getCenterPose())
+        );
+
+        ScalableObjectManager.INSTANCE.setAutoScaleObjectsFrom(mPet);
+
+        for (BaseScalableObject scalableObject : ScalableObjectManager.INSTANCE.getScalableObjects()) {
+            mScene.addSceneObject(scalableObject.getAnchor());
+        }
     }
 
     @Override

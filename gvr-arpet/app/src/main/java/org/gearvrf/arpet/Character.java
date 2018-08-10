@@ -25,9 +25,11 @@ import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.GestureDetector;
-import org.gearvrf.arpet.gesture.RotationGestureDetector;
-import org.gearvrf.arpet.gesture.ScaleGestureDetector;
-import org.gearvrf.arpet.movement.BasicMovement;
+import org.gearvrf.arpet.gesture.rotation.RotationGestureDetector;
+import org.gearvrf.arpet.gesture.scale.OnScaleListener;
+import org.gearvrf.arpet.gesture.scale.ScalableObject;
+import org.gearvrf.arpet.gesture.scale.ScaleGestureDetector;
+import org.gearvrf.arpet.movement.BaseMovement;
 import org.gearvrf.arpet.movement.MovableObject;
 import org.gearvrf.arpet.movement.SimpleMovementListener;
 import org.gearvrf.arpet.movement.lookatobject.LookAtObjectMovement;
@@ -46,9 +48,11 @@ import java.util.List;
 
 public class Character extends MovableObject implements GVRDrawFrameListener,
         RotationGestureDetector.OnRotationGestureListener,
-        ScaleGestureDetector.OnScaleGestureListener {
+        ScaleGestureDetector.OnScaleGestureListener,
+        ScalableObject {
 
     private GVRMixedReality mMixedReality;
+    private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
 
     @IntDef({PetAction.IDLE, PetAction.TO_BALL,
             PetAction.TO_SCREEN, PetAction.TO_FOOD,
@@ -72,8 +76,8 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
     private GVRPlane mPetMovementBoundary;
 
     // Movement handlers
-    private BasicMovement mToScreenMovement;
-    private BasicMovement mLookAtObjectMovement;
+    private BaseMovement mToScreenMovement;
+    private BaseMovement mLookAtObjectMovement;
     // ...
 
     // Gesture detectors
@@ -209,9 +213,7 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
 
     @Override
     public void onScale(ScaleGestureDetector detector) {
-        GVRTransform t = getTransform();
-        float factor = detector.getFactor();
-        t.setScale(factor, factor, factor);
+        scale(detector.getFactor());
     }
 
     public void setRotationEnabled(boolean enabled) {
@@ -249,6 +251,26 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         registerDrawFrameListener();
         if (mCurrentAction == PetAction.TO_SCREEN) {
             mToScreenMovement.move();
+        }
+    }
+
+    @Override
+    public void scale(float factor) {
+        GVRTransform t = getTransform();
+        t.setScale(factor, factor, factor);
+        notifyScale(factor);
+    }
+
+    private synchronized void notifyScale(float factor) {
+        for (OnScaleListener listener : mOnScaleListeners) {
+            listener.onScale(factor);
+        }
+    }
+
+    @Override
+    public void addOnScaleListener(OnScaleListener listener) {
+        if (!mOnScaleListeners.contains(listener)) {
+            mOnScaleListeners.add(listener);
         }
     }
 

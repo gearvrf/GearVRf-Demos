@@ -15,17 +15,11 @@
  *
  */
 
-package org.gearvrf.arpet.movement;
+package org.gearvrf.arpet.gesture.scale;
 
-import android.support.annotation.NonNull;
+public interface ScalableObject {
 
-public abstract class BasicMovement<Movable extends MovableObject, Listener extends OnMovementListener> implements Movement {
+    void scale(float factor);
 
-    protected Movable mMovable;
-    protected Listener mOnMovementListener;
-
-    public BasicMovement(@NonNull Movable movable, @NonNull Listener listener) {
-        this.mMovable = movable;
-        this.mOnMovementListener = listener;
-    }
+    void addOnScaleListener(OnScaleListener listener);
 }

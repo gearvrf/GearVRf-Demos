@@ -24,7 +24,7 @@ import org.gearvrf.animation.GVRAccelerateDecelerateInterpolator;
 import org.gearvrf.arpet.PetActivity;
 import org.gearvrf.arpet.animation.CustomPositionAnimation;
 import org.gearvrf.arpet.animation.OnPositionAnimationListener;
-import org.gearvrf.arpet.movement.BasicMovement;
+import org.gearvrf.arpet.movement.BaseMovement;
 import org.gearvrf.arpet.movement.MovableObject;
 import org.gearvrf.arpet.movement.OnMovementListener;
 import org.gearvrf.mixedreality.GVRMixedReality;
@@ -35,7 +35,7 @@ import org.joml.Vector3f;
  * Class the represents a movement of given anchored object to the screen position.
  */
 public class ToScreenMovement<Movable extends MovableObject>
-        extends BasicMovement<Movable, OnMovementListener<Movable, ToScreenMovementPosition>> {
+        extends BaseMovement<Movable, OnMovementListener<Movable, ToScreenMovementPosition>> {
 
     private static final String TAG = ToScreenMovement.class.getSimpleName();
 
