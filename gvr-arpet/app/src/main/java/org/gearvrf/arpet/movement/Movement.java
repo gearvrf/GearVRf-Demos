@@ -18,16 +18,16 @@
 package org.gearvrf.arpet.movement;
 
 /**
- * Interface representing a movement of the pet
+ * Interface representing a movement.
  */
 interface Movement {
     /**
-     * Moves the pet
+     * Does a movement
      */
     void move();
 
     /**
-     * Stop movement
+     * Stops the movement
      */
     void stop();
 
