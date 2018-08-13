@@ -120,6 +120,7 @@ public class PetMain extends GVRMain {
         if (mPet != null) {
             mPet.setRotationEnabled(enabled);
             mPet.setScaleEnabled(enabled);
+            mPet.setDraggingEnabled(enabled);
         }
     }
 

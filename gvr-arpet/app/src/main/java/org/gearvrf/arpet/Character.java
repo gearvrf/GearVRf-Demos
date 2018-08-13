@@ -17,11 +17,16 @@ package org.gearvrf.arpet;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.GestureDetector;
@@ -37,19 +42,26 @@ import org.gearvrf.arpet.movement.lookatobject.LookAtObjectMovementPosition;
 import org.gearvrf.arpet.movement.lookatobject.ObjectToLookAt;
 import org.gearvrf.arpet.movement.toscreen.ToScreenMovement;
 import org.gearvrf.arpet.movement.toscreen.ToScreenMovementPosition;
+import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Character extends MovableObject implements GVRDrawFrameListener,
         RotationGestureDetector.OnRotationGestureListener,
         ScaleGestureDetector.OnScaleGestureListener,
         ScalableObject {
+
+    private final String TAG = getClass().getSimpleName();
 
     private GVRMixedReality mMixedReality;
     private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
@@ -74,6 +86,10 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
     private GVRContext mContext;
     private float[] mCurrentPose;
     private GVRPlane mPetMovementBoundary;
+    private TouchHandler mTouchHandler;
+    private GVRSceneObject mCursor;
+    private GVRCursorController mCursorController;
+    private final static String PET_NAME = "Pet";
 
     // Movement handlers
     private BaseMovement mToScreenMovement;
@@ -93,6 +109,7 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         mContext = gvrContext;
         mMixedReality = mixedReality;
         mCurrentPose = pose;
+        mMixedReality = mixedReality;
         load3DModel();
 
         mGestureDetectors.add(mRotationDetector = new RotationGestureDetector(this));
@@ -103,6 +120,37 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
             public void dispatchTouchEvent(MotionEvent event) {
                 mRotationDetector.onTouchEvent(event);
                 mScaleDetector.onTouchEvent(event);
+            }
+        });
+
+        mTouchHandler = new TouchHandler();
+        initController();
+    }
+
+    private void initController() {
+        final int cursorDepth = 100;
+        GVRInputManager inputManager = mContext.getInputManager();
+        final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
+                GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
+                GVRPicker.EventOptions.SEND_TO_LISTENERS);
+
+        mCursor = new GVRSceneObject(mContext,
+                mContext.createQuad(0.2f * cursorDepth,
+                        0.2f * cursorDepth),
+                mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
+                        R.raw.cursor)));
+        mCursor.getRenderData().setDepthTest(false);
+        mCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
+                if (oldController != null) {
+                    oldController.removePickEventListener(mTouchHandler);
+                }
+                mCursorController = newController;
+                newController.setCursorDepth(-cursorDepth);
+                newController.setCursor(mCursor);
+                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+                newController.getPicker().setEventOptions(eventOptions);
             }
         });
     }
@@ -166,6 +214,10 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         try {
             sceneObject = mContext.getAssetLoader().loadModel("objects/Fox_Pokemon.obj");
             addChildObject(sceneObject);
+            sceneObject.setName(PET_NAME);
+            GVRBoxCollider boxCollider = new GVRBoxCollider(mContext);
+            boxCollider.setHalfExtents(0.05f, 0.05f, 0.05f);
+            sceneObject.attachCollider(boxCollider);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -228,6 +280,14 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
             stopMovement();
         }
         mScaleDetector.setEnabled(enabled);
+    }
+
+    public void setDraggingEnabled(boolean enabled) {
+        if (enabled) {
+            mCursorController.addPickEventListener(mTouchHandler);
+        } else {
+            mCursorController.removePickEventListener(mTouchHandler);
+        }
     }
 
     private void disableGestureDetectors() {
@@ -305,6 +365,64 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         @Override
         public void onMove(Character pet, LookAtObjectMovementPosition position) {
             pet.getTransform().setModelMatrix(position.getValue());
+        }
+    }
+
+    public class TouchHandler extends GVREventListeners.TouchEvents {
+        private GVRSceneObject mDraggingObject = null;
+
+        @Override
+        public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
+            super.onTouchStart(sceneObject, pickedObject);
+            if (sceneObject.getName().equals(PET_NAME)) {
+                Log.d(TAG, "onTouchStart ");
+                sceneObject.getTransform().setPositionY(0.02f);
+                if (mDraggingObject == null) {
+                    mDraggingObject = sceneObject;
+                }
+            }
+
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
+            super.onTouchEnd(sceneObject, pickedObject);
+            if (sceneObject.getName().equals(PET_NAME)) {
+                Log.d(TAG, "onTouchEnd");
+                sceneObject.getTransform().setPositionY(0f);
+                if (mDraggingObject != null) {
+                    mDraggingObject = null;
+                }
+            }
+        }
+
+        @Override
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
+            super.onInside(sceneObj, collision);
+
+            if (mDraggingObject == null) {
+                return;
+            }
+
+            if (sceneObj.getName().equals(PET_NAME)) {
+                collision = pickSceneObject(mMixedReality.getPassThroughObject());
+                if (collision != null) {
+                    GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(), collision);
+                    if (gvrHitResult != null) {
+                        updatePose(gvrHitResult.getPose());
+                    }
+                }
+            }
+        }
+
+        private GVRPicker.GVRPickedObject pickSceneObject(GVRSceneObject sceneObject) {
+            Vector3f origin = new Vector3f();
+            Vector3f direction = new Vector3f();
+
+            mCursorController.getPicker().getWorldPickRay(origin, direction);
+
+            return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
+                    direction.x, direction.y, direction.z);
         }
     }
 }
