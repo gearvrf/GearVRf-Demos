@@ -18,7 +18,6 @@ import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.greenrobot.eventbus.EventBus;
@@ -27,7 +26,6 @@ import org.joml.Vector3f;
 import java.util.LinkedList;
 
 public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameListener {
-    private final static float PLANE_GROWTH_LIMIT = 0.3f;
 
     private GVRContext mContext;
     private GVRScene mScene;
@@ -51,8 +49,6 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     // attached to it.
     private final class PlaneBoard extends GVRComponent {
         private GVRPlane plane;
-        private float oldHeight = 0f;
-        private float oldWidth = 0f;
         private GVRSceneObject box;
         private Vector3f scale = new Vector3f();
         private Vector3f pos = new Vector3f();
@@ -108,6 +104,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 //            box.getTransform().setScaleZ(1f);
 
             // ... That's why I'm using the solution below
+            // FIXME: this can be optimized
             targetMtx.getScale(scale);
             targetMtx.getTranslation(pos);
             targetMtx.normalize3x3();
@@ -125,19 +122,17 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             // TODO: check if this should also be done only when plane grows too much
             setBoxTransform();
 
-            float dX = Math.abs(oldHeight - plane.getHeight());
-            float dY = Math.abs(oldWidth - plane.getWidth());
-            if (dX > PLANE_GROWTH_LIMIT || dY > PLANE_GROWTH_LIMIT) {
-                // A.R. plane had grown too much, static body must be replaced
-
-                box.detachComponent(GVRRigidBody.getComponentType());
-                oldHeight = plane.getHeight();
-                oldWidth = plane.getWidth();
-                GVRRigidBody board = new GVRRigidBody(mContext, 0f);
+            GVRRigidBody board = (GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType());
+            if (board == null) {
+                board = new GVRRigidBody(mContext, 0f);
                 board.setRestitution(0.5f);
                 board.setFriction(1.0f);
                 box.attachComponent(board);
             }
+
+            // This will update rigid body according to owner's transform
+            board.disable();
+            board.enable();
         }
     }
 
