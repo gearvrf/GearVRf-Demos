@@ -31,6 +31,13 @@ import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Vector3f;
 
+/**
+ * Movements the given object to the given target on an horizontal plane, keeping y-axis fixed.
+ *
+ * @param <Movable>  The object to move.
+ * @param <Target>   The target object.
+ * @param <Listener> Listener called when the object moves.
+ */
 public class DefaultMovement<
         Movable extends MovableObject,
         Target extends TargetObject,
@@ -80,9 +87,9 @@ public class DefaultMovement<
     public void move() {
         if (mAnimation != null) {
             mAnimation.stop();
+            Log.d(TAG, "run: Movement stopped!");
         }
         initializeAnimation();
-        Log.d(TAG, "run: Movement stopped!");
         startMoveDelayed();
     }
 
@@ -172,7 +179,7 @@ public class DefaultMovement<
     }
 
     private float calculateDuration() {
-        return 6 * (mDistanceToTarget / 0.650f);
+        return 8 * (mDistanceToTarget / 0.650f);
     }
 
     private void printStatus() {

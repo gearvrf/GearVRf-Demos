@@ -80,7 +80,7 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         ballThrowHandler = new BallThrowHandler(gvrContext);
-        // ballThrowHandler.enable();
+        ballThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -113,14 +113,18 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
+
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
-        mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
+        mPet.setBoundaryPlane(plane);
+
+        mScene.addSceneObject(mPet.getAnchor());
         mScene.addSceneObject(mHudMode.getPlayScene());
 
         //addPetObjectsToPlane(plane);
         //setEditModeEnabled(true);
-        //movePetToScreen(plane);
+        //movePetToScreen();
+        //movePetToBed();
     }
 
     private void setEditModeEnabled(boolean enabled) {
@@ -131,15 +135,24 @@ public class PetMain extends GVRMain {
         }
     }
 
-    private void movePetToScreen(final GVRPlane boundary) {
+    private void movePetToScreen() {
         mPetContext.runDelayedOnPetThread(new Runnable() {
             @Override
             public void run() {
-                mPet.setBoundaryPlane(boundary);
                 mPet.goToScreen();
             }
         }, 1500);
     }
+
+    private void movePetToBed() {
+        mPetContext.runDelayedOnPetThread(new Runnable() {
+            @Override
+            public void run() {
+                mPet.goToBed();
+            }
+        }, 1500);
+    }
+
 
     private void addPetObjectsToPlane(GVRPlane plane) {
 
