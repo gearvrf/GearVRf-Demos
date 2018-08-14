@@ -10,7 +10,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:visibility="visible">
+    android:clickable="true"
+    android:focusable="true"
+    android:visibility="invisible">
 
     <Button
        android:id="@+id/btn_fetchball"
@@ -20,18 +22,21 @@
        android:background="@drawable/btn_fetchball" />
 
     <Button
+        android:id="@+id/btn_shareanchor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:background="@drawable/btn_shareanchor" />
 
     <Button
+        android:id="@+id/btn_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         android:background="@drawable/btn_edit" />
 
     <Button
+        android:id="@+id/btn_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
@@ -40,10 +45,17 @@
 </LinearLayout>
 
     <Button
-        android:id="@+id/OptionsMenu"
+        android:id="@+id/btn_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_options"
         android:visibility="visible"/>
+
+    <Button
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_close"
+        android:visibility="invisible"/>
 
 </LinearLayout>

@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRBoxCollider;
@@ -24,11 +23,11 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.gesture.scale.BaseScalableObject;
 import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
+import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
@@ -59,7 +58,7 @@ public class PetMain extends GVRMain {
     private GVRSceneObject cube;
     private Character mPet;
 
-    private Hud mHud;
+    private HudMode mHudMode;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -81,12 +80,12 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         ballThrowHandler = new BallThrowHandler(gvrContext);
+        // ballThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
 
-        mHud = new Hud(mContext);
-        mHud.registerListener(new HudEventHandler());
+        mHudMode = new HudMode(mContext, mScene);
 
 
         cube = new GVRSceneObject(gvrContext);
@@ -97,7 +96,7 @@ public class PetMain extends GVRMain {
 
         mScene.addSceneObject(cube);
 
-        disableCursor();
+        //  disableCursor();
     }
 
     public void resume() {
@@ -116,13 +115,9 @@ public class PetMain extends GVRMain {
     public void onPlaneDetected(final GVRPlane plane) {
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
         mScene.addSceneObject(mPet.getAnchor());
-
         mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
-
+        mScene.addSceneObject(mHudMode.getPlayScene());
         // addPetObjectsToPlane(plane);
-
-        mScene.getMainCameraRig().addChildObject(mHud);
-
         // setEditModeEnabled(true);
         // movePetToScreen(plane);
     }
@@ -172,8 +167,7 @@ public class PetMain extends GVRMain {
             ballThrowHandler.reset();
         }
 
-        HudOrientation();
-
+        mHudMode.handleOrientation();
     }
 
     @Subscribe
@@ -225,45 +219,6 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onMotionOutside(GVRPicker picker, MotionEvent motionEvent) {
-
-        }
-    }
-
-    private void HudOrientation() {
-        float rotationZAxis = mScene.getMainCameraRig().getHeadTransform().getRotationRoll();
-        GVRTransform cameraTransform = mScene.getMainCameraRig().getHeadTransform();
-
-        if (rotationZAxis < 3 && rotationZAxis > -60 || rotationZAxis > -80 && rotationZAxis < 175) {
-            mHud.getTransform().setPosition(cameraTransform.getPositionX() + 2.8f, cameraTransform.getPositionY(), cameraTransform.getPositionZ() - 5);
-            mHud.getTransform().setRotation(cameraTransform.getRotationW(), cameraTransform.getRotationX(), cameraTransform.getRotationY(), cameraTransform.getRotationZ());
-            Log.d(TAG, "Landscape " + " Z: " + rotationZAxis);
-        } else {
-            mHud.getTransform().setPosition(cameraTransform.getPositionX() + 1.4f, cameraTransform.getPositionY() + 1.4f, cameraTransform.getPositionZ() - 5);
-            mHud.getTransform().setRotation(cameraTransform.getRotationW(), cameraTransform.getRotationX(), cameraTransform.getRotationY(), -cameraTransform.getRotationZ());
-            Log.d(TAG, "Portrait " + " Z: " + rotationZAxis);
-        }
-    }
-
-    private class HudEventHandler implements OnHudItemClicked {
-        private OnHudItemClicked mOnHudItemClicked;
-
-        @Override
-        public void onBallClicked() {
-            //ballThrowHandler.enable();
-        }
-
-        @Override
-        public void onShareAnchorClicked() {
-
-        }
-
-        @Override
-        public void onEditModeClicked() {
-
-        }
-
-        @Override
-        public void onCameraClicked() {
 
         }
     }

@@ -14,4 +14,6 @@
  */-->
 
 <resources>
+    <string name="editing_mode">Editing Mode</string>
+    <string name="save">SAVE</string>
 </resources>
