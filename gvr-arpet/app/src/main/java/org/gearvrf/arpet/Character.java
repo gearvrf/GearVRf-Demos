@@ -130,10 +130,6 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
     private void initController() {
         final int cursorDepth = 100;
         GVRInputManager inputManager = mContext.getInputManager();
-        final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
-                GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
-                GVRPicker.EventOptions.SEND_TO_LISTENERS);
-
         mCursor = new GVRSceneObject(mContext,
                 mContext.createQuad(0.2f * cursorDepth,
                         0.2f * cursorDepth),
@@ -150,7 +146,6 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
                 newController.setCursorDepth(-cursorDepth);
                 newController.setCursor(mCursor);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
-                newController.getPicker().setEventOptions(eventOptions);
             }
         });
     }
