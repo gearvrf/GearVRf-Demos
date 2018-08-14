@@ -34,19 +34,20 @@ import org.gearvrf.arpet.gesture.rotation.RotationGestureDetector;
 import org.gearvrf.arpet.gesture.scale.OnScaleListener;
 import org.gearvrf.arpet.gesture.scale.ScalableObject;
 import org.gearvrf.arpet.gesture.scale.ScaleGestureDetector;
-import org.gearvrf.arpet.movement.BaseMovement;
 import org.gearvrf.arpet.movement.MovableObject;
+import org.gearvrf.arpet.movement.Movement;
 import org.gearvrf.arpet.movement.SimpleMovementListener;
-import org.gearvrf.arpet.movement.lookatobject.LookAtObjectMovement;
-import org.gearvrf.arpet.movement.lookatobject.LookAtObjectMovementPosition;
-import org.gearvrf.arpet.movement.lookatobject.ObjectToLookAt;
-import org.gearvrf.arpet.movement.toscreen.ToScreenMovement;
-import org.gearvrf.arpet.movement.toscreen.ToScreenMovementPosition;
+import org.gearvrf.arpet.movement.TargetObject;
+import org.gearvrf.arpet.movement.impl.DefaultMovement;
+import org.gearvrf.arpet.movement.impl.LookAtObjectMovement;
+import org.gearvrf.arpet.movement.impl.ToScreenMovement;
+import org.gearvrf.arpet.movement.targetwrapper.VRCameraRigWrapper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -92,8 +93,8 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
     private final static String PET_NAME = "Pet";
 
     // Movement handlers
-    private BaseMovement mToScreenMovement;
-    private BaseMovement mLookAtObjectMovement;
+    private Movement mToScreenMovement;
+    private Movement mLookAtObjectMovement;
     // ...
 
     // Gesture detectors
@@ -107,7 +108,6 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
 
         mCurrentAction = PetAction.IDLE;
         mContext = gvrContext;
-        mMixedReality = mixedReality;
         mCurrentPose = pose;
         mMixedReality = mixedReality;
         load3DModel();
@@ -161,8 +161,8 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
 
     public void goToScreen() {
         disableGestureDetectors();
-        mToScreenMovement = new ToScreenMovement<>(this, mMixedReality, new TooScreenMovementListener(mContext));
-        ((ToScreenMovement) mToScreenMovement).setBoundaryPlane(mPetMovementBoundary);
+        mToScreenMovement = new ToScreenMovement(this, new ToScreenMovementListener(mContext));
+        ((DefaultMovement) mToScreenMovement).setBoundaryPlane(mPetMovementBoundary);
         mCurrentAction = PetAction.TO_SCREEN;
         registerDrawFrameListener();
         mToScreenMovement.move();
@@ -180,7 +180,7 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         mCurrentAction = PetAction.TO_BED;
     }
 
-    public void lookAt(@NonNull ObjectToLookAt objectToLookAt) {
+    public void lookAt(@NonNull TargetObject objectToLookAt) {
         disableGestureDetectors();
         mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener());
         mCurrentAction = PetAction.LOOK_AT;
@@ -334,25 +334,25 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         }
     }
 
-    private class TooScreenMovementListener extends SimpleMovementListener<Character, ToScreenMovementPosition> {
+    private class ToScreenMovementListener extends SimpleMovementListener<Character, Vector3f> {
 
-        private ObjectToLookAt mCamera;
+        private VRCameraRigWrapper mCamera;
 
-        TooScreenMovementListener(@NonNull GVRContext context) {
-            mCamera = new ObjectToLookAt(context.getMainScene().getMainCameraRig());
+        ToScreenMovementListener(@NonNull GVRContext context) {
+            mCamera = new VRCameraRigWrapper(context.getMainScene().getMainCameraRig());
         }
 
         @Override
-        public void onMove(Character pet, ToScreenMovementPosition position) {
+        public void onMove(Character pet, Vector3f position) {
 
             // Keep the pet looking at GVR camera
             pet.getTransform().setModelMatrix(LookAtObjectMovement.lookAt(Character.this, mCamera));
 
             // Update current position. The onDrawFrame() method uses this point to update
             // position of this character
-            mCurrentPose[12] = position.getValue().x;
-            mCurrentPose[13] = position.getValue().y;
-            mCurrentPose[14] = position.getValue().z;
+            mCurrentPose[12] = position.x;
+            mCurrentPose[13] = position.y;
+            mCurrentPose[14] = position.z;
         }
 
         @Override
@@ -361,10 +361,10 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         }
     }
 
-    private class LookAtObjectListener extends SimpleMovementListener<Character, LookAtObjectMovementPosition> {
+    private class LookAtObjectListener extends SimpleMovementListener<Character, Matrix4f> {
         @Override
-        public void onMove(Character pet, LookAtObjectMovementPosition position) {
-            pet.getTransform().setModelMatrix(position.getValue());
+        public void onMove(Character pet, Matrix4f position) {
+            pet.getTransform().setModelMatrix(position);
         }
     }
 

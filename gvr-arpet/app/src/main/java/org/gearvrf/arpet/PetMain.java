@@ -27,7 +27,7 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.gesture.scale.BaseScalableObject;
 import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
-import org.gearvrf.arpet.movement.lookatobject.ObjectToLookAt;
+import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
 import org.gearvrf.arpet.petobjects.Hydrant;
@@ -109,11 +109,11 @@ public class PetMain extends GVRMain {
     public void onPlaneDetected(final GVRPlane plane) {
         mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
         mScene.addSceneObject(mPet.getAnchor());
-        mPet.lookAt(new ObjectToLookAt(ballThrowHandler.getBall()));
+        mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
 
         // addPetObjectsToPlane(plane);
         // setEditModeEnabled(true);
-        // movePetToScreen(plane, 1500);
+        // movePetToScreen(plane);
     }
 
     private void setEditModeEnabled(boolean enabled) {
@@ -124,14 +124,14 @@ public class PetMain extends GVRMain {
         }
     }
 
-    private void movePetToScreen(final GVRPlane boundary, int delayToStart) {
+    private void movePetToScreen(final GVRPlane boundary) {
         mPetContext.runDelayedOnPetThread(new Runnable() {
             @Override
             public void run() {
                 mPet.setBoundaryPlane(boundary);
                 mPet.goToScreen();
             }
-        }, delayToStart);
+        }, 1500);
     }
 
     private void addPetObjectsToPlane(GVRPlane plane) {

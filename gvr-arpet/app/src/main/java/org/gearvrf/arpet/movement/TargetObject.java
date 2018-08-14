@@ -15,22 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.movement.toscreen;
+package org.gearvrf.arpet.movement;
 
-import org.gearvrf.arpet.movement.MovementPosition;
-import org.joml.Vector3f;
+import org.gearvrf.GVRTransform;
 
-public class ToScreenMovementPosition implements MovementPosition<Vector3f> {
+public interface TargetObject {
 
-    private Vector3f mValue = new Vector3f();
+    float[] getPoseMatrix();
 
-    @Override
-    public Vector3f getValue() {
-        return mValue;
-    }
-
-    @Override
-    public void setValue(Vector3f value) {
-        this.mValue.set(value);
-    }
+    GVRTransform getTransform();
 }

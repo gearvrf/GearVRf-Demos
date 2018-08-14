@@ -15,17 +15,29 @@
  *
  */
 
-package org.gearvrf.arpet.movement;
+package org.gearvrf.arpet.movement.targetwrapper;
 
 import android.support.annotation.NonNull;
 
-public abstract class BaseMovement<Movable extends MovableObject, Listener extends OnMovementListener> implements Movement {
+import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVRTransform;
+import org.gearvrf.arpet.movement.TargetObject;
 
-    protected Movable mMovable;
-    protected Listener mOnMovementListener;
+public class VRCameraRigWrapper implements TargetObject {
 
-    public BaseMovement(@NonNull Movable movable, @NonNull Listener listener) {
-        this.mMovable = movable;
-        this.mOnMovementListener = listener;
+    private GVRCameraRig mCameraRig;
+
+    public VRCameraRigWrapper(@NonNull GVRCameraRig cameraRig) {
+        this.mCameraRig = cameraRig;
+    }
+
+    @Override
+    public GVRTransform getTransform() {
+        return mCameraRig.getHeadTransform();
+    }
+
+    @Override
+    public float[] getPoseMatrix() {
+        return new float[0];
     }
 }

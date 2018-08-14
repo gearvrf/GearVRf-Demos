@@ -20,9 +20,10 @@ package org.gearvrf.arpet.movement;
 /**
  * Interface called when movement occurs.
  *
+ * @param <Movable>  The object to be moved.
  * @param <Position> The new position returned when movement occurs.
  */
-public interface OnMovementListener<Movable extends MovableObject, Position extends MovementPosition> {
+public interface OnMovementListener<Movable extends MovableObject, Position> {
 
     void onStartMove();
 

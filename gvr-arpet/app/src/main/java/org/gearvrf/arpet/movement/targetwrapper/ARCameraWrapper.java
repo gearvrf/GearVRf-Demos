@@ -15,22 +15,27 @@
  *
  */
 
-package org.gearvrf.arpet.movement.lookatobject;
+package org.gearvrf.arpet.movement.targetwrapper;
 
-import org.gearvrf.arpet.movement.MovementPosition;
-import org.joml.Matrix4f;
+import org.gearvrf.GVRTransform;
+import org.gearvrf.arpet.movement.TargetObject;
+import org.gearvrf.mixedreality.GVRMixedReality;
 
-public class LookAtObjectMovementPosition implements MovementPosition<Matrix4f> {
+public class ARCameraWrapper implements TargetObject {
 
-    private Matrix4f mValue = new Matrix4f();
+    private GVRMixedReality mMixedReality;
 
-    @Override
-    public Matrix4f getValue() {
-        return mValue;
+    public ARCameraWrapper(GVRMixedReality mMixedReality) {
+        this.mMixedReality = mMixedReality;
     }
 
     @Override
-    public void setValue(Matrix4f value) {
-        this.mValue.set(value);
+    public float[] getPoseMatrix() {
+        return mMixedReality.getCameraPoseMatrix();
+    }
+
+    @Override
+    public GVRTransform getTransform() {
+        return null;
     }
 }

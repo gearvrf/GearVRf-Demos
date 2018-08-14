@@ -54,4 +54,8 @@ public abstract class AnchoredObject extends GVRSceneObject {
     public float[] getPoseMatrix() {
         return mPoseMatrix;
     }
+
+    public GVRMixedReality getMixedReality() {
+        return mMixedReality;
+    }
 }

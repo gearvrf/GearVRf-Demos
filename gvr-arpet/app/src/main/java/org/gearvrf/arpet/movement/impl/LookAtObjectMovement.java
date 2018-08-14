@@ -15,41 +15,40 @@
  *
  */
 
-package org.gearvrf.arpet.movement.lookatobject;
+package org.gearvrf.arpet.movement.impl;
 
 import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.arpet.movement.BaseMovement;
+import org.gearvrf.arpet.movement.Movement;
+import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.arpet.movement.MovableObject;
 import org.gearvrf.arpet.movement.OnMovementListener;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class LookAtObjectMovement<Movable extends MovableObject>
-        extends BaseMovement<Movable, OnMovementListener<Movable, LookAtObjectMovementPosition>> {
+public class LookAtObjectMovement<Movable extends MovableObject, Target extends TargetObject>
+        extends Movement<Movable, Target, OnMovementListener<Movable, Matrix4f>> {
 
-    private ObjectToLookAt mObjectToLookAt;
-    private LookAtObjectMovementPosition mMovementPosition = new LookAtObjectMovementPosition();
+    private Matrix4f mPosition = new Matrix4f();
 
     public LookAtObjectMovement(@NonNull Movable objectToMove,
-                                @NonNull ObjectToLookAt objectToLookAt,
-                                @NonNull OnMovementListener<Movable, LookAtObjectMovementPosition> listener) {
-        super(objectToMove, listener);
-        mObjectToLookAt = objectToLookAt;
+                                @NonNull Target objectToLookAt,
+                                @NonNull OnMovementListener<Movable, Matrix4f> listener) {
+        super(objectToMove, objectToLookAt, listener);
     }
 
     @Override
     public void move() {
-        mMovementPosition.setValue(lookAt(mMovable, mObjectToLookAt));
-        mOnMovementListener.onMove(mMovable, mMovementPosition);
+        mPosition.set(lookAt(mMovable, mTarget));
+        mOnMovementListener.onMove(mMovable, mPosition);
     }
 
-    public static Matrix4f lookAt(@NonNull GVRSceneObject objectToMove,
-                                  @NonNull ObjectToLookAt objectToLookAt) {
+    public static <T extends TargetObject> Matrix4f lookAt(@NonNull GVRSceneObject objectToMove,
+                                                           @NonNull T target) {
 
-        float[] modelMatrix = objectToLookAt.getTransform().getModelMatrix();
+        float[] modelMatrix = target.getTransform().getModelMatrix();
 
         Vector3f vectorDest = new Vector3f();
         Vector3f vectorOrig = new Vector3f();

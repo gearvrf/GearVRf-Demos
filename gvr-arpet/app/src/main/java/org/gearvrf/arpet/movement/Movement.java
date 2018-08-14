@@ -17,24 +17,37 @@
 
 package org.gearvrf.arpet.movement;
 
-/**
- * Interface representing a movement.
- */
-interface Movement {
+import android.support.annotation.NonNull;
+
+public abstract class Movement<
+        Movable extends MovableObject,
+        Target extends TargetObject,
+        Listener extends OnMovementListener> {
+
+    protected Movable mMovable;
+    protected Target mTarget;
+    protected Listener mOnMovementListener;
+
+    public Movement(@NonNull Movable movable, @NonNull Target target, @NonNull Listener listener) {
+        this.mMovable = movable;
+        this.mTarget = target;
+        this.mOnMovementListener = listener;
+    }
+
     /**
      * Does a movement
      */
-    void move();
+    public abstract void move();
 
     /**
      * Stops the movement
      */
-    void stop();
+    public abstract void stop();
 
     /**
      * Whether is moving or not.
      *
      * @return true if is moving; false otherwise.
      */
-    boolean isMoving();
+    public abstract boolean isMoving();
 }

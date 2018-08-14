@@ -15,16 +15,27 @@
  *
  */
 
-package org.gearvrf.arpet.movement;
+package org.gearvrf.arpet.movement.targetwrapper;
 
-/**
- * Holds the value of a movement position.
- *
- * @param <T> Type of position value.
- */
-public interface MovementPosition<T> {
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
+import org.gearvrf.arpet.movement.TargetObject;
 
-    T getValue();
+public class BallWrapper implements TargetObject {
 
-    void setValue(T value);
+    private GVRSceneObject mBall;
+
+    public BallWrapper(GVRSceneObject ball) {
+        this.mBall = ball;
+    }
+
+    @Override
+    public float[] getPoseMatrix() {
+        return mBall.getTransform().getModelMatrix();
+    }
+
+    @Override
+    public GVRTransform getTransform() {
+        return mBall.getTransform();
+    }
 }

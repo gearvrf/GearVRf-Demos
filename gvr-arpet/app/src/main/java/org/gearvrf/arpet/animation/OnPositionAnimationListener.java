@@ -17,11 +17,13 @@
 
 package org.gearvrf.arpet.animation;
 
+import org.joml.Vector3f;
+
 public interface OnPositionAnimationListener {
 
     void onAnimationStart();
 
-    void onAnimate(float x, float y, float z);
+    void onAnimate(Vector3f position);
 
     void onAnimationEnd();
 }

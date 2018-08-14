@@ -17,7 +17,7 @@
 
 package org.gearvrf.arpet.movement;
 
-public class SimpleMovementListener<Movable extends MovableObject, Position extends MovementPosition>
+public class SimpleMovementListener<Movable extends MovableObject, Position>
         implements OnMovementListener<Movable, Position> {
 
     @Override

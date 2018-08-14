@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.movement.toscreen;
+package org.gearvrf.arpet.movement.impl;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -24,55 +24,53 @@ import org.gearvrf.animation.GVRAccelerateDecelerateInterpolator;
 import org.gearvrf.arpet.PetActivity;
 import org.gearvrf.arpet.animation.CustomPositionAnimation;
 import org.gearvrf.arpet.animation.OnPositionAnimationListener;
-import org.gearvrf.arpet.movement.BaseMovement;
 import org.gearvrf.arpet.movement.MovableObject;
+import org.gearvrf.arpet.movement.Movement;
 import org.gearvrf.arpet.movement.OnMovementListener;
-import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.joml.Vector3f;
 
-/**
- * Class the represents a movement of given anchored object to the screen position.
- */
-public class ToScreenMovement<Movable extends MovableObject>
-        extends BaseMovement<Movable, OnMovementListener<Movable, ToScreenMovementPosition>> {
+public class DefaultMovement<
+        Movable extends MovableObject,
+        Target extends TargetObject,
+        Listener extends OnMovementListener<Movable, Vector3f>>
+        extends Movement<Movable, Target, Listener> {
 
-    private static final String TAG = ToScreenMovement.class.getSimpleName();
+    private static final String TAG = DefaultMovement.class.getSimpleName();
 
-    private static final float CAMERA_DISPLACEMENT_THRESHOLD = 0.04f;
+    private static final float TARGET_DISPLACEMENT_THRESHOLD = 0.04f;
 
     private static final int POSE_X = 12;
     private static final int POSE_Y = 13;
     private static final int POSE_Z = 14;
 
     private CustomPositionAnimation mAnimation;
-    private GVRMixedReality mMixedReality;
     private GVRPlane mBoundaryPlane;
 
-    private float mCameraDisplacement;
+    private float mTargetDisplacement;
     private float mDistanceToTarget;
     private float mAnimationDuration;
-    private float[] mCameraPose;
+
+    private float[] mTargetPose;
     private float[] mObjectPose;
     private float[] mBoundaryPlaneCenterPose = new float[16];
 
     private Vector3f mObjectPosition = new Vector3f();
-    private Vector3f mPreviousCameraPosition = new Vector3f();
-    private Vector3f mCameraPosition = new Vector3f();
+    private Vector3f mPreviousTargetPosition = new Vector3f();
+    private Vector3f mTargetPosition = new Vector3f();
 
     /**
      * @param objectToMove The object to be moved.
-     * @param mixedReality The mixed reality session.
+     * @param targetObject The target object.
      */
-    public ToScreenMovement(@NonNull Movable objectToMove,
-                            @NonNull final GVRMixedReality mixedReality,
-                            OnMovementListener<Movable, ToScreenMovementPosition> listener) {
-        super(objectToMove, listener);
-
-        mMixedReality = mixedReality;
+    DefaultMovement(@NonNull Movable objectToMove,
+                    @NonNull Target targetObject,
+                    @NonNull Listener listener) {
+        super(objectToMove, targetObject, listener);
 
         updatePositionHolders();
-        getPositionFromPose(mPreviousCameraPosition, mCameraPose);
+        getPositionFromPose(mPreviousTargetPosition, mTargetPose);
     }
 
     /**
@@ -103,7 +101,7 @@ public class ToScreenMovement<Movable extends MovableObject>
 
     private void startMoveDelayed() {
 
-        Log.d(TAG, "initialPosition: " + mCameraPosition);
+        Log.d(TAG, "initialPosition: " + mTargetPosition);
         PetActivity.PetContext.INSTANCE.runDelayedOnPetThread(new Runnable() {
             @Override
             public void run() {
@@ -124,22 +122,22 @@ public class ToScreenMovement<Movable extends MovableObject>
 
     private void updatePositionHolders() {
 
-        mCameraPose = mMixedReality.getCameraPoseMatrix();
         mObjectPose = mMovable.getPoseMatrix();
+        mTargetPose = mTarget.getPoseMatrix();
 
-        getPositionFromPose(mCameraPosition, mCameraPose);
         getPositionFromPose(mObjectPosition, mObjectPose);
+        getPositionFromPose(mTargetPosition, mTargetPose);
 
-        mCameraDisplacement = mCameraPosition.distance(mPreviousCameraPosition);
-        mDistanceToTarget = mCameraPosition.distance(mObjectPosition);
+        mTargetDisplacement = mTargetPosition.distance(mPreviousTargetPosition);
+        mDistanceToTarget = mTargetPosition.distance(mObjectPosition);
     }
 
-    private void checkCameraDisplacementThreshold() {
+    private void checkTargetDisplacementThreshold() {
 
-        if (mCameraDisplacement > CAMERA_DISPLACEMENT_THRESHOLD) {
-            Log.d(TAG, "checkCameraDisplacementThreshold: the camera's displacement threshold has been reached!");
+        if (mTargetDisplacement > TARGET_DISPLACEMENT_THRESHOLD) {
+            Log.d(TAG, "checkTargetDisplacementThreshold: the target's displacement threshold has been reached!");
             synchronized (this) {
-                mPreviousCameraPosition.set(mCameraPosition);
+                mPreviousTargetPosition.set(mTargetPosition);
                 resetMovement();
             }
         }
@@ -168,7 +166,7 @@ public class ToScreenMovement<Movable extends MovableObject>
     }
 
     private void initializeAnimation() {
-        mAnimation = new CustomPositionAnimation<>(mMovable, mCameraPosition, mAnimationDuration = calculateDuration());
+        mAnimation = new CustomPositionAnimation<>(mMovable, mTargetPosition, mAnimationDuration = calculateDuration());
         mAnimation.setInterpolator(GVRAccelerateDecelerateInterpolator.getInstance());
         mAnimation.setOnAnimationListener(mAnimationListener);
     }
@@ -178,8 +176,8 @@ public class ToScreenMovement<Movable extends MovableObject>
     }
 
     private void printStatus() {
-        Log.d(TAG, String.format("ObjectPosition: %s / CameraPosition= %s / DistanceToTarget= %.3f / CameraDisplacement= %.3f / AnimDuration= %.3f",
-                mObjectPosition, mCameraPosition, mDistanceToTarget, mCameraDisplacement, mAnimationDuration));
+        Log.d(TAG, String.format("ObjectPosition: %s / TargetPosition= %s / DistanceToTarget= %.3f / TargetDisplacement= %.3f / AnimDuration= %.3f",
+                mObjectPosition, mTargetPosition, mDistanceToTarget, mTargetDisplacement, mAnimationDuration));
     }
 
     /**
@@ -193,9 +191,10 @@ public class ToScreenMovement<Movable extends MovableObject>
 
     private OnPositionAnimationListener mAnimationListener = new OnPositionAnimationListener() {
 
-        ToScreenMovementPosition position = new ToScreenMovementPosition();
+        Vector3f mPosition = new Vector3f();
 
         @Override
+
         public void onAnimationStart() {
             Log.d(TAG, "onAnimationStart: ");
             if (mOnMovementListener != null) {
@@ -204,15 +203,15 @@ public class ToScreenMovement<Movable extends MovableObject>
         }
 
         @Override
-        public void onAnimate(float x, float y, float z) {
+        public void onAnimate(Vector3f position) {
             updatePositionHolders();
-            checkCameraDisplacementThreshold();
+            checkTargetDisplacementThreshold();
             printStatus();
             checkBoundaryPlane();
             if (mOnMovementListener != null) {
-                // Move keeping Y value fixed in mStartY
-                position.getValue().set(x, mObjectPosition.y, z);
-                mOnMovementListener.onMove(mMovable, position);
+                mPosition.set(position);
+                mPosition.y = mObjectPosition.y;
+                mOnMovementListener.onMove(mMovable, mPosition);
             }
         }
 

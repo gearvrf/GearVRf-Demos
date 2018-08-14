@@ -36,8 +36,9 @@ public class CustomPositionAnimation<T extends AnchoredObject> extends GVRTransf
     private static final int POSE_Y = 13;
     private static final int POSE_Z = 14;
 
-    private float mStartX, mStartY, mStartZ;
-    private float mDeltaX, mDeltaY, mDeltaZ;
+    private Vector3f mStart = new Vector3f();
+    private Vector3f mDelta = new Vector3f();
+    private Vector3f mPosition = new Vector3f();
 
     private OnPositionAnimationListener mOnAnimationListener;
     private T mObjectToMove;
@@ -65,11 +66,12 @@ public class CustomPositionAnimation<T extends AnchoredObject> extends GVRTransf
     protected void animate(GVRHybridObject target, float ratio) {
 
         if (mOnAnimationListener != null) {
-            mOnAnimationListener.onAnimate(
-                    mStartX + ratio * mDeltaX,
-                    mStartY + ratio * mDeltaY,
-                    mStartZ + ratio * mDeltaZ
+            mPosition.set(
+                    mStart.x + ratio * mDelta.x,
+                    mStart.y + ratio * mDelta.y,
+                    mStart.z + ratio * mDelta.z
             );
+            mOnAnimationListener.onAnimate(mPosition);
         }
     }
 
@@ -78,14 +80,8 @@ public class CustomPositionAnimation<T extends AnchoredObject> extends GVRTransf
     }
 
     private void setEndPosition(Vector3f end) {
-
-        mStartX = mCurrentPose[POSE_X];
-        mStartY = mCurrentPose[POSE_Y];
-        mStartZ = mCurrentPose[POSE_Z];
-
-        mDeltaX = end.x - mStartX;
-        mDeltaY = end.y - mStartY;
-        mDeltaZ = end.z - mStartZ;
+        mStart.set(mCurrentPose[POSE_X], mCurrentPose[POSE_Y], mCurrentPose[POSE_Z]);
+        mDelta.set(end.x - mStart.x, end.y - mStart.y, end.z - mStart.z);
     }
 
     /**
