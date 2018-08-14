@@ -19,10 +19,19 @@ package org.gearvrf.arpet.movement;
 
 import android.support.annotation.NonNull;
 
+/**
+ * Class representing a generic movement.
+ *
+ * @param <Movable>  Object to move.
+ * @param <Target>   The target object.
+ * @param <Position> The result position when object moves.
+ * @param <Listener> Called to notify when movement events occur.
+ */
 public abstract class Movement<
         Movable extends MovableObject,
         Target extends TargetObject,
-        Listener extends OnMovementListener> {
+        Position,
+        Listener extends OnMovementListener<Movable, Target, Position>> {
 
     protected Movable mMovable;
     protected Target mTarget;

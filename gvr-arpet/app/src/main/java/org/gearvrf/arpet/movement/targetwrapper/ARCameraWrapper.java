@@ -36,6 +36,6 @@ public class ARCameraWrapper implements TargetObject {
 
     @Override
     public GVRTransform getTransform() {
-        return null;
+        return mMixedReality.getTransform();
     }
 }

@@ -27,12 +27,12 @@ import org.joml.Vector3f;
 /**
  * Class the represents a movement of given anchored object to the screen position.
  */
-public class ToScreenMovement extends DefaultMovement<Character, ARCameraWrapper, OnMovementListener<Character, Vector3f>> {
-
+public class ToScreenMovement<Listener extends OnMovementListener<Character, ARCameraWrapper, Vector3f>>
+        extends DefaultMovement<Character, ARCameraWrapper, Listener> {
     /**
      * @param pet The object to be moved.
      */
-    public ToScreenMovement(@NonNull Character pet, OnMovementListener<Character, Vector3f> listener) {
+    public ToScreenMovement(@NonNull Character pet, Listener listener) {
         super(pet, new ARCameraWrapper(pet.getMixedReality()), listener);
     }
 }

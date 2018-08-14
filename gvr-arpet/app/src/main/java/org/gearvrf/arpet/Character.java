@@ -33,6 +33,7 @@ import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.rotation.RotationGestureDetector;
 import org.gearvrf.arpet.gesture.scale.OnScaleListener;
 import org.gearvrf.arpet.gesture.scale.ScalableObject;
+import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
 import org.gearvrf.arpet.gesture.scale.ScaleGestureDetector;
 import org.gearvrf.arpet.movement.MovableObject;
 import org.gearvrf.arpet.movement.Movement;
@@ -41,7 +42,9 @@ import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.arpet.movement.impl.DefaultMovement;
 import org.gearvrf.arpet.movement.impl.LookAtObjectMovement;
 import org.gearvrf.arpet.movement.impl.ToScreenMovement;
-import org.gearvrf.arpet.movement.targetwrapper.VRCameraRigWrapper;
+import org.gearvrf.arpet.movement.targetwrapper.ARCameraWrapper;
+import org.gearvrf.arpet.petobjects.Bed;
+import org.gearvrf.arpet.petobjects.Toy;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -95,6 +98,7 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
     // Movement handlers
     private Movement mToScreenMovement;
     private Movement mLookAtObjectMovement;
+    private Movement mGoToObjectMovement;
     // ...
 
     // Gesture detectors
@@ -154,15 +158,6 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         mCurrentAction = PetAction.TO_BALL;
     }
 
-    public void goToScreen() {
-        disableGestureDetectors();
-        mToScreenMovement = new ToScreenMovement(this, new ToScreenMovementListener(mContext));
-        ((DefaultMovement) mToScreenMovement).setBoundaryPlane(mPetMovementBoundary);
-        mCurrentAction = PetAction.TO_SCREEN;
-        registerDrawFrameListener();
-        mToScreenMovement.move();
-    }
-
     public void goToFood() {
         mCurrentAction = PetAction.TO_FOOD;
     }
@@ -172,12 +167,33 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
     }
 
     public void goToBed() {
-        mCurrentAction = PetAction.TO_BED;
+        TargetObject targetObject = (Toy) ScalableObjectManager.INSTANCE.getObjectByType(Bed.class);
+        if (targetObject != null) {
+            mCurrentAction = PetAction.TO_BED;
+            goToObject(targetObject);
+        }
     }
 
-    public void lookAt(@NonNull TargetObject objectToLookAt) {
+    public void goToScreen() {
         disableGestureDetectors();
-        mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener());
+        mToScreenMovement = new ToScreenMovement<>(this, new ToScreenMovementListener());
+        ((DefaultMovement) mToScreenMovement).setBoundaryPlane(mPetMovementBoundary);
+        mCurrentAction = PetAction.TO_SCREEN;
+        registerDrawFrameListener();
+        mToScreenMovement.move();
+    }
+
+    private <Target extends TargetObject> void goToObject(Target targetObject) {
+        disableGestureDetectors();
+        mGoToObjectMovement = new DefaultMovement<>(this, targetObject, new ToObjectMovementListener<Target>());
+        mCurrentAction = PetAction.TO_SCREEN;
+        registerDrawFrameListener();
+        mToScreenMovement.move();
+    }
+
+    public <Target extends TargetObject> void lookAt(@NonNull Target objectToLookAt) {
+        disableGestureDetectors();
+        mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener<Target>());
         mCurrentAction = PetAction.LOOK_AT;
         registerDrawFrameListener();
     }
@@ -329,19 +345,13 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         }
     }
 
-    private class ToScreenMovementListener extends SimpleMovementListener<Character, Vector3f> {
-
-        private VRCameraRigWrapper mCamera;
-
-        ToScreenMovementListener(@NonNull GVRContext context) {
-            mCamera = new VRCameraRigWrapper(context.getMainScene().getMainCameraRig());
-        }
+    private class ToScreenMovementListener extends SimpleMovementListener<Character, ARCameraWrapper, Vector3f> {
 
         @Override
-        public void onMove(Character pet, Vector3f position) {
+        public void onMove(Character pet, ARCameraWrapper target, Vector3f position) {
 
             // Keep the pet looking at GVR camera
-            pet.getTransform().setModelMatrix(LookAtObjectMovement.lookAt(Character.this, mCamera));
+            pet.getTransform().setModelMatrix(LookAtObjectMovement.lookAt(Character.this, target));
 
             // Update current position. The onDrawFrame() method uses this point to update
             // position of this character
@@ -356,12 +366,34 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         }
     }
 
-    private class LookAtObjectListener extends SimpleMovementListener<Character, Matrix4f> {
+    private class LookAtObjectListener<Target extends TargetObject> extends SimpleMovementListener<Character, Target, Matrix4f> {
         @Override
-        public void onMove(Character pet, Matrix4f position) {
+        public void onMove(Character pet, Target target, Matrix4f position) {
             pet.getTransform().setModelMatrix(position);
         }
     }
+
+    private class ToObjectMovementListener<Target extends TargetObject> extends SimpleMovementListener<Character, Target, Vector3f> {
+
+        @Override
+        public void onMove(Character pet, Target target, Vector3f position) {
+
+            // Keep the pet looking at GVR camera
+            pet.getTransform().setModelMatrix(LookAtObjectMovement.lookAt(pet, target));
+
+            // Update current position. The onDrawFrame() method uses this point to update
+            // position of this character
+            mCurrentPose[12] = position.x;
+            mCurrentPose[13] = position.y;
+            mCurrentPose[14] = position.z;
+        }
+
+        @Override
+        public void onStopMove() {
+            stopMovement();
+        }
+    }
+
 
     public class TouchHandler extends GVREventListeners.TouchEvents {
         private GVRSceneObject mDraggingObject = null;

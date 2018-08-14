@@ -38,6 +38,6 @@ public class VRCameraRigWrapper implements TargetObject {
 
     @Override
     public float[] getPoseMatrix() {
-        return new float[0];
+        return mCameraRig.getTransform().getModelMatrix();
     }
 }

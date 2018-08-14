@@ -20,29 +20,29 @@ package org.gearvrf.arpet.movement.impl;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.arpet.movement.Movement;
-import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.arpet.movement.MovableObject;
+import org.gearvrf.arpet.movement.Movement;
 import org.gearvrf.arpet.movement.OnMovementListener;
+import org.gearvrf.arpet.movement.TargetObject;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class LookAtObjectMovement<Movable extends MovableObject, Target extends TargetObject>
-        extends Movement<Movable, Target, OnMovementListener<Movable, Matrix4f>> {
+        extends Movement<Movable, Target, Matrix4f, OnMovementListener<Movable, Target, Matrix4f>> {
 
     private Matrix4f mPosition = new Matrix4f();
 
     public LookAtObjectMovement(@NonNull Movable objectToMove,
                                 @NonNull Target objectToLookAt,
-                                @NonNull OnMovementListener<Movable, Matrix4f> listener) {
+                                @NonNull OnMovementListener<Movable, Target, Matrix4f> listener) {
         super(objectToMove, objectToLookAt, listener);
     }
 
     @Override
     public void move() {
         mPosition.set(lookAt(mMovable, mTarget));
-        mOnMovementListener.onMove(mMovable, mPosition);
+        mOnMovementListener.onMove(mMovable, mTarget, mPosition);
     }
 
     public static <T extends TargetObject> Matrix4f lookAt(@NonNull GVRSceneObject objectToMove,

@@ -15,23 +15,25 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.scale;
+package org.gearvrf.arpet.petobjects;
 
 import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.AnchoredObject;
+import org.gearvrf.arpet.gesture.scale.OnScaleListener;
+import org.gearvrf.arpet.gesture.scale.ScalableObject;
 import org.gearvrf.mixedreality.GVRMixedReality;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseScalableObject extends AnchoredObject implements ScalableObject {
+public abstract class AnchoredScalableObject extends AnchoredObject implements ScalableObject {
 
     private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
 
-    public BaseScalableObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
+    public AnchoredScalableObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
         super(context, mixedReality, poseMatrix);
     }
 

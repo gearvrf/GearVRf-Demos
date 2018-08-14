@@ -34,8 +34,8 @@ import org.joml.Vector3f;
 public class DefaultMovement<
         Movable extends MovableObject,
         Target extends TargetObject,
-        Listener extends OnMovementListener<Movable, Vector3f>>
-        extends Movement<Movable, Target, Listener> {
+        Listener extends OnMovementListener<Movable, Target, Vector3f>>
+        extends Movement<Movable, Target, Vector3f, Listener> {
 
     private static final String TAG = DefaultMovement.class.getSimpleName();
 
@@ -64,9 +64,9 @@ public class DefaultMovement<
      * @param objectToMove The object to be moved.
      * @param targetObject The target object.
      */
-    DefaultMovement(@NonNull Movable objectToMove,
-                    @NonNull Target targetObject,
-                    @NonNull Listener listener) {
+    public DefaultMovement(@NonNull Movable objectToMove,
+                           @NonNull Target targetObject,
+                           @NonNull Listener listener) {
         super(objectToMove, targetObject, listener);
 
         updatePositionHolders();
@@ -211,7 +211,7 @@ public class DefaultMovement<
             if (mOnMovementListener != null) {
                 mPosition.set(position);
                 mPosition.y = mObjectPosition.y;
-                mOnMovementListener.onMove(mMovable, mPosition);
+                mOnMovementListener.onMove(mMovable, mTarget, mPosition);
             }
         }
 

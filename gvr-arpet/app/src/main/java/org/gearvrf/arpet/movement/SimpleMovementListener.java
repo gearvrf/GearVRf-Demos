@@ -17,15 +17,15 @@
 
 package org.gearvrf.arpet.movement;
 
-public class SimpleMovementListener<Movable extends MovableObject, Position>
-        implements OnMovementListener<Movable, Position> {
+public class SimpleMovementListener<Movable extends MovableObject, Target extends TargetObject, Position>
+        implements OnMovementListener<Movable, Target, Position> {
 
     @Override
     public void onStartMove() {
     }
 
     @Override
-    public void onMove(Movable movable, Position position) {
+    public void onMove(Movable movable, Target target, Position position) {
     }
 
     @Override

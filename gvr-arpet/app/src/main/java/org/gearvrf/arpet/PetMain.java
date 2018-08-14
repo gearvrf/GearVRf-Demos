@@ -25,10 +25,10 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
-import org.gearvrf.arpet.gesture.scale.BaseScalableObject;
 import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
+import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
 import org.gearvrf.arpet.petobjects.Hydrant;
@@ -117,9 +117,10 @@ public class PetMain extends GVRMain {
         mScene.addSceneObject(mPet.getAnchor());
         mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
         mScene.addSceneObject(mHudMode.getPlayScene());
-        // addPetObjectsToPlane(plane);
-        // setEditModeEnabled(true);
-        // movePetToScreen(plane);
+
+        //addPetObjectsToPlane(plane);
+        //setEditModeEnabled(true);
+        //movePetToScreen(plane);
     }
 
     private void setEditModeEnabled(boolean enabled) {
@@ -142,22 +143,23 @@ public class PetMain extends GVRMain {
 
     private void addPetObjectsToPlane(GVRPlane plane) {
 
-        ScalableObjectManager.INSTANCE.addScalableObject(
+        AnchoredScalableObject[] objects = {
                 new Bed(mContext, mMixedReality, plane.getCenterPose()),
                 new Bowl(mContext, mMixedReality, plane.getCenterPose()),
                 new Hydrant(mContext, mMixedReality, plane.getCenterPose()),
                 new Toy(mContext, mMixedReality, plane.getCenterPose())
-        );
+        };
 
-        ScalableObjectManager.INSTANCE.setAutoScaleObjectsFrom(mPet);
-
-        for (BaseScalableObject scalableObject : ScalableObjectManager.INSTANCE.getScalableObjects()) {
+        // Anchor objects to the plane
+        for (AnchoredScalableObject scalableObject : objects) {
             mScene.addSceneObject(scalableObject.getAnchor());
         }
 
+        // Manages scalable objects
+        ScalableObjectManager.INSTANCE.addScalableObject(objects);
 
-
-
+        // Enables objects resizing on pet scale
+        ScalableObjectManager.INSTANCE.setAutoScaleObjectsFrom(mPet);
     }
 
     @Override

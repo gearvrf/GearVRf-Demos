@@ -22,13 +22,12 @@ import android.support.annotation.NonNull;
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
-import org.gearvrf.arpet.gesture.scale.BaseScalableObject;
 import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 
-public class Bowl extends BaseScalableObject implements TargetObject {
+public class Bowl extends AnchoredScalableObject implements TargetObject {
 
     public Bowl(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
         super(context, mixedReality, setPose(poseMatrix));

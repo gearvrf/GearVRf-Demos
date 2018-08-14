@@ -27,14 +27,14 @@ public enum ScalableObjectManager {
 
     INSTANCE;
 
-    private List<BaseScalableObject> mScalableObjects = new ArrayList<>();
+    private List<ScalableObject> mScalableObjects = new ArrayList<>();
 
-    public void addScalableObject(@NonNull BaseScalableObject... objects) {
+    public void addScalableObject(@NonNull ScalableObject... objects) {
         mScalableObjects.addAll(Arrays.asList(objects));
     }
 
     public void applyScale(float factor) {
-        for (BaseScalableObject object : mScalableObjects) {
+        for (ScalableObject object : mScalableObjects) {
             object.scale(factor);
         }
     }
@@ -43,7 +43,7 @@ public enum ScalableObjectManager {
         scalableObject.addOnScaleListener(mOnScaleListener);
     }
 
-    public List<BaseScalableObject> getScalableObjects() {
+    public List<ScalableObject> getScalableObjects() {
         return new ArrayList<>(mScalableObjects);
     }
 
@@ -53,4 +53,13 @@ public enum ScalableObjectManager {
             applyScale(factor);
         }
     };
+
+    public <T extends ScalableObject> ScalableObject getObjectByType(Class<T> type) {
+        for (ScalableObject scalableObject : mScalableObjects) {
+            if (scalableObject.getClass() == type) {
+                return scalableObject;
+            }
+        }
+        return null;
+    }
 }
