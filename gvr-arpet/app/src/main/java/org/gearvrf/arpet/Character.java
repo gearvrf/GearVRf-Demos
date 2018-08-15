@@ -112,6 +112,14 @@ public class Character extends MovableObject implements
         mMixedReality = mixedReality;
         load3DModel();
 
+        registerGestureDetectors();
+
+        mTouchHandler = new TouchHandler();
+        initController();
+    }
+
+    private void registerGestureDetectors() {
+
         mGestureDetectors.add(mRotationDetector = GestureDetectorFactory.INSTANCE.getSwipeRotationGestureDetector(mContext, this));
         mGestureDetectors.add(mScaleDetector = GestureDetectorFactory.INSTANCE.getScaleGestureDetector(mContext, this));
 
@@ -122,9 +130,6 @@ public class Character extends MovableObject implements
                 mScaleDetector.onTouchEvent(event);
             }
         });
-
-        mTouchHandler = new TouchHandler();
-        initController();
     }
 
     private void initController() {

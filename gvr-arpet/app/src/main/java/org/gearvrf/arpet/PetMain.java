@@ -145,7 +145,6 @@ public class PetMain extends GVRMain {
 
     private void setEditModeEnabled(boolean enabled) {
         if (mPet != null) {
-            ballThrowHandler.disable();
             mPet.setRotationEnabled(enabled);
             mPet.setScaleEnabled(enabled);
             mPet.setDraggingEnabled(enabled);
