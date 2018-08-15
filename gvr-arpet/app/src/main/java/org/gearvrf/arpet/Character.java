@@ -25,9 +25,11 @@ import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
@@ -89,6 +91,7 @@ public class Character extends MovableObject implements
     private GVRPlane mMovementBoundary;
     private TouchHandler mTouchHandler;
     private GVRSceneObject mCursor;
+    private GVRSceneObject mShadow;
     private GVRCursorController mCursorController;
     private final static String PET_NAME = "Pet";
 
@@ -111,6 +114,7 @@ public class Character extends MovableObject implements
         mCurrentPose = pose;
         mMixedReality = mixedReality;
         load3DModel();
+        createShadow();
 
         registerGestureDetectors();
 
@@ -232,6 +236,19 @@ public class Character extends MovableObject implements
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void createShadow() {
+        GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.drag_shadow));
+        GVRMaterial mat = new GVRMaterial(mContext);
+        mat.setMainTexture(tex);
+        mShadow = new GVRSceneObject(mContext, 0.05f, 0.1f);
+        mShadow.getRenderData().setMaterial(mat);
+        mShadow.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
+        mShadow.getTransform().setPosition(0f, 0.01f, -0.02f);
+        mShadow.setName("shadow");
+        mShadow.setEnable(false);
+        addChildObject(mShadow);
     }
 
     @Override
@@ -385,6 +402,7 @@ public class Character extends MovableObject implements
             if (sceneObject.getName().equals(PET_NAME)) {
                 Log.d(TAG, "onTouchStart ");
                 sceneObject.getTransform().setPositionY(0.02f);
+                mShadow.setEnable(true);
                 if (mDraggingObject == null) {
                     mDraggingObject = sceneObject;
                 }
@@ -397,6 +415,7 @@ public class Character extends MovableObject implements
             super.onTouchEnd(sceneObject, pickedObject);
             if (sceneObject.getName().equals(PET_NAME)) {
                 Log.d(TAG, "onTouchEnd");
+                mShadow.setEnable(false);
                 sceneObject.getTransform().setPositionY(0f);
                 if (mDraggingObject != null) {
                     mDraggingObject = null;
