@@ -15,6 +15,7 @@
 
 package org.gearvrf.arpet;
 
+import android.util.Log;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRBoxCollider;
@@ -26,7 +27,10 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
+import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
+import org.gearvrf.arpet.mode.IPetMode;
+import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
 import org.gearvrf.arpet.petobjects.Bed;
@@ -58,7 +62,10 @@ public class PetMain extends GVRMain {
     private GVRSceneObject cube;
     private Character mPet;
 
-    private HudMode mHudMode;
+    private IPetMode mCurrentMode;
+
+    private HandlerModeChange mHandlerModeChange;
+
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -85,8 +92,7 @@ public class PetMain extends GVRMain {
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
 
-        mHudMode = new HudMode(mContext, mScene);
-
+        mHandlerModeChange = new HandlerModeChange();
 
         cube = new GVRSceneObject(gvrContext);
         cube.getTransform().setPosition(0f, 0f, -10f);
@@ -114,17 +120,27 @@ public class PetMain extends GVRMain {
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
 
-        mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
-        mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
-        mPet.setBoundaryPlane(plane);
+        if (mPet == null) {
+            mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
+            mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
+            mPet.setBoundaryPlane(plane);
+            mScene.addSceneObject(mPet.getAnchor());
+        }
 
-        mScene.addSceneObject(mPet.getAnchor());
-        mScene.addSceneObject(mHudMode.getPlayScene());
+        if (mCurrentMode instanceof EditMode) {
+            Log.e(TAG, "Wrong state at first detection!");
+        }
+
+        if (mCurrentMode == null) {
+            mCurrentMode = new HudMode(mContext, mHandlerModeChange);
+            mCurrentMode.enter();
+        }
 
         //addPetObjectsToPlane(plane);
         //setEditModeEnabled(true);
         //movePetToScreen();
         //movePetToBed();
+
     }
 
     private void setEditModeEnabled(boolean enabled) {
@@ -182,7 +198,9 @@ public class PetMain extends GVRMain {
             ballThrowHandler.reset();
         }
 
-        mHudMode.handleOrientation();
+        if (mCurrentMode != null) {
+            mCurrentMode.handleOrientation();
+        }
     }
 
     @Subscribe
@@ -234,6 +252,40 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onMotionOutside(GVRPicker picker, MotionEvent motionEvent) {
+
+        }
+    }
+
+    public class HandlerModeChange implements OnModeChange {
+
+        @Override
+        public void onPlayBall() {
+            mCurrentMode.exit();
+            mCurrentMode = null;
+            ballThrowHandler.enable();
+        }
+
+        @Override
+        public void onShareAnchor() {
+
+        }
+
+        @Override
+        public void onEditMode() {
+            if (mCurrentMode instanceof EditMode) {
+                return;
+            }
+
+            if (mCurrentMode != null) {
+                mCurrentMode.exit();
+            }
+
+            mCurrentMode = new EditMode(mContext);
+            mCurrentMode.enter();
+        }
+
+        @Override
+        public void onScreenshot() {
 
         }
     }

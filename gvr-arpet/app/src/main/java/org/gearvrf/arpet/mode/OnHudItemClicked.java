@@ -15,25 +15,13 @@
 
 package org.gearvrf.arpet.mode;
 
-import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRContext;
+public interface OnHudItemClicked {
 
-public class EditMode extends BasePetMode {
+    void onBallClicked();
 
-    public EditMode(GVRContext context) {
-        super(context, new EditScene(context));
-    }
+    void onShareAnchorClicked();
 
-    @Override
-    protected void onEnter() {
-    }
+    void onEditModeClicked();
 
-    @Override
-    protected void onExit() {
-    }
-
-    @Override
-    protected void onHandleOrientation(GVRCameraRig cameraRig) {
-
-    }
+    void onCameraClicked();
 }

@@ -15,25 +15,20 @@
 
 package org.gearvrf.arpet.mode;
 
-import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 
-public class EditMode extends BasePetMode {
-
-    public EditMode(GVRContext context) {
-        super(context, new EditScene(context));
+public class BasePetScene extends GVRSceneObject {
+    public BasePetScene(GVRContext gvrContext) {
+        super(gvrContext);
     }
 
-    @Override
-    protected void onEnter() {
+    public void show(GVRScene mainScene) {
+        mainScene.addSceneObject(this);
     }
 
-    @Override
-    protected void onExit() {
-    }
-
-    @Override
-    protected void onHandleOrientation(GVRCameraRig cameraRig) {
-
+    public void hide(GVRScene mainScene) {
+        mainScene.removeSceneObject(this);
     }
 }
