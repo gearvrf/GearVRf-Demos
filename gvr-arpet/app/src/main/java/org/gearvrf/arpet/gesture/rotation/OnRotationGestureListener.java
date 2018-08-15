@@ -17,17 +17,6 @@
 
 package org.gearvrf.arpet.gesture.rotation;
 
-import android.support.annotation.NonNull;
-
-import org.gearvrf.arpet.gesture.GestureDetector;
-
-public abstract class RotationGestureDetector extends GestureDetector {
-
-    OnRotationGestureListener mListener;
-
-    RotationGestureDetector(@NonNull OnRotationGestureListener listener) {
-        mListener = listener;
-    }
-
-    public abstract float getAngle();
+public interface OnRotationGestureListener {
+    void onRotate(RotationGestureDetector detector);
 }

@@ -45,18 +45,20 @@ public class ScaleGestureDetector extends GestureDetector {
         mContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mScaleGestureDetector = new android.view.ScaleGestureDetector(mContext.getContext(),
-                        new android.view.ScaleGestureDetector.SimpleOnScaleGestureListener() {
-                            @Override
-                            public boolean onScale(android.view.ScaleGestureDetector detector) {
-                                mFactor *= detector.getScaleFactor();
-                                mFactor = Math.max(mMinFactor, Math.min(mFactor, mMaxFactor));
-                                mOnScaleGestureListener.onScale(ScaleGestureDetector.this);
-                                return true;
-                            }
-                        });
+                mScaleGestureDetector = new android.view.ScaleGestureDetector(
+                        mContext.getContext(), new LocalGestureListener());
             }
         });
+    }
+
+    private class LocalGestureListener extends android.view.ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(android.view.ScaleGestureDetector detector) {
+            mFactor *= detector.getScaleFactor();
+            mFactor = Math.max(mMinFactor, Math.min(mFactor, mMaxFactor));
+            mOnScaleGestureListener.onScale(ScaleGestureDetector.this);
+            return true;
+        }
     }
 
     public float getFactor() {
@@ -78,7 +80,4 @@ public class ScaleGestureDetector extends GestureDetector {
         this.mMaxFactor = Math.max(MIN_FACTOR, Math.min(factor, MAX_FACTOR));
     }
 
-    public interface OnScaleGestureListener {
-        void onScale(ScaleGestureDetector detector);
-    }
 }

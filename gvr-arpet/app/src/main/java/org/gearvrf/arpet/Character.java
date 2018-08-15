@@ -30,7 +30,10 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.GestureDetector;
+import org.gearvrf.arpet.gesture.rotation.OnRotationGestureListener;
 import org.gearvrf.arpet.gesture.rotation.RotationGestureDetector;
+import org.gearvrf.arpet.gesture.rotation.TwoFingersRotationGestureDetector;
+import org.gearvrf.arpet.gesture.scale.OnScaleGestureListener;
 import org.gearvrf.arpet.gesture.scale.OnScaleListener;
 import org.gearvrf.arpet.gesture.scale.ScalableObject;
 import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
@@ -57,9 +60,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Character extends MovableObject implements GVRDrawFrameListener,
-        RotationGestureDetector.OnRotationGestureListener,
-        ScaleGestureDetector.OnScaleGestureListener,
+public class Character extends MovableObject implements
+        GVRDrawFrameListener,
+        OnRotationGestureListener,
+        OnScaleGestureListener,
         ScalableObject {
 
     private final String TAG = getClass().getSimpleName();
@@ -112,7 +116,9 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
         mMixedReality = mixedReality;
         load3DModel();
 
-        mGestureDetectors.add(mRotationDetector = new RotationGestureDetector(this));
+        mGestureDetectors.add(mRotationDetector = new TwoFingersRotationGestureDetector(this));
+        //mGestureDetectors.add(mRotationDetector = new SwipeRotationGestureDetector(mContext, this));
+
         mGestureDetectors.add(mScaleDetector = new ScaleGestureDetector(mContext, this));
 
         mContext.getApplication().getEventReceiver().addListener(new GVREventListeners.ActivityEvents() {
@@ -269,7 +275,7 @@ public class Character extends MovableObject implements GVRDrawFrameListener,
 
     @Override
     public void onRotate(RotationGestureDetector detector) {
-        getTransform().rotateByAxis(mRotationDetector.getAngle() * 0.05f, 0, 1, 0);
+        getTransform().rotateByAxis(mRotationDetector.getAngle(), 0, 1, 0);
     }
 
     @Override
