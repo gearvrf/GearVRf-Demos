@@ -30,6 +30,7 @@ import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
+import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
@@ -65,6 +66,7 @@ public class PetMain extends GVRMain {
     private IPetMode mCurrentMode;
 
     private HandlerModeChange mHandlerModeChange;
+    private HandlerBackToHud mHandlerBackToHud;
 
 
     public PetMain(PetActivity.PetContext petContext) {
@@ -87,12 +89,13 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         ballThrowHandler = new BallThrowHandler(gvrContext);
-        ballThrowHandler.enable();
+        //ballThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
 
         mHandlerModeChange = new HandlerModeChange();
+        mHandlerBackToHud = new HandlerBackToHud();
 
         cube = new GVRSceneObject(gvrContext);
         cube.getTransform().setPosition(0f, 0f, -10f);
@@ -135,9 +138,7 @@ public class PetMain extends GVRMain {
             mCurrentMode = new HudMode(mContext, mHandlerModeChange);
             mCurrentMode.enter();
         }
-
         //addPetObjectsToPlane(plane);
-        //setEditModeEnabled(true);
         //movePetToScreen();
         //movePetToBed();
 
@@ -260,9 +261,7 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onPlayBall() {
-            mCurrentMode.exit();
-            mCurrentMode = null;
-            ballThrowHandler.enable();
+
         }
 
         @Override
@@ -280,13 +279,24 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new EditMode(mContext);
+            mCurrentMode = new EditMode(mContext, mHandlerBackToHud);
             mCurrentMode.enter();
+            setEditModeEnabled(true);
         }
 
         @Override
         public void onScreenshot() {
 
+        }
+    }
+
+    public class HandlerBackToHud implements OnBackToHudModeListener {
+
+        @Override
+        public void OnBackToHud() {
+            mCurrentMode.exit();
+            mCurrentMode = new HudMode(mContext, mHandlerModeChange);
+            mCurrentMode.enter();
         }
     }
 

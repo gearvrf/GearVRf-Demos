@@ -15,17 +15,24 @@
 
 package org.gearvrf.arpet.mode;
 
+import android.util.Log;
+
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 
 public class EditMode extends BasePetMode {
+    private OnBackToHudModeListener mBackToHudModeListener;
 
-    public EditMode(GVRContext context) {
+    public EditMode(GVRContext context, OnBackToHudModeListener listener) {
         super(context, new EditScene(context));
+        mBackToHudModeListener = listener;
+
+        ((EditScene) mModeScene).setListenerEditMode(new OnEditModeClickedListenerHandler());
     }
 
     @Override
     protected void onEnter() {
+
     }
 
     @Override
@@ -36,4 +43,19 @@ public class EditMode extends BasePetMode {
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
 
     }
+
+    private class OnEditModeClickedListenerHandler implements OnEditModeClickedListener {
+
+        @Override
+        public void OnBack() {
+            mBackToHudModeListener.OnBackToHud();
+            Log.d(TAG, "On Back");
+        }
+
+        @Override
+        public void OnSave() {
+
+        }
+    }
+
 }

@@ -16,7 +16,7 @@
 package org.gearvrf.arpet.mode;
 
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.Button;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
@@ -26,30 +26,51 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class EditScene extends BasePetScene implements View.OnClickListener, IViewEvents {
     private GVRContext mContext;
-    private GVRSceneObject mEditMode;
-    private RelativeLayout mEditModeLayout;
+    private GVRSceneObject mEditModeObject;
+    private Button mBackButton, mSaveButton;
+    private OnEditModeClickedListener mListenerEditMode;
 
     public EditScene(GVRContext gvrContext) {
         super(gvrContext);
         mContext = gvrContext;
-        mEditMode = new GVRViewSceneObject(mContext, R.layout.edit_mode_layout, this);
-
+        mEditModeObject = new GVRViewSceneObject(mContext, R.layout.edit_mode_layout, this);
     }
 
-    @Override
-    public void onClick(View view) {
-
+    public void setListenerEditMode(OnEditModeClickedListener listenerEditMode) {
+        this.mListenerEditMode = listenerEditMode;
     }
 
     @Override
     public void onInitView(GVRViewSceneObject EditModeSceneObject, View view) {
-        EditModeSceneObject.getTransform().setScale(3.2f, 3.2f, 1.0f);
-        EditModeSceneObject.getTransform().setPosition(0.0f, 0.0f, -5.0f);
-        mEditModeLayout = view.findViewById(R.id.editMode);
+        mBackButton = view.findViewById(R.id.btn_back);
+        mSaveButton = view.findViewById(R.id.btn_save);
+        mBackButton.setOnClickListener(this);
+        mSaveButton.setOnClickListener(this);
     }
 
     @Override
-    public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        addChildObject(mEditMode);
+    public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
+        editSceneObject.getTransform().setScale(3.2f, 3.2f, 1.0f);
+        editSceneObject.getTransform().setPosition(0.0f, 0.0f, -5.0f);
+        addChildObject(mEditModeObject);
+    }
+
+    @Override
+    public void onClick(View view) {
+        if (view.getId() == R.id.btn_back) {
+            mBackButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    mListenerEditMode.OnBack();
+                }
+            });
+        } else if (view.getId() == R.id.btn_save) {
+            mSaveButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    mListenerEditMode.OnSave();
+                }
+            });
+        }
     }
 }
