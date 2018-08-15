@@ -15,11 +15,8 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.scale;
+package org.gearvrf.arpet.gesture;
 
-public interface ScalableObject {
-
-    void scale(float factor);
-
-    void addOnScaleListener(OnScaleListener listener);
+public interface OnGestureListener {
+    void onGesture(GestureDetector detector);
 }

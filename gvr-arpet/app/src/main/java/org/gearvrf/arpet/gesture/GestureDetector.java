@@ -32,4 +32,6 @@ public abstract class GestureDetector {
     }
 
     public abstract void onTouchEvent(MotionEvent event);
+
+    public abstract float getValue();
 }

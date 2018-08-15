@@ -15,14 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.rotation;
+package org.gearvrf.arpet.gesture.impl;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.arpet.gesture.OnGestureListener;
+import org.gearvrf.arpet.gesture.RotationGestureDetector;
 
-public class SwipeRotationGestureDetector extends RotationGestureDetector {
+class SwipeRotationGestureDetector extends RotationGestureDetector {
 
     private static final float VELOCITY = 1.f;
     private static final float DISTANCE_FACTOR = -0.15f;
@@ -30,9 +32,9 @@ public class SwipeRotationGestureDetector extends RotationGestureDetector {
     private GVRContext mContext;
     private GestureDetector mGestureDetector;
     private float mAngle;
-    private boolean mHasDubleTouch;
+    private boolean mHasDoubleTouch;
 
-    public SwipeRotationGestureDetector(GVRContext context, OnRotationGestureListener listener) {
+    public SwipeRotationGestureDetector(GVRContext context, OnGestureListener listener) {
         super(listener);
         mContext = context;
         initDetector();
@@ -51,7 +53,7 @@ public class SwipeRotationGestureDetector extends RotationGestureDetector {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             mAngle = VELOCITY * distanceX * DISTANCE_FACTOR;
-            mListener.onRotate(SwipeRotationGestureDetector.this);
+            mListener.onGesture(SwipeRotationGestureDetector.this);
             return true;
         }
     }
@@ -59,19 +61,24 @@ public class SwipeRotationGestureDetector extends RotationGestureDetector {
     @Override
     public void onTouchEvent(MotionEvent event) {
         if (isEnabled()) {
+
+            // Second touch detected
             if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN) {
-                mHasDubleTouch = true;
-            } else if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
-                mHasDubleTouch = false;
+                mHasDoubleTouch = true;
             }
-            if (!mHasDubleTouch) {
+            // Second touch lost
+            else if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP) {
+                mHasDoubleTouch = false;
+            }
+
+            if (!mHasDoubleTouch) {
                 mGestureDetector.onTouchEvent(event);
             }
         }
     }
 
     @Override
-    public float getAngle() {
+    public float getValue() {
         return mAngle;
     }
 }

@@ -30,14 +30,11 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.gesture.GestureDetector;
-import org.gearvrf.arpet.gesture.rotation.OnRotationGestureListener;
-import org.gearvrf.arpet.gesture.rotation.RotationGestureDetector;
-import org.gearvrf.arpet.gesture.rotation.TwoFingersRotationGestureDetector;
-import org.gearvrf.arpet.gesture.scale.OnScaleGestureListener;
-import org.gearvrf.arpet.gesture.scale.OnScaleListener;
-import org.gearvrf.arpet.gesture.scale.ScalableObject;
-import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
-import org.gearvrf.arpet.gesture.scale.ScaleGestureDetector;
+import org.gearvrf.arpet.gesture.OnGestureListener;
+import org.gearvrf.arpet.gesture.OnScaleListener;
+import org.gearvrf.arpet.gesture.ScalableObject;
+import org.gearvrf.arpet.gesture.ScalableObjectManager;
+import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
 import org.gearvrf.arpet.movement.MovableObject;
 import org.gearvrf.arpet.movement.Movement;
 import org.gearvrf.arpet.movement.SimpleMovementListener;
@@ -62,8 +59,7 @@ import java.util.List;
 
 public class Character extends MovableObject implements
         GVRDrawFrameListener,
-        OnRotationGestureListener,
-        OnScaleGestureListener,
+        OnGestureListener,
         ScalableObject {
 
     private final String TAG = getClass().getSimpleName();
@@ -103,8 +99,8 @@ public class Character extends MovableObject implements
 
     // Gesture detectors
     private List<GestureDetector> mGestureDetectors = new ArrayList<>();
-    private RotationGestureDetector mRotationDetector;
-    private ScaleGestureDetector mScaleDetector;
+    private GestureDetector mRotationDetector;
+    private GestureDetector mScaleDetector;
     // ...
 
     Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
@@ -116,10 +112,8 @@ public class Character extends MovableObject implements
         mMixedReality = mixedReality;
         load3DModel();
 
-        mGestureDetectors.add(mRotationDetector = new TwoFingersRotationGestureDetector(this));
-        //mGestureDetectors.add(mRotationDetector = new SwipeRotationGestureDetector(mContext, this));
-
-        mGestureDetectors.add(mScaleDetector = new ScaleGestureDetector(mContext, this));
+        mGestureDetectors.add(mRotationDetector = GestureDetectorFactory.INSTANCE.getSwipeRotationGestureDetector(mContext, this));
+        mGestureDetectors.add(mScaleDetector = GestureDetectorFactory.INSTANCE.getScaleGestureDetector(mContext, this));
 
         mContext.getApplication().getEventReceiver().addListener(new GVREventListeners.ActivityEvents() {
             @Override
@@ -274,13 +268,12 @@ public class Character extends MovableObject implements
     }
 
     @Override
-    public void onRotate(RotationGestureDetector detector) {
-        getTransform().rotateByAxis(mRotationDetector.getAngle(), 0, 1, 0);
-    }
-
-    @Override
-    public void onScale(ScaleGestureDetector detector) {
-        scale(detector.getFactor());
+    public void onGesture(GestureDetector detector) {
+        if (detector == mRotationDetector) {
+            getTransform().rotateByAxis(detector.getValue(), 0, 1, 0);
+        } else if (detector == mScaleDetector) {
+            scale(detector.getValue());
+        }
     }
 
     public void setRotationEnabled(boolean enabled) {

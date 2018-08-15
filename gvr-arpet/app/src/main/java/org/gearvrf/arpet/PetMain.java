@@ -26,7 +26,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.events.CollisionEvent;
-import org.gearvrf.arpet.gesture.scale.ScalableObjectManager;
+import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
@@ -141,11 +141,11 @@ public class PetMain extends GVRMain {
         //addPetObjectsToPlane(plane);
         //movePetToScreen();
         //movePetToBed();
-
     }
 
     private void setEditModeEnabled(boolean enabled) {
         if (mPet != null) {
+            ballThrowHandler.disable();
             mPet.setRotationEnabled(enabled);
             mPet.setScaleEnabled(enabled);
             mPet.setDraggingEnabled(enabled);
@@ -169,7 +169,6 @@ public class PetMain extends GVRMain {
             }
         }, 1500);
     }
-
 
     private void addPetObjectsToPlane(GVRPlane plane) {
 

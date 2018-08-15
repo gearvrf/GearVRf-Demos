@@ -15,11 +15,14 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.rotation;
+package org.gearvrf.arpet.gesture.impl;
 
 import android.view.MotionEvent;
 
-public class TwoFingersRotationGestureDetector extends RotationGestureDetector {
+import org.gearvrf.arpet.gesture.OnGestureListener;
+import org.gearvrf.arpet.gesture.RotationGestureDetector;
+
+class TwoFingersRotationGestureDetector extends RotationGestureDetector {
 
     private static final float VELOCITY = 1.f;
     private static final float ANGLE_FACTOR = 0.05f;
@@ -28,7 +31,7 @@ public class TwoFingersRotationGestureDetector extends RotationGestureDetector {
     private float mAngle;
 
 
-    public TwoFingersRotationGestureDetector(OnRotationGestureListener listener) {
+    public TwoFingersRotationGestureDetector(OnGestureListener listener) {
         super(listener);
     }
 
@@ -57,7 +60,7 @@ public class TwoFingersRotationGestureDetector extends RotationGestureDetector {
                     mLine2.setPositions(event);
                     mAngle = VELOCITY * mLine1.angle(mLine2) * ANGLE_FACTOR;
                     if (mListener != null) {
-                        mListener.onRotate(this);
+                        mListener.onGesture(this);
                     }
                 }
                 break;
@@ -78,7 +81,7 @@ public class TwoFingersRotationGestureDetector extends RotationGestureDetector {
     }
 
     @Override
-    public float getAngle() {
+    public float getValue() {
         return mAngle;
     }
 

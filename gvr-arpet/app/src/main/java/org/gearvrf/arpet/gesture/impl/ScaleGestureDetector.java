@@ -15,27 +15,28 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.scale;
+package org.gearvrf.arpet.gesture.impl;
 
 import android.support.annotation.FloatRange;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.arpet.gesture.GestureDetector;
+import org.gearvrf.arpet.gesture.OnGestureListener;
 
-public class ScaleGestureDetector extends GestureDetector {
+class ScaleGestureDetector extends GestureDetector {
 
     private static final float MIN_FACTOR = 1.f;
     private static final float MAX_FACTOR = 3.f;
 
     private android.view.ScaleGestureDetector mScaleGestureDetector;
-    private OnScaleGestureListener mOnScaleGestureListener;
+    private OnGestureListener mOnScaleGestureListener;
 
     private float mFactor = MIN_FACTOR;
     private float mMinFactor = MIN_FACTOR, mMaxFactor = MAX_FACTOR;
     private GVRContext mContext;
 
-    public ScaleGestureDetector(GVRContext context, OnScaleGestureListener listener) {
+    public ScaleGestureDetector(GVRContext context, OnGestureListener listener) {
         mContext = context;
         mOnScaleGestureListener = listener;
         initDetector();
@@ -56,12 +57,13 @@ public class ScaleGestureDetector extends GestureDetector {
         public boolean onScale(android.view.ScaleGestureDetector detector) {
             mFactor *= detector.getScaleFactor();
             mFactor = Math.max(mMinFactor, Math.min(mFactor, mMaxFactor));
-            mOnScaleGestureListener.onScale(ScaleGestureDetector.this);
+            mOnScaleGestureListener.onGesture(ScaleGestureDetector.this);
             return true;
         }
     }
 
-    public float getFactor() {
+    @Override
+    public float getValue() {
         return mFactor;
     }
 

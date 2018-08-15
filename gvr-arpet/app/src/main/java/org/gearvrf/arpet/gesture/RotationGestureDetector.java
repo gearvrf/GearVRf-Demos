@@ -15,8 +15,15 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.rotation;
+package org.gearvrf.arpet.gesture;
 
-public interface OnRotationGestureListener {
-    void onRotate(RotationGestureDetector detector);
+import android.support.annotation.NonNull;
+
+public abstract class RotationGestureDetector extends GestureDetector {
+
+    protected OnGestureListener mListener;
+
+    public RotationGestureDetector(@NonNull OnGestureListener listener) {
+        mListener = listener;
+    }
 }

@@ -22,8 +22,8 @@ import android.support.annotation.NonNull;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.AnchoredObject;
-import org.gearvrf.arpet.gesture.scale.OnScaleListener;
-import org.gearvrf.arpet.gesture.scale.ScalableObject;
+import org.gearvrf.arpet.gesture.OnScaleListener;
+import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.mixedreality.GVRMixedReality;
 
 import java.util.ArrayList;

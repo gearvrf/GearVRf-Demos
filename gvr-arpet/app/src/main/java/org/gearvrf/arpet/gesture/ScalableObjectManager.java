@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.gesture.scale;
+package org.gearvrf.arpet.gesture;
 
 import android.support.annotation.NonNull;
 
