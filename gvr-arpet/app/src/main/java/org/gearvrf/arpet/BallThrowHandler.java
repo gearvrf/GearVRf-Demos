@@ -65,7 +65,7 @@ public class BallThrowHandler implements ICollisionEvents {
     private GVRSceneObject physicsRoot = null;
 
     private static BallThrowHandler sInstance;
-
+    private boolean mResetOnTouchEnabled = true;
 
     private BallThrowHandler(GVRContext gvrContext, GVRMixedReality mixedReality) {
         mContext = gvrContext;
@@ -135,8 +135,13 @@ public class BallThrowHandler implements ICollisionEvents {
         final GVRTouchPadGestureListener gestureListener = new GVRTouchPadGestureListener() {
             @Override
             public boolean onDown(MotionEvent arg0) {
+
                 if (physicsRoot == null) {
                     return true; // or false?
+                }
+
+                if (!mResetOnTouchEnabled) {
+                    return true;
                 }
 
                 if (thrown) {
@@ -211,6 +216,10 @@ public class BallThrowHandler implements ICollisionEvents {
 
     public boolean canBeReseted() {
         return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
+    }
+
+    public void setResetOnTouchEnabled(boolean enabled) {
+        mResetOnTouchEnabled = enabled;
     }
 
     private void load3DModel() {

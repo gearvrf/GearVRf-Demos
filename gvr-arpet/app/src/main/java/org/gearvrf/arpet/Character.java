@@ -110,14 +110,21 @@ public class Character extends MovableObject implements
 
     private Vector3f mCurrentBallPosition = new Vector3f();
     private Vector3f mCurrentPetPosition = new Vector3f();
-    private Vector3f mPreviousPetPosition = new Vector3f();
 
     private float[] mLastBallHitPose;
-    private int mFrameCount;
 
-    Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
+    private OnPetActionListener mOnPetActionListener;
+    private BallThrowHandler mBallThrowHandler;
+
+    Character(
+            @NonNull GVRContext gvrContext,
+            @NonNull GVRMixedReality mixedReality,
+            @NonNull float[] pose,
+            @NonNull OnPetActionListener petListener) {
+
         super(gvrContext, mixedReality, pose);
 
+        mOnPetActionListener = petListener;
         mCurrentAction = PetAction.IDLE;
         mContext = gvrContext;
         mCurrentPose = pose;
@@ -129,6 +136,7 @@ public class Character extends MovableObject implements
 
         mTouchHandler = new TouchHandler();
         initController();
+        mBallThrowHandler = BallThrowHandler.getInstance(mContext, mMixedReality);
     }
 
     private void registerGestureDetectors() {
@@ -168,10 +176,11 @@ public class Character extends MovableObject implements
         });
     }
 
-    public void goToBall(BallWrapper ball) {
-        mBall = ball;
+    public void goToBall() {
+        mBall = new BallWrapper(BallThrowHandler.getInstance(mContext, mMixedReality).getBall());
         mCurrentAction = PetAction.TO_BALL;
         registerDrawFrameListener();
+        mOnPetActionListener.onActionStart(PetAction.TO_BALL);
     }
 
     public void goToFood() {
@@ -193,6 +202,7 @@ public class Character extends MovableObject implements
     public void goToScreen() {
         mCurrentAction = PetAction.TO_SCREEN;
         goToObject(new ARCameraWrapper(mMixedReality));
+        mOnPetActionListener.onActionStart(PetAction.TO_SCREEN);
     }
 
     /**
@@ -210,7 +220,11 @@ public class Character extends MovableObject implements
         mGoToObjectMovement.move();
     }
 
-    public <Target extends TargetObject> void lookAt(@NonNull Target objectToLookAt) {
+    public void lookAtBall() {
+        lookAt(new BallWrapper(mBallThrowHandler.getBall()));
+    }
+
+    private <Target extends TargetObject> void lookAt(@NonNull Target objectToLookAt) {
         disableGestureDetectors();
         mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener<Target>());
         mCurrentAction = PetAction.LOOK_AT;
@@ -226,7 +240,7 @@ public class Character extends MovableObject implements
         }
     }
 
-    private void moveToObject() {
+    private synchronized void moveToObject() {
         try {
             updatePose(mCurrentPose);
         } catch (Throwable throwable) {
@@ -288,35 +302,37 @@ public class Character extends MovableObject implements
     }
 
     private synchronized void moveToBall() {
-        mFrameCount++;
+
+        BallThrowHandler throwHandler = BallThrowHandler.getInstance(getGVRContext(), mMixedReality);
+        float[] ballHitPose = throwHandler.getBallHitPose();
+
+        // Holds last valid hit pose
+        if (ballHitPose != null) {
+            mLastBallHitPose = ballHitPose;
+            getPositionFromPose(mCurrentBallPosition, mLastBallHitPose);
+        }
+        // When ball reach plane boundary, gets null hit pose.
+        // So stop ball movement before it exit plane.
+        else {
+            Log.d(TAG, "NoHitPose!");
+            throwHandler.disablePhysics();
+        }
+
+        getPositionFromPose(mCurrentPetPosition, mCurrentPose);
+
+        if (mCurrentPetPosition.distance(mCurrentBallPosition) < 0.05) {
+            Log.d(TAG, "StopPetMovement");
+            stopMovement();
+            mOnPetActionListener.onActionEnd(PetAction.TO_BALL);
+        }
+
         try {
 
-            BallThrowHandler throwHandler = BallThrowHandler.getInstance(getGVRContext(), mMixedReality);
-            float[] ballHitPose = throwHandler.getBallHitPose();
-
-            if (ballHitPose != null) {
-                mLastBallHitPose = ballHitPose;
-                getPositionFromPose(mCurrentBallPosition, mLastBallHitPose);
-            } else {
-                Log.d(TAG, "moveToBall: NoHitPose!");
-                throwHandler.disablePhysics();
-            }
-
-            getPositionFromPose(mCurrentPetPosition, getPoseMatrix());
-
-            if (mFrameCount == 180) {
-                mFrameCount = 0;
-                if (mCurrentPetPosition.equals(mPreviousPetPosition)) {
-                    throwHandler.disablePhysics();
-                    lookAt(mBall);
-                    Log.d(TAG, "moveToBall: StopMovement");
-                }
-            }
-
+            // Keeps pet looking to the ball
             getTransform().setModelMatrix(LookAtObjectMovement.lookAt(this, mBall));
-            mMixedReality.updateAnchorPose(getAnchor(),
-                    mMixedReality.makeInterpolated(getAnchor().getPose(), mLastBallHitPose, 0.01f));
-            getPositionFromPose(mPreviousPetPosition, getPoseMatrix());
+            // Gets interpolation and update pet position
+            mCurrentPose = mMixedReality.makeInterpolated(getAnchor().getPose(), mLastBallHitPose, 0.01f);
+            updatePose(mCurrentPose);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -384,22 +400,9 @@ public class Character extends MovableObject implements
         }
     }
 
-    public void stopMovement() {
+    private synchronized void stopMovement() {
         mCurrentAction = PetAction.IDLE;
-    }
-
-    public void pauseMovement() {
         unregisterDrawFrameListener();
-        if (mCurrentAction == PetAction.TO_SCREEN) {
-            mGoToObjectMovement.stop();
-        }
-    }
-
-    public void resumeMovement() {
-        registerDrawFrameListener();
-        if (mCurrentAction == PetAction.TO_SCREEN) {
-            mGoToObjectMovement.move();
-        }
     }
 
     @Override
@@ -439,6 +442,7 @@ public class Character extends MovableObject implements
 
             // Update current position. The onDrawFrame() method uses this point to update
             // position of this object
+            mCurrentPose = getPoseMatrix();
             mCurrentPose[12] = position.x;
             mCurrentPose[13] = position.y;
             mCurrentPose[14] = position.z;
@@ -446,7 +450,11 @@ public class Character extends MovableObject implements
 
         @Override
         public void onStopMove() {
+            int action = mCurrentAction;
             stopMovement();
+            if (action == PetAction.TO_SCREEN) {
+                mOnPetActionListener.onActionEnd(PetAction.TO_SCREEN);
+            }
         }
     }
 

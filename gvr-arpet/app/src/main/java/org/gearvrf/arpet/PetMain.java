@@ -25,6 +25,7 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
+import org.gearvrf.arpet.Character.PetAction;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
@@ -32,7 +33,6 @@ import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
-import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
@@ -57,18 +57,16 @@ public class PetMain extends GVRMain {
     private PetActivity.PetContext mPetContext;
     private GVRMixedReality mMixedReality;
 
-    private BallThrowHandler ballThrowHandler;
+    private BallThrowHandler mBallThrowHandler;
     private PlaneHandler planeHandler;
 
     private GVRSceneObject cube;
     private Character mPet;
 
     private IPetMode mCurrentMode;
-
     private HandlerModeChange mHandlerModeChange;
     private HandlerBackToHud mHandlerBackToHud;
 
-    private BallWrapper mBallTarget;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -89,8 +87,8 @@ public class PetMain extends GVRMain {
         world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
 
-        ballThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
-        //ballThrowHandler.enable();
+        mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
+        mBallThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -107,7 +105,6 @@ public class PetMain extends GVRMain {
         mScene.addSceneObject(cube);
 
         //  disableCursor();
-        mBallTarget = new BallWrapper(ballThrowHandler.getBall());
     }
 
     public void resume() {
@@ -126,8 +123,8 @@ public class PetMain extends GVRMain {
     public void onPlaneDetected(final GVRPlane plane) {
 
         if (mPet == null) {
-            mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
-            mPet.lookAt(new BallWrapper(ballThrowHandler.getBall()));
+            mPet = new Character(mContext, mMixedReality, plane.getCenterPose(), new PetActionListener());
+            mPet.lookAtBall();
             mPet.setBoundaryPlane(plane);
             mScene.addSceneObject(mPet.getAnchor());
         }
@@ -195,8 +192,8 @@ public class PetMain extends GVRMain {
     @Override
     public void onStep() {
         super.onStep();
-        if (ballThrowHandler.canBeReseted()) {
-            ballThrowHandler.reset();
+        if (mBallThrowHandler.canBeReseted()) {
+            mBallThrowHandler.reset();
         }
 
         if (mCurrentMode != null) {
@@ -207,7 +204,35 @@ public class PetMain extends GVRMain {
     @Subscribe
     public void onCollisionDetected(CollisionEvent event) {
         if (event.getType() == CollisionEvent.Type.ENTER) {
-            mPet.goToBall(mBallTarget);
+            mBallThrowHandler.setResetOnTouchEnabled(false);
+            mPet.goToBall();
+        }
+    }
+
+    private class PetActionListener implements OnPetActionListener {
+
+        @Override
+        public void onActionStart(int action) {
+            Log.d(TAG, "onActionStart: " + action);
+        }
+
+        @Override
+        public void onActionEnd(int action) {
+            Log.d(TAG, "onActionEnd: " + action);
+            if (action == PetAction.TO_BALL) {
+                mBallThrowHandler.disable();
+                PetActivity.PetContext.INSTANCE.runDelayedOnPetThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPet.goToScreen();
+                    }
+                }, 1000);
+            } else if (action == PetAction.TO_SCREEN) {
+                mBallThrowHandler.enable();
+                mBallThrowHandler.reset();
+                mPet.lookAtBall();
+                mBallThrowHandler.setResetOnTouchEnabled(true);
+            }
         }
     }
 

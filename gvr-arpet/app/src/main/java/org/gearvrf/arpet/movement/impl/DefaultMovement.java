@@ -179,7 +179,7 @@ public class DefaultMovement<
     }
 
     private float calculateDuration() {
-        return 8 * (mDistanceToTarget / 0.650f);
+        return 6 * (mDistanceToTarget / 0.650f);
     }
 
     private void printStatus() {
