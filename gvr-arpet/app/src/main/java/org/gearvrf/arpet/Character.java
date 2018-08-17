@@ -44,6 +44,7 @@ import org.gearvrf.arpet.movement.TargetObject;
 import org.gearvrf.arpet.movement.impl.DefaultMovement;
 import org.gearvrf.arpet.movement.impl.LookAtObjectMovement;
 import org.gearvrf.arpet.movement.targetwrapper.ARCameraWrapper;
+import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -68,6 +69,7 @@ public class Character extends MovableObject implements
 
     private GVRMixedReality mMixedReality;
     private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
+    private BallWrapper mBall;
 
     @IntDef({PetAction.IDLE, PetAction.TO_BALL,
             PetAction.TO_SCREEN, PetAction.TO_FOOD,
@@ -88,7 +90,7 @@ public class Character extends MovableObject implements
     private int mCurrentAction; // default action IDLE
     private GVRContext mContext;
     private float[] mCurrentPose;
-    private GVRPlane mMovementBoundary;
+    private GVRPlane mBoundaryPlane;
     private TouchHandler mTouchHandler;
     private GVRSceneObject mCursor;
     private GVRSceneObject mShadow;
@@ -105,6 +107,13 @@ public class Character extends MovableObject implements
     private GestureDetector mRotationDetector;
     private GestureDetector mScaleDetector;
     // ...
+
+    private Vector3f mCurrentBallPosition = new Vector3f();
+    private Vector3f mCurrentPetPosition = new Vector3f();
+    private Vector3f mPreviousPetPosition = new Vector3f();
+
+    private float[] mLastBallHitPose;
+    private int mFrameCount;
 
     Character(@NonNull GVRContext gvrContext, @NonNull GVRMixedReality mixedReality, @NonNull float[] pose) {
         super(gvrContext, mixedReality, pose);
@@ -159,8 +168,10 @@ public class Character extends MovableObject implements
         });
     }
 
-    public void goToBall() {
+    public void goToBall(BallWrapper ball) {
+        mBall = ball;
         mCurrentAction = PetAction.TO_BALL;
+        registerDrawFrameListener();
     }
 
     public void goToFood() {
@@ -194,7 +205,7 @@ public class Character extends MovableObject implements
         disableGestureDetectors();
         mGoToObjectMovement = new DefaultMovement<>(this, targetObject, new ToObjectMovementListener<Target>());
         // Sets some existing boundary
-        ((DefaultMovement) mGoToObjectMovement).setBoundaryPlane(mMovementBoundary);
+        ((DefaultMovement) mGoToObjectMovement).setBoundaryPlane(mBoundaryPlane);
         registerDrawFrameListener();
         mGoToObjectMovement.move();
     }
@@ -206,7 +217,7 @@ public class Character extends MovableObject implements
         registerDrawFrameListener();
     }
 
-    private void lookAtObject() {
+    private synchronized void lookAtObject() {
         try {
             mLookAtObjectMovement.move();
         } catch (Throwable throwable) {
@@ -215,7 +226,7 @@ public class Character extends MovableObject implements
         }
     }
 
-    private void move() {
+    private void moveToObject() {
         try {
             updatePose(mCurrentPose);
         } catch (Throwable throwable) {
@@ -254,6 +265,8 @@ public class Character extends MovableObject implements
     @Override
     public void onDrawFrame(float v) {
 
+        Log.d(TAG, "onDrawFrame: " + mCurrentAction);
+
         switch (mCurrentAction) {
 
             case PetAction.IDLE:
@@ -261,14 +274,59 @@ public class Character extends MovableObject implements
                 break;
             case PetAction.LOOK_AT:
                 lookAtObject();
+                break;
             case PetAction.TO_BALL:
+                moveToBall();
+                break;
             case PetAction.TO_BED:
             case PetAction.TO_FOOD:
             case PetAction.TO_SCREEN:
             case PetAction.TO_TOILET:
-                move();
+                moveToObject();
                 break;
         }
+    }
+
+    private synchronized void moveToBall() {
+        mFrameCount++;
+        try {
+
+            BallThrowHandler throwHandler = BallThrowHandler.getInstance(getGVRContext(), mMixedReality);
+            float[] ballHitPose = throwHandler.getBallHitPose();
+
+            if (ballHitPose != null) {
+                mLastBallHitPose = ballHitPose;
+                getPositionFromPose(mCurrentBallPosition, mLastBallHitPose);
+            } else {
+                Log.d(TAG, "moveToBall: NoHitPose!");
+                throwHandler.disablePhysics();
+            }
+
+            getPositionFromPose(mCurrentPetPosition, getPoseMatrix());
+
+            if (mFrameCount == 180) {
+                mFrameCount = 0;
+                if (mCurrentPetPosition.equals(mPreviousPetPosition)) {
+                    throwHandler.disablePhysics();
+                    lookAt(mBall);
+                    Log.d(TAG, "moveToBall: StopMovement");
+                }
+            }
+
+            getTransform().setModelMatrix(LookAtObjectMovement.lookAt(this, mBall));
+            mMixedReality.updateAnchorPose(getAnchor(),
+                    mMixedReality.makeInterpolated(getAnchor().getPose(), mLastBallHitPose, 0.01f));
+            getPositionFromPose(mPreviousPetPosition, getPoseMatrix());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getPositionFromPose(Vector3f out, float[] pose) {
+        out.x = pose[12];
+        out.y = pose[13];
+        out.z = pose[14];
     }
 
     /**
@@ -286,7 +344,7 @@ public class Character extends MovableObject implements
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {
-        mMovementBoundary = boundary;
+        mBoundaryPlane = boundary;
     }
 
     @Override

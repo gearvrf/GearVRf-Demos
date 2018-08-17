@@ -15,28 +15,20 @@
 
 package org.gearvrf.arpet.events;
 
-import org.gearvrf.GVRSceneObject;
-
 public class CollisionEvent {
     public enum Type {
         ENTER,
         EXIT
     }
 
-    private GVRSceneObject mObject;
     private Type mType;
 
-    public CollisionEvent(GVRSceneObject gvrSceneObject, Type type) {
-        mObject = gvrSceneObject;
+    public CollisionEvent(Type type) {
         mType = type;
     }
 
     public Type getType() {
         return mType;
-    }
-
-    public GVRSceneObject getObject() {
-        return mObject;
     }
 
     public void setType(Type type) {

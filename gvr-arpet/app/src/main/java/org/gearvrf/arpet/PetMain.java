@@ -68,6 +68,7 @@ public class PetMain extends GVRMain {
     private HandlerModeChange mHandlerModeChange;
     private HandlerBackToHud mHandlerBackToHud;
 
+    private BallWrapper mBallTarget;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -88,7 +89,7 @@ public class PetMain extends GVRMain {
         world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
 
-        ballThrowHandler = new BallThrowHandler(gvrContext);
+        ballThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
         //ballThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
@@ -106,6 +107,7 @@ public class PetMain extends GVRMain {
         mScene.addSceneObject(cube);
 
         //  disableCursor();
+        mBallTarget = new BallWrapper(ballThrowHandler.getBall());
     }
 
     public void resume() {
@@ -204,7 +206,9 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onCollisionDetected(CollisionEvent event) {
-        // TODO: Handle here the collision event according to its type
+        if (event.getType() == CollisionEvent.Type.ENTER) {
+            mPet.goToBall(mBallTarget);
+        }
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {

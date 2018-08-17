@@ -15,16 +15,20 @@
 
 package org.gearvrf.arpet;
 
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.io.GVRTouchPadGestureListener;
+import org.gearvrf.mixedreality.GVRHitResult;
+import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.physics.ICollisionEvents;
 import org.greenrobot.eventbus.EventBus;
@@ -45,6 +49,7 @@ public class BallThrowHandler implements ICollisionEvents {
     private static final float defaultScaleZ = 20f;
 
     private static final float MIN_Y_OFFSET = -100;
+    private final GVRMixedReality mMixedReality;
 
     private GVRContext mContext;
     private GVRScene mScene;
@@ -59,14 +64,25 @@ public class BallThrowHandler implements ICollisionEvents {
 
     private GVRSceneObject physicsRoot = null;
 
-    BallThrowHandler(GVRContext gvrContext) {
+    private static BallThrowHandler sInstance;
+
+
+    private BallThrowHandler(GVRContext gvrContext, GVRMixedReality mixedReality) {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
+        mMixedReality = mixedReality;
 
         createBall();
         initController();
 
         EventBus.getDefault().register(this);
+    }
+
+    public static BallThrowHandler getInstance(GVRContext gvrContext, GVRMixedReality mixedReality) {
+        if (sInstance == null) {
+            sInstance = new BallThrowHandler(gvrContext, mixedReality);
+        }
+        return sInstance;
     }
 
     public void setForceVector(float x, float y, float z) {
@@ -104,6 +120,10 @@ public class BallThrowHandler implements ICollisionEvents {
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
         mBall.getEventReceiver().addListener(this);
+    }
+
+    public void disablePhysics() {
+        mRigidBody.setEnable(false);
     }
 
     @Subscribe
@@ -207,14 +227,46 @@ public class BallThrowHandler implements ICollisionEvents {
 
     @Override
     public void onEnter(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
-        mCollisionEvent = new CollisionEvent(gvrSceneObject1, CollisionEvent.Type.ENTER);
-        EventBus.getDefault().post(mCollisionEvent);
+
+        Log.d(BallThrowHandler.class.getSimpleName(), "onEnter: " + gvrSceneObject1.getParent().getName());
+        float[] hitPose = getBallHitPose();
+
+        if (hitPose != null) {
+            mCollisionEvent = new CollisionEvent(CollisionEvent.Type.ENTER);
+            EventBus.getDefault().post(mCollisionEvent);
+        }
     }
 
     @Override
     public void onExit(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
-        mCollisionEvent.setType(CollisionEvent.Type.EXIT);
-        EventBus.getDefault().post(mCollisionEvent);
     }
 
+    public float[] getBallHitPose() {
+
+        GVRPicker.GVRPickedObject pickObj = pickedObject(mBall);
+
+        if (pickObj != null) {
+            GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(), pickObj);
+            if (gvrHitResult != null) {
+                return gvrHitResult.getPose();
+            }
+        }
+
+        return null;
+    }
+
+    private GVRPicker.GVRPickedObject pickedObject(GVRSceneObject sceneObject) {
+
+        Vector3f direction = new Vector3f();
+        float[] matrix = sceneObject.getTransform().getModelMatrix();
+        float x = matrix[12];
+        float y = matrix[13];
+        float z = matrix[14];
+
+        direction.set(x, y, z);
+        direction.normalize();
+
+
+        return GVRPicker.pickSceneObject(mMixedReality.getPassThroughObject(), 0, 0, 0, direction.x, direction.y, direction.z);
+    }
 }
