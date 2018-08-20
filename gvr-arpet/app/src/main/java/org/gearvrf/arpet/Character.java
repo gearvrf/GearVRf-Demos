@@ -320,7 +320,7 @@ public class Character extends MovableObject implements
 
         getPositionFromPose(mCurrentPetPosition, mCurrentPose);
 
-        if (mCurrentPetPosition.distance(mCurrentBallPosition) < 0.05) {
+        if (mCurrentPetPosition.distance(mCurrentBallPosition) < 0.06) {
             Log.d(TAG, "StopPetMovement");
             stopMovement();
             mOnPetActionListener.onActionEnd(PetAction.TO_BALL);
@@ -401,8 +401,18 @@ public class Character extends MovableObject implements
     }
 
     private synchronized void stopMovement() {
+
         mCurrentAction = PetAction.IDLE;
         unregisterDrawFrameListener();
+
+        if (mLookAtObjectMovement != null) {
+            mLookAtObjectMovement.stop();
+            mLookAtObjectMovement = null;
+        }
+        if (mGoToObjectMovement != null) {
+            mGoToObjectMovement.stop();
+            mGoToObjectMovement = null;
+        }
     }
 
     @Override

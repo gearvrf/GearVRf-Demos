@@ -221,12 +221,7 @@ public class PetMain extends GVRMain {
             Log.d(TAG, "onActionEnd: " + action);
             if (action == PetAction.TO_BALL) {
                 mBallThrowHandler.disable();
-                PetActivity.PetContext.INSTANCE.runDelayedOnPetThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mPet.goToScreen();
-                    }
-                }, 1000);
+                mPet.goToScreen();
             } else if (action == PetAction.TO_SCREEN) {
                 mBallThrowHandler.enable();
                 mBallThrowHandler.reset();
