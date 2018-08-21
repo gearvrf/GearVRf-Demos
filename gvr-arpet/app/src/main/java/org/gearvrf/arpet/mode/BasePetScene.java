@@ -25,10 +25,10 @@ public class BasePetScene extends GVRSceneObject {
     }
 
     public void show(GVRScene mainScene) {
-        mainScene.addSceneObject(this);
+        mainScene.getMainCameraRig().addChildObject(this);
     }
 
     public void hide(GVRScene mainScene) {
-        mainScene.removeSceneObject(this);
+        mainScene.getMainCameraRig().removeChildObject(this);
     }
 }

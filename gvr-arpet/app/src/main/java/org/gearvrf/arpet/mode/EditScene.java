@@ -51,7 +51,7 @@ public class EditScene extends BasePetScene implements View.OnClickListener, IVi
     @Override
     public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
         editSceneObject.getTransform().setScale(3.2f, 3.2f, 1.0f);
-        editSceneObject.getTransform().setPosition(0.0f, 0.0f, -5.0f);
+        editSceneObject.getTransform().setPosition(0.0f, 1.4f, -5.0f);
         addChildObject(mEditModeObject);
     }
 

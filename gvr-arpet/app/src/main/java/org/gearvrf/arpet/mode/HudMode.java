@@ -45,13 +45,11 @@ public class HudMode extends BasePetMode {
         float rotationZAxis = cameraTransform.getRotationRoll();
 
         if (rotationZAxis < 3 && rotationZAxis > -60 || rotationZAxis > -80 && rotationZAxis < 175) {
-            mModeScene.getTransform().setPosition(cameraTransform.getPositionX() + 1.1f, cameraTransform.getPositionY(), cameraTransform.getPositionZ() - 5);
-            mModeScene.getTransform().setRotation(0.9836236f, -0.09276326f, -0.15403655f, -0.012204962f);
-            Log.d(TAG, "Landscape " + " Z: " + rotationZAxis);
+            mModeScene.getTransform().setPosition(cameraTransform.getPositionX() + 1.1f, cameraTransform.getPositionY(), cameraTransform.getPositionZ() - 2f);
+            mModeScene.getTransform().setRotation(0.9943424f, 0.017548352f, 0.10321358f, 0.017914105f);
         } else {
-            mModeScene.getTransform().setPosition(cameraTransform.getPositionX() + 0.7f, cameraTransform.getPositionY() + 1.4f, cameraTransform.getPositionZ() - 5);
-            mModeScene.getTransform().setRotation(0.6800038f - 1.0f, -0.166928f, 0.07900262f, -0.709568f);
-            Log.d(TAG, "Portrait " + " Z: " + rotationZAxis);
+            mModeScene.getTransform().setPosition(-cameraTransform.getPositionX() + 1.2f,  -cameraTransform.getPositionY() - 0.1f , cameraTransform.getPositionZ() - 1f);
+            mModeScene.getTransform().setRotation(0.68466544f - 1.0f, -0.10663576f, -0.017476797f, -0.7043389f);
         }
     }
 

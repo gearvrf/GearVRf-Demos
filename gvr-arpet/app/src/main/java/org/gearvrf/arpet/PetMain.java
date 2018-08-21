@@ -88,7 +88,7 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
-        mBallThrowHandler.enable();
+        //mBallThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -104,7 +104,7 @@ public class PetMain extends GVRMain {
 
         mScene.addSceneObject(cube);
 
-        //  disableCursor();
+        disableCursor();
     }
 
     public void resume() {

@@ -131,7 +131,7 @@ public class HudScene extends BasePetScene implements View.OnClickListener, IVie
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
         gvrViewSceneObject.getTransform().setScale(3.2f, 3.2f, 1.0f);
-        gvrViewSceneObject.getTransform().setPosition(0.0f, 0.0f,-2.0f);
+        gvrViewSceneObject.getTransform().setPosition(1.9f, -0.2f,-2.0f);
         addChildObject(mHudMenu);
     }
 
