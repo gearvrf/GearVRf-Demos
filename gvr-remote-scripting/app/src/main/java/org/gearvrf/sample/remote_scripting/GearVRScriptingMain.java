@@ -70,7 +70,7 @@ public class GearVRScriptingMain extends GVRMain
         context.getInputManager().selectController();
 
         // Add display utils for scripts
-        GVRScriptManager scriptManager = gvrContext.getScriptManager();
+        GVRScriptManager scriptManager = (GVRScriptManager)gvrContext.getScriptManager();
         scriptManager.addVariable("display", new DisplayUtils(gvrContext));
         scriptManager.addVariable("editor", new EditorUtils(gvrContext));
         scriptManager.addVariable("passthrough", new PassthroughUtils(gvrContext, activity));

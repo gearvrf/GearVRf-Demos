@@ -178,7 +178,7 @@ public class AvatarMain extends GVRMain
                     public void run()
                     {
                         mScene.addSceneObject(avatarRoot);
-                        mAvatar.centerModel(avatarRoot);
+                        mAvatar.centerModel();
                     }
                 });
             }

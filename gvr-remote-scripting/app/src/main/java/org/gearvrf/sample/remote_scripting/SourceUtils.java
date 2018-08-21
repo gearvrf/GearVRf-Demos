@@ -37,7 +37,7 @@ public class SourceUtils {
 
     public SourceUtils(GVRContext context) {
         gvrContext = context;
-        mScriptManager = gvrContext.getScriptManager();
+        mScriptManager = (GVRScriptManager)gvrContext.getScriptManager();
     }
 
     private void logError(String message)
@@ -63,7 +63,7 @@ public class SourceUtils {
             }
             GVRResourceVolume volume = new GVRResourceVolume(gvrContext, volType);
             GVRAndroidResource resource = volume.openResource(filename);
-            GVRScriptFile script = mScriptManager.loadScript(resource, language);
+            GVRScriptFile script = (GVRScriptFile)mScriptManager.loadScript(resource, language);
             script.invoke();
             String err = script.getLastError();
             if (err != null) {
