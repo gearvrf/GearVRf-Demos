@@ -57,7 +57,7 @@
         <!-- This API key is used to share anchor using Google Cloud Anchor API -->
         <meta-data
             android:name="com.google.android.ar.API_KEY"
-            android:value="AIzaSyCgBDF3JffODfo-nBCPfItdsGS6gAlUDzM" />
+            android:value="${cloudAnchorApiKey}" />
 
     </application>
 

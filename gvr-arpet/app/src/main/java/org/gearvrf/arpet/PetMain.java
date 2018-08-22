@@ -15,6 +15,8 @@
 
 package org.gearvrf.arpet;
 
+import android.annotation.SuppressLint;
+import android.support.v4.util.Preconditions;
 import android.util.Log;
 import android.view.MotionEvent;
 
@@ -119,19 +121,23 @@ public class PetMain extends GVRMain {
         }
     }
 
+    @SuppressLint("RestrictedApi")
     private void testAnchorSharing(GVRAnchor anchor) {
-        // Host the given anchor then revolve it
-        Log.d(TAG, "testAnchorSharing: hosting anchor...");
+
+        Log.d(TAG, "hosting anchor...");
         mMixedReality.hostAnchor(
                 anchor,
                 (hostedAnchor) -> {
-                    Log.d(TAG, "testAnchorSharing: anchor hosted successful! Anchor ID = " + hostedAnchor.getCloudAnchorId());
+
+                    Preconditions.checkStringNotEmpty(hostedAnchor.getCloudAnchorId(), TAG + ": Error hosting anchor.");
+                    Log.d(TAG, "anchor hosted successful! Anchor ID = \""
+                            + hostedAnchor.getCloudAnchorId() + "\"");
+
                     Log.d(TAG, "testAnchorSharing: resolving anchor...");
                     mMixedReality.resolveCloudAnchor(
                             hostedAnchor.getCloudAnchorId(),
-                            (resolvedAnchor) -> {
-                                Log.d(TAG, "testAnchorSharing: anchor resolved successful!");
-                            }
+                            (resolvedAnchor) -> Log.d(TAG, "anchor resolved successful! Anchor ID = \""
+                                    + resolvedAnchor.getCloudAnchorId() + "\"")
                     );
                 }
         );

@@ -5,14 +5,20 @@ System.setProperty("appName", "gvr-arpet")
 project.ext.hasBackend = true
 project.ext.backend_monoscopic = true
 
-if(file("../../common.gradle").exists()) {
+if (file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
-}
-else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+} else if (file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
+def getPropertyOrDefault(propertyName, defaultValue) {
+    return project.hasProperty(propertyName) ? project.property(propertyName) : defaultValue
+}
+
 android {
+    defaultConfig {
+        manifestPlaceholders = [cloudAnchorApiKey: getPropertyOrDefault("cloudAnchorApiKey", "")]
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -27,6 +33,7 @@ android {
         jni.srcDirs = [] // no auto generation of Android.mk
         jniLibs.srcDir 'libs' // pre-compiled libraries
     }
+
 }
 
 dependencies {
