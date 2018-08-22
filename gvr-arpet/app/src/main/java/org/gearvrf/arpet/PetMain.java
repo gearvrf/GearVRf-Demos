@@ -35,6 +35,7 @@ import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
+import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
@@ -90,7 +91,7 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
-        //mBallThrowHandler.enable();
+        mBallThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -106,7 +107,7 @@ public class PetMain extends GVRMain {
 
         mScene.addSceneObject(cube);
 
-        disableCursor();
+//        disableCursor();
     }
 
     public void resume() {
@@ -148,7 +149,7 @@ public class PetMain extends GVRMain {
 
         if (mPet == null) {
             mPet = new Character(mContext, mMixedReality, plane.getCenterPose(), new PetActionListener());
-            mPet.lookAtBall();
+            mPet.lookAt(mBallThrowHandler.getBallWrapper());
             mPet.setBoundaryPlane(plane);
             mScene.addSceneObject(mPet.getAnchor());
         }
@@ -218,9 +219,7 @@ public class PetMain extends GVRMain {
     @Override
     public void onStep() {
         super.onStep();
-        if (mBallThrowHandler.canBeReseted()) {
-            mBallThrowHandler.reset();
-        }
+        mBallThrowHandler.tryReset();
 
         if (mCurrentMode != null) {
             mCurrentMode.handleOrientation();
@@ -229,10 +228,16 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onCollisionDetected(CollisionEvent event) {
-        if (event.getType() == CollisionEvent.Type.ENTER) {
-            mBallThrowHandler.setResetOnTouchEnabled(false);
-            mPet.goToBall();
-        }
+//        if (event.getType() == CollisionEvent.Type.ENTER) {
+//            mBallThrowHandler.setResetOnTouchEnabled(false);
+//            mPet.goToBall();
+//        }
+    }
+
+    @Subscribe
+    public void onBallThrown(BallWrapper ballWrapper) {
+//        mBallThrowHandler.setResetOnTouchEnabled(false);
+        mPet.goToBall(ballWrapper);
     }
 
     private class PetActionListener implements OnPetActionListener {
@@ -251,7 +256,7 @@ public class PetMain extends GVRMain {
             } else if (action == PetAction.TO_SCREEN) {
                 mBallThrowHandler.enable();
                 mBallThrowHandler.reset();
-                mPet.lookAtBall();
+                mPet.lookAt(mBallThrowHandler.getBallWrapper());
                 mBallThrowHandler.setResetOnTouchEnabled(true);
             }
         }

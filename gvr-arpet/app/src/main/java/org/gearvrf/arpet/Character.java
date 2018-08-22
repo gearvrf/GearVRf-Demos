@@ -48,9 +48,11 @@ import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -114,7 +116,6 @@ public class Character extends MovableObject implements
     private float[] mLastBallHitPose;
 
     private OnPetActionListener mOnPetActionListener;
-    private BallThrowHandler mBallThrowHandler;
 
     Character(
             @NonNull GVRContext gvrContext,
@@ -136,7 +137,7 @@ public class Character extends MovableObject implements
 
         mTouchHandler = new TouchHandler();
         initController();
-        mBallThrowHandler = BallThrowHandler.getInstance(mContext, mMixedReality);
+
     }
 
     private void registerGestureDetectors() {
@@ -176,8 +177,9 @@ public class Character extends MovableObject implements
         });
     }
 
-    public void goToBall() {
-        mBall = new BallWrapper(BallThrowHandler.getInstance(mContext, mMixedReality).getBall());
+    public void goToBall(BallWrapper ballWrapper) {
+        // FIXME: some cleanup might be needed
+        mBall = ballWrapper;
         mCurrentAction = PetAction.TO_BALL;
         registerDrawFrameListener();
         mOnPetActionListener.onActionStart(PetAction.TO_BALL);
@@ -220,11 +222,7 @@ public class Character extends MovableObject implements
         mGoToObjectMovement.move();
     }
 
-    public void lookAtBall() {
-        lookAt(new BallWrapper(mBallThrowHandler.getBall()));
-    }
-
-    private <Target extends TargetObject> void lookAt(@NonNull Target objectToLookAt) {
+    public <Target extends TargetObject> void lookAt(@NonNull Target objectToLookAt) {
         disableGestureDetectors();
         mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener<Target>());
         mCurrentAction = PetAction.LOOK_AT;
@@ -302,22 +300,12 @@ public class Character extends MovableObject implements
     }
 
     private synchronized void moveToBall() {
+        float[] m = mBall.getPoseMatrix();
+        float[] t = getAnchor().getPose();
+        t[12] = m[12] * 0.01f;
+        t[14] = m[14] * 0.01f;
 
-        BallThrowHandler throwHandler = BallThrowHandler.getInstance(getGVRContext(), mMixedReality);
-        float[] ballHitPose = throwHandler.getBallHitPose();
-
-        // Holds last valid hit pose
-        if (ballHitPose != null) {
-            mLastBallHitPose = ballHitPose;
-            getPositionFromPose(mCurrentBallPosition, mLastBallHitPose);
-        }
-        // When ball reach plane boundary, gets null hit pose.
-        // So stop ball movement before it exit plane.
-        else {
-            Log.d(TAG, "NoHitPose!");
-            throwHandler.disablePhysics();
-        }
-
+        mCurrentBallPosition.set(t[12], m[13] * 0.01f, t[14]);
         getPositionFromPose(mCurrentPetPosition, mCurrentPose);
 
         if (mCurrentPetPosition.distance(mCurrentBallPosition) < 0.06) {
@@ -328,15 +316,17 @@ public class Character extends MovableObject implements
 
         try {
 
-            // Keeps pet looking to the ball
+            // Keeps the pet looking to the ball
             getTransform().setModelMatrix(LookAtObjectMovement.lookAt(this, mBall));
             // Gets interpolation and update pet position
-            mCurrentPose = mMixedReality.makeInterpolated(getAnchor().getPose(), mLastBallHitPose, 0.01f);
+            // FIXME: this can be optimized
+            mCurrentPose = mMixedReality.makeInterpolated(getAnchor().getPose(), t, 0.01f);
             updatePose(mCurrentPose);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private void getPositionFromPose(Vector3f out, float[] pose) {

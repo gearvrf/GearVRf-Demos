@@ -26,7 +26,9 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.events.CollisionEvent;
+import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
+import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.physics.GVRRigidBody;
@@ -67,6 +69,8 @@ public class BallThrowHandler implements ICollisionEvents {
     private static BallThrowHandler sInstance;
     private boolean mResetOnTouchEnabled = true;
 
+    private BallWrapper mBallWrapper;
+
     private BallThrowHandler(GVRContext gvrContext, GVRMixedReality mixedReality) {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
@@ -78,6 +82,7 @@ public class BallThrowHandler implements ICollisionEvents {
         EventBus.getDefault().register(this);
     }
 
+    // FIXME: look for a different approach for this
     public static BallThrowHandler getInstance(GVRContext gvrContext, GVRMixedReality mixedReality) {
         if (sInstance == null) {
             sInstance = new BallThrowHandler(gvrContext, mixedReality);
@@ -120,6 +125,8 @@ public class BallThrowHandler implements ICollisionEvents {
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
         mBall.getEventReceiver().addListener(this);
+
+        mBallWrapper = new BallWrapper(mBall);
     }
 
     public void disablePhysics() {
@@ -175,6 +182,8 @@ public class BallThrowHandler implements ICollisionEvents {
                     mRigidBody.setEnable(true);
                     mRigidBody.applyCentralForce(force.x(), force.y(), force.z());
                     thrown = true;
+
+                    EventBus.getDefault().post(mBallWrapper);
                 }
 
                 return true;
@@ -205,6 +214,10 @@ public class BallThrowHandler implements ICollisionEvents {
         return mBall;
     }
 
+    public BallWrapper getBallWrapper() {
+        return mBallWrapper;
+    }
+
     public void reset() {
         resetRigidBody();
         mBall.getParent().removeChildObject(mBall);
@@ -212,6 +225,15 @@ public class BallThrowHandler implements ICollisionEvents {
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
         mScene.getMainCameraRig().addChildObject(mBall);
         thrown = false;
+    }
+
+    public boolean tryReset() {
+        if (mBall.getTransform().getPositionY() < MIN_Y_OFFSET) {
+            reset();
+            return true;
+        }
+
+        return false;
     }
 
     public boolean canBeReseted() {
@@ -237,13 +259,13 @@ public class BallThrowHandler implements ICollisionEvents {
     @Override
     public void onEnter(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
 
-        Log.d(BallThrowHandler.class.getSimpleName(), "onEnter: " + gvrSceneObject1.getParent().getName());
-        float[] hitPose = getBallHitPose();
-
-        if (hitPose != null) {
-            mCollisionEvent = new CollisionEvent(CollisionEvent.Type.ENTER);
-            EventBus.getDefault().post(mCollisionEvent);
-        }
+//        Log.d(BallThrowHandler.class.getSimpleName(), "onEnter: " + gvrSceneObject1.getParent().getName());
+//        float[] hitPose = getBallHitPose();
+//
+//        if (hitPose != null) {
+//            mCollisionEvent = new CollisionEvent(CollisionEvent.Type.ENTER);
+//            EventBus.getDefault().post(mCollisionEvent);
+//        }
     }
 
     @Override
