@@ -2,6 +2,9 @@ apply plugin: 'com.android.application'
 
 System.setProperty("appName", "gvr-arpet")
 
+project.ext.hasBackend = true
+project.ext.backend_monoscopic = true
+
 if(file("../../common.gradle").exists()) {
     apply from: '../../common.gradle'
 }
@@ -34,21 +37,5 @@ dependencies {
 
     debugImplementation(name: 'gvrf-physics-debug', ext: 'aar')
     releaseImplementation(name: 'gvrf-physics-release', ext: 'aar')
-
-//    if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-//        if (findProject(':gvrf-physics')) {
-//            compile project(':gvrf-physics')
-//            compile project(':MixedReality')
-//        } else {
-//            debugCompile(name: 'MixedReality-debug', ext: 'aar')
-//            releaseCompile(name: 'MixedReality-release', ext: 'aar')
-//
-//            debugImplementation(name: 'gvrf-physics-debug', ext: 'aar')
-//            releaseImplementation(name: 'gvrf-physics-release', ext: 'aar')
-//        }
-//    } else {
-//        implementation "org.gearvrf:gvrf-physics:$gearvrfVersion"
-//        implementation "org.gearvrf:MixedReality:$gearvrfVersion"
-//    }
 
 }
