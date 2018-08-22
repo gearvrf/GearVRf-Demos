@@ -14,38 +14,51 @@
  */-->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="org.gearvrf.arpet"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- This tag indicates that this application requires ARCore.  This results in the application
         only being visible in the Google Play Store on devices that support ARCore. -->
-    <uses-feature android:name="android.hardware.camera.ar" android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera.ar"
+        android:required="true" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/gearvr_logo"
         android:label="@string/app_name">
-        <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+        <meta-data
+            android:name="com.samsung.android.vr.application.mode"
+            android:value="vr_only" />
         <activity
             android:name="org.gearvrf.arpet.PetActivity"
-            android:screenOrientation="landscape"
+            android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:label="@string/app_name" >
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <!-- This tag indicates that this application requires ARCore.  This results in the Google Play
             Store downloading and installing ARCore along with the application. -->
-        <meta-data android:name="com.google.ar.core" android:value="required" />
+        <meta-data
+            android:name="com.google.ar.core"
+            android:value="required" />
+
+        <!-- This API key is used to share anchor using Google Cloud Anchor API -->
+        <meta-data
+            android:name="com.google.android.ar.API_KEY"
+            android:value="AIzaSyCgBDF3JffODfo-nBCPfItdsGS6gAlUDzM" />
+
     </application>
 
 </manifest>

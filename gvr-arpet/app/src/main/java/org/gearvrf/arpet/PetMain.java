@@ -80,7 +80,7 @@ public class PetMain extends GVRMain {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
 
-        mMixedReality = new GVRMixedReality(gvrContext);
+        mMixedReality = new GVRMixedReality(gvrContext, true);
         mMixedReality.resume();
 
         GVRWorld world = new GVRWorld(gvrContext);
@@ -119,6 +119,24 @@ public class PetMain extends GVRMain {
         }
     }
 
+    private void testAnchorSharing(GVRAnchor anchor) {
+        // Host the given anchor then revolve it
+        Log.d(TAG, "testAnchorSharing: hosting anchor...");
+        mMixedReality.hostAnchor(
+                anchor,
+                (hostedAnchor) -> {
+                    Log.d(TAG, "testAnchorSharing: anchor hosted successful! Anchor ID = " + hostedAnchor.getCloudAnchorId());
+                    Log.d(TAG, "testAnchorSharing: resolving anchor...");
+                    mMixedReality.resolveCloudAnchor(
+                            hostedAnchor.getCloudAnchorId(),
+                            (resolvedAnchor) -> {
+                                Log.d(TAG, "testAnchorSharing: anchor resolved successful!");
+                            }
+                    );
+                }
+        );
+    }
+
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
 
@@ -128,6 +146,8 @@ public class PetMain extends GVRMain {
             mPet.setBoundaryPlane(plane);
             mScene.addSceneObject(mPet.getAnchor());
         }
+
+        testAnchorSharing(mPet.getAnchor());
 
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");
