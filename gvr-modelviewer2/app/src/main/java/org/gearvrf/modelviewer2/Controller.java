@@ -17,7 +17,6 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.util.AssetsReader;
 import org.gearvrf.util.Banner;
@@ -351,13 +350,13 @@ public class Controller {
         oDefaultCameraPosition.get(0).loadNavigator(context);
 
         for (int i = 1; i < oDefaultCameraPosition.size(); i++) {
-            GVRModelSceneObject temp = oDefaultCameraPosition.get(i).loadNavigator(context);
+            GVRSceneObject temp = oDefaultCameraPosition.get(i).loadNavigator(context);
             room.addSceneObject(temp);
             enableDisableLightOnModel(temp, false);
         }
     }
 
-    protected void lookAt(GVRTransform modeltransform, GVRTransform camera, GVRModelSceneObject
+    protected void lookAt(GVRTransform modeltransform, GVRTransform camera, GVRSceneObject
             mCharacter) {
         Vector3f cameraV = new Vector3f(camera.getPositionX(), camera.getPositionY(), camera
                 .getPositionZ());
@@ -479,7 +478,7 @@ public class Controller {
 
     public int getCountOfAnimations() {
         if (currentDisplayedModel != null)
-            return currentDisplayedModel.getAnimationsList().size();
+            return currentDisplayedModel.getAnimation().getAnimationCount();
         return 0;
     }
 
@@ -492,11 +491,11 @@ public class Controller {
             }
         } else {
             index -= 1;
-            if (currentDisplayedModel != null && currentDisplayedModel.getAnimationsList().size()
-                    > 0)
-                currentAnimation = currentDisplayedModel.getAnimationsList().get(index);
-            currentAnimation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
-            context.getAnimationEngine().start(currentAnimation);
+            if (currentDisplayedModel != null && currentDisplayedModel.getAnimation().getAnimationCount() > 0)
+                currentAnimation = currentDisplayedModel.getAnimation().getAnimation(index);
+            currentAnimation.setRepeatMode(GVRRepeatMode.REPEATED);
+            currentAnimation.setRepeatCount(-1);
+            currentAnimation.start(context.getAnimationEngine());
         }
     }
 

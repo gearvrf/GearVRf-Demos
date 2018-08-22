@@ -27,7 +27,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.resonanceaudio.GVRAudioManager;
 import org.gearvrf.resonanceaudio.GVRAudioSource;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Threads;
 
 public final class SpatialAudioActivity extends GVRActivity
@@ -56,7 +55,7 @@ public final class SpatialAudioActivity extends GVRActivity
     private static final class SpatialAudioMain extends GVRMain
     {
         private static final String SOUND_FILE = "cube_sound.wav";
-        GVRModelSceneObject r2d2Model;
+        GVRSceneObject r2d2Model;
         private float modelY = -1.5f;
         private GVRAudioManager audioListener;
         private float time = 0f;

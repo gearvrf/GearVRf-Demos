@@ -8,6 +8,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
@@ -21,6 +22,7 @@ import org.gearvrf.animation.GVRPoseMapper;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRSkeleton;
 import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import android.util.Log;
@@ -28,13 +30,15 @@ import android.view.MotionEvent;
 
 public class AvatarMain extends GVRMain
 {
-    //private final String mModelPath = "TRex_NoGround.fbx";
-    private final String mModelPath = "DeepMotion/DeepMotionSkeleton.fbx";
+    private final String mModelPath = "DeepMotion/skeletonAnim_locked.dae";
+//    private final String mAnimationPath = "bodyturn.txt";
 //    private final String mModelPath = "Andromeda/Andromeda.dae";
 //    private final String mAnimationPath = "Andromeda/HipHopDancing.dae";
 //    private final String mAnimationPath = "Andromeda/Bellydancing.dae";
 //    private final String mAnimationPath = "Andromeda/Boxing.dae";
-    private final String mAnimationPath = "bodyturn.txt";
+    private final String mAnimationPath = "DeepMotion/skeletonAnim_locked.dae";
+//    private final String mModelPath = "Lily/female_outfitJ.fbx";
+//    private final String mAnimationPath = "Lily/Idle.fbx";
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
@@ -177,8 +181,12 @@ public class AvatarMain extends GVRMain
                 {
                     public void run()
                     {
+                        Quaternionf q = new Quaternionf();
+                        //q.rotateAxis((float) -Math.PI / 2, 1, 0, 0);
+                        q.rotateAxis((float) Math.PI, 0, 1, 0);
+                        avatarRoot.getTransform().rotate(q.w, q.x, q.y, q.z);
+                        mAvatar.centerModel(avatarRoot);
                         mScene.addSceneObject(avatarRoot);
-                        mAvatar.centerModel();
                     }
                 });
             }
@@ -190,6 +198,20 @@ public class AvatarMain extends GVRMain
             mAnimator = animation;
             animation.setRepeatMode(GVRRepeatMode.REPEATED);
             animation.setRepeatCount(-1);
+            GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animation.getAnimation(0);
+            GVRSkeleton avatarSkel = mAvatar.getSkeleton();
+            GVRSkeleton animSkel = skelAnim.getSkeleton();
+            GVRPose bindpose1 = animSkel.getBindPose();
+            GVRPose bindpose2 = new GVRPose(avatarSkel);
+            float[] rotations = new float[avatarSkel.getNumBones() * 4];
+            float[] positions = new float[avatarSkel.getNumBones() * 3];
+
+            bindpose1.getWorldPositions(positions);
+            bindpose1.getWorldRotations(rotations);
+            bindpose2.setWorldPositions(positions);
+            bindpose2.setWorldRotations(rotations);
+            avatarSkel.setBindPose(bindpose2);
+            avatarSkel.updateSkinPose();
         }
     };
 
@@ -199,6 +221,7 @@ public class AvatarMain extends GVRMain
     {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
+        mScene.getMainCameraRig().getHeadTransformObject().attachComponent(new GVRDirectLight(mContext));
         mDeepMotionSkeleton = new GVRSkeleton(gvrContext, mDeepMotionBoneParents);
         mDeepMotionSkeleton.setBoneNames(mDeepMotionBoneNames);
         mAvatar = new GVRAvatar(gvrContext, "Andromeda");

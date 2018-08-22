@@ -27,7 +27,6 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.joml.Quaternionf;
 
 import android.util.Log;
@@ -100,7 +99,7 @@ public class MultiLightMain extends GVRMain {
     {
          try
          {
-            GVRModelSceneObject model = context.getAssetLoader().loadModel("astro_boy.dae");
+            GVRSceneObject model = context.getAssetLoader().loadModel("astro_boy.dae");
 
             model.getTransform().setScale(10, 10, 10);
             model.getTransform().setPositionY(-1);
