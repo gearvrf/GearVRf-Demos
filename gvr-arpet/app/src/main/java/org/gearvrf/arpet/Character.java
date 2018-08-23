@@ -320,8 +320,11 @@ public class Character extends MovableObject implements
             getTransform().setModelMatrix(LookAtObjectMovement.lookAt(this, mBall));
             // Gets interpolation and update pet position
             // FIXME: this can be optimized
-            mCurrentPose = mMixedReality.makeInterpolated(getAnchor().getPose(), t, 0.01f);
-            updatePose(mCurrentPose);
+            float[] p = mMixedReality.makeInterpolated(getAnchor().getPose(), t, 0.01f);
+            if (mBoundaryPlane.isPoseInPolygon(p)) {
+                mCurrentPose = p;
+                updatePose(mCurrentPose);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
