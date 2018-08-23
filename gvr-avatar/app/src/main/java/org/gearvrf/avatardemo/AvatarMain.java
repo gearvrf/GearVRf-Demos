@@ -13,7 +13,9 @@ import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAvatar;
+import org.gearvrf.animation.GVROnFinish;
 import org.gearvrf.animation.keyframe.TRSImporter;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.GVRSceneObject;
@@ -30,141 +32,21 @@ import android.view.MotionEvent;
 
 public class AvatarMain extends GVRMain
 {
-    private final String mModelPath = "DeepMotion/skeletonAnim_locked.dae";
+//    private final String mModelPath = "DeepMotion/sahithi_character_skin.fbx";
 //    private final String mAnimationPath = "bodyturn.txt";
-//    private final String mModelPath = "Andromeda/Andromeda.dae";
-//    private final String mAnimationPath = "Andromeda/HipHopDancing.dae";
-//    private final String mAnimationPath = "Andromeda/Bellydancing.dae";
-//    private final String mAnimationPath = "Andromeda/Boxing.dae";
-    private final String mAnimationPath = "DeepMotion/skeletonAnim_locked.dae";
+    private final String mModelPath = "Andromeda/Andromeda.dae";
+    private final String[] mAnimationPaths =  { "Andromeda/HipHopDancing.dae", "Andromeda/Bellydancing.dae", "Andromeda/Boxing.dae" };
+//    private final String[] mAnimationPaths = { "DeepMotion/animation_baked.fbx" };
 //    private final String mModelPath = "Lily/female_outfitJ.fbx";
-//    private final String mAnimationPath = "Lily/Idle.fbx";
+//    private final String[] mAnimationPaths = { "Lily/Idle.fbx" };
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
     private GVRScene        mScene;
     private GVRAvatar       mAvatar;
     private GVRActivity     mActivity;
-    private GVRAnimator     mAnimator;
-    private GVRSkeleton     mDeepMotionSkeleton;
-
-    private String[] mDeepMotionBoneNames =
-    {
-            "Pelvis", "HipRight", "KneeRight", "AnkleRight", "HipLeft",
-            "KneeLeft", "AnkleLeft", "SpineShoulder", "ShoulderRight",
-            "ElbowRight", "WristRight", "ShoulderLeft", "ElbowLeft",
-            "WristLeft", "Neck", "HeadOrient"
-    };
-
-
-    private int[] mDeepMotionBoneParents =
-    {
-        -1, 0, 1, 2, 0, 4, 5, 0, 7, 8, 9, 7, 11, 12, 7, 14
-    };
-
-    private String[] mMixamoBoneNames = 
-    {
-        "mixamorig_Hips",
-        "mixamorig_Spine",
-        "mixamorig_Spine1",
-        "mixamorig_Spine2",
-        "mixamorig_Neck 3",
-        "mixamorig_Head 4",
-        "mixamorig_RightEye",
-        "mixamorig_LeftEye",
-        "mixamorig_LeftShoulder",
-        "mixamorig_LeftArm",
-        "mixamorig_LeftForeArm",
-        "mixamorig_LeftHand",
-        "mixamorig_LeftHandMiddle1",
-        "mixamorig_LeftHandMiddle2",
-        "mixamorig_LeftHandMiddle3",
-        "mixamorig_LeftHandMiddle4",
-        "mixamorig_LeftHandThumb1",
-        "mixamorig_LeftHandThumb2",
-        "mixamorig_LeftHandThumb3",
-        "mixamorig_LeftHandThumb4",
-        "mixamorig_LeftHandIndex1",
-        "mixamorig_LeftHandIndex2",
-        "mixamorig_LeftHandIndex3",
-        "mixamorig_LeftHandIndex4",
-        "mixamorig_LeftHandRing1",
-        "mixamorig_LeftHandRing2",
-        "mixamorig_LeftHandRing3",
-        "mixamorig_LeftHandRing4",
-        "mixamorig_LeftHandPinky1",
-        "mixamorig_LeftHandPinky2",
-        "mixamorig_LeftHandPinky3",
-        "mixamorig_LeftHandPinky4",
-        "mixamorig_RightShoulder",
-        "mixamorig_RightArm",
-        "mixamorig_RightForeArm",
-        "mixamorig_RightHand",
-        "mixamorig_RightHandMiddle1",
-        "mixamorig_RightHandMiddle2",
-        "mixamorig_RightHandMiddle3",
-        "mixamorig_RightHandMiddle4",
-        "mixamorig_RightHandThumb1",
-        "mixamorig_RightHandThumb2",
-        "mixamorig_RightHandThumb3",
-        "mixamorig_RightHandThumb4",
-        "mixamorig_RightHandIndex1",
-        "mixamorig_RightHandIndex2",
-        "mixamorig_RightHandIndex3",
-        "mixamorig_RightHandIndex4",
-        "mixamorig_RightHandRing1",
-        "mixamorig_RightHandRing2",
-        "mixamorig_RightHandRing3",
-        "mixamorig_RightHandRing4",
-        "mixamorig_RightHandPinky1",
-        "mixamorig_RightHandPinky2",
-        "mixamorig_RightHandPinky3",
-        "mixamorig_RightHandPinky4",
-        "mixamorig_LeftUpLeg",
-        "mixamorig_LeftLeg",
-        "mixamorig_LeftFoot",
-        "mixamorig_LeftToeBase",
-        "mixamorig_LeftToe_End",
-        "mixamorig_RightUpLeg",
-        "mixamorig_RightLeg",
-        "mixamorig_RightFoot",
-        "mixamorig_RightToeBase",
-        "mixamorig_RightToe_End",
-    };
-
-    private int[] mMixamoBoneParents =
-    {
-        -1, 0, 1, 2, 3, 4, 5, 5,
-        3, 8, 9, 10, 11, 12, 13, 14,
-        11, 16, 17, 18, 11, 20, 21, 22,
-        11, 24, 25, 26, 11, 28, 29, 30,
-        3, 32, 33, 34, 35, 36, 37, 38,
-        35, 40, 41, 42, 35, 44, 45, 46,
-        35, 48, 49, 50, 35, 52, 53, 54,
-        0, 56, 57, 58, 59, 0, 61, 62,
-        63, 64
-    };
-
-    private int[] mMixamoBoneMap =
-    {
-        0, -1, -1, -1,
-        14, -1  -1, -1,
-        11, 12, -1, 13,
-        -1, -1, -1, -1,
-        -1, -1, -1, -1,
-        -1, -1, -1, -1,
-        -1, -1, -1, -1,
-        -1, -1, -1,  8,
-        9, -1, 10,  -1,
-        -1, -1, -1, -1,
-        -1, -1, -1, -1,
-        -1, -1, -1, -1,
-        -1, -1, -1, -1,
-        -1, -1, -1, 4,
-        5, 6, -1, -1,
-        1, 2, 3, -1,
-        -1
-    };
+    private int             mNumAnimsLoaded = 0;
+    private int             mCurrentAnimIndex = -1;
 
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
@@ -181,10 +63,6 @@ public class AvatarMain extends GVRMain
                 {
                     public void run()
                     {
-                        Quaternionf q = new Quaternionf();
-                        //q.rotateAxis((float) -Math.PI / 2, 1, 0, 0);
-                        q.rotateAxis((float) Math.PI, 0, 1, 0);
-                        avatarRoot.getTransform().rotate(q.w, q.x, q.y, q.z);
                         mAvatar.centerModel(avatarRoot);
                         mScene.addSceneObject(avatarRoot);
                     }
@@ -195,24 +73,22 @@ public class AvatarMain extends GVRMain
         @Override
         public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors)
         {
-            mAnimator = animation;
-            animation.setRepeatMode(GVRRepeatMode.REPEATED);
-            animation.setRepeatCount(-1);
-            GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animation.getAnimation(0);
-            GVRSkeleton avatarSkel = mAvatar.getSkeleton();
-            GVRSkeleton animSkel = skelAnim.getSkeleton();
-            GVRPose bindpose1 = animSkel.getBindPose();
-            GVRPose bindpose2 = new GVRPose(avatarSkel);
-            float[] rotations = new float[avatarSkel.getNumBones() * 4];
-            float[] positions = new float[avatarSkel.getNumBones() * 3];
-
-            bindpose1.getWorldPositions(positions);
-            bindpose1.getWorldRotations(rotations);
-            bindpose2.setWorldPositions(positions);
-            bindpose2.setWorldRotations(rotations);
-            avatarSkel.setBindPose(bindpose2);
-            avatarSkel.updateSkinPose();
+            if (!mAvatar.isRunning())
+            {
+                mAvatar.start(0);
+            }
         }
+
+        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation)
+        {
+            if (mCurrentAnimIndex >= mAvatar.getAnimationCount())
+            {
+                mCurrentAnimIndex = 0;
+            }
+            mAvatar.start(mCurrentAnimIndex++);
+        }
+
+        public void onAnimationStarted(GVRAnimator animator) { }
     };
 
 
@@ -222,10 +98,7 @@ public class AvatarMain extends GVRMain
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
         mScene.getMainCameraRig().getHeadTransformObject().attachComponent(new GVRDirectLight(mContext));
-        mDeepMotionSkeleton = new GVRSkeleton(gvrContext, mDeepMotionBoneParents);
-        mDeepMotionSkeleton.setBoneNames(mDeepMotionBoneNames);
         mAvatar = new GVRAvatar(gvrContext, "Andromeda");
-
         mAvatar.getEventReceiver().addListener(mAvatarListener);
         try
         {
@@ -253,27 +126,25 @@ public class AvatarMain extends GVRMain
 
     public void onSingleTapUp(MotionEvent event)
     {
-        if (mAnimator == null)
+        if (mNumAnimsLoaded < mAnimationPaths.length)
         {
             try
             {
-                loadAnimation(mAnimationPath);
+                loadAnimation(mAnimationPaths[mNumAnimsLoaded++]);
             }
             catch (IOException ex)
             {
                 ex.printStackTrace();
             }
         }
+        else if (mAvatar.isRunning())
+        {
+            mAvatar.stop();
+        }
         else
         {
-            if (mAnimator.isRunning())
-            {
-                mAnimator.stop();
-            }
-            else
-            {
-                mAnimator.start();
-            }
+            mCurrentAnimIndex = 0;
+            mAvatar.start(mCurrentAnimIndex++);
         }
     }
 }
