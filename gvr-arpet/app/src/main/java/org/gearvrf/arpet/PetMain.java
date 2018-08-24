@@ -28,6 +28,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.Character.PetAction;
+import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
@@ -122,23 +123,41 @@ public class PetMain extends GVRMain {
         }
     }
 
+    private boolean isCloudAnchorApiKeySet() {
+        return ContextUtils.isMetaDataSet(getGVRContext().getContext(),
+                ApiConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
+    }
+
     @SuppressLint("RestrictedApi")
     private void testAnchorSharing(GVRAnchor anchor) {
+
+        if (!isCloudAnchorApiKeySet()) {
+            Log.d(TAG, " Cloud Anchor API key is not set.");
+            return;
+        }
 
         Log.d(TAG, "hosting anchor...");
         mMixedReality.hostAnchor(
                 anchor,
                 (hostedAnchor) -> {
 
-                    Preconditions.checkStringNotEmpty(hostedAnchor.getCloudAnchorId(), TAG + ": Error hosting anchor.");
+                    Preconditions.checkStringNotEmpty(hostedAnchor.getCloudAnchorId(),
+                            TAG + ": Error hosting anchor.");
+
                     Log.d(TAG, "anchor hosted successful! Anchor ID = \""
                             + hostedAnchor.getCloudAnchorId() + "\"");
 
-                    Log.d(TAG, "testAnchorSharing: resolving anchor...");
+                    Log.d(TAG, "resolving anchor...");
                     mMixedReality.resolveCloudAnchor(
                             hostedAnchor.getCloudAnchorId(),
-                            (resolvedAnchor) -> Log.d(TAG, "anchor resolved successful! Anchor ID = \""
-                                    + resolvedAnchor.getCloudAnchorId() + "\"")
+                            (resolvedAnchor) -> {
+
+                                Preconditions.checkStringNotEmpty(resolvedAnchor.getCloudAnchorId(),
+                                        TAG + ": Error resolving anchor.");
+
+                                Log.d(TAG, "anchor resolved successful! Anchor ID = \""
+                                        + resolvedAnchor.getCloudAnchorId() + "\"");
+                            }
                     );
                 }
         );
@@ -154,6 +173,7 @@ public class PetMain extends GVRMain {
             mScene.addSceneObject(mPet.getAnchor());
         }
 
+        // Host pet anchor
         testAnchorSharing(mPet.getAnchor());
 
         if (mCurrentMode instanceof EditMode) {
