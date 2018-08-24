@@ -19,9 +19,7 @@ import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.greenrobot.eventbus.EventBus;
-import org.joml.Vector3f;
 
 import java.util.LinkedList;
 
@@ -50,9 +48,6 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     private final class PlaneBoard extends GVRComponent {
         private GVRPlane plane;
         private GVRSceneObject box;
-        private Vector3f scale = new Vector3f();
-        private Vector3f pos = new Vector3f();
-        private Quaternionf rot = new Quaternionf();
 
         PlaneBoard(GVRContext gvrContext) {
             super(gvrContext, 0);
@@ -99,19 +94,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             Matrix4f targetMtx = plane.getSceneObject().getTransform().getModelMatrix4f();
             rootInvMat.mul(targetMtx, targetMtx);
 
-            // This should work, but it seems to have a problem at setModelMatrix method...
-//            box.getTransform().setModelMatrix(targetMtx);
-//            box.getTransform().setScaleZ(1f);
-
-            // ... That's why I'm using the solution below
-            // FIXME: this can be optimized
-            targetMtx.getScale(scale);
-            targetMtx.getTranslation(pos);
-            targetMtx.normalize3x3();
-            rot.setFromNormalized(targetMtx);
-            box.getTransform().setScale(scale.x, scale.y, 1f);
-            box.getTransform().setPosition(pos.x, pos.y, pos.z);
-            box.getTransform().setRotation(rot.w, rot.x, rot.y, rot.z);
+            box.getTransform().setModelMatrix(targetMtx);
+            box.getTransform().setScaleZ(1f);
         }
 
         void update() {
@@ -119,7 +103,6 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
                 return;
             }
 
-            // TODO: check if this should also be done only when plane grows too much
             setBoxTransform();
 
             GVRRigidBody board = (GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType());

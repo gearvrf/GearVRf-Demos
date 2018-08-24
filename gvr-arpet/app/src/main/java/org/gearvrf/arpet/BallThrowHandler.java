@@ -121,7 +121,7 @@ public class BallThrowHandler implements ICollisionEvents {
         mBall.attachComponent(collider);
 
         mRigidBody = new GVRRigidBody(mContext, 0.2f);
-        mRigidBody.setRestitution(1.0f);
+        mRigidBody.setRestitution(1.5f);
         mRigidBody.setFriction(0.5f);
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
