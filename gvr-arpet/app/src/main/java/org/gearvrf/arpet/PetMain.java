@@ -20,7 +20,6 @@ import android.support.v4.util.Preconditions;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
@@ -29,6 +28,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.Character.PetAction;
 import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
@@ -42,6 +42,7 @@ import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
 import org.gearvrf.arpet.petobjects.Hydrant;
 import org.gearvrf.arpet.petobjects.Toy;
+import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -50,8 +51,10 @@ import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.physics.GVRWorld;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
 
 public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
@@ -64,8 +67,8 @@ public class PetMain extends GVRMain {
     private BallThrowHandler mBallThrowHandler;
     private PlaneHandler planeHandler;
 
-    private GVRSceneObject cube;
     private Character mPet;
+    private GVRModelSceneObject petSceneObject;
 
     private IPetMode mCurrentMode;
     private HandlerModeChange mHandlerModeChange;
@@ -100,13 +103,7 @@ public class PetMain extends GVRMain {
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
 
-        cube = new GVRSceneObject(gvrContext);
-        cube.getTransform().setPosition(0f, 0f, -10f);
-        GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
-        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
-        cube.attachComponent(collider);
-
-        mScene.addSceneObject(cube);
+        petSceneObject = LoadModelHelper.loadModelSceneObject(gvrContext, LoadModelHelper.PET_MODEL_PATH);
 
 //        disableCursor();
     }
@@ -167,8 +164,10 @@ public class PetMain extends GVRMain {
     public void onPlaneDetected(final GVRPlane plane) {
 
         if (mPet == null) {
-            mPet = new Character(mContext, mMixedReality, plane.getCenterPose(), new PetActionListener());
+            mPet = new Character(mContext, mMixedReality, plane.getCenterPose(),
+                    new PetActionListener(), new PetAnimationHelper(mContext));
             mPet.lookAt(mBallThrowHandler.getBallWrapper());
+            mPet.set3DModel(petSceneObject);
             mPet.setBoundaryPlane(plane);
             mScene.addSceneObject(mPet.getAnchor());
         }

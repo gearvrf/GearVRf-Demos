@@ -27,6 +27,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
+import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -245,15 +246,10 @@ public class BallThrowHandler implements ICollisionEvents {
     }
 
     private void load3DModel() {
-        GVRSceneObject sceneObject;
-        try {
-            sceneObject = mContext.getAssetLoader().loadModel("objects/ball.fbx");
-            GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
-            ball.getParent().removeChildObject(ball);
-            mBall = ball;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        GVRSceneObject sceneObject = LoadModelHelper.loadSceneObject(mContext, LoadModelHelper.BALL_MODEL_PATH);
+        GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
+        ball.getParent().removeChildObject(ball);
+        mBall = ball;
     }
 
     @Override

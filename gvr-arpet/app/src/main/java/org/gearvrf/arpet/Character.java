@@ -31,6 +31,8 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.animation.GVRAnimator;
+import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.OnScaleListener;
@@ -48,15 +50,13 @@ import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
@@ -99,6 +99,8 @@ public class Character extends MovableObject implements
     private GVRCursorController mCursorController;
     private final static String PET_NAME = "Pet";
 
+    private PetAnimationHelper mPetAnimationHelper;
+
     // Movement handlers
     private Movement mLookAtObjectMovement;
     private Movement mGoToObjectMovement;
@@ -121,7 +123,8 @@ public class Character extends MovableObject implements
             @NonNull GVRContext gvrContext,
             @NonNull GVRMixedReality mixedReality,
             @NonNull float[] pose,
-            @NonNull OnPetActionListener petListener) {
+            @NonNull OnPetActionListener petListener,
+            @NonNull PetAnimationHelper petAnimationHelper) {
 
         super(gvrContext, mixedReality, pose);
 
@@ -130,7 +133,7 @@ public class Character extends MovableObject implements
         mContext = gvrContext;
         mCurrentPose = pose;
         mMixedReality = mixedReality;
-        load3DModel();
+        mPetAnimationHelper = petAnimationHelper;
         createShadow();
 
         registerGestureDetectors();
@@ -183,6 +186,7 @@ public class Character extends MovableObject implements
         mCurrentAction = PetAction.TO_BALL;
         registerDrawFrameListener();
         mOnPetActionListener.onActionStart(PetAction.TO_BALL);
+//        mPetAnimationHelper.play(PetAnimationHelper.PetAnimation.WALK, -1);
     }
 
     public void goToFood() {
@@ -247,18 +251,16 @@ public class Character extends MovableObject implements
         }
     }
 
-    private void load3DModel() {
-        GVRSceneObject sceneObject;
-        try {
-            sceneObject = mContext.getAssetLoader().loadModel("objects/Fox_Pokemon.obj");
-            addChildObject(sceneObject);
-            sceneObject.setName(PET_NAME);
+    public void set3DModel(GVRModelSceneObject petObject) {
+            addChildObject(petObject);
+            petObject.getTransform().setScale(0.001f, 0.001f, 0.001f);
+            petObject.setName(PET_NAME);
+            // FIXME: Set appropriate size for collider
             GVRBoxCollider boxCollider = new GVRBoxCollider(mContext);
             boxCollider.setHalfExtents(0.05f, 0.05f, 0.05f);
-            sceneObject.attachCollider(boxCollider);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        mPetAnimationHelper.setAnimations(petObject.getAnimations(),
+                (GVRAnimator) petObject.getComponent(GVRAnimator.getComponentType()));
     }
 
     private void createShadow() {
@@ -312,6 +314,7 @@ public class Character extends MovableObject implements
             Log.d(TAG, "StopPetMovement");
             stopMovement();
             mOnPetActionListener.onActionEnd(PetAction.TO_BALL);
+//            mPetAnimationHelper.stop(PetAnimationHelper.PetAnimation.WALK);
         }
 
         try {
