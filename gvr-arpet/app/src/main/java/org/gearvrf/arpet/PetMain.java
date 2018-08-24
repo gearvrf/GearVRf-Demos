@@ -42,6 +42,7 @@ import org.gearvrf.arpet.petobjects.Bed;
 import org.gearvrf.arpet.petobjects.Bowl;
 import org.gearvrf.arpet.petobjects.Hydrant;
 import org.gearvrf.arpet.petobjects.Toy;
+import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
