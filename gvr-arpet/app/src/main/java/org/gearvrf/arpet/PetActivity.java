@@ -19,8 +19,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
+import android.widget.Toast;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.arpet.permission.OnPermissionResultListener;
+import org.gearvrf.arpet.permission.PermissionManager;
 import org.gearvrf.utility.Log;
 
 public class PetActivity extends GVRActivity {
@@ -28,6 +32,7 @@ public class PetActivity extends GVRActivity {
 
     private PetMain mMain;
     private PetContext mPetContext;
+    private PermissionManager mPermissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,25 +40,75 @@ public class PetActivity extends GVRActivity {
 
         Log.d(TAG, "onCreate");
 
+        mPermissionManager = new PermissionManager();
+        mPermissionManager.setPermissionResultListener(new PermissionListener());
+
+        if (!mPermissionManager.hasCameraPermission(this)) {
+            mPermissionManager.requestCameraPermission(this);
+        } else {
+            startPetMain();
+        }
+    }
+
+    private void startPetMain() {
         mPetContext = PetContext.INSTANCE;
         mMain = new PetMain(mPetContext);
-
         setMain(mMain, "gvr.xml");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mPetContext.resume();
-        mMain.resume();
+        if (!mPermissionManager.hasCameraPermission(this)) {
+            if (mPermissionManager.shouldShowRequestPermission(this, PermissionManager.PermissionType.CAMERA)) {
+                // TODO: show a prompt here to inform the user that the app needs camera permission
+                // This prompt should be async and after the user sees the explanation, request the permission
+                // again
+                Log.d(TAG, "onResume: should show a prompt to request camera permission");
+            } else {
+                // Don't show any prompt and request the permission again
+                mPermissionManager.requestCameraPermission(this);
+            }
+        } else {
+            mPetContext.resume();
+            mMain.resume();
+        }
         Log.d(TAG, "onResume");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        mPermissionManager.handlePermissionResults(requestCode, permissions, grantResults);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mPetContext.pause();
-        mMain.pause();
+        if (mPetContext != null) {
+            mPetContext.pause();
+        }
+        if (mMain != null) {
+            mMain.pause();
+        }
+    }
+
+    private class PermissionListener implements OnPermissionResultListener {
+        @Override
+        public void onPermissionGranted(int type) {
+            if (type == PermissionManager.PermissionType.CAMERA) {
+                startPetMain();
+            }
+        }
+
+        @Override
+        public void onPermissionDenied(int type) {
+            if (type == PermissionManager.PermissionType.CAMERA) {
+                Toast.makeText(getApplicationContext(), "The application needs camera permission", Toast.LENGTH_LONG).show();
+                // TODO: maybe we need to call settings here to enable permission again
+                finish();
+            }
+        }
     }
 
     public enum PetContext {
