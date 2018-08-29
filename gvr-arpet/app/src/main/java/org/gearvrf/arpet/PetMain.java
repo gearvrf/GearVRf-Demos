@@ -27,9 +27,8 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.Character.PetAction;
-import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
-import org.gearvrf.arpet.events.CollisionEvent;
+import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
@@ -243,14 +242,6 @@ public class PetMain extends GVRMain {
         if (mCurrentMode != null) {
             mCurrentMode.handleOrientation();
         }
-    }
-
-    @Subscribe
-    public void onCollisionDetected(CollisionEvent event) {
-//        if (event.getType() == CollisionEvent.Type.ENTER) {
-//            mBallThrowHandler.setResetOnTouchEnabled(false);
-//            mPet.goToBall();
-//        }
     }
 
     @Subscribe

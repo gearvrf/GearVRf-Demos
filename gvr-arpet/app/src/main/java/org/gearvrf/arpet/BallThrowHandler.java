@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -25,24 +24,19 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
-import org.gearvrf.arpet.events.CollisionEvent;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
-import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.physics.GVRRigidBody;
-import org.gearvrf.physics.ICollisionEvents;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.io.IOException;
-
-public class BallThrowHandler implements ICollisionEvents {
+public class BallThrowHandler {
     private static final float defaultPositionX = 0f;
     private static final float defaultPositionY = 0f;
     private static final float defaultPositionZ = -20f;
@@ -58,7 +52,6 @@ public class BallThrowHandler implements ICollisionEvents {
     private GVRScene mScene;
     private GVRSceneObject mBall;
     private GVRRigidBody mRigidBody;
-    private CollisionEvent mCollisionEvent;
 
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
@@ -125,7 +118,6 @@ public class BallThrowHandler implements ICollisionEvents {
         mRigidBody.setFriction(0.5f);
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
-        mBall.getEventReceiver().addListener(this);
 
         mBallWrapper = new BallWrapper(mBall);
     }
@@ -250,22 +242,6 @@ public class BallThrowHandler implements ICollisionEvents {
         GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
         ball.getParent().removeChildObject(ball);
         mBall = ball;
-    }
-
-    @Override
-    public void onEnter(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
-
-//        Log.d(BallThrowHandler.class.getSimpleName(), "onEnter: " + gvrSceneObject1.getParent().getName());
-//        float[] hitPose = getBallHitPose();
-//
-//        if (hitPose != null) {
-//            mCollisionEvent = new CollisionEvent(CollisionEvent.Type.ENTER);
-//            EventBus.getDefault().post(mCollisionEvent);
-//        }
-    }
-
-    @Override
-    public void onExit(GVRSceneObject gvrSceneObject, GVRSceneObject gvrSceneObject1, float[] floats, float v) {
     }
 
     public float[] getBallHitPose() {
