@@ -257,6 +257,9 @@ public class PetMain extends GVRMain {
         @Override
         public void onActionStart(int action) {
             Log.d(TAG, "onActionStart: " + action);
+            if (action == PetAction.TO_BALL) {
+                mBallThrowHandler.setResetOnTouchEnabled(false);
+            }
         }
 
         @Override
@@ -269,7 +272,6 @@ public class PetMain extends GVRMain {
                 mBallThrowHandler.enable();
                 mBallThrowHandler.reset();
                 mPet.lookAt(mBallThrowHandler.getBallWrapper());
-                mBallThrowHandler.setResetOnTouchEnabled(true);
             }
         }
     }

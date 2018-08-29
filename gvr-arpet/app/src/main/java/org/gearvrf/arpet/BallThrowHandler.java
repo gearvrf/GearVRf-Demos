@@ -217,6 +217,7 @@ public class BallThrowHandler {
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
         mScene.getMainCameraRig().addChildObject(mBall);
+        mResetOnTouchEnabled = true;
         thrown = false;
     }
 
