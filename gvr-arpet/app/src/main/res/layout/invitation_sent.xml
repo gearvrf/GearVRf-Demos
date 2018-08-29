@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_overlay">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="55dp"
+            android:src="@drawable/ic_invitation" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="193dp"
+            android:layout_marginTop="163dp"
+            android:text="@string/host_or_guest"
+            android:textAlignment="center"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="220dp">
+
+            <Button
+                android:id="@+id/guest_button"
+                android:layout_width="144dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="340dp"
+                android:layout_marginTop="29.1dp"
+                android:background="@drawable/background_button"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/guest"
+                android:textColor="#ffffff"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/host_button"
+                android:layout_width="144dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="180dp"
+                android:layout_marginTop="29.1dp"
+                android:background="@drawable/background_button"
+                android:fontFamily="@font/roboto_medium"
+                android:text="@string/host"
+                android:textColor="#ffffff"
+                android:textSize="14sp" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+</LinearLayout>

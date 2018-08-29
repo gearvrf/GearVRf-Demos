@@ -37,7 +37,7 @@ public class EditScene extends BasePetScene implements View.OnClickListener, IVi
     }
 
     public void setListenerEditMode(OnEditModeClickedListener listenerEditMode) {
-        this.mListenerEditMode = listenerEditMode;
+        mListenerEditMode = listenerEditMode;
     }
 
     @Override

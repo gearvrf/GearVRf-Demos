@@ -16,4 +16,13 @@
 <resources>
     <string name="editing_mode">Editing Mode</string>
     <string name="save">SAVE</string>
+    <string name="waiting_invitation">Waiting for your friends \n to accept the invitation.</string>
+    <string name="looking_the_same_thing">Make sure you and your friends are \n side-by-side looking at the same thing.</string>
+    <string name="accepted_invitation">3 guests entered\n on Sharing Anchor.</string>
+    <string name="paired">Paired</string>
+    <string name="sharing_anchor">SHARING ANCHOR</string>
+    <string name="host_or_guest">Let’s start Sharing Anchor!\n What role do you want to play?</string>
+    <string name="host">HOST</string>
+    <string name="guest">GUEST</string>
+    <string name="waiting_guests">Waiting for the guests to\n enter on the Sharing Anchor.</string>
 </resources>

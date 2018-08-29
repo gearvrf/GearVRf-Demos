@@ -35,6 +35,7 @@ import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
+import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
 import org.gearvrf.arpet.petobjects.Bed;
@@ -333,6 +334,16 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onShareAnchor() {
+            if (mCurrentMode instanceof ShareAnchorMode) {
+                return;
+            }
+
+            if (mCurrentMode != null) {
+                mCurrentMode.exit();
+            }
+
+            mCurrentMode = new ShareAnchorMode(mContext);
+            mCurrentMode.enter();
 
         }
 
