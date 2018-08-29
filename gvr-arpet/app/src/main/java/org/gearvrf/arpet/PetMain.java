@@ -237,7 +237,9 @@ public class PetMain extends GVRMain {
     @Override
     public void onStep() {
         super.onStep();
-        mBallThrowHandler.tryReset();
+        if (mBallThrowHandler.canBeReseted()) {
+            mBallThrowHandler.reset();
+        }
 
         if (mCurrentMode != null) {
             mCurrentMode.handleOrientation();

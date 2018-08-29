@@ -220,15 +220,6 @@ public class BallThrowHandler {
         thrown = false;
     }
 
-    public boolean tryReset() {
-        if (mBall.getTransform().getPositionY() < MIN_Y_OFFSET) {
-            reset();
-            return true;
-        }
-
-        return false;
-    }
-
     public boolean canBeReseted() {
         return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
     }
