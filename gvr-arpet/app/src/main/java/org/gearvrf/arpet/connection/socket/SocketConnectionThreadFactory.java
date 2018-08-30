@@ -25,12 +25,12 @@ import org.gearvrf.arpet.connection.OnMessageListener;
 
 public interface SocketConnectionThreadFactory {
 
-    IncomingSocketConnectionThread getIncomingSocketConnectionThread(
+    IncomingSocketConnectionThread createIncomingSocketConnectionThread(
             @NonNull OnMessageListener messageListener,
             @NonNull OnConnectionListener connectionListener
     );
 
-    OutgoingSocketConnectionThread getOutgoingSocketConnectionThread(
+    OutgoingSocketConnectionThread createOutgoingSocketConnectionThread(
             @NonNull Device device,
             @NonNull OnMessageListener messageListener,
             @NonNull OnConnectionListener connectionListener);

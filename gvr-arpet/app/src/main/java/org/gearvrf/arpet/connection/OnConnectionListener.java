@@ -32,7 +32,7 @@ public interface OnConnectionListener {
     void onConnectionEstablished(Connection connection);
 
     /**
-     * Called when an error occurs trying connect to a remote.
+     * Called when an error occurs while trying/opening connection to a remote.
      *
      * @param failure The failure info.
      */

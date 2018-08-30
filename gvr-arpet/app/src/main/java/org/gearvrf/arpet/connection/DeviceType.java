@@ -23,7 +23,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@IntDef({DeviceType.PHONE})
+@IntDef({DeviceType.PHONE, DeviceType.UNCATEGORIZED})
 public @interface DeviceType {
     int PHONE = 0;
+    int UNCATEGORIZED = -1;
 }

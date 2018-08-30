@@ -17,7 +17,6 @@
 
 package org.gearvrf.arpet.connection;
 
-import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -36,9 +35,8 @@ public interface ConnectionManager {
      * Listen to remote connections.
      *
      * @param messageListener Listener to listen messages from remote.
-     * @param mMaxConnections Max connections allowed.
      */
-    void startConnectionListener(@NonNull OnMessageListener messageListener, @IntRange() int mMaxConnections);
+    void startConnectionListener(@NonNull OnMessageListener messageListener);
 
     /**
      * Stop wait for remote connections.
