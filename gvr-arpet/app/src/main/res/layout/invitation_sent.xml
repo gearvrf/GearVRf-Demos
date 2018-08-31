@@ -5,16 +5,16 @@
     android:orientation="horizontal">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="640dp"
+        android:layout_height="400dp"
         android:background="@drawable/bg_overlay">
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginEnd="30dp"
-            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="55dp"
             android:src="@drawable/ic_invitation" />
 
@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginStart="193dp"
+            android:layout_marginStart="180dp"
             android:layout_marginTop="163dp"
             android:text="@string/host_or_guest"
             android:textAlignment="center"
@@ -31,7 +31,7 @@
 
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="220dp">
 

@@ -2,6 +2,7 @@ package org.gearvrf.arpet.mode;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
@@ -14,6 +15,7 @@ public class WaitingGuestHostScene extends BasePetScene implements IViewEvents, 
     private GVRSceneObject mInvitedObject;
     private Button allowButton, denyButton;
     private OnWaitingGuestHostListener mlistenerReceiveInvite;
+    private ProgressBar mProgressBar;
 
     public void setListener(OnWaitingGuestHostListener listener) {
         mlistenerReceiveInvite = listener;
@@ -29,6 +31,9 @@ public class WaitingGuestHostScene extends BasePetScene implements IViewEvents, 
     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
         allowButton = view.findViewById(R.id.guest_button);
         denyButton = view.findViewById(R.id.host_button);
+        mProgressBar = view.findViewById(R.id.progress);
+        mProgressBar.setIndeterminate(false);
+
         allowButton.setOnClickListener(this);
         denyButton.setOnClickListener(this);
     }

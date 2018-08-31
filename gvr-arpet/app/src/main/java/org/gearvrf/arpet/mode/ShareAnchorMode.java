@@ -29,7 +29,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
 
-    private class HandlerSendingInvitation implements OnSendingInviteListener {
+    private class HandlerSendingInvitation implements OnShareAnchorModeListener {
 
         @Override
         public void OnSending() {

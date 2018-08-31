@@ -1,6 +1,6 @@
 package org.gearvrf.arpet.mode;
 
-public interface OnSendingInviteListener {
+public interface OnShareAnchorModeListener {
 
     void OnSending();
 }

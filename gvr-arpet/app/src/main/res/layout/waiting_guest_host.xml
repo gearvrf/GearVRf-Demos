@@ -32,13 +32,14 @@
             android:textSize="20sp" />
 
         <ProgressBar
+            android:id="@+id/progress"
+            style="@android:style/Widget.ProgressBar.Large"
             android:layout_width="39.8dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_marginStart="300dp"
             android:layout_marginTop="216dp"
-            style="@android:style/Widget.ProgressBar.Large"
-            android:id="@+id/progress"/>
+            android:indeterminateDrawable="@drawable/progress" />
 
     </RelativeLayout>
 </LinearLayout>
