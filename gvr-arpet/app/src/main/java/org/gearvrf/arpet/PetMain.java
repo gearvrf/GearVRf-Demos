@@ -18,14 +18,10 @@ package org.gearvrf.arpet;
 import android.annotation.SuppressLint;
 import android.support.v4.util.Preconditions;
 import android.util.Log;
-import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.Character.PetAction;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.constant.ApiConstants;
@@ -292,38 +288,6 @@ public class PetMain extends GVRMain {
                 newController.setCursor(null);
             }
         });
-    }
-
-    public class TouchEvents implements ITouchEvents {
-        @Override
-        public void onEnter(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
-
-        }
-
-        @Override
-        public void onExit(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
-
-        }
-
-        @Override
-        public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
-
-        }
-
-        @Override
-        public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
-
-        }
-
-        @Override
-        public void onInside(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
-
-        }
-
-        @Override
-        public void onMotionOutside(GVRPicker picker, MotionEvent motionEvent) {
-
-        }
     }
 
     public class HandlerModeChange implements OnModeChange {
