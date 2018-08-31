@@ -33,7 +33,7 @@ public abstract class BTConnectionManager extends BaseSocketConnectionManager {
             new BluetoothSocketConnectionThreadFactory();
 
     @Override
-    protected SocketConnectionThreadFactory createSocketConnectionThreadFactory() {
+    protected SocketConnectionThreadFactory getSocketConnectionThreadFactory() {
         return mSocketConnectionThreadFactory;
     }
 

@@ -20,6 +20,7 @@ package org.gearvrf.arpet.connection.socket;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.connection.Connection;
+import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 
@@ -31,12 +32,12 @@ public abstract class OutgoingSocketConnectionThread<S extends Socket> extends S
 
     protected OnConnectionListener mOnConnectionListener;
 
-    public OutgoingSocketConnectionThread(@NonNull OnConnectionListener connectionListener) {
+    public OutgoingSocketConnectionThread(@NonNull Device device, @NonNull OnConnectionListener connectionListener) {
 
         mOnConnectionListener = connectionListener;
 
         try {
-            mSocket = getSocket();
+            mSocket = createSocket(device);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,11 +54,12 @@ public abstract class OutgoingSocketConnectionThread<S extends Socket> extends S
         } catch (IOException e) {
             cancel();
             mOnConnectionListener.onConnectionFailure(
-                    new ConnectionException("Error connecting to " + mSocket.getRemoteDevice(), e));
+                    new ConnectionException("Error connecting to "
+                            + mSocket.getRemoteDevice() + ": " + e.getMessage(), e));
         }
     }
 
-    private void cancel() {
+    public void cancel() {
         try {
             mSocket.close();
         } catch (IOException e) {
@@ -65,7 +67,7 @@ public abstract class OutgoingSocketConnectionThread<S extends Socket> extends S
         }
     }
 
-    protected abstract S getSocket() throws IOException;
+    protected abstract S createSocket(Device device) throws IOException;
 
     protected abstract Connection createConnection(S socket);
 }

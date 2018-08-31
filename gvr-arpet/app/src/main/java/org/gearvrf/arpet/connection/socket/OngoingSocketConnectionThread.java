@@ -52,7 +52,8 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
             mOutStream = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
             mOnConnectionListener.onConnectionFailure(
-                    new ConnectionException("Error opening connection to remote " + getRemoteDevice(), e));
+                    new ConnectionException("Error opening connection to remote " +
+                            getRemoteDevice() + ": " + e.getMessage(), e));
         }
     }
 

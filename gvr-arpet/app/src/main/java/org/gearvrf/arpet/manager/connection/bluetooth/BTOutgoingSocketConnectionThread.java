@@ -20,6 +20,7 @@ package org.gearvrf.arpet.manager.connection.bluetooth;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.connection.Connection;
+import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.socket.OutgoingSocketConnectionThread;
@@ -28,7 +29,6 @@ import java.io.IOException;
 
 public class BTOutgoingSocketConnectionThread extends OutgoingSocketConnectionThread<BTSocket> {
 
-    private BTDevice mDevice;
     private OnMessageListener mMessageListener;
 
     BTOutgoingSocketConnectionThread(
@@ -36,14 +36,13 @@ public class BTOutgoingSocketConnectionThread extends OutgoingSocketConnectionTh
             @NonNull OnMessageListener messageListener,
             @NonNull OnConnectionListener connectionListener) {
 
-        super(connectionListener);
-        this.mDevice = device;
+        super(device, connectionListener);
         this.mMessageListener = messageListener;
     }
 
     @Override
-    protected BTSocket getSocket() throws IOException {
-        return mDevice.createSocket(BTConstants.SOCKET_SERVER_UUID);
+    protected BTSocket createSocket(Device device) throws IOException {
+        return ((BTDevice) device).createSocket(BTConstants.SOCKET_SERVER_UUID);
     }
 
     @Override

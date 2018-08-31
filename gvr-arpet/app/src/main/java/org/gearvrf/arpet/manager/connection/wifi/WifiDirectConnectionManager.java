@@ -20,7 +20,6 @@ package org.gearvrf.arpet.manager.connection.wifi;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.connection.Device;
-import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.socket.SocketConnectionThreadFactory;
 import org.gearvrf.arpet.manager.connection.BaseSocketConnectionManager;
@@ -43,12 +42,8 @@ public class WifiDirectConnectionManager extends BaseSocketConnectionManager {
     }
 
     @Override
-    protected SocketConnectionThreadFactory createSocketConnectionThreadFactory() {
+    protected SocketConnectionThreadFactory getSocketConnectionThreadFactory() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
-    public void onMessageReceived(Message message) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
 }

@@ -17,6 +17,10 @@
 
 package org.gearvrf.arpet.manager.connection.bluetooth;
 
+import android.bluetooth.BluetoothClass;
+import android.bluetooth.BluetoothDevice;
+
+import org.gearvrf.arpet.connection.DeviceType;
 import org.gearvrf.arpet.manager.connection.BaseDevice;
 
 import java.io.IOException;
@@ -24,9 +28,9 @@ import java.util.UUID;
 
 public class BTDevice extends BaseDevice {
 
-    private android.bluetooth.BluetoothDevice mDevice;
+    private BluetoothDevice mDevice;
 
-    public BTDevice(android.bluetooth.BluetoothDevice mDevice) {
+    public BTDevice(BluetoothDevice mDevice) {
         this.mDevice = mDevice;
     }
 
@@ -42,7 +46,13 @@ public class BTDevice extends BaseDevice {
 
     @Override
     public int getType() {
-        return mDevice.getBluetoothClass().getDeviceClass();
+        int majorType = mDevice.getBluetoothClass().getMajorDeviceClass();
+        switch (majorType) {
+            case BluetoothClass.Device.Major.PHONE:
+                return DeviceType.PHONE;
+            default:
+                return DeviceType.UNKNOWN;
+        }
     }
 
     @Override
