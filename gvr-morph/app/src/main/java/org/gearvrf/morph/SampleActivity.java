@@ -19,7 +19,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRAssetLoader;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRImportSettings;
@@ -28,15 +28,15 @@ import org.gearvrf.GVRMeshMorph;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTexture;
-import org.gearvrf.GVRTransform;
+import org.gearvrf.GVRVertexBuffer;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRMorphAnimation;
 import org.gearvrf.animation.GVRRepeatMode;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.EnumSet;
-import java.util.concurrent.TimeoutException;
+import java.util.List;
 
 public class SampleActivity extends GVRActivity {
 
@@ -46,94 +46,126 @@ public class SampleActivity extends GVRActivity {
         setMain(new SampleMain());
     }
 
-    private static class SampleMain extends GVRMain
+    private  GVRSceneObject mObjectRoot;
+    private  int animDuration = 50;
+    private GVRScene mScene = null;
+
+    private class SampleMain extends GVRMain
     {
         @Override
         public void onInit(GVRContext gvrContext)
         {
-            GVRContext ctx = gvrContext;
             GVRScene scene = gvrContext.getMainScene();
-            GVRSceneObject lightObj = new GVRSceneObject(ctx);
-            GVRPointLight pointLight = new GVRPointLight(ctx);
+            mScene = scene;
+
             GVRCameraRig rig = scene.getMainCameraRig();
-            GVRSceneObject model = null;
-            GVRTransform t = scene.getMainCameraRig().getTransform();
-            EnumSet<GVRImportSettings> settings = EnumSet.of(GVRImportSettings.TRIANGULATE,
-                    GVRImportSettings.FLIP_UV,
-                    GVRImportSettings.LIMIT_BONE_WEIGHT,
-                    GVRImportSettings.SORTBY_PRIMITIVE_TYPE);
-            rig.getCenterCamera().setBackgroundColor(Color.LTGRAY);
-            rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
-            rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
-            pointLight.setDiffuseIntensity(0.8f, 0.8f, 08f, 1.0f);
-            pointLight.setSpecularIntensity(0.8f, 0.8f, 08f, 1.0f);
-            lightObj.attachComponent(pointLight);
-            lightObj.getTransform().setPosition(-1.0f, 1.0f, 0);
-            scene.addSceneObject(lightObj);
+            mObjectRoot = new GVRSceneObject(gvrContext);
+            rig.getCenterCamera().setBackgroundColor(Color.BLACK);
+            rig.getLeftCamera().setBackgroundColor(Color.BLACK);
+            rig.getRightCamera().setBackgroundColor(Color.BLACK);
+
+            String filePath = "/sloth/sloth.gltf";
+
+            GVRSceneObject light1 = createLight(gvrContext, 1, 1, 1, new Vector3f(0,1.8f, 0));
+            GVRSceneObject light2 = createLight(gvrContext ,1, 1, 1, new Vector3f(0,-0.8f, 0));
+
+            mObjectRoot.addChildObject(light1);
+            mObjectRoot.addChildObject(light2);
 
             try
             {
-                model = ctx.getAssetLoader().loadModel("faceBlendShapes_center.fbx");
+                addModeltoScene(filePath, new Vector3f(0.05f,0.05f,0.05f),
+                        new Vector3f(0, -8.5f, -6.5f));
             }
             catch (IOException ex)
             {
             }
 
-            String[] shapeNames = {"Jason_Shapes_Ref:JasnNeutral:Default", "Jaw_Open", "Smile"};
-            GVRMeshMorph morph = addMorph(model, shapeNames);
+            scene.addSceneObject(mObjectRoot);
 
-            centerModel(model, t);
-            model.getTransform().setPositionZ(-1);
-            scene.addSceneObject(model);
-            GVRAnimator animator = setupAnimation(model, morph);
+            GVRAnimator animator = setupAnimation(mObjectRoot);
             animator.start();
         }
 
-        public void centerModel(GVRSceneObject model, GVRTransform camTrans)
+        private GVRAnimator setupAnimation(GVRSceneObject root)
         {
-            GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
-            float x = camTrans.getPositionX();
-            float y = camTrans.getPositionY();
-            float z = camTrans.getPositionZ();
-            float sf = 1 / bv.radius;
-            model.getTransform().setScale(sf, sf, sf);
-            bv = model.getBoundingVolume();
-            model.getTransform()
-                 .setPosition(x - bv.center.x, y - bv.center.y, z - bv.center.z - 1.5f * bv.radius);
-        }
 
-        private GVRMeshMorph addMorph(GVRSceneObject model, String shapeNames[])
-        {
-            GVRSceneObject baseShape = model.getSceneObjectByName(shapeNames[0]);
-            GVRMeshMorph morph = new GVRMeshMorph(model.getGVRContext(), 2, false);
+            GVRSceneObject baseObject = mObjectRoot.getSceneObjectByName("Sloth_face");
+            GVRMeshMorph morph = (GVRMeshMorph)baseObject.getComponent(GVRMeshMorph.getComponentType());
+            int numBlendShapes = morph.getBlendShapeCount();
 
-            baseShape.attachComponent(morph);
-            for (int i = 1; i < shapeNames.length; ++i)
-            {
-                GVRSceneObject blendShape = model.getSceneObjectByName(shapeNames[i]);
-                GVRSceneObject parent = blendShape.getParent();
+            float [] keys = generateAnimationKeys(numBlendShapes, animDuration);
 
-                parent.removeChildObject(blendShape);
-                morph.setBlendShape(i - 1, blendShape);
-            }
-            morph.update();
-            return morph;
-        }
-
-        private GVRAnimator setupAnimation(GVRSceneObject root, GVRMeshMorph morph)
-        {
-            float[] keys = new float[]{0, 0, 0, 1, 1, 0, 2, 0, 0, 3, 0, 1};
             GVRAnimator animator = (GVRAnimator) root.getComponent(GVRAnimator.getComponentType());
             if (animator == null)
             {
                 animator = new GVRAnimator(root.getGVRContext());
                 root.attachComponent(animator);
             }
-            GVRMorphAnimation morphAnim = new GVRMorphAnimation(morph, keys, 3);
+
+            GVRMorphAnimation morphAnim = new GVRMorphAnimation(morph, keys, numBlendShapes + 1);
             animator.addAnimation(morphAnim);
             animator.setRepeatMode(GVRRepeatMode.PINGPONG);
             animator.setRepeatCount(1000);
             return animator;
         }
+
+
+        /*
+
+        create animation keys in the format:
+        t1, 0, 0, 0, 0, .....0, 0, 0
+        t2, 0, 1, 0, 0, .....0, 0, 0
+        t3, 0, 0, 1, 0, .....0, 0, 0
+        t4, 0, 0, 0, 1, .....0, 0, 0
+        .
+        .
+
+        t1, t2, ... tn are timestamps in the range [0,animDuration]
+
+         */
+        private float[] generateAnimationKeys(int numBlendShapes, int timeTicks)
+        {
+            timeTicks ++;
+            int keyArraySize = numBlendShapes * timeTicks + timeTicks;
+            float [] keys = new float[keyArraySize];
+            int timeCounter = 0;
+            for(int i = 0; i < keyArraySize; i += (numBlendShapes + 1) )
+            {
+                keys[i] = timeCounter;
+                for(int j = i + 1; j <= i + numBlendShapes; j ++)
+                    keys[j] = (timeCounter == (j % (numBlendShapes + 1)) ) ? 1 : 0;
+                timeCounter ++;
+            }
+            return keys;
+        }
+
+        private void addModeltoScene(String filePath, Vector3f scale, Vector3f position) throws IOException {
+
+            GVRAssetLoader loader = getGVRContext().getAssetLoader();
+            GVRSceneObject root = loader.loadModel(filePath,GVRImportSettings.getRecommendedMorphSettings(), false, null);
+            root.getTransform().setScale(scale.x,scale.y,scale.z);
+            root.getTransform().setPosition(position.x, position.y, position.z);
+
+            mObjectRoot.addChildObject(root);
+
+        }
+
+        private GVRSceneObject createLight(GVRContext context, float r, float g, float b, Vector3f position)
+        {
+            GVRSceneObject lightNode = new GVRSceneObject(context);
+            GVRPointLight light = new GVRPointLight(context);
+
+            lightNode.attachLight(light);
+            lightNode.getTransform().setPosition(0, 0.5f, 0);
+            light.setAmbientIntensity(0.7f * r, 0.7f * g, 0.7f * b, 1);
+            light.setDiffuseIntensity(r , g , b , 1);
+            light.setSpecularIntensity(r, g, b, 1);
+
+            lightNode.getTransform().setPosition(position.x,position.y,position.z);
+
+            return lightNode;
+        }
+
     }
 }
