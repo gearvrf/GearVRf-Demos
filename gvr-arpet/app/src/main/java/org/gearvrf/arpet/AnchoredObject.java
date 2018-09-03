@@ -39,7 +39,8 @@ public abstract class AnchoredObject extends GVRSceneObject {
         super(context);
         this.mMixedReality = mixedReality;
         this.mPoseMatrix = poseMatrix;
-        this.mAnchor = mixedReality.createAnchor(poseMatrix, this);
+        this.mAnchor = mixedReality.createAnchor(poseMatrix);
+        this.mAnchor.attachSceneObject(this);
     }
 
     public void updatePose(float[] poseMatrix) {
@@ -57,5 +58,13 @@ public abstract class AnchoredObject extends GVRSceneObject {
 
     public GVRMixedReality getMixedReality() {
         return mMixedReality;
+    }
+
+    public void setAnchor(GVRAnchor anchor) {
+        if (mAnchor != null) {
+            mAnchor.detachSceneObject(this);
+        }
+        mAnchor = anchor;
+        mAnchor.attachSceneObject(this);
     }
 }

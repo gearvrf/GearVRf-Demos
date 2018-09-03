@@ -1,7 +1,6 @@
 package org.gearvrf.arpet;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRComponent;
@@ -17,9 +16,8 @@ import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.joml.Matrix4f;
 import org.greenrobot.eventbus.EventBus;
+import org.joml.Matrix4f;
 
 import java.util.LinkedList;
 
@@ -182,7 +180,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
             // Physics root will be anchored to A.R. world so that all physics simulation will
             // work as if it was running at the A.R. world
-            GVRAnchor anchor = mixedReality.createAnchor(plane.getCenterPose(), physicsRoot);
+            GVRAnchor anchor = mixedReality.createAnchor(plane.getCenterPose());
+            anchor.attachSceneObject(physicsRoot);
             mScene.addSceneObject(anchor);
 
             EventBus.getDefault().post(physicsRoot);
