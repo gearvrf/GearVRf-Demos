@@ -15,6 +15,7 @@
 
 package org.gearvrf.arpet;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.arpet.permission.OnPermissionResultListener;
 import org.gearvrf.arpet.permission.PermissionManager;
+import org.gearvrf.arpet.sharing.AppConnectionManager;
 import org.gearvrf.utility.Log;
 
 public class PetActivity extends GVRActivity {
@@ -33,6 +35,7 @@ public class PetActivity extends GVRActivity {
     private PetMain mMain;
     private PetContext mPetContext;
     private PermissionManager mPermissionManager;
+    private AppConnectionManager mConnectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,4 +183,8 @@ public class PetActivity extends GVRActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mMain.onActivityResult(requestCode, resultCode);
+    }
 }
