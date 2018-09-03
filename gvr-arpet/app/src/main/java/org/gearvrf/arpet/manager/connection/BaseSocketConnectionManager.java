@@ -28,10 +28,12 @@ import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.connection.socket.IncomingSocketConnectionThread;
+import org.gearvrf.arpet.connection.socket.OngoingSocketConnectionThread;
 import org.gearvrf.arpet.connection.socket.OutgoingSocketConnectionThread;
 import org.gearvrf.arpet.connection.socket.SocketConnectionThreadFactory;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class BaseSocketConnectionManager implements ConnectionManager, OnConnectionListener {
@@ -40,7 +42,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @ManagerState
     private int mState = ManagerState.IDLE;
-    private List<Connection> mConnections = new ArrayList<>();
+    private List<Connection> mOngoingConnections = new ArrayList<>();
     private IncomingSocketConnectionThread mIncomingSocketConnection;
     private int mTotalConnectionsDesired, mTotalConnectionsFailed;
     private List<OutgoingSocketConnectionThread> mOutgoingSocketConnections;
@@ -59,6 +61,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
             setState(ManagerState.CONNECTING_TO_REMOTE);
             mTotalConnectionsDesired = devices.length;
             mTotalConnectionsFailed = 0;
+            mOngoingConnections.clear();
             mOutgoingSocketConnections.clear();
 
             for (Device device : devices) {
@@ -99,7 +102,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     @Override
     public synchronized void sendMessage(Message message) {
         if (stateIs(ManagerState.CONNECTED)) {
-            for (Connection connection : mConnections) {
+            for (Connection connection : mOngoingConnections) {
                 connection.write(message);
             }
         }
@@ -107,13 +110,14 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @Override
     public synchronized List<Device> getConnectedDevices() {
-        List<Device> devices = new ArrayList<>(mConnections.size());
-        for (Connection connection : mConnections) {
+        List<Device> devices = new ArrayList<>(mOngoingConnections.size());
+        for (Connection connection : mOngoingConnections) {
             devices.add(connection.getRemoteDevice());
         }
         return devices;
     }
 
+    @ManagerState
     @Override
     public synchronized int getState() {
         return mState;
@@ -123,30 +127,35 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
         return getState() == state;
     }
 
-    protected synchronized void setState(@ManagerState int mState) {
+    private synchronized void setState(@ManagerState int mState) {
         this.mState = mState;
     }
 
     protected synchronized void cancelOutgoingConnectionsThreads() {
-        for (OutgoingSocketConnectionThread connection : mOutgoingSocketConnections) {
-            connection.cancel();
+        Iterator<OutgoingSocketConnectionThread> iterator = mOutgoingSocketConnections.iterator();
+        while (iterator.hasNext()) {
+            OutgoingSocketConnectionThread thread = iterator.next();
+            if (!thread.isConnected()) {
+                thread.cancel();
+                iterator.remove();
+            }
         }
-        mOutgoingSocketConnections.clear();
+        setState(getTotalConnected() > 0 ? ManagerState.CONNECTED : ManagerState.IDLE);
     }
 
     @Override
     public synchronized int getTotalConnected() {
-        return mConnections.size();
+        return mOngoingConnections.size();
     }
 
     @Override
     public synchronized void disconnect() {
         if (stateIs(ManagerState.CONNECTED)) {
             try {
-                for (Connection connection : mConnections) {
+                for (Connection connection : mOngoingConnections) {
                     connection.close();
                 }
-                mConnections.clear();
+                mOngoingConnections.clear();
                 setState(ManagerState.IDLE);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -159,8 +168,9 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     // CONNECTION LISTENER METHODS
 
     @Override
-    public synchronized void onConnectionEstablished(Connection connection) {
-        mConnections.add(connection);
+    public void onConnectionEstablished(Connection connection) {
+        mOngoingConnections.add(connection);
+        ((OngoingSocketConnectionThread) connection).start();
         if (checkOutgoingConnectionThreadsFinished()) {
             setState(ManagerState.CONNECTED);
         }
@@ -169,32 +179,34 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     @Override
     public void onConnectionFailure(ConnectionException error) {
         synchronized (this) {
+            mTotalConnectionsFailed++;
             if (checkOutgoingConnectionThreadsFinished()) {
-                setState(getTotalConnected() == 0 ? ManagerState.IDLE : ManagerState.CONNECTED);
+                if (getTotalConnected() == 0) {
+                    setState(ManagerState.IDLE);
+                }
             } else if (stateIs(ManagerState.LISTENING_TO_CONNECTIONS)) {
-                // When failed while accepting the first connection then set final state
-                // since the listener thread is stopped on any error
-                setState(getTotalConnected() == 0 ? ManagerState.IDLE : ManagerState.CONNECTED);
+                // When failed while accepting the first connection then set final state IDLE
+                // since the listener thread is stopped when any error occurs
+                if (getTotalConnected() == 0) {
+                    setState(ManagerState.IDLE);
+                }
+
             }
         }
-        error.printStackTrace();
     }
 
     @Override
     public void onConnectionLost(Connection connection, ConnectionException error) {
         synchronized (this) {
-            mConnections.remove(connection);
-            if (mConnections.size() == 0) {
+            mOngoingConnections.remove(connection);
+            if (mOngoingConnections.size() == 0) {
                 setState(ManagerState.IDLE);
             }
-        }
-        if (error != null) {
-            error.printStackTrace();
         }
     }
 
     private boolean checkOutgoingConnectionThreadsFinished() {
-        int connectionsSuccessful = mConnections.size();
+        int connectionsSuccessful = mOngoingConnections.size();
         return stateIs(ManagerState.CONNECTING_TO_REMOTE)
                 && (connectionsSuccessful + mTotalConnectionsFailed) == mTotalConnectionsDesired;
     }

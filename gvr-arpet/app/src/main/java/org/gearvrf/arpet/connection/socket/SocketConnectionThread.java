@@ -18,4 +18,5 @@
 package org.gearvrf.arpet.connection.socket;
 
 public abstract class SocketConnectionThread extends Thread {
+
 }

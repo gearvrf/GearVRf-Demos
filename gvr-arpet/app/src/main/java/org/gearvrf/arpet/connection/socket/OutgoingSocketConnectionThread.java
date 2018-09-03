@@ -28,6 +28,7 @@ import java.io.IOException;
 
 public abstract class OutgoingSocketConnectionThread<S extends Socket> extends SocketConnectionThread {
 
+    protected static final String TAG = OutgoingSocketConnectionThread.class.getSimpleName();
     private S mSocket;
 
     protected OnConnectionListener mOnConnectionListener;
@@ -46,7 +47,7 @@ public abstract class OutgoingSocketConnectionThread<S extends Socket> extends S
     @Override
     public void run() {
 
-        setName("OutgoingSocketConnectionThread");
+        setName(TAG);
 
         try {
             mSocket.connect();
@@ -65,6 +66,10 @@ public abstract class OutgoingSocketConnectionThread<S extends Socket> extends S
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isConnected() {
+        return mSocket.isConnected();
     }
 
     protected abstract S createSocket(Device device) throws IOException;

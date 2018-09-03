@@ -63,6 +63,15 @@ public final class LocalBluetoothDevice {
             public int getType() {
                 return DeviceType.PHONE;
             }
+
+            @Override
+            public String toString() {
+                return "Device{" +
+                        "name='" + name + '\'' +
+                        ", address='" + address + '\'' +
+                        ", type=" + getType() +
+                        "} " + super.toString();
+            }
         };
     }
 }

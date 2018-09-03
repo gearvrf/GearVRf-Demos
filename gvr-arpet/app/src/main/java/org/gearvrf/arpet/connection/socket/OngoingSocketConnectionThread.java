@@ -19,6 +19,9 @@ package org.gearvrf.arpet.connection.socket;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
@@ -26,17 +29,19 @@ import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class OngoingSocketConnectionThread extends SocketConnectionThread implements Connection {
 
     private Socket mSocket;
-    private ObjectInputStream mInStream;
-    private ObjectOutputStream mOutStream;
+    private InputStream mInStream;
+    private OutputStream mOutStream;
     private OnMessageListener mMessageListener;
     private OnConnectionListener mOnConnectionListener;
+    private Gson mGson;
 
     public OngoingSocketConnectionThread(
             @NonNull Socket socket,
@@ -46,10 +51,11 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
         mSocket = socket;
         mMessageListener = messageListener;
         mOnConnectionListener = listener;
+        mGson = new GsonBuilder().create();
 
         try {
-            mInStream = new ObjectInputStream(socket.getInputStream());
-            mOutStream = new ObjectOutputStream(socket.getOutputStream());
+            mInStream = socket.getInputStream();
+            mOutStream = socket.getOutputStream();
         } catch (IOException e) {
             mOnConnectionListener.onConnectionFailure(
                     new ConnectionException("Error opening connection to remote " +
@@ -62,9 +68,22 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
 
         while (true) {
             try {
-                Message message = (Message) mInStream.readObject();
+
+                ByteArrayOutputStream result = new ByteArrayOutputStream();
+                byte[] buffer = new byte[1024];
+                int length;
+
+                while ((length = mInStream.read(buffer)) != -1) {
+                    result.write(buffer, 0, length);
+                    if (mInStream.available() == 0) {
+                        break;
+                    }
+                }
+
+                Message message = mGson.fromJson(result.toString("UTF-8"), Message.class);
                 mMessageListener.onMessageReceived(message);
-            } catch (IOException | ClassNotFoundException e) {
+
+            } catch (IOException e) {
                 if (!mSocket.isConnected()) {
                     mOnConnectionListener.onConnectionLost(this, null);
                 } else {
@@ -79,7 +98,8 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
     @Override
     public void write(Message message) {
         try {
-            mOutStream.writeObject(message);
+            String m = mGson.toJson(message);
+            mOutStream.write(mGson.toJson(message).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
