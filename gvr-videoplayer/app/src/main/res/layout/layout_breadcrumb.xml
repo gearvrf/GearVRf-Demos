@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/breadcrumb"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/breadcrumb_height"
+    tools:ignore="HardcodedText,PxUsage,ContentDescription,UseCompoundDrawables">
+
+    <TextView
+        android:id="@+id/home"
+        android:layout_width="@dimen/breadcrumb_item_width"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_breadcrumb_home_extended"
+        android:fontFamily="@string/font_roboto_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="HOME"
+        android:textColor="#ffffff"
+        android:textSize="@dimen/breadcrumb_text_size" />
+
+    <LinearLayout
+        android:id="@+id/source"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="22px"
+            android:layout_height="match_parent"
+            android:background="#eeeeee"
+            android:src="@drawable/ic_arrow_breadcrumb_home" />
+
+        <TextView
+            android:id="@+id/label"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_breadcrumb_source_extended"
+            android:ellipsize="end"
+            android:fontFamily="@string/font_roboto_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingEnd="33px"
+            android:paddingStart="25.7px"
+            android:text="@string/lorem_ipsum"
+            android:textAllCaps="true"
+            android:textColor="#686868"
+            android:textSize="@dimen/breadcrumb_text_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/album"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="22px"
+            android:layout_height="match_parent"
+            android:background="#d4eeeeee"
+            android:src="@drawable/ic_arrow_breadcrumb_local" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_breadcrumb_album_normal"
+            android:ellipsize="end"
+            android:fontFamily="@string/font_roboto_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingEnd="33px"
+            android:paddingStart="25.7px"
+            android:text="@string/lorem_ipsum"
+            android:textAllCaps="true"
+            android:textColor="#212121"
+            android:textSize="@dimen/breadcrumb_text_size" />
+
+    </LinearLayout>
+
+</LinearLayout>
