@@ -24,9 +24,9 @@ public abstract class BasePetMode implements IPetMode {
     protected final String TAG;
 
     final private GVRScene mMainScene;
-    final protected BasePetScene mModeScene;
+    final protected BasePetView mModeScene;
 
-    public BasePetMode(GVRContext context, BasePetScene sceneMode) {
+    public BasePetMode(GVRContext context, BasePetView sceneMode) {
         TAG = sceneMode.getClass().getSimpleName();
 
         mMainScene = context.getMainScene();

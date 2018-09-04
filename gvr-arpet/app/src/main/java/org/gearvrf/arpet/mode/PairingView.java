@@ -8,11 +8,11 @@ import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
-public class PairingScene extends BasePetScene implements IViewEvents {
+public class PairingView extends BasePetView implements IViewEvents {
     private GVRContext mContext;
     private GVRSceneObject mPairing;
 
-    public PairingScene(GVRContext gvrContext) {
+    public PairingView(GVRContext gvrContext) {
         super(gvrContext);
         mContext = gvrContext;
         mPairing = new GVRViewSceneObject(mContext, R.layout.paring_layout, this);

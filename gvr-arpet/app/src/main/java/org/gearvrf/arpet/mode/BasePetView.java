@@ -19,8 +19,8 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 
-public class BasePetScene extends GVRSceneObject {
-    public BasePetScene(GVRContext gvrContext) {
+public class BasePetView extends GVRSceneObject {
+    public BasePetView(GVRContext gvrContext) {
         super(gvrContext);
     }
 

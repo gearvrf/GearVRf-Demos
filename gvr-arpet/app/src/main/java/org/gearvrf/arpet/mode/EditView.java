@@ -24,13 +24,13 @@ import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
-public class EditScene extends BasePetScene implements View.OnClickListener, IViewEvents {
+public class EditView extends BasePetView implements View.OnClickListener, IViewEvents {
     private GVRContext mContext;
     private GVRSceneObject mEditModeObject;
     private Button mBackButton, mSaveButton;
     private OnEditModeClickedListener mListenerEditMode;
 
-    public EditScene(GVRContext gvrContext) {
+    public EditView(GVRContext gvrContext) {
         super(gvrContext);
         mContext = gvrContext;
         mEditModeObject = new GVRViewSceneObject(mContext, R.layout.edit_mode_layout, this);

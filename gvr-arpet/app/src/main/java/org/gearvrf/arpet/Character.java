@@ -60,6 +60,7 @@ import org.joml.Vector3f;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Character extends MovableObject implements
@@ -158,24 +159,13 @@ public class Character extends MovableObject implements
     }
 
     private void initController() {
-        final int cursorDepth = 100;
         GVRInputManager inputManager = mContext.getInputManager();
-        mCursor = new GVRSceneObject(mContext,
-                mContext.createQuad(0.2f * cursorDepth,
-                        0.2f * cursorDepth),
-                mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext,
-                        R.raw.cursor)));
-        mCursor.getRenderData().setDepthTest(false);
-        mCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
                 if (oldController != null) {
                     oldController.removePickEventListener(mTouchHandler);
                 }
                 mCursorController = newController;
-                newController.setCursorDepth(-cursorDepth);
-                newController.setCursor(mCursor);
-                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
             }
         });
     }

@@ -19,6 +19,7 @@
             android:src="@drawable/ic_invitation" />
 
         <TextView
+            android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -59,6 +60,24 @@
                 android:textColor="#ffffff"
                 android:textSize="14sp" />
 
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="39.8dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="54.2dp"
+                android:layout_marginStart="307dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/check"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginStart="310dp"
+                android:layout_marginTop="43dp"
+                android:src="@drawable/icn_check"
+                android:visibility="gone"/>
         </RelativeLayout>
 
     </RelativeLayout>

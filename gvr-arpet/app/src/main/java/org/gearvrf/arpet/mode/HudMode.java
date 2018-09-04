@@ -19,16 +19,15 @@ import android.util.Log;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRTransform;
 
 public class HudMode extends BasePetMode {
     private OnModeChange mModeChangeListener;
 
     public HudMode(GVRContext context, OnModeChange listener) {
-        super(context, new HudScene(context));
+        super(context, new HudView(context));
         mModeChangeListener = listener;
 
-        ((HudScene) mModeScene).setListener(new OnHudItemClickedHandler());
+        ((HudView) mModeScene).setListener(new OnHudItemClickedHandler());
     }
 
     @Override
@@ -41,16 +40,7 @@ public class HudMode extends BasePetMode {
 
     @Override
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
-        GVRTransform cameraTransform = cameraRig.getHeadTransform();
-        float rotationZAxis = cameraTransform.getRotationRoll();
 
-        if (rotationZAxis < 3 && rotationZAxis > -60 || rotationZAxis > -80 && rotationZAxis < 175) {
-            mModeScene.getTransform().setPosition(cameraTransform.getPositionX() + 1.1f, cameraTransform.getPositionY(), cameraTransform.getPositionZ() - 2f);
-            mModeScene.getTransform().setRotation(0.9943424f, 0.017548352f, 0.10321358f, 0.017914105f);
-        } else {
-            mModeScene.getTransform().setPosition(-cameraTransform.getPositionX() + 1.2f,  -cameraTransform.getPositionY() - 0.1f , cameraTransform.getPositionZ() - 1f);
-            mModeScene.getTransform().setRotation(0.68466544f - 1.0f, -0.10663576f, -0.017476797f, -0.7043389f);
-        }
     }
 
     private class OnHudItemClickedHandler implements OnHudItemClicked {

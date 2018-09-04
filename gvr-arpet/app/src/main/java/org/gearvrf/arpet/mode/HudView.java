@@ -25,8 +25,8 @@ import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.utility.Log;
 
-public class HudScene extends BasePetScene implements View.OnClickListener, IViewEvents {
-    private static final String TAG = "HudScene";
+public class HudView extends BasePetView implements View.OnClickListener, IViewEvents {
+    private static final String TAG = "HudView";
 
     private GVRContext mContext;
     private LinearLayout MenuHud;
@@ -34,7 +34,7 @@ public class HudScene extends BasePetScene implements View.OnClickListener, IVie
     private GVRViewSceneObject mHudMenu;
     private OnHudItemClicked mListener;
 
-    public HudScene(GVRContext gvrContext) {
+    public HudView(GVRContext gvrContext) {
         super(gvrContext);
         mContext = gvrContext;
         mHudMenu = new GVRViewSceneObject(mContext, R.layout.hud_layout, this);
@@ -130,8 +130,7 @@ public class HudScene extends BasePetScene implements View.OnClickListener, IVie
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        gvrViewSceneObject.getTransform().setScale(3.2f, 3.2f, 1.0f);
-        gvrViewSceneObject.getTransform().setPosition(1.9f, -0.2f,-2.0f);
+        gvrViewSceneObject.getTransform().setPosition(0.4f, 0.1f,-1.4f);
         addChildObject(mHudMenu);
     }
 

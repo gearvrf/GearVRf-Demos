@@ -24,10 +24,10 @@ public class EditMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
 
     public EditMode(GVRContext context, OnBackToHudModeListener listener) {
-        super(context, new EditScene(context));
+        super(context, new EditView(context));
         mBackToHudModeListener = listener;
 
-        ((EditScene) mModeScene).setListenerEditMode(new OnEditModeClickedListenerHandler());
+        ((EditView) mModeScene).setListenerEditMode(new OnEditModeClickedListenerHandler());
     }
 
     @Override

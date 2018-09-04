@@ -102,7 +102,7 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
-        mBallThrowHandler.enable();
+        //mBallThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -111,6 +111,8 @@ public class PetMain extends GVRMain {
         mHandlerBackToHud = new HandlerBackToHud();
 
         petSceneObject = LoadModelHelper.loadModelSceneObject(gvrContext, LoadModelHelper.PET_MODEL_PATH);
+
+        //disableCursor();
     }
 
     public void resume() {
@@ -185,7 +187,7 @@ public class PetMain extends GVRMain {
         }
 
         if (mCurrentMode == null) {
-            mCurrentMode = new HudMode(mContext, mHandlerModeChange);
+            mCurrentMode = new HudMode(mContext,mHandlerModeChange);
             mCurrentMode.enter();
         }
         //addPetObjectsToPlane(plane);
