@@ -18,7 +18,6 @@ package org.gearvrf.arpet;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.util.Preconditions;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -29,6 +28,7 @@ import org.gearvrf.arpet.Character.PetAction;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
@@ -81,6 +81,7 @@ public class PetMain extends GVRMain {
     private HandlerBackToHud mHandlerBackToHud;
 
     private AppConnectionManager mConnectionManager;
+    private CloudAnchorManager mCloudAnchorManager;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -112,6 +113,8 @@ public class PetMain extends GVRMain {
 
         petSceneObject = LoadModelHelper.loadModelSceneObject(gvrContext, LoadModelHelper.PET_MODEL_PATH);
 
+        mCloudAnchorManager = new CloudAnchorManager();
+
         //disableCursor();
     }
 
@@ -132,41 +135,6 @@ public class PetMain extends GVRMain {
                 ApiConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
     }
 
-    @SuppressLint("RestrictedApi")
-    private void testAnchorSharing(GVRAnchor anchor) {
-
-        if (!isCloudAnchorApiKeySet()) {
-            Log.d(TAG, " Cloud Anchor API key is not set.");
-            return;
-        }
-
-        Log.d(TAG, "hosting anchor...");
-        mMixedReality.hostAnchor(
-                anchor,
-                (hostedAnchor) -> {
-
-                    Preconditions.checkStringNotEmpty(hostedAnchor.getCloudAnchorId(),
-                            TAG + ": Error hosting anchor.");
-
-                    Log.d(TAG, "anchor hosted successful! Anchor ID = \""
-                            + hostedAnchor.getCloudAnchorId() + "\"");
-
-                    Log.d(TAG, "resolving anchor...");
-                    mMixedReality.resolveCloudAnchor(
-                            hostedAnchor.getCloudAnchorId(),
-                            (resolvedAnchor) -> {
-
-                                Preconditions.checkStringNotEmpty(resolvedAnchor.getCloudAnchorId(),
-                                        TAG + ": Error resolving anchor.");
-
-                                Log.d(TAG, "anchor resolved successful! Anchor ID = \""
-                                        + resolvedAnchor.getCloudAnchorId() + "\"");
-                            }
-                    );
-                }
-        );
-    }
-
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
 
@@ -180,7 +148,9 @@ public class PetMain extends GVRMain {
         }
 
         // Host pet anchor
-        testAnchorSharing(mPet.getAnchor());
+        if (isCloudAnchorApiKeySet()) {
+            mCloudAnchorManager.hostAnchor(mMixedReality, mPet);
+        }
 
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");
