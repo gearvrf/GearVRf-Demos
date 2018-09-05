@@ -34,11 +34,14 @@ public class AvatarMain extends GVRMain
 {
 //    private final String mModelPath = "DeepMotion/sahithi_character_skin.fbx";
 //    private final String mAnimationPath = "bodyturn.txt";
-    private final String mModelPath = "Andromeda/Andromeda.dae";
-    private final String[] mAnimationPaths =  { "Andromeda/HipHopDancing.dae", "Andromeda/Bellydancing.dae", "Andromeda/Boxing.dae" };
+//    private final String mModelPath = "Andromeda/Andromeda.dae";
+//    private final String[] mAnimationPaths =  { "Andromeda/HipHopDancing.dae", "Andromeda/Bellydancing.dae", "Andromeda/Boxing.dae" };
 //    private final String[] mAnimationPaths = { "DeepMotion/animation_baked.fbx" };
 //    private final String mModelPath = "Lily/female_outfitJ.fbx";
 //    private final String[] mAnimationPaths = { "Lily/Idle.fbx" };
+    private final String mModelPath = "astroboy/astro_boy.dae";
+    private final String[] mAnimationPaths =  { "astroboy/astro_boy.dae" };
+
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
@@ -75,17 +78,18 @@ public class AvatarMain extends GVRMain
         {
             if (!mAvatar.isRunning())
             {
+                mCurrentAnimIndex = 0;
                 mAvatar.start(0);
             }
         }
 
         public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation)
         {
-            if (mCurrentAnimIndex >= mAvatar.getAnimationCount())
+            if (++mCurrentAnimIndex >= mAvatar.getAnimationCount())
             {
                 mCurrentAnimIndex = 0;
             }
-            mAvatar.start(mCurrentAnimIndex++);
+            mAvatar.start(mCurrentAnimIndex);
         }
 
         public void onAnimationStarted(GVRAnimator animator) { }
@@ -144,7 +148,7 @@ public class AvatarMain extends GVRMain
         else
         {
             mCurrentAnimIndex = 0;
-            mAvatar.start(mCurrentAnimIndex++);
+            mAvatar.start(mCurrentAnimIndex);
         }
     }
 }
