@@ -39,7 +39,7 @@ public class StarBoxSceneObject extends GVRSceneObject {
 
         Resources res = gvrContext.getContext().getResources();
         String clearButtonText = res.getString(R.string.clear_button);
-
+        setName("StarBox");
         createStar();
 
         playButton = new AnimButtonPlay(gvrContext);

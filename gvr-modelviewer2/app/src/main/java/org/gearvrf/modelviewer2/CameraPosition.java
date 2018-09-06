@@ -45,6 +45,7 @@ public class CameraPosition {
 
         attachCollider(context);
         cameraModel.getTransform().setPosition(position.x, position.y, position.z);
+        cameraModel.setName("CameraModel");
         return cameraModel;
     }
 

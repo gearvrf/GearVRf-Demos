@@ -18,6 +18,7 @@ public class Banner {
         message.setTextColor(color);
         message.getTransform().setPosition(posX, posY, posZ);
         message.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
+        message.setName("Banner");
     }
 
     public GVRTextViewSceneObject getBanner() {

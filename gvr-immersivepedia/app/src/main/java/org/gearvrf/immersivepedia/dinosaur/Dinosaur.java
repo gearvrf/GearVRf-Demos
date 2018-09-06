@@ -30,18 +30,21 @@ public class Dinosaur extends FocusableSceneObject {
         if (dino != null && dino.getRenderData() != null
                 && dino.getRenderData().getMaterial() != null) {
             dino.getRenderData().setRenderingOrder(RenderingOrderApplication.DINOSAUR);
+            dino.setName("Dinosaur");
             this.addChildObject(dino);
         }
 
         if (base != null && base.getRenderData() != null
                 && base.getRenderData().getMaterial() != null) {
             base.getRenderData().setRenderingOrder(RenderingOrderApplication.DINOSAUR);
+            base.setName("Base");
             this.addChildObject(base);
         }
 
         if (ground != null && ground.getRenderData() != null
                 && ground.getRenderData().getMaterial() != null) {
             ground.getRenderData().setRenderingOrder(RenderingOrderApplication.DINOSAUR);
+            ground.setName("Ground");
             this.addChildObject(ground);
         }
     }

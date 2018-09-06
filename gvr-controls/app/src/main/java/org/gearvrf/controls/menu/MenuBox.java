@@ -33,7 +33,7 @@ public class MenuBox extends GVRSceneObject {
 
     public MenuBox(GVRContext gvrContext) {
         super(gvrContext);
-
+        setName("MenuBox");
         getTransform().setPosition(0, MENU_BOX_Y, MENU_BOX_Z);
 
         attachMenuHeader();

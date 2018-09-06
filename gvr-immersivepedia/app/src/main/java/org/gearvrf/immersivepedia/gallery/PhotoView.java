@@ -128,7 +128,6 @@ public class PhotoView extends FocusableSceneObject implements FocusListener {
 
     public PhotoView(GVRContext gvrContext, float f, float g, GVRTexture t) {
         super(gvrContext, f, g, t);
-        setName("photoview");
     }
 
     private void hover() {

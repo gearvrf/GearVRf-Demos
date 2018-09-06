@@ -62,7 +62,7 @@ public class MotionButton extends MenuControlSceneObject {
 
     public MotionButton(GVRContext gvrContext, String title, Motion motion) {
         super(gvrContext);
-
+        setName("MotionButton");
         this.motion = motion;
         this.title = title;
 
@@ -78,7 +78,7 @@ public class MotionButton extends MenuControlSceneObject {
         createTextures();
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT);
+        getRenderData().setRenderingOrder(RenderingOrder.MENU_TEXT);
 
         attachComponent(new GVRMeshCollider(gvrContext, false));
     }

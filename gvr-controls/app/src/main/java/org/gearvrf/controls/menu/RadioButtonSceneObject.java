@@ -63,7 +63,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
 
     public RadioButtonSceneObject(GVRContext gvrContext, String title, float second) {
         super(gvrContext);
-
+        setName("RadioButton");
         this.title = title;
         this.second = second;
 
@@ -80,7 +80,7 @@ public class RadioButtonSceneObject extends MenuControlSceneObject {
         createTextures();
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT);
+        getRenderData().setRenderingOrder(RenderingOrder.MENU_TEXT);
 
         attachComponent(new GVRMeshCollider(gvrContext, false));
 

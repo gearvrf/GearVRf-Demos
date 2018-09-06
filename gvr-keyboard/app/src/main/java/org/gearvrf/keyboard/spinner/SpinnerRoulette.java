@@ -64,7 +64,7 @@ public class SpinnerRoulette extends GVRSceneObject {
 
     protected SpinnerRoulette(GVRContext gvrContext, int initialCharacterPosition, int mode) {
         super(gvrContext);
-        setName(SceneObjectNames.SPINNER);
+        setName(SceneObjectNames.SPINNER_ROUTLETTE);
 
         this.initialCharacterPosition = initialCharacterPosition;
         this.gvrContext = gvrContext;

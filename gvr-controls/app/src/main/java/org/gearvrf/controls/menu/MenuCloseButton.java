@@ -40,7 +40,7 @@ public class MenuCloseButton extends ControlSceneObject {
 
     public MenuCloseButton(GVRContext gvrContext) {
         super(gvrContext);
-
+        setName("MenuCloseButton");
         GVRMesh sMesh = getGVRContext().createQuad(0.4f, 0.4f);
 
         attachRenderData(new GVRRenderData(gvrContext));
@@ -49,7 +49,7 @@ public class MenuCloseButton extends ControlSceneObject {
         createTextures(gvrContext);
 
         getRenderData().getMaterial().setFloat(ButtonShader.TEXTURE_SWITCH, IDLE_STATE);
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT + 1);
+        getRenderData().setRenderingOrder(RenderingOrder.MENU_TEXT + 1);
 
         attachComponent(new GVRMeshCollider(gvrContext, false));
     }

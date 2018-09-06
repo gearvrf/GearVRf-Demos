@@ -99,7 +99,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
     public Gallery(GVRContext gvrContext, int[] resources) {
         this(gvrContext);
         this.insertPhotos(resources);
-
+        this.setName("Gallery");
         this.createHighlightGridItem();
         this.createAllGridItems();
         this.createInitialPhotos();
@@ -123,6 +123,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         scrollbar.getRenderData().setRenderingOrder(RenderingOrderApplication.GALLERY_SCROLLBAR);
 
         this.addChildObject(scrollbar);
+        scrollbar.setName("GalleryScrollBar");
         this.updateScrollbar(false, this.currentPage);
     }
 
@@ -258,7 +259,8 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
     }
 
     private void createInitialPhotos() {
-        int index = 0;
+
+        Integer index = 0;
 
         PhotoGridItem centered = new PhotoGridItem();
         PhotoGridItem left = new PhotoGridItem();
@@ -267,6 +269,7 @@ public class Gallery extends FocusableSceneObject implements PhotoEventListener,
         for (PhotoGridItem item : this.gridItems) {
 
             PhotoView photo = PhotoView.createPhotoView(this.gvrContext, this.photoIds[index]);
+            photo.setName("PhotoView" + index.toString());
             this.addChildObject(photo);
             this.photos.add(photo);
             photo.getTransform().setPosition(item.x, item.y, item.z);

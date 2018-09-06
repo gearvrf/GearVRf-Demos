@@ -122,7 +122,7 @@ class MenuHeaderItem extends ControlSceneObject {
         GVRTexture tex3 = new GVRTexture(gvrContext);
         tex3.setImage(bitmapSelected);
         material.setTexture(ButtonShader.STATE3_TEXT_TEXTURE, tex3);
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_HEADER_TEXT);
+        getRenderData().setRenderingOrder(RenderingOrder.MENU_TEXT);
     }
 
     public Bitmap createText(Text text, boolean showBottomLine){

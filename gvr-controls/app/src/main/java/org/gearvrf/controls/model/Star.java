@@ -38,7 +38,7 @@ public class Star extends GVRSceneObject {
                         .getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext, R.drawable.star_diffuse)));
         this.getRenderData().getMaterial().setOpacity(0);
         this.getTransform().setScale(STAR_SCALE, STAR_SCALE, STAR_SCALE);
-
+        setName("Star");
     }
 
     public void playMoveAnimation(GVRContext gvrContext, GVRSceneObject returnTarget) {

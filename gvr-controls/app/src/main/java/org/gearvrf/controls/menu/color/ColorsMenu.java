@@ -28,7 +28,7 @@ import org.gearvrf.controls.menu.GridSceneObjects;
 import org.gearvrf.controls.menu.ItemSelectedListener;
 import org.gearvrf.controls.menu.MenuWindow;
 import org.gearvrf.controls.menu.RadioButtonSceneObject;
-import org.gearvrf.controls.menu.RadioGrupoSceneObject;
+import org.gearvrf.controls.menu.RadioGroupSceneObject;
 import org.gearvrf.controls.util.ColorControls.Color;
 
 public class ColorsMenu extends MenuWindow {
@@ -43,11 +43,11 @@ public class ColorsMenu extends MenuWindow {
 
     private MenuColorsPreview previewArea;
     private GridSceneObjects mGrid;
-    private RadioGrupoSceneObject radioGroup;
+    private RadioGroupSceneObject radioGroup;
 
     public ColorsMenu(GVRContext gvrContext) {
         super(gvrContext);
-
+        setName("ColorsMenu");
         createPreviewBox();
 
         attachGrid();
@@ -94,7 +94,7 @@ public class ColorsMenu extends MenuWindow {
 
     private void attachRadioGroup() {
 
-        radioGroup =  new RadioGrupoSceneObject(getGVRContext(), new ItemSelectedListener() {
+        radioGroup =  new RadioGroupSceneObject(getGVRContext(), new ItemSelectedListener() {
 
             @Override
             public void selected(ControlSceneObject object) {

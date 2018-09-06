@@ -151,8 +151,8 @@ public class Main extends GVRMain implements KeyboardEventListener {
         floor.getTransform().setRotationByAxis(-90, 1, 0, 0);
         floor.getTransform().setPositionY(-10.0f);
         gvrContext.getMainScene().addSceneObject(floor);
-        floor.getRenderData().setRenderingOrder(0);
-
+        floor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+        floor.setName("Floor");
         createSkybox();
 
         addCursorPosition();
@@ -293,7 +293,8 @@ public class Main extends GVRMain implements KeyboardEventListener {
         mGVRContext.getMainScene().addSceneObject(mSpaceSceneObject);
         List<GVRRenderData> rdatas = mSpaceSceneObject.getAllComponents(GVRRenderData.getComponentType());
         GVRRenderData rdata = rdatas.get(0);
-        rdata.setRenderingOrder(0);
+        rdata.setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
+        mSpaceSceneObject.setName("SkyBox");
     }
 
     private void addCursorPosition() {

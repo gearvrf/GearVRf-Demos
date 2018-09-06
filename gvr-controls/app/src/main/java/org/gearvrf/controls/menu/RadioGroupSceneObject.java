@@ -21,7 +21,7 @@ import org.gearvrf.controls.focus.GamepadTouchImpl;
 import org.gearvrf.controls.focus.TouchAndGestureImpl;
 import org.gearvrf.controls.input.GamepadMap;
 
-public class RadioGrupoSceneObject extends GVRSceneObject {
+public class RadioGroupSceneObject extends GVRSceneObject {
 
     private static final float SPACE_BETWEEN_BUTTONS = 0.5f;
     private RadioButtonSceneObject button1;
@@ -31,10 +31,10 @@ public class RadioGrupoSceneObject extends GVRSceneObject {
 
     private ItemSelectedListener mItemSelectedListener;
 
-    public RadioGrupoSceneObject(GVRContext gvrContext, ItemSelectedListener mItemSelectedListener,
+    public RadioGroupSceneObject(GVRContext gvrContext, ItemSelectedListener mItemSelectedListener,
                                  float time1, float time2, float time3) {
         super(gvrContext);
-
+        setName("RadioGroup");
         this.mItemSelectedListener = mItemSelectedListener;
 
         button1 = new RadioButtonSceneObject(gvrContext, time1 >= 1 ? (int) time1 + "s" : time1

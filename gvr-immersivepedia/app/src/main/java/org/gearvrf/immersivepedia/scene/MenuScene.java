@@ -50,9 +50,9 @@ public class MenuScene extends GVRScene {
         createBirdsMenuItem();
         createFishesMenuItem();
         createMammalsMenuItem();
-        addSceneObject(createSkybox()); //
+        addSceneObject(createSkybox());
 
-        addSceneObject(createBlueSkybox()); //
+        addSceneObject(createBlueSkybox());
 
         getMainCameraRig().getTransform().setPositionY(CAMERA_Y);
     }
@@ -164,12 +164,12 @@ public class MenuScene extends GVRScene {
         GVRTexture texture = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_walls_tex_diffuse));
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().rotateByAxisWithPivot(-90, 1, 0, 0, 0, 0, 0);
-        skybox.getRenderData().setRenderingOrder(0);
+        skybox.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
 
         GVRMesh meshGround = getGVRContext().getAssetLoader().loadMesh(new GVRAndroidResource(getGVRContext(), R.raw.environment_ground_mesh));
         GVRTexture textureGround = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), R.drawable.menu_ground_tex_diffuse));
         GVRSceneObject skyboxGround = new GVRSceneObject(getGVRContext(), meshGround, textureGround);
-        skyboxGround.getRenderData().setRenderingOrder(0);
+        skyboxGround.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
 
         skybox.addChildObject(skyboxGround);
         return skybox;
@@ -186,7 +186,7 @@ public class MenuScene extends GVRScene {
                 textureParameters);
         GVRSceneObject skybox = new GVRSceneObject(getGVRContext(), mesh, texture);
         skybox.getTransform().setScale(1, 1, 1);
-        skybox.getRenderData().setRenderingOrder(0);
+        skybox.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         return skybox;
     }
 

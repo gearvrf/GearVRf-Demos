@@ -27,6 +27,7 @@ import org.gearvrf.immersivepedia.R;
 import org.gearvrf.immersivepedia.focus.FocusListener;
 import org.gearvrf.immersivepedia.focus.FocusableSceneObject;
 import org.gearvrf.immersivepedia.focus.OnClickListener;
+import org.gearvrf.immersivepedia.util.RenderingOrderApplication;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 
@@ -67,6 +68,8 @@ public class VideoComponent extends GVRSceneObject {
         seekbar = new Seekbar(gvrContext, Seekbar.WIDTH, 0.05f, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(
                 gvrContext, R.drawable.timeline_towatch)));
         seekbar.getTransform().setPosition(0.0f, -1.5f, video.getTransform().getPositionZ() + 0.1f);
+        seekbar.setName("SeekBar");
+        seekbar.getRenderData().setRenderingOrder(RenderingOrderApplication.VIDEO);
         addChildObject(seekbar);
     }
 
@@ -75,6 +78,7 @@ public class VideoComponent extends GVRSceneObject {
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext.getActivity(),
                         R.drawable.empty)), this);
         buttonBoard.getTransform().setPosition(0f, 0f, video.getTransform().getPositionZ() + 0.1f);
+        buttonBoard.setName("ButtonBoard");
         addChildObject(buttonBoard);
     }
 
@@ -85,7 +89,9 @@ public class VideoComponent extends GVRSceneObject {
         focus = new FocusableSceneObject(gvrContext, WIDTH, HEIGHT, gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                 R.drawable.empty_clickable)));
         focus.attachCollider(new GVRMeshCollider(gvrContext, false));
-        focus.setName("video");
+        focus.setName("VideoFocus");
+        video.setName("VideoScreen");
+        video.getRenderData().setRenderingOrder(RenderingOrderApplication.VIDEO);
         focus.focusListener = new FocusListener() {
 
             @Override

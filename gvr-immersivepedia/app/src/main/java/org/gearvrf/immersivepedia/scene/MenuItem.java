@@ -44,12 +44,14 @@ public class MenuItem extends FocusableSceneObject {
     private final float SUB_TEXT_Y = -1.08f + (difTextToBackground+difGroupTextY);
     private final float MAIN_TEXT_Y = -0.86f + (difTextToBackground+difGroupTextY);
     private final float FRONT_IMAGE_Z_OFFSET = 2.2f;
+    private final float BACK_IMAGE_Z_OFFSET = 2.2f;
     private final float FRONT_IMAGE_Y = -.18f;
     private final float FRONT_IMAGE_X = +0.0f;
-    private final float TEXT_BACKGROUND_Z = FRONT_IMAGE_Z_OFFSET + 0.1f;
+    private final float TEXT_BACKGROUND_Z = FRONT_IMAGE_Z_OFFSET - 0.3f;
     private final float TEXT_BACKGROUND_Y = -1f+(difGroupTextY) ;
     private final float TEXT_HEIGHT = 0.41f;
     private final float TEXT_WIDTH = 1.31f;
+    private final float TEXT_Z = TEXT_BACKGROUND_Z - 0.1f;
 
     private final float WIDTH = 4.6f;
     private final float HEIGHT = 2.8f;
@@ -81,10 +83,13 @@ public class MenuItem extends FocusableSceneObject {
         frontObj.getTransform().setPositionY(FRONT_IMAGE_Y);
         frontObj.getTransform().setPositionX(FRONT_IMAGE_X);
         frontObj.getRenderData().setRenderingOrder(RenderingOrderApplication.MAIN_IMAGE);
+        frontObj.setName("FrontObj");
         scale = (MenuScene.DISTANCE_TO_CAMERA - FRONT_IMAGE_Z_OFFSET) / MenuScene.DISTANCE_TO_CAMERA;
         frontObj.getTransform().setScale(scale, scale, scale);
         backgroundObj = createSceneObject(backgroundIdleRes, backgroundHoverRes);
         backgroundObj.getRenderData().setRenderingOrder(RenderingOrderApplication.BACKGROUND_IMAGE);
+        backgroundObj.getTransform().setPositionZ(BACK_IMAGE_Z_OFFSET);
+        backgroundObj.setName("BackgroundObj");
 
         GVRMeshCollider collider = new GVRMeshCollider(gvrContext, false);
 
@@ -144,14 +149,14 @@ public class MenuItem extends FocusableSceneObject {
 
         GVRTexture idle = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), idleImageRes));
         GVRTexture hover = getGVRContext().getAssetLoader().loadTexture(new GVRAndroidResource(getGVRContext(), hoverImageRes));
-
-        obj.attachRenderData(new GVRRenderData(getGVRContext()));
-        obj.getRenderData().setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(MenuImageShader.class)));
-        obj.getRenderData().setMesh(getGVRContext().createQuad(CHILD_WIDTH, CHILD_HEIGHT));
-        obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE1_TEXTURE, idle);
-        obj.getRenderData().getMaterial().setTexture(MenuImageShader.STATE2_TEXTURE, hover);
-        obj.getRenderData().getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
-
+        GVRRenderData rdata = new GVRRenderData(getGVRContext());
+        obj.attachRenderData(rdata);
+        rdata.setMaterial(new GVRMaterial(getGVRContext(), new GVRShaderId(MenuImageShader.class)));
+        rdata.setMesh(getGVRContext().createQuad(CHILD_WIDTH, CHILD_HEIGHT));
+        rdata.getMaterial().setTexture(MenuImageShader.STATE1_TEXTURE, idle);
+        rdata.getMaterial().setTexture(MenuImageShader.STATE2_TEXTURE, hover);
+        rdata.getMaterial().setFloat(MenuImageShader.TEXTURE_SWITCH, IDLE_STATE);
+        obj.setName("IdleHover");
         addChildObject(obj);
 
         return obj;
@@ -171,7 +176,7 @@ public class MenuItem extends FocusableSceneObject {
         textBackground.getTransform().setPosition(0, TEXT_BACKGROUND_Y, TEXT_BACKGROUND_Z);
         textBackground.getRenderData().setRenderingOrder(RenderingOrderApplication.IMAGE_TEXT_BACKGROUND);
         textBackground.getRenderData().getMaterial().setOpacity(0);
-
+        textBackground.setName("TextBackground");
         addChildObject(textBackground);
     }
 
@@ -182,10 +187,10 @@ public class MenuItem extends FocusableSceneObject {
         mainText.setTextSize(5);
         mainText.setGravity(Gravity.CENTER);
 
-        mainText.getTransform().setPosition(0, MAIN_TEXT_Y, TEXT_BACKGROUND_Z + 0.01f);
+        mainText.getTransform().setPosition(0, MAIN_TEXT_Y, TEXT_BACKGROUND_Z);
         mainText.getRenderData().setRenderingOrder(RenderingOrderApplication.IMAGE_TEXT);
         mainText.getRenderData().getMaterial().setOpacity(0);
-
+        mainText.setName("MainText");
         addChildObject(mainText);
     }
 
@@ -196,10 +201,10 @@ public class MenuItem extends FocusableSceneObject {
         subText.setTextSize(3);
         subText.setGravity(Gravity.CENTER);
 
-        subText.getTransform().setPosition(0, SUB_TEXT_Y, TEXT_BACKGROUND_Z + 0.01f);
+        subText.getTransform().setPosition(0, SUB_TEXT_Y, TEXT_Z);
         subText.getRenderData().setRenderingOrder(RenderingOrderApplication.IMAGE_TEXT);
         subText.getRenderData().getMaterial().setOpacity(0);
-
+        subText.setName("SubText");
         addChildObject(subText);
     }
 

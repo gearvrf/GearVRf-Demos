@@ -70,7 +70,7 @@ public class Dashboard extends GVRSceneObject {
         originalRotationY = getTransform().getRotationY();
         originalRotationZ = getTransform().getRotationZ();
         originalRotationW = getTransform().getRotationW();
-
+        setName("Dashboard");
         attachComponent(new GVRSphereCollider(gvrContext));
     }
 

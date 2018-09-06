@@ -63,12 +63,14 @@ public class GazeCursorSceneObject extends GVRSceneObject {
         rightCursor.attachRenderData(createRenderData(gvrContext));
         rightCursor.getRenderData().setRenderMask(GVRRenderMaskBit.Right);
         rightCursor.getTransform().setPosition(xRightCursor, 0, zRightCursor);
+        rightCursor.setName("RightCursor");
         addChildObject(rightCursor);
 
         leftCursor = new GVRSceneObject(gvrContext);
         leftCursor.attachRenderData(createRenderData(gvrContext));
         leftCursor.getRenderData().setRenderMask(GVRRenderMaskBit.Left);
         leftCursor.getTransform().setPosition(xLeftCursor, 0, zLeftCursor);
+        leftCursor.setName("LeftCursor");
         addChildObject(leftCursor);
     }
 

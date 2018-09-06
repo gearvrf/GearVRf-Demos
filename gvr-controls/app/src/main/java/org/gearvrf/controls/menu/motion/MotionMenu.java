@@ -26,7 +26,7 @@ import org.gearvrf.controls.menu.GridSceneObjects;
 import org.gearvrf.controls.menu.ItemSelectedListener;
 import org.gearvrf.controls.menu.MenuWindow;
 import org.gearvrf.controls.menu.RadioButtonSceneObject;
-import org.gearvrf.controls.menu.RadioGrupoSceneObject;
+import org.gearvrf.controls.menu.RadioGroupSceneObject;
 import org.gearvrf.controls.model.Apple;
 import org.gearvrf.controls.model.Apple.Motion;
 
@@ -41,11 +41,11 @@ public class MotionMenu extends MenuWindow {
 
     private MenuPreview previewArea;
     private GridSceneObjects mGrid;
-    private RadioGrupoSceneObject radioGroup;
+    private RadioGroupSceneObject radioGroup;
 
     public MotionMenu(GVRContext gvrContext) {
         super(gvrContext);
-
+        setName("MotionMenu");
         createPreviewBox();
 
         attachGrid();
@@ -89,7 +89,7 @@ public class MotionMenu extends MenuWindow {
 
     private void attachRadioGroup() {
 
-        radioGroup =  new RadioGrupoSceneObject(getGVRContext(), new ItemSelectedListener() {
+        radioGroup =  new RadioGroupSceneObject(getGVRContext(), new ItemSelectedListener() {
 
             @Override
             public void selected(ControlSceneObject object) {

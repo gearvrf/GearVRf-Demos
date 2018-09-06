@@ -36,7 +36,7 @@ public class TouchableButton extends ControlSceneObject {
 
     public TouchableButton(GVRContext gvrContext, ArrayList<GVRTexture> textures) {
         super(gvrContext);
-
+        setName("TouchableButton");
         this.textures = textures;
         GVRMesh sMesh = getGVRContext().createQuad(0.4f, 0.4f);
 
@@ -46,7 +46,7 @@ public class TouchableButton extends ControlSceneObject {
 
         getRenderData().getMaterial().setMainTexture(textures.get(IDLE));
 
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_FRAME_TEXT);
+        getRenderData().setRenderingOrder(RenderingOrder.MENU_TEXT);
 
         attachComponent(new GVRMeshCollider(gvrContext, false));
 

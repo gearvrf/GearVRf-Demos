@@ -79,8 +79,6 @@ public class GamepadButton extends GVRSceneObject {
 
         buttonNormal = new GVRSceneObject(getGVRContext(), buttonMesh,
                 buttonTexture);
-        buttonNormal.getRenderData().setRenderingOrder(
-                RenderingOrder.ORDER_RENDERING_GAMEPAD_BUTTONS);
 
         addChildObject(buttonNormal);
     }
@@ -102,8 +100,6 @@ public class GamepadButton extends GVRSceneObject {
         evPositionZ = buttonHover.getTransform().getPositionZ();
         evRotationW = buttonHover.getTransform().getRotationW();
 
-        buttonHover.getRenderData().setRenderingOrder(
-                RenderingOrder.ORDER_RENDERING_GAMEPAD_BUTTONS_EVENT);
 
         addChildObject(buttonHover);
     }

@@ -72,7 +72,6 @@ public class Cloud extends GVRSceneObject {
         GVRRenderData renderData = new GVRRenderData(gvrContext);
         renderData.setMesh(mesh);
         renderData.setMaterial(material);
-        renderData.setRenderingOrder(RenderingOrder.CLOUDS);
         this.attachRenderData(renderData);
 
     }

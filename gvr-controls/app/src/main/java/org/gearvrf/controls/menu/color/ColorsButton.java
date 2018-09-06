@@ -42,7 +42,7 @@ public class ColorsButton extends MenuControlSceneObject {
         super(gvrContext);
 
         this.color = color;
-
+        setName("ColorsButton");
         GVRMesh sMesh = getGVRContext().createQuad(BUTTON_SIZE, BUTTON_SIZE);
 
         attachRenderData(new GVRRenderData(gvrContext));
@@ -67,7 +67,7 @@ public class ColorsButton extends MenuControlSceneObject {
         checkObject = new GVRSceneObject(getGVRContext(), checkMesh, checkTexture);
         checkObject.getRenderData().getMaterial().setOpacity(0);
         checkObject.getTransform().setPositionZ(0.01f);
-        checkObject.getRenderData().setRenderingOrder(RenderingOrder.MENU_BUTTON_COLOR - 1);
+        checkObject.getRenderData().setRenderingOrder(RenderingOrder.MENU_TEXT);
         
         addChildObject(checkObject);
     }
@@ -82,7 +82,7 @@ public class ColorsButton extends MenuControlSceneObject {
         hoverObject.getTransform().setScale(SELECTED_SIZE + 0.1f, SELECTED_SIZE + 0.1f, SELECTED_SIZE + 0.1f);
         hoverObject.getRenderData().getMaterial().setOpacity(0);
         hoverObject.getTransform().setPositionZ(0.011f);
-        hoverObject.getRenderData().setRenderingOrder(RenderingOrder.MENU_BUTTON_COLOR);
+        hoverObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         
         addChildObject(hoverObject);
     }
@@ -101,7 +101,7 @@ public class ColorsButton extends MenuControlSceneObject {
         getRenderData().getMaterial().setVec4(ColorSwapShader.COLOR, this.color.getRed(),
                 this.color.getGreen(), this.color.getBlue(), 1);
 
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_GRID_BUTTON);
+        getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
     }
 
     private void hover() {

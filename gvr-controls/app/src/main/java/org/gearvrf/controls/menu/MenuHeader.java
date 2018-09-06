@@ -19,6 +19,7 @@ import android.content.res.Resources;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.animation.GVRPositionAnimation;
 import org.gearvrf.controls.R;
 import org.gearvrf.controls.focus.ControlSceneObject;
@@ -71,14 +72,14 @@ public class MenuHeader extends ControlSceneObject implements ItemSelectedListen
         this.frameListener = frameListener;
 
         attachComponent(new GVRMeshCollider(gvrContext, false));
-
+        setName("MenuHeader");
         createMenuTypes();
         createMenuItems(gvrContext);
         organizeItens();
         attachMenuItens();
         setOriginalPosition();
 
-        getRenderData().setRenderingOrder(RenderingOrder.MENU_HEADER);
+        getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
     }
 
     private void createMenuTypes() {

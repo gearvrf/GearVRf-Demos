@@ -15,42 +15,8 @@
 
 package org.gearvrf.controls.util;
 
+import org.gearvrf.GVRRenderData;
+
 public class RenderingOrder {
-
-    public static final int SKYBOX = 0;
-    public static final int CLOUDS = 1;
-    public static final int SUN = 2;
-    public static final int GROUND = 2;
-    public static final int WOOD = 2;
-    public static final int FENCE = 3;
-    public static final int GRASS = 4;
-    public static final int FLOWERS = 5;
-    public static final int WORM = 15;
-    public static final int WORM_SHADOW_HEADER = 13;
-    public static final int WORM_SHADOW_MIDDLE = 11;
-    public static final int WORM_SHADOW_END = 12;
-    public static final int STAR = 1;
-    public static final int APPLE= 17;
-    public static final int APPLE_SHADOW= 10;
-
-    public static final int ORDER_RENDERING_SKYBOX = 0;
-
-    public static final int ORDER_RENDERING_GAMEPAD_FATHER = 98;
-    public static final int ORDER_RENDERING_GAMEPAD = 100;
-    public static final int ORDER_RENDERING_GAMEPAD_BUTTONS = 111;
-    public static final int ORDER_RENDERING_GAMEPAD_BUTTONS_EVENT = 112;
-    public static final int ORDER_RENDERING_TOUCHPAD_AROOWS = 113;
-
-    public static final int ORDER_RENDERING_MENU_ITEM = 19;
-
-    public static final int MENU_FRAME_BG = 20;
-    public static final int MENU_FRAME_TEXT = 21;
-    public static final int MENU_GRID_BUTTON = 21;
-    public static final int MENU_PREVIEW_AREA = 22;
-    public static final int MENU_HEADER = 24;
-    public static final int MENU_HEADER_TEXT = 25;
-    
-    public static final int MENU_BUTTON_COLOR = 23;
-    
-    public static final int MOVE_BUTON = 2000;
+    public static final int MENU_TEXT = GVRRenderData.GVRRenderingOrder.OVERLAY + 1;
 }

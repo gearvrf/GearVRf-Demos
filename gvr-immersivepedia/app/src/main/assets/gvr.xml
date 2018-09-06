@@ -24,7 +24,7 @@
         useProtectedFramebuffer="false"
         useControllerTypes="gaze,controller,weartouchpad"
         useSrgbFramebuffer="false"
-        useMultiview="true">
+        useMultiview="false">
 
         <mono-mode-parms
             monoFullScreen="false"

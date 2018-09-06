@@ -3,7 +3,7 @@ package org.gearvrf.modelviewer2;
 import android.graphics.Color;
 import android.os.Environment;
 import android.util.Log;
-
+import android.opengl.GLES20;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRCollider;
 import org.gearvrf.GVRContext;
@@ -28,6 +28,8 @@ import org.joml.Vector4f;
 
 import java.io.File;
 import java.util.ArrayList;
+
+
 
 public class Controller {
     private static final String TAG = "GVRModelViewer2";
@@ -243,7 +245,7 @@ public class Controller {
                 for (GVRRenderData rdata : renderDatas) {
                     GVRMaterial noMaterial = new GVRMaterial(context, new GVRShaderId(NoTextureShader.class));
                     rdata.setMaterial(noMaterial);
-                    rdata.setDrawMode(4);
+                    rdata.setDrawMode(GLES20.GL_TRIANGLES);
                 }
                 break;
 
@@ -253,24 +255,24 @@ public class Controller {
                 for (GVRRenderData rdata : renderDatas) {
                     rdata.setMaterial(outlineMaterial);
                     rdata.setCullFace(GVRRenderPass.GVRCullFaceEnum.Front);
-                    rdata.setDrawMode(4);
+                    rdata.setDrawMode(GLES20.GL_TRIANGLES);
                 }
                 break;
             case 3:
                 for (GVRRenderData rdata : renderDatas) {
-                    rdata.setDrawMode(1);
+                    rdata.setDrawMode(GLES20.GL_LINES);
                 }
 
                 break;
             case 4:
                 for (GVRRenderData rdata : renderDatas) {
-                    rdata.setDrawMode(3);
+                    rdata.setDrawMode(GLES20.GL_LINE_STRIP);
                 }
 
                 break;
             case 5:
                 for (GVRRenderData rdata : renderDatas) {
-                    rdata.setDrawMode(0);
+                    rdata.setDrawMode(GLES20.GL_POINTS);
                 }
 
                 break;
@@ -683,7 +685,7 @@ public class Controller {
         } else {
             Log.d(TAG, "SkyBox is null");
         }
-
+        current.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.BACKGROUND);
         enableDisableLightOnModel(current, false);
     }
 
