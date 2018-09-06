@@ -40,7 +40,6 @@ import org.gearvrf.io.cursor3d.SelectableBehavior;
 import org.gearvrf.io.cursor3d.SelectableBehavior.ObjectState;
 import org.gearvrf.io.cursor3d.SelectableBehavior.StateChangedListener;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
 import java.io.IOException;
@@ -82,7 +81,7 @@ public class CursorMain extends GVRMain {
         */
 
         cursorManager = new CursorManager(gvrContext, mainScene, devices);
-        GVRModelSceneObject astronautModel, rocketModel;
+        GVRSceneObject astronautModel, rocketModel;
 
         float[] position = new float[]{5.0f, 0.0f, -20.0f};
         try {

@@ -8,7 +8,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
+import org.gearvrf.scene_objects.GVRSceneObject;
 
 import java.util.concurrent.Future;
 
@@ -21,7 +21,7 @@ public class MainScene extends GVRMain {
     public void onInit(GVRContext gvrContext) throws Throwable {
 
         //Load animated model
-        GVRModelSceneObject character = gvrContext.getAssetLoader().loadModel("astro_boy.dae");
+        GVRSceneObject character = gvrContext.getAssetLoader().loadModel("astro_boy.dae");
         character.getTransform().setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f);
         character.getTransform().setScale(6, 6, 6);
         character.getTransform().setPosition(0.0f, -0.5f, -1f);

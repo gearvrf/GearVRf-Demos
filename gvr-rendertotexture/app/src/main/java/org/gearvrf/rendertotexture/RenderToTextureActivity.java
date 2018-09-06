@@ -28,9 +28,9 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSpotLight;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.gearvrf.utility.Log;
 
 import java.io.IOException;
@@ -76,18 +76,18 @@ public final class RenderToTextureActivity extends GVRActivity {
             centerCamera.setBackgroundColor(0.7f, 0.4f, 0, 1);
 
             try {
-                final GVRModelSceneObject model = getGVRContext().getAssetLoader().loadModel("astro_boy.dae", newScene);
+                final GVRSceneObject model = getGVRContext().getAssetLoader().loadModel("astro_boy.dae", newScene);
 
                 model.getTransform()
                         .setRotationByAxis(45.0f, 0.0f, 1.0f, 0.0f)
                         .setScale(2, 2, 2)
                         .setPosition(0.0f, -0.15f, -0.3f);
 
-                final List<GVRAnimation> animations = model.getAnimations();
-                if (animations.size() >= 1) {
-                    final GVRAnimation animation = animations.get(0);
-                    animation.setRepeatMode(GVRRepeatMode.REPEATED).setRepeatCount(-1);
-                    animation.start(getGVRContext().getAnimationEngine());
+                GVRAnimator animations = (GVRAnimator) model.getComponent(GVRAnimator.getComponentType());
+                if (animations != null) {
+                    animations.setRepeatMode(GVRRepeatMode.REPEATED);
+                    animations.setRepeatCount(-1);
+                    animations.start();
                 }
             } catch (final IOException e) {
                 Log.e(TAG, "Failed to load a model: %s", e);

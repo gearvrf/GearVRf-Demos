@@ -1,0 +1,24 @@
+apply plugin: 'com.android.application'
+
+System.setProperty("appName", "gvr-avatar")
+
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] // no auto generation of Android.mk
+        jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+}
