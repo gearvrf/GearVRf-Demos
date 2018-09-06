@@ -24,7 +24,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.util.BoundingBoxCreator;
 import org.joml.Vector3f;
 
@@ -36,9 +36,9 @@ public class Model {
     String name;
     String location;
 
-    GVRModelSceneObject model;
+    GVRSceneObject model;
     ArrayList<GVRMaterial> originalMaterial;
-    List<GVRAnimation> animation;
+    GVRAnimator animation;
     private float currentZoom = 0;
 
 
@@ -89,11 +89,10 @@ public class Model {
         saveRenderData();
 
         // Load Animations
-        animation = model.getAnimations();
-        Log.i(TAG, "Animation" + Integer.toString(animation.size()));
+        animation = (GVRAnimator) model.getComponent(GVRAnimator.getComponentType());
     }
 
-    public List<GVRAnimation> getAnimationsList() {
+    public GVRAnimator getAnimation() {
         return animation;
     }
 
