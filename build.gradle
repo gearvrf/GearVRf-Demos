@@ -4,8 +4,8 @@ buildscript {
         // Gradle 4.1 and higher include support for Google's Maven repo using
         // the google() method. And you need to include this repo to download
         // Android plugin 3.0.0 or higher.
-	    google()
         jcenter()
+	    google()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
@@ -14,7 +14,10 @@ buildscript {
 
 allprojects {
     repositories {
-	    google()
+        maven {
+            url "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+        google()
         jcenter()
     }
 }
