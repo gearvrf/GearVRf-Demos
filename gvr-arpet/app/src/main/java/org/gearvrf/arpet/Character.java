@@ -33,6 +33,8 @@ import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
+import org.gearvrf.arpet.characterstates.CharacterStateMachine;
+import org.gearvrf.arpet.characterstates.CharacterStates;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.OnScaleListener;
@@ -120,6 +122,8 @@ public class Character extends MovableObject implements
 
     private OnPetActionListener mOnPetActionListener;
 
+    CharacterStateMachine mStateMachine;
+
     Character(
             @NonNull GVRContext gvrContext,
             @NonNull GVRMixedReality mixedReality,
@@ -141,6 +145,14 @@ public class Character extends MovableObject implements
 
         mTouchHandler = new TouchHandler();
         initController();
+
+        mStateMachine = new CharacterStateMachine(gvrContext);
+
+        mStateMachine.addState(new CharacterStates.IDLE());
+        mStateMachine.addState(new CharacterStates.LOOKING_AT_CAM(this,
+                gvrContext.getMainScene().getMainCameraRig()));
+        mStateMachine.setCurrentState(CharacterStates.IDLE.ID);
+        mStateMachine.start();
 
     }
 
@@ -216,11 +228,8 @@ public class Character extends MovableObject implements
         mGoToObjectMovement.move();
     }
 
-    public <Target extends TargetObject> void lookAt(@NonNull Target objectToLookAt) {
-        disableGestureDetectors();
-        mLookAtObjectMovement = new LookAtObjectMovement<>(this, objectToLookAt, new LookAtObjectListener<Target>());
-        mCurrentAction = PetAction.LOOK_AT;
-        registerDrawFrameListener();
+    public void lookAtCamera() {
+        mStateMachine.setCurrentState(CharacterStates.LOOKING_AT_CAM.ID);
     }
 
     private synchronized void lookAtObject() {
@@ -329,6 +338,13 @@ public class Character extends MovableObject implements
         out.x = pose[12];
         out.y = pose[13];
         out.z = pose[14];
+    }
+
+    @Override
+    public void updatePose(float[] poseMatrix) {
+        if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)) {
+            super.updatePose(poseMatrix);
+        }
     }
 
     /**

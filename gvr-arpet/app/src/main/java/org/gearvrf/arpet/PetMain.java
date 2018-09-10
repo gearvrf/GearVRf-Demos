@@ -173,10 +173,10 @@ public class PetMain extends GVRMain {
         if (mPet == null) {
             mPet = new Character(mContext, mMixedReality, plane.getCenterPose(),
                     new PetActionListener(), new PetAnimationHelper(mContext));
-            mPet.lookAt(mBallThrowHandler.getBallWrapper());
             mPet.set3DModel(petSceneObject);
             mPet.setBoundaryPlane(plane);
             mScene.addSceneObject(mPet.getAnchor());
+            mPet.lookAtCamera();
         }
 
         // Host pet anchor
@@ -279,7 +279,7 @@ public class PetMain extends GVRMain {
             } else if (action == PetAction.TO_SCREEN) {
                 mBallThrowHandler.enable();
                 mBallThrowHandler.reset();
-                mPet.lookAt(mBallThrowHandler.getBallWrapper());
+                mPet.lookAtCamera();
             }
         }
     }
