@@ -71,7 +71,7 @@ public class PetMain extends GVRMain {
     private PlaneHandler planeHandler;
 
     private Character mPet;
-    private GVRModelSceneObject petSceneObject;
+
 
     private IPetMode mCurrentMode;
     private HandlerModeChange mHandlerModeChange;
@@ -108,7 +108,6 @@ public class PetMain extends GVRMain {
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
 
-        petSceneObject = LoadModelHelper.loadModelSceneObject(gvrContext, LoadModelHelper.PET_MODEL_PATH);
 
         mCloudAnchorManager = new CloudAnchorManager();
 
@@ -162,7 +161,6 @@ public class PetMain extends GVRMain {
 
         initPetActions(mPet);
 
-        mPet.set3DModel(petSceneObject);
         mPet.setBoundaryPlane(plane);
         mScene.addSceneObject(mPet.getAnchor());
         mPet.setCurrentAction(PetActions.TO_CAMERA.ID);
@@ -252,7 +250,6 @@ public class PetMain extends GVRMain {
 
             mCurrentMode = new ShareAnchorMode(mContext);
             mCurrentMode.enter();
-
         }
 
         @Override

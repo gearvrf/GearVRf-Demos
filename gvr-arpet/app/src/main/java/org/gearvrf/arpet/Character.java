@@ -39,6 +39,7 @@ import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
+import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -79,6 +80,7 @@ public class Character extends AnchoredObject implements
 
     private final Map<Integer, IPetAction> mPetActions;
     private GVRDrawFrameListener mDrawFrameHandler;
+    private GVRModelSceneObject m3DModel;
 
     Character(
             @NonNull GVRContext gvrContext,
@@ -91,7 +93,6 @@ public class Character extends AnchoredObject implements
         mContext = gvrContext;
         mMixedReality = mixedReality;
         mPetAnimationHelper = petAnimationHelper;
-        createShadow();
 
         registerGestureDetectors();
 
@@ -100,6 +101,11 @@ public class Character extends AnchoredObject implements
         mPetActions = new HashMap<>();
         mCurrentAction = null;
         mDrawFrameHandler = null;
+
+        createShadow();
+
+        // TODO: Load at thread
+        load3DModel();
 
         initController();
     }
@@ -130,16 +136,15 @@ public class Character extends AnchoredObject implements
         });
     }
 
-    public void set3DModel(GVRModelSceneObject petObject) {
-            addChildObject(petObject);
-            petObject.getTransform().setScale(0.001f, 0.001f, 0.001f);
-            petObject.setName(PET_NAME);
-            // FIXME: Set appropriate size for collider
-            GVRBoxCollider boxCollider = new GVRBoxCollider(mContext);
-            boxCollider.setHalfExtents(0.05f, 0.05f, 0.05f);
+    private void load3DModel() {
+        m3DModel = LoadModelHelper.loadModelSceneObject(mContext, LoadModelHelper.PET_MODEL_PATH);
 
-        mPetAnimationHelper.setAnimations(petObject.getAnimations(),
-                (GVRAnimator) petObject.getComponent(GVRAnimator.getComponentType()));
+        addChildObject(m3DModel);
+        m3DModel.getTransform().setScale(0.001f, 0.001f, 0.001f);
+        m3DModel.setName(PET_NAME);
+            // FIXME: Set appropriate size for collider
+        GVRBoxCollider boxCollider = new GVRBoxCollider(mContext);
+        boxCollider.setHalfExtents(0.05f, 0.05f, 0.05f);
     }
 
     private void createShadow() {
