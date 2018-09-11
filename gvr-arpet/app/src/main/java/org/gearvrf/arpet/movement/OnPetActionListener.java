@@ -17,18 +17,6 @@
 
 package org.gearvrf.arpet.movement;
 
-/**
- * Interface called when movement occurs.
- *
- * @param <Movable>  The object to be moved.
- * @param <Target>   The target object.
- * @param <Position> The new position returned when movement occurs.
- */
-public interface OnMovementListener<Movable extends MovableObject, Target extends TargetObject, Position> {
-
-    void onStartMove();
-
-    void onMove(Movable movable, Target target, Position position);
-
-    void onStopMove();
+public interface OnPetActionListener {
+    void onActionEnd(IPetAction action);
 }

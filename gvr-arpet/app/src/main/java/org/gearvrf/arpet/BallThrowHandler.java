@@ -91,15 +91,24 @@ public class BallThrowHandler {
     }
 
     public void enable() {
+        final GVRSceneObject parent = mBall.getParent();
+
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
+        if (parent != null) {
+            parent.removeChildObject(mBall);
+        }
+
         mScene.getMainCameraRig().addChildObject(mBall);
         mContext.getApplication().getEventReceiver().addListener(mEventListener);
     }
 
     public void disable() {
+        final GVRSceneObject parent = mBall.getParent();
         thrown = false;
         resetRigidBody();
-        mBall.getParent().removeChildObject(mBall);
+        if (parent != null) {
+            parent.removeChildObject(mBall);
+        }
         mContext.getApplication().getEventReceiver().removeListener(mEventListener);
     }
 

@@ -24,25 +24,22 @@ import android.widget.Toast;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
-import org.gearvrf.arpet.Character.PetAction;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.constant.ApiConstants;
-import org.gearvrf.arpet.gesture.ScalableObjectManager;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
+import org.gearvrf.arpet.movement.IPetAction;
+import org.gearvrf.arpet.movement.OnPetActionListener;
+import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
-import org.gearvrf.arpet.petobjects.AnchoredScalableObject;
-import org.gearvrf.arpet.petobjects.Bed;
-import org.gearvrf.arpet.petobjects.Bowl;
-import org.gearvrf.arpet.petobjects.Hydrant;
-import org.gearvrf.arpet.petobjects.Toy;
 import org.gearvrf.arpet.sharing.AppConnectionManager;
 import org.gearvrf.arpet.sharing.UiMessage;
 import org.gearvrf.arpet.sharing.UiMessageHandler;
@@ -103,7 +100,7 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
-        //mBallThrowHandler.enable();
+        mBallThrowHandler.enable();
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
@@ -137,14 +134,8 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
-
         if (mPet == null) {
-            mPet = new Character(mContext, mMixedReality, plane.getCenterPose(),
-                    new PetActionListener(), new PetAnimationHelper(mContext));
-            mPet.set3DModel(petSceneObject);
-            mPet.setBoundaryPlane(plane);
-            mScene.addSceneObject(mPet.getAnchor());
-            mPet.lookAtCamera();
+            createPet(plane);
         }
 
         // Host pet anchor
@@ -165,51 +156,57 @@ public class PetMain extends GVRMain {
         //movePetToBed();
     }
 
+    private void createPet(final GVRPlane plane) {
+        mPet = new Character(mContext, mMixedReality, plane.getCenterPose(),
+                new PetAnimationHelper(mContext));
+
+        initPetActions(mPet);
+
+        mPet.set3DModel(petSceneObject);
+        mPet.setBoundaryPlane(plane);
+        mScene.addSceneObject(mPet.getAnchor());
+        mPet.setCurrentAction(PetActions.TO_CAMERA.ID);
+
+        // Enable action animations
+        mPet.enableAction();
+    }
+
+    private void initPetActions(Character pet) {
+        // TODO: move this to the Character class
+        GVRTransform camTrans = mContext.getMainScene().getMainCameraRig().getTransform();
+
+        pet.addAction(new PetActions.IDLE(pet, camTrans));
+
+        pet.addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall().getTransform(),
+                new OnPetActionListener() {
+                    @Override
+                    public void onActionEnd(IPetAction action) {
+                        mPet.setCurrentAction(PetActions.TO_CAMERA.ID);
+                        mPet.getChildByIndex(0).setEnable(false);
+                        mBallThrowHandler.disable();
+                        // TODO: Pet take the ball
+                    }
+                }));
+
+        pet.addAction(new PetActions.TO_CAMERA(pet, camTrans,
+                new OnPetActionListener() {
+                    @Override
+                    public void onActionEnd(IPetAction action) {
+                        pet.setCurrentAction(PetActions.IDLE.ID);
+                        // TODO: Improve this Ball handler api
+                        mBallThrowHandler.enable();
+                        mBallThrowHandler.reset();
+                        mPet.getChildByIndex(0).setEnable(true);
+                    }
+                }));
+    }
+
     private void setEditModeEnabled(boolean enabled) {
         if (mPet != null) {
             mPet.setRotationEnabled(enabled);
             mPet.setScaleEnabled(enabled);
             mPet.setDraggingEnabled(enabled);
         }
-    }
-
-    private void movePetToScreen() {
-        mPetContext.runDelayedOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                mPet.goToScreen();
-            }
-        }, 1500);
-    }
-
-    private void movePetToBed() {
-        mPetContext.runDelayedOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                mPet.goToBed();
-            }
-        }, 1500);
-    }
-
-    private void addPetObjectsToPlane(GVRPlane plane) {
-
-        AnchoredScalableObject[] objects = {
-                new Bed(mContext, mMixedReality, plane.getCenterPose()),
-                new Bowl(mContext, mMixedReality, plane.getCenterPose()),
-                new Hydrant(mContext, mMixedReality, plane.getCenterPose()),
-                new Toy(mContext, mMixedReality, plane.getCenterPose())
-        };
-
-        // Anchor objects to the plane
-        for (AnchoredScalableObject scalableObject : objects) {
-            mScene.addSceneObject(scalableObject.getAnchor());
-        }
-
-        // Manages scalable objects
-        ScalableObjectManager.INSTANCE.addScalableObject(objects);
-
-        // Enables objects resizing on pet scale
-        ScalableObjectManager.INSTANCE.setAutoScaleObjectsFrom(mPet);
     }
 
     @Override
@@ -226,32 +223,7 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onBallThrown(BallWrapper ballWrapper) {
-//        mBallThrowHandler.setResetOnTouchEnabled(false);
-        mPet.goToBall(ballWrapper);
-    }
-
-    private class PetActionListener implements OnPetActionListener {
-
-        @Override
-        public void onActionStart(int action) {
-            Log.d(TAG, "onActionStart: " + action);
-            if (action == PetAction.TO_BALL) {
-                mBallThrowHandler.setResetOnTouchEnabled(false);
-            }
-        }
-
-        @Override
-        public void onActionEnd(int action) {
-            Log.d(TAG, "onActionEnd: " + action);
-            if (action == PetAction.TO_BALL) {
-                mBallThrowHandler.disable();
-                mPet.goToScreen();
-            } else if (action == PetAction.TO_SCREEN) {
-                mBallThrowHandler.enable();
-                mBallThrowHandler.reset();
-                mPet.lookAtCamera();
-            }
-        }
+        mPet.setCurrentAction(PetActions.TO_BALL.ID);
     }
 
     private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {

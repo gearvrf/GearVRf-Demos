@@ -17,18 +17,9 @@
 
 package org.gearvrf.arpet.movement;
 
-public class SimpleMovementListener<Movable extends MovableObject, Target extends TargetObject, Position>
-        implements OnMovementListener<Movable, Target, Position> {
-
-    @Override
-    public void onStartMove() {
-    }
-
-    @Override
-    public void onMove(Movable movable, Target target, Position position) {
-    }
-
-    @Override
-    public void onStopMove() {
-    }
+public interface IPetAction {
+    int id();
+    void entry();
+    void exit();
+    void run();
 }
