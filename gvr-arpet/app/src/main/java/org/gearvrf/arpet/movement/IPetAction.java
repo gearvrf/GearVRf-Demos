@@ -21,5 +21,5 @@ public interface IPetAction {
     int id();
     void entry();
     void exit();
-    void run();
+    void run(float frameTime);
 }

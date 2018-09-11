@@ -18,7 +18,9 @@
 package org.gearvrf.arpet.movement;
 
 import org.gearvrf.GVRTransform;
+import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.arpet.AnchoredObject;
+import org.gearvrf.arpet.Character;
 import org.gearvrf.utility.Log;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -30,25 +32,41 @@ public class PetActions {
     private static final String TAG = "CharacterStates";
 
     private static abstract class PetAction implements IPetAction {
+        protected final Character mCharacter;
+        protected final GVRTransform mTargetTransform;
         protected final OnPetActionListener mListener;
+        protected GVRAnimation mAnimation;
 
-        protected PetAction(OnPetActionListener listener) {
+        protected PetAction(Character character, GVRTransform target,
+                            OnPetActionListener listener) {
+            mCharacter = character;
+            mTargetTransform = target;
             mListener = listener;
+            mAnimation = null;
+        }
+
+        public void setAnimation(GVRAnimation animation) {
+            mAnimation = animation;
+            mAnimation.reset();
+        }
+
+        long mElapsedTime = 0;
+        protected void animate(float frameTime) {
+            int duration = (int)mAnimation.getDuration() * 1000;
+            mElapsedTime += (frameTime * 1000);
+            mElapsedTime = mElapsedTime % duration;
+            // mAnimation.animate((float)mElapsedTime / (float)duration);
         }
     }
 
     public static class IDLE extends PetAction {
         public static final int ID = 0;
 
-        private final AnchoredObject mCharacter;
-        private final GVRTransform mTargetTransform;
         private float mTurnSpeed = 0.05f;
 
-        public IDLE(AnchoredObject character, GVRTransform target) {
-            super(null);
-
-            mCharacter = character;
-            mTargetTransform = target;
+        public IDLE(Character character, GVRTransform target) {
+            super(character, target, null);
+            setAnimation(character.getAnimation(1));
         }
 
         @Override
@@ -72,7 +90,7 @@ public class PetActions {
         private Vector3f mLookAt = new Vector3f();
 
         @Override
-        public void run() {
+        public void run(float frameTime) {
             GVRTransform pTrans = mCharacter.getParent().getTransform();
             GVRTransform cTrans = mCharacter.getTransform();
             pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
@@ -112,23 +130,23 @@ public class PetActions {
             // Multiply by character rotation.
             cRot.mul(pRot);
             // Set the new rotation to the Character
-            mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
+            cTrans.setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
+
+            if (mAnimation != null) {
+                //animate(frameTime);
+                //cTrans.setPosition(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
+            }
         }
     }
 
     public static class TO_CAMERA extends PetAction {
         public static final int ID = 1;
-        private final AnchoredObject mCharacter;
-        private final GVRTransform mTargetTransform;
         private float mTurnSpeed = 0.05f;
         private float mWalkSpeed = 0.005f;
 
-        public TO_CAMERA(AnchoredObject character, GVRTransform target,
+        public TO_CAMERA(Character character, GVRTransform target,
                          OnPetActionListener listener) {
-            super(listener);
-
-            mCharacter = character;
-            mTargetTransform = target;
+            super(character, target, listener);
         }
 
         @Override
@@ -152,7 +170,7 @@ public class PetActions {
         private Vector3f mLookAt = new Vector3f();
 
         @Override
-        public void run() {
+        public void run(float frameTime) {
             GVRTransform pTrans = mCharacter.getParent().getTransform();
             GVRTransform cTrans = mCharacter.getTransform();
             pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
@@ -211,17 +229,12 @@ public class PetActions {
 
     public static class TO_BALL extends PetAction {
         public static final int ID = 2;
-        private final AnchoredObject mCharacter;
-        private final GVRTransform mTargetTransform;
         private float mTurnSpeed = 0.05f;
         private float mWalkSpeed = 0.005f;
 
-        public TO_BALL(AnchoredObject character, GVRTransform target,
+        public TO_BALL(Character character, GVRTransform target,
                        OnPetActionListener listener) {
-            super(listener);
-
-            mCharacter = character;
-            mTargetTransform = target;
+            super(character, target, listener);
         }
 
         @Override
@@ -245,7 +258,7 @@ public class PetActions {
         private Vector3f mLookAt = new Vector3f();
 
         @Override
-        public void run() {
+        public void run(float frameTime) {
             GVRTransform pTrans = mCharacter.getParent().getTransform();
             GVRTransform cTrans = mCharacter.getTransform();
             pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),

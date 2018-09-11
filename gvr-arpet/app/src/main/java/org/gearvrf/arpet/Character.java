@@ -29,6 +29,8 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
@@ -142,6 +144,10 @@ public class Character extends AnchoredObject implements
             // FIXME: Set appropriate size for collider
         GVRBoxCollider boxCollider = new GVRBoxCollider(mContext);
         boxCollider.setHalfExtents(0.05f, 0.05f, 0.05f);
+    }
+
+    public GVRAnimation getAnimation(int i) {
+        return m3DModel.getAnimations().get(i);
     }
 
     private void createShadow() {
@@ -305,7 +311,7 @@ public class Character extends AnchoredObject implements
     private class DrawFrameHandler implements GVRDrawFrameListener {
         IPetAction activeAction = null;
         @Override
-        public void onDrawFrame(float v) {
+        public void onDrawFrame(float frameTime) {
             if (mCurrentAction != activeAction) {
                 if (activeAction != null) {
                     activeAction.exit();
@@ -313,7 +319,7 @@ public class Character extends AnchoredObject implements
                 activeAction = mCurrentAction;
                 activeAction.entry();
             } else if (activeAction != null) {
-                activeAction.run();
+                activeAction.run(frameTime);
             }
         }
     }

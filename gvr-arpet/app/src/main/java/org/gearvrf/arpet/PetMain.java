@@ -199,7 +199,6 @@ public class PetMain extends GVRMain {
                         // TODO: Improve this Ball handler api
                         mBallThrowHandler.enable();
                         mBallThrowHandler.reset();
-                        mPet.getChildByIndex(0).setEnable(true);
                     }
                 }));
     }
