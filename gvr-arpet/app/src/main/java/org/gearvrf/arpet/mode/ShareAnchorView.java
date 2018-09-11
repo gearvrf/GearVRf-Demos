@@ -21,17 +21,19 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     private TextView mMessage;
     private ProgressBar mProgressBar;
     private ProgressHandler mProgressHandler;
-    private OnShareAnchorModeListener mSendingInviteListener;
-    private ImageView mCheckImage;
+    private ImageView mCheckImage, mPairing;
+    private Handler mHandler;
+    OnGuestOrHostListener mGuestOrHostListener;
 
     public ShareAnchorView(GVRContext gvrContext) {
         super(gvrContext);
         mContext = gvrContext;
         mInvitationObject = new GVRViewSceneObject(mContext, R.layout.share_anchor_layout, this);
+        mHandler = new Handler();
     }
 
-    public void setSendingInviteListener(OnShareAnchorModeListener listener) {
-        mSendingInviteListener = listener;
+    public void setListenerShareAnchorMode(OnGuestOrHostListener listener) {
+        mGuestOrHostListener = listener;
     }
 
     @Override
@@ -41,6 +43,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mMessage = view.findViewById(R.id.message);
         mProgressBar = view.findViewById(R.id.progress);
         mCheckImage = view.findViewById(R.id.check);
+        mPairing = view.findViewById(R.id.image_action);
         mGuestButton.setOnClickListener(this);
         mHostButton.setOnClickListener(this);
         mProgressHandler = new ProgressHandler(mProgressBar, 10000);
@@ -54,21 +57,18 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mInvitationObject.getRenderData().getMaterial().setColor(0.6f, 0.6f, 0.6f);
     }
 
-    public void OnSending() {
-        mSendingInviteListener.OnSending();
-    }
-
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.guest_button) {
-            mGuestButton.post(new Runnable() {
-                @Override
-                public void run() {
-                    modeGuest();
-                }
+            mGuestOrHostListener.OnGuest();
+            mGuestButton.post(() -> {
+                modeGuest();
+                mHandler.postDelayed(() -> inviteAcceptedGuest(), 10000);
             });
         } else if (view.getId() == R.id.host_button) {
+            mGuestOrHostListener.OnHost();
             modeHost();
+            mHandler.postDelayed(() -> inviteAcceptedHost(), 10000);
         }
     }
 
@@ -91,6 +91,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCheckImage.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     private void inviteAcceptedHost() {
@@ -98,6 +99,12 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCheckImage.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    private void pairing() {
+        mPairing.setBackgroundResource(R.drawable.ic_pairing);
+        mMessage.setText(R.string.looking_the_same_thing);
     }
 
     class ProgressHandler extends Handler {

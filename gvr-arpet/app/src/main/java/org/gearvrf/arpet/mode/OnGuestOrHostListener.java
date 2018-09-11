@@ -1,6 +1,6 @@
 package org.gearvrf.arpet.mode;
 
-public interface OnWaitingGuestHostListener {
+public interface OnGuestOrHostListener {
 
         void OnHost();
 

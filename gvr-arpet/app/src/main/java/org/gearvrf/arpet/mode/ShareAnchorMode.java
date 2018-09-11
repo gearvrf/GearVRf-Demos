@@ -4,12 +4,13 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 
 public class ShareAnchorMode extends BasePetMode {
-    ShareAnchorView mSendingInvitationScene;
+    private OnGuestOrHostListener mGuestOrHostListener;
 
-    public ShareAnchorMode(GVRContext context) {
+    public ShareAnchorMode(GVRContext context, OnGuestOrHostListener listener) {
         super(context, new ShareAnchorView(context));
+        mGuestOrHostListener = listener;
 
-        ((ShareAnchorView) mModeScene).setSendingInviteListener(new HandlerSendingInvitation());
+        ((ShareAnchorView) mModeScene).setListenerShareAnchorMode(new HandlerSendingInvitation());
     }
 
     @Override
@@ -28,11 +29,16 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
 
-    private class HandlerSendingInvitation implements OnShareAnchorModeListener {
+    private class HandlerSendingInvitation implements OnGuestOrHostListener {
 
         @Override
-        public void OnSending() {
-            mSendingInvitationScene.OnSending();
+        public void OnHost() {
+            mGuestOrHostListener.OnHost();
+        }
+
+        @Override
+        public void OnGuest() {
+
         }
     }
 

@@ -34,6 +34,7 @@ import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
+import org.gearvrf.arpet.mode.OnGuestOrHostListener;
 import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.IPetAction;
@@ -76,6 +77,7 @@ public class PetMain extends GVRMain {
     private IPetMode mCurrentMode;
     private HandlerModeChange mHandlerModeChange;
     private HandlerBackToHud mHandlerBackToHud;
+    private HandlerGuestOrHost handlerGuestOrHost;
 
     private AppConnectionManager mConnectionManager;
     private CloudAnchorManager mCloudAnchorManager;
@@ -100,13 +102,16 @@ public class PetMain extends GVRMain {
         mScene.getRoot().attachComponent(world);
 
         mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
+
         mBallThrowHandler.enable();
+
 
         planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
         mMixedReality.registerPlaneListener(planeHandler);
 
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
+        handlerGuestOrHost = new HandlerGuestOrHost();
 
 
         mCloudAnchorManager = new CloudAnchorManager();
@@ -235,7 +240,7 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onPlayBall() {
-
+            mBallThrowHandler.enable();
         }
 
         @Override
@@ -248,7 +253,7 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new ShareAnchorMode(mContext);
+            mCurrentMode = new ShareAnchorMode(mContext, handlerGuestOrHost);
             mCurrentMode.enter();
         }
 
@@ -280,6 +285,20 @@ public class PetMain extends GVRMain {
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mContext, mHandlerModeChange);
             mCurrentMode.enter();
+        }
+    }
+
+    public class HandlerGuestOrHost implements OnGuestOrHostListener{
+
+        @Override
+        public void OnHost() {
+            Log.d(TAG, "Search devices");
+
+        }
+
+        @Override
+        public void OnGuest() {
+
         }
     }
 
