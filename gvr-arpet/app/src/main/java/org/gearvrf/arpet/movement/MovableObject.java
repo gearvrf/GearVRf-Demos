@@ -24,7 +24,8 @@ import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.mixedreality.GVRMixedReality;
 
 public class MovableObject extends AnchoredObject {
-    public MovableObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
-        super(context, mixedReality, poseMatrix);
+    public MovableObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality,
+                         @NonNull float[] poseMatrix, @ObjectType int objectType) {
+        super(context, mixedReality, poseMatrix, objectType);
     }
 }

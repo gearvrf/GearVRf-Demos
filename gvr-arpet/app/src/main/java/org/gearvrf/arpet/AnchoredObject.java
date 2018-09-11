@@ -17,12 +17,16 @@
 
 package org.gearvrf.arpet;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * Class representing a {@link GVRSceneObject} with an {@link GVRAnchor} and its AR pose matrix
@@ -31,16 +35,32 @@ public abstract class AnchoredObject extends GVRSceneObject {
 
     final String TAG = getClass().getSimpleName();
 
+    @IntDef({ObjectType.CHARACTER,
+            ObjectType.BED,
+            ObjectType.BOWL,
+            ObjectType.HYDRANT})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ObjectType {
+        int CHARACTER = 0;
+        int BED = 1;
+        int BOWL = 2;
+        int HYDRANT = 3;
+    }
+
     private GVRAnchor mAnchor;
     private float[] mPoseMatrix;
     private GVRMixedReality mMixedReality;
+    @ObjectType
+    private int mObjectType;
 
-    public AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality, @NonNull float[] poseMatrix) {
+    public AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality,
+                          @NonNull float[] poseMatrix, @ObjectType int objectType) {
         super(context);
         this.mMixedReality = mixedReality;
         this.mPoseMatrix = poseMatrix;
         this.mAnchor = mixedReality.createAnchor(poseMatrix);
         this.mAnchor.attachSceneObject(this);
+        this.mObjectType = objectType;
     }
 
     public void updatePose(float[] poseMatrix) {
@@ -66,5 +86,10 @@ public abstract class AnchoredObject extends GVRSceneObject {
         }
         mAnchor = anchor;
         mAnchor.attachSceneObject(this);
+    }
+
+    @ObjectType
+    public int getObjectType() {
+        return mObjectType;
     }
 }

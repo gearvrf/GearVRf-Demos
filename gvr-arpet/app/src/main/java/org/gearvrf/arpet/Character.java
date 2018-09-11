@@ -29,16 +29,13 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
-import org.gearvrf.arpet.movement.IPetAction;
-import org.gearvrf.arpet.movement.OnPetActionListener;
-import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
+import org.gearvrf.arpet.movement.IPetAction;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -88,7 +85,7 @@ public class Character extends AnchoredObject implements
             @NonNull float[] pose,
             @NonNull PetAnimationHelper petAnimationHelper) {
 
-        super(gvrContext, mixedReality, pose);
+        super(gvrContext, mixedReality, pose, ObjectType.CHARACTER);
 
         mContext = gvrContext;
         mMixedReality = mixedReality;
