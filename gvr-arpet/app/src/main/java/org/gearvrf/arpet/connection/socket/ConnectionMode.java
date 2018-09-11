@@ -15,14 +15,17 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.connection.socket;
 
-import org.gearvrf.arpet.connection.Device;
-import org.gearvrf.arpet.connection.DeviceType;
+import android.support.annotation.IntDef;
 
-public class PhoneTypeDeviceFilter implements DeviceFilter {
-    @Override
-    public boolean meet(Device device) {
-        return device.getType() == DeviceType.PHONE;
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.SOURCE)
+@IntDef({ConnectionMode.CLIENT, ConnectionMode.SERVER, ConnectionMode.NONE})
+public @interface ConnectionMode {
+    int CLIENT = 0;
+    int SERVER = 1;
+    int NONE = -1;
 }

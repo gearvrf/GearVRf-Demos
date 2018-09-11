@@ -19,19 +19,18 @@ package org.gearvrf.arpet.connection.socket;
 
 import android.support.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
+import org.gearvrf.arpet.connection.exception.ClosedConnectionException;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 
 public class OngoingSocketConnectionThread extends SocketConnectionThread implements Connection {
@@ -41,7 +40,6 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
     private OutputStream mOutStream;
     private OnMessageListener mMessageListener;
     private OnConnectionListener mOnConnectionListener;
-    private Gson mGson;
 
     public OngoingSocketConnectionThread(
             @NonNull Socket socket,
@@ -51,7 +49,6 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
         mSocket = socket;
         mMessageListener = messageListener;
         mOnConnectionListener = listener;
-        mGson = new GsonBuilder().create();
 
         try {
             mInStream = socket.getInputStream();
@@ -68,29 +65,16 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
 
         while (true) {
             try {
-
-                ByteArrayOutputStream result = new ByteArrayOutputStream();
-                byte[] buffer = new byte[1024];
-                int length;
-
-                while ((length = mInStream.read(buffer)) != -1) {
-                    result.write(buffer, 0, length);
-                    if (mInStream.available() == 0) {
-                        break;
-                    }
+                Message message = readMessage();
+                if (message != null) {
+                    mMessageListener.onMessageReceived(message);
                 }
-
-                Message message = mGson.fromJson(result.toString("UTF-8"), Message.class);
-                mMessageListener.onMessageReceived(message);
-
             } catch (IOException e) {
-                if (!mSocket.isConnected()) {
-                    mOnConnectionListener.onConnectionLost(this, null);
-                } else {
-                    mOnConnectionListener.onConnectionLost(this,
-                            new ConnectionException("Error reading from remote " + getRemoteDevice(), e));
-                }
+                handleIOException(e);
                 break;
+
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -98,10 +82,24 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
     @Override
     public void write(Message message) {
         try {
-            String m = mGson.toJson(message);
-            mOutStream.write(mGson.toJson(message).getBytes());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(mOutStream);
+            objectOutputStream.writeObject(message);
+            objectOutputStream.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            handleIOException(e);
+        }
+    }
+
+    private Message readMessage() throws IOException, ClassNotFoundException {
+        ObjectInputStream objectInputStream = new ObjectInputStream(mInStream);
+        return (Message) objectInputStream.readObject();
+    }
+
+    private void handleIOException(IOException e) {
+        if (!mSocket.isConnected()) {
+            mOnConnectionListener.onConnectionLost(this, new ClosedConnectionException(e));
+        } else {
+            mOnConnectionListener.onConnectionLost(this, new ConnectionException(e));
         }
     }
 

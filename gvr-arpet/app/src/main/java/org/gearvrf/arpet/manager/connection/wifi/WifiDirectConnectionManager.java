@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.socket.SocketConnectionThreadFactory;
-import org.gearvrf.arpet.manager.connection.BaseSocketConnectionManager;
+import org.gearvrf.arpet.connection.socket.BaseSocketConnectionManager;
 
 public class WifiDirectConnectionManager extends BaseSocketConnectionManager {
 

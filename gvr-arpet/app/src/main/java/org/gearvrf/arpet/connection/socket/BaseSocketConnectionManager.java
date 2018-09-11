@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection;
+package org.gearvrf.arpet.connection.socket;
 
 import android.support.annotation.NonNull;
 
@@ -27,10 +27,6 @@ import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
-import org.gearvrf.arpet.connection.socket.IncomingSocketConnectionThread;
-import org.gearvrf.arpet.connection.socket.OngoingSocketConnectionThread;
-import org.gearvrf.arpet.connection.socket.OutgoingSocketConnectionThread;
-import org.gearvrf.arpet.connection.socket.SocketConnectionThreadFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -47,8 +43,12 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     private int mTotalConnectionsDesired, mTotalConnectionsFailed;
     private List<OutgoingSocketConnectionThread> mOutgoingSocketConnections;
 
+    @ConnectionMode
+    private int mConnectionMode;
+
     public BaseSocketConnectionManager() {
         mOutgoingSocketConnections = new ArrayList<>();
+        mConnectionMode = ConnectionMode.NONE;
     }
 
     @Override
@@ -93,8 +93,10 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
             mIncomingSocketConnection = null;
             if (getTotalConnected() == 0) {
                 setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
             } else {
                 setState(ManagerState.CONNECTED);
+                mConnectionMode = ConnectionMode.SERVER;
             }
         }
     }
@@ -141,11 +143,21 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
             }
         }
         setState(getTotalConnected() > 0 ? ManagerState.CONNECTED : ManagerState.IDLE);
+        mConnectionMode = getTotalConnected() > 0 ? ConnectionMode.CLIENT : ConnectionMode.NONE;
     }
 
     @Override
     public synchronized int getTotalConnected() {
         return mOngoingConnections.size();
+    }
+
+    public boolean isConnectedAs(@ConnectionMode int mode) {
+        return mConnectionMode == mode;
+    }
+
+    @ConnectionMode
+    public int getConnectionMode() {
+        return mConnectionMode;
     }
 
     @Override
@@ -157,6 +169,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
                 }
                 mOngoingConnections.clear();
                 setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -168,47 +181,48 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     // CONNECTION LISTENER METHODS
 
     @Override
-    public void onConnectionEstablished(Connection connection) {
+    public synchronized void onConnectionEstablished(Connection connection) {
         mOngoingConnections.add(connection);
         ((OngoingSocketConnectionThread) connection).start();
         if (checkOutgoingConnectionThreadsFinished()) {
             setState(ManagerState.CONNECTED);
+            mConnectionMode = ConnectionMode.CLIENT;
         }
     }
 
     @Override
-    public void onConnectionFailure(ConnectionException error) {
-        synchronized (this) {
-            mTotalConnectionsFailed++;
-            if (checkOutgoingConnectionThreadsFinished()) {
-                if (getTotalConnected() == 0) {
-                    setState(ManagerState.IDLE);
-                }
-            } else if (stateIs(ManagerState.LISTENING_TO_CONNECTIONS)) {
-                // When failed while accepting the first connection then set final state IDLE
-                // since the listener thread is stopped when any error occurs
-                if (getTotalConnected() == 0) {
-                    setState(ManagerState.IDLE);
-                }
-
+    public synchronized void onConnectionFailure(ConnectionException error) {
+        mTotalConnectionsFailed++;
+        if (checkOutgoingConnectionThreadsFinished()) {
+            if (getTotalConnected() == 0) {
+                setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
             }
+        } else if (stateIs(ManagerState.LISTENING_TO_CONNECTIONS)) {
+            // When failed while accepting the first connection then set final state IDLE
+            // since the listener thread is stopped when any error occurs
+            if (getTotalConnected() == 0) {
+                setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
+            }
+
         }
     }
 
     @Override
-    public void onConnectionLost(Connection connection, ConnectionException error) {
+    public synchronized void onConnectionLost(Connection connection, ConnectionException error) {
         synchronized (this) {
             mOngoingConnections.remove(connection);
             if (mOngoingConnections.size() == 0) {
                 setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
             }
         }
     }
 
-    private boolean checkOutgoingConnectionThreadsFinished() {
+    private synchronized boolean checkOutgoingConnectionThreadsFinished() {
         int connectionsSuccessful = mOngoingConnections.size();
         return stateIs(ManagerState.CONNECTING_TO_REMOTE)
                 && (connectionsSuccessful + mTotalConnectionsFailed) == mTotalConnectionsDesired;
     }
-
 }

@@ -18,11 +18,29 @@
 package org.gearvrf.arpet.sharing;
 
 import org.gearvrf.arpet.connection.Device;
-import org.gearvrf.arpet.connection.DeviceType;
+import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.connection.socket.ConnectionMode;
 
-public class PhoneTypeDeviceFilter implements DeviceFilter {
-    @Override
-    public boolean meet(Device device) {
-        return device.getType() == DeviceType.PHONE;
-    }
+import java.util.List;
+
+public interface IAppConnectionManager {
+
+    void startUsersInvitation();
+
+    void stopUsersInvitation();
+
+    void acceptInvitation();
+
+    boolean isConnectedAs(@ConnectionMode int mode);
+
+    List<Device> getConnectedDevices();
+
+    @ConnectionMode
+    int getConnectionMode();
+
+    int getTotalConnected();
+
+    void sendMessage(Message message);
+
+    void onActivityResult(int requestCode, int resultCode);
 }

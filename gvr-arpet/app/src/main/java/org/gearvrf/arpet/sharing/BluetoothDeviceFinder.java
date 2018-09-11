@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.gearvrf.arpet.manager.connection.bluetooth.BTDevice;
 
@@ -86,6 +87,8 @@ public class BluetoothDeviceFinder extends BroadcastReceiver {
 
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
+            BluetoothDevice bt = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            Log.d("naveca", "onReceive: " + bt.getName() + ", " + bt.getBluetoothClass().getMajorDeviceClass());
             BTDevice device = new BTDevice(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
 
             if (mDeviceFilter == null || mDeviceFilter.meet(device)) {

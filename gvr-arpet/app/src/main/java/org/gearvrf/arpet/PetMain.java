@@ -26,10 +26,12 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.animation.PetAnimationHelper;
+import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
-import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
+import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.manager.connection.bluetooth.LocalBluetoothDevice;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
@@ -42,18 +44,17 @@ import org.gearvrf.arpet.movement.OnPetActionListener;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.sharing.AppConnectionManager;
+import org.gearvrf.arpet.sharing.IAppConnectionManager;
 import org.gearvrf.arpet.sharing.UiMessage;
 import org.gearvrf.arpet.sharing.UiMessageHandler;
 import org.gearvrf.arpet.sharing.UiMessageType;
 import org.gearvrf.arpet.util.ContextUtils;
-import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.physics.GVRWorld;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -79,8 +80,8 @@ public class PetMain extends GVRMain {
     private HandlerBackToHud mHandlerBackToHud;
     private HandlerGuestOrHost handlerGuestOrHost;
 
-    private AppConnectionManager mConnectionManager;
     private CloudAnchorManager mCloudAnchorManager;
+    private IAppConnectionManager mConnectionManager;
 
     public PetMain(PetActivity.PetContext petContext) {
         mPetContext = petContext;
@@ -152,7 +153,7 @@ public class PetMain extends GVRMain {
         }
 
         if (mCurrentMode == null) {
-            mCurrentMode = new HudMode(mContext,mHandlerModeChange);
+            mCurrentMode = new HudMode(mContext, mHandlerModeChange);
             mCurrentMode.enter();
         }
         //addPetObjectsToPlane(plane);
@@ -287,7 +288,7 @@ public class PetMain extends GVRMain {
         }
     }
 
-    public class HandlerGuestOrHost implements OnGuestOrHostListener{
+    public class HandlerGuestOrHost implements OnGuestOrHostListener {
 
         @Override
         public void OnHost() {
@@ -332,40 +333,52 @@ public class PetMain extends GVRMain {
             switch (messageType) {
 
                 case UiMessageType.CONNECTION_ESTABLISHED:
-                    toast("Connections established: " + mConnectionManager.getTotalConnected());
-                    Message message = AppConnectionManager.newMessage(
-                            getGVRContext().getContext().getString(R.string.lorem_ipsum));
-                    mConnectionManager.sendMessage(message);
+                    handleConnectionEstablished();
                     break;
                 case UiMessageType.CONNECTION_NOT_FOUND:
-                    toast("No connection found");
+                    showToast("No connection found");
                     break;
                 case UiMessageType.CONNECTION_LOST:
-                    toast("No active connection");
+                    showToast("No active connection");
                     break;
                 case UiMessageType.CONNECTION_LISTENER_STARTED:
-                    toast("Ready to accept connections");
+                    showToast("Ready to accept connections");
                     new Handler().postDelayed(
                             // Stop listening after a few seconds
-                            () -> mConnectionManager.stopConnectionListener(),
+                            () -> mConnectionManager.stopUsersInvitation(),
                             30000);
                     break;
                 case UiMessageType.ERROR_BLUETOOTH_NOT_ENABLED:
-                    toast("Bluetooth is disabled");
+                    showToast("Bluetooth is disabled");
                     break;
                 case UiMessageType.ERROR_DEVICE_NOT_DISCOVERABLE:
-                    toast("Device is not visible to other devices");
+                    showToast("Device is not visible to other devices");
                     break;
                 case UiMessageType.MESSAGE_RECEIVED:
                     Serializable data = msg.getData().getSerializable("data");
-                    toast("Message received from remote: " + data);
                     handleReceivedMessage(data);
                     break;
             }
         }
+    }
 
-        private void toast(String text) {
-            Toast.makeText(getGVRContext().getActivity(), text, Toast.LENGTH_LONG).show();
+    private void handleConnectionEstablished() {
+        switch (mConnectionManager.getConnectionMode()) {
+            case ConnectionMode.CLIENT: {
+                Message message = AppConnectionManager.newMessage("Hello I'm the client "
+                        + LocalBluetoothDevice.getDefault().getName());
+                mConnectionManager.sendMessage(message);
+                break;
+            }
+            case ConnectionMode.SERVER: {
+                Message message = AppConnectionManager.newMessage("Hello I'm the server "
+                        + LocalBluetoothDevice.getDefault().getName());
+                mConnectionManager.sendMessage(message);
+                break;
+            }
+            case ConnectionMode.NONE:
+            default:
+                break;
         }
     }
 
@@ -373,16 +386,21 @@ public class PetMain extends GVRMain {
     public void onAfterInit() {
         super.onAfterInit();
         new Handler().postDelayed(() -> {
-            mConnectionManager = new AppConnectionManager(mContext.getActivity(), new AppMessageHandler());
-            //mConnectionManager.inviteUsers();
+            mConnectionManager = AppConnectionManager.getInstance(mContext.getActivity(), new AppMessageHandler());
+            //mConnectionManager.startUsersInvitation();
             //mConnectionManager.acceptInvitation();
         }, 1000);
     }
 
-    private void handleReceivedMessage(Serializable receivedData) {
-        Message message = (Message) receivedData;
+    private void handleReceivedMessage(Serializable receivedMessage) {
+        Message message = (Message) receivedMessage;
         Device device = message.getDevice();
-        Serializable messageData = message.getData();
+        Object messageData = message.getData();
+        showToast(messageData.toString());
+    }
+
+    private void showToast(String text) {
+        Toast.makeText(getGVRContext().getActivity(), text, Toast.LENGTH_LONG).show();
     }
 }
 

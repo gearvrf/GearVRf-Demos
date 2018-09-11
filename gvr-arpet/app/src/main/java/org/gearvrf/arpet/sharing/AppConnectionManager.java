@@ -34,11 +34,11 @@ import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public final class AppConnectionManager extends BTConnectionManager {
+public final class AppConnectionManager extends BTConnectionManager implements IAppConnectionManager {
 
     private static final int REQUEST_ENABLE_BT = 1000;
     private static final int REQUEST_ENABLE_DISCOVERABLE = 1001;
-    private static final int DISCOVERABLE_DURATION = 30;
+    private static final int DISCOVERABLE_DURATION = 30; // in seconds
 
     private Activity mContext;
     private UiMessageHandler mUiMessageHandler;
@@ -47,7 +47,9 @@ public final class AppConnectionManager extends BTConnectionManager {
     private OnEnableBluetoothCallback mEnableBTCallback;
     private OnEnableDiscoverableCallback mEnableDiscoverableCallback;
 
-    public AppConnectionManager(
+    private static volatile IAppConnectionManager sInstance;
+
+    private AppConnectionManager(
             @NonNull Activity context,
             @NonNull UiMessageHandler mMessageHandler) {
 
@@ -57,14 +59,28 @@ public final class AppConnectionManager extends BTConnectionManager {
         this.mDeviceFinder = new BluetoothDeviceFinder(mContext);
     }
 
-    public void inviteUsers() {
-        Log.d(TAG, "inviteUsers: ");
+    public static IAppConnectionManager getInstance(
+            @NonNull Activity context,
+            @NonNull UiMessageHandler mMessageHandler) {
+        if (sInstance == null) {
+            synchronized (IAppConnectionManager.class) {
+                if (sInstance == null) {
+                    sInstance = new AppConnectionManager(context, mMessageHandler);
+                }
+            }
+        }
+        return sInstance;
+    }
+
+    @Override
+    public void startUsersInvitation() {
+        Log.d(TAG, "startUsersInvitation: ");
         if (stateIs(ManagerState.IDLE)) {
-            Log.d(TAG, "inviteUsers: request enable BT");
+            Log.d(TAG, "startUsersInvitation: request enable BT");
             enableBluetooth(() -> {
-                Log.d(TAG, "inviteUsers: OK, BT enabled. Request device discoverable");
+                Log.d(TAG, "startUsersInvitation: OK, BT enabled. Request device discoverable");
                 enableDiscoverable(() -> {
-                    Log.d(TAG, "inviteUsers: OK, now this device is discoverable for "
+                    Log.d(TAG, "startUsersInvitation: OK, now this device is discoverable for "
                             + DISCOVERABLE_DURATION + " seconds. Wait for connections");
                     startConnectionListener(this::onMessageReceived);
                     sendMessageToUI(UiMessageType.CONNECTION_LISTENER_STARTED);
@@ -73,14 +89,20 @@ public final class AppConnectionManager extends BTConnectionManager {
         }
     }
 
+    @Override
+    public void stopUsersInvitation() {
+        this.stopConnectionListener();
+    }
+
+    @Override
     public void acceptInvitation() {
         Log.d(TAG, "acceptInvitation: ");
         if (stateIs(ManagerState.IDLE)) {
             enableBluetooth(() -> {
                 Log.d(TAG, "acceptInvitation: finding devices...");
-                mDeviceFinder.find(new PhoneTypeDeviceFilter(), true, this::onDevicesFound);
                 // Broadcast all devices found and saves the first successfully connection
-                //mDeviceFinder.find(this::onDevicesFound);
+                mDeviceFinder.find(new PhoneTypeDeviceFilter(), true, this::onDevicesFound);
+                mDeviceFinder.find(this::onDevicesFound);
             });
         }
     }
@@ -111,7 +133,7 @@ public final class AppConnectionManager extends BTConnectionManager {
     }
 
     @Override
-    public synchronized void onConnectionEstablished(Connection connection) {
+    public void onConnectionEstablished(Connection connection) {
         Log.d(TAG, "onConnectionEstablished: " + connection.getRemoteDevice());
         // Stop trying connection when first connection is successful
         if (stateIs(ManagerState.CONNECTING_TO_REMOTE)) {
@@ -124,7 +146,7 @@ public final class AppConnectionManager extends BTConnectionManager {
     }
 
     @Override
-    public synchronized void onConnectionFailure(ConnectionException error) {
+    public void onConnectionFailure(ConnectionException error) {
         Log.d(TAG, "onConnectionFailure: " + error.getMessage());
         if (stateIs(ManagerState.CONNECTING_TO_REMOTE)) {
             super.onConnectionFailure(error);
@@ -138,7 +160,7 @@ public final class AppConnectionManager extends BTConnectionManager {
     }
 
     @Override
-    public synchronized void onConnectionLost(Connection connection, ConnectionException error) {
+    public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
         if (getTotalConnected() == 0) {
             sendMessageToUI(UiMessageType.CONNECTION_LOST);
@@ -146,7 +168,7 @@ public final class AppConnectionManager extends BTConnectionManager {
     }
 
     @Override
-    public synchronized void stopConnectionListener() {
+    public void stopConnectionListener() {
         if (stateIs(ManagerState.LISTENING_TO_CONNECTIONS)) {
             Log.d(TAG, "stopConnectionListener: force stop connection listener");
             super.stopConnectionListener();
@@ -183,7 +205,9 @@ public final class AppConnectionManager extends BTConnectionManager {
     }
 
     private void sendMessageToUI(@UiMessageType int type, Serializable data) {
-        mUiMessageHandler.handleMessage(new UiMessage(type, data));
+        if (mUiMessageHandler != null) {
+            mUiMessageHandler.handleMessage(new UiMessage(type, data));
+        }
     }
 
     private void enableBluetooth(OnEnableBluetoothCallback callback) {

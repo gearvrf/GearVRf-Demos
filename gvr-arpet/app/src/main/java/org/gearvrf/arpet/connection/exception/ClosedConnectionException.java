@@ -15,14 +15,22 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.connection.exception;
 
-import org.gearvrf.arpet.connection.Device;
-import org.gearvrf.arpet.connection.DeviceType;
+public class ClosedConnectionException extends ConnectionException {
 
-public class PhoneTypeDeviceFilter implements DeviceFilter {
-    @Override
-    public boolean meet(Device device) {
-        return device.getType() == DeviceType.PHONE;
+    public ClosedConnectionException() {
+    }
+
+    public ClosedConnectionException(String message) {
+        super(message);
+    }
+
+    public ClosedConnectionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public ClosedConnectionException(Throwable cause) {
+        super(cause);
     }
 }

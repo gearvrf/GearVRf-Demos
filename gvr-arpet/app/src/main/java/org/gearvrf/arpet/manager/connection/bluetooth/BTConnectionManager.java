@@ -25,7 +25,7 @@ import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.socket.IncomingSocketConnectionThread;
 import org.gearvrf.arpet.connection.socket.OutgoingSocketConnectionThread;
 import org.gearvrf.arpet.connection.socket.SocketConnectionThreadFactory;
-import org.gearvrf.arpet.manager.connection.BaseSocketConnectionManager;
+import org.gearvrf.arpet.connection.socket.BaseSocketConnectionManager;
 
 public abstract class BTConnectionManager extends BaseSocketConnectionManager {
 

@@ -23,5 +23,5 @@ public interface Message extends Serializable {
 
     Device getDevice();
 
-    Serializable getData();
+    Object getData();
 }
