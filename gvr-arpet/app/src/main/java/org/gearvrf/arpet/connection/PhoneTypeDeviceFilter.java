@@ -15,11 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
-
-import org.gearvrf.arpet.connection.Device;
-import org.gearvrf.arpet.connection.DeviceFilter;
-import org.gearvrf.arpet.connection.DeviceType;
+package org.gearvrf.arpet.connection;
 
 public class PhoneTypeDeviceFilter implements DeviceFilter {
     @Override

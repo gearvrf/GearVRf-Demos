@@ -17,9 +17,6 @@ package org.gearvrf.arpet;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.widget.Toast;
 
@@ -116,6 +113,6 @@ public class PetActivity extends GVRActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mMain.onActivityResult(requestCode, resultCode);
+        mPetContext.notifyActivityResult(requestCode, resultCode, data);
     }
 }

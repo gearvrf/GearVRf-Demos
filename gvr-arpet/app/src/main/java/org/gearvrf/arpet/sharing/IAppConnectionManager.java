@@ -17,6 +17,9 @@
 
 package org.gearvrf.arpet.sharing;
 
+import android.support.annotation.NonNull;
+
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
@@ -24,6 +27,8 @@ import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import java.util.List;
 
 public interface IAppConnectionManager {
+
+    void init(@NonNull PetContext context);
 
     void startUsersInvitation();
 
@@ -42,5 +47,7 @@ public interface IAppConnectionManager {
 
     void sendMessage(Message message);
 
-    void onActivityResult(int requestCode, int resultCode);
+    void addUiMessageHandler(UiMessageHandler handler);
+
+    void removeUiMessageHandlers(UiMessageHandler handler);
 }

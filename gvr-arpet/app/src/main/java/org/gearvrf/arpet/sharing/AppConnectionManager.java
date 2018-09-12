@@ -27,6 +27,7 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.ManagerState;
 import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.connection.PhoneTypeDeviceFilter;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTDevice;
@@ -34,7 +35,9 @@ import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
 import org.gearvrf.arpet.manager.connection.bluetooth.BluetoothDeviceFinder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class AppConnectionManager extends BTConnectionManager implements IAppConnectionManager {
 
@@ -42,32 +45,23 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     private static final int REQUEST_ENABLE_DISCOVERABLE = 1001;
     private static final int DISCOVERABLE_DURATION = 30; // in seconds
 
-    private Activity mContext;
-    private UiMessageHandler mUiMessageHandler;
+    private PetContext mContext;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothDeviceFinder mDeviceFinder;
     private OnEnableBluetoothCallback mEnableBTCallback;
     private OnEnableDiscoverableCallback mEnableDiscoverableCallback;
+    private List<UiMessageHandler> mUiMessageHandlers = new ArrayList<>();
 
-    private static volatile IAppConnectionManager sInstance;
+    private static volatile AppConnectionManager sInstance;
 
-    private AppConnectionManager(
-            @NonNull Activity context,
-            @NonNull UiMessageHandler mMessageHandler) {
-
-        this.mContext = context;
-        this.mUiMessageHandler = mMessageHandler;
-        this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        this.mDeviceFinder = new BluetoothDeviceFinder(mContext);
+    private AppConnectionManager() {
     }
 
-    public static IAppConnectionManager getInstance(
-            @NonNull PetContext petContext,
-            @NonNull UiMessageHandler mMessageHandler) {
+    public static IAppConnectionManager getInstance() {
         if (sInstance == null) {
             synchronized (IAppConnectionManager.class) {
                 if (sInstance == null) {
-                    sInstance = new AppConnectionManager(petContext.getActivity(), mMessageHandler);
+                    sInstance = new AppConnectionManager();
                 }
             }
         }
@@ -75,7 +69,32 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
+    public void init(@NonNull PetContext context) {
+        if (mContext == null) {
+            mContext = context;
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+            mDeviceFinder = new BluetoothDeviceFinder(mContext.getActivity());
+            mContext.addOnPetContextListener((requestCode, resultCode, data)
+                    -> onActivityResult(requestCode, resultCode));
+        }
+    }
+
+    @Override
+    public void addUiMessageHandler(UiMessageHandler handler) {
+        checkInitialization();
+        mUiMessageHandlers.remove(handler);
+        mUiMessageHandlers.add(handler);
+    }
+
+    @Override
+    public void removeUiMessageHandlers(UiMessageHandler handler) {
+        checkInitialization();
+        mUiMessageHandlers.remove(handler);
+    }
+
+    @Override
     public void startUsersInvitation() {
+        checkInitialization();
         Log.d(TAG, "startUsersInvitation: ");
         if (stateIs(ManagerState.IDLE)) {
             Log.d(TAG, "startUsersInvitation: request enable BT");
@@ -93,11 +112,13 @@ public final class AppConnectionManager extends BTConnectionManager implements I
 
     @Override
     public void stopUsersInvitation() {
+        checkInitialization();
         this.stopConnectionListener();
     }
 
     @Override
     public void acceptInvitation() {
+        checkInitialization();
         Log.d(TAG, "acceptInvitation: ");
         if (stateIs(ManagerState.IDLE)) {
             enableBluetooth(() -> {
@@ -107,6 +128,36 @@ public final class AppConnectionManager extends BTConnectionManager implements I
                 mDeviceFinder.find(new PhoneTypeDeviceFilter(), false, this::onDevicesFound);
                 // mDeviceFinder.find(this::onDevicesFound);
             });
+        }
+    }
+
+    @Override
+    public boolean isConnectedAs(int mode) {
+        checkInitialization();
+        return super.isConnectedAs(mode);
+    }
+
+    @Override
+    public int getConnectionMode() {
+        checkInitialization();
+        return super.getConnectionMode();
+    }
+
+    @Override
+    public int getTotalConnected() {
+        checkInitialization();
+        return super.getTotalConnected();
+    }
+
+    @Override
+    public synchronized void sendMessage(Message message) {
+        checkInitialization();
+        super.sendMessage(message);
+    }
+
+    private void checkInitialization() {
+        if (mContext == null) {
+            throw new IllegalStateException("Manager must be initialized first. Please call init() method.");
         }
     }
 
@@ -183,7 +234,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
         }
     }
 
-    public void onActivityResult(int requestCode, int resultCode) {
+    private void onActivityResult(int requestCode, int resultCode) {
         if (requestCode == REQUEST_ENABLE_BT) {
             if (resultCode == Activity.RESULT_OK) {
                 mEnableBTCallback.onEnabled();
@@ -208,8 +259,8 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     }
 
     private void sendMessageToUI(@UiMessageType int type, Serializable data) {
-        if (mUiMessageHandler != null) {
-            mUiMessageHandler.handleMessage(new UiMessage(type, data));
+        for (UiMessageHandler uiMessageHandler : mUiMessageHandlers) {
+            uiMessageHandler.handleMessage(new UiMessage(type, data));
         }
     }
 
@@ -217,7 +268,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
         mEnableBTCallback = callback;
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            mContext.startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            mContext.getActivity().startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
         } else {
             callback.onEnabled();
         }
@@ -228,7 +279,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
         if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_DURATION);
-            mContext.startActivityForResult(discoverableIntent, REQUEST_ENABLE_DISCOVERABLE);
+            mContext.getActivity().startActivityForResult(discoverableIntent, REQUEST_ENABLE_DISCOVERABLE);
         } else {
             mEnableDiscoverableCallback.onEnabled();
         }
