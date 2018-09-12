@@ -62,6 +62,10 @@ public class PetContext {
 
         mMixedReality = new GVRMixedReality(context, true);
         mMixedReality.resume();
+
+        // FIXME: Workaround to
+        // You may only use GestureDetector constructor from a {@link android.os.Looper} thread.
+        BallThrowHandler.getInstance(this);
     }
 
     public GVRActivity getActivity() {

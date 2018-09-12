@@ -25,9 +25,9 @@ public abstract class BasePetMode implements IPetMode {
     protected final String TAG;
 
     protected final PetContext mPetContext;
-    protected final BasePetView mModeScene;
+    protected final IPetView mModeScene;
 
-    public BasePetMode(PetContext petContext, BasePetView sceneMode) {
+    public BasePetMode(PetContext petContext, IPetView sceneMode) {
         TAG = sceneMode.getClass().getSimpleName();
         mPetContext = petContext;
         mModeScene = sceneMode;
@@ -45,6 +45,11 @@ public abstract class BasePetMode implements IPetMode {
         Log.w(TAG, "exit");
         mModeScene.hide(mPetContext.getMainScene());
         onExit();
+    }
+
+    @Override
+    public IPetView view() {
+        return mModeScene;
     }
 
     public void handleOrientation() {

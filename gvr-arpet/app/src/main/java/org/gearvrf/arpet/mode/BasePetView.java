@@ -20,7 +20,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;
 
-public abstract class BasePetView extends GVRSceneObject {
+public abstract class BasePetView extends GVRSceneObject implements IPetView {
     protected final PetContext mPetContext;
 
     public BasePetView(PetContext petContext) {
@@ -28,10 +28,12 @@ public abstract class BasePetView extends GVRSceneObject {
         mPetContext = petContext;
     }
 
+    @Override
     public void show(GVRScene mainScene) {
         onShow(mainScene);
     }
 
+    @Override
     public void hide(GVRScene mainScene) {
         onHide(mainScene);
     }

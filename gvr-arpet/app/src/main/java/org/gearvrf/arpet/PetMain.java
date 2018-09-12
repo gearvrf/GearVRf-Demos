@@ -25,6 +25,8 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRTransform;
+import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
@@ -65,11 +67,7 @@ public class PetMain extends GVRMain {
     private GVRScene mScene;
     private PetContext mPetContext;
 
-    private BallThrowHandler mBallThrowHandler;
     private PlaneHandler planeHandler;
-
-    private Character mPet;
-
 
     private IPetMode mCurrentMode;
     private HandlerModeChange mHandlerModeChange;
@@ -78,6 +76,8 @@ public class PetMain extends GVRMain {
 
     private CloudAnchorManager mCloudAnchorManager;
     private IAppConnectionManager mConnectionManager;
+
+    private CharacterController mPet = null;
 
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
@@ -95,20 +95,14 @@ public class PetMain extends GVRMain {
         world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
 
-        mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
-
-        mBallThrowHandler.enable();
-
-
-        planeHandler = new PlaneHandler(mPetContext);
-        mPetContext.getMixedReality().registerPlaneListener(planeHandler);
-
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
         handlerGuestOrHost = new HandlerGuestOrHost();
 
-
         mCloudAnchorManager = new CloudAnchorManager();
+
+        planeHandler = new PlaneHandler(mPetContext);
+        mPetContext.getMixedReality().registerPlaneListener(planeHandler);
 
         //disableCursor();
     }
@@ -138,7 +132,7 @@ public class PetMain extends GVRMain {
 
         // Host pet anchor
         if (isCloudAnchorApiKeySet()) {
-            mCloudAnchorManager.hostAnchor(mPetContext, mPet);
+            mCloudAnchorManager.hostAnchor(mPetContext, (AnchoredObject)mPet.view());
         }
 
         if (mCurrentMode instanceof EditMode) {
@@ -155,62 +149,22 @@ public class PetMain extends GVRMain {
     }
 
     private void createPet(final GVRPlane plane) {
-        mPet = new Character(mPetContext, plane.getCenterPose());
-
-        initPetActions(mPet);
-
-        mPet.setBoundaryPlane(plane);
-        mScene.addSceneObject(mPet.getAnchor());
-        mPet.setCurrentAction(PetActions.TO_CAMERA.ID);
-
-        // Enable action animations
-        mPet.enableAction();
-    }
-
-    private void initPetActions(Character pet) {
-        // TODO: move this to the Character class
-        GVRTransform camTrans = mPetContext.getMainScene().getMainCameraRig().getTransform();
-
-        pet.addAction(new PetActions.IDLE(pet, camTrans));
-
-        pet.addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall().getTransform(),
-                new OnPetActionListener() {
-                    @Override
-                    public void onActionEnd(IPetAction action) {
-                        mPet.setCurrentAction(PetActions.TO_CAMERA.ID);
-                        mPet.getChildByIndex(0).setEnable(false);
-                        mBallThrowHandler.disable();
-                        // TODO: Pet take the ball
-                    }
-                }));
-
-        pet.addAction(new PetActions.TO_CAMERA(pet, camTrans,
-                new OnPetActionListener() {
-                    @Override
-                    public void onActionEnd(IPetAction action) {
-                        pet.setCurrentAction(PetActions.IDLE.ID);
-                        // TODO: Improve this Ball handler api
-                        mBallThrowHandler.enable();
-                        mBallThrowHandler.reset();
-                    }
-                }));
+        mPet = new CharacterController(mPetContext, plane);
+        mPet.enter();
     }
 
     private void setEditModeEnabled(boolean enabled) {
         if (mPet != null) {
+            /* FIXME: Should be a state of the pet
             mPet.setRotationEnabled(enabled);
             mPet.setScaleEnabled(enabled);
-            mPet.setDraggingEnabled(enabled);
+            mPet.setDraggingEnabled(enabled);*/
         }
     }
 
     @Override
     public void onStep() {
         super.onStep();
-        if (mBallThrowHandler.canBeReseted()) {
-            mBallThrowHandler.reset();
-        }
-
         if (mCurrentMode != null) {
             mCurrentMode.handleOrientation();
         }
@@ -232,7 +186,7 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onPlayBall() {
-            mBallThrowHandler.enable();
+            // FIXME: Create this state to the PET
         }
 
         @Override

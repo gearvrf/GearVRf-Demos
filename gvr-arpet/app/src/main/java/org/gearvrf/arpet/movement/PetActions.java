@@ -19,8 +19,7 @@ package org.gearvrf.arpet.movement;
 
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.arpet.AnchoredObject;
-import org.gearvrf.arpet.Character;
+import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.utility.Log;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -32,12 +31,12 @@ public class PetActions {
     private static final String TAG = "CharacterStates";
 
     private static abstract class PetAction implements IPetAction {
-        protected final Character mCharacter;
+        protected final CharacterView mCharacter;
         protected final GVRTransform mTargetTransform;
         protected final OnPetActionListener mListener;
         protected GVRAnimation mAnimation;
 
-        protected PetAction(Character character, GVRTransform target,
+        protected PetAction(CharacterView character, GVRTransform target,
                             OnPetActionListener listener) {
             mCharacter = character;
             mTargetTransform = target;
@@ -64,7 +63,7 @@ public class PetActions {
 
         private float mTurnSpeed = 0.05f;
 
-        public IDLE(Character character, GVRTransform target) {
+        public IDLE(CharacterView character, GVRTransform target) {
             super(character, target, null);
             setAnimation(character.getAnimation(1));
         }
@@ -144,7 +143,7 @@ public class PetActions {
         private float mTurnSpeed = 0.05f;
         private float mWalkSpeed = 0.005f;
 
-        public TO_CAMERA(Character character, GVRTransform target,
+        public TO_CAMERA(CharacterView character, GVRTransform target,
                          OnPetActionListener listener) {
             super(character, target, listener);
         }
@@ -232,7 +231,7 @@ public class PetActions {
         private float mTurnSpeed = 0.05f;
         private float mWalkSpeed = 0.005f;
 
-        public TO_BALL(Character character, GVRTransform target,
+        public TO_BALL(CharacterView character, GVRTransform target,
                        OnPetActionListener listener) {
             super(character, target, listener);
         }

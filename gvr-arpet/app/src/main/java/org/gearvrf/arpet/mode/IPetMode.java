@@ -18,5 +18,6 @@ package org.gearvrf.arpet.mode;
 public interface IPetMode {
     void enter();
     void exit();
+    IPetView view();
     void handleOrientation();
 }
