@@ -78,14 +78,13 @@ public class Character extends AnchoredObject implements
     private GVRModelSceneObject m3DModel;
 
     Character(
-            @NonNull GVRContext gvrContext,
-            @NonNull GVRMixedReality mixedReality,
+            @NonNull PetContext petContext,
             @NonNull float[] pose) {
 
-        super(gvrContext, mixedReality, pose, ObjectType.CHARACTER);
+        super(petContext.getGVRContext(), petContext.getMixedReality(), pose, ObjectType.CHARACTER);
 
-        mContext = gvrContext;
-        mMixedReality = mixedReality;
+        mContext = petContext.getGVRContext();
+        mMixedReality = petContext.getMixedReality();
 
         registerGestureDetectors();
 

@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.ManagerState;
 import org.gearvrf.arpet.connection.Message;
@@ -61,12 +62,12 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     }
 
     public static IAppConnectionManager getInstance(
-            @NonNull Activity context,
+            @NonNull PetContext petContext,
             @NonNull UiMessageHandler mMessageHandler) {
         if (sInstance == null) {
             synchronized (IAppConnectionManager.class) {
                 if (sInstance == null) {
-                    sInstance = new AppConnectionManager(context, mMessageHandler);
+                    sInstance = new AppConnectionManager(petContext.getActivity(), mMessageHandler);
                 }
             }
         }

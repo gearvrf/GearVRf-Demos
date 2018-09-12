@@ -22,19 +22,19 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class EditView extends BasePetView implements View.OnClickListener, IViewEvents {
-    private GVRContext mContext;
     private GVRSceneObject mEditModeObject;
     private Button mBackButton, mSaveButton;
     private OnEditModeClickedListener mListenerEditMode;
 
-    public EditView(GVRContext gvrContext) {
-        super(gvrContext);
-        mContext = gvrContext;
-        mEditModeObject = new GVRViewSceneObject(mContext, R.layout.edit_mode_layout, this);
+    public EditView(PetContext petContext) {
+        super(petContext);
+        mEditModeObject = new GVRViewSceneObject(petContext.getGVRContext(),
+                R.layout.edit_mode_layout, this);
     }
 
     @Override

@@ -54,7 +54,7 @@ public class PetActivity extends GVRActivity {
     }
 
     private void startPetMain() {
-        mPetContext = PetContext.INSTANCE;
+        mPetContext = new PetContext(this);
         mMain = new PetMain(mPetContext);
         setMain(mMain, "gvr.xml");
     }
@@ -111,75 +111,6 @@ public class PetActivity extends GVRActivity {
                 // TODO: maybe we need to call settings here to enable permission again
                 finish();
             }
-        }
-    }
-
-    public enum PetContext {
-
-        INSTANCE;
-
-        private final HandlerThread mHandlerThread;
-        private final Handler mHandler;
-        private final Runnable mPauseTask;
-        private boolean mPaused;
-        private long mResumeTime;
-
-        private PetContext() {
-            mHandlerThread = new HandlerThread("arpet-main");
-            mHandlerThread.start();
-            mHandler = new Handler(mHandlerThread.getLooper());
-
-            mPaused = true;
-            mResumeTime = 0;
-
-            mPauseTask = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        synchronized (mPauseTask) {
-                            mPauseTask.wait();
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-        }
-
-        public long getResumeTime() {
-            return mResumeTime;
-        }
-
-        public boolean runOnPetThread(Runnable r) {
-            return mHandler.post(r);
-        }
-
-        public boolean runDelayedOnPetThread(Runnable r, long delayMillis) {
-            return mHandler.postDelayed(r, delayMillis);
-        }
-
-        public void removeTask(Runnable r) {
-            mHandler.removeCallbacks(r);
-        }
-
-        void pause() {
-            mPaused = true;
-            synchronized (mPauseTask) {
-                mHandler.postAtFrontOfQueue(mPauseTask);
-            }
-        }
-
-        void resume() {
-            mPaused = false;
-            mResumeTime = SystemClock.uptimeMillis();
-            synchronized (mPauseTask) {
-                mHandler.removeCallbacks(mPauseTask);
-                mPauseTask.notify();
-            }
-        }
-
-        public boolean isPaused() {
-            return mPaused;
         }
     }
 

@@ -19,12 +19,13 @@ import android.util.Log;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.arpet.PetContext;
 
 public class HudMode extends BasePetMode {
     private OnModeChange mModeChangeListener;
 
-    public HudMode(GVRContext context, OnModeChange listener) {
-        super(context, new HudView(context));
+    public HudMode(PetContext petContext, OnModeChange listener) {
+        super(petContext, new HudView(petContext));
         mModeChangeListener = listener;
 
         ((HudView) mModeScene).setListener(new OnHudItemClickedHandler());

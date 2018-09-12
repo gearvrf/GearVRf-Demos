@@ -49,7 +49,6 @@ import org.gearvrf.arpet.sharing.UiMessageHandler;
 import org.gearvrf.arpet.sharing.UiMessageType;
 import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
@@ -64,9 +63,7 @@ public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
 
     private GVRScene mScene;
-    private GVRContext mContext;
-    private PetActivity.PetContext mPetContext;
-    private GVRMixedReality mMixedReality;
+    private PetContext mPetContext;
 
     private BallThrowHandler mBallThrowHandler;
     private PlaneHandler planeHandler;
@@ -82,7 +79,7 @@ public class PetMain extends GVRMain {
     private CloudAnchorManager mCloudAnchorManager;
     private IAppConnectionManager mConnectionManager;
 
-    public PetMain(PetActivity.PetContext petContext) {
+    public PetMain(PetContext petContext) {
         mPetContext = petContext;
         EventBus.getDefault().register(this);
     }
@@ -90,24 +87,21 @@ public class PetMain extends GVRMain {
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
         super.onInit(gvrContext);
+        mPetContext.init(gvrContext);
 
-        mContext = gvrContext;
         mScene = gvrContext.getMainScene();
-
-        mMixedReality = new GVRMixedReality(gvrContext, true);
-        mMixedReality.resume();
 
         GVRWorld world = new GVRWorld(gvrContext);
         world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
 
-        mBallThrowHandler = BallThrowHandler.getInstance(gvrContext, mMixedReality);
+        mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
         mBallThrowHandler.enable();
 
 
-        planeHandler = new PlaneHandler(gvrContext, mPetContext, mMixedReality);
-        mMixedReality.registerPlaneListener(planeHandler);
+        planeHandler = new PlaneHandler(mPetContext);
+        mPetContext.getMixedReality().registerPlaneListener(planeHandler);
 
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
@@ -144,7 +138,7 @@ public class PetMain extends GVRMain {
 
         // Host pet anchor
         if (isCloudAnchorApiKeySet()) {
-            mCloudAnchorManager.hostAnchor(mMixedReality, mPet);
+            mCloudAnchorManager.hostAnchor(mPetContext, mPet);
         }
 
         if (mCurrentMode instanceof EditMode) {
@@ -152,7 +146,7 @@ public class PetMain extends GVRMain {
         }
 
         if (mCurrentMode == null) {
-            mCurrentMode = new HudMode(mContext, mHandlerModeChange);
+            mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
         }
         //addPetObjectsToPlane(plane);
@@ -161,7 +155,7 @@ public class PetMain extends GVRMain {
     }
 
     private void createPet(final GVRPlane plane) {
-        mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
+        mPet = new Character(mPetContext, plane.getCenterPose());
 
         initPetActions(mPet);
 
@@ -175,7 +169,7 @@ public class PetMain extends GVRMain {
 
     private void initPetActions(Character pet) {
         // TODO: move this to the Character class
-        GVRTransform camTrans = mContext.getMainScene().getMainCameraRig().getTransform();
+        GVRTransform camTrans = mPetContext.getMainScene().getMainCameraRig().getTransform();
 
         pet.addAction(new PetActions.IDLE(pet, camTrans));
 
@@ -251,7 +245,7 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new ShareAnchorMode(mContext, handlerGuestOrHost);
+            mCurrentMode = new ShareAnchorMode(mPetContext, handlerGuestOrHost);
             mCurrentMode.enter();
         }
 
@@ -265,7 +259,7 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new EditMode(mContext, mHandlerBackToHud);
+            mCurrentMode = new EditMode(mPetContext, mHandlerBackToHud);
             mCurrentMode.enter();
             setEditModeEnabled(true);
         }
@@ -281,7 +275,7 @@ public class PetMain extends GVRMain {
         @Override
         public void OnBackToHud() {
             mCurrentMode.exit();
-            mCurrentMode = new HudMode(mContext, mHandlerModeChange);
+            mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
         }
     }
@@ -384,7 +378,7 @@ public class PetMain extends GVRMain {
     public void onAfterInit() {
         super.onAfterInit();
         new Handler().postDelayed(() -> {
-            mConnectionManager = AppConnectionManager.getInstance(mContext.getActivity(), new AppMessageHandler());
+            mConnectionManager = AppConnectionManager.getInstance(mPetContext, new AppMessageHandler());
             //mConnectionManager.startUsersInvitation();
             //mConnectionManager.acceptInvitation();
         }, 1000);

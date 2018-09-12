@@ -19,12 +19,13 @@ import android.util.Log;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.arpet.PetContext;
 
 public class EditMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
 
-    public EditMode(GVRContext context, OnBackToHudModeListener listener) {
-        super(context, new EditView(context));
+    public EditMode(PetContext petContext, OnBackToHudModeListener listener) {
+        super(petContext, new EditView(petContext));
         mBackToHudModeListener = listener;
 
         ((EditView) mModeScene).setListenerEditMode(new OnEditModeClickedListenerHandler());

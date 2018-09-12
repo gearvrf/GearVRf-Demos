@@ -12,11 +12,11 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class ShareAnchorView extends BasePetView implements IViewEvents, View.OnClickListener {
-    private GVRContext mContext;
     private GVRSceneObject mInvitationObject;
     private Button mGuestButton, mHostButton;
     private TextView mMessage;
@@ -26,10 +26,10 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     private Handler mHandler;
     OnGuestOrHostListener mGuestOrHostListener;
 
-    public ShareAnchorView(GVRContext gvrContext) {
-        super(gvrContext);
-        mContext = gvrContext;
-        mInvitationObject = new GVRViewSceneObject(mContext, R.layout.share_anchor_layout, this);
+    public ShareAnchorView(PetContext petContext) {
+        super(petContext);
+        mInvitationObject = new GVRViewSceneObject(petContext.getGVRContext(),
+                R.layout.share_anchor_layout, this);
         mHandler = new Handler();
     }
 

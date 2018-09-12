@@ -20,6 +20,7 @@ import android.support.annotation.IntDef;
 import android.util.Log;
 
 import org.gearvrf.arpet.AnchoredObject;
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.ICloudAnchorListener;
 
@@ -48,11 +49,11 @@ public class CloudAnchorManager {
         mIsReady = false;
     }
 
-    public void hostAnchor(GVRMixedReality mixedReality, AnchoredObject object) {
+    public void hostAnchor(PetContext petContext, AnchoredObject object) {
         CloudAnchor cloudAnchor = new CloudAnchor(object);
         cloudAnchor.setResponseListener(new CloudAnchorResponseListener());
         Log.d(TAG, "hosting anchor...");
-        mixedReality.hostAnchor(object.getAnchor(), cloudAnchor.getCloudListener());
+        petContext.getMixedReality().hostAnchor(object.getAnchor(), cloudAnchor.getCloudListener());
         mCloudAnchors.add(cloudAnchor);
     }
 

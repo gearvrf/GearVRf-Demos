@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.IViewEvents;
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.utility.Log;
@@ -29,18 +30,15 @@ import org.gearvrf.utility.Log;
 public class HudView extends BasePetView implements View.OnClickListener, IViewEvents {
     private static final String TAG = "HudView";
 
-    private GVRContext mContext;
     private LinearLayout MenuHud;
     private Button menuButton, closeButton, editModeButton, playBallButton, shareAnchorButton, cameraButton;
     private GVRViewSceneObject mHudMenu;
     private OnHudItemClicked mListener;
 
-    public HudView(GVRContext gvrContext) {
-        super(gvrContext);
-        mContext = gvrContext;
-        mHudMenu = new GVRViewSceneObject(mContext, R.layout.hud_layout, this);
+    public HudView(PetContext petContext) {
+        super(petContext);
+        mHudMenu = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.hud_layout, this);
         mListener = null;
-
     }
 
     @Override

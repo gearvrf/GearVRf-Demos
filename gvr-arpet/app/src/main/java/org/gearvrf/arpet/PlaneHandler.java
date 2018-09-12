@@ -25,7 +25,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private GVRContext mContext;
     private GVRScene mScene;
-    private PetActivity.PetContext mPetContext;
+    private PetContext mPetContext;
 
     private int hsvHUE = 0;
 
@@ -124,9 +124,9 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     // All objects that have physics attached to it will be children of this object
     private GVRSceneObject physicsRoot;
 
-    PlaneHandler(GVRContext gvrContext, PetActivity.PetContext petContext, GVRMixedReality mixedReality) {
-        mContext = gvrContext;
-        mScene = mContext.getMainScene();
+    PlaneHandler(PetContext petContext) {
+        mContext = petContext.getGVRContext();
+        mScene = petContext.getMainScene();
         mPetContext = petContext;
 
         this.mixedReality = mixedReality;

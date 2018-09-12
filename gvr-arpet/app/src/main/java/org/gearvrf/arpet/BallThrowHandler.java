@@ -65,10 +65,10 @@ public class BallThrowHandler {
 
     private BallWrapper mBallWrapper;
 
-    private BallThrowHandler(GVRContext gvrContext, GVRMixedReality mixedReality) {
-        mContext = gvrContext;
-        mScene = gvrContext.getMainScene();
-        mMixedReality = mixedReality;
+    private BallThrowHandler(PetContext petContext) {
+        mContext = petContext.getGVRContext();
+        mScene = petContext.getMainScene();
+        mMixedReality = petContext.getMixedReality();
 
         createBall();
         initController();
@@ -77,9 +77,9 @@ public class BallThrowHandler {
     }
 
     // FIXME: look for a different approach for this
-    public static BallThrowHandler getInstance(GVRContext gvrContext, GVRMixedReality mixedReality) {
+    public static BallThrowHandler getInstance(PetContext petContext) {
         if (sInstance == null) {
-            sInstance = new BallThrowHandler(gvrContext, mixedReality);
+            sInstance = new BallThrowHandler(petContext);
         }
         return sInstance;
     }

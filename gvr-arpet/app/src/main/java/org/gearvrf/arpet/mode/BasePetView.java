@@ -18,10 +18,14 @@ package org.gearvrf.arpet.mode;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.PetContext;
 
 public abstract class BasePetView extends GVRSceneObject {
-    public BasePetView(GVRContext gvrContext) {
-        super(gvrContext);
+    protected final PetContext mPetContext;
+
+    public BasePetView(PetContext petContext) {
+        super(petContext.getGVRContext());
+        mPetContext = petContext;
     }
 
     public void show(GVRScene mainScene) {

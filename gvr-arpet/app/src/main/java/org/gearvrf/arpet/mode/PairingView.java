@@ -6,17 +6,17 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class PairingView extends BasePetView implements IViewEvents {
-    private GVRContext mContext;
     private GVRSceneObject mPairing;
 
-    public PairingView(GVRContext gvrContext) {
-        super(gvrContext);
-        mContext = gvrContext;
-        mPairing = new GVRViewSceneObject(mContext, R.layout.paring_layout, this);
+    public PairingView(PetContext petContext) {
+        super(petContext);
+        mPairing = new GVRViewSceneObject(petContext.getGVRContext(),
+                R.layout.paring_layout, this);
     }
 
     @Override
