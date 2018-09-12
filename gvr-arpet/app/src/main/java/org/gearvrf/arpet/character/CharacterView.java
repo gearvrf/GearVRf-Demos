@@ -97,7 +97,14 @@ public class CharacterView extends AnchoredObject implements
         createShadow();
 
         // TODO: Load at thread
-        load3DModel();
+        petContext.runOnPetThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Loading pet 3D model...");
+                load3DModel();
+                Log.d(TAG, "Pet 3D model loaded!s");
+            }
+        });
 
         initController();
     }

@@ -45,18 +45,34 @@ public class CharacterController extends BasePetMode {
         mCurrentAction = null;
         mDrawFrameHandler = null;
 
-        intPet((CharacterView)mModeScene, petPlane);
+        // Put at same thread that is loading the pet 3dmodel.
+        mPetContext.runOnPetThread(new Runnable() {
+            @Override
+            public void run() {
+                intPet((CharacterView)mModeScene, petPlane);
+            }
+        });
     }
 
     @Override
     protected void onEnter() {
-        setCurrentAction(PetActions.TO_CAMERA.ID);
-        enableActions();
+        mPetContext.runOnPetThread(new Runnable() {
+            @Override
+            public void run() {
+                setCurrentAction(PetActions.TO_CAMERA.ID);
+                enableActions();
+            }
+        });
     }
 
     @Override
     protected void onExit() {
-        disableActions();
+        mPetContext.runOnPetThread(new Runnable() {
+            @Override
+            public void run() {
+                disableActions();
+            }
+        });
     }
 
     @Override
