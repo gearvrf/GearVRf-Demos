@@ -90,6 +90,8 @@ public class PetMain extends GVRMain {
         planeHandler = new PlaneHandler(mPetContext);
         mPetContext.getMixedReality().registerPlaneListener(planeHandler);
 
+        mPet = new CharacterController(mPetContext);
+
         //disableCursor();
     }
 
@@ -112,9 +114,8 @@ public class PetMain extends GVRMain {
 
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
-        if (mPet == null) {
-            createPet(plane);
-        }
+        mPet.setPlane(plane);
+        mPet.enter();
 
         // Host pet anchor
         if (isCloudAnchorApiKeySet()) {
@@ -132,11 +133,6 @@ public class PetMain extends GVRMain {
         //addPetObjectsToPlane(plane);
         //movePetToScreen();
         //movePetToBed();
-    }
-
-    private void createPet(final GVRPlane plane) {
-        mPet = new CharacterController(mPetContext, plane);
-        mPet.enter();
     }
 
     private void setEditModeEnabled(boolean enabled) {

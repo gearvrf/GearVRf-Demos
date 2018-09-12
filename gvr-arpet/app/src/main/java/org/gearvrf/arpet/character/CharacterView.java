@@ -82,10 +82,9 @@ public class CharacterView extends AnchoredObject implements
     private GVRModelSceneObject m3DModel;
 
     CharacterView(
-            @NonNull PetContext petContext,
-            @NonNull float[] pose) {
+            @NonNull PetContext petContext) {
 
-        super(petContext.getGVRContext(), petContext.getMixedReality(), pose, ObjectType.CHARACTER);
+        super(petContext.getGVRContext(), petContext.getMixedReality(), null, ObjectType.CHARACTER);
 
         mContext = petContext.getGVRContext();
         mMixedReality = petContext.getMixedReality();
@@ -204,7 +203,6 @@ public class CharacterView extends AnchoredObject implements
             gestureDetector.setEnabled(false);
         }
     }
-
 
     @Override
     public void scale(float factor) {

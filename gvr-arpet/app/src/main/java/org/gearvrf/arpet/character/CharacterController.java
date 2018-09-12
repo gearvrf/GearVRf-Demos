@@ -38,8 +38,8 @@ public class CharacterController extends BasePetMode {
     private GVRDrawFrameListener mDrawFrameHandler;
     private BallThrowHandler mBallThrowHandler;
 
-    public CharacterController(PetContext petContext, GVRPlane petPlane) {
-        super(petContext, new CharacterView(petContext, petPlane.getCenterPose()));
+    public CharacterController(PetContext petContext) {
+        super(petContext, new CharacterView(petContext));
 
         mPetActions = new HashMap<>();
         mCurrentAction = null;
@@ -49,7 +49,7 @@ public class CharacterController extends BasePetMode {
         mPetContext.runOnPetThread(new Runnable() {
             @Override
             public void run() {
-                intPet((CharacterView)mModeScene, petPlane);
+                intPet((CharacterView)mModeScene);
             }
         });
     }
@@ -80,9 +80,7 @@ public class CharacterController extends BasePetMode {
 
     }
 
-    private void intPet(CharacterView pet, GVRPlane petPlane) {
-        pet.setBoundaryPlane(petPlane);
-
+    private void intPet(CharacterView pet) {
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
         // FIXME: Enalble and disable ball
         mBallThrowHandler.enable();
@@ -112,6 +110,13 @@ public class CharacterController extends BasePetMode {
                         mBallThrowHandler.reset();
                     }
                 }));
+    }
+
+    public void setPlane(GVRPlane plane) {
+        CharacterView petView = (CharacterView) view();
+
+        petView.setBoundaryPlane(plane);
+        petView.setAnchor(mPetContext.getMixedReality().createAnchor(plane.getCenterPose()));
     }
 
     public void addAction(IPetAction action) {
