@@ -3,6 +3,7 @@ package org.gearvrf.arpet.mode;
 import android.view.View;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.R;
@@ -16,6 +17,16 @@ public class PairingView extends BasePetView implements IViewEvents {
         super(gvrContext);
         mContext = gvrContext;
         mPairing = new GVRViewSceneObject(mContext, R.layout.paring_layout, this);
+    }
+
+    @Override
+    protected void onShow(GVRScene mainScene) {
+        mainScene.getMainCameraRig().addChildObject(this);
+    }
+
+    @Override
+    protected void onHide(GVRScene mainScene) {
+        mainScene.getMainCameraRig().removeChildObject(this);
     }
 
     @Override

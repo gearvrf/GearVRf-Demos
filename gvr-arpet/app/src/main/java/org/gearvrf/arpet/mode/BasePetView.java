@@ -19,16 +19,20 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 
-public class BasePetView extends GVRSceneObject {
+public abstract class BasePetView extends GVRSceneObject {
     public BasePetView(GVRContext gvrContext) {
         super(gvrContext);
     }
 
     public void show(GVRScene mainScene) {
-        mainScene.getMainCameraRig().addChildObject(this);
+        onShow(mainScene);
     }
 
     public void hide(GVRScene mainScene) {
-        mainScene.getMainCameraRig().removeChildObject(this);
+        onHide(mainScene);
     }
+
+    protected abstract void onShow(GVRScene mainScene);
+
+    protected abstract void onHide(GVRScene mainScene);
 }

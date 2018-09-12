@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.R;
@@ -30,6 +31,16 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mContext = gvrContext;
         mInvitationObject = new GVRViewSceneObject(mContext, R.layout.share_anchor_layout, this);
         mHandler = new Handler();
+    }
+
+    @Override
+    protected void onShow(GVRScene mainScene) {
+        mainScene.getMainCameraRig().addChildObject(this);
+    }
+
+    @Override
+    protected void onHide(GVRScene mainScene) {
+        mainScene.getMainCameraRig().removeChildObject(this);
     }
 
     public void setListenerShareAnchorMode(OnGuestOrHostListener listener) {

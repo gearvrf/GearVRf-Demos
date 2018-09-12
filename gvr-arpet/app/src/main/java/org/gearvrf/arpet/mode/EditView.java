@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.R;
@@ -34,6 +35,16 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
         super(gvrContext);
         mContext = gvrContext;
         mEditModeObject = new GVRViewSceneObject(mContext, R.layout.edit_mode_layout, this);
+    }
+
+    @Override
+    protected void onShow(GVRScene mainScene) {
+        mainScene.getMainCameraRig().addChildObject(this);
+    }
+
+    @Override
+    protected void onHide(GVRScene mainScene) {
+        mainScene.getMainCameraRig().removeChildObject(this);
     }
 
     public void setListenerEditMode(OnEditModeClickedListener listenerEditMode) {

@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRScene;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
@@ -40,6 +41,16 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
         mHudMenu = new GVRViewSceneObject(mContext, R.layout.hud_layout, this);
         mListener = null;
 
+    }
+
+    @Override
+    protected void onShow(GVRScene mainScene) {
+        mainScene.getMainCameraRig().addChildObject(this);
+    }
+
+    @Override
+    protected void onHide(GVRScene mainScene) {
+        mainScene.getMainCameraRig().removeChildObject(this);
     }
 
     public void setListener(OnHudItemClicked listener) {
