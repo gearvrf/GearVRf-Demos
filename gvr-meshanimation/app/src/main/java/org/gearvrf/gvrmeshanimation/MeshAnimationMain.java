@@ -27,7 +27,7 @@ public class MeshAnimationMain extends GVRMain {
 
     private GVRAnimationEngine mAnimationEngine;
     GVRAnimator mAssimpAnimation = null;
-    
+
 
     public MeshAnimationMain(GVRActivity activity) {
         mActivity = activity;

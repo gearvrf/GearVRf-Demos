@@ -112,7 +112,6 @@ public class SampleActivity extends GVRActivity {
 
 
         /*
-
         create animation keys in the format:
         t1, 0, 0, 0, 0, .....0, 0, 0
         t2, 0, 1, 0, 0, .....0, 0, 0
@@ -120,9 +119,7 @@ public class SampleActivity extends GVRActivity {
         t4, 0, 0, 0, 1, .....0, 0, 0
         .
         .
-
         t1, t2, ... tn are timestamps in the range [0,animDuration]
-
          */
         private float[] generateAnimationKeys(int numBlendShapes, int timeTicks)
         {
