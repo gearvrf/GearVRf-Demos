@@ -30,8 +30,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVRAnimator;
-import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.OnScaleListener;
@@ -70,8 +68,6 @@ public class Character extends AnchoredObject implements
     private GVRCursorController mCursorController;
     private final static String PET_NAME = "Pet";
 
-    private PetAnimationHelper mPetAnimationHelper;
-
     // Gesture detectors
     private List<GestureDetector> mGestureDetectors = new ArrayList<>();
     private GestureDetector mRotationDetector;
@@ -84,14 +80,12 @@ public class Character extends AnchoredObject implements
     Character(
             @NonNull GVRContext gvrContext,
             @NonNull GVRMixedReality mixedReality,
-            @NonNull float[] pose,
-            @NonNull PetAnimationHelper petAnimationHelper) {
+            @NonNull float[] pose) {
 
         super(gvrContext, mixedReality, pose, ObjectType.CHARACTER);
 
         mContext = gvrContext;
         mMixedReality = mixedReality;
-        mPetAnimationHelper = petAnimationHelper;
 
         registerGestureDetectors();
 

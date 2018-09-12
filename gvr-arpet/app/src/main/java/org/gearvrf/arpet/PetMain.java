@@ -29,7 +29,9 @@ import org.gearvrf.arpet.animation.PetAnimationHelper;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
-import org.gearvrf.arpet.connection.socket.ConnectionMode;
+import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
+import org.gearvrf.arpet.connection.Device;
+import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.connection.bluetooth.LocalBluetoothDevice;
 import org.gearvrf.arpet.mode.EditMode;
@@ -162,8 +164,7 @@ public class PetMain extends GVRMain {
     }
 
     private void createPet(final GVRPlane plane) {
-        mPet = new Character(mContext, mMixedReality, plane.getCenterPose(),
-                new PetAnimationHelper(mContext));
+        mPet = new Character(mContext, mMixedReality, plane.getCenterPose());
 
         initPetActions(mPet);
 

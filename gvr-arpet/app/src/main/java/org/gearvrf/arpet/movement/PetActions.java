@@ -275,7 +275,7 @@ public class PetActions {
             // Remove y vector
             mLookToward.y = 0;
 
-            // Vector of Character toward to Camera
+            // Vector of Character toward to ball
             float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
             float[] modelCam = mTargetTransform.getModelMatrix();
             mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
