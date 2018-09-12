@@ -61,6 +61,9 @@ public class CharacterController extends BasePetMode {
             public void run() {
                 setCurrentAction(PetActions.TO_CAMERA.ID);
                 enableActions();
+
+                // FIXME: Enalble and disable ball
+                mBallThrowHandler.enable();
             }
         });
     }
@@ -82,8 +85,6 @@ public class CharacterController extends BasePetMode {
 
     private void intPet(CharacterView pet) {
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
-        // FIXME: Enalble and disable ball
-        mBallThrowHandler.enable();
 
         // TODO: move this to the Character class
         GVRTransform camTrans = mPetContext.getMainScene().getMainCameraRig().getTransform();

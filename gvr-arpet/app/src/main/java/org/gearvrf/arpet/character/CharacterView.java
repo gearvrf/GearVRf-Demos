@@ -101,7 +101,7 @@ public class CharacterView extends AnchoredObject implements
             public void run() {
                 Log.d(TAG, "Loading pet 3D model...");
                 load3DModel();
-                Log.d(TAG, "Pet 3D model loaded!s");
+                Log.d(TAG, "Pet 3D model loaded!");
             }
         });
 
