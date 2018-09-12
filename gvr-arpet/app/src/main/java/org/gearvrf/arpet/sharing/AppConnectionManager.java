@@ -102,7 +102,6 @@ public final class AppConnectionManager extends BTConnectionManager implements I
                 Log.d(TAG, "acceptInvitation: finding devices...");
                 // Broadcast all devices found and saves the first successfully connection
                 mDeviceFinder.find(new PhoneTypeDeviceFilter(), true, this::onDevicesFound);
-                mDeviceFinder.find(this::onDevicesFound);
             });
         }
     }
