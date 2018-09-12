@@ -15,9 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
-
-import org.gearvrf.arpet.connection.Device;
+package org.gearvrf.arpet.connection;
 
 @FunctionalInterface
 public interface DeviceFilter {

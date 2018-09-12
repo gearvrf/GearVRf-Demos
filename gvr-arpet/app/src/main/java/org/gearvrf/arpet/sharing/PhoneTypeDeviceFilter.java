@@ -18,6 +18,7 @@
 package org.gearvrf.arpet.sharing;
 
 import org.gearvrf.arpet.connection.Device;
+import org.gearvrf.arpet.connection.DeviceFilter;
 import org.gearvrf.arpet.connection.DeviceType;
 
 public class PhoneTypeDeviceFilter implements DeviceFilter {

@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.manager.connection.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -26,7 +26,7 @@ import android.content.IntentFilter;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import org.gearvrf.arpet.manager.connection.bluetooth.BTDevice;
+import org.gearvrf.arpet.connection.DeviceFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +59,7 @@ public class BluetoothDeviceFinder extends BroadcastReceiver {
         mDeviceFilter = filter;
         mReturnOnFirstFound = returnOnFirstFound;
         mDevicesFound.clear();
-        setEnabled(true);
+        setReceiverEnabled(true);
         doDiscovery();
     }
 
@@ -67,7 +67,7 @@ public class BluetoothDeviceFinder extends BroadcastReceiver {
         find(null, false, callback);
     }
 
-    private void setEnabled(boolean enabled) {
+    private void setReceiverEnabled(boolean enabled) {
         if (enabled) {
             mContext.registerReceiver(this, mIntentFilter);
         } else {
@@ -98,13 +98,13 @@ public class BluetoothDeviceFinder extends BroadcastReceiver {
             if (mDeviceFilter == null || mDeviceFilter.meet(device)) {
                 mDevicesFound.add(device);
                 if (mReturnOnFirstFound) {
-                    setEnabled(false);
+                    setReceiverEnabled(false);
                     mOnFindCallback.onFound(mDevicesFound.toArray(new BTDevice[mDevicesFound.size()]));
                 }
             }
 
         } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-            setEnabled(false);
+            setReceiverEnabled(false);
             mOnFindCallback.onFound(mDevicesFound.toArray(new BTDevice[mDevicesFound.size()]));
         }
     }

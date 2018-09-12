@@ -30,6 +30,7 @@ import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTDevice;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
+import org.gearvrf.arpet.manager.connection.bluetooth.BluetoothDeviceFinder;
 
 import java.io.Serializable;
 import java.util.Arrays;
