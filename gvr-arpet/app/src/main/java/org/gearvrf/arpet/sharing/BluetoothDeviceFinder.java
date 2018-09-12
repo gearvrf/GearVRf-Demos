@@ -33,6 +33,8 @@ import java.util.List;
 
 public class BluetoothDeviceFinder extends BroadcastReceiver {
 
+    private static final String TAG = BluetoothDeviceFinder.class.getSimpleName();
+
     private IntentFilter mIntentFilter;
     private Context mContext;
     private DeviceFilter mDeviceFilter;
@@ -87,9 +89,11 @@ public class BluetoothDeviceFinder extends BroadcastReceiver {
 
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
-            BluetoothDevice bt = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            Log.d("naveca", "onReceive: " + bt.getName() + ", " + bt.getBluetoothClass().getMajorDeviceClass());
-            BTDevice device = new BTDevice(intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE));
+            BluetoothDevice btDeviceFound = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+            Log.d(TAG, String.format("Device found { name: %s, type: %s}",
+                    btDeviceFound.getName(), btDeviceFound.getBluetoothClass().getMajorDeviceClass()));
+
+            BTDevice device = new BTDevice(btDeviceFound);
 
             if (mDeviceFilter == null || mDeviceFilter.meet(device)) {
                 mDevicesFound.add(device);
