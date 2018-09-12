@@ -37,7 +37,6 @@ import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
-import org.gearvrf.arpet.mode.OnGuestOrHostListener;
 import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.IPetAction;
@@ -72,7 +71,6 @@ public class PetMain extends GVRMain {
     private IPetMode mCurrentMode;
     private HandlerModeChange mHandlerModeChange;
     private HandlerBackToHud mHandlerBackToHud;
-    private HandlerGuestOrHost handlerGuestOrHost;
 
     private CloudAnchorManager mCloudAnchorManager;
     private IAppConnectionManager mConnectionManager;
@@ -95,9 +93,14 @@ public class PetMain extends GVRMain {
         world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
 
+
+        //mBallThrowHandler.enable();
+
+        planeHandler = new PlaneHandler(mPetContext);
+        mPetContext.getMixedReality().registerPlaneListener(planeHandler);
+
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
-        handlerGuestOrHost = new HandlerGuestOrHost();
 
         mCloudAnchorManager = new CloudAnchorManager();
 
@@ -199,7 +202,8 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new ShareAnchorMode(mPetContext, handlerGuestOrHost);
+            mConnectionManager = AppConnectionManager.getInstance(mPetContext, new AppMessageHandler());
+            mCurrentMode = new ShareAnchorMode(mPetContext, mConnectionManager);
             mCurrentMode.enter();
         }
 
@@ -231,20 +235,6 @@ public class PetMain extends GVRMain {
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
-        }
-    }
-
-    public class HandlerGuestOrHost implements OnGuestOrHostListener {
-
-        @Override
-        public void OnHost() {
-            Log.d(TAG, "Search devices");
-
-        }
-
-        @Override
-        public void OnGuest() {
-
         }
     }
 
@@ -280,19 +270,24 @@ public class PetMain extends GVRMain {
 
                 case UiMessageType.CONNECTION_ESTABLISHED:
                     handleConnectionEstablished();
+                    if (mCurrentMode instanceof ShareAnchorMode) {
+                        ((ShareAnchorMode) mCurrentMode).showInviteAcceptedScreen();
+                    }
                     break;
                 case UiMessageType.CONNECTION_NOT_FOUND:
                     showToast("No connection found");
+                    if (mCurrentMode instanceof ShareAnchorMode) {
+                        ((ShareAnchorMode) mCurrentMode).showInviteMain();
+                    }
                     break;
                 case UiMessageType.CONNECTION_LOST:
                     showToast("No active connection");
                     break;
                 case UiMessageType.CONNECTION_LISTENER_STARTED:
                     showToast("Ready to accept connections");
-                    new Handler().postDelayed(
-                            // Stop listening after a few seconds
-                            () -> mConnectionManager.stopUsersInvitation(),
-                            30000);
+                    if (mCurrentMode instanceof ShareAnchorMode) {
+                        ((ShareAnchorMode) mCurrentMode).showWaitingForScreen();
+                    }
                     break;
                 case UiMessageType.ERROR_BLUETOOTH_NOT_ENABLED:
                     showToast("Bluetooth is disabled");
@@ -328,15 +323,6 @@ public class PetMain extends GVRMain {
         }
     }
 
-    @Override
-    public void onAfterInit() {
-        super.onAfterInit();
-        new Handler().postDelayed(() -> {
-            mConnectionManager = AppConnectionManager.getInstance(mPetContext, new AppMessageHandler());
-            //mConnectionManager.startUsersInvitation();
-            //mConnectionManager.acceptInvitation();
-        }, 1000);
-    }
 
     private void handleReceivedMessage(Serializable receivedMessage) {
         Message message = (Message) receivedMessage;

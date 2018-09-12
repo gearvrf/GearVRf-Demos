@@ -72,45 +72,47 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     public void onClick(View view) {
         if (view.getId() == R.id.guest_button) {
             mGuestOrHostListener.OnGuest();
-            mGuestButton.post(() -> {
-                modeGuest();
-                mHandler.postDelayed(() -> inviteAcceptedGuest(), 10000);
-            });
         } else if (view.getId() == R.id.host_button) {
             mGuestOrHostListener.OnHost();
-            modeHost();
-            mHandler.postDelayed(() -> inviteAcceptedHost(), 10000);
         }
     }
 
-    private void modeGuest() {
-        mMessage.setText(R.string.waiting_guests);
-        mGuestButton.setVisibility(View.GONE);
-        mHostButton.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
-    }
-
-    private void modeHost() {
+    public void modeGuest() {
         mMessage.setText(R.string.waiting_host);
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
-    private void inviteAcceptedGuest() {
-        mMessage.setText(R.string.connected_guests);
+    public void modeHost() {
+        mMessage.setText(R.string.waiting_guests);
+        mGuestButton.setVisibility(View.GONE);
+        mHostButton.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    public void inviteAcceptedGuest() {
+        mMessage.setText(R.string.connected_host);
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCheckImage.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
     }
 
-    private void inviteAcceptedHost() {
-        mMessage.setText(R.string.connected_host);
+    public void inviteAcceptedHost(int total) {
+        mMessage.setText(getGVRContext().getContext().getResources().getQuantityString(R.plurals.connected_guests, total, total));
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCheckImage.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    public void invitationView() {
+        mMessage.setText("Let’s start Sharing Anchor!\n" +
+                "What role do you want to play?");
+        mProgressBar.setVisibility(View.GONE);
+        mGuestButton.setVisibility(View.VISIBLE);
+        mHostButton.setVisibility(View.VISIBLE);
     }
 
     private void pairing() {

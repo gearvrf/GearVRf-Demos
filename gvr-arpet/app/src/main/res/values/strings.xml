@@ -17,7 +17,6 @@
     <string name="editing_mode">Editing Mode</string>
     <string name="save">SAVE</string>
     <string name="looking_the_same_thing">Make sure you and your friends are \n side-by-side looking at the same thing.</string>
-    <string name="connected_guests">3 guests entered\n on Sharing Anchor.</string>
     <string name="paired">Paired</string>
     <string name="sharing_anchor">SHARING ANCHOR</string>
     <string name="host_or_guest">Let’s start Sharing Anchor!\n What role do you want to play?</string>
@@ -26,4 +25,8 @@
     <string name="waiting_guests">Waiting for the guests to\n enter on the Sharing Anchor.</string>
     <string name="waiting_host">Waiting for a host to\n start the Sharing Anchor.</string>
     <string name="connected_host">Connected to the\n  host successfully.</string>
+    <plurals name="connected_guests" >
+        <item quantity="one">1 guest entered\n on Sharing Anchor.</item>
+        <item quantity="many">%d guests entered\n on Sharing Anchor.</item>
+    </plurals>
 </resources>

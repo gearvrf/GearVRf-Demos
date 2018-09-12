@@ -103,7 +103,9 @@ public final class AppConnectionManager extends BTConnectionManager implements I
             enableBluetooth(() -> {
                 Log.d(TAG, "acceptInvitation: finding devices...");
                 // Broadcast all devices found and saves the first successfully connection
-                mDeviceFinder.find(new PhoneTypeDeviceFilter(), true, this::onDevicesFound);
+
+                mDeviceFinder.find(new PhoneTypeDeviceFilter(), false, this::onDevicesFound);
+                // mDeviceFinder.find(this::onDevicesFound);
             });
         }
     }
