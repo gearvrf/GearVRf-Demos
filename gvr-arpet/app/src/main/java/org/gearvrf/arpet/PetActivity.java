@@ -21,9 +21,8 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.arpet.permission.OnPermissionResultListener;
-import org.gearvrf.arpet.permission.PermissionManager;
-import org.gearvrf.arpet.sharing.AppConnectionManager;
+import org.gearvrf.arpet.manager.permission.OnPermissionResultListener;
+import org.gearvrf.arpet.manager.permission.PermissionManager;
 import org.gearvrf.utility.Log;
 
 public class PetActivity extends GVRActivity {
@@ -32,7 +31,6 @@ public class PetActivity extends GVRActivity {
     private PetMain mMain;
     private PetContext mPetContext;
     private PermissionManager mPermissionManager;
-    private AppConnectionManager mConnectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -157,7 +157,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
 
     private void checkInitialization() {
         if (mContext == null) {
-            throw new IllegalStateException("Manager must be initialized first. Please call init() method.");
+            throw new IllegalStateException("The manager must be initialized with the init() method.");
         }
     }
 

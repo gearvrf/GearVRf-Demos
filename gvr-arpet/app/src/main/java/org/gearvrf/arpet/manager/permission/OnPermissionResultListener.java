@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.permission;
+package org.gearvrf.arpet.manager.permission;
 
 public interface OnPermissionResultListener {
 
