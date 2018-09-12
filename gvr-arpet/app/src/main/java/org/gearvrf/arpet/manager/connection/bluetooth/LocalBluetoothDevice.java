@@ -70,7 +70,7 @@ public final class LocalBluetoothDevice {
                         "name='" + name + '\'' +
                         ", address='" + address + '\'' +
                         ", type=" + getType() +
-                        "} " + super.toString();
+                        "}";
             }
         };
     }
