@@ -46,7 +46,9 @@ public class PetActions {
 
         public void setAnimation(GVRAnimation animation) {
             mAnimation = animation;
-            mAnimation.reset();
+            if (animation != null) {
+                mAnimation.reset();
+            }
         }
 
         long mElapsedTime = 0;

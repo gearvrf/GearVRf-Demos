@@ -79,9 +79,6 @@ public class PetMain extends GVRMain {
 
         //mBallThrowHandler.enable();
 
-        planeHandler = new PlaneHandler(mPetContext);
-        mPetContext.getMixedReality().registerPlaneListener(planeHandler);
-
         mConnectionManager = AppConnectionManager.getInstance();
         mConnectionManager.init(mPetContext);
 
