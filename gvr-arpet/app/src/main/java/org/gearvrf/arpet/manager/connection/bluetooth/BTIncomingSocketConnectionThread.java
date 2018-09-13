@@ -43,7 +43,7 @@ public final class BTIncomingSocketConnectionThread extends IncomingSocketConnec
     @Override
     protected ServerSocket<BTSocket> getServerSocket() throws IOException {
         return new BTServerSocket(BluetoothAdapter.getDefaultAdapter().
-                listenUsingRfcommWithServiceRecord(BTConstants.SOCKET_SERVER_NAME, BTConstants.SOCKET_SERVER_UUID));
+                listenUsingInsecureRfcommWithServiceRecord(BTConstants.SOCKET_SERVER_NAME, BTConstants.SOCKET_SERVER_UUID));
     }
 
     @Override

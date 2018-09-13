@@ -16,12 +16,14 @@
 package org.gearvrf.arpet;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
+import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
@@ -31,8 +33,9 @@ import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
-import org.gearvrf.arpet.sharing.PetConnectionManager;
 import org.gearvrf.arpet.sharing.IPetConnectionManager;
+import org.gearvrf.arpet.sharing.PetConnectionManager;
+import org.gearvrf.arpet.sharing.PetConnectionMessageType;
 import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -92,7 +95,27 @@ public class PetMain extends GVRMain {
 
         mPet = new CharacterController(mPetContext);
 
-        //disableCursor();
+    }
+
+    @Override
+    public void onAfterInit() {
+        // TEST CONNECTION
+        mPetContext.runDelayedOnPetThread(() -> mConnectionManager.addUiMessageHandler(
+                message -> {
+                    if (message.getType() == PetConnectionMessageType.CONNECTION_ESTABLISHED) {
+                        mPetContext.runOnPetThread(() -> {
+                            if (mConnectionManager.isConnectedAs(ConnectionMode.CLIENT)) {
+                                Toast.makeText(mPetContext.getActivity(), "Connected to host", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(mPetContext.getActivity(), "Guests connected: " + mConnectionManager.getTotalConnected(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                })
+                , 1000);
+
+        //mConnectionManager.startUsersInvitation();
+        //mConnectionManager.acceptInvitation();
     }
 
     public void resume() {
@@ -130,9 +153,6 @@ public class PetMain extends GVRMain {
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
         }
-        //addPetObjectsToPlane(plane);
-        //movePetToScreen();
-        //movePetToBed();
     }
 
     private void setEditModeEnabled(boolean enabled) {

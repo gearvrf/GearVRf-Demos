@@ -91,8 +91,7 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
     }
 
     private Message readMessage() throws IOException, ClassNotFoundException {
-        ObjectInputStream objectInputStream = new ObjectInputStream(mInStream);
-        return (Message) objectInputStream.readObject();
+        return (Message) new ObjectInputStream(mInStream).readObject();
     }
 
     private void handleIOException(IOException e) {

@@ -65,6 +65,6 @@ public class BTDevice extends BaseDevice {
     }
 
     public BTSocket createSocket(UUID uuid) throws IOException {
-        return new BTSocket(mDevice.createRfcommSocketToServiceRecord(uuid));
+        return new BTSocket(mDevice.createInsecureRfcommSocketToServiceRecord(uuid));
     }
 }
