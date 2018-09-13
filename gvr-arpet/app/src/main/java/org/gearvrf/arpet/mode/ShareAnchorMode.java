@@ -39,7 +39,7 @@ public class ShareAnchorMode extends BasePetMode {
     public ShareAnchorMode(PetContext petContext) {
         super(petContext, new ShareAnchorView(petContext));
         mConnectionManager = PetConnectionManager.getInstance();
-        mConnectionManager.addUiMessageHandler(new AppConnectionMessageHandler());
+        mConnectionManager.addMessageHandler(new AppConnectionMessageHandler());
         mShareAnchorView = (ShareAnchorView) mModeScene;
         mShareAnchorView.setListenerShareAnchorMode(new HandlerSendingInvitation());
     }

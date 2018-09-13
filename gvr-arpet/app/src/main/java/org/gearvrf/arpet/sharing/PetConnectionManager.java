@@ -80,14 +80,14 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public void addUiMessageHandler(PetConnectionMessageHandler handler) {
+    public void addMessageHandler(PetConnectionMessageHandler handler) {
         checkInitialization();
         mPetConnectionMessageHandlers.remove(handler);
         mPetConnectionMessageHandlers.add(handler);
     }
 
     @Override
-    public void removeUiMessageHandlers(PetConnectionMessageHandler handler) {
+    public void removeMessageHandlers(PetConnectionMessageHandler handler) {
         checkInitialization();
         mPetConnectionMessageHandlers.remove(handler);
     }

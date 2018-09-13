@@ -100,7 +100,7 @@ public class PetMain extends GVRMain {
     @Override
     public void onAfterInit() {
         // TEST CONNECTION
-        mPetContext.runDelayedOnPetThread(() -> mConnectionManager.addUiMessageHandler(
+        mPetContext.runDelayedOnPetThread(() -> mConnectionManager.addMessageHandler(
                 message -> {
                     if (message.getType() == PetConnectionMessageType.CONNECTION_ESTABLISHED) {
                         mPetContext.runOnPetThread(() -> {

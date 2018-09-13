@@ -47,7 +47,7 @@ public interface IPetConnectionManager {
 
     void sendMessage(Message message);
 
-    void addUiMessageHandler(PetConnectionMessageHandler handler);
+    void addMessageHandler(PetConnectionMessageHandler handler);
 
-    void removeUiMessageHandlers(PetConnectionMessageHandler handler);
+    void removeMessageHandlers(PetConnectionMessageHandler handler);
 }
