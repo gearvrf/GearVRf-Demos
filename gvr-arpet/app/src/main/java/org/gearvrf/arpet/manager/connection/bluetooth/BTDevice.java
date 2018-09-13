@@ -21,7 +21,7 @@ import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 
 import org.gearvrf.arpet.connection.DeviceType;
-import org.gearvrf.arpet.manager.connection.BaseDevice;
+import org.gearvrf.arpet.connection.BaseDevice;
 
 import java.io.IOException;
 import java.util.UUID;

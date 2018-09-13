@@ -22,7 +22,7 @@ import android.bluetooth.BluetoothAdapter;
 
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.DeviceType;
-import org.gearvrf.arpet.manager.connection.BaseDevice;
+import org.gearvrf.arpet.connection.BaseDevice;
 
 public final class LocalBluetoothDevice {
 
