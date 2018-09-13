@@ -22,7 +22,6 @@ import android.view.MotionEvent;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRPicker;
@@ -40,20 +39,16 @@ import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
 import org.gearvrf.arpet.mode.IPetView;
-import org.gearvrf.arpet.movement.IPetAction;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.gearvrf.scene_objects.GVRModelSceneObject;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class CharacterView extends AnchoredObject implements
         IPetView,
@@ -79,7 +74,7 @@ public class CharacterView extends AnchoredObject implements
     private GestureDetector mRotationDetector;
     private GestureDetector mScaleDetector;
 
-    private GVRModelSceneObject m3DModel;
+    private GVRSceneObject m3DModel;
 
     CharacterView(
             @NonNull PetContext petContext) {
@@ -146,7 +141,7 @@ public class CharacterView extends AnchoredObject implements
     }
 
     public GVRAnimation getAnimation(int i) {
-        return m3DModel.getAnimations().get(i);
+        return null;//m3DModel.getAnimations().get(i);
     }
 
     private void createShadow() {
