@@ -24,14 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
 @IntDef({
-        UiMessageType.CONNECTION_ESTABLISHED,
-        UiMessageType.CONNECTION_NOT_FOUND,
-        UiMessageType.CONNECTION_LOST,
-        UiMessageType.CONNECTION_LISTENER_STARTED,
-        UiMessageType.MESSAGE_RECEIVED,
-        UiMessageType.ERROR_BLUETOOTH_NOT_ENABLED,
-        UiMessageType.ERROR_DEVICE_NOT_DISCOVERABLE})
-public @interface UiMessageType {
+        PetConnectionMessageType.CONNECTION_ESTABLISHED,
+        PetConnectionMessageType.CONNECTION_NOT_FOUND,
+        PetConnectionMessageType.CONNECTION_LOST,
+        PetConnectionMessageType.CONNECTION_LISTENER_STARTED,
+        PetConnectionMessageType.MESSAGE_RECEIVED,
+        PetConnectionMessageType.ERROR_BLUETOOTH_NOT_ENABLED,
+        PetConnectionMessageType.ERROR_DEVICE_NOT_DISCOVERABLE})
+public @interface PetConnectionMessageType {
 
     // Connection status
 

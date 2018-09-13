@@ -17,6 +17,6 @@
 
 package org.gearvrf.arpet.sharing;
 
-public interface UiMessageHandler {
-    void handleMessage(UiMessage message);
+public interface PetConnectionMessageHandler {
+    void handleMessage(PetConnectionMessage message);
 }

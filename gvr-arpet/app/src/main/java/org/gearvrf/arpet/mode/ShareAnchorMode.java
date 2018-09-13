@@ -10,11 +10,11 @@ import android.widget.Toast;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.sharing.AppConnectionManager;
-import org.gearvrf.arpet.sharing.IAppConnectionManager;
-import org.gearvrf.arpet.sharing.UiMessage;
-import org.gearvrf.arpet.sharing.UiMessageHandler;
-import org.gearvrf.arpet.sharing.UiMessageType;
+import org.gearvrf.arpet.sharing.PetConnectionManager;
+import org.gearvrf.arpet.sharing.IPetConnectionManager;
+import org.gearvrf.arpet.sharing.PetConnectionMessage;
+import org.gearvrf.arpet.sharing.PetConnectionMessageHandler;
+import org.gearvrf.arpet.sharing.PetConnectionMessageType;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,8 +29,8 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private OnGuestOrHostListener mGuestOrHostListener;
-    private UiMessageHandler mMessageHandler;
-    private IAppConnectionManager mConnectionManager;
+    private PetConnectionMessageHandler mMessageHandler;
+    private IPetConnectionManager mConnectionManager;
     private final Handler mHandler = new Handler();
     private ShareAnchorView mShareAnchorView;
     @Mode
@@ -38,8 +38,8 @@ public class ShareAnchorMode extends BasePetMode {
 
     public ShareAnchorMode(PetContext petContext) {
         super(petContext, new ShareAnchorView(petContext));
-        mConnectionManager = AppConnectionManager.getInstance();
-        mConnectionManager.addUiMessageHandler(new AppMessageHandler());
+        mConnectionManager = PetConnectionManager.getInstance();
+        mConnectionManager.addUiMessageHandler(new AppConnectionMessageHandler());
         mShareAnchorView = (ShareAnchorView) mModeScene;
         mShareAnchorView.setListenerShareAnchorMode(new HandlerSendingInvitation());
     }
@@ -105,10 +105,10 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     @SuppressLint("HandlerLeak")
-    private class AppMessageHandler extends Handler implements UiMessageHandler {
+    private class AppConnectionMessageHandler extends Handler implements PetConnectionMessageHandler {
 
         @Override
-        public void handleMessage(UiMessage message) {
+        public void handleMessage(PetConnectionMessage message) {
             android.os.Message m = obtainMessage(message.getType());
             Bundle b = new Bundle();
             b.putSerializable("data", message.getData());
@@ -125,32 +125,32 @@ public class ShareAnchorMode extends BasePetMode {
                     msg.what, msg.getData().getSerializable("data"));
             Log.d(TAG, log);
 
-            @UiMessageType
+            @PetConnectionMessageType
             int messageType = msg.what;
 
             switch (messageType) {
 
-                case UiMessageType.CONNECTION_ESTABLISHED:
+                case PetConnectionMessageType.CONNECTION_ESTABLISHED:
                     handleConnectionEstablished();
                     break;
-                case UiMessageType.CONNECTION_NOT_FOUND:
+                case PetConnectionMessageType.CONNECTION_NOT_FOUND:
                     showInviteMain();
                     showToast("No connection found");
                     break;
-                case UiMessageType.CONNECTION_LOST:
+                case PetConnectionMessageType.CONNECTION_LOST:
                     showToast("No active connection");
                     break;
-                case UiMessageType.CONNECTION_LISTENER_STARTED:
+                case PetConnectionMessageType.CONNECTION_LISTENER_STARTED:
                     showToast("Ready to accept connections");
                     showWaitingForScreen();
                     break;
-                case UiMessageType.ERROR_BLUETOOTH_NOT_ENABLED:
+                case PetConnectionMessageType.ERROR_BLUETOOTH_NOT_ENABLED:
                     showToast("Bluetooth is disabled");
                     break;
-                case UiMessageType.ERROR_DEVICE_NOT_DISCOVERABLE:
+                case PetConnectionMessageType.ERROR_DEVICE_NOT_DISCOVERABLE:
                     showToast("Device is not visible to other devices");
                     break;
-                case UiMessageType.MESSAGE_RECEIVED:
+                case PetConnectionMessageType.MESSAGE_RECEIVED:
                 default:
                     break;
             }

@@ -26,7 +26,7 @@ import org.gearvrf.arpet.connection.socket.ConnectionMode;
 
 import java.util.List;
 
-public interface IAppConnectionManager {
+public interface IPetConnectionManager {
 
     void init(@NonNull PetContext context);
 
@@ -47,7 +47,7 @@ public interface IAppConnectionManager {
 
     void sendMessage(Message message);
 
-    void addUiMessageHandler(UiMessageHandler handler);
+    void addUiMessageHandler(PetConnectionMessageHandler handler);
 
-    void removeUiMessageHandlers(UiMessageHandler handler);
+    void removeUiMessageHandlers(PetConnectionMessageHandler handler);
 }

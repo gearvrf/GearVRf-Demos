@@ -19,18 +19,18 @@ package org.gearvrf.arpet.sharing;
 
 import java.io.Serializable;
 
-public class UiMessage {
+public class PetConnectionMessage {
 
-    @UiMessageType
+    @PetConnectionMessageType
     private int type;
     private Serializable data;
 
-    public UiMessage(@UiMessageType int type, Serializable data) {
+    public PetConnectionMessage(@PetConnectionMessageType int type, Serializable data) {
         this.type = type;
         this.data = data;
     }
 
-    @UiMessageType
+    @PetConnectionMessageType
     public int getType() {
         return type;
     }

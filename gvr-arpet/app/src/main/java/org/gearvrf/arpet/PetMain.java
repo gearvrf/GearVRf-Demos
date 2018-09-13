@@ -31,8 +31,8 @@ import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
-import org.gearvrf.arpet.sharing.AppConnectionManager;
-import org.gearvrf.arpet.sharing.IAppConnectionManager;
+import org.gearvrf.arpet.sharing.PetConnectionManager;
+import org.gearvrf.arpet.sharing.IPetConnectionManager;
 import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -56,7 +56,7 @@ public class PetMain extends GVRMain {
     private HandlerBackToHud mHandlerBackToHud;
 
     private CloudAnchorManager mCloudAnchorManager;
-    private IAppConnectionManager mConnectionManager;
+    private IPetConnectionManager mConnectionManager;
 
     private CharacterController mPet = null;
 
@@ -79,7 +79,7 @@ public class PetMain extends GVRMain {
 
         //mBallThrowHandler.enable();
 
-        mConnectionManager = AppConnectionManager.getInstance();
+        mConnectionManager = PetConnectionManager.getInstance();
         mConnectionManager.init(mPetContext);
 
         mHandlerModeChange = new HandlerModeChange();

@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public final class AppConnectionManager extends BTConnectionManager implements IAppConnectionManager {
+public final class PetConnectionManager extends BTConnectionManager implements IPetConnectionManager {
 
     private static final int REQUEST_ENABLE_BT = 1000;
     private static final int REQUEST_ENABLE_DISCOVERABLE = 1001;
@@ -50,18 +50,18 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     private BluetoothDeviceFinder mDeviceFinder;
     private OnEnableBluetoothCallback mEnableBTCallback;
     private OnEnableDiscoverableCallback mEnableDiscoverableCallback;
-    private List<UiMessageHandler> mUiMessageHandlers = new ArrayList<>();
+    private List<PetConnectionMessageHandler> mPetConnectionMessageHandlers = new ArrayList<>();
 
-    private static volatile AppConnectionManager sInstance;
+    private static volatile PetConnectionManager sInstance;
 
-    private AppConnectionManager() {
+    private PetConnectionManager() {
     }
 
-    public static IAppConnectionManager getInstance() {
+    public static IPetConnectionManager getInstance() {
         if (sInstance == null) {
-            synchronized (IAppConnectionManager.class) {
+            synchronized (IPetConnectionManager.class) {
                 if (sInstance == null) {
-                    sInstance = new AppConnectionManager();
+                    sInstance = new PetConnectionManager();
                 }
             }
         }
@@ -80,16 +80,16 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public void addUiMessageHandler(UiMessageHandler handler) {
+    public void addUiMessageHandler(PetConnectionMessageHandler handler) {
         checkInitialization();
-        mUiMessageHandlers.remove(handler);
-        mUiMessageHandlers.add(handler);
+        mPetConnectionMessageHandlers.remove(handler);
+        mPetConnectionMessageHandlers.add(handler);
     }
 
     @Override
-    public void removeUiMessageHandlers(UiMessageHandler handler) {
+    public void removeUiMessageHandlers(PetConnectionMessageHandler handler) {
         checkInitialization();
-        mUiMessageHandlers.remove(handler);
+        mPetConnectionMessageHandlers.remove(handler);
     }
 
     @Override
@@ -104,7 +104,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
                     Log.d(TAG, "startUsersInvitation: OK, now this device is discoverable for "
                             + DISCOVERABLE_DURATION + " seconds. Wait for connections");
                     startConnectionListener(this::onMessageReceived);
-                    sendMessageToUI(UiMessageType.CONNECTION_LISTENER_STARTED);
+                    sendMessageToUI(PetConnectionMessageType.CONNECTION_LISTENER_STARTED);
                 });
             });
         }
@@ -172,7 +172,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
             Log.d(TAG, "onDevicesFound: Trying connect to devices " + Arrays.toString(devices));
             connectToDevices(this::onMessageReceived, devices);
         } else {
-            sendMessageToUI(UiMessageType.CONNECTION_NOT_FOUND);
+            sendMessageToUI(PetConnectionMessageType.CONNECTION_NOT_FOUND);
         }
     }
 
@@ -183,7 +183,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
      */
     private void onMessageReceived(Message message) {
         Log.d(TAG, "onMessageReceived: " + message);
-        sendMessageToUI(UiMessageType.MESSAGE_RECEIVED, message);
+        sendMessageToUI(PetConnectionMessageType.MESSAGE_RECEIVED, message);
     }
 
     @Override
@@ -193,7 +193,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
         if (stateIs(ManagerState.CONNECTING_TO_REMOTE)) {
             super.onConnectionEstablished(connection);
             cancelOutgoingConnectionsThreads();
-            sendMessageToUI(UiMessageType.CONNECTION_ESTABLISHED);
+            sendMessageToUI(PetConnectionMessageType.CONNECTION_ESTABLISHED);
         } else {
             super.onConnectionEstablished(connection);
         }
@@ -206,7 +206,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
             super.onConnectionFailure(error);
             if (stateIs(ManagerState.IDLE)) {
                 Log.d(TAG, "onConnectionFailure: No connection found.");
-                sendMessageToUI(UiMessageType.CONNECTION_NOT_FOUND);
+                sendMessageToUI(PetConnectionMessageType.CONNECTION_NOT_FOUND);
             }
         } else {
             super.onConnectionFailure(error);
@@ -217,7 +217,7 @@ public final class AppConnectionManager extends BTConnectionManager implements I
     public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
         if (getTotalConnected() == 0) {
-            sendMessageToUI(UiMessageType.CONNECTION_LOST);
+            sendMessageToUI(PetConnectionMessageType.CONNECTION_LOST);
         }
     }
 
@@ -227,9 +227,9 @@ public final class AppConnectionManager extends BTConnectionManager implements I
             Log.d(TAG, "stopConnectionListener: force stop connection listener");
             super.stopConnectionListener();
             if (getTotalConnected() > 0) {
-                sendMessageToUI(UiMessageType.CONNECTION_ESTABLISHED);
+                sendMessageToUI(PetConnectionMessageType.CONNECTION_ESTABLISHED);
             } else {
-                sendMessageToUI(UiMessageType.CONNECTION_NOT_FOUND);
+                sendMessageToUI(PetConnectionMessageType.CONNECTION_NOT_FOUND);
             }
         }
     }
@@ -239,13 +239,13 @@ public final class AppConnectionManager extends BTConnectionManager implements I
             if (resultCode == Activity.RESULT_OK) {
                 mEnableBTCallback.onEnabled();
             } else {
-                sendMessageToUI(UiMessageType.ERROR_BLUETOOTH_NOT_ENABLED);
+                sendMessageToUI(PetConnectionMessageType.ERROR_BLUETOOTH_NOT_ENABLED);
             }
         } else if (requestCode == REQUEST_ENABLE_DISCOVERABLE) {
             if (resultCode != Activity.RESULT_CANCELED) {
                 mEnableDiscoverableCallback.onEnabled();
             } else {
-                sendMessageToUI(UiMessageType.ERROR_DEVICE_NOT_DISCOVERABLE);
+                sendMessageToUI(PetConnectionMessageType.ERROR_DEVICE_NOT_DISCOVERABLE);
             }
         }
     }
@@ -254,13 +254,13 @@ public final class AppConnectionManager extends BTConnectionManager implements I
         return new BTMessage(data);
     }
 
-    private void sendMessageToUI(@UiMessageType int type) {
+    private void sendMessageToUI(@PetConnectionMessageType int type) {
         sendMessageToUI(type, null);
     }
 
-    private void sendMessageToUI(@UiMessageType int type, Serializable data) {
-        for (UiMessageHandler uiMessageHandler : mUiMessageHandlers) {
-            uiMessageHandler.handleMessage(new UiMessage(type, data));
+    private void sendMessageToUI(@PetConnectionMessageType int type, Serializable data) {
+        for (PetConnectionMessageHandler petConnectionMessageHandler : mPetConnectionMessageHandlers) {
+            petConnectionMessageHandler.handleMessage(new PetConnectionMessage(type, data));
         }
     }
 
