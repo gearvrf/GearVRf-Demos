@@ -28,10 +28,14 @@ android {
 }
 
 dependencies {
-    if (findProject(':script')) {
-        implementation project (':script')
+    if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        if (findProject(':script')) {
+			implementation project (':script')
+		} else {
+			debugCompile(name: 'script-debug', ext: 'aar')
+			releaseCompile(name: 'script-release', ext: 'aar')
+		}
     } else {
-        debugCompile(name: 'script-debug', ext: 'aar')
-        releaseCompile(name: 'script-release', ext: 'aar')
+        compile "org.gearvrf:script:$gearvrfVersion"
     }
 }
