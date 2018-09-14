@@ -3,38 +3,25 @@ package org.gearvrf.arpet.mode;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.IntDef;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.sharing.PetConnectionManager;
 import org.gearvrf.arpet.sharing.IPetConnectionManager;
+import org.gearvrf.arpet.sharing.PetConnectionManager;
 import org.gearvrf.arpet.sharing.PetConnectionMessage;
 import org.gearvrf.arpet.sharing.PetConnectionMessageHandler;
 import org.gearvrf.arpet.sharing.PetConnectionMessageType;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 public class ShareAnchorMode extends BasePetMode {
-
-    @IntDef({Mode.HOST, Mode.GUEST})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {
-        int HOST = 0;
-        int GUEST = 1;
-    }
 
     private OnGuestOrHostListener mGuestOrHostListener;
     private PetConnectionMessageHandler mMessageHandler;
     private IPetConnectionManager mConnectionManager;
     private final Handler mHandler = new Handler();
     private ShareAnchorView mShareAnchorView;
-    @Mode
-    private int mMode;
 
     public ShareAnchorMode(PetContext petContext) {
         super(petContext, new ShareAnchorView(petContext));
@@ -63,13 +50,11 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnHost() {
-            mMode = Mode.HOST;
             mConnectionManager.startUsersInvitation();
         }
 
         @Override
         public void OnGuest() {
-            mMode = Mode.GUEST;
             mConnectionManager.acceptInvitation();
             mShareAnchorView.modeGuest();
             mShareAnchorView.getmProgressHandler().start();
@@ -83,11 +68,10 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showInviteAcceptedScreen() {
-        Log.d("XX", "accepted");
-        if (mMode == Mode.HOST) {
+        if (mConnectionManager.getConnectionMode() == ConnectionMode.SERVER) {
             mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
             mHandler.postDelayed(() -> showParingScreen(), 3000);
-        }else {
+        } else {
             Log.d("XX", "guest");
             mShareAnchorView.inviteAcceptedGuest();
             mHandler.postDelayed(() -> showParingScreen(), 3000);
@@ -195,5 +179,4 @@ public class ShareAnchorMode extends BasePetMode {
     private void showStatusModeView(){
         mShareAnchorView.modeView();
     }
-
 }
