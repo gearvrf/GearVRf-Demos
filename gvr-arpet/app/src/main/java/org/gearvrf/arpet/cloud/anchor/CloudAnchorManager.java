@@ -21,7 +21,6 @@ import android.util.Log;
 
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.ICloudAnchorListener;
 
 import java.lang.annotation.Retention;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CloudAnchorManager {
-    private static final String TAG = CloudAnchorManager.class.getName();
+    private static final String TAG = CloudAnchorManager.class.getSimpleName();
 
     @IntDef({ResponseType.FAILURE, ResponseType.SUCCESS})
     @Retention(RetentionPolicy.SOURCE)
@@ -42,23 +41,25 @@ public class CloudAnchorManager {
     private List<CloudAnchor> mCloudAnchors;
     private int mCountSuccess;
     private boolean mIsReady;
+    private final PetContext mPetContext;
 
-    public CloudAnchorManager() {
+    public CloudAnchorManager(PetContext petContext) {
+        mPetContext = petContext;
         mCloudAnchors = new ArrayList<>();
         mCountSuccess = 0;
         mIsReady = false;
     }
 
-    public void hostAnchor(PetContext petContext, AnchoredObject object) {
+    public void hostAnchor(AnchoredObject object) {
         CloudAnchor cloudAnchor = new CloudAnchor(object);
         cloudAnchor.setResponseListener(new CloudAnchorResponseListener());
         Log.d(TAG, "hosting anchor...");
-        petContext.getMixedReality().hostAnchor(object.getAnchor(), cloudAnchor.getCloudListener());
+        mPetContext.getMixedReality().hostAnchor(object.getAnchor(), cloudAnchor.getCloudListener());
         mCloudAnchors.add(cloudAnchor);
     }
 
-    public void resolveAnchor(GVRMixedReality mixedReality, CloudAnchor cloudAnchor, ICloudAnchorListener listener) {
-        mixedReality.resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), listener);
+    public void resolveAnchor(CloudAnchor cloudAnchor, ICloudAnchorListener listener) {
+        mPetContext.getMixedReality().resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), listener);
         mCloudAnchors.remove(cloudAnchor);
     }
 

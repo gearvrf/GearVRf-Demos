@@ -88,7 +88,7 @@ public class PetMain extends GVRMain {
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
 
-        mCloudAnchorManager = new CloudAnchorManager();
+        mCloudAnchorManager = new CloudAnchorManager(mPetContext);
 
         planeHandler = new PlaneHandler(mPetContext);
         mPetContext.getMixedReality().registerPlaneListener(planeHandler);
@@ -142,7 +142,7 @@ public class PetMain extends GVRMain {
 
         // Host pet anchor
         if (isCloudAnchorApiKeySet()) {
-            mCloudAnchorManager.hostAnchor(mPetContext, (AnchoredObject) mPet.view());
+            mCloudAnchorManager.hostAnchor((AnchoredObject) mPet.view());
         }
 
         if (mCurrentMode instanceof EditMode) {
