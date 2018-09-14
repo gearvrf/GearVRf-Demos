@@ -211,12 +211,10 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @Override
     public synchronized void onConnectionLost(Connection connection, ConnectionException error) {
-        synchronized (this) {
-            mOngoingConnections.remove(connection);
-            if (mOngoingConnections.size() == 0) {
-                setState(ManagerState.IDLE);
-                mConnectionMode = ConnectionMode.NONE;
-            }
+        mOngoingConnections.remove(connection);
+        if (mOngoingConnections.size() == 0) {
+            setState(ManagerState.IDLE);
+            mConnectionMode = ConnectionMode.NONE;
         }
     }
 
