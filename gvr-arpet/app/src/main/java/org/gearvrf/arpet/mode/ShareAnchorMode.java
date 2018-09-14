@@ -16,6 +16,7 @@ import org.gearvrf.arpet.sharing.PetConnectionMessageHandler;
 import org.gearvrf.arpet.sharing.PetConnectionMessageType;
 
 public class ShareAnchorMode extends BasePetMode {
+    private final String TAG = getClass().getSimpleName();
 
     private OnGuestOrHostListener mGuestOrHostListener;
     private PetConnectionMessageHandler mMessageHandler;
@@ -69,10 +70,11 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void showInviteAcceptedScreen() {
         if (mConnectionManager.getConnectionMode() == ConnectionMode.SERVER) {
+            Log.d(TAG, "host");
             mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
             mHandler.postDelayed(() -> showParingScreen(), 3000);
         } else {
-            Log.d("XX", "guest");
+            Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
             mHandler.postDelayed(() -> showParingScreen(), 3000);
         }
@@ -83,10 +85,10 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void OnWaitingForConnection() {
-        Log.d("XX", "OnWaitingForConnection: time up");
+        Log.d(TAG, "OnWaitingForConnection: time up");
         mConnectionManager.stopUsersInvitation();
         if (mConnectionManager.getTotalConnected() > 0) {
-            Log.d("XX", "Total" + mConnectionManager.getTotalConnected());
+            Log.d(TAG, "Total" + mConnectionManager.getTotalConnected());
             mShareAnchorView.inviteAcceptedGuest();
         }
     }
@@ -164,19 +166,19 @@ public class ShareAnchorMode extends BasePetMode {
         Toast.makeText(mPetContext.getActivity(), text, Toast.LENGTH_LONG).show();
     }
 
-    private void showParingScreen(){
+    private void showParingScreen() {
         mShareAnchorView.pairingView();
     }
 
-    private void showStayInPositionToPair(){
+    private void showStayInPositionToPair() {
         mShareAnchorView.toPairView();
     }
 
-    private void showParedView(){
+    private void showParedView() {
         mShareAnchorView.paredView();
     }
 
-    private void showStatusModeView(){
+    private void showStatusModeView() {
         mShareAnchorView.modeView();
     }
 }
