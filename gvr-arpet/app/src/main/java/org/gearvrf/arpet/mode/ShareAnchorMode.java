@@ -72,19 +72,25 @@ public class ShareAnchorMode extends BasePetMode {
             mMode = Mode.GUEST;
             mConnectionManager.acceptInvitation();
             mShareAnchorView.modeGuest();
+            mShareAnchorView.getmProgressHandler().start();
         }
     }
 
     private void showWaitingForScreen() {
         mShareAnchorView.modeHost();
-        mHandler.postDelayed(this::OnWaitingForConnection, 30000);
+        mShareAnchorView.getmProgressHandler().start();
+        mHandler.postDelayed(this::OnWaitingForConnection, 10000);
     }
 
     private void showInviteAcceptedScreen() {
+        Log.d("XX", "accepted");
         if (mMode == Mode.HOST) {
             mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
-        } else {
+            mHandler.postDelayed(() -> showParingScreen(), 3000);
+        }else {
+            Log.d("XX", "guest");
             mShareAnchorView.inviteAcceptedGuest();
+            mHandler.postDelayed(() -> showParingScreen(), 3000);
         }
     }
 
@@ -98,9 +104,6 @@ public class ShareAnchorMode extends BasePetMode {
         if (mConnectionManager.getTotalConnected() > 0) {
             Log.d("XX", "Total" + mConnectionManager.getTotalConnected());
             mShareAnchorView.inviteAcceptedGuest();
-            // 3 segundos tela de conectados
-
-            // pareando
         }
     }
 
@@ -160,7 +163,7 @@ public class ShareAnchorMode extends BasePetMode {
     private void handleConnectionEstablished() {
         switch (mConnectionManager.getConnectionMode()) {
             case ConnectionMode.CLIENT: {
-                showInviteMain();
+                showInviteAcceptedScreen();
                 break;
             }
             case ConnectionMode.SERVER: {
@@ -176,4 +179,21 @@ public class ShareAnchorMode extends BasePetMode {
     private void showToast(String text) {
         Toast.makeText(mPetContext.getActivity(), text, Toast.LENGTH_LONG).show();
     }
+
+    private void showParingScreen(){
+        mShareAnchorView.pairingView();
+    }
+
+    private void showStayInPositionToPair(){
+        mShareAnchorView.toPairView();
+    }
+
+    private void showParedView(){
+        mShareAnchorView.paredView();
+    }
+
+    private void showStatusModeView(){
+        mShareAnchorView.modeView();
+    }
+
 }

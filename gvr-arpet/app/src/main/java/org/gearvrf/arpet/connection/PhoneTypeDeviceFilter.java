@@ -21,5 +21,6 @@ public class PhoneTypeDeviceFilter implements DeviceFilter {
     @Override
     public boolean meet(Device device) {
         return device.getType() == DeviceType.PHONE;
+       // return device.getAddress().equalsIgnoreCase("48:49:C7:57:B8:0B");
     }
 }
