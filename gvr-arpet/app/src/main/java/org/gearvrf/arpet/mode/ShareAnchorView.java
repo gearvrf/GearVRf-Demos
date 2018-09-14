@@ -158,7 +158,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
         private static final int TICK_DELAY = 1000; // millisecond
         private int currentProgress;
-        private int duration = 11000;
+        private int duration = 0;
 
         public ProgressHandler(ProgressBar progressBar) {
             mProgressBar = progressBar;
@@ -168,8 +168,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (currentProgress < duration) {
-                mProgressBar.setProgress(currentProgress);
                 currentProgress += TICK_DELAY;
+                mProgressBar.setProgress(currentProgress);
                 sendEmptyMessageDelayed(0, TICK_DELAY);
             }
         }
@@ -182,6 +182,10 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
         void stop() {
             removeMessages(0);
+        }
+
+        void setDuration (int duration) {
+            this.duration = duration;
         }
     }
 }

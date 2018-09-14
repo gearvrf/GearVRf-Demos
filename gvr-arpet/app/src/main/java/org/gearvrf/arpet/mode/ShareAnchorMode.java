@@ -18,6 +18,9 @@ import org.gearvrf.arpet.sharing.PetConnectionMessageType;
 public class ShareAnchorMode extends BasePetMode {
     private final String TAG = getClass().getSimpleName();
 
+    private final int DEFAULT_SERVER_LISTENNING_TIMEOUT = 30000; // 30s for waiting incoming connections
+    private final int DEFAULT_GUEST_TIMEOUT = 12000;  // 12s according to bluetooth timeout
+
     private OnGuestOrHostListener mGuestOrHostListener;
     private PetConnectionMessageHandler mMessageHandler;
     private IPetConnectionManager mConnectionManager;
@@ -58,25 +61,27 @@ public class ShareAnchorMode extends BasePetMode {
         public void OnGuest() {
             mConnectionManager.acceptInvitation();
             mShareAnchorView.modeGuest();
+            mShareAnchorView.getmProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
             mShareAnchorView.getmProgressHandler().start();
         }
     }
 
     private void showWaitingForScreen() {
         mShareAnchorView.modeHost();
+        mShareAnchorView.getmProgressHandler().setDuration(DEFAULT_SERVER_LISTENNING_TIMEOUT);
         mShareAnchorView.getmProgressHandler().start();
-        mHandler.postDelayed(this::OnWaitingForConnection, 10000);
+        mHandler.postDelayed(this::OnWaitingForConnection, DEFAULT_SERVER_LISTENNING_TIMEOUT);
     }
 
     private void showInviteAcceptedScreen() {
         if (mConnectionManager.getConnectionMode() == ConnectionMode.SERVER) {
             Log.d(TAG, "host");
             mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
-            mHandler.postDelayed(() -> showParingScreen(), 3000);
+            mHandler.postDelayed(() -> showParingScreen(), Toast.LENGTH_LONG);
         } else {
             Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
-            mHandler.postDelayed(() -> showParingScreen(), 3000);
+            mHandler.postDelayed(() -> showParingScreen(), Toast.LENGTH_LONG);
         }
     }
 
