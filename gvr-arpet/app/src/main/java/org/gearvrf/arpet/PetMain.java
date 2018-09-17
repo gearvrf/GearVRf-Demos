@@ -37,6 +37,9 @@ import org.gearvrf.arpet.sharing.IPetConnectionManager;
 import org.gearvrf.arpet.sharing.PetConnectionManager;
 import org.gearvrf.arpet.sharing.PetConnectionMessageType;
 import org.gearvrf.arpet.util.ContextUtils;
+import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.io.GVRGazeCursorController;
+import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
@@ -95,6 +98,7 @@ public class PetMain extends GVRMain {
 
         mPet = new CharacterController(mPetContext);
 
+        configTouchScreen();
     }
 
     @Override
@@ -116,6 +120,19 @@ public class PetMain extends GVRMain {
 
         //mConnectionManager.startUsersInvitation();
         //mConnectionManager.acceptInvitation();
+    }
+
+    private void configTouchScreen() {
+        GVRInputManager inputManager = mPetContext.getGVRContext().getInputManager();
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
+        {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
+            {
+                if (newController instanceof GVRGazeCursorController) {
+                    ((GVRGazeCursorController)newController).setEnableTouchScreen(true);
+                }
+            }
+        });
     }
 
     public void resume() {
