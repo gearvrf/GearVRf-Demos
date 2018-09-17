@@ -18,7 +18,6 @@
 package org.gearvrf.arpet.character;
 
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.BallThrowHandler;
@@ -49,7 +48,7 @@ public class CharacterController extends BasePetMode {
         mPetContext.runOnPetThread(new Runnable() {
             @Override
             public void run() {
-                intPet((CharacterView)mModeScene);
+                intPet((CharacterView) mModeScene);
             }
         });
     }
@@ -113,11 +112,26 @@ public class CharacterController extends BasePetMode {
                 }));
     }
 
+    public void playBall() {
+        mBallThrowHandler.enable();
+        enableActions();
+    }
+
+    public void stopBall() {
+        mBallThrowHandler.disable();
+        disableActions();
+    }
+
     public void setPlane(GVRPlane plane) {
         CharacterView petView = (CharacterView) view();
 
         petView.setBoundaryPlane(plane);
         petView.setAnchor(mPetContext.getMixedReality().createAnchor(plane.getCenterPose()));
+    }
+
+    public CharacterView getView() {
+        CharacterView view = (CharacterView) view();
+        return view;
     }
 
     public void addAction(IPetAction action) {
@@ -144,14 +158,17 @@ public class CharacterController extends BasePetMode {
 
     private class DrawFrameHandler implements GVRDrawFrameListener {
         IPetAction activeAction = null;
+
         @Override
         public void onDrawFrame(float frameTime) {
             if (mCurrentAction != activeAction) {
                 if (activeAction != null) {
                     activeAction.exit();
+                    mBallThrowHandler.disable();
                 }
                 activeAction = mCurrentAction;
                 activeAction.entry();
+                mBallThrowHandler.enable();
             } else if (activeAction != null) {
                 activeAction.run(frameTime);
             }

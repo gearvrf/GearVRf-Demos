@@ -73,15 +73,11 @@ public class PetMain extends GVRMain {
     public void onInit(final GVRContext gvrContext) throws Throwable {
         super.onInit(gvrContext);
         mPetContext.init(gvrContext);
-
         mScene = gvrContext.getMainScene();
 
         GVRWorld world = new GVRWorld(gvrContext);
         world.setGravity(0f, -50f, 0f);
         mScene.getRoot().attachComponent(world);
-
-
-        //mBallThrowHandler.enable();
 
         mConnectionManager = PetConnectionManager.getInstance();
         mConnectionManager.init(mPetContext);
@@ -122,12 +118,10 @@ public class PetMain extends GVRMain {
 
     private void configTouchScreen() {
         GVRInputManager inputManager = mPetContext.getGVRContext().getInputManager();
-        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
-        {
-            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
-            {
+        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
+            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
                 if (newController instanceof GVRGazeCursorController) {
-                    ((GVRGazeCursorController)newController).setEnableTouchScreen(true);
+                    ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
                     newController.setCursor(null);
                 }
             }
@@ -161,16 +155,9 @@ public class PetMain extends GVRMain {
         if (mCurrentMode == null) {
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
+            mPet.stopBall();
         }
-    }
 
-    private void setEditModeEnabled(boolean enabled) {
-        if (mPet != null) {
-            /* FIXME: Should be a state of the pet
-            mPet.setRotationEnabled(enabled);
-            mPet.setScaleEnabled(enabled);
-            mPet.setDraggingEnabled(enabled);*/
-        }
     }
 
     @Override
@@ -197,7 +184,8 @@ public class PetMain extends GVRMain {
 
         @Override
         public void onPlayBall() {
-            // FIXME: Create this state to the PET
+            mPet.playBall();
+
         }
 
         @Override
@@ -212,6 +200,7 @@ public class PetMain extends GVRMain {
 
             mCurrentMode = new ShareAnchorMode(mPetContext);
             mCurrentMode.enter();
+            mPet.stopBall();
         }
 
         @Override
@@ -224,9 +213,9 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new EditMode(mPetContext, mHandlerBackToHud);
+            mCurrentMode = new EditMode(mPetContext, mHandlerBackToHud, mPet);
             mCurrentMode.enter();
-            setEditModeEnabled(true);
+            mPet.stopBall();
         }
 
         @Override
