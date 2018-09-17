@@ -24,7 +24,6 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
@@ -36,7 +35,6 @@ import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.sharing.IPetConnectionManager;
 import org.gearvrf.arpet.sharing.PetConnectionManager;
 import org.gearvrf.arpet.sharing.PetConnectionMessageType;
-import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -147,20 +145,13 @@ public class PetMain extends GVRMain {
         }
     }
 
-    private boolean isCloudAnchorApiKeySet() {
-        return ContextUtils.isMetaDataSet(getGVRContext().getContext(),
-                ApiConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
-    }
-
     @Subscribe
     public void onPlaneDetected(final GVRPlane plane) {
         mPet.setPlane(plane);
         mPet.enter();
 
         // Host pet anchor
-        if (isCloudAnchorApiKeySet()) {
-            mCloudAnchorManager.hostAnchor((AnchoredObject) mPet.view());
-        }
+        mCloudAnchorManager.hostAnchor((AnchoredObject) mPet.view());
 
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");

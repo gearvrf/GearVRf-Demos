@@ -21,6 +21,8 @@ import android.util.Log;
 
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.ICloudAnchorListener;
 
 import java.lang.annotation.Retention;
@@ -51,6 +53,11 @@ public class CloudAnchorManager {
     }
 
     public void hostAnchor(AnchoredObject object) {
+        if (!isCloudAnchorApiKeySet()) {
+            Log.e(TAG, "Cloud Anchor API key is not set!");
+            return;
+        }
+
         CloudAnchor cloudAnchor = new CloudAnchor(object);
         cloudAnchor.setResponseListener(new CloudAnchorResponseListener());
         Log.d(TAG, "hosting anchor...");
@@ -59,6 +66,11 @@ public class CloudAnchorManager {
     }
 
     public void resolveAnchor(CloudAnchor cloudAnchor, ICloudAnchorListener listener) {
+        if (!isCloudAnchorApiKeySet()) {
+            Log.e(TAG, "Cloud Anchor API key is not set!");
+            return;
+        }
+
         mPetContext.getMixedReality().resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), listener);
         mCloudAnchors.remove(cloudAnchor);
     }
@@ -75,6 +87,11 @@ public class CloudAnchorManager {
 
     public boolean isReady() {
         return mIsReady;
+    }
+
+    private boolean isCloudAnchorApiKeySet() {
+        return ContextUtils.isMetaDataSet(mPetContext.getGVRContext().getContext(),
+                ApiConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
     }
 
     private class CloudAnchorResponseListener implements OnCloudAnchorResponseListener {
