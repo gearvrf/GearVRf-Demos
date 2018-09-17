@@ -61,8 +61,8 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
 
     @Override
     public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
-        editSceneObject.getTransform().setScale(3.2f, 3.2f, 1.0f);
-        editSceneObject.getTransform().setPosition(0.0f, 1.4f, -5.0f);
+        editSceneObject.getTransform().setScale(1.2f, 1.2f, 1.0f);
+        editSceneObject.getTransform().setPosition(-0.02f, 0.35f, -1.0f);
         addChildObject(mEditModeObject);
     }
 

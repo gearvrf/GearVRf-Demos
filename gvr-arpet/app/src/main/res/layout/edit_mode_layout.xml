@@ -31,7 +31,7 @@
         android:fontFamily="@font/roboto_medium"
         android:textSize="20sp"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="310dp"
+        android:layout_marginStart="540dp"
         android:layout_marginTop="14.5dp"
         android:layout_height="wrap_content" />
 

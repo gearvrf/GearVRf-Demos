@@ -61,15 +61,15 @@ public class ShareAnchorMode extends BasePetMode {
         public void OnGuest() {
             mConnectionManager.acceptInvitation();
             mShareAnchorView.modeGuest();
-            mShareAnchorView.getmProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
-            mShareAnchorView.getmProgressHandler().start();
+            mShareAnchorView.getProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
+            mShareAnchorView.getProgressHandler().start();
         }
     }
 
     private void showWaitingForScreen() {
         mShareAnchorView.modeHost();
-        mShareAnchorView.getmProgressHandler().setDuration(DEFAULT_SERVER_LISTENNING_TIMEOUT);
-        mShareAnchorView.getmProgressHandler().start();
+        mShareAnchorView.getProgressHandler().setDuration(DEFAULT_SERVER_LISTENNING_TIMEOUT);
+        mShareAnchorView.getProgressHandler().start();
         mHandler.postDelayed(this::OnWaitingForConnection, DEFAULT_SERVER_LISTENNING_TIMEOUT);
     }
 

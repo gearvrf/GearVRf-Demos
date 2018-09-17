@@ -49,7 +49,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mGuestOrHostListener = listener;
     }
 
-    public ProgressHandler getmProgressHandler() {
+    public ProgressHandler getProgressHandler() {
         return mProgressHandler;
     }
 
