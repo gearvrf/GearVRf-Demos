@@ -128,6 +128,7 @@ public class PetMain extends GVRMain {
             {
                 if (newController instanceof GVRGazeCursorController) {
                     ((GVRGazeCursorController)newController).setEnableTouchScreen(true);
+                    newController.setCursor(null);
                 }
             }
         });
