@@ -44,27 +44,27 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':3DCursorLibrary')) {
-            compile project (':3DCursorLibrary')
+            implementation project (':3DCursorLibrary')
         } else {
-            compile(name: '3DCursorLibrary-debug', ext: 'aar')
+            implementation(name: '3DCursorLibrary-debug', ext: 'aar')
         }
         if (findProject(':GearWearIoDevice')) {
-            compile project (':GearWearIoDevice')
+            implementation project (':GearWearIoDevice')
         } else {
-            compile(name: 'GearWearIoDevice-debug', ext: 'aar')
+            implementation(name: 'GearWearIoDevice-debug', ext: 'aar')
         }
         if (findProject(':gearwearlibrary')) {
-            compile project (':gearwearlibrary')
+            implementation project (':gearwearlibrary')
         } else {
-            compile(name: 'gearwearlibrary-debug', ext: 'aar')
+            implementation(name: 'gearwearlibrary-debug', ext: 'aar')
         }
     } else {
-        compile "org.gearvrf:3DCursorLibrary:$gearvrfVersion"
-        compile "org.gearvrf:GearWearIoDevice:$gearvrfVersion"
-        compile "org.gearvrf:gearwearlibrary:$gearvrfVersion"
+        implementation "org.gearvrf:3DCursorLibrary:$gearvrfVersion"
+        implementation "org.gearvrf:GearWearIoDevice:$gearvrfVersion"
+        implementation "org.gearvrf:gearwearlibrary:$gearvrfVersion"
     }
     //_VENDOR_TODO_ add the device to gvr-3dcursor here
     //compile project(':IODevices:io_template')
