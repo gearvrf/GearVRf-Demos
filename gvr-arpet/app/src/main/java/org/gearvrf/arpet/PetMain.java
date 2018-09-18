@@ -112,7 +112,7 @@ public class PetMain extends GVRMain {
                 });
         mPetContext.runDelayedOnPetThread(() -> {
             //mConnectionManager.startUsersInvitation();
-            mConnectionManager.acceptInvitation();
+            //mConnectionManager.acceptInvitation();
         }, 1000);
 
     }
