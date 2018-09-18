@@ -158,17 +158,14 @@ public class CharacterController extends BasePetMode {
 
     private class DrawFrameHandler implements GVRDrawFrameListener {
         IPetAction activeAction = null;
-
         @Override
         public void onDrawFrame(float frameTime) {
             if (mCurrentAction != activeAction) {
                 if (activeAction != null) {
                     activeAction.exit();
-                    mBallThrowHandler.disable();
                 }
                 activeAction = mCurrentAction;
                 activeAction.entry();
-                mBallThrowHandler.enable();
             } else if (activeAction != null) {
                 activeAction.run(frameTime);
             }

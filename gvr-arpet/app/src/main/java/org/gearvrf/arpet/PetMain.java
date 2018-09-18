@@ -186,7 +186,7 @@ public class PetMain extends GVRMain {
         @Override
         public void onPlayBall() {
             mPet.playBall();
-
+            mHandlerBackToHud.OnBackToHud();
         }
 
         @Override
