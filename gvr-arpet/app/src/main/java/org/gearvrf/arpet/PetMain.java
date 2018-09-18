@@ -98,7 +98,7 @@ public class PetMain extends GVRMain {
     @Override
     public void onAfterInit() {
         // TEST CONNECTION
-        mPetContext.runDelayedOnPetThread(() -> mConnectionManager.addMessageHandler(
+        mConnectionManager.addMessageHandler(
                 message -> {
                     if (message.getType() == PetConnectionMessageType.CONNECTION_ESTABLISHED) {
                         mPetContext.runOnPetThread(() -> {
@@ -109,11 +109,12 @@ public class PetMain extends GVRMain {
                             }
                         });
                     }
-                })
-                , 1000);
+                });
+        mPetContext.runDelayedOnPetThread(() -> {
+            //mConnectionManager.startUsersInvitation();
+            mConnectionManager.acceptInvitation();
+        }, 1000);
 
-        //mConnectionManager.startUsersInvitation();
-        //mConnectionManager.acceptInvitation();
     }
 
     private void configTouchScreen() {

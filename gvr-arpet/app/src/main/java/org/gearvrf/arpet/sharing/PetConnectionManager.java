@@ -27,16 +27,14 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.ManagerState;
 import org.gearvrf.arpet.connection.Message;
-import org.gearvrf.arpet.connection.PhoneTypeDeviceFilter;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTDevice;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
-import org.gearvrf.arpet.manager.connection.bluetooth.BluetoothDeviceFinder;
+import org.gearvrf.arpet.manager.connection.bluetooth.BTServerDeviceFinder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public final class PetConnectionManager extends BTConnectionManager implements IPetConnectionManager {
@@ -47,7 +45,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
 
     private PetContext mContext;
     private BluetoothAdapter mBluetoothAdapter;
-    private BluetoothDeviceFinder mDeviceFinder;
+    private BTServerDeviceFinder mServerFinder;
     private OnEnableBluetoothCallback mEnableBTCallback;
     private OnEnableDiscoverableCallback mEnableDiscoverableCallback;
     private List<PetConnectionMessageHandler> mPetConnectionMessageHandlers = new ArrayList<>();
@@ -73,7 +71,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         if (mContext == null) {
             mContext = context;
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            mDeviceFinder = new BluetoothDeviceFinder(mContext.getActivity());
+            mServerFinder = new BTServerDeviceFinder(mContext.getActivity());
             mContext.addOnPetContextListener((requestCode, resultCode, data)
                     -> onActivityResult(requestCode, resultCode));
         }
@@ -102,7 +100,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
                 Log.d(TAG, "startUsersInvitation: OK, BT enabled. Request device discoverable");
                 enableDiscoverable(() -> {
                     Log.d(TAG, "startUsersInvitation: OK, now this device is discoverable for "
-                            + DISCOVERABLE_DURATION + " seconds. Wait for connections");
+                            + DISCOVERABLE_DURATION + " seconds. Waiting for connections");
                     startConnectionListener(this::onMessageReceived);
                     sendMessageToUI(PetConnectionMessageType.CONNECTION_LISTENER_STARTED);
                 });
@@ -122,10 +120,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         Log.d(TAG, "acceptInvitation: ");
         if (stateIs(ManagerState.IDLE)) {
             enableBluetooth(() -> {
-                Log.d(TAG, "acceptInvitation: finding devices...");
+                Log.d(TAG, "acceptInvitation: finding server devices...");
                 // Broadcast all devices found and saves the first successfully connection
-                mDeviceFinder.find(new PhoneTypeDeviceFilter(), false, this::onDevicesFound);
-                // mDeviceFinder.find(this::onDevicesFound);
+                mServerFinder.find(this::onServerFinderResult);
             });
         }
     }
@@ -161,15 +158,15 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     /**
-     * Handle devices found by {@link BluetoothDeviceFinder}.
+     * Handle devices found by {@link BTServerDeviceFinder}.
      *
-     * @param devices Devices to handle.
+     * @param server Ser.
      */
-    private void onDevicesFound(BTDevice[] devices) {
-        Log.d(TAG, "onDevicesFound: " + devices.length);
-        if (devices.length > 0) {
-            Log.d(TAG, "onDevicesFound: Trying connect to devices " + Arrays.toString(devices));
-            connectToDevices(this::onMessageReceived, devices);
+    private void onServerFinderResult(BTDevice server) {
+        Log.d(TAG, "onServerFinderResult: " + server);
+        if (server != null) {
+            Log.d(TAG, "onDevicesFound: Trying connect to server " + server);
+            connectToDevices(this::onMessageReceived, server);
         } else {
             sendMessageToUI(PetConnectionMessageType.CONNECTION_NOT_FOUND);
         }
@@ -216,6 +213,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
         if (getTotalConnected() == 0) {
+            Log.d(TAG, "onConnectionLost: " + connection.getRemoteDevice());
             sendMessageToUI(PetConnectionMessageType.CONNECTION_LOST);
         }
     }
