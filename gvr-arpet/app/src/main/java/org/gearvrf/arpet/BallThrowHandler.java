@@ -39,11 +39,11 @@ import org.joml.Vector3f;
 public class BallThrowHandler {
     private static final float defaultPositionX = 0f;
     private static final float defaultPositionY = 0f;
-    private static final float defaultPositionZ = -20f;
+    private static final float defaultPositionZ = -40f;
 
-    private static final float defaultScaleX = 20f;
-    private static final float defaultScaleY = 20f;
-    private static final float defaultScaleZ = 20f;
+    private static final float defaultScaleX = 40f;
+    private static final float defaultScaleY = 40f;
+    private static final float defaultScaleZ = 40f;
 
     private static final float MIN_Y_OFFSET = -100;
     private final GVRMixedReality mMixedReality;
@@ -56,7 +56,7 @@ public class BallThrowHandler {
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
 
-    private float[] mForce = {0f, 80f, -80f};
+    private float[] mForce = {0f, 0f, -40000f};
 
     private GVRSceneObject physicsRoot = null;
 
@@ -122,7 +122,7 @@ public class BallThrowHandler {
         collider.setRadius(0.1f);
         mBall.attachComponent(collider);
 
-        mRigidBody = new GVRRigidBody(mContext, 0.2f);
+        mRigidBody = new GVRRigidBody(mContext, 5.0f);
         mRigidBody.setRestitution(1.5f);
         mRigidBody.setFriction(0.5f);
         mBall.attachComponent(mRigidBody);

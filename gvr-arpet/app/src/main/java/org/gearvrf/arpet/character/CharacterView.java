@@ -133,7 +133,7 @@ public class CharacterView extends AnchoredObject implements
         m3DModel = LoadModelHelper.loadModelSceneObject(mContext, LoadModelHelper.PET_MODEL_PATH);
 
         addChildObject(m3DModel);
-        m3DModel.getTransform().setScale(0.001f, 0.001f, 0.001f);
+        m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
         m3DModel.setName(PET_NAME);
             // FIXME: Set appropriate size for collider
         GVRBoxCollider boxCollider = new GVRBoxCollider(mContext);
@@ -158,10 +158,11 @@ public class CharacterView extends AnchoredObject implements
     }
 
     @Override
-    public void updatePose(float[] poseMatrix) {
+    public boolean updatePose(float[] poseMatrix) {
         if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)) {
-            super.updatePose(poseMatrix);
+            return super.updatePose(poseMatrix);
         }
+        return false;
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {

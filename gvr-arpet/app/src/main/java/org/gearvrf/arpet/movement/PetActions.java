@@ -34,6 +34,13 @@ public class PetActions {
         protected final CharacterView mCharacter;
         protected final GVRTransform mTargetTransform;
         protected final OnPetActionListener mListener;
+        protected final float mCharacterHalfSize = 25.0f;
+        protected final float mMoveAcceleration = 0.001f;
+        protected final float mMaxMoveSpeed = 0.01f;
+        protected final float mTurnSpeed = 0.05f;
+        protected float mMoveSpeed = 0.0f;
+        protected long mElapsedTime = 0;
+
         protected GVRAnimation mAnimation;
 
         protected PetAction(CharacterView character, GVRTransform target,
@@ -51,19 +58,41 @@ public class PetActions {
             }
         }
 
-        long mElapsedTime = 0;
         protected void animate(float frameTime) {
             int duration = (int)mAnimation.getDuration() * 1000;
             mElapsedTime += (frameTime * 1000);
             mElapsedTime = mElapsedTime % duration;
             // mAnimation.animate((float)mElapsedTime / (float)duration);
         }
+
+        @Override
+        public void entry() {
+            mMoveSpeed = 0.0f;
+
+            onEntry();
+        }
+
+        @Override
+        public void exit() {
+            onExit();
+        }
+
+        @Override
+        public void run(float frameTime) {
+            if (mMoveSpeed < mMaxMoveSpeed) {
+                mMoveSpeed += mMoveAcceleration;
+            }
+
+            onRun(frameTime);
+        }
+
+        protected abstract void onEntry();
+        protected abstract void onExit();
+        protected abstract void onRun(float fimeTime);
     }
 
     public static class IDLE extends PetAction {
         public static final int ID = 0;
-
-        private float mTurnSpeed = 0.05f;
 
         public IDLE(CharacterView character, GVRTransform target) {
             super(character, target, null);
@@ -74,12 +103,12 @@ public class PetActions {
         public int id() { return ID; }
 
         @Override
-        public void entry() {
+        public void onEntry() {
             Log.w(TAG, "entry => IDLE");
         }
 
         @Override
-        public void exit() {
+        public void onExit() {
             Log.w(TAG, "exit => IDLE");
         }
 
@@ -91,7 +120,7 @@ public class PetActions {
         private Vector3f mLookAt = new Vector3f();
 
         @Override
-        public void run(float frameTime) {
+        public void onRun(float frameTime) {
             GVRTransform pTrans = mCharacter.getParent().getTransform();
             GVRTransform cTrans = mCharacter.getTransform();
             pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
@@ -142,8 +171,6 @@ public class PetActions {
 
     public static class TO_CAMERA extends PetAction {
         public static final int ID = 1;
-        private float mTurnSpeed = 0.05f;
-        private float mWalkSpeed = 0.005f;
 
         public TO_CAMERA(CharacterView character, GVRTransform target,
                          OnPetActionListener listener) {
@@ -154,12 +181,12 @@ public class PetActions {
         public int id() { return ID; }
 
         @Override
-        public void entry() {
+        public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_CAMERA");
         }
 
         @Override
-        public void exit() {
+        public void onExit() {
             Log.w(TAG, "exit => MOVING_TO_CAMERA");
         }
 
@@ -171,7 +198,7 @@ public class PetActions {
         private Vector3f mLookAt = new Vector3f();
 
         @Override
-        public void run(float frameTime) {
+        public void onRun(float frameTime) {
             GVRTransform pTrans = mCharacter.getParent().getTransform();
             GVRTransform cTrans = mCharacter.getTransform();
             pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
@@ -199,24 +226,25 @@ public class PetActions {
 
             // Keep a angle of 45 degree of distance
             boolean moveTowardToCam = mLookAt.length() > (y * Math.tan(Math.PI * 0.25));
-            // Normalize after calc the distance
-            mLookAt.normalize();
-
-            // Speed vector to create a smooth rotation
-            mLookAt.mul(mTurnSpeed);
-            mLookAt.add(mLookToward);
-            mLookAt.normalize();
-            // Calc the rotation toward the camera and put it in pRot
-            mLookToward.rotationTo(mLookAt, pRot);
-            // Multiply by character rotation.
-            cRot.mul(pRot);
-            // Set the new rotation to the Character
-            mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
 
             if (moveTowardToCam) {
+                // Normalize after calc the distance
+                mLookAt.normalize();
+
+                // Speed vector to create a smooth rotation
+                mLookAt.mul(mTurnSpeed);
+                mLookAt.add(mLookToward);
+                mLookAt.normalize();
+                // Calc the rotation toward the camera and put it in pRot
+                mLookToward.rotationTo(mLookAt, pRot);
+                // Multiply by character rotation.
+                cRot.mul(pRot);
+                // Set the new rotation to the Character
+                mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
+
                 float[] pose = mCharacter.getAnchor().getPose();
                 // TODO: Create pose
-                mLookAt.mul(mWalkSpeed);
+                mLookAt.mul(mMoveSpeed);
 
                 pose[12] = pose[12] + mLookAt.x;
                 pose[14] = pose[14] + mLookAt.z;
@@ -230,8 +258,6 @@ public class PetActions {
 
     public static class TO_BALL extends PetAction {
         public static final int ID = 2;
-        private float mTurnSpeed = 0.05f;
-        private float mWalkSpeed = 0.005f;
 
         public TO_BALL(CharacterView character, GVRTransform target,
                        OnPetActionListener listener) {
@@ -242,12 +268,12 @@ public class PetActions {
         public int id() { return ID; }
 
         @Override
-        public void entry() {
+        public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_BALL");
         }
 
         @Override
-        public void exit() {
+        public void onExit() {
             Log.w(TAG, "exit => MOVING_TO_BALL");
         }
 
@@ -259,7 +285,7 @@ public class PetActions {
         private Vector3f mLookAt = new Vector3f();
 
         @Override
-        public void run(float frameTime) {
+        public void onRun(float frameTime) {
             GVRTransform pTrans = mCharacter.getParent().getTransform();
             GVRTransform cTrans = mCharacter.getTransform();
             pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
@@ -280,31 +306,32 @@ public class PetActions {
             float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
             float[] modelCam = mTargetTransform.getModelMatrix();
             mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
-            mLookAt.sub(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
-            float y = mLookAt.y;
-            // Remove y vector
-            mLookAt.y = 0;
+            mLookAt.sub(modelCharacter[12], modelCharacter[13] + mCharacterHalfSize, // Center
+                    modelCharacter[14]);
 
             // Min distance to ball
-            boolean moveTowardToBall = mLookAt.length() > 8.0f;
-            // Normalize after calc the distance
-            mLookAt.normalize();
-
-            // Speed vector to create a smooth rotation
-            mLookAt.mul(mTurnSpeed);
-            mLookAt.add(mLookToward);
-            mLookAt.normalize();
-            // Calc the rotation toward the camera and put it in pRot
-            mLookToward.rotationTo(mLookAt, pRot);
-            // Multiply by character rotation.
-            cRot.mul(pRot);
-            // Set the new rotation to the Character
-            mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
+            boolean moveTowardToBall = mLookAt.length() > mCharacterHalfSize * 1.1f;
 
             if (moveTowardToBall) {
+                // Remove y vector
+                mLookAt.y = 0;
+                // Normalize after calc the distance
+                mLookAt.normalize();
+
+                // Speed vector to create a smooth rotation
+                mLookAt.mul(mTurnSpeed);
+                mLookAt.add(mLookToward);
+                mLookAt.normalize();
+                // Calc the rotation toward the camera and put it in pRot
+                mLookToward.rotationTo(mLookAt, pRot);
+                // Multiply by character rotation.
+                cRot.mul(pRot);
+                // Set the new rotation to the Character
+                mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
+
                 float[] pose = mCharacter.getAnchor().getPose();
                 // TODO: Create pose
-                mLookAt.mul(mWalkSpeed);
+                mLookAt.mul(mMoveSpeed);
 
                 pose[12] = pose[12] + mLookAt.x;
                 pose[14] = pose[14] + mLookAt.z;

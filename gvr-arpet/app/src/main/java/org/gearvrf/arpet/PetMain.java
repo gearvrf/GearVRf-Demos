@@ -76,7 +76,7 @@ public class PetMain extends GVRMain {
         mScene = gvrContext.getMainScene();
 
         GVRWorld world = new GVRWorld(gvrContext);
-        world.setGravity(0f, -50f, 0f);
+        world.setGravity(0f, -200f, 0f);
         mScene.getRoot().attachComponent(world);
 
         mConnectionManager = PetConnectionManager.getInstance();

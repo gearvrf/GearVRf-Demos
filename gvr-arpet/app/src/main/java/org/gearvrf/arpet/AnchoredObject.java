@@ -65,9 +65,10 @@ public abstract class AnchoredObject extends GVRSceneObject {
         this.mObjectType = objectType;
     }
 
-    public void updatePose(float[] poseMatrix) {
+    public boolean updatePose(float[] poseMatrix) {
         mPoseMatrix = poseMatrix;
         mMixedReality.updateAnchorPose(mAnchor, poseMatrix);
+        return true;
     }
 
     public GVRAnchor getAnchor() {
