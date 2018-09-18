@@ -43,18 +43,18 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile fileTree(dir: 'src/main/libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'src/main/libs', include: ['*.jar'])
 
-    compile "com.google.vr:sdk-audio:$daydreamVersion"
+    implementation "com.google.vr:sdk-audio:$daydreamVersion"
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':ResonanceAudio')) {
-            compile project(':ResonanceAudio')
+            implementation project(':ResonanceAudio')
         } else {
-            debugCompile(name: 'ResonanceAudio-debug', ext: 'aar')
-            releaseCompile(name: 'ResonanceAudio-release', ext: 'aar')
+            debugImplementation(name: 'ResonanceAudio-debug', ext: 'aar')
+            releaseImplementation(name: 'ResonanceAudio-release', ext: 'aar')
         }
     } else {
-        compile "org.gearvrf:ResonanceAudio:$gearvrfVersion"
+        implementation "org.gearvrf:ResonanceAudio:$gearvrfVersion"
     }
 }
