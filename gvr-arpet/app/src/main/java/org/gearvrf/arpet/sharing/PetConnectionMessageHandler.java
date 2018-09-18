@@ -17,6 +17,7 @@
 
 package org.gearvrf.arpet.sharing;
 
+@FunctionalInterface
 public interface PetConnectionMessageHandler {
     void handleMessage(PetConnectionMessage message);
 }
