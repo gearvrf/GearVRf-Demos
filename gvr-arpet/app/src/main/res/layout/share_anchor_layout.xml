@@ -16,21 +16,26 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="60dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="55dp"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="75dp"
             android:src="@drawable/ic_invitation" />
 
-        <TextView
-            android:id="@+id/message"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="180dp"
-            android:layout_marginTop="163dp"
-            android:text="@string/invitation"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="@string/invitation"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="21sp" />
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/check_bigger"
@@ -63,7 +68,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="220dp">
+            android:layout_marginTop="230dp">
 
             <Button
                 android:id="@+id/guest_button"

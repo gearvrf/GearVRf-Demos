@@ -72,10 +72,9 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     @Override
     public void onStartRendering(GVRViewSceneObject sendingInvitationObject, View view) {
-        sendingInvitationObject.getTransform().setScale(7.2f, 6.2f, 1.0f);
-        sendingInvitationObject.getTransform().setPosition(0.0f, 0.0f, -5.0f);
+        sendingInvitationObject.getTransform().setScale(3.0f, 2.8f, 1.0f);
+        sendingInvitationObject.getTransform().setPosition(0.0f, 0.0f, -2.0f);
         addChildObject(mInvitationObject);
-        mInvitationObject.getRenderData().getMaterial().setColor(0.6f, 0.6f, 0.6f);
     }
 
     @Override
