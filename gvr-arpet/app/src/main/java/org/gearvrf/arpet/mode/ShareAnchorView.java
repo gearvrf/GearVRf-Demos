@@ -134,7 +134,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         anim.setInterpolator(new LinearInterpolator());
         anim.setRepeatCount(Animation.INFINITE);
-        anim.setDuration(700);
+        anim.setDuration(2000);
         mSpinner.startAnimation(anim);
     }
 
@@ -144,6 +144,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public void paredView() {
         mPairing.setVisibility(View.GONE);
+        mSpinner.clearAnimation();
         mSpinner.setVisibility(View.GONE);
         mCheckBiggerIcon.setVisibility(View.VISIBLE);
         mMessage.setText(R.string.paired);
@@ -151,6 +152,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public void modeView() {
         mStatusMode.setVisibility(View.VISIBLE);
+        mCheckBiggerIcon.setVisibility(View.GONE);
+        mMessage.setVisibility(View.GONE);
         mOverlayLayout.setBackground(null);
     }
 
