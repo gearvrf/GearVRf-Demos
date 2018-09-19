@@ -1,0 +1,518 @@
+{
+  "objects": {
+    "org.gearvrf.widgetlibviewer.BackgroundListContentScene": {
+      "padding": 0.8,
+      "arch_radius": 7,
+      "rows_num": 3,
+      "columns_num": 3,
+      "control_bar": {
+        "name": "ControlBar",
+        "size": {
+          "x": 1,
+          "y": 1
+        },
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": -7
+        },
+        "padding": 0.4,
+        "controls": [
+          {
+            "name": "Home",
+            "states": {
+              "normal": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home"
+                    }
+                  }
+                }
+              },
+              "focused": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home_hover"
+                    }
+                  }
+                }
+              },
+              "selected": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home_active"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "org.gearvrf.widgetlibviewer.ModelViewer.ModelBox": {
+      "name": "ModelBox",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": -7
+      }
+    },
+    "org.gearvrf.widgetlibviewer.CheckList": {
+      "name": "CheckList",
+      "size": {
+        "x": 0,
+        "y": 0
+      },
+      "label": {
+        "name": "item_label",
+        "size": {
+          "x": 2,
+          "y": 0.8
+        },
+        "text_size": 7,
+        "text_color": "DKGRAY",
+        "gravity": 3
+      }
+    },
+    "org.gearvrf.widgetlibviewer.ModelViewer": {
+      "zoom_step": 1,
+      "padding": 2,
+      "control_bar": {
+        "name": "ControlBar",
+        "size": {
+          "x": 1,
+          "y": 1
+        },
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": -7
+        },
+        "padding": 0.1,
+        "controls": [
+          {
+            "name": "Home",
+            "states": {
+              "normal": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home"
+                    }
+                  }
+                }
+              },
+              "focused": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home_hover"
+                    }
+                  }
+                }
+              },
+              "selected": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home_active"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "Zoom",
+            "states": {
+              "normal": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_zoom"
+                    }
+                  }
+                }
+              },
+              "focused": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_zoom_hover"
+                    }
+                  }
+                }
+              },
+              "selected": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_zoom_active"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "org.gearvrf.widgetlibviewer.ModelsListContentScene": {
+      "padding": 0.8,
+      "arch_radius": 7,
+      "control_bar": {
+        "name": "ControlBar",
+        "size": {
+          "x": 1,
+          "y": 1
+        },
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": -7
+        },
+        "padding": 0.4,
+        "controls": [
+          {
+            "name": "Settings",
+            "states": {
+              "normal": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_settings"
+                    }
+                  }
+                }
+              },
+              "focused": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_settings_hover"
+                    }
+                  }
+                }
+              },
+              "selected": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_settings_active"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "org.gearvrf.widgetlibviewer.ViewerMain.BackgroundWidget": {
+      "name": "BackgroundWidget",
+      "mesh": {
+        "id": "backgrounds/sphere.obj"
+      },
+      "level": 0,
+      "levels": [
+        {
+          "thumbnail": "R.raw.env_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/cubes.jpg"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.eagleview_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/eagleview.png"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.skybox_2pm_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/skybox_2pm.png"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.skybox_6pm_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/skybox_6pm.png"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.skybox_desert_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/skybox_desert.png"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.skybox_earth_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/skybox_earth.png"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.skybox_gridroom_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/skybox_gridroom.png"
+              }
+            }
+          }
+        },
+        {
+          "thumbnail": "R.raw.skybox_outdoor_thumbnail",
+          "material": {
+            "main_texture": {
+              "type": "bitmap",
+              "bitmap": {
+                "resource_type": "asset",
+                "type": "uncompressed",
+                "id": "backgrounds/skybox_outdoor.png"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "org.gearvrf.widgetlibviewer.NotificationsContentScene.NotificationItemGroupWidget": {
+      "name": "notificationItemGroupWidget",
+      "size": {
+        "x": 0,
+        "y": 0
+      },
+      "cancel": {
+        "name": "cancelButton",
+        "size": {
+          "x": 1.8,
+          "y": 1.8
+        },
+        "states": {
+          "normal": {
+            "material": {
+              "main_texture": {
+                "type": "bitmap",
+                "bitmap": {
+                  "resource_type": "resource",
+                  "type": "uncompressed",
+                  "id": "R.drawable.notification_cancel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "org.gearvrf.widgetlibviewer.NotificationsContentScene.NotificationItemWidget": {
+      "name": "item",
+      "size": {
+        "x": 5,
+        "y": 2
+      },
+      "large_icon": {
+        "name": "large_icon",
+        "size": {
+          "x": 1.8,
+          "y": 1.8
+        }
+      }
+    },
+    "org.gearvrf.widgetlibviewer.NotificationsContentScene.NotificationContentWidget": {
+      "name": "content",
+      "size": {
+        "x": 0,
+        "y": 0
+      },
+      "content_with_big_icon": {
+        "title": {
+          "name": "title",
+          "size": {
+            "x": 5,
+            "y": 0.75
+          },
+          "text_size": 7,
+          "text_color": "WHITE",
+          "gravity": 3
+        },
+        "text": {
+          "name": "text",
+          "size": {
+            "x": 5,
+            "y": 0.75
+          },
+          "text_size": 7,
+          "text_color": "WHITE",
+          "gravity": 3
+        }
+      }
+    },
+    "org.gearvrf.widgetlibviewer.NotificationsContentScene": {
+      "control_bar": {
+        "name": "ControlBar",
+        "size": {
+          "x": 1,
+          "y": 1
+        },
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": -7
+        },
+        "padding": 0.1,
+        "controls": [
+          {
+            "name": "Home",
+            "states": {
+              "normal": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home"
+                    }
+                  }
+                }
+              },
+              "focused": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home_hover"
+                    }
+                  }
+                }
+              },
+              "selected": {
+                "material": {
+                  "main_texture": {
+                    "type": "bitmap",
+                    "bitmap": {
+                      "resource_type": "resource",
+                      "type": "uncompressed",
+                      "id": "R.drawable.navbar_home_active"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "padding": 0.2,
+      "list": {
+        "name": "mList",
+        "size": {
+          "x": 0,
+          "y": 0
+        },
+        "viewport": {
+          "x": 8,
+          "y": 7
+        }
+      },
+      "panel": {
+        "name": "mPanel",
+        "size": {
+          "x": 8,
+          "y": 7
+        },
+        "position": {
+          "x": 0,
+          "y": 0,
+          "z": -7
+        }
+      }
+    }
+  }
+}
