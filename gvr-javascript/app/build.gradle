@@ -36,6 +36,8 @@ dependencies {
 			releaseCompile(name: 'script-release', ext: 'aar')
 		}
     } else {
+
         compile "org.gearvrf:script:$gearvrfVersion"
+
     }
 }
