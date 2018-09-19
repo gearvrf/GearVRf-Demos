@@ -63,6 +63,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
     public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
         editSceneObject.getTransform().setScale(1.2f, 1.2f, 1.0f);
         editSceneObject.getTransform().setPosition(-0.02f, 0.35f, -1.0f);
+        editSceneObject.setTextureBufferSize(1024);
         addChildObject(mEditModeObject);
     }
 

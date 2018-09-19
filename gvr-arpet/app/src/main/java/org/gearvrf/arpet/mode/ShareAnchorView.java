@@ -20,7 +20,7 @@ import org.gearvrf.arpet.R;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class ShareAnchorView extends BasePetView implements IViewEvents, View.OnClickListener {
-    private GVRSceneObject mInvitationObject;
+    private GVRSceneObject mShareAnchorObject;
     private Button mGuestButton, mHostButton, mStatusMode;
     private TextView mMessage;
     private ProgressBar mProgressBar;
@@ -31,7 +31,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public ShareAnchorView(PetContext petContext) {
         super(petContext);
-        mInvitationObject = new GVRViewSceneObject(petContext.getGVRContext(),
+        mShareAnchorObject = new GVRViewSceneObject(petContext.getGVRContext(),
                 R.layout.share_anchor_layout, this);
     }
 
@@ -71,10 +71,11 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     }
 
     @Override
-    public void onStartRendering(GVRViewSceneObject sendingInvitationObject, View view) {
-        sendingInvitationObject.getTransform().setScale(3.0f, 2.8f, 1.0f);
-        sendingInvitationObject.getTransform().setPosition(0.0f, 0.0f, -2.0f);
-        addChildObject(mInvitationObject);
+    public void onStartRendering(GVRViewSceneObject shareAnchorView, View view) {
+        shareAnchorView.getTransform().setScale(3.0f, 2.8f, 1.0f);
+        shareAnchorView.getTransform().setPosition(0.0f, 0.0f, -2.0f);
+        shareAnchorView.setTextureBufferSize(1024);
+        addChildObject(mShareAnchorObject);
     }
 
     @Override
