@@ -16,49 +16,30 @@
 
 package org.gearvrf.arpet.cloud.anchor;
 
-import android.util.Log;
-
 import org.gearvrf.arpet.AnchoredObject;
-import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.ICloudAnchorListener;
 
-public class CloudAnchor {
+import java.io.Serializable;
+
+public class CloudAnchor implements Serializable {
     private final String TAG = CloudAnchor.class.getSimpleName();
 
-    private AnchoredObject mAnchoredObject;
-
     private String mCloudAnchorId;
-    private CloudAnchorListener mCloudListener;
-    private OnCloudAnchorResponseListener mResponseListener;
+    @AnchoredObject.ObjectType
+    private int mObjectType;
 
-    public CloudAnchor(AnchoredObject anchoredObject) {
-        mAnchoredObject = anchoredObject;
-        mCloudListener = new CloudAnchorListener();
-    }
-
-    public void setResponseListener(OnCloudAnchorResponseListener listener) {
-        mResponseListener = listener;
-    }
-
-    public CloudAnchorListener getCloudListener() {
-        return mCloudListener;
+    public CloudAnchor(@AnchoredObject.ObjectType int type) {
+        mObjectType = type;
     }
 
     public String getCloudAnchorId() {
         return mCloudAnchorId;
     }
 
-    private class CloudAnchorListener implements ICloudAnchorListener {
-        @Override
-        public void onTaskComplete(GVRAnchor gvrAnchor) {
-            String id = gvrAnchor.getCloudAnchorId();
-            if (!id.isEmpty()) {
-                mCloudAnchorId = id;
-                mResponseListener.onResult(CloudAnchorManager.ResponseType.SUCCESS);
-            } else {
-                Log.d(TAG, "cloud anchor ID is empty");
-                mResponseListener.onResult(CloudAnchorManager.ResponseType.FAILURE);
-            }
-        }
+    public int getObjectType() {
+        return mObjectType;
+    }
+
+    public void setCloudAnchorId(String id) {
+        mCloudAnchorId = id;
     }
 }

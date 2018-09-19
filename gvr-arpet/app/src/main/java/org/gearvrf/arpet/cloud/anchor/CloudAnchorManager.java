@@ -28,7 +28,6 @@ import org.gearvrf.mixedreality.ICloudAnchorListener;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CloudAnchorManager {
     private static final String TAG = CloudAnchorManager.class.getSimpleName();
@@ -40,16 +39,18 @@ public class CloudAnchorManager {
         int SUCCESS = 1;
     }
 
-    private List<CloudAnchor> mCloudAnchors;
+    private ArrayList<CloudAnchor> mCloudAnchors;
     private int mCountSuccess;
     private boolean mIsReady;
     private final PetContext mPetContext;
+    private OnCloudAnchorManagerListener mListener;
 
-    public CloudAnchorManager(PetContext petContext) {
+    public CloudAnchorManager(PetContext petContext, OnCloudAnchorManagerListener listener) {
         mPetContext = petContext;
         mCloudAnchors = new ArrayList<>();
         mCountSuccess = 0;
         mIsReady = false;
+        mListener = listener;
     }
 
     public void hostAnchor(AnchoredObject object) {
@@ -58,21 +59,30 @@ public class CloudAnchorManager {
             return;
         }
 
-        CloudAnchor cloudAnchor = new CloudAnchor(object);
-        cloudAnchor.setResponseListener(new CloudAnchorResponseListener());
-        Log.d(TAG, "hosting anchor...");
-        mPetContext.getMixedReality().hostAnchor(object.getAnchor(), cloudAnchor.getCloudListener());
+        CloudAnchor cloudAnchor = new CloudAnchor(object.getObjectType());
         mCloudAnchors.add(cloudAnchor);
+        Log.d(TAG, "hosting anchor...");
+        mPetContext.getMixedReality().hostAnchor(
+                object.getAnchor(),
+                (anchor) -> {
+                    String id = anchor.getCloudAnchorId();
+                    if (!id.isEmpty()) {
+                        cloudAnchor.setCloudAnchorId(id);
+                        onHostResult(ResponseType.SUCCESS);
+                    } else {
+                        Log.d(TAG, "cloud anchor ID is empty");
+                        onHostResult(ResponseType.FAILURE);
+                    }
+                });
     }
 
-    public void resolveAnchor(CloudAnchor cloudAnchor, ICloudAnchorListener listener) {
+    public void resolveAnchor(String anchorId, ICloudAnchorListener listener) {
         if (!isCloudAnchorApiKeySet()) {
             Log.e(TAG, "Cloud Anchor API key is not set!");
             return;
         }
-
-        mPetContext.getMixedReality().resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), listener);
-        mCloudAnchors.remove(cloudAnchor);
+        Log.d(TAG, "resolving anchor ID...");
+        mPetContext.getMixedReality().resolveCloudAnchor(anchorId, listener);
     }
 
     public void clearAnchors() {
@@ -81,7 +91,7 @@ public class CloudAnchorManager {
         mCountSuccess = 0;
     }
 
-    public List<CloudAnchor> getCloudAnchors() {
+    public ArrayList<CloudAnchor> getCloudAnchors() {
         return mCloudAnchors;
     }
 
@@ -94,19 +104,18 @@ public class CloudAnchorManager {
                 ApiConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
     }
 
-    private class CloudAnchorResponseListener implements OnCloudAnchorResponseListener {
-        @Override
-        public void onResult(int type) {
-            if (type == ResponseType.SUCCESS) {
-                Log.d(TAG, "anchor was hosted successfully!");
-                mCountSuccess++;
-            }
+    private void onHostResult(int type) {
+        if (type == ResponseType.SUCCESS) {
+            Log.d(TAG, "anchor was hosted successfully!");
+            mCountSuccess++;
+        }
 
-            if (mCountSuccess == mCloudAnchors.size()) {
-                // TODO: manager is ready to notify the clients
-                mIsReady = true;
-                Log.d(TAG, "the manager is ready");
-            }
+        // TODO: handle FAILURE responses
+        if (mCountSuccess == mCloudAnchors.size()) {
+            mIsReady = true;
+            Log.d(TAG, "the manager is ready");
+            mListener.onHostReady();
+            mCountSuccess = 0;
         }
     }
 }

@@ -22,7 +22,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
-import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
@@ -46,6 +45,8 @@ import org.gearvrf.physics.GVRWorld;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+
 
 public class PetMain extends GVRMain {
     private static final String TAG = "GVR_ARPET";
@@ -59,10 +60,11 @@ public class PetMain extends GVRMain {
     private HandlerModeChange mHandlerModeChange;
     private HandlerBackToHud mHandlerBackToHud;
 
-    private CloudAnchorManager mCloudAnchorManager;
     private IPetConnectionManager mConnectionManager;
 
     private CharacterController mPet = null;
+
+    private ArrayList<AnchoredObject> mAnchoredObjects;
 
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
@@ -85,12 +87,14 @@ public class PetMain extends GVRMain {
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
 
-        mCloudAnchorManager = new CloudAnchorManager(mPetContext);
-
         planeHandler = new PlaneHandler(mPetContext);
         mPetContext.getMixedReality().registerPlaneListener(planeHandler);
 
         mPet = new CharacterController(mPetContext);
+
+        // Add in this array all objects that will be hosted by Cloud Anchor
+        mAnchoredObjects = new ArrayList<>();
+        mAnchoredObjects.add((AnchoredObject) mPet.view());
 
         configTouchScreen();
     }
@@ -146,9 +150,6 @@ public class PetMain extends GVRMain {
         mPet.setPlane(plane);
         mPet.enter();
 
-        // Host pet anchor
-        mCloudAnchorManager.hostAnchor((AnchoredObject) mPet.view());
-
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");
         }
@@ -199,7 +200,7 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new ShareAnchorMode(mPetContext);
+            mCurrentMode = new ShareAnchorMode(mPetContext, mAnchoredObjects);
             mCurrentMode.enter();
             mPet.stopBall();
         }

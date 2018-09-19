@@ -26,6 +26,7 @@ import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.movement.IPetAction;
 import org.gearvrf.arpet.movement.OnPetActionListener;
 import org.gearvrf.arpet.movement.PetActions;
+import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 
 import java.util.HashMap;
@@ -127,6 +128,12 @@ public class CharacterController extends BasePetMode {
 
         petView.setBoundaryPlane(plane);
         petView.setAnchor(mPetContext.getMixedReality().createAnchor(plane.getCenterPose()));
+    }
+
+    public void setAnchor(GVRAnchor anchor) {
+        CharacterView petView = (CharacterView) view();
+
+        petView.setAnchor(anchor);
     }
 
     public CharacterView getView() {

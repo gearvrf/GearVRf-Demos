@@ -16,6 +16,12 @@
 
 package org.gearvrf.arpet.cloud.anchor;
 
-public interface OnCloudAnchorResponseListener {
-    void onResult(@CloudAnchorManager.ResponseType int type);
+import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
+
+import java.io.Serializable;
+
+public class ShareSceneObjectsMessage extends BTMessage {
+    public ShareSceneObjectsMessage(Serializable data) {
+        super(data);
+    }
 }

@@ -12,12 +12,27 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package org.gearvrf.arpet.constant;
+package org.gearvrf.arpet.cloud.anchor;
 
-public interface ApiConstants {
-    String GOOGLE_CLOUD_ANCHOR_KEY_NAME = "com.google.android.ar.API_KEY";
-    int DISCOVERABLE_DURATION = 12; // in seconds
+import android.support.annotation.IntDef;
+
+import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+
+public class CommandViewMessage extends BTMessage {
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({CommandViewType.SHOW_PAIRED_VIEW})
+    public @interface CommandViewType {
+        int SHOW_PAIRED_VIEW = 1;
+    }
+
+    public CommandViewMessage(@CommandViewType int type) {
+        super(type);
+    }
 }

@@ -12,12 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
-package org.gearvrf.arpet.constant;
+package org.gearvrf.arpet.cloud.anchor;
 
-public interface ApiConstants {
-    String GOOGLE_CLOUD_ANCHOR_KEY_NAME = "com.google.android.ar.API_KEY";
-    int DISCOVERABLE_DURATION = 12; // in seconds
+public interface OnCloudAnchorManagerListener {
+    void onHostReady();
 }

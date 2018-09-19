@@ -28,6 +28,7 @@ import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.ManagerState;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
+import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTDevice;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
@@ -41,7 +42,6 @@ public final class PetConnectionManager extends BTConnectionManager implements I
 
     private static final int REQUEST_ENABLE_BT = 1000;
     private static final int REQUEST_ENABLE_DISCOVERABLE = 1001;
-    private static final int DISCOVERABLE_DURATION = 30; // in seconds
 
     private PetContext mContext;
     private BluetoothAdapter mBluetoothAdapter;
@@ -100,7 +100,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
                 Log.d(TAG, "startUsersInvitation: OK, BT enabled. Request device discoverable");
                 enableDiscoverable(() -> {
                     Log.d(TAG, "startUsersInvitation: OK, now this device is discoverable for "
-                            + DISCOVERABLE_DURATION + " seconds. Waiting for connections");
+                            + ApiConstants.DISCOVERABLE_DURATION + " seconds. Waiting for connections");
                     startConnectionListener(this::onMessageReceived);
                     notifyManagerEvent(PetConnectionMessageType.CONNECTION_LISTENER_STARTED);
                 });
@@ -278,7 +278,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         mEnableDiscoverableCallback = callback;
         if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, DISCOVERABLE_DURATION);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, ApiConstants.DISCOVERABLE_DURATION);
             mContext.getActivity().startActivityForResult(discoverableIntent, REQUEST_ENABLE_DISCOVERABLE);
         } else {
             mEnableDiscoverableCallback.onEnabled();

@@ -35,12 +35,14 @@ public abstract class AnchoredObject extends GVRSceneObject {
 
     final String TAG = getClass().getSimpleName();
 
-    @IntDef({ObjectType.CHARACTER,
+    @IntDef({ObjectType.NONE,
+            ObjectType.CHARACTER,
             ObjectType.BED,
             ObjectType.BOWL,
             ObjectType.HYDRANT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ObjectType {
+        int NONE = -1;
         int CHARACTER = 0;
         int BED = 1;
         int BOWL = 2;
