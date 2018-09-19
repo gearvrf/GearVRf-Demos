@@ -33,22 +33,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 public class AvatarMain extends GVRMain {
-    //private final String mModelPath = "DeepMotion/sahithi_character_skin.fbx";
-    //private final String mAnimationPath = "bodyturn.txt";
-      private final String mModelPath = "YBot/YBOT.fbx";
+    private final String mModelPath = "YBot/YBOT.fbx";
     //private final String mModelPath = "Andromeda/Andromeda.dae";
     //private final String[] mAnimationPaths =  { "Andromeda/HipHopDancing.dae", "Andromeda/Bellydancing.dae", "Andromeda/Boxing.dae" };
-    //private final String[] mAnimationPaths = { "DeepMotion/animation_baked.fbx" };
-    //private final String mModelPath = "Lily/female_outfitJ.fbx";
-    //private final String[] mAnimationPaths = { "Lily/Idle.fbx" };
-    //private final String mModelPath = "astroboy/astro_boy.dae";
-    private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh"};
-   // private final String[] mAnimationPaths = {"YBot/Samba_Dancing_mixamo.com.bvh"};
-    //private final String[] mAnimationPaths = {"YBot/Football_Hike_mixamo.com.bvh"};
-    //private final String[] mAnimationPaths = {"Andromeda/HipHopDancing.dae"};
+    private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh", "YBot/Football_Hike_mixamo.com.bvh","YBot/Football_Hike_mixamo.com.bvh"};
 
     private static final String TAG = "AVATAR";
-
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRAvatar mAvatar;
@@ -56,15 +46,17 @@ public class AvatarMain extends GVRMain {
     private int mNumAnimsLoaded = 0;
     private int mCurrentAnimIndex = -1;
 
-
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
     }
 
-    private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents() {
+    private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents()
+    {
         @Override
-        public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors) {
-            if (avatarRoot.getParent() == null) {
+        public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors)
+        {
+            if (avatarRoot.getParent() == null)
+            {
                 mContext.runOnGlThread(new Runnable() {
                     public void run() {
                         mAvatar.centerModel(avatarRoot);
@@ -75,30 +67,35 @@ public class AvatarMain extends GVRMain {
         }
 
         @Override
-        public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors) {
-            if (!mAvatar.isRunning()) {
+        public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors)
+        {
+            if (!mAvatar.isRunning())
+            {
                 mCurrentAnimIndex = 0;
-                animation.setRepeatMode(GVRRepeatMode.REPEATED);
-                animation.setRepeatCount(-1);
+                animation.setRepeatMode(GVRRepeatMode.ONCE);
                 animation.setSpeed(1f);
                 mAvatar.start(0);
             }
         }
 
-        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation) {
-            if (++mCurrentAnimIndex >= mAvatar.getAnimationCount()) {
+        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation)
+        {
+            if (++mCurrentAnimIndex >= mAvatar.getAnimationCount())
+            {
                 mCurrentAnimIndex = 0;
             }
             mAvatar.start(mCurrentAnimIndex);
         }
 
-        public void onAnimationStarted(GVRAnimator animator) {
-        }
+        public void onModelLoaded(GVRSceneObject obj, String path, String errors) { }
+
+        public void onAnimationStarted(GVRAnimator animator) { }
     };
 
 
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext)
+    {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
         GVRCameraRig rig = mScene.getMainCameraRig();
@@ -107,10 +104,12 @@ public class AvatarMain extends GVRMain {
         rig.getHeadTransformObject().attachComponent(new GVRDirectLight(mContext));
         mAvatar = new GVRAvatar(gvrContext, "Andromeda");
         mAvatar.getEventReceiver().addListener(mAvatarListener);
-        try {
+        try
+        {
             mAvatar.loadModel(new GVRAndroidResource(gvrContext, mModelPath));
-
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
             mActivity.finish();
             mActivity = null;
@@ -120,21 +119,21 @@ public class AvatarMain extends GVRMain {
     }
 
 
-    private void loadAnimation(String animPath) throws IOException {
+    private void loadAnimation(String animPath) throws IOException
+    {
         mAvatar.loadAnimation(new GVRAndroidResource(mContext, animPath));
     }
 
-    @Override
-    public void onStep() {
-
-
-    }
-
-    public void onSingleTapUp(MotionEvent event) {
-        if (mNumAnimsLoaded < mAnimationPaths.length) {
-            try {
+    public void onSingleTapUp(MotionEvent event)
+    {
+        if (mNumAnimsLoaded < mAnimationPaths.length)
+        {
+            try
+            {
                 loadAnimation(mAnimationPaths[mNumAnimsLoaded++]);
-            } catch (IOException ex) {
+            }
+            catch (IOException ex)
+            {
                 ex.printStackTrace();
             }
         }
