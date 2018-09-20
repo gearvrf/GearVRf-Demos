@@ -19,5 +19,5 @@ package org.gearvrf.arpet.constant;
 
 public interface ApiConstants {
     String GOOGLE_CLOUD_ANCHOR_KEY_NAME = "com.google.android.ar.API_KEY";
-    int DISCOVERABLE_DURATION = 12; // in seconds
+    int DISCOVERABLE_DURATION = 25; // in seconds
 }
