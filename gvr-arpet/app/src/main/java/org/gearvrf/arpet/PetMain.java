@@ -62,6 +62,7 @@ public class PetMain extends GVRMain {
     private CharacterController mPet = null;
 
     private ArrayList<AnchoredObject> mAnchoredObjects;
+    private  GVRCursorController mCursorController = null;
 
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
@@ -104,6 +105,7 @@ public class PetMain extends GVRMain {
                     ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
                     newController.setCursor(null);
                 }
+                mCursorController = newController;
             }
         });
     }
@@ -192,6 +194,7 @@ public class PetMain extends GVRMain {
 
             mCurrentMode = new EditMode(mPetContext, mHandlerBackToHud, mPet);
             mCurrentMode.enter();
+            ((EditMode)mCurrentMode).onEnableGesture(mCursorController);
             mPet.stopBall();
         }
 

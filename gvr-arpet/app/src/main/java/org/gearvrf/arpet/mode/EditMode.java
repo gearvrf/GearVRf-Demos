@@ -16,34 +16,55 @@
 package org.gearvrf.arpet.mode;
 
 import android.util.Log;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRCameraRig;
+import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.character.CharacterView;
+import org.gearvrf.arpet.gesture.GestureDetector;
+import org.gearvrf.arpet.gesture.OnGestureListener;
+import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
+import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.mixedreality.GVRHitResult;
+import org.gearvrf.mixedreality.GVRMixedReality;
+import org.joml.Vector3f;
 
 public class EditMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
-    private CharacterController mCharacterController;
+    private final CharacterView mCharacterView;
+    private final GVRMixedReality mMixedReality;
+    private GestureDetector mRotationDetector;
+    private GestureDetector mScaleDetector;
+    private GVRCursorController mCursorController = null;
+    private final GestureHandler mGestureHandler;
 
     public EditMode(PetContext petContext, OnBackToHudModeListener listener, CharacterController controller) {
         super(petContext, new EditView(petContext));
         mBackToHudModeListener = listener;
         ((EditView) mModeScene).setListenerEditMode(new OnEditModeClickedListenerHandler());
-        mCharacterController = controller;
+        mCharacterView = controller.getView();
+        mMixedReality = petContext.getMixedReality();
+
+        mGestureHandler = new GestureHandler();
+        // FIXME: remove listener from constructor
+        mRotationDetector = GestureDetectorFactory.INSTANCE.getSwipeRotationGestureDetector(
+                mPetContext.getGVRContext(), mGestureHandler);
+        mScaleDetector = GestureDetectorFactory.INSTANCE.getScaleGestureDetector(
+                mPetContext.getGVRContext(), mGestureHandler);
     }
 
     @Override
     protected void onEnter() {
-        mCharacterController.getView().setRotationEnabled(true);
-        mCharacterController.getView().setDraggingEnabled(true);
-        mCharacterController.getView().setScaleEnabled(true);
     }
 
     @Override
     protected void onExit() {
-        mCharacterController.getView().setRotationEnabled(false);
-        mCharacterController.getView().setDraggingEnabled(false);
-        mCharacterController.getView().setScaleEnabled(false);
+        onDisableGesture();
     }
 
     @Override
@@ -51,6 +72,29 @@ public class EditMode extends BasePetMode {
 
     }
 
+    public void onEnableGesture(GVRCursorController cursorController) {
+        if (mCursorController == null) {
+            mCursorController = cursorController;
+
+            mCursorController.addPickEventListener(mGestureHandler);
+            mPetContext.getGVRContext().getApplication().getEventReceiver().addListener(mGestureHandler);
+
+            mScaleDetector.setEnabled(true);
+            mRotationDetector.setEnabled(true);
+        }
+    }
+
+    public void onDisableGesture() {
+        if (mCursorController != null) {
+            mCursorController.removePickEventListener(mGestureHandler);
+            mPetContext.getGVRContext().getApplication().getEventReceiver().removeListener(mGestureHandler);
+
+            mScaleDetector.setEnabled(false);
+            mRotationDetector.setEnabled(false);
+
+            mCursorController = null;
+        }
+    }
 
     private class OnEditModeClickedListenerHandler implements OnEditModeClickedListener {
 
@@ -66,4 +110,88 @@ public class EditMode extends BasePetMode {
         }
     }
 
+    private class GestureHandler extends GVREventListeners.ActivityEvents
+            implements OnGestureListener, ITouchEvents {
+
+        private GVRSceneObject mDraggingObject = null;
+
+        @Override
+        public void dispatchTouchEvent(MotionEvent event) {
+            mRotationDetector.onTouchEvent(event);
+            mScaleDetector.onTouchEvent(event);
+        }
+
+        @Override
+        public void onGesture(GestureDetector detector) {
+            if (mDraggingObject == null) {
+                if (detector == mRotationDetector) {
+                    mCharacterView.rotate(detector.getValue());
+                } else if (detector == mScaleDetector) {
+                    mCharacterView.scale(detector.getValue());
+                }
+            }
+        }
+
+        @Override
+        public void onEnter(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
+        }
+
+        @Override
+        public void onExit(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
+        }
+
+        @Override
+        public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
+            Log.d(TAG, "onTouchStart");
+            if (sceneObject == mCharacterView && mDraggingObject == null) {
+                Log.d(TAG, "onDrag start");
+                mDraggingObject = sceneObject;
+                mCharacterView.startDragging();
+            }
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
+            Log.d(TAG, "onTouchEnd");
+            if (mDraggingObject != null) {
+                Log.d(TAG, "onDrag stop");
+                mDraggingObject = null;
+                mCharacterView.stopDragging();
+            }
+        }
+
+        @Override
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
+            if (mDraggingObject == null) {
+                return;
+            }
+
+            Log.d(TAG, "onInside");
+
+            collision = pickSceneObject(mMixedReality.getPassThroughObject());
+            if (collision != null) {
+                GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(), collision);
+                if (gvrHitResult != null) {
+                    mCharacterView.updatePose(gvrHitResult.getPose());
+                }
+            }
+        }
+
+        @Override
+        public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
+
+        }
+
+        private GVRPicker.GVRPickedObject pickSceneObject(GVRSceneObject sceneObject) {
+            Vector3f origin = new Vector3f();
+            Vector3f direction = new Vector3f();
+
+            mCursorController.getPicker().getWorldPickRay(origin, direction);
+
+            return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
+                    direction.x, direction.y, direction.z);
+        }
+    }
 }
