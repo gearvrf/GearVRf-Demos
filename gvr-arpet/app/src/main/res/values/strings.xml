@@ -28,6 +28,6 @@
     <string name="stay_in_position">Stay in this position while\n we connect the phones.</string>
     <plurals name="connected_guests" >
         <item quantity="one">1 guest entered\n on Sharing Anchor.</item>
-        <item quantity="many">%d guests entered\n on Sharing Anchor.</item>
+        <item quantity="other">%d guests entered\n on Sharing Anchor.</item>
     </plurals>
 </resources>
