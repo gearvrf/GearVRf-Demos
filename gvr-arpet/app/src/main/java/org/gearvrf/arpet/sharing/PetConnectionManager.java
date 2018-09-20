@@ -27,6 +27,7 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.ManagerState;
 import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.connection.SendMessageCallback;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.connection.bluetooth.BTConnectionManager;
@@ -36,6 +37,7 @@ import org.gearvrf.arpet.manager.connection.bluetooth.BTServerDeviceFinder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class PetConnectionManager extends BTConnectionManager implements IPetConnectionManager {
@@ -128,12 +130,6 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public boolean isConnectedAs(int mode) {
-        checkInitialization();
-        return super.isConnectedAs(mode);
-    }
-
-    @Override
     public int getConnectionMode() {
         checkInitialization();
         return super.getConnectionMode();
@@ -146,9 +142,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public synchronized void sendMessage(Message message) {
+    public synchronized void sendMessage(Message message, @NonNull SendMessageCallback callback) {
         checkInitialization();
-        super.sendMessage(message);
+        super.sendMessage(message, callback);
     }
 
     private void checkInitialization() {
@@ -160,13 +156,13 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     /**
      * Handle devices found by {@link BTServerDeviceFinder}.
      *
-     * @param server Ser.
+     * @param servers Servers found.
      */
-    private void onServerFinderResult(BTDevice server) {
-        Log.d(TAG, "onServerFinderResult: " + server);
-        if (server != null) {
-            Log.d(TAG, "onDevicesFound: Trying connect to server " + server);
-            connectToDevices(this::onMessageReceived, server);
+    private void onServerFinderResult(BTDevice[] servers) {
+        Log.d(TAG, "onServerFinderResult: found = " + servers.length);
+        if (servers.length > 0) {
+            Log.d(TAG, "onDevicesFound: Trying connect to servers " + Arrays.toString(servers));
+            connectToDevices(this::onMessageReceived, servers);
         } else {
             notifyManagerEvent(PetConnectionMessageType.CONNECTION_NOT_FOUND);
         }

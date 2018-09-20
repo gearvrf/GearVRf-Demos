@@ -23,6 +23,7 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
+import org.gearvrf.arpet.connection.SendMessageCallback;
 
 import java.util.List;
 
@@ -36,8 +37,6 @@ public interface IPetConnectionManager {
 
     void acceptInvitation();
 
-    boolean isConnectedAs(@ConnectionMode int mode);
-
     List<Device> getConnectedDevices();
 
     @ConnectionMode
@@ -45,7 +44,7 @@ public interface IPetConnectionManager {
 
     int getTotalConnected();
 
-    void sendMessage(Message message);
+    void sendMessage(Message message, @NonNull SendMessageCallback callback);
 
     void addMessageHandler(PetConnectionMessageHandler handler);
 
