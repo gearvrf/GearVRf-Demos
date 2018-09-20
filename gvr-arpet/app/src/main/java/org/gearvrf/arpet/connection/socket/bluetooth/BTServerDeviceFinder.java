@@ -125,7 +125,7 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (isPhoneDevice(device)) {
+            if (device.getBondState() != BluetoothDevice.BOND_BONDED && isPhoneDevice(device)) {
                 // Check cached SDP records
                 if (isServerDevice(device)) {
                     Log.d(TAG, "Cached server found" + deviceToString(device));
