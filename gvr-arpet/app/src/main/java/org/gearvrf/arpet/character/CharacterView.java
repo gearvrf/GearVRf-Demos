@@ -63,6 +63,7 @@ public class CharacterView extends AnchoredObject implements
 
     private GVRContext mContext;
     private GVRPlane mBoundaryPlane;
+    private float[] mPlaneCenterPose = new float[16];
     private TouchHandler mTouchHandler;
     private GVRSceneObject mCursor;
     private GVRSceneObject mShadow;
@@ -159,6 +160,10 @@ public class CharacterView extends AnchoredObject implements
 
     @Override
     public boolean updatePose(float[] poseMatrix) {
+        // Update y position to plane's y pos
+        mBoundaryPlane.getCenterPose(mPlaneCenterPose);
+        poseMatrix[13] = mPlaneCenterPose[13];
+
         if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)) {
             return super.updatePose(poseMatrix);
         }
@@ -166,6 +171,7 @@ public class CharacterView extends AnchoredObject implements
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {
+        boundary.getCenterPose(mPlaneCenterPose);
         mBoundaryPlane = boundary;
     }
 

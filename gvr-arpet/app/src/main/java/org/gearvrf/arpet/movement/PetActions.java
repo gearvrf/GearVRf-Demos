@@ -35,10 +35,9 @@ public class PetActions {
         protected final GVRTransform mTargetTransform;
         protected final OnPetActionListener mListener;
         protected final float mCharacterHalfSize = 25.0f;
-        protected final float mMoveAcceleration = 0.001f;
-        protected final float mMaxMoveSpeed = 0.01f;
-        protected final float mTurnSpeed = 0.05f;
-        protected float mMoveSpeed = 0.0f;
+        protected final float mTurnSpeed = 0.1f;
+        protected final float mWalkingSpeed = 0.02f;
+        protected final float mRunningSpeed = 0.04f;
         protected long mElapsedTime = 0;
 
         protected GVRAnimation mAnimation;
@@ -67,8 +66,6 @@ public class PetActions {
 
         @Override
         public void entry() {
-            mMoveSpeed = 0.0f;
-
             onEntry();
         }
 
@@ -79,10 +76,6 @@ public class PetActions {
 
         @Override
         public void run(float frameTime) {
-            if (mMoveSpeed < mMaxMoveSpeed) {
-                mMoveSpeed += mMoveAcceleration;
-            }
-
             onRun(frameTime);
         }
 
@@ -228,6 +221,9 @@ public class PetActions {
             boolean moveTowardToCam = mLookAt.length() > (y * Math.tan(Math.PI * 0.25));
 
             if (moveTowardToCam) {
+                // Total angle difference
+                mLookToward.rotationTo(mLookAt, pRot);
+                float angle = pRot.angle();
                 // Normalize after calc the distance
                 mLookAt.normalize();
 
@@ -242,14 +238,16 @@ public class PetActions {
                 // Set the new rotation to the Character
                 mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
 
-                float[] pose = mCharacter.getAnchor().getPose();
-                // TODO: Create pose
-                mLookAt.mul(mMoveSpeed);
+                if (angle < Math.PI / 4.0f) {
+                    // acceleration logic
+                    float[] pose = mCharacter.getAnchor().getPose();
+                    mLookAt.mul(mWalkingSpeed);
 
-                pose[12] = pose[12] + mLookAt.x;
-                pose[14] = pose[14] + mLookAt.z;
+                    pose[12] = pose[12] + mLookAt.x;
+                    pose[14] = pose[14] + mLookAt.z;
 
-                mCharacter.updatePose(pose);
+                    mCharacter.updatePose(pose);
+                }
             } else {
                 mListener.onActionEnd(this);
             }
@@ -315,6 +313,9 @@ public class PetActions {
             if (moveTowardToBall) {
                 // Remove y vector
                 mLookAt.y = 0;
+                // Total angle difference
+                mLookToward.rotationTo(mLookAt, pRot);
+                float angle = pRot.angle();
                 // Normalize after calc the distance
                 mLookAt.normalize();
 
@@ -329,14 +330,16 @@ public class PetActions {
                 // Set the new rotation to the Character
                 mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
 
-                float[] pose = mCharacter.getAnchor().getPose();
-                // TODO: Create pose
-                mLookAt.mul(mMoveSpeed);
+                if (angle < Math.PI / 4.0f) {
+                    float[] pose = mCharacter.getAnchor().getPose();
+                    // TODO: Create pose
+                    mLookAt.mul(mRunningSpeed);
 
-                pose[12] = pose[12] + mLookAt.x;
-                pose[14] = pose[14] + mLookAt.z;
+                    pose[12] = pose[12] + mLookAt.x;
+                    pose[14] = pose[14] + mLookAt.z;
 
-                mCharacter.updatePose(pose);
+                    mCharacter.updatePose(pose);
+                }
             } else {
                 mListener.onActionEnd(this);
             }

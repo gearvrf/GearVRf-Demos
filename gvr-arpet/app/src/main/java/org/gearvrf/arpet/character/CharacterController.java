@@ -45,6 +45,8 @@ public class CharacterController extends BasePetMode {
         mCurrentAction = null;
         mDrawFrameHandler = null;
 
+        mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
+
         // Put at same thread that is loading the pet 3dmodel.
         mPetContext.runOnPetThread(new Runnable() {
             @Override
@@ -60,10 +62,6 @@ public class CharacterController extends BasePetMode {
             @Override
             public void run() {
                 setCurrentAction(PetActions.TO_CAMERA.ID);
-                enableActions();
-
-                // FIXME: Enalble and disable ball
-                mBallThrowHandler.enable();
             }
         });
     }
@@ -84,7 +82,6 @@ public class CharacterController extends BasePetMode {
     }
 
     private void intPet(CharacterView pet) {
-        mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
         // TODO: move this to the Character class
         GVRTransform camTrans = mPetContext.getMainScene().getMainCameraRig().getTransform();
@@ -179,6 +176,7 @@ public class CharacterController extends BasePetMode {
 
             // FIXME: Move this to a proper place
             if (mBallThrowHandler.canBeReseted()) {
+                setCurrentAction(PetActions.TO_CAMERA.ID);
                 mBallThrowHandler.reset();
             }
         }
