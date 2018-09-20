@@ -15,38 +15,40 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection.bluetooth;
+package org.gearvrf.arpet.connection.socket.bluetooth;
 
+import android.bluetooth.BluetoothAdapter;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.connection.Connection;
-import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
-import org.gearvrf.arpet.connection.socket.OutgoingSocketConnectionThread;
+import org.gearvrf.arpet.connection.socket.IncomingSocketConnectionThread;
+import org.gearvrf.arpet.connection.socket.ServerSocket;
 
 import java.io.IOException;
 
-public class BTOutgoingSocketConnectionThread extends OutgoingSocketConnectionThread<BTSocket> {
+public final class BTIncomingSocketConnectionThread extends IncomingSocketConnectionThread<BTSocket> {
 
     private OnMessageListener mMessageListener;
 
-    BTOutgoingSocketConnectionThread(
-            @NonNull BTDevice device,
+    BTIncomingSocketConnectionThread(
             @NonNull OnMessageListener messageListener,
             @NonNull OnConnectionListener connectionListener) {
 
-        super(device, connectionListener);
-        this.mMessageListener = messageListener;
+        super(connectionListener);
+        mMessageListener = messageListener;
     }
 
     @Override
-    protected BTSocket createSocket(Device device) throws IOException {
-        return ((BTDevice) device).createSocket(BTConstants.SOCKET_SERVER_UUID);
+    protected ServerSocket<BTSocket> getServerSocket() throws IOException {
+        return new BTServerSocket(BluetoothAdapter.getDefaultAdapter().
+                listenUsingInsecureRfcommWithServiceRecord(BTConstants.SOCKET_SERVER_NAME, BTConstants.SOCKET_SERVER_UUID));
     }
 
     @Override
     protected Connection createConnection(BTSocket socket) {
         return new BTOngoingSocketConnectionThread(socket, mMessageListener, mOnConnectionListener);
     }
+
 }

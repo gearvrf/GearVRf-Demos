@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.manager.connection;
 
 import android.support.annotation.IntDef;
 
@@ -24,14 +24,14 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
 @IntDef({
-        PetConnectionMessageType.CONNECTION_ESTABLISHED,
-        PetConnectionMessageType.CONNECTION_NOT_FOUND,
-        PetConnectionMessageType.CONNECTION_LOST,
-        PetConnectionMessageType.CONNECTION_LISTENER_STARTED,
-        PetConnectionMessageType.MESSAGE_RECEIVED,
-        PetConnectionMessageType.ERROR_BLUETOOTH_NOT_ENABLED,
-        PetConnectionMessageType.ERROR_DEVICE_NOT_DISCOVERABLE})
-public @interface PetConnectionMessageType {
+        PetConnectionEventType.CONNECTION_ESTABLISHED,
+        PetConnectionEventType.CONNECTION_NOT_FOUND,
+        PetConnectionEventType.CONNECTION_LOST,
+        PetConnectionEventType.CONNECTION_LISTENER_STARTED,
+        PetConnectionEventType.MESSAGE_RECEIVED,
+        PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED,
+        PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE})
+public @interface PetConnectionEventType {
 
     // Connection status
 

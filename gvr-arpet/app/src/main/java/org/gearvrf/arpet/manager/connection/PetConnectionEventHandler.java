@@ -15,27 +15,9 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.manager.connection;
 
-import java.io.Serializable;
-
-public class PetConnectionMessage {
-
-    @PetConnectionMessageType
-    private int type;
-    private Serializable data;
-
-    public PetConnectionMessage(@PetConnectionMessageType int type, Serializable data) {
-        this.type = type;
-        this.data = data;
-    }
-
-    @PetConnectionMessageType
-    public int getType() {
-        return type;
-    }
-
-    public Serializable getData() {
-        return data;
-    }
+@FunctionalInterface
+public interface PetConnectionEventHandler {
+    void handleEvent(PetConnectionEvent event);
 }

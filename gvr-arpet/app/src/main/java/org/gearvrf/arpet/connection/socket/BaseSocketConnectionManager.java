@@ -165,7 +165,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     }
 
     public boolean isConnectedAs(@ConnectionMode int mode) {
-        return getTotalConnected() > 0 && mConnectionMode == mode;
+        return mConnectionMode == mode;
     }
 
     @ConnectionMode

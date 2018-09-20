@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection.wifi;
+package org.gearvrf.arpet.connection.socket.bluetooth;
 
 import android.support.annotation.NonNull;
 
@@ -23,9 +23,13 @@ import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
 import org.gearvrf.arpet.connection.socket.OngoingSocketConnectionThread;
 
-public class WifiDirectOngoingSocketConnectionThread extends OngoingSocketConnectionThread {
+public class BTOngoingSocketConnectionThread extends OngoingSocketConnectionThread {
 
-    WifiDirectOngoingSocketConnectionThread(@NonNull OnMessageListener messageListener, @NonNull OnConnectionListener connectionListener) {
-        super(new WifiDirectSocket(), messageListener, connectionListener);
+    BTOngoingSocketConnectionThread(
+            @NonNull BTSocket socket,
+            @NonNull OnMessageListener messageListener,
+            @NonNull OnConnectionListener connectionListener) {
+
+        super(socket, messageListener, connectionListener);
     }
 }

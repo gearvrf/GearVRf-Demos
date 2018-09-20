@@ -17,13 +17,14 @@ import org.gearvrf.arpet.cloud.anchor.OnCloudAnchorManagerListener;
 import org.gearvrf.arpet.cloud.anchor.ResolveStatusMessage;
 import org.gearvrf.arpet.cloud.anchor.ShareSceneObjectsMessage;
 import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.connection.SendMessageCallback;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ApiConstants;
-import org.gearvrf.arpet.sharing.IPetConnectionManager;
-import org.gearvrf.arpet.sharing.PetConnectionManager;
-import org.gearvrf.arpet.sharing.PetConnectionMessage;
-import org.gearvrf.arpet.sharing.PetConnectionMessageHandler;
-import org.gearvrf.arpet.sharing.PetConnectionMessageType;
+import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
+import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
+import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
+import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class ShareAnchorMode extends BasePetMode {
     private final int DEFAULT_SCREEN_TIMEOUT = 5000;  // 5s to change between screens
 
     private OnGuestOrHostListener mGuestOrHostListener;
-    private PetConnectionMessageHandler mMessageHandler;
+    private PetConnectionEventHandler mMessageHandler;
     private IPetConnectionManager mConnectionManager;
     private final Handler mHandler = new Handler();
     private ShareAnchorView mShareAnchorView;
@@ -49,7 +50,7 @@ public class ShareAnchorMode extends BasePetMode {
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects) {
         super(petContext, new ShareAnchorView(petContext));
         mConnectionManager = PetConnectionManager.getInstance();
-        mConnectionManager.addMessageHandler(new AppConnectionMessageHandler());
+        mConnectionManager.addEventHandler(new AppConnectionMessageHandler());
         mShareAnchorView = (ShareAnchorView) mModeScene;
         mShareAnchorView.setListenerShareAnchorMode(new HandlerSendingInvitation());
         mAnchoredObjects = anchoredObjects;
@@ -120,10 +121,10 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     @SuppressLint("HandlerLeak")
-    private class AppConnectionMessageHandler extends Handler implements PetConnectionMessageHandler {
+    private class AppConnectionMessageHandler extends Handler implements PetConnectionEventHandler {
 
         @Override
-        public void handleMessage(PetConnectionMessage message) {
+        public void handleEvent(PetConnectionEvent message) {
             android.os.Message m = obtainMessage(message.getType());
             Bundle b = new Bundle();
             b.putSerializable("data", message.getData());
@@ -136,37 +137,37 @@ public class ShareAnchorMode extends BasePetMode {
             super.handleMessage(msg);
 
             String log = String.format(
-                    "handleMessage: {what: %s, data: %s}",
+                    "handleEvent: {what: %s, data: %s}",
                     msg.what, msg.getData().getSerializable("data"));
             Log.d(TAG, log);
             Message data = (Message) msg.getData().getSerializable("data");
 
-            @PetConnectionMessageType
+            @PetConnectionEventType
             int messageType = msg.what;
 
             switch (messageType) {
 
-                case PetConnectionMessageType.CONNECTION_ESTABLISHED:
+                case PetConnectionEventType.CONNECTION_ESTABLISHED:
                     handleConnectionEstablished();
                     break;
-                case PetConnectionMessageType.CONNECTION_NOT_FOUND:
+                case PetConnectionEventType.CONNECTION_NOT_FOUND:
                     showInviteMain();
                     showToast("No connection found");
                     break;
-                case PetConnectionMessageType.CONNECTION_LOST:
+                case PetConnectionEventType.CONNECTION_LOST:
                     showToast("No active connection");
                     break;
-                case PetConnectionMessageType.CONNECTION_LISTENER_STARTED:
+                case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
                     showToast("Ready to accept connections");
                     showWaitingForScreen();
                     break;
-                case PetConnectionMessageType.ERROR_BLUETOOTH_NOT_ENABLED:
+                case PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED:
                     showToast("Bluetooth is disabled");
                     break;
-                case PetConnectionMessageType.ERROR_DEVICE_NOT_DISCOVERABLE:
+                case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
                     showToast("Device is not visible to other devices");
                     break;
-                case PetConnectionMessageType.MESSAGE_RECEIVED:
+                case PetConnectionEventType.MESSAGE_RECEIVED:
                     handleReceivedMessage(data);
                 default:
                     break;
@@ -195,7 +196,12 @@ public class ShareAnchorMode extends BasePetMode {
 
                             if ((mCountResolveSuccess + mCountResolveFailure) == anchors.size()) {
                                 // inform the host that all anchors were resolved successfully in this client
-                                mConnectionManager.sendMessage(new ResolveStatusMessage(ResolveStatusMessage.StatusType.RESOLVE_OK));
+                                mConnectionManager.sendMessage(new ResolveStatusMessage(ResolveStatusMessage.StatusType.RESOLVE_OK), new SendMessageCallback() {
+                                    @Override
+                                    public void onResult(int totalSent) {
+
+                                    }
+                                });
                             }
                         });
             }
@@ -220,7 +226,12 @@ public class ShareAnchorMode extends BasePetMode {
             switch (type) {
                 case ResolveStatusMessage.StatusType.RESOLVE_OK:
                     showParedView();
-                    mConnectionManager.sendMessage(new CommandViewMessage(CommandViewMessage.CommandViewType.SHOW_PAIRED_VIEW));
+                    mConnectionManager.sendMessage(new CommandViewMessage(CommandViewMessage.CommandViewType.SHOW_PAIRED_VIEW), new SendMessageCallback() {
+                        @Override
+                        public void onResult(int totalSent) {
+
+                        }
+                    });
                     break;
                 default:
                     Log.d(TAG, "invalid status type");
@@ -299,7 +310,12 @@ public class ShareAnchorMode extends BasePetMode {
         @Override
         public void onHostReady() {
             Log.d(TAG, "sending a list of CloudAnchor objects to the clients");
-            mConnectionManager.sendMessage(new ShareSceneObjectsMessage(mCloudAnchorManager.getCloudAnchors()));
+            mConnectionManager.sendMessage(new ShareSceneObjectsMessage(mCloudAnchorManager.getCloudAnchors()), new SendMessageCallback() {
+                @Override
+                public void onResult(int totalSent) {
+
+                }
+            });
         }
     }
 }

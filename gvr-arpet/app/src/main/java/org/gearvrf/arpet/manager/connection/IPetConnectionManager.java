@@ -15,15 +15,15 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.manager.connection;
 
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
-import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.connection.SendMessageCallback;
+import org.gearvrf.arpet.connection.socket.ConnectionMode;
 
 import java.util.List;
 
@@ -42,11 +42,13 @@ public interface IPetConnectionManager {
     @ConnectionMode
     int getConnectionMode();
 
+    boolean isConnectedAs(@ConnectionMode int mode);
+
     int getTotalConnected();
 
     void sendMessage(Message message, @NonNull SendMessageCallback callback);
 
-    void addMessageHandler(PetConnectionMessageHandler handler);
+    void addEventHandler(PetConnectionEventHandler handler);
 
-    void removeMessageHandlers(PetConnectionMessageHandler handler);
+    void removeMessageHandlers(PetConnectionEventHandler handler);
 }

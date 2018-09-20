@@ -15,11 +15,27 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection.bluetooth;
+package org.gearvrf.arpet.manager.connection;
 
-import java.util.UUID;
+import java.io.Serializable;
 
-public interface BTConstants {
-    String SOCKET_SERVER_NAME = "ar-pet-server";
-    UUID SOCKET_SERVER_UUID = UUID.fromString("9336bd0a-46f1-4f6c-9e05-448013506e85");
+public class PetConnectionEvent {
+
+    @PetConnectionEventType
+    private int type;
+    private Serializable data;
+
+    public PetConnectionEvent(@PetConnectionEventType int type, Serializable data) {
+        this.type = type;
+        this.data = data;
+    }
+
+    @PetConnectionEventType
+    public int getType() {
+        return type;
+    }
+
+    public Serializable getData() {
+        return data;
+    }
 }

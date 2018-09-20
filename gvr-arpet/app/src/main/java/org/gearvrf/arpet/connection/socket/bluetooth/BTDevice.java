@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection.bluetooth;
+package org.gearvrf.arpet.connection.socket.bluetooth;
 
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;

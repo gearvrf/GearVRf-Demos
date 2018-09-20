@@ -15,21 +15,27 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection.bluetooth;
+package org.gearvrf.arpet.connection.socket.bluetooth;
 
-import android.support.annotation.NonNull;
+import org.gearvrf.arpet.connection.socket.ServerSocket;
 
-import org.gearvrf.arpet.connection.OnConnectionListener;
-import org.gearvrf.arpet.connection.OnMessageListener;
-import org.gearvrf.arpet.connection.socket.OngoingSocketConnectionThread;
+import java.io.IOException;
 
-public class BTOngoingSocketConnectionThread extends OngoingSocketConnectionThread {
+public class BTServerSocket implements ServerSocket<BTSocket> {
 
-    BTOngoingSocketConnectionThread(
-            @NonNull BTSocket socket,
-            @NonNull OnMessageListener messageListener,
-            @NonNull OnConnectionListener connectionListener) {
+    private android.bluetooth.BluetoothServerSocket mServerSocket;
 
-        super(socket, messageListener, connectionListener);
+    BTServerSocket(android.bluetooth.BluetoothServerSocket mServerSocket) {
+        this.mServerSocket = mServerSocket;
+    }
+
+    @Override
+    public BTSocket accept() throws IOException {
+        return new BTSocket(mServerSocket.accept());
+    }
+
+    @Override
+    public void close() throws IOException {
+        mServerSocket.close();
     }
 }

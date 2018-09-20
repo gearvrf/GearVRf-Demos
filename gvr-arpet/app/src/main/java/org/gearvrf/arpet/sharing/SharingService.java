@@ -23,6 +23,10 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
+import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
+import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.sharing.message.Command;
 import org.gearvrf.arpet.sharing.message.RequestMessage;
 import org.gearvrf.arpet.sharing.message.ResponseMessage;
@@ -48,7 +52,7 @@ public final class SharingService {
 
     private SharingService() {
         this.mConnectionManager = PetConnectionManager.getInstance();
-        this.mConnectionManager.addMessageHandler(this::handleConnectionManagerEvent);
+        this.mConnectionManager.addEventHandler(this::handleConnectionEvent);
     }
 
     public static SharingService getInstance() {
@@ -59,7 +63,7 @@ public final class SharingService {
      * @param objects  Scene objects to load in remote side.
      * @param callback Returns nothing.
      */
-    public void shareScene(@NonNull Serializable[] objects, @NonNull SharingCallback<Void> callback) {
+    public void shareScene(@NonNull Serializable[] objects, @NonNull SharingMessageCallback<Void> callback) {
 
         if (mConnectionManager.getTotalConnected() == 0) {
             callback.onFailure(new IllegalStateException("No connection found"));
@@ -83,7 +87,7 @@ public final class SharingService {
      * @param command  Command to execute in remote side.
      * @param callback Returns nothing.
      */
-    public void sendCommand(@NonNull @Command String command, @NonNull SharingCallback<Void> callback) {
+    public void sendCommand(@NonNull @Command String command, @NonNull SharingMessageCallback<Void> callback) {
 
         if (mConnectionManager.getTotalConnected() == 0) {
             callback.onFailure(new IllegalStateException("No connection found"));
@@ -120,11 +124,11 @@ public final class SharingService {
         }
     }
 
-    private void handleConnectionManagerEvent(PetConnectionMessage event) {
-        if (event.getType() == PetConnectionMessageType.MESSAGE_RECEIVED) {
+    private void handleConnectionEvent(PetConnectionEvent event) {
+        if (event.getType() == PetConnectionEventType.MESSAGE_RECEIVED) {
             // Handle request or response
             onMessageReceived((Message) event.getData());
-        } else if (event.getType() == PetConnectionMessageType.CONNECTION_LOST) {
+        } else if (event.getType() == PetConnectionEventType.CONNECTION_LOST) {
             mRequestCallbacks.clear();
         }
     }
@@ -200,9 +204,9 @@ public final class SharingService {
     private static class CallbackInfo<T> {
 
         int mTotalPendingResponses;
-        SharingCallback<T> mCallback;
+        SharingMessageCallback<T> mCallback;
 
-        CallbackInfo(int totalPendingResponses, SharingCallback<T> mCallback) {
+        CallbackInfo(int totalPendingResponses, SharingMessageCallback<T> mCallback) {
             this.mTotalPendingResponses = totalPendingResponses;
             this.mCallback = mCallback;
         }

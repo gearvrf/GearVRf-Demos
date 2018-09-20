@@ -18,7 +18,7 @@ package org.gearvrf.arpet.cloud.anchor;
 
 import android.support.annotation.IntDef;
 
-import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
+import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

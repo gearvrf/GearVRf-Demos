@@ -17,7 +17,7 @@
 
 package org.gearvrf.arpet.sharing.message;
 
-import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
+import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
 import java.io.Serializable;
 

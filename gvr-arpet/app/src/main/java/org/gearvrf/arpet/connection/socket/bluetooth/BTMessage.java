@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection.bluetooth;
+package org.gearvrf.arpet.connection.socket.bluetooth;
 
 import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;

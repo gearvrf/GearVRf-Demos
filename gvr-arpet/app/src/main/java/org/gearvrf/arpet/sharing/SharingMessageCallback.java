@@ -17,7 +17,9 @@
 
 package org.gearvrf.arpet.sharing;
 
-@FunctionalInterface
-public interface PetConnectionMessageHandler {
-    void handleMessage(PetConnectionMessage message);
+public interface SharingMessageCallback<T> {
+
+    void onSuccess(T result);
+
+    void onFailure(Exception error);
 }

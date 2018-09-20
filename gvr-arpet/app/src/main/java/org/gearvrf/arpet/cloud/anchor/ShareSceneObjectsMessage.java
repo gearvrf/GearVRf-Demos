@@ -16,7 +16,7 @@
 
 package org.gearvrf.arpet.cloud.anchor;
 
-import org.gearvrf.arpet.manager.connection.bluetooth.BTMessage;
+import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
 import java.io.Serializable;
 
