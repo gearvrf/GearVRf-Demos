@@ -1,42 +1,31 @@
 package org.gearvrf.avatardemo;
 
 import java.io.IOException;
-import java.util.EnumSet;
-import java.util.List;
+import java.io.InputStream;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAvatar;
-import org.gearvrf.animation.GVROnFinish;
-import org.gearvrf.animation.keyframe.TRSImporter;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.animation.GVRPose;
-import org.gearvrf.animation.GVRPoseMapper;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.animation.GVRSkeleton;
-import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 import android.graphics.Color;
 import android.util.Log;
 import android.view.MotionEvent;
 
 public class AvatarMain extends GVRMain {
-    private final String mModelPath = "YBot/YBOT.fbx";
+    private final String mModelPath = "YBot/ybot.fbx";
     //private final String mModelPath = "Andromeda/Andromeda.dae";
     //private final String[] mAnimationPaths =  { "Andromeda/HipHopDancing.dae", "Andromeda/Bellydancing.dae", "Andromeda/Boxing.dae" };
-    private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh", "YBot/Football_Hike_mixamo.com.bvh","YBot/Football_Hike_mixamo.com.bvh"};
+//    private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh", "YBot/Football_Hike_mixamo.com.bvh","YBot/Football_Hike_mixamo.com.bvh"};
+    private final String[] mAnimationPaths = {"test.bvh"};
 
     private static final String TAG = "AVATAR";
     private GVRContext mContext;
@@ -45,6 +34,7 @@ public class AvatarMain extends GVRMain {
     private GVRActivity mActivity;
     private int mNumAnimsLoaded = 0;
     private int mCurrentAnimIndex = -1;
+    private String mBoneMap;
 
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
@@ -55,6 +45,7 @@ public class AvatarMain extends GVRMain {
         @Override
         public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors)
         {
+            mBoneMap = readFile("YBot/arcsoft_ybot.txt");
             if (avatarRoot.getParent() == null)
             {
                 mContext.runOnGlThread(new Runnable() {
@@ -102,7 +93,7 @@ public class AvatarMain extends GVRMain {
         rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
         rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
         rig.getHeadTransformObject().attachComponent(new GVRDirectLight(mContext));
-        mAvatar = new GVRAvatar(gvrContext, "Andromeda");
+        mAvatar = new GVRAvatar(gvrContext, "YBot");
         mAvatar.getEventReceiver().addListener(mAvatarListener);
         try
         {
@@ -121,7 +112,7 @@ public class AvatarMain extends GVRMain {
 
     private void loadAnimation(String animPath) throws IOException
     {
-        mAvatar.loadAnimation(new GVRAndroidResource(mContext, animPath));
+        mAvatar.loadAnimation(new GVRAndroidResource(mContext, animPath), mBoneMap);
     }
 
     public void onSingleTapUp(MotionEvent event)
@@ -136,6 +127,23 @@ public class AvatarMain extends GVRMain {
             {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    private String readFile(String filePath)
+    {
+        try
+        {
+            GVRAndroidResource res = new GVRAndroidResource(getGVRContext(), filePath);
+            InputStream stream = res.getStream();
+            byte[] bytes = new byte[stream.available()];
+            stream.read(bytes);
+            String s = new String(bytes);
+            return s;
+        }
+        catch (IOException ex)
+        {
+            return null;
         }
     }
 }

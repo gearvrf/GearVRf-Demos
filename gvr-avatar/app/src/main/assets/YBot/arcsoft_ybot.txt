@@ -1,0 +1,11 @@
+Pelvis mixamorig:Hips
+SpineShoulder mixamorig:Spine1
+ShoulderLeft mixamorig:LeftArm
+ElbowLeft mixamorig:LeftForeArm
+ShoulderRight mixamorig:RightArm
+ElbowRight mixamorig:RightForeArm
+Neck mixamorig:Neck
+HipRight mixamorig:RightUpLeg
+KneeRight mixamorig:RightLeg
+HipLeft mixamorig:LeftUpLeg
+KneeLeft mixamorig:LeftLeg
