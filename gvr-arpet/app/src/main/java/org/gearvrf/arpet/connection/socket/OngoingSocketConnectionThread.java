@@ -24,6 +24,8 @@ import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
+import org.gearvrf.arpet.connection.WriteErrorCallback;
+import org.gearvrf.arpet.connection.WriteSuccessCallback;
 import org.gearvrf.arpet.connection.exception.ClosedConnectionException;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 
@@ -80,13 +82,26 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
     }
 
     @Override
-    public void write(Message message) {
+    public void write(@NonNull Message message, WriteSuccessCallback successCallback, WriteErrorCallback errorCallback) {
         try {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(mOutStream);
             objectOutputStream.writeObject(message);
             objectOutputStream.flush();
-        } catch (IOException e) {
-            handleIOException(e);
+            if (successCallback != null) {
+                successCallback.onSuccess();
+            }
+        } catch (Exception e) {
+            if (!mSocket.isConnected()) {
+                ClosedConnectionException exc = new ClosedConnectionException("Connection closed", e);
+                if (errorCallback != null) {
+                    errorCallback.onError(exc);
+                }
+                mOnConnectionListener.onConnectionLost(this, exc);
+            } else {
+                if (errorCallback != null) {
+                    errorCallback.onError(e);
+                }
+            }
         }
     }
 
@@ -96,7 +111,7 @@ public class OngoingSocketConnectionThread extends SocketConnectionThread implem
 
     private void handleIOException(IOException e) {
         if (!mSocket.isConnected()) {
-            mOnConnectionListener.onConnectionLost(this, new ClosedConnectionException(e));
+            mOnConnectionListener.onConnectionLost(this, new ClosedConnectionException("Connection closed", e));
         } else {
             mOnConnectionListener.onConnectionLost(this, new ConnectionException(e));
         }

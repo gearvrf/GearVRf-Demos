@@ -18,6 +18,7 @@
 package org.gearvrf.arpet.connection.socket;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import org.gearvrf.arpet.connection.Connection;
 import org.gearvrf.arpet.connection.ConnectionManager;
@@ -26,11 +27,14 @@ import org.gearvrf.arpet.connection.ManagerState;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.OnConnectionListener;
 import org.gearvrf.arpet.connection.OnMessageListener;
+import org.gearvrf.arpet.connection.SendMessageCallback;
+import org.gearvrf.arpet.connection.WriteSuccessCallback;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class BaseSocketConnectionManager implements ConnectionManager, OnConnectionListener {
 
@@ -102,12 +106,21 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     }
 
     @Override
-    public synchronized void sendMessage(Message message) {
-        if (stateIs(ManagerState.CONNECTED)) {
-            for (Connection connection : mOngoingConnections) {
-                connection.write(message);
-            }
+    public synchronized void sendMessage(Message message, @NonNull SendMessageCallback callback) {
+
+        if (!stateIs(ManagerState.CONNECTED)) {
+            Log.d(TAG, "Manager is not connected");
+            callback.onResult(0);
         }
+
+        AtomicInteger totalSent = new AtomicInteger();
+        WriteSuccessCallback writeCallback = totalSent::incrementAndGet;
+
+        for (Connection connection : mOngoingConnections) {
+            connection.write(message, writeCallback, null);
+        }
+
+        callback.onResult(totalSent.get());
     }
 
     @Override
@@ -152,7 +165,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     }
 
     public boolean isConnectedAs(@ConnectionMode int mode) {
-        return mConnectionMode == mode;
+        return getTotalConnected() > 0 && mConnectionMode == mode;
     }
 
     @ConnectionMode

@@ -46,9 +46,10 @@ public interface ConnectionManager {
     /**
      * Send message to all connected devices.
      *
-     * @param message A message to send.
+     * @param message  A message to send.
+     * @param callback Returns total of messages sent successful.
      */
-    void sendMessage(Message message);
+    void sendMessage(Message message, @NonNull SendMessageCallback callback);
 
     /**
      * Get a list of current connected devices.

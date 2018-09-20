@@ -17,11 +17,13 @@
 
 package org.gearvrf.arpet.connection;
 
+import android.support.annotation.NonNull;
+
 public interface Connection {
 
     Device getRemoteDevice();
 
-    void write(Message message);
+    void write(@NonNull Message message, WriteSuccessCallback successCallback, WriteErrorCallback errorCallback);
 
     void close();
 }

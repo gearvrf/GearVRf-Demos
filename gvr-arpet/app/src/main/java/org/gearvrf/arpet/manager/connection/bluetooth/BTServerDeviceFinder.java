@@ -43,7 +43,7 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
     private IntentFilter mIntentFilter;
     private Context mContext;
     private OnFindCallback mOnFindCallback;
-    private BTDevice mServerFound;
+    private List<BTDevice> mServersFound = new ArrayList<>();
     private List<BluetoothDevice> mPendingDevices = Collections.synchronizedList(new ArrayList<>());
     private BluetoothAdapter mBluetoothAdapter;
 
@@ -62,17 +62,14 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
 
         mOnFindCallback = callback;
         mPendingDevices.clear();
-        mServerFound = null;
+        mServersFound.clear();
 
-        if (findInPairedDevices()) {
-            notifyResult();
-        } else {
-            setReceiverEnabled(true);
-            doDiscovery();
-        }
+        findInPairedDevices();
+        setReceiverEnabled(true);
+        doDiscovery();
     }
 
-    private boolean findInPairedDevices() {
+    private void findInPairedDevices() {
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
         for (BluetoothDevice paired : pairedDevices) {
             if (isPhoneDevice(paired)) {
@@ -82,13 +79,11 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
                 } else {
                     if (isServerDevice(paired)) {
                         Log.d(TAG, "Server found in paired " + deviceToString(paired));
-                        mServerFound = new BTDevice(paired);
-                        return true;
+                        mServersFound.add(new BTDevice(paired));
                     }
                 }
             }
         }
-        return false;
     }
 
     private boolean isPhoneDevice(BluetoothDevice device) {
@@ -134,10 +129,7 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
                 // Check cached SDP records
                 if (isServerDevice(device)) {
                     Log.d(TAG, "Cached server found" + deviceToString(device));
-                    mBluetoothAdapter.cancelDiscovery();
-                    mServerFound = new BTDevice(device);
-                    setReceiverEnabled(false);
-                    notifyResult();
+                    mServersFound.add(new BTDevice(device));
                 } else {
                     mPendingDevices.add(device);
                     Log.d(TAG, "Candidate device found added to pending " + deviceToString(device));
@@ -159,10 +151,7 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
 
             if (isServerDevice(device)) {
                 Log.d(TAG, "Server found " + deviceToString(device));
-                mServerFound = new BTDevice(device);
-                setReceiverEnabled(false);
-                notifyResult();
-                return;
+                mServersFound.add(new BTDevice(device));
             }
 
             if (hasNextPendingToFetchUuid()) {
@@ -196,11 +185,11 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
     }
 
     private void notifyResult() {
-        new Handler().post(() -> mOnFindCallback.onResult(mServerFound));
+        new Handler().post(() -> mOnFindCallback.onResult(mServersFound.toArray(new BTDevice[mServersFound.size()])));
     }
 
     @FunctionalInterface
     public interface OnFindCallback {
-        void onResult(BTDevice devices);
+        void onResult(BTDevice[] devices);
     }
 }

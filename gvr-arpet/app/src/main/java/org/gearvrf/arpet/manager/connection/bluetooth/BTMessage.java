@@ -25,9 +25,21 @@ import java.io.Serializable;
 public class BTMessage implements Message {
 
     private Serializable mData;
+    private static int sId;
+    private int mId;
 
     public BTMessage(Serializable data) {
+        mId = incrementId();
         mData = data;
+    }
+
+    private static int incrementId() {
+        return ++sId;
+    }
+
+    @Override
+    public int getId() {
+        return mId;
     }
 
     @Override
@@ -42,8 +54,9 @@ public class BTMessage implements Message {
 
     @Override
     public String toString() {
-        return "BTMessage{" +
-                "device=" + getDevice() +
+        return getClass().getSimpleName() + "{" +
+                "id=" + getId() +
+                ", device=" + getDevice() +
                 ", data=" + getData() +
                 '}';
     }

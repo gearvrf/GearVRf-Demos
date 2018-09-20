@@ -17,13 +17,7 @@
 
 package org.gearvrf.arpet.connection;
 
-import java.io.Serializable;
-
-public interface Message extends Serializable {
-
-    int getId();
-
-    Device getDevice();
-
-    Object getData();
+@FunctionalInterface
+public interface SendMessageCallback {
+    void onResult(int totalSent);
 }
