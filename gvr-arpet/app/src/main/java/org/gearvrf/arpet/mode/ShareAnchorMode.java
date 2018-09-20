@@ -44,6 +44,7 @@ public class ShareAnchorMode extends BasePetMode {
     private final List<AnchoredObject> mAnchoredObjects;
     private CloudAnchorManager mCloudAnchorManager;
     private int mCountResolveSuccess;
+    private int mCountResolveFailure;
 
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects) {
         super(petContext, new ShareAnchorView(petContext));
@@ -178,6 +179,7 @@ public class ShareAnchorMode extends BasePetMode {
         if (message instanceof ShareSceneObjectsMessage && mConnectionManager.isConnectedAs(ConnectionMode.CLIENT)) {
             ArrayList<CloudAnchor> anchors = (ArrayList<CloudAnchor>) message.getData();
             mCountResolveSuccess = 0;
+            mCountResolveFailure = 0;
             for (CloudAnchor cloudAnchor : anchors) {
                 Log.d(TAG, "resolving cloud anchor ID...");
                 mCloudAnchorManager.resolveAnchor(cloudAnchor.getCloudAnchorId(),
@@ -188,10 +190,10 @@ public class ShareAnchorMode extends BasePetMode {
                                 mCountResolveSuccess++;
                             } else {
                                 Log.e(TAG, "could not be possible to resolve a cloud anchor ID");
+                                mCountResolveFailure++;
                             }
 
-                            // TODO: handle FAILURE resolve anchors
-                            if (mCountResolveSuccess == anchors.size()) {
+                            if ((mCountResolveSuccess + mCountResolveFailure) == anchors.size()) {
                                 // inform the host that all anchors were resolved successfully in this client
                                 mConnectionManager.sendMessage(new ResolveStatusMessage(ResolveStatusMessage.StatusType.RESOLVE_OK));
                             }

@@ -41,6 +41,7 @@ public class CloudAnchorManager {
 
     private ArrayList<CloudAnchor> mCloudAnchors;
     private int mCountSuccess;
+    private int mCountFailure;
     private boolean mIsReady;
     private final PetContext mPetContext;
     private OnCloudAnchorManagerListener mListener;
@@ -49,6 +50,7 @@ public class CloudAnchorManager {
         mPetContext = petContext;
         mCloudAnchors = new ArrayList<>();
         mCountSuccess = 0;
+        mCountFailure = 0;
         mIsReady = false;
         mListener = listener;
     }
@@ -89,6 +91,7 @@ public class CloudAnchorManager {
         mCloudAnchors.clear();
         mIsReady = false;
         mCountSuccess = 0;
+        mCountFailure = 0;
     }
 
     public ArrayList<CloudAnchor> getCloudAnchors() {
@@ -108,14 +111,22 @@ public class CloudAnchorManager {
         if (type == ResponseType.SUCCESS) {
             Log.d(TAG, "anchor was hosted successfully!");
             mCountSuccess++;
+        } else if (type == ResponseType.FAILURE) {
+            Log.d(TAG, "anchor was not hosted");
+            mCountFailure++;
         }
 
-        // TODO: handle FAILURE responses
-        if (mCountSuccess == mCloudAnchors.size()) {
-            mIsReady = true;
-            Log.d(TAG, "the manager is ready");
-            mListener.onHostReady();
+        if ((mCountSuccess + mCountFailure) == mCloudAnchors.size()) {
+            if (mCountFailure == 0) {
+                mIsReady = true;
+                Log.d(TAG, "the manager is ready");
+                mListener.onHostReady();
+            } else {
+                // TODO: handle this exception in UI
+                Log.d(TAG, "the manager is ready but some anchor was not hosted correctly");
+            }
             mCountSuccess = 0;
+            mCountFailure = 0;
         }
     }
 }
