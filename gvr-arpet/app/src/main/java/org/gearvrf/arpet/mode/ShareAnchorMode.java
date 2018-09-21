@@ -1,7 +1,6 @@
 package org.gearvrf.arpet.mode;
 
 import android.annotation.SuppressLint;
-import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,22 +12,24 @@ import org.gearvrf.arpet.PlaneHandler;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
-import org.gearvrf.arpet.cloud.anchor.CommandViewMessage;
 import org.gearvrf.arpet.cloud.anchor.OnCloudAnchorManagerListener;
-import org.gearvrf.arpet.cloud.anchor.ResolveStatusMessage;
-import org.gearvrf.arpet.cloud.anchor.ShareSceneObjectsMessage;
-import org.gearvrf.arpet.connection.Message;
-import org.gearvrf.arpet.connection.SendMessageCallback;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
-import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
+import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
+import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.sharing.SharingMessageCallback;
+import org.gearvrf.arpet.sharing.SharingService;
+import org.gearvrf.arpet.sharing.SharingServiceMessageReceiver;
+import org.gearvrf.arpet.sharing.SyncTask;
+import org.gearvrf.arpet.sharing.message.Command;
 import org.gearvrf.mixedreality.GVRAnchor;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ShareAnchorMode extends BasePetMode {
@@ -38,15 +39,12 @@ public class ShareAnchorMode extends BasePetMode {
     private final int DEFAULT_GUEST_TIMEOUT = 10000;  // 10s for waiting to connect to the host
     private final int DEFAULT_SCREEN_TIMEOUT = 5000;  // 5s to change between screens
 
-    private OnGuestOrHostListener mGuestOrHostListener;
-    private PetConnectionEventHandler mMessageHandler;
     private IPetConnectionManager mConnectionManager;
     private final Handler mHandler = new Handler();
     private ShareAnchorView mShareAnchorView;
     private final List<AnchoredObject> mAnchoredObjects;
     private CloudAnchorManager mCloudAnchorManager;
-    private int mCountResolveSuccess;
-    private int mCountResolveFailure;
+    private SharingService mSharingService;
 
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects) {
         super(petContext, new ShareAnchorView(petContext));
@@ -56,6 +54,9 @@ public class ShareAnchorMode extends BasePetMode {
         mShareAnchorView.setListenerShareAnchorMode(new HandlerSendingInvitation());
         mAnchoredObjects = anchoredObjects;
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
+
+        mSharingService = SharingService.getInstance();
+        mSharingService.addMessageReceiver(new MessageReceiver());
     }
 
     @Override
@@ -132,121 +133,44 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     @SuppressLint("HandlerLeak")
-    private class AppConnectionMessageHandler extends Handler implements PetConnectionEventHandler {
+    private class AppConnectionMessageHandler implements PetConnectionEventHandler {
 
         @Override
         public void handleEvent(PetConnectionEvent message) {
-            android.os.Message m = obtainMessage(message.getType());
-            Bundle b = new Bundle();
-            b.putSerializable("data", message.getData());
-            m.setData(b);
-            sendMessage(m);
-        }
+            mPetContext.getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    @PetConnectionEventType
+                    int messageType = message.getType();
 
-        @Override
-        public void handleMessage(android.os.Message msg) {
-            super.handleMessage(msg);
+                    switch (messageType) {
 
-            String log = String.format(
-                    "handleEvent: {what: %s, data: %s}",
-                    msg.what, msg.getData().getSerializable("data"));
-            Log.d(TAG, log);
-            Message data = (Message) msg.getData().getSerializable("data");
-
-            @PetConnectionEventType
-            int messageType = msg.what;
-
-            switch (messageType) {
-
-                case PetConnectionEventType.CONNECTION_ESTABLISHED:
-                    handleConnectionEstablished();
-                    break;
-                case PetConnectionEventType.CONNECTION_NOT_FOUND:
-                    showInviteMain();
-                    showToast("No connection found");
-                    break;
-                case PetConnectionEventType.CONNECTION_ALL_LOST:
-                    showToast("No active connection");
-                    break;
-                case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
-                    showToast("Ready to accept connections");
-                    showWaitingForScreen();
-                    break;
-                case PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED:
-                    showToast("Bluetooth is disabled");
-                    break;
-                case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
-                    showToast("Device is not visible to other devices");
-                    break;
-                case PetConnectionEventType.MESSAGE_RECEIVED:
-                    handleReceivedMessage(data);
-                default:
-                    break;
-            }
-        }
-    }
-
-    private void handleReceivedMessage(Message message) {
-        Log.d(TAG, "message received, ready to handle it");
-        if (message instanceof ShareSceneObjectsMessage && mConnectionManager.isConnectedAs(ConnectionMode.CLIENT)) {
-            ArrayList<CloudAnchor> anchors = (ArrayList<CloudAnchor>) message.getData();
-            mCountResolveSuccess = 0;
-            mCountResolveFailure = 0;
-            for (CloudAnchor cloudAnchor : anchors) {
-                Log.d(TAG, "resolving cloud anchor ID...");
-                mCloudAnchorManager.resolveAnchor(cloudAnchor.getCloudAnchorId(),
-                        (anchor) -> {
-                            if (anchor != null) {
-                                Log.d(TAG, "anchor ID has been resolved successfully");
-                                loadModel(cloudAnchor.getObjectType(), anchor);
-                                mCountResolveSuccess++;
-                            } else {
-                                Log.e(TAG, "could not be possible to resolve a cloud anchor ID");
-                                mCountResolveFailure++;
-                            }
-
-                            if ((mCountResolveSuccess + mCountResolveFailure) == anchors.size()) {
-                                // inform the host that all anchors were resolved successfully in this client
-                                mConnectionManager.sendMessage(new ResolveStatusMessage(ResolveStatusMessage.StatusType.RESOLVE_OK), new SendMessageCallback() {
-                                    @Override
-                                    public void onResult(int totalSent) {
-
-                                    }
-                                });
-                            }
-                        });
-            }
-        }
-
-        if (mConnectionManager.isConnectedAs(ConnectionMode.CLIENT) && message instanceof CommandViewMessage) {
-            @CommandViewMessage.CommandViewType
-            int type = (int) message.getData();
-            switch (type) {
-                case CommandViewMessage.CommandViewType.SHOW_PAIRED_VIEW:
-                    Log.d(TAG, "show paired view");
-                    showParedView();
-                    break;
-                default:
-                    Log.d(TAG, "invalid command view");
-            }
-        }
-
-        if (mConnectionManager.isConnectedAs(ConnectionMode.SERVER) && message instanceof ResolveStatusMessage) {
-            @ResolveStatusMessage.StatusType
-            int type = (int) message.getData();
-            switch (type) {
-                case ResolveStatusMessage.StatusType.RESOLVE_OK:
-                    showParedView();
-                    mConnectionManager.sendMessage(new CommandViewMessage(CommandViewMessage.CommandViewType.SHOW_PAIRED_VIEW), new SendMessageCallback() {
-                        @Override
-                        public void onResult(int totalSent) {
-
-                        }
-                    });
-                    break;
-                default:
-                    Log.d(TAG, "invalid status type");
-            }
+                        case PetConnectionEventType.CONNECTION_ESTABLISHED:
+                            handleConnectionEstablished();
+                            break;
+                        case PetConnectionEventType.CONNECTION_NOT_FOUND:
+                            showInviteMain();
+                            showToast("No connection found");
+                            break;
+                        case PetConnectionEventType.CONNECTION_ALL_LOST:
+                            showToast("No active connection");
+                            break;
+                        case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
+                            showToast("Ready to accept connections");
+                            showWaitingForScreen();
+                            break;
+                        case PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED:
+                            showToast("Bluetooth is disabled");
+                            break;
+                        case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
+                            showToast("Device is not visible to other devices");
+                            break;
+                        case PetConnectionEventType.MESSAGE_RECEIVED:
+                        default:
+                            break;
+                    }
+                }
+            });
         }
     }
 
@@ -320,13 +244,87 @@ public class ShareAnchorMode extends BasePetMode {
     private class CloudAnchorManagerReadyListener implements OnCloudAnchorManagerListener {
         @Override
         public void onHostReady() {
-            Log.d(TAG, "sending a list of CloudAnchor objects to the clients");
-            mConnectionManager.sendMessage(new ShareSceneObjectsMessage(mCloudAnchorManager.getCloudAnchors()), new SendMessageCallback() {
+            Log.d(TAG, "sending a list of CloudAnchor objects to the guests");
+            ArrayList<CloudAnchor> cloudAnchors = mCloudAnchorManager.getCloudAnchors();
+            int listSize = cloudAnchors.size();
+            mSharingService.shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]), new SharingMessageCallback<Void>() {
                 @Override
-                public void onResult(int totalSent) {
+                public void onSuccess(Void result) {
+                    Log.d(TAG, "all guests have resolved their cloud anchors");
+                    mSharingService.sendCommand(Command.SHOW_PAIRED_VIEW, new SharingMessageCallback<Void>() {
+                        @Override
+                        public void onSuccess(Void result) {
+                            showParedView();
+                        }
+
+                        @Override
+                        public void onFailure(Exception error) {
+
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(Exception error) {
 
                 }
             });
+        }
+    }
+
+    private class MessageReceiver implements SharingServiceMessageReceiver {
+        @Override
+        public void onShareScene(Serializable[] sharedObjects) {
+            Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
+            // This method will return only after loader finish
+            new SharedSceneLoader(sharedObjects).start();
+        }
+
+        @Override
+        public void onSendCommand(@Command String command) {
+            Log.d(TAG, "Command received: " + command);
+            if (command.equals(Command.SHOW_PAIRED_VIEW)) {
+                showParedView();
+            }
+        }
+    }
+
+    private class SharedSceneLoader extends SyncTask {
+
+        Serializable[] mSharedObjects;
+        int countResolveFailure;
+        int countResolveSuccess;
+
+        SharedSceneLoader(Serializable[] sharedObjects) {
+            this.mSharedObjects = sharedObjects;
+        }
+
+        @Override
+        public void process() {
+            Log.d(TAG, "Loading shared scene");
+            handleResolvedAnchors((CloudAnchor[]) mSharedObjects);
+        }
+
+        private void handleResolvedAnchors(CloudAnchor[] cloudAnchors) {
+            for (CloudAnchor cloudAnchor : cloudAnchors) {
+                Log.d(TAG, "resolving cloud anchor ID...");
+                mCloudAnchorManager.resolveAnchor(cloudAnchor.getCloudAnchorId(),
+                        (anchor) -> {
+                            if (anchor != null) {
+                                Log.d(TAG, "anchor ID has been resolved successfully");
+                                loadModel(cloudAnchor.getObjectType(), anchor);
+                                countResolveSuccess++;
+                            } else {
+                                Log.e(TAG, "could not be possible to resolve a cloud anchor ID");
+                                countResolveFailure++;
+                            }
+                            notifyProcessed();
+                            // TODO: handle the exception in sharing service
+                            /* if (countResolveFailure > 0) {
+                                throw new RuntimeException("all objects were not resolved");
+                            }*/
+                        });
+            }
         }
     }
 }

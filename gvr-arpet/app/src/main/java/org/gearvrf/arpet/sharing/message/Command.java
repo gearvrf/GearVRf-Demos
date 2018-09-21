@@ -23,8 +23,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({Command.FETCH_BALL, Command.HANDLE_EVENT_SHARING_DONE})
+@StringDef({Command.FETCH_BALL, Command.SHOW_PAIRED_VIEW})
 public @interface Command {
     String FETCH_BALL = "FETCH_BALL";
-    String HANDLE_EVENT_SHARING_DONE = "HANDLE_EVENT_SHARING_DONE";
+    String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
 }

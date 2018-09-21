@@ -15,8 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,7 +23,6 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.event.SharingModeViewEvent;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
@@ -39,11 +36,6 @@ import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
-import org.gearvrf.arpet.sharing.SharingMessageCallback;
-import org.gearvrf.arpet.sharing.SharingService;
-import org.gearvrf.arpet.sharing.SharingServiceMessageReceiver;
-import org.gearvrf.arpet.sharing.SyncTask;
-import org.gearvrf.arpet.sharing.message.Command;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -55,9 +47,7 @@ import org.gearvrf.physics.GVRWorld;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class PetMain extends GVRMain {
@@ -73,7 +63,6 @@ public class PetMain extends GVRMain {
     private HandlerBackToHud mHandlerBackToHud;
 
     private IPetConnectionManager mConnectionManager;
-    private SharingService mSharingService;
 
     private CharacterController mPet = null;
 
@@ -98,9 +87,6 @@ public class PetMain extends GVRMain {
         mConnectionManager = PetConnectionManager.getInstance();
         mConnectionManager.init(mPetContext);
         mConnectionManager.addEventHandler(new ConnectionEventHandler());
-
-        mSharingService = SharingService.getInstance();
-        mSharingService.addMessageReceiver(new MessageReceiver());
 
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
@@ -234,46 +220,6 @@ public class PetMain extends GVRMain {
         }
     }
 
-    @Subscribe
-    public void handleSharingModeViewEvent(SharingModeViewEvent event) {
-        if (event.getAction().equals(SharingModeViewEvent.Action.SHARE_PET_SCENE)) {
-            sharePetScene();
-        }
-    }
-
-    private void sharePetScene() {
-        Log.d(TAG, "Start sharing pet scene");
-        mSharingService.shareScene(
-                new Serializable[]{"SharedObject1", "SharedObject2", "SharedObject3"},
-                new SharingMessageCallback<Void>() {
-                    @Override
-                    public void onSuccess(Void result) {
-                        Log.d(TAG, "Sharing completed");
-                        Toast.makeText(mPetContext.getActivity(), "Sharing completed", Toast.LENGTH_LONG).show();
-                        sendCommand(Command.HANDLE_EVENT_SHARING_DONE);
-                    }
-
-                    @Override
-                    public void onFailure(Exception error) {
-                        Log.d(TAG, "Sharing failed: " + error);
-                    }
-                });
-    }
-
-    private void sendCommand(@Command String command) {
-        mSharingService.sendCommand(command, new SharingMessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Command sent");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.d(TAG, "Error sending command " + command + ": " + error);
-            }
-        });
-    }
-
     class ConnectionEventHandler implements PetConnectionEventHandler {
 
         @Override
@@ -283,49 +229,8 @@ public class PetMain extends GVRMain {
                     Toast.makeText(mPetContext.getActivity(), "Connected to host", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(mPetContext.getActivity(), "Guests connected: " + mConnectionManager.getTotalConnected(), Toast.LENGTH_LONG).show();
-                    sharePetScene();
                 }
             }
-        }
-    }
-
-    class MessageReceiver implements SharingServiceMessageReceiver {
-        @Override
-        public void onShareScene(Serializable[] sharedObjects) {
-            Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
-            // This method will return only after loader finish
-            new SharedSceneLoader(sharedObjects).start();
-        }
-
-        @Override
-        public void onSendCommand(@Command String command) {
-            Log.d(TAG, "Command received: " + command);
-            if (command.equals(Command.HANDLE_EVENT_SHARING_DONE)) {
-                Toast.makeText(mPetContext.getActivity(), "Sharing completed", Toast.LENGTH_LONG).show();
-                // notify view controller
-            } else if (command.equals(Command.FETCH_BALL)) {
-                // move pet
-            }
-        }
-    }
-
-    class SharedSceneLoader extends SyncTask {
-
-        Serializable[] mSharedObjects;
-
-        SharedSceneLoader(Serializable[] sharedObjects) {
-            this.mSharedObjects = sharedObjects;
-        }
-
-        @Override
-        public void process() {
-            Log.d(TAG, "Loading shared scene");
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                synchronized (SharedSceneLoader.this) {
-                    Log.d(TAG, "Shared scene loaded");
-                    notifyProcessed();
-                }
-            }, 10000);
         }
     }
 }

@@ -20,7 +20,9 @@ package org.gearvrf.arpet.sharing;
 public abstract class SyncTask {
 
     protected void notifyProcessed() {
-        notify();
+        synchronized (this) {
+            notify();
+        }
     }
 
     public void start() {
