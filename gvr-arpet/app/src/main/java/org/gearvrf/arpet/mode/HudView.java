@@ -140,6 +140,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+        gvrViewSceneObject.getTransform().setScale(1.0f,0.9f,1.0f);
         gvrViewSceneObject.setTextureBufferSize(1024);
         addChildObject(gvrViewSceneObject);
     }
