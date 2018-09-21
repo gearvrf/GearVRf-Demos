@@ -146,7 +146,7 @@ public final class SharingService {
             mRequestCallbacks.clear();
         } else {
             /*
-             * This method handles the case where no new connections are made during the app experience.
+             * This method treat the case where no new connections are made during the app experience.
              * If new connections are accepted during the app experience, you must modify the following
              * code to decrease the pending responses for requests associated with the lost connection.
              */
@@ -204,20 +204,10 @@ public final class SharingService {
         if (callbackInfo != null) {
             callbackInfo.decreaseTotalPendingResponses();
             if (!callbackInfo.hasPendingResponses()) {
-                sendVoidResponseOrError(response, callbackInfo);
+                mContext.runOnPetThread(() -> callbackInfo.mCallback.onSuccess(null));
                 mRequestCallbacks.remove(response.getRequestId());
             }
         }
-    }
-
-    private void sendVoidResponseOrError(ResponseMessage response, CallbackInfo<Void> callbackInfo) {
-        mContext.runOnPetThread(() -> {
-            if (response.getError() == null) {
-                callbackInfo.mCallback.onSuccess(null);
-            } else {
-                callbackInfo.mCallback.onFailure(response.getError());
-            }
-        });
     }
 
     private void sendDefaultResponseForRequest(RequestMessage request) {

@@ -15,16 +15,30 @@
  *
  */
 
-package org.gearvrf.arpet.sharing.message;
+package org.gearvrf.arpet.event;
 
 import android.support.annotation.StringDef;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-@Retention(RetentionPolicy.SOURCE)
-@StringDef({Command.FETCH_BALL, Command.HANDLE_EVENT_SHARING_DONE})
-public @interface Command {
-    String FETCH_BALL = "FETCH_BALL";
-    String HANDLE_EVENT_SHARING_DONE = "HANDLE_EVENT_SHARING_DONE";
+public class SharingModeViewEvent {
+
+    @StringDef({Action.SHARE_PET_SCENE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Action {
+        String SHARE_PET_SCENE = "SHARE_PET_SCENE";
+    }
+
+    @Action
+    private String action;
+
+    public SharingModeViewEvent(String action) {
+        this.action = action;
+    }
+
+    @Action
+    public String getAction() {
+        return action;
+    }
 }
