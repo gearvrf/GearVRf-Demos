@@ -16,17 +16,12 @@
 package org.gearvrf.arpet;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
-import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
-import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
-import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
@@ -39,10 +34,7 @@ import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.gearvrf.mixedreality.GVRTrackingState;
-import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.physics.GVRWorld;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -86,7 +78,6 @@ public class PetMain extends GVRMain {
 
         mConnectionManager = PetConnectionManager.getInstance();
         mConnectionManager.init(mPetContext);
-        mConnectionManager.addEventHandler(new ConnectionEventHandler());
 
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
@@ -105,14 +96,12 @@ public class PetMain extends GVRMain {
 
     private void configTouchScreen() {
         GVRInputManager inputManager = mPetContext.getGVRContext().getInputManager();
-        inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener() {
-            public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController) {
-                if (newController instanceof GVRGazeCursorController) {
-                    ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
-                    newController.setCursor(null);
-                }
-                mCursorController = newController;
+        inputManager.selectController((newController, oldController) -> {
+            if (newController instanceof GVRGazeCursorController) {
+                ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
+                newController.setCursor(null);
             }
+            mCursorController = newController;
         });
     }
 
@@ -157,13 +146,6 @@ public class PetMain extends GVRMain {
     public void onBallThrown(BallWrapper ballWrapper) {
         mPet.setCurrentAction(PetActions.TO_BALL.ID);
     }
-
-    private IAnchorEventsListener mAnchorEventsListener = new IAnchorEventsListener() {
-        @Override
-        public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState) {
-
-        }
-    };
 
     public class HandlerModeChange implements OnModeChange {
 
@@ -217,20 +199,6 @@ public class PetMain extends GVRMain {
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
-        }
-    }
-
-    class ConnectionEventHandler implements PetConnectionEventHandler {
-
-        @Override
-        public void handleEvent(PetConnectionEvent event) {
-            if (event.getType() == PetConnectionEventType.CONNECTION_ESTABLISHED) {
-                if (mConnectionManager.getConnectionMode() == ConnectionMode.CLIENT) {
-                    Toast.makeText(mPetContext.getActivity(), "Connected to host", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(mPetContext.getActivity(), "Guests connected: " + mConnectionManager.getTotalConnected(), Toast.LENGTH_LONG).show();
-                }
-            }
         }
     }
 }
