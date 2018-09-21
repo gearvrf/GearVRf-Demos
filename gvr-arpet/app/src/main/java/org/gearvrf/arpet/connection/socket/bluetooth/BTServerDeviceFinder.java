@@ -90,6 +90,10 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
         return device.getBluetoothClass().getMajorDeviceClass() == BluetoothClass.Device.Major.PHONE;
     }
 
+    private boolean isPaired(BluetoothDevice device) {
+        return device.getBondState() == BluetoothDevice.BOND_BONDED;
+    }
+
     private boolean isServerDevice(BluetoothDevice device) {
         ParcelUuid[] uuids = device.getUuids();
         if (uuids != null) {
@@ -125,7 +129,8 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
         if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 
             BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            if (device.getBondState() != BluetoothDevice.BOND_BONDED && isPhoneDevice(device)) {
+
+            if (!isPaired(device) && isPhoneDevice(device)) {
                 // Check cached SDP records
                 if (isServerDevice(device)) {
                     Log.d(TAG, "Cached server found" + deviceToString(device));

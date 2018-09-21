@@ -26,7 +26,8 @@ import java.lang.annotation.RetentionPolicy;
 @IntDef({
         PetConnectionEventType.CONNECTION_ESTABLISHED,
         PetConnectionEventType.CONNECTION_NOT_FOUND,
-        PetConnectionEventType.CONNECTION_LOST,
+        PetConnectionEventType.CONNECTION_ALL_LOST,
+        PetConnectionEventType.CONNECTION_ONE_LOST,
         PetConnectionEventType.CONNECTION_LISTENER_STARTED,
         PetConnectionEventType.MESSAGE_RECEIVED,
         PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED,
@@ -48,12 +49,17 @@ public @interface PetConnectionEventType {
     /**
      * All connections lost
      */
-    int CONNECTION_LOST = 12;
+    int CONNECTION_ALL_LOST = 12;
+
+    /**
+     * A connection was lost
+     */
+    int CONNECTION_ONE_LOST = 13;
 
     /**
      * Listener ready to accept connections
      */
-    int CONNECTION_LISTENER_STARTED = 13;
+    int CONNECTION_LISTENER_STARTED = 14;
 
     // Message exchange for ongoing connections
 

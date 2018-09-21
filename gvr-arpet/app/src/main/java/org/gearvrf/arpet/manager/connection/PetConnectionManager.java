@@ -214,9 +214,10 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     @Override
     public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
+        Log.d(TAG, "onConnectionLost: " + connection.getRemoteDevice());
+        notifyManagerEvent(PetConnectionEventType.CONNECTION_ONE_LOST, connection.getRemoteDevice());
         if (getTotalConnected() == 0) {
-            Log.d(TAG, "onConnectionLost: " + connection.getRemoteDevice());
-            notifyManagerEvent(PetConnectionEventType.CONNECTION_LOST);
+            notifyManagerEvent(PetConnectionEventType.CONNECTION_ALL_LOST);
         }
     }
 
@@ -231,6 +232,11 @@ public final class PetConnectionManager extends BTConnectionManager implements I
                 notifyManagerEvent(PetConnectionEventType.CONNECTION_NOT_FOUND);
             }
         }
+    }
+
+    @Override
+    public PetContext getContext() {
+        return mContext;
     }
 
     private void onActivityResult(int requestCode, int resultCode) {

@@ -51,4 +51,6 @@ public interface IPetConnectionManager {
     void addEventHandler(PetConnectionEventHandler handler);
 
     void removeMessageHandlers(PetConnectionEventHandler handler);
+
+    PetContext getContext();
 }

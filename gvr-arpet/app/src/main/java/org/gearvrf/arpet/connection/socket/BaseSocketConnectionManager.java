@@ -218,14 +218,13 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
                 setState(ManagerState.IDLE);
                 mConnectionMode = ConnectionMode.NONE;
             }
-
         }
     }
 
     @Override
     public synchronized void onConnectionLost(Connection connection, ConnectionException error) {
         mOngoingConnections.remove(connection);
-        if (mOngoingConnections.size() == 0) {
+        if (getTotalConnected() == 0) {
             setState(ManagerState.IDLE);
             mConnectionMode = ConnectionMode.NONE;
         }

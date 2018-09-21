@@ -154,7 +154,7 @@ public class ShareAnchorMode extends BasePetMode {
                     showInviteMain();
                     showToast("No connection found");
                     break;
-                case PetConnectionEventType.CONNECTION_LOST:
+                case PetConnectionEventType.CONNECTION_ALL_LOST:
                     showToast("No active connection");
                     break;
                 case PetConnectionEventType.CONNECTION_LISTENER_STARTED:

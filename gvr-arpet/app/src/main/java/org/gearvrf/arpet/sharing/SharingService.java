@@ -17,20 +17,20 @@
 
 package org.gearvrf.arpet.sharing;
 
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseArray;
 
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
+import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.sharing.message.Command;
+import org.gearvrf.arpet.sharing.message.CommandRequestMessage;
 import org.gearvrf.arpet.sharing.message.RequestMessage;
 import org.gearvrf.arpet.sharing.message.ResponseMessage;
-import org.gearvrf.arpet.sharing.message.CommandRequestMessage;
 import org.gearvrf.arpet.sharing.message.SceneSharingRequestMessage;
 
 import java.io.Serializable;
@@ -42,6 +42,7 @@ public final class SharingService {
 
     private static final String TAG = SharingService.class.getSimpleName();
 
+    private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
     private List<SharingServiceMessageReceiver> mSharingServiceMessageReceivers = new ArrayList<>();
     private SparseArray<CallbackInfo<Void>> mRequestCallbacks = new SparseArray<>();
@@ -53,6 +54,7 @@ public final class SharingService {
     private SharingService() {
         this.mConnectionManager = PetConnectionManager.getInstance();
         this.mConnectionManager.addEventHandler(this::handleConnectionEvent);
+        this.mContext = this.mConnectionManager.getContext();
     }
 
     public static SharingService getInstance() {
@@ -78,7 +80,7 @@ public final class SharingService {
             logForMessage(request, "Sharing request sent to " + totalSent + " remotes");
             if (totalSent == 0) {
                 mRequestCallbacks.remove(request.getId());
-                callback.onFailure(new RuntimeException("Failure sending message to remotes"));
+                mContext.runOnPetThread(() -> callback.onFailure(new RuntimeException("Failure sending message to remotes")));
             }
         });
     }
@@ -102,7 +104,7 @@ public final class SharingService {
             logForMessage(request, "Command request sent to " + totalSent + " remotes");
             if (totalSent == 0) {
                 mRequestCallbacks.remove(request.getId());
-                callback.onFailure(new RuntimeException("Failure sending message to remotes"));
+                mContext.runOnPetThread(() -> callback.onFailure(new RuntimeException("Failure sending message to remotes")));
             }
         });
     }
@@ -128,8 +130,34 @@ public final class SharingService {
         if (event.getType() == PetConnectionEventType.MESSAGE_RECEIVED) {
             // Handle request or response
             onMessageReceived((Message) event.getData());
-        } else if (event.getType() == PetConnectionEventType.CONNECTION_LOST) {
+        } else if (event.getType() == PetConnectionEventType.CONNECTION_ONE_LOST) {
+            handleConnectionLost();
+        }
+    }
+
+
+    private void handleConnectionLost() {
+        if (mConnectionManager.getTotalConnected() == 0) {
+            int size = mRequestCallbacks.size();
+            for (int i = 0; i < size; i++) {
+                CallbackInfo<Void> callbackInfo = mRequestCallbacks.get(mRequestCallbacks.keyAt(0));
+                mContext.runOnPetThread(() -> callbackInfo.mCallback.onFailure(new RuntimeException("Failure sending message to remotes")));
+            }
             mRequestCallbacks.clear();
+        } else {
+            /*
+             * This method handles the case where no new connections are made during the app experience.
+             * If new connections are accepted during the app experience, you must modify the following
+             * code to decrease the pending responses for requests associated with the lost connection.
+             */
+            int size = mRequestCallbacks.size();
+            for (int i = 0; i < size; i++) {
+                CallbackInfo<Void> callbackInfo = mRequestCallbacks.get(mRequestCallbacks.keyAt(0));
+                callbackInfo.decreaseTotalPendingResponses();
+                if (!callbackInfo.hasPendingResponses()) {
+                    callbackInfo.mCallback.onSuccess(null);
+                }
+            }
         }
     }
 
@@ -167,21 +195,29 @@ public final class SharingService {
 
     private void handleResponseMessage(ResponseMessage response) {
 
+        if (mRequestCallbacks.size() == 0) {
+            return;
+        }
+
         CallbackInfo<Void> callbackInfo = mRequestCallbacks.get(response.getRequestId());
 
         if (callbackInfo != null) {
             callbackInfo.decreaseTotalPendingResponses();
             if (!callbackInfo.hasPendingResponses()) {
-                new Handler().post(() -> {
-                    if (response.getError() == null) {
-                        callbackInfo.mCallback.onSuccess(null);
-                    } else {
-                        callbackInfo.mCallback.onFailure(response.getError());
-                    }
-                });
+                sendVoidResponseOrError(response, callbackInfo);
                 mRequestCallbacks.remove(response.getRequestId());
             }
         }
+    }
+
+    private void sendVoidResponseOrError(ResponseMessage response, CallbackInfo<Void> callbackInfo) {
+        mContext.runOnPetThread(() -> {
+            if (response.getError() == null) {
+                callbackInfo.mCallback.onSuccess(null);
+            } else {
+                callbackInfo.mCallback.onFailure(response.getError());
+            }
+        });
     }
 
     private void sendDefaultResponseForRequest(RequestMessage request) {
