@@ -74,6 +74,34 @@ public class X3DparserScript extends GVRMain
     if (null == filename) {
       filename = "JavaScriptLightColors.x3d";
     }
+
+    filename = "JavaScript_clock.x3d";
+    filename = "cylSensor_CtrlMaterial.x3d";
+    //filename = "cylSensor_CtrlLtColor.x3d";
+    //filename = "cylSensor_CtrlRotation.x3d";
+    filename = "cylSensor_CtrlTextureTransform.x3d";
+    filename = "texturetransform_JS_rotation_anim.x3d";
+
+    filename = "SphereSensor_CtrlTranslation.x3d";
+    //filename = "SphereSensor_CtrlMaterial.x3d";
+
+    //filename = "Billboard2.x3d";
+    filename = "ProtoExample.x3d";
+    filename = "Proto_Cylinders.x3d";
+    filename = "Proto_Cones.x3d";
+    filename = "Proto_Boxes.x3d";
+    filename = "Proto_Spheres.x3d";
+    filename = "Proto_TextString.x3d";
+    //filename = "Proto_SimpleIFS.x3d";
+    //filename = "Proto_TextureTransform.x3d";
+    //filename = "Proto_ImageTexture.x3d";
+    //filename = "Proto_MovieTexture.x3d";
+    //filename = "MovieTexture01.x3d";
+
+    //filename = "JavaScriptChangeText.x3d";
+    //filename = "font_SingleText.x3d";
+    //filename = "font_SingleText.x3d";
+
     try
     {
       model = gvrContext.getAssetLoader().loadModel(filename, scene);
