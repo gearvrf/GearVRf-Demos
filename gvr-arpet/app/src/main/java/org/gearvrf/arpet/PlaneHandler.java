@@ -29,6 +29,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     private int hsvHUE = 0;
 
     private GVRPlane firstPlane = null;
+    public final static String PLANE_NAME = "Plane";
 
     // FIXME: move this to a utils or helper class
     private static long newComponentType(Class<? extends GVRComponent> clazz) {
@@ -173,6 +174,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         if (firstPlane == null && plane.getPlaneType() != GVRPlane.Type.VERTICAL) {
             firstPlane = plane;
+            firstPlane.setName(PLANE_NAME);
             EventBus.getDefault().post(firstPlane);
 
             // Physics root will be anchored to A.R. world so that all physics simulation will

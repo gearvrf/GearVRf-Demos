@@ -9,6 +9,7 @@ import android.widget.Toast;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.PlaneHandler;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.cloud.anchor.CloudAnchorManager;
@@ -81,11 +82,21 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnGuest() {
+            // Clear the scene once the user is in Guest mode and the objects will
+            // be shared by the Host.
+            clearSceneObjects();
             mConnectionManager.acceptInvitation();
             mShareAnchorView.modeGuest();
             mShareAnchorView.getProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
             mShareAnchorView.getProgressHandler().start();
         }
+    }
+
+    private void clearSceneObjects() {
+        for (AnchoredObject object : mAnchoredObjects) {
+            mPetContext.getMainScene().removeSceneObject(object.getAnchor());
+        }
+        mPetContext.getMainScene().removeSceneObjectByName(PlaneHandler.PLANE_NAME);
     }
 
     private void showWaitingForScreen() {
