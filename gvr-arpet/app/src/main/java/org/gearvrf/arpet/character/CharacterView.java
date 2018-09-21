@@ -15,6 +15,7 @@
 
 package org.gearvrf.arpet.character;
 
+import android.opengl.GLES30;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -36,6 +37,7 @@ import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,7 @@ public class CharacterView extends AnchoredObject implements
     private float[] mPlaneCenterPose = new float[16];
     private GVRSceneObject mCursor;
     private GVRSceneObject mShadow;
-    private final static String PET_NAME = "Pet";
+    public final static String PET_NAME = "Pet";
 
     private GVRSceneObject m3DModel;
 
@@ -81,15 +83,35 @@ public class CharacterView extends AnchoredObject implements
 
     private void load3DModel() {
         m3DModel = LoadModelHelper.loadModelSceneObject(mContext, LoadModelHelper.PET_MODEL_PATH);
-
-        addChildObject(m3DModel);
         m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
         m3DModel.setName(PET_NAME);
-            // FIXME: Set appropriate size for collider
-        GVRSphereCollider collider = new GVRSphereCollider(mContext);
-        collider.setRadius(1.0f);
-        //collider.setHalfExtents(0.05f, 0.05f, 0.05f);
-        attachCollider(collider);
+
+        addChildObject(m3DModel);
+
+        GVRMaterial material = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Color.ID);
+        material.setColor(1, 0, 0);
+
+
+        final boolean showCollider = false;
+        GVRSceneObject cube;
+
+        // To debug the  collision
+        if (!showCollider) {
+            cube = new GVRSceneObject(mContext);
+        }  else {
+            cube = new GVRCubeSceneObject(mContext, true, material);
+            cube.getRenderData().setDrawMode(GLES30.GL_LINE_LOOP);
+        }
+
+        GVRBoxCollider collider = new GVRBoxCollider(mContext);
+        collider.setHalfExtents(0.5f, 0.5f , 0.5f);
+        cube.attachCollider(collider);
+
+        cube.getTransform().setPosition(0, 0.2f, 0);
+        cube.getTransform().setScale(0.2f, 0.5f, 0.5f);
+
+        cube.setName(PET_NAME);
+        addChildObject(cube);
     }
 
     public GVRAnimation getAnimation(int i) {

@@ -145,9 +145,9 @@ public class EditMode extends BasePetMode {
         @Override
         public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
             Log.d(TAG, "onTouchStart");
-            if (sceneObject == mCharacterView && mDraggingObject == null) {
+            if (CharacterView.PET_NAME.equals(sceneObject.getName()) && mDraggingObject == null) {
                 Log.d(TAG, "onDrag start");
-                mDraggingObject = sceneObject;
+                mDraggingObject = mCharacterView;
                 mCharacterView.startDragging();
             }
         }
