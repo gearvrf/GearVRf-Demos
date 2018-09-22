@@ -39,6 +39,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
         super(petContext);
         mHudMenu = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.hud_layout, this);
         mListener = null;
+        getTransform().setPosition(1.0f, 0.0f,-1.8f);
     }
 
     @Override
@@ -139,9 +140,8 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        gvrViewSceneObject.getTransform().setPosition(1.0f, 0.0f,-1.8f);
         gvrViewSceneObject.setTextureBufferSize(1024);
-        addChildObject(mHudMenu);
+        addChildObject(gvrViewSceneObject);
     }
 
 }
