@@ -169,10 +169,17 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     @Override
     public void onPlaneDetection(GVRPlane plane) {
+        GVRPlane.Type planeType = plane.getPlaneType();
+
+        // Don't use planes that are downward facing, e.g ceiling
+        if (planeType == GVRPlane.Type.HORIZONTAL_DOWNWARD_FACING) {
+            return;
+        }
+
         plane.setSceneObject(createQuadPlane());
         mScene.addSceneObject(plane);
 
-        if (firstPlane == null && plane.getPlaneType() == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
+        if (firstPlane == null && planeType == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
             firstPlane = plane;
             firstPlane.setName(PLANE_NAME);
             EventBus.getDefault().post(firstPlane);
