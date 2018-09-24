@@ -172,7 +172,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         plane.setSceneObject(createQuadPlane());
         mScene.addSceneObject(plane);
 
-        if (firstPlane == null && plane.getPlaneType() != GVRPlane.Type.VERTICAL) {
+        if (firstPlane == null && plane.getPlaneType() == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
             firstPlane = plane;
             firstPlane.setName(PLANE_NAME);
             EventBus.getDefault().post(firstPlane);
