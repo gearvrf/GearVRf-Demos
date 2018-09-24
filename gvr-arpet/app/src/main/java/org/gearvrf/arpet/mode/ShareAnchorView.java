@@ -75,7 +75,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         shareAnchorView.getTransform().setScale(3.5f, 2.8f, 1.0f);
         shareAnchorView.getTransform().setPosition(0.0f, 0.0f, -2.0f);
         shareAnchorView.setTextureBufferSize(1024);
-        addChildObject(mShareAnchorObject);
+        addChildObject(shareAnchorView);
     }
 
     @Override
