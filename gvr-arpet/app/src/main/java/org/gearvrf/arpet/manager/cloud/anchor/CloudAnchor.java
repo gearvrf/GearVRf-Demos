@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.gearvrf.arpet.cloud.anchor;
+package org.gearvrf.arpet.manager.cloud.anchor;
 
 import org.gearvrf.arpet.AnchoredObject;
 
