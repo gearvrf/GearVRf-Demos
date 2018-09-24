@@ -19,14 +19,14 @@
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:layout_marginBottom="10dp"
-       android:background="@drawable/btn_fetchball" />
+       android:background="@drawable/ripple_ball" />
 
     <Button
         android:id="@+id/btn_shareanchor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/btn_shareanchor" />
+        android:background="@drawable/ripple_share_anchor" />
 
     <Button
         android:id="@+id/btn_edit"
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/btn_camera" />
+        android:background="@drawable/ripple_camera" />
 
 </LinearLayout>
 
@@ -48,14 +48,14 @@
         android:id="@+id/btn_menu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_options"
+        android:background="@drawable/ripple_options"
         android:visibility="visible"/>
 
     <Button
         android:id="@+id/btn_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_close"
+        android:background="@drawable/ripple_close"
         android:visibility="invisible"/>
 
 </LinearLayout>
