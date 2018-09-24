@@ -60,4 +60,17 @@ public class BTMessage implements Message {
                 ", data=" + getData() +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BTMessage btMessage = (BTMessage) o;
+        return mId == btMessage.mId;
+    }
+
+    @Override
+    public int hashCode() {
+        return mId;
+    }
 }

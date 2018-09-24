@@ -45,7 +45,7 @@ public final class SharingService {
     private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
     private List<SharingServiceMessageReceiver> mSharingServiceMessageReceivers = new ArrayList<>();
-    private SparseArray<CallbackInfo<Void>> mRequestCallbacks = new SparseArray<>();
+    private SparseArray<CallbackInfo<Void>> mPendingCallbacks = new SparseArray<>();
 
     private static class InstanceHolder {
         private static final SharingService INSTANCE = new SharingService();
@@ -66,23 +66,7 @@ public final class SharingService {
      * @param callback Returns nothing.
      */
     public void shareScene(@NonNull Serializable[] objects, @NonNull SharingMessageCallback<Void> callback) {
-
-        if (mConnectionManager.getTotalConnected() == 0) {
-            callback.onFailure(new IllegalStateException("No connection found"));
-            return;
-        }
-
-        RequestMessage request = new SceneSharingRequestMessage(objects);
-        CallbackInfo<Void> callbackInfo = new CallbackInfo<>(mConnectionManager.getTotalConnected(), callback);
-        mRequestCallbacks.put(request.getId(), callbackInfo);
-
-        mConnectionManager.sendMessage(request, totalSent -> {
-            logForMessage(request, "Sharing request sent to " + totalSent + " remotes");
-            if (totalSent == 0) {
-                mRequestCallbacks.remove(request.getId());
-                mContext.runOnPetThread(() -> callback.onFailure(new RuntimeException("Failure sending message to remotes")));
-            }
-        });
+        sendRequest(new SceneSharingRequestMessage(objects), callback);
     }
 
     /**
@@ -90,39 +74,51 @@ public final class SharingService {
      * @param callback Returns nothing.
      */
     public void sendCommand(@NonNull @Command String command, @NonNull SharingMessageCallback<Void> callback) {
+        sendRequest(new CommandRequestMessage(command), callback);
+    }
+
+    private synchronized void sendRequest(RequestMessage request, SharingMessageCallback<Void> callback) {
+
+        CallbackInfo<Void> callbackInfo = new CallbackInfo<>(mConnectionManager.getTotalConnected(), callback);
 
         if (mConnectionManager.getTotalConnected() == 0) {
-            callback.onFailure(new IllegalStateException("No connection found"));
+            callbackFailure(callbackInfo, new IllegalStateException("No connection found"));
             return;
         }
 
-        RequestMessage request = new CommandRequestMessage(command);
-        CallbackInfo<Void> callbackInfo = new CallbackInfo<>(mConnectionManager.getTotalConnected(), callback);
-        mRequestCallbacks.put(request.getId(), callbackInfo);
+        mPendingCallbacks.put(request.getId(), callbackInfo);
 
         mConnectionManager.sendMessage(request, totalSent -> {
-            logForMessage(request, "Command request sent to " + totalSent + " remotes");
+            logForMessage(request, "Request sent to " + totalSent + " remotes");
             if (totalSent == 0) {
-                mRequestCallbacks.remove(request.getId());
-                mContext.runOnPetThread(() -> callback.onFailure(new RuntimeException("Failure sending message to remotes")));
+                mPendingCallbacks.remove(request.getId());
+                callbackFailure(callbackInfo, new RuntimeException("Failure sending request"));
             }
         });
     }
 
-    public void addMessageReceiver(SharingServiceMessageReceiver listener) {
-        mSharingServiceMessageReceivers.remove(listener);
-        mSharingServiceMessageReceivers.add(listener);
+    public void addMessageReceiver(SharingServiceMessageReceiver receiver) {
+        mSharingServiceMessageReceivers.remove(receiver);
+        mSharingServiceMessageReceivers.add(receiver);
     }
 
-    private void onShareScene(Serializable[] objects) {
-        for (SharingServiceMessageReceiver listener : mSharingServiceMessageReceivers) {
-            listener.onReceiveSharedScene(objects);
+    private void onReceiveSharedScene(Serializable[] objects) {
+        for (SharingServiceMessageReceiver receiver : mSharingServiceMessageReceivers) {
+            receiver.onReceiveSharedScene(objects);
         }
     }
 
-    private void onSenCommand(@Command String command) {
-        for (SharingServiceMessageReceiver listener : mSharingServiceMessageReceivers) {
-            listener.onReceiveCommand(command);
+    private void callbackFailure(CallbackInfo callback, Exception e) {
+        mContext.runOnPetThread(() -> callback.mCallback.onFailure(e));
+    }
+
+    private void callbackSuccessVoid(CallbackInfo<Void> callback) {
+        mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
+    }
+
+    private void onReceiveCommand(@Command String command) {
+        for (SharingServiceMessageReceiver receiver : mSharingServiceMessageReceivers) {
+            receiver.onReceiveCommand(command);
         }
     }
 
@@ -131,32 +127,24 @@ public final class SharingService {
             // Handle request or response
             onMessageReceived((Message) event.getData());
         } else if (event.getType() == PetConnectionEventType.CONNECTION_ONE_LOST) {
-            handleConnectionLost();
+            if (mPendingCallbacks.size() > 0) {
+                handleConnectionLost();
+            }
         }
     }
 
-
-    private void handleConnectionLost() {
-        if (mConnectionManager.getTotalConnected() == 0) {
-            int size = mRequestCallbacks.size();
-            for (int i = 0; i < size; i++) {
-                CallbackInfo<Void> callbackInfo = mRequestCallbacks.get(mRequestCallbacks.keyAt(0));
-                mContext.runOnPetThread(() -> callbackInfo.mCallback.onFailure(new RuntimeException("Failure sending message to remotes")));
-            }
-            mRequestCallbacks.clear();
-        } else {
-            /*
-             * This method treat the case where no new connections are made during the app experience.
-             * If new connections are accepted during the app experience, you must modify the following
-             * code to decrease the pending responses for requests associated with the lost connection.
-             */
-            int size = mRequestCallbacks.size();
-            for (int i = 0; i < size; i++) {
-                CallbackInfo<Void> callbackInfo = mRequestCallbacks.get(mRequestCallbacks.keyAt(0));
-                callbackInfo.decreaseTotalPendingResponses();
-                if (!callbackInfo.hasPendingResponses()) {
-                    callbackInfo.mCallback.onSuccess(null);
-                }
+    private synchronized void handleConnectionLost() {
+        /*
+         * This method treat the case where no new connections are made during the app experience.
+         * If new connections are accepted during the app experience, you must modify the following
+         * code to decrease the pending responses for requests associated with the lost connection.
+         */
+        for (int i = mPendingCallbacks.size() - 1; i >= 0; i--) {
+            CallbackInfo<Void> callbackInfo = mPendingCallbacks.valueAt(i);
+            callbackInfo.decreaseTotalPendingResponses();
+            if (!callbackInfo.hasPendingResponses()) {
+                callbackSuccessVoid(callbackInfo);
+                mPendingCallbacks.removeAt(i);
             }
         }
     }
@@ -174,7 +162,7 @@ public final class SharingService {
         if (request instanceof SceneSharingRequestMessage) {
 
             try {
-                onShareScene((Serializable[]) request.getData());
+                onReceiveSharedScene((Serializable[]) request.getData());
                 logForMessage(request, "Shared objects received and processed.");
                 sendDefaultResponseForRequest(request);
             } catch (Exception error) {
@@ -184,7 +172,7 @@ public final class SharingService {
         } else if (request instanceof CommandRequestMessage) {
 
             try {
-                onSenCommand((String) request.getData());
+                onReceiveCommand((String) request.getData());
                 logForMessage(request, "Command received and processed.");
                 sendDefaultResponseForRequest(request);
             } catch (Exception error) {
@@ -193,19 +181,19 @@ public final class SharingService {
         }
     }
 
-    private void handleResponseMessage(ResponseMessage response) {
+    private synchronized void handleResponseMessage(ResponseMessage response) {
 
-        if (mRequestCallbacks.size() == 0) {
+        if (mPendingCallbacks.size() == 0) {
             return;
         }
 
-        CallbackInfo<Void> callbackInfo = mRequestCallbacks.get(response.getRequestId());
+        CallbackInfo<Void> callbackInfo = mPendingCallbacks.get(response.getRequestId());
 
         if (callbackInfo != null) {
             callbackInfo.decreaseTotalPendingResponses();
             if (!callbackInfo.hasPendingResponses()) {
-                mContext.runOnPetThread(() -> callbackInfo.mCallback.onSuccess(null));
-                mRequestCallbacks.remove(response.getRequestId());
+                callbackSuccessVoid(callbackInfo);
+                mPendingCallbacks.remove(response.getRequestId());
             }
         }
     }
@@ -216,7 +204,7 @@ public final class SharingService {
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
-    private void sendResponseError(Message request, Exception error) {
+    private void sendResponseError(RequestMessage request, Exception error) {
         ResponseMessage response = new ResponseMessage.Builder(request.getId()).error(error).build();
         mConnectionManager.sendMessage(response, totalSent ->
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
