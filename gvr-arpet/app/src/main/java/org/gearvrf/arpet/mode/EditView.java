@@ -36,7 +36,6 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
         mEditModeObject = new GVRViewSceneObject(petContext.getGVRContext(),
                 R.layout.edit_mode_layout, this);
 
-        // FIXME: Do not change the x value, we need figure out why the view is not getting centralized.
         getTransform().setPosition(0.0f, 0.25f, -0.85f);
     }
 

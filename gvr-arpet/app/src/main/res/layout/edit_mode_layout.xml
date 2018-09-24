@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/editMode"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:background="#FFFF"
-    android:id="@+id/editMode">
+    android:layout_height="wrap_content">
 
     <Button
         android:id="@+id/btn_back"
         android:layout_width="wrap_content"
-        android:text="@string/editing_mode"
-        android:textColor="#717171"
-        android:fontFamily="@font/roboto_medium"
-        android:textSize="20sp"
-        android:background="#00000000"
-        android:drawableStart="@drawable/btn_back"
-        android:drawablePadding="10dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="14.5dp"
-        android:layout_height="wrap_content" />
+        android:background="#00000000"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/btn_back"
+        android:fontFamily="@font/roboto_medium"
+        android:text="@string/editing_mode"
+        android:textColor="#717171"
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/btn_save"
-        android:background="#00000000"
         android:layout_width="wrap_content"
-        android:text="@string/save"
-        android:textColor="#717171"
-        android:fontFamily="@font/roboto_medium"
-        android:textSize="20sp"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_marginStart="540dp"
         android:layout_marginTop="14.5dp"
-        android:layout_height="wrap_content" />
+        android:background="#00000000"
+        android:fontFamily="@font/roboto_medium"
+        android:text="@string/save"
+        android:textColor="#717171"
+        android:textSize="20sp" />
 
 </RelativeLayout>
