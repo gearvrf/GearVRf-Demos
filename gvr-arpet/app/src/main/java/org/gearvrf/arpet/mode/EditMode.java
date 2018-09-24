@@ -15,8 +15,12 @@
 
 package org.gearvrf.arpet.mode;
 
+import android.gesture.Gesture;
+import android.opengl.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.TouchDelegate;
+import android.view.ViewConfiguration;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVREventListeners;
@@ -111,9 +115,9 @@ public class EditMode extends BasePetMode {
     }
 
     private class GestureHandler extends GVREventListeners.ActivityEvents
-            implements OnGestureListener, ITouchEvents {
+            implements OnGestureListener, ITouchEvents, Runnable {
 
-        private GVRSceneObject mDraggingObject = null;
+        private float[] mDraggingOffset = null;
 
         @Override
         public void dispatchTouchEvent(MotionEvent event) {
@@ -123,7 +127,9 @@ public class EditMode extends BasePetMode {
 
         @Override
         public void onGesture(GestureDetector detector) {
-            if (mDraggingObject == null) {
+            if (!mCharacterView.isDragging()) {
+                Log.d(TAG, "onGesture detected");
+                mDraggingOffset = null;
                 if (detector == mRotationDetector) {
                     mCharacterView.rotate(detector.getValue());
                 } else if (detector == mScaleDetector) {
@@ -144,37 +150,33 @@ public class EditMode extends BasePetMode {
 
         @Override
         public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
-            Log.d(TAG, "onTouchStart");
-            if (CharacterView.PET_NAME.equals(sceneObject.getName()) && mDraggingObject == null) {
-                Log.d(TAG, "onDrag start");
-                mDraggingObject = mCharacterView;
-                mCharacterView.startDragging();
+            Log.d(TAG, "onTouchStart " + sceneObject.getName());
+            if (CharacterView.PET_NAME.equals(sceneObject.getName()) && mDraggingOffset == null) {
+                mDraggingOffset = pickedObject.hitLocation;
+                mPetContext.runDelayedOnPetThread(this, ViewConfiguration.getLongPressTimeout());
             }
         }
 
         @Override
         public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
             Log.d(TAG, "onTouchEnd");
-            if (mDraggingObject != null) {
+            if (mCharacterView.isDragging()) {
                 Log.d(TAG, "onDrag stop");
-                mDraggingObject = null;
                 mCharacterView.stopDragging();
+                mDraggingOffset = null;
             }
         }
 
         @Override
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
-            if (mDraggingObject == null) {
-                return;
-            }
-
-            Log.d(TAG, "onInside");
-
-            collision = pickSceneObject(mMixedReality.getPassThroughObject());
-            if (collision != null) {
-                GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(), collision);
-                if (gvrHitResult != null) {
-                    mCharacterView.updatePose(gvrHitResult.getPose());
+            if (mCharacterView.isDragging()) {
+                collision = testDraggingOnPlane(mMixedReality.getPassThroughObject());
+                if (collision != null) {
+                    GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(),
+                            collision);
+                    if (gvrHitResult != null) {
+                        mCharacterView.updatePose(gvrHitResult.getPose());
+                    }
                 }
             }
         }
@@ -184,14 +186,26 @@ public class EditMode extends BasePetMode {
 
         }
 
-        private GVRPicker.GVRPickedObject pickSceneObject(GVRSceneObject sceneObject) {
+        private GVRPicker.GVRPickedObject testDraggingOnPlane(GVRSceneObject sceneObject) {
             Vector3f origin = new Vector3f();
             Vector3f direction = new Vector3f();
 
             mCursorController.getPicker().getWorldPickRay(origin, direction);
+            //direction.sub(mDraggingOffset[0], mDraggingOffset[1], mDraggingOffset[2]);
+            direction.normalize();
 
             return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
                     direction.x, direction.y, direction.z);
+        }
+
+        @Override
+        public void run() {
+            if (mDraggingOffset != null) {
+                Log.d(TAG, "onDrag start");
+
+                mCharacterView.startDragging();
+                mDraggingOffset = null;
+            }
         }
     }
 }

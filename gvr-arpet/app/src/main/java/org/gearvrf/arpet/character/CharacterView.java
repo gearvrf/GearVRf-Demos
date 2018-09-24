@@ -122,7 +122,7 @@ public class CharacterView extends AnchoredObject implements
         GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.drag_shadow));
         GVRMaterial mat = new GVRMaterial(mContext);
         mat.setMainTexture(tex);
-        mShadow = new GVRSceneObject(mContext, 0.05f, 0.1f);
+        mShadow = new GVRSceneObject(mContext, 0.3f, 0.6f);
         mShadow.getRenderData().setMaterial(mat);
         mShadow.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
         mShadow.getTransform().setPosition(0f, 0.01f, -0.02f);
@@ -160,12 +160,16 @@ public class CharacterView extends AnchoredObject implements
 
     public void startDragging() {
         mShadow.setEnable(true);
-        getTransform().setPositionY(0.02f);
+        m3DModel.getTransform().setPositionY(0.2f);
     }
 
     public void stopDragging() {
         mShadow.setEnable(false);
-        getTransform().setPositionY(0.0f);
+        m3DModel.getTransform().setPositionY(0.0f);
+    }
+
+    public boolean isDragging() {
+        return mShadow.isEnabled();
     }
 
     private synchronized void notifyScale(float factor) {
