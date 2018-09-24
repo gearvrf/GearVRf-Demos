@@ -23,8 +23,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
-@StringDef({Command.FETCH_BALL, Command.SHOW_PAIRED_VIEW})
+@StringDef({Command.FETCH_BALL,
+        Command.SHOW_PAIRED_VIEW,
+        Command.SHOW_STAY_IN_POSITION_TO_PAIR})
 public @interface Command {
     String FETCH_BALL = "FETCH_BALL";
     String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
+    String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";
 }

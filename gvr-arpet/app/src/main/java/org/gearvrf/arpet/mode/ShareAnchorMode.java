@@ -215,11 +215,15 @@ public class ShareAnchorMode extends BasePetMode {
                 mCloudAnchorManager.hostAnchor(object);
             }
         }
-        mHandler.postDelayed(() -> showStayInPositionToPair(), DEFAULT_SCREEN_TIMEOUT);
     }
 
     private void showStayInPositionToPair() {
-        mShareAnchorView.toPairView();
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mShareAnchorView.toPairView();
+            }
+        });
     }
 
     private void showParedView() {
@@ -241,34 +245,62 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
+    private void sendCommandToShowStayInPosition() {
+        mSharingService.sendCommand(Command.SHOW_STAY_IN_POSITION_TO_PAIR, new SharingMessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "command to show 'stay in position' was performed successfully");
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.e(TAG, "command to show 'stay in position' has failed");
+            }
+        });
+    }
+
+    private void sendCommandToShowPairedView() {
+        mSharingService.sendCommand(Command.SHOW_PAIRED_VIEW, new SharingMessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                showParedView();
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.e(TAG, "command to show 'paired view' has failed");
+            }
+        });
+    }
+
+    private void shareScene(CloudAnchor[] anchors) {
+        mSharingService.shareScene(anchors, new SharingMessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "all guests have resolved their cloud anchors");
+                // Inform the guests to change their view
+                sendCommandToShowPairedView();
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.e(TAG, "some guest didn't get to resolve a cloud anchor");
+            }
+        });
+    }
+
     private class CloudAnchorManagerReadyListener implements OnCloudAnchorManagerListener {
         @Override
         public void onHostReady() {
+            // Just inform the guests to change their view
+            sendCommandToShowStayInPosition();
+            // Change the host view
+            showStayInPositionToPair();
+
             Log.d(TAG, "sending a list of CloudAnchor objects to the guests");
             ArrayList<CloudAnchor> cloudAnchors = mCloudAnchorManager.getCloudAnchors();
             int listSize = cloudAnchors.size();
-            mSharingService.shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]), new SharingMessageCallback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "all guests have resolved their cloud anchors");
-                    mSharingService.sendCommand(Command.SHOW_PAIRED_VIEW, new SharingMessageCallback<Void>() {
-                        @Override
-                        public void onSuccess(Void result) {
-                            showParedView();
-                        }
-
-                        @Override
-                        public void onFailure(Exception error) {
-
-                        }
-                    });
-                }
-
-                @Override
-                public void onFailure(Exception error) {
-
-                }
-            });
+            shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]));
         }
     }
 
@@ -283,8 +315,14 @@ public class ShareAnchorMode extends BasePetMode {
         @Override
         public void onReceiveCommand(@Command String command) {
             Log.d(TAG, "Command received: " + command);
-            if (command.equals(Command.SHOW_PAIRED_VIEW)) {
-                showParedView();
+            switch (command) {
+                case Command.SHOW_PAIRED_VIEW:
+                    showParedView();
+                    break;
+                case Command.SHOW_STAY_IN_POSITION_TO_PAIR:
+                    showStayInPositionToPair();
+                    break;
+                default:
             }
         }
     }
