@@ -27,12 +27,12 @@ public interface SharingServiceMessageReceiver {
      *
      * @param sharedObjects Metadata for objects to load.
      */
-    void onShareScene(Serializable[] sharedObjects);
+    void onReceiveSharedScene(Serializable[] sharedObjects);
 
     /**
      * Execute the given command on this device
      *
      * @param command Command to execute.
      */
-    void onSendCommand(@Command String command);
+    void onReceiveCommand(@Command String command);
 }

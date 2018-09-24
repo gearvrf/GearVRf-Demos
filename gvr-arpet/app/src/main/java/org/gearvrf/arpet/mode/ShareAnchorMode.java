@@ -274,14 +274,14 @@ public class ShareAnchorMode extends BasePetMode {
 
     private class MessageReceiver implements SharingServiceMessageReceiver {
         @Override
-        public void onShareScene(Serializable[] sharedObjects) {
+        public void onReceiveSharedScene(Serializable[] sharedObjects) {
             Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
             // This method will return only after loader finish
             new SharedSceneLoader(sharedObjects).start();
         }
 
         @Override
-        public void onSendCommand(@Command String command) {
+        public void onReceiveCommand(@Command String command) {
             Log.d(TAG, "Command received: " + command);
             if (command.equals(Command.SHOW_PAIRED_VIEW)) {
                 showParedView();

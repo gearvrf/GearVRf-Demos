@@ -116,13 +116,13 @@ public final class SharingService {
 
     private void onShareScene(Serializable[] objects) {
         for (SharingServiceMessageReceiver listener : mSharingServiceMessageReceivers) {
-            listener.onShareScene(objects);
+            listener.onReceiveSharedScene(objects);
         }
     }
 
     private void onSenCommand(@Command String command) {
         for (SharingServiceMessageReceiver listener : mSharingServiceMessageReceivers) {
-            listener.onSendCommand(command);
+            listener.onReceiveCommand(command);
         }
     }
 
