@@ -17,7 +17,22 @@
 
 package org.gearvrf.arpet.sharing;
 
-public abstract class SyncTask {
+public abstract class Task implements Thread.UncaughtExceptionHandler {
+
+    private TaskException mError;
+
+    public TaskException getError() {
+        return mError;
+    }
+
+    public void setError(TaskException error) {
+        this.mError = error;
+    }
+
+    @Override
+    public void uncaughtException(Thread t, Throwable e) {
+        mError = new TaskException(e);
+    }
 
     protected void notifyProcessed() {
         synchronized (this) {
@@ -32,15 +47,16 @@ public abstract class SyncTask {
                 try {
                     wait();
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    mError = new TaskException(e);
                 }
             }
         });
+        thread.setUncaughtExceptionHandler(this);
         thread.start();
         try {
             thread.join();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            mError = new TaskException(e);
         }
     }
 

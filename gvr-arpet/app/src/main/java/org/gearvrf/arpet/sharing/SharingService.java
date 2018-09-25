@@ -102,7 +102,7 @@ public final class SharingService {
         mSharingServiceMessageReceivers.add(receiver);
     }
 
-    private void onReceiveSharedScene(Serializable[] objects) {
+    private void onReceiveSharedScene(Serializable[] objects) throws SharingException {
         for (SharingServiceMessageReceiver receiver : mSharingServiceMessageReceivers) {
             receiver.onReceiveSharedScene(objects);
         }
@@ -116,7 +116,7 @@ public final class SharingService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveCommand(@Command String command) {
+    private void onReceiveCommand(@Command String command) throws SharingException {
         for (SharingServiceMessageReceiver receiver : mSharingServiceMessageReceivers) {
             receiver.onReceiveCommand(command);
         }
@@ -165,7 +165,7 @@ public final class SharingService {
                 onReceiveSharedScene((Serializable[]) request.getData());
                 logForMessage(request, "Shared objects received and processed.");
                 sendDefaultResponseForRequest(request);
-            } catch (Exception error) {
+            } catch (SharingException error) {
                 sendResponseError(request, error);
             }
 
@@ -175,7 +175,7 @@ public final class SharingService {
                 onReceiveCommand((String) request.getData());
                 logForMessage(request, "Command received and processed.");
                 sendDefaultResponseForRequest(request);
-            } catch (Exception error) {
+            } catch (SharingException error) {
                 sendResponseError(request, error);
             }
         }
@@ -204,7 +204,7 @@ public final class SharingService {
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
-    private void sendResponseError(RequestMessage request, Exception error) {
+    private void sendResponseError(RequestMessage request, SharingException error) {
         ResponseMessage response = new ResponseMessage.Builder(request.getId()).error(error).build();
         mConnectionManager.sendMessage(response, totalSent ->
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));

@@ -17,22 +17,20 @@
 
 package org.gearvrf.arpet.sharing;
 
-import org.gearvrf.arpet.sharing.message.Command;
+public class SharingException extends Exception {
 
-import java.io.Serializable;
+    public SharingException() {
+    }
 
-public interface SharingServiceMessageReceiver {
-    /**
-     * Resolve end load the objects represented by given metadata array.
-     *
-     * @param sharedObjects Metadata for objects to load.
-     */
-    void onReceiveSharedScene(Serializable[] sharedObjects) throws SharingException;
+    public SharingException(String message) {
+        super(message);
+    }
 
-    /**
-     * Execute the given command on this device
-     *
-     * @param command Command to execute.
-     */
-    void onReceiveCommand(@Command String command) throws SharingException;
+    public SharingException(Throwable cause) {
+        super(cause);
+    }
+
+    public SharingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

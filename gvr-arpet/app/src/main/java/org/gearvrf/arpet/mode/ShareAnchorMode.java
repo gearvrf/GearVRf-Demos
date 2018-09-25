@@ -10,20 +10,22 @@ import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.PlaneHandler;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.connection.socket.ConnectionMode;
+import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.OnCloudAnchorManagerListener;
-import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.sharing.SharingException;
 import org.gearvrf.arpet.sharing.SharingMessageCallback;
 import org.gearvrf.arpet.sharing.SharingService;
 import org.gearvrf.arpet.sharing.SharingServiceMessageReceiver;
-import org.gearvrf.arpet.sharing.SyncTask;
+import org.gearvrf.arpet.sharing.Task;
+import org.gearvrf.arpet.sharing.TaskException;
 import org.gearvrf.arpet.sharing.message.Command;
 import org.gearvrf.mixedreality.GVRAnchor;
 
@@ -31,6 +33,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShareAnchorMode extends BasePetMode {
     private final String TAG = getClass().getSimpleName();
@@ -306,10 +310,14 @@ public class ShareAnchorMode extends BasePetMode {
 
     private class MessageReceiver implements SharingServiceMessageReceiver {
         @Override
-        public void onReceiveSharedScene(Serializable[] sharedObjects) {
+        public void onReceiveSharedScene(Serializable[] sharedObjects) throws SharingException {
             Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
             // This method will return only after loader finish
-            new SharedSceneLoader(sharedObjects).start();
+            Task task = new SharedSceneLoader(sharedObjects);
+            task.start();
+            if (task.getError() != null) {
+                throw new SharingException(task.getError());
+            }
         }
 
         @Override
@@ -327,11 +335,12 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
-    private class SharedSceneLoader extends SyncTask {
+    private class SharedSceneLoader extends Task {
 
         Serializable[] mSharedObjects;
-        int countResolveFailure;
-        int countResolveSuccess;
+
+        AtomicInteger countResolveFailure = new AtomicInteger(0);
+        AtomicInteger countResolveSuccess = new AtomicInteger(0);
 
         SharedSceneLoader(Serializable[] sharedObjects) {
             this.mSharedObjects = sharedObjects;
@@ -344,24 +353,45 @@ public class ShareAnchorMode extends BasePetMode {
         }
 
         private void handleResolvedAnchors(CloudAnchor[] cloudAnchors) {
+
             for (CloudAnchor cloudAnchor : cloudAnchors) {
                 Log.d(TAG, "resolving cloud anchor ID...");
-                mCloudAnchorManager.resolveAnchor(cloudAnchor.getCloudAnchorId(),
-                        (anchor) -> {
-                            if (anchor != null) {
-                                Log.d(TAG, "anchor ID has been resolved successfully");
-                                loadModel(cloudAnchor.getObjectType(), anchor);
-                                countResolveSuccess++;
-                            } else {
-                                Log.e(TAG, "could not be possible to resolve a cloud anchor ID");
-                                countResolveFailure++;
-                            }
-                            notifyProcessed();
-                            // TODO: handle the exception in sharing service
-                            /* if (countResolveFailure > 0) {
-                                throw new RuntimeException("all objects were not resolved");
-                            }*/
-                        });
+                mCloudAnchorManager.resolveAnchor(cloudAnchor.getCloudAnchorId(), (anchor) -> {
+
+                    if (anchor == null || anchor.getCloudAnchorId().isEmpty()) {
+                        countResolveFailure.incrementAndGet();
+                        String errorString = String.format(Locale.getDefault(),
+                                "Error resolving cloud anchor id %s for object of type %d",
+                                cloudAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
+                        Log.e(TAG, errorString);
+                    } else {
+                        try {
+                            loadModel(cloudAnchor.getObjectType(), anchor);
+                            countResolveSuccess.incrementAndGet();
+                            String successString = String.format(Locale.getDefault(),
+                                    "Loading succeeded for object of type %d",
+                                    cloudAnchor.getObjectType());
+                            Log.i(TAG, successString);
+                        } catch (Exception e) {
+                            countResolveFailure.incrementAndGet();
+                            String errorString = String.format(Locale.getDefault(),
+                                    "Error loading model for object of type %d",
+                                    cloudAnchor.getObjectType());
+                            Log.e(TAG, errorString);
+                        }
+                    }
+
+                    if ((countResolveSuccess.get() + countResolveFailure.get()) == cloudAnchors.length) {
+                        if (countResolveFailure.get() > 0) {
+                            String errorString = "Error loading one or more objects";
+                            setError(new TaskException(errorString));
+                            Log.e(TAG, errorString);
+                        } else {
+                            Log.i(TAG, "All objects successfully loaded");
+                        }
+                        notifyProcessed();
+                    }
+                });
             }
         }
     }
