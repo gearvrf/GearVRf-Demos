@@ -124,7 +124,12 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showInviteMain() {
-        mShareAnchorView.invitationView();
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mShareAnchorView.invitationView();
+            }
+        });
     }
 
     private void OnWaitingForConnection() {
