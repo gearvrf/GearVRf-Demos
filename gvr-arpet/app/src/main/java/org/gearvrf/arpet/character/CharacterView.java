@@ -56,7 +56,7 @@ public class CharacterView extends AnchoredObject implements
     private float[] mPlaneCenterPose = new float[16];
     private GVRSceneObject mCursor;
     private GVRSceneObject mShadow;
-    public final static String PET_NAME = "Pet";
+    public final static String PET_COLLIDER = "Pet collider";
 
     private GVRSceneObject m3DModel;
 
@@ -84,7 +84,6 @@ public class CharacterView extends AnchoredObject implements
     private void load3DModel() {
         m3DModel = LoadModelHelper.loadModelSceneObject(mContext, LoadModelHelper.PET_MODEL_PATH);
         m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
-        m3DModel.setName(PET_NAME);
 
         addChildObject(m3DModel);
 
@@ -110,7 +109,7 @@ public class CharacterView extends AnchoredObject implements
         cube.getTransform().setPosition(0, 0.2f, 0);
         cube.getTransform().setScale(0.2f, 0.5f, 0.5f);
 
-        cube.setName(PET_NAME);
+        cube.setName(PET_COLLIDER);
         addChildObject(cube);
     }
 

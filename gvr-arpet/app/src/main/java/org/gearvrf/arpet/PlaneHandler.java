@@ -57,6 +57,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
             collider.setHalfExtents(0.5f, 0.5f, 0.5f);
             box.attachComponent(collider);
+            // To touch debug
+            box.setName("Plane collider");
 
             // Uncomment if you want a green box to appear at the center of the invisible board.
             // Notice this green box is smaller than the board
