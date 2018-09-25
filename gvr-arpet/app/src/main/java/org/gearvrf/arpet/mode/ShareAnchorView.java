@@ -159,7 +159,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     class ProgressHandler extends Handler {
 
-        private static final int TICK_DELAY = 1000; // millisecond
+        private static final int TICK_DELAY = 50; // millisecond
         private int currentProgress;
         private int duration = 0;
 
