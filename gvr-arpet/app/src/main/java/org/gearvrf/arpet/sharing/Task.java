@@ -34,7 +34,7 @@ public abstract class Task implements Thread.UncaughtExceptionHandler {
         mError = new TaskException(e);
     }
 
-    protected void notifyProcessed() {
+    protected void notifyExecuted() {
         synchronized (this) {
             notify();
         }
@@ -42,7 +42,7 @@ public abstract class Task implements Thread.UncaughtExceptionHandler {
 
     public void start() {
         Thread thread = new Thread(() -> {
-            process();
+            execute();
             synchronized (this) {
                 try {
                     wait();
@@ -60,5 +60,5 @@ public abstract class Task implements Thread.UncaughtExceptionHandler {
         }
     }
 
-    public abstract void process();
+    public abstract void execute();
 }

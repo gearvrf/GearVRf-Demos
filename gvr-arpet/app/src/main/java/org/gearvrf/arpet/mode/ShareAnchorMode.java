@@ -39,8 +39,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ShareAnchorMode extends BasePetMode {
     private final String TAG = getClass().getSimpleName();
 
-    private final int DEFAULT_SERVER_LISTENNING_TIMEOUT = ApiConstants.DISCOVERABLE_DURATION * 1000; // time in ms
-    private final int DEFAULT_GUEST_TIMEOUT = 10000;  // 10s for waiting to connect to the host
+    private static final int DEFAULT_SERVER_LISTENING_TIMEOUT = ApiConstants.DISCOVERABLE_DURATION * 1000; // time in ms
+    private static final int DEFAULT_GUEST_TIMEOUT = 10000;  // 10s for waiting to connect to the host
     private final int DEFAULT_SCREEN_TIMEOUT = 5000;  // 5s to change between screens
 
     private IPetConnectionManager mConnectionManager;
@@ -106,9 +106,9 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void showWaitingForScreen() {
         mShareAnchorView.modeHost();
-        mShareAnchorView.getProgressHandler().setDuration(DEFAULT_SERVER_LISTENNING_TIMEOUT);
+        mShareAnchorView.getProgressHandler().setDuration(DEFAULT_SERVER_LISTENING_TIMEOUT);
         mShareAnchorView.getProgressHandler().start();
-        mHandler.postDelayed(this::OnWaitingForConnection, DEFAULT_SERVER_LISTENNING_TIMEOUT);
+        mHandler.postDelayed(this::OnWaitingForConnection, DEFAULT_SERVER_LISTENING_TIMEOUT);
     }
 
     private void showInviteAcceptedScreen() {
@@ -144,40 +144,35 @@ public class ShareAnchorMode extends BasePetMode {
     @SuppressLint("HandlerLeak")
     private class AppConnectionMessageHandler implements PetConnectionEventHandler {
 
+        @SuppressLint("SwitchIntDef")
         @Override
         public void handleEvent(PetConnectionEvent message) {
-            mPetContext.getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    @PetConnectionEventType
-                    int messageType = message.getType();
-
-                    switch (messageType) {
-
-                        case PetConnectionEventType.CONNECTION_ESTABLISHED:
-                            handleConnectionEstablished();
-                            break;
-                        case PetConnectionEventType.CONNECTION_NOT_FOUND:
-                            showInviteMain();
-                            showToast("No connection found");
-                            break;
-                        case PetConnectionEventType.CONNECTION_ALL_LOST:
-                            showToast("No active connection");
-                            break;
-                        case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
-                            showToast("Ready to accept connections");
-                            showWaitingForScreen();
-                            break;
-                        case PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED:
-                            showToast("Bluetooth is disabled");
-                            break;
-                        case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
-                            showToast("Device is not visible to other devices");
-                            break;
-                        case PetConnectionEventType.MESSAGE_RECEIVED:
-                        default:
-                            break;
-                    }
+            mPetContext.getActivity().runOnUiThread(() -> {
+                @PetConnectionEventType
+                int messageType = message.getType();
+                switch (messageType) {
+                    case PetConnectionEventType.CONNECTION_ESTABLISHED:
+                        handleConnectionEstablished();
+                        break;
+                    case PetConnectionEventType.CONNECTION_NOT_FOUND:
+                        showInviteMain();
+                        showToast("No connection found");
+                        break;
+                    case PetConnectionEventType.CONNECTION_ALL_LOST:
+                        showToast("No active connection");
+                        break;
+                    case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
+                        showToast("Ready to accept connections");
+                        showWaitingForScreen();
+                        break;
+                    case PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED:
+                        showToast("Bluetooth is disabled");
+                        break;
+                    case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
+                        showToast("Device is not visible to other devices");
+                        break;
+                    default:
+                        break;
                 }
             });
         }
@@ -352,7 +347,7 @@ public class ShareAnchorMode extends BasePetMode {
         }
 
         @Override
-        public void process() {
+        public void execute() {
             Log.d(TAG, "Loading shared scene");
             handleResolvedAnchors((CloudAnchor[]) mSharedObjects);
         }
@@ -394,7 +389,7 @@ public class ShareAnchorMode extends BasePetMode {
                         } else {
                             Log.i(TAG, "All objects successfully loaded");
                         }
-                        notifyProcessed();
+                        notifyExecuted();
                     }
                 });
             }
