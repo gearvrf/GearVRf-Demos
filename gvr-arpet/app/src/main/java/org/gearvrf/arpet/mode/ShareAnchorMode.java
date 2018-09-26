@@ -119,7 +119,6 @@ public class ShareAnchorMode extends BasePetMode {
         } else {
             Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
-            mHandler.postDelayed(() -> showParingScreen(ConnectionMode.CLIENT), DEFAULT_SCREEN_TIMEOUT);
         }
     }
 
@@ -213,8 +212,15 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showParingScreen(@ConnectionMode int mode) {
-        mShareAnchorView.pairingView();
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mShareAnchorView.pairingView();
+            }
+        });
+
         if (mode == ConnectionMode.SERVER) {
+            sendCommandToShowPairingView();
             for (AnchoredObject object : mAnchoredObjects) {
                 mCloudAnchorManager.hostAnchor(object);
             }
@@ -245,6 +251,20 @@ public class ShareAnchorMode extends BasePetMode {
             @Override
             public void run() {
                 mShareAnchorView.modeView();
+            }
+        });
+    }
+
+    private void sendCommandToShowPairingView() {
+        mSharingService.sendCommand(Command.SHOW_PAIRING_VIEW, new SharingMessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "command to show 'pairing view' was performed successfully");
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.d(TAG, "command to show 'pairing view' has failed");
             }
         });
     }
@@ -329,6 +349,9 @@ public class ShareAnchorMode extends BasePetMode {
                     break;
                 case Command.SHOW_STAY_IN_POSITION_TO_PAIR:
                     showStayInPositionToPair();
+                    break;
+                case Command.SHOW_PAIRING_VIEW:
+                    showParingScreen(mConnectionManager.getConnectionMode());
                     break;
                 default:
             }
