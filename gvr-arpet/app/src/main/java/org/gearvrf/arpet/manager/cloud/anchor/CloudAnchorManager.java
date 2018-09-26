@@ -17,17 +17,22 @@
 package org.gearvrf.arpet.manager.cloud.anchor;
 
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.util.ContextUtils;
+import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.ICloudAnchorListener;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CloudAnchorManager {
     private static final String TAG = CloudAnchorManager.class.getSimpleName();
@@ -69,10 +74,12 @@ public class CloudAnchorManager {
                 (anchor) -> {
                     String id = anchor.getCloudAnchorId();
                     if (!id.isEmpty()) {
+                        Log.d(TAG, "Success hosting anchor for object of type " + cloudAnchor.getObjectType());
                         cloudAnchor.setCloudAnchorId(id);
                         onHostResult(ResponseType.SUCCESS);
                     } else {
                         Log.d(TAG, "cloud anchor ID is empty");
+                        Log.d(TAG, "Failure hosting anchor for object of type " + cloudAnchor.getObjectType());
                         onHostResult(ResponseType.FAILURE);
                     }
                 });
@@ -128,5 +135,85 @@ public class CloudAnchorManager {
             mCountSuccess = 0;
             mCountFailure = 0;
         }
+    }
+
+    private AtomicInteger mPendingToResolve;
+    private List<ResolvedCloudAnchor> mResolvedCloudAnchors;
+    private final Object RESOLVER_LOCK = new Object();
+    private ResolveCallback mResolveCallback;
+
+    /**
+     * Retrieve the given anchors from ARCore.
+     *
+     * @param anchors  Anchors to retrieve.
+     * @param callback The success callback will be called if and only if all anchors are successfully resolved.
+     *                 The error callback will be called if cannot resolve some anchor for any reason.
+     */
+    public void resolveAnchors(CloudAnchor[] anchors, @NonNull ResolveCallback callback) {
+
+        // Already is resolving
+        if (mPendingToResolve != null) {
+            return;
+        }
+
+        if (!isCloudAnchorApiKeySet()) {
+            String errorString = "Unable to resolver anchor. Cloud anchor API key is not set.";
+            Log.e(TAG, errorString);
+            callback.onError(new RuntimeException(errorString));
+            return;
+        }
+
+        mResolveCallback = callback;
+        mPendingToResolve = new AtomicInteger(anchors.length);
+        mResolvedCloudAnchors = new ArrayList<>(anchors.length);
+
+        for (CloudAnchor cloudAnchor : anchors) {
+            try {
+                mPetContext.getMixedReality().resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), (GVRAnchor resolvedAnchor) -> {
+                    synchronized (RESOLVER_LOCK) {
+                        // Ignore others result if any previous already failed
+                        if (mPendingToResolve == null) {
+                            return;
+                        }
+                        mPendingToResolve.decrementAndGet();
+                        if (resolvedAnchor != null && !resolvedAnchor.getCloudAnchorId().isEmpty()) {
+                            String successString = String.format(Locale.getDefault(),
+                                    "Success resolving anchor id %s for object of type %d",
+                                    resolvedAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
+                            Log.i(TAG, successString);
+                            mResolvedCloudAnchors.add(new ResolvedCloudAnchor(cloudAnchor, resolvedAnchor));
+                        } else {
+                            mPendingToResolve = null;
+                            mResolvedCloudAnchors = null;
+                            String errorString = String.format(Locale.getDefault(),
+                                    "Failed resolving anchor id %s for object of type %d",
+                                    cloudAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
+                            mResolveCallback.onError(new RuntimeException(errorString));
+                            Log.e(TAG, errorString);
+                        }
+                        if (mPendingToResolve != null && mPendingToResolve.get() == 0) {
+                            List<ResolvedCloudAnchor> result = new ArrayList<>(mResolvedCloudAnchors);
+                            mResolveCallback.onAllResolved(new ArrayList<>(result));
+                            mPendingToResolve = null;
+                            mResolvedCloudAnchors = null;
+                        }
+                    }
+                });
+            } catch (Throwable e) {
+                synchronized (RESOLVER_LOCK) {
+                    mPendingToResolve = null;
+                    mResolvedCloudAnchors = null;
+                }
+                mResolveCallback.onError(e);
+                break;
+            }
+        }
+    }
+
+    public interface ResolveCallback {
+
+        void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors);
+
+        void onError(Throwable e);
     }
 }

@@ -107,10 +107,14 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
     }
 
     private void setReceiverEnabled(boolean enabled) {
-        if (enabled) {
-            mContext.registerReceiver(this, mIntentFilter);
-        } else {
-            mContext.unregisterReceiver(this);
+        try {
+            if (enabled) {
+                mContext.registerReceiver(this, mIntentFilter);
+            } else {
+                mContext.unregisterReceiver(this);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

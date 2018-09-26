@@ -15,6 +15,7 @@ import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.OnCloudAnchorManagerListener;
+import org.gearvrf.arpet.manager.cloud.anchor.ResolvedCloudAnchor;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
@@ -34,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class ShareAnchorMode extends BasePetMode {
     private final String TAG = getClass().getSimpleName();
@@ -333,10 +333,13 @@ public class ShareAnchorMode extends BasePetMode {
         public void onReceiveSharedScene(Serializable[] sharedObjects) throws SharingException {
             Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
             // This method will return only after loader finish
-            Task task = new SharedSceneLoader(sharedObjects);
+            Task task = new SharedSceneLoader((CloudAnchor[]) sharedObjects);
             task.start();
             if (task.getError() != null) {
+                showToast("Error loading objects: " + task.getError().getMessage());
                 throw new SharingException(task.getError());
+            } else {
+                showToast("All objects successfully loaded");
             }
         }
 
@@ -360,62 +363,46 @@ public class ShareAnchorMode extends BasePetMode {
 
     private class SharedSceneLoader extends Task {
 
-        Serializable[] mSharedObjects;
+        CloudAnchor[] mSharedObjects;
 
-        AtomicInteger countResolveFailure = new AtomicInteger(0);
-        AtomicInteger countResolveSuccess = new AtomicInteger(0);
-
-        SharedSceneLoader(Serializable[] sharedObjects) {
+        SharedSceneLoader(CloudAnchor[] sharedObjects) {
             this.mSharedObjects = sharedObjects;
         }
 
         @Override
         public void execute() {
-            Log.d(TAG, "Loading shared scene");
-            handleResolvedAnchors((CloudAnchor[]) mSharedObjects);
-        }
-
-        private void handleResolvedAnchors(CloudAnchor[] cloudAnchors) {
-
-            for (CloudAnchor cloudAnchor : cloudAnchors) {
-                Log.d(TAG, "resolving cloud anchor ID...");
-                mCloudAnchorManager.resolveAnchor(cloudAnchor.getCloudAnchorId(), (anchor) -> {
-
-                    if (anchor == null || anchor.getCloudAnchorId().isEmpty()) {
-                        countResolveFailure.incrementAndGet();
-                        String errorString = String.format(Locale.getDefault(),
-                                "Error resolving cloud anchor id %s for object of type %d",
-                                cloudAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
-                        Log.e(TAG, errorString);
-                    } else {
+            Log.d(TAG, "Loading shared objects");
+            mCloudAnchorManager.resolveAnchors(mSharedObjects, new CloudAnchorManager.ResolveCallback() {
+                @Override
+                public void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors) {
+                    Log.i(TAG, "All anchors successfully resolved");
+                    for (ResolvedCloudAnchor resolvedCloudAnchor : resolvedCloudAnchors) {
                         try {
-                            loadModel(cloudAnchor.getObjectType(), anchor);
-                            countResolveSuccess.incrementAndGet();
+                            loadModel(resolvedCloudAnchor.getCloudAnchor().getObjectType(), resolvedCloudAnchor.getAnchor());
                             String successString = String.format(Locale.getDefault(),
-                                    "Loading succeeded for object of type %d",
-                                    cloudAnchor.getObjectType());
+                                    "Success loading model for object of type %d",
+                                    resolvedCloudAnchor.getCloudAnchor().getObjectType());
                             Log.i(TAG, successString);
                         } catch (Exception e) {
-                            countResolveFailure.incrementAndGet();
                             String errorString = String.format(Locale.getDefault(),
                                     "Error loading model for object of type %d",
-                                    cloudAnchor.getObjectType());
+                                    resolvedCloudAnchor.getCloudAnchor().getObjectType());
+                            setError(new TaskException(errorString, e));
                             Log.e(TAG, errorString);
+                            break;
                         }
                     }
+                    notifyExecuted();
+                }
 
-                    if ((countResolveSuccess.get() + countResolveFailure.get()) == cloudAnchors.length) {
-                        if (countResolveFailure.get() > 0) {
-                            String errorString = "Error loading one or more objects";
-                            setError(new TaskException(errorString));
-                            Log.e(TAG, errorString);
-                        } else {
-                            Log.i(TAG, "All objects successfully loaded");
-                        }
-                        notifyExecuted();
-                    }
-                });
-            }
+                @Override
+                public void onError(Throwable e) {
+                    String errorString = "Error resolving anchors";
+                    setError(new TaskException(errorString, e));
+                    Log.e(TAG, errorString + ": " + e.getMessage());
+                    notifyExecuted();
+                }
+            });
         }
     }
 }
