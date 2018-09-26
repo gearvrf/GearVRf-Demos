@@ -15,8 +15,11 @@
 
 package org.gearvrf.widgetlibviewer;
 
+import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRImportSettings;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRRenderPass;
@@ -30,10 +33,10 @@ import org.gearvrf.widgetlib.widget.GroupWidget;
 import org.gearvrf.widgetlib.widget.TransformCache;
 import org.gearvrf.widgetlib.widget.Widget;
 import org.gearvrf.widgetlibviewer.shaders.NoTextureShader;
-import org.gearvrf.widgetlibviewer.shaders.OutlineShader;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import static org.gearvrf.utility.Log.tag;
@@ -43,7 +46,7 @@ public class Model extends GroupWidget {
     ArrayList<GVRMaterial> mOriginalMaterial;
     List<GVRAnimation> mAnimation;
     private float mCurrentZoom = 0;
-    private boolean mLightEnabled;
+    private boolean mLightEnabled = true;
 
     private static final String TAG = tag(Model.class);
     private static final float MIN_RADIUS = 1.5f;
@@ -56,7 +59,7 @@ public class Model extends GroupWidget {
     public Model(GVRContext context, String name, String location) throws IOException {
         super(context, loadModel(context, location));
         mLocation = location;
-        setName(name);
+        setName(location);
         GVRSceneObject model = getSceneObject();
         model.attachComponent(new GVRMeshCollider(context, true));
 
@@ -65,16 +68,12 @@ public class Model extends GroupWidget {
         float originalRadius = bv.radius;
         Log.i(TAG, "Radius" + Float.toString(originalRadius));
 
-        // TODO Scale Appropriately
         if (originalRadius > MAX_RADIUS || originalRadius < MIN_RADIUS) {
             float scaleFactor = MAX_RADIUS / originalRadius;
             setScale(scaleFactor, scaleFactor, scaleFactor);
         }
 
         // Make Copy of Original Render Data
-        saveRenderData();
-
-        applyCustomShader(0);
 
         Widget.OnTouchListener homeButtonTouchListener = new Widget.OnTouchListener() {
             @Override
@@ -96,15 +95,9 @@ public class Model extends GroupWidget {
         setViewPortHeight(MAX_RADIUS);
         setViewPortDepth(MAX_RADIUS);
         enableClipRegion();
-
+        saveRenderData();
     }
 
-/*    protected JSONObject getObjectMetadata() {
-        JSONObject metaData = super.getObjectMetadata();
-        JSONHelpers.put(metaData, Widget.Properties.create_children, false);
-        return metaData;
-    }
-*/
     String getLocation() {
         return mLocation;
     }
@@ -116,7 +109,6 @@ public class Model extends GroupWidget {
     }
 
     public void startModelViewer() {
-        Log.i(TAG, "Sveta.onTouch: %s", getName());
         final ContentSceneController contentSceneController = WidgetLib.getContentSceneController();
 
         try {
@@ -131,15 +123,20 @@ public class Model extends GroupWidget {
 
     private void saveRenderData() {
         mOriginalMaterial = new ArrayList<>();
-        ArrayList<GVRRenderData> rdata = getSceneObject().getAllComponents(GVRRenderData.getComponentType());
-        for (GVRRenderData r : rdata) {
+        for (GVRRenderData r : getRenderDatas()) {
             mOriginalMaterial.add(r.getMaterial());
         }
     }
 
     private static GVRSceneObject loadModel(GVRContext context, String location) throws IOException {
-        GVRSceneObject model;
-        model = context.getAssetLoader().loadModel("models/" + location);
+        EnumSet<GVRImportSettings> additionalSettings = EnumSet.of(GVRImportSettings.CALCULATE_SMOOTH_NORMALS,  GVRImportSettings.NO_ANIMATION);
+        EnumSet<GVRImportSettings> settings = GVRImportSettings.getRecommendedSettingsWith(additionalSettings);
+
+        GVRMesh mesh = context.getAssetLoader().loadMesh(new GVRAndroidResource(context,
+                "models/" + location), settings);
+        GVRSceneObject model = new GVRSceneObject(context, mesh);
+
+//        model = context.getAssetLoader().loadModel("models/" + location);
         return model;
     }
 
@@ -172,73 +169,70 @@ public class Model extends GroupWidget {
             }
         }
         mCurrentZoom = zTransform;
-        setViewPortWidth(MAX_RADIUS * getScaleX());
-        setViewPortHeight(MAX_RADIUS * getScaleY());
-        setViewPortDepth(MAX_RADIUS * getScaleZ());
     }
 
 
-    public void enableDisableLight(boolean flag) {
-        mLightEnabled = flag;
-        ArrayList<GVRRenderData> rdata = getSceneObject().getAllComponents(GVRRenderData.getComponentType());
-        for (GVRRenderData r : rdata) {
-            if (r != null) {
-                if (flag) {
-                    r.enableLight();
-                } else {
-                    r.disableLight();
+    public void enableDisableLight(final boolean flag) {
+        getGVRContext().runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                if (flag != isLightEnabled()) {
+                    Log.d(TAG, "enableDisableLight flag is %b isLightEnabled() = %b", flag, isLightEnabled());
+                    mLightEnabled = flag;
+                    for (GVRRenderData r : getRenderDatas()) {
+                        if (flag) {
+                            r.enableLight();
+                        } else {
+                            r.disableLight();
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 
     public boolean isLightEnabled() {
         return mLightEnabled;
     }
 
-    public void applyCustomShader(int index) {
-        ArrayList<GVRRenderData> renderDatas = getSceneObject().getAllComponents(GVRRenderData.getComponentType());
-        GVRMaterial outlineMaterial = new GVRMaterial(getGVRContext(), new GVRShaderId(OutlineShader.class));
+    private List<GVRRenderData> getRenderDatas() {
+        return getSceneObject().getAllComponents(GVRRenderData.getComponentType());
+    }
 
+    public void applyCustomShader(ModelViewer.SHADER index) {
+        List<GVRRenderData> renderDatas = getRenderDatas();
         switch (index) {
-            case 0:
+            case Original:
                 for (int i = 0; i < renderDatas.size() && i < mOriginalMaterial.size(); i++) {
                     renderDatas.get(i).setMaterial(mOriginalMaterial.get(i));
                     renderDatas.get(i).setCullFace(GVRRenderPass.GVRCullFaceEnum.Back);
                     renderDatas.get(i).setDrawMode(4);
                 }
+                enableDisableLight(true);
                 break;
-            case 1:
+            case NoTexture:
                 for (GVRRenderData rdata : renderDatas) {
-                    GVRMaterial noMaterial = new GVRMaterial(getGVRContext(), new GVRShaderId(NoTextureShader.class));
+                    GVRMaterial noMaterial = new GVRMaterial(getGVRContext(),
+                            new GVRShaderId(NoTextureShader.class));
                     rdata.setMaterial(noMaterial);
-                    rdata.setDrawMode(4);
                 }
+                enableDisableLight(false);
                 break;
 
-            case 2:
-                outlineMaterial.setVec4(OutlineShader.COLOR_KEY, 0.4f, 0.1725f, 0.1725f, 1.0f);
-                outlineMaterial.setFloat(OutlineShader.THICKNESS_KEY, 2.0f);
-                for (GVRRenderData rdata : renderDatas) {
-                    rdata.setMaterial(outlineMaterial);
-                    rdata.setCullFace(GVRRenderPass.GVRCullFaceEnum.Front);
-                    rdata.setDrawMode(4);
-                }
-                break;
-            case 3:
+            case Lines:
                 for (GVRRenderData rdata : renderDatas) {
                     rdata.setDrawMode(1);
                 }
 
                 break;
-            case 4:
+            case LinesLoop:
                 for (GVRRenderData rdata : renderDatas) {
                     rdata.setDrawMode(3);
                 }
 
                 break;
-            case 5:
-                for (GVRRenderData rdata : renderDatas) {
+            case Points:
+                for (GVRRenderData rdata : getRenderDatas()) {
                     rdata.setDrawMode(0);
                 }
 
