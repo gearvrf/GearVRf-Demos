@@ -33,12 +33,6 @@ public class ModelsListContentScene extends BaseContentScene {
         mControlBar.addControlListener("Settings", settingsListener);
     }
 
-    public void turnOnOffLight(boolean flag, Model model) {
-        if (flag != model.isLightEnabled()) {
-            model.enableDisableLight(flag);
-        }
-    }
-
     @Override
     protected Widget createContent() {
         mHorizontalPicker = setupHorizontalPicker();
@@ -141,6 +135,7 @@ public class ModelsListContentScene extends BaseContentScene {
         ArchLayout archLayout = new ArchLayout(radius);
 
         PickerWidget horizontalPicker = new PickerWidget(mGvrContext, modelAdapter,0, 0);
+
         horizontalPicker.setViewPortWidth(Float.POSITIVE_INFINITY);
 
         horizontalPicker.enableFocusAnimation(true);
@@ -153,11 +148,9 @@ public class ModelsListContentScene extends BaseContentScene {
         ListWidget.OnItemFocusListener focusListener = new ListWidget.OnItemFocusListener() {
             public void onFocus(ListWidget list, boolean focused, int dataIndex) {
                 Model model = (Model)(list.getView(dataIndex));
-                Log.d(TAG, "ModelList:: onFocus dataIndex = %d focused = %b", dataIndex, focused);
-                turnOnOffLight(!model.isLightEnabled(), model);
+                model.enableDisableLight(focused);
             }
             public void onLongFocus(ListWidget list, int dataIndex) {
-                Log.d(TAG, "ModelList: onLongFocus dataIndex = %d", dataIndex);
                 Model model = (Model)(list.getView(dataIndex));
                 model.startModelViewer();
             }
@@ -168,7 +161,6 @@ public class ModelsListContentScene extends BaseContentScene {
         ListWidget.OnItemTouchListener touchListener = new ListWidget.OnItemTouchListener() {
             @Override
             public boolean onTouch(ListWidget listWidget, int dataIndex) {
-                Log.d(TAG, "ModelList: onTouch dataIndex = %d", dataIndex);
                 Model model = (Model)(listWidget.getView(dataIndex));
                 model.startModelViewer();
                 return true;
@@ -176,6 +168,7 @@ public class ModelsListContentScene extends BaseContentScene {
         };
 
         horizontalPicker.addOnItemTouchListener(touchListener);
+        horizontalPicker.setViewPortHeight(2.5f);
 
 
         horizontalPicker.hide();

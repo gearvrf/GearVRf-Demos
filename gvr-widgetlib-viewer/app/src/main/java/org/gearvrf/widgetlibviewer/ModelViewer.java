@@ -1,6 +1,7 @@
 package org.gearvrf.widgetlibviewer;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.widgetlib.log.Log;
 import org.gearvrf.widgetlib.main.WidgetLib;
 import org.gearvrf.widgetlib.widget.GroupWidget;
 import org.gearvrf.widgetlib.widget.Widget;
@@ -42,10 +43,9 @@ public class ModelViewer extends BaseContentScene {
         List<CheckList.Item> shaders = new ArrayList<>();
         shaders.add(new CheckList.Item(gvrContext, "Original", labelProperties, new ShaderAction(0)));
         shaders.add(new CheckList.Item(gvrContext, "No Texture", labelProperties, new ShaderAction(1)));
-        shaders.add(new CheckList.Item(gvrContext, "Outline", labelProperties, new ShaderAction(2)));
-        shaders.add(new CheckList.Item(gvrContext, "Lines", labelProperties, new ShaderAction(3)));
-        shaders.add(new CheckList.Item(gvrContext, "Lines_Loop", labelProperties, new ShaderAction(4)));
-        shaders.add(new CheckList.Item(gvrContext, "Points", labelProperties, new ShaderAction(5)));
+        shaders.add(new CheckList.Item(gvrContext, "Lines", labelProperties, new ShaderAction(2)));
+        shaders.add(new CheckList.Item(gvrContext, "Lines_Loop", labelProperties, new ShaderAction(3)));
+        shaders.add(new CheckList.Item(gvrContext, "Points", labelProperties, new ShaderAction(4)));
 
         mShaderList = new CheckList(gvrContext, "ShaderList", shaders);
     }
@@ -60,6 +60,9 @@ public class ModelViewer extends BaseContentScene {
         @Override
         public void enable() {
             if (mModel != null) {
+                Log.d(TAG, "enable ShaderAction for shader [%d]", mShaderId);
+
+                mModel.applyCustomShader(DEFAULT_SHADER_ID);
                 mModel.applyCustomShader(mShaderId);
             }
         }
