@@ -32,7 +32,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class CloudAnchorManager {
     private static final String TAG = CloudAnchorManager.class.getSimpleName();
@@ -137,10 +136,11 @@ public class CloudAnchorManager {
         }
     }
 
-    private AtomicInteger mPendingToResolve;
+    private int mPendingToResolve;
+    private boolean mIsResolvingAnchors;
     private List<ResolvedCloudAnchor> mResolvedCloudAnchors;
     private final Object RESOLVER_LOCK = new Object();
-    private ResolveCallback mResolveCallback;
+    private OnResolveCallback mResolveCallback;
 
     /**
      * Retrieve the given anchors from ARCore.
@@ -149,22 +149,23 @@ public class CloudAnchorManager {
      * @param callback The success callback will be called if and only if all anchors are successfully resolved.
      *                 The error callback will be called if cannot resolve some anchor for any reason.
      */
-    public void resolveAnchors(CloudAnchor[] anchors, @NonNull ResolveCallback callback) {
+    public void resolveAnchors(CloudAnchor[] anchors, @NonNull OnResolveCallback callback) {
 
         // Already is resolving
-        if (mPendingToResolve != null) {
+        if (mIsResolvingAnchors) {
             return;
         }
 
         if (!isCloudAnchorApiKeySet()) {
             String errorString = "Unable to resolver anchor. Cloud anchor API key is not set.";
             Log.e(TAG, errorString);
-            callback.onError(new RuntimeException(errorString));
+            callback.onError(new CloudAnchorException(errorString));
             return;
         }
 
         mResolveCallback = callback;
-        mPendingToResolve = new AtomicInteger(anchors.length);
+        mPendingToResolve = anchors.length;
+        mIsResolvingAnchors = true;
         mResolvedCloudAnchors = new ArrayList<>(anchors.length);
 
         for (CloudAnchor cloudAnchor : anchors) {
@@ -172,10 +173,10 @@ public class CloudAnchorManager {
                 mPetContext.getMixedReality().resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), (GVRAnchor resolvedAnchor) -> {
                     synchronized (RESOLVER_LOCK) {
                         // Ignore others result if any previous already failed
-                        if (mPendingToResolve == null) {
+                        if (!mIsResolvingAnchors) {
                             return;
                         }
-                        mPendingToResolve.decrementAndGet();
+                        mPendingToResolve--;
                         if (resolvedAnchor != null && !resolvedAnchor.getCloudAnchorId().isEmpty()) {
                             String successString = String.format(Locale.getDefault(),
                                     "Success resolving anchor id %s for object of type %d",
@@ -183,25 +184,27 @@ public class CloudAnchorManager {
                             Log.i(TAG, successString);
                             mResolvedCloudAnchors.add(new ResolvedCloudAnchor(cloudAnchor, resolvedAnchor));
                         } else {
-                            mPendingToResolve = null;
+                            mIsResolvingAnchors = false;
                             mResolvedCloudAnchors = null;
                             String errorString = String.format(Locale.getDefault(),
                                     "Failed resolving anchor id %s for object of type %d",
                                     cloudAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
-                            mResolveCallback.onError(new RuntimeException(errorString));
+                            mResolveCallback.onError(new CloudAnchorException(errorString));
                             Log.e(TAG, errorString);
                         }
-                        if (mPendingToResolve != null && mPendingToResolve.get() == 0) {
+                        if (mIsResolvingAnchors && mPendingToResolve == 0) {
                             List<ResolvedCloudAnchor> result = new ArrayList<>(mResolvedCloudAnchors);
-                            mResolveCallback.onAllResolved(new ArrayList<>(result));
-                            mPendingToResolve = null;
+                            mIsResolvingAnchors = false;
                             mResolvedCloudAnchors = null;
+                            mResolveCallback.onAllResolved(new ArrayList<>(result));
                         }
                     }
                 });
-            } catch (Throwable e) {
+            }
+            // Unknown error
+            catch (Throwable e) {
                 synchronized (RESOLVER_LOCK) {
-                    mPendingToResolve = null;
+                    mIsResolvingAnchors = false;
                     mResolvedCloudAnchors = null;
                 }
                 mResolveCallback.onError(e);
@@ -210,7 +213,7 @@ public class CloudAnchorManager {
         }
     }
 
-    public interface ResolveCallback {
+    public interface OnResolveCallback {
 
         void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors);
 
