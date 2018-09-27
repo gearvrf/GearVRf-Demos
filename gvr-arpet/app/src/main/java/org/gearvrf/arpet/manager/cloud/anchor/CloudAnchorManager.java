@@ -157,7 +157,7 @@ public class CloudAnchorManager {
         }
 
         if (!isCloudAnchorApiKeySet()) {
-            String errorString = "Unable to resolver anchor. Cloud anchor API key is not set.";
+            String errorString = "Unable to resolver anchors. Cloud anchor API key is not set.";
             Log.e(TAG, errorString);
             callback.onError(new CloudAnchorException(errorString));
             return;
@@ -200,14 +200,12 @@ public class CloudAnchorManager {
                         }
                     }
                 });
-            }
-            // Unknown error
-            catch (Throwable e) {
+            } catch (Throwable e) {
                 synchronized (RESOLVER_LOCK) {
                     mIsResolvingAnchors = false;
                     mResolvedCloudAnchors = null;
                 }
-                mResolveCallback.onError(e);
+                mResolveCallback.onError(new CloudAnchorException("Unknown error", e));
                 break;
             }
         }
@@ -217,6 +215,6 @@ public class CloudAnchorManager {
 
         void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors);
 
-        void onError(Throwable e);
+        void onError(CloudAnchorException e);
     }
 }

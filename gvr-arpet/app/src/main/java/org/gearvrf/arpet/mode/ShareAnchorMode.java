@@ -13,6 +13,7 @@ import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.OnCloudAnchorManagerListener;
 import org.gearvrf.arpet.manager.cloud.anchor.ResolvedCloudAnchor;
@@ -396,7 +397,7 @@ public class ShareAnchorMode extends BasePetMode {
                 }
 
                 @Override
-                public void onError(Throwable e) {
+                public void onError(CloudAnchorException e) {
                     String errorString = "Error resolving anchors";
                     setError(new TaskException(errorString, e));
                     Log.e(TAG, errorString + ": " + e.getMessage());
