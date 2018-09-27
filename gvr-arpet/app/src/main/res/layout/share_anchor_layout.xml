@@ -83,7 +83,7 @@
                     android:layout_width="144dp"
                     android:layout_height="48dp"
                     android:background="@drawable/background_button"
-                    android:fontFamily="@font/roboto_medium"
+                    android:fontFamily="@font/roboto_bold"
                     android:text="@string/guest"
                     android:textColor="#ffffff"
                     android:textSize="14sp" />
@@ -94,7 +94,7 @@
                     android:layout_height="48dp"
                     android:layout_marginStart="17dp"
                     android:background="@drawable/background_button"
-                    android:fontFamily="@font/roboto_medium"
+                    android:fontFamily="@font/roboto_bold"
                     android:text="@string/host"
                     android:textColor="#ffffff"
                     android:textSize="14sp" />
