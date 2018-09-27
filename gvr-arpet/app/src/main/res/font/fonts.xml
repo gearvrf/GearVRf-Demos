@@ -16,4 +16,5 @@
   -->
 <font-family xmlns:app="http://schemas.android.com/apk/res-auto">
     <font app:font="@font/roboto_medium" />
+    <font app:font="@font/roboto_bold" />
 </font-family>
