@@ -372,6 +372,7 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void execute() {
+
             Log.d(TAG, "Loading shared objects");
             mCloudAnchorManager.resolveAnchors(mSharedObjects, new CloudAnchorManager.OnResolveCallback() {
                 @Override

@@ -149,10 +149,17 @@ public class CloudAnchorManager {
      * @param callback The success callback will be called if and only if all anchors are successfully resolved.
      *                 The error callback will be called if cannot resolve some anchor for any reason.
      */
-    public void resolveAnchors(CloudAnchor[] anchors, @NonNull OnResolveCallback callback) {
+    public void resolveAnchors(@NonNull CloudAnchor[] anchors, @NonNull OnResolveCallback callback) {
 
         // Already is resolving
         if (mIsResolvingAnchors) {
+            return;
+        }
+
+        if (anchors.length == 0) {
+            String errorString = "Nothing to resolve. Anchors array is empty";
+            Log.e(TAG, errorString);
+            callback.onError(new CloudAnchorException(errorString));
             return;
         }
 
