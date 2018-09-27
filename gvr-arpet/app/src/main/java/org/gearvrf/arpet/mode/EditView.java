@@ -18,7 +18,6 @@ package org.gearvrf.arpet.mode;
 import android.view.View;
 import android.widget.Button;
 
-import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;

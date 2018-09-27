@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
@@ -39,7 +38,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
         super(petContext);
         mHudMenu = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.hud_layout, this);
         mListener = null;
-        getTransform().setPosition(0.85f, 0.0f,-1.5f);
+        getTransform().setPosition(0.95f, 0.0f,-1.6f);
     }
 
     @Override
@@ -140,7 +139,6 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        gvrViewSceneObject.getTransform().setScale(1.0f,0.9f,1.0f);
         gvrViewSceneObject.setTextureBufferSize(1024);
         addChildObject(gvrViewSceneObject);
     }
