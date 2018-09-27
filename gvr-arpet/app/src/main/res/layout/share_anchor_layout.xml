@@ -1,86 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
+    <RelativeLayout
+        android:id="@+id/overlay"
+        android:layout_width="640dp"
+        android:layout_height="400dp"
+        android:background="@drawable/bg_overlay">
+
+        <ImageView
+            android:id="@+id/image_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="60dp"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="75dp"
+            android:src="@drawable/ic_invitation" />
 
         <RelativeLayout
-            android:id="@+id/overlay"
-            android:layout_width="640dp"
-            android:layout_height="400dp"
-            android:background="@drawable/bg_overlay">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/image_action"
+            <TextView
+                android:id="@+id/message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="60dp"
-                android:layout_marginStart="65dp"
-                android:layout_marginTop="75dp"
-                android:src="@drawable/ic_invitation" />
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="@string/invitation"
+                android:textAlignment="center"
+                android:textColor="#ffffff"
+                android:textSize="21sp" />
+        </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+        <ImageView
+            android:id="@+id/check_bigger"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="60dp"
+            android:layout_marginStart="85dp"
+            android:layout_marginTop="110dp"
+            android:src="@drawable/icn_check_bigger"
+            android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/message"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:gravity="center"
-                    android:text="@string/invitation"
-                    android:textAlignment="center"
-                    android:textColor="#ffffff"
-                    android:textSize="21sp" />
-            </RelativeLayout>
+        <Button
+            android:id="@+id/status_sharing_anchor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/rounded_button"
+            android:gravity="center_horizontal"
+            android:paddingBottom="6dp"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:text="@string/sharing_anchor"
+            android:textColor="#4b279f"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
-            <ImageView
-                android:id="@+id/check_bigger"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginEnd="60dp"
-                android:layout_marginStart="85dp"
-                android:layout_marginTop="110dp"
-                android:src="@drawable/icn_check_bigger"
-                android:visibility="gone" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="266dp"
+            tools:ignore="ContentDescription, ButtonStyle">
 
-            <Button
-                android:id="@+id/status_sharing_anchor"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="35dp"
-                android:background="@drawable/rounded_button"
-                android:gravity="center_horizontal"
-                android:paddingBottom="6dp"
-                android:paddingEnd="12dp"
-                android:paddingStart="12dp"
-                android:paddingTop="6dp"
-                android:text="@string/sharing_anchor"
-                android:textColor="#4b279f"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="230dp">
+                android:layout_centerInParent="true"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/guest_button"
                     android:layout_width="144dp"
                     android:layout_height="48dp"
-                    android:layout_marginStart="340dp"
-                    android:layout_marginTop="29.1dp"
                     android:background="@drawable/background_button"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@string/guest"
@@ -91,50 +92,44 @@
                     android:id="@+id/host_button"
                     android:layout_width="144dp"
                     android:layout_height="48dp"
-                    android:layout_marginStart="180dp"
-                    android:layout_marginTop="29.1dp"
+                    android:layout_marginStart="17dp"
                     android:background="@drawable/background_button"
                     android:fontFamily="@font/roboto_medium"
                     android:text="@string/host"
                     android:textColor="#ffffff"
                     android:textSize="14sp" />
 
-                <ProgressBar
-                    android:id="@+id/progress"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="39.8dp"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="54.2dp"
-                    android:layout_marginStart="307dp"
-                    android:indeterminate="false"
-                    android:progress="0"
-                    android:progressDrawable="@drawable/rotate_progress_bar"
-                    android:visibility="gone" />
+            </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/check"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="54.2dp"
-                    android:layout_marginStart="307dp"
-                    android:src="@drawable/icn_check"
-                    android:visibility="gone" />
+            <ProgressBar
+                android:id="@+id/progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:indeterminate="false"
+                android:progress="0"
+                android:progressDrawable="@drawable/rotate_progress_bar"
+                android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="54.2dp"
-                    android:layout_marginStart="307dp"
-                    android:src="@drawable/loading"
-                    android:visibility="gone" />
+            <ImageView
+                android:id="@+id/check"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/icn_check"
+                android:visibility="gone" />
 
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/spinner"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/loading"
+                android:visibility="gone" />
 
         </RelativeLayout>
-    </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
