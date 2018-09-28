@@ -68,7 +68,7 @@ public class MessageText extends FadeableObject implements IViewEvents {
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        addChildObject(mMessageTextObject);
+        addChildObject(gvrViewSceneObject);
     }
 
     @NonNull

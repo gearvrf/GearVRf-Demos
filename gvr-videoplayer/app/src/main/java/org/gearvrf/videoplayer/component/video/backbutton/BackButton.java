@@ -37,7 +37,8 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
 
     private GVRViewSceneObject mBackButtonObject;
     private ImageView mBackButton;
-    public FocusListener mFocusListener;
+    private FocusListener mFocusListener = null;
+    private View.OnClickListener mClickListener = null;
 
     public BackButton(final GVRContext gvrContext, int intViewId) {
         super(gvrContext);
@@ -50,12 +51,11 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
     }
 
     public void setOnClickListener(@NonNull final View.OnClickListener listener) {
-        getGVRContext().getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mBackButton.setOnClickListener(listener);
-            }
-        });
+        mClickListener = listener;
+
+        if (mBackButton != null) {
+            mBackButton.setOnClickListener(listener);
+        }
     }
 
     @NonNull
@@ -67,6 +67,7 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
     @Override
     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
         mBackButton = view.findViewById(R.id.backButtonImage);
+        mBackButton.setOnClickListener(mClickListener);
         mBackButton.setOnHoverListener(new View.OnHoverListener() {
             @Override
             public boolean onHover(View view, MotionEvent motionEvent) {
@@ -88,7 +89,7 @@ public class BackButton extends FadeableObject implements Focusable, IViewEvents
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        addChildObject(mBackButtonObject);
+        addChildObject(gvrViewSceneObject);
     }
 
     public void performClick() {
