@@ -15,47 +15,60 @@
 
 package org.gearvrf.events;
 
-import android.widget.FrameLayout;
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import org.gearvrf.GVRContext;
-
-import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
-import org.gearvrf.io.GVRControllerType;
-import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.GVRScene;
+import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
-import java.util.EnumSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EventsMain extends GVRMain {
     private static final String TAG = EventsMain.class.getSimpleName();
-    private static final int KEY_EVENT = 1;
-    private static final int MOTION_EVENT = 2;
 
     private GVRViewSceneObject layoutSceneObject;
     private GVRContext context;
     private GVRScene mainScene;
 
-    private static final float QUAD_X = 1.0f;
-    private static final float QUAD_Y = 1.0f;
     private static final float DEPTH = -1.5f;
-    private final FrameLayout frameLayout;
 
+    private TextView buttonTextView, keyTextView, listTextView;
+    private Button button1, button2;
+    private CheckBox checkBox;
+    private String buttonPressed, listItemClicked;
+    private ListView listView;
 
-    public EventsMain(EventsActivity activity, final FrameLayout frameLayout) {
-        this.frameLayout = frameLayout;
+    private static final List<String> items = new ArrayList<String>(5);
+
+    static {
+        items.add("Note 4");
+        items.add("GS 6");
+        items.add("GS 6 Edge");
+        items.add("Note 5");
+        items.add("GS 6 Edge Plus");
     }
 
     @Override
-    public void onInit(final GVRContext gvrContext) throws Throwable {
+    public void onInit(final GVRContext gvrContext) {
         context = gvrContext;
-
-        layoutSceneObject = new GVRViewSceneObject(gvrContext, frameLayout, QUAD_X, QUAD_Y);
         mainScene = gvrContext.getMainScene();
-        mainScene.addSceneObject(layoutSceneObject);
-        layoutSceneObject.getTransform().setPosition(0.0f, 0.0f, DEPTH);
+
+        layoutSceneObject = new GVRViewSceneObject(gvrContext,
+                R.layout.activity_main, viewSOEventsListener);
+
         gvrContext.getInputManager().selectController();
     }
 
@@ -63,4 +76,92 @@ public class EventsMain extends GVRMain {
     public void onStep() {
         // unused
     }
+
+    public void onKeyDown(int keyCode) {
+        keyTextView.setText(String.format("Key Pressed: %s ",
+                KeyEvent.keyCodeToString(keyCode)));
+    }
+
+    private IViewEvents viewSOEventsListener = new IViewEvents() {
+        @Override
+        public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+            final Activity activity = context.getActivity();
+
+            button1 = view.findViewById(R.id.button1);
+            button2 = view.findViewById(R.id.button2);
+            checkBox = view.findViewById(R.id.checkBox);
+            keyTextView = view.findViewById(R.id.keyTextView);
+            buttonTextView = view.findViewById(R.id.buttonTextView);
+            listTextView = view.findViewById(R.id.listTextView);
+            listView = view.findViewById(R.id.listView);
+            listView.setBackgroundColor(Color.LTGRAY);
+
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(activity, R.layout.list_item, items);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(itemClickListener);
+            button1.setOnClickListener(clickListener);
+            button1.setOnHoverListener(buttonHoverListener);
+            button2.setOnClickListener(clickListener);
+            button2.setOnHoverListener(buttonHoverListener);
+            checkBox.setOnClickListener(clickListener);
+            buttonPressed = activity.getResources().getString(R.string.buttonPressed);
+            listItemClicked = activity.getResources().getString(R.string.listClicked);
+        }
+
+        @Override
+        public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+            mainScene.addSceneObject(gvrViewSceneObject);
+            gvrViewSceneObject.getTransform().setPosition(0.0f, 0.0f, DEPTH);
+        }
+    };
+
+    private View.OnClickListener clickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            String button = new String();
+            switch (v.getId()) {
+                case R.id.button1:
+                    button = "1";
+                    break;
+                case R.id.button2:
+                    button = "2";
+                    break;
+                case R.id.checkBox:
+                    button = "Check Box";
+                    break;
+                default:
+                    break;
+            }
+
+            buttonTextView
+                    .setText(String.format("%s %s", buttonPressed, button));
+        }
+    };
+
+    private AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int position,
+                                long arg3) {
+            listTextView.setText(String.format("%s %s", listItemClicked,
+                    items.get(position)));
+        }
+    };
+
+    private View.OnHoverListener buttonHoverListener = new View.OnHoverListener() {
+        @Override
+        public boolean onHover(View v, MotionEvent event) {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_HOVER_ENTER:
+                    ((Button) v).setTextColor(Color.WHITE);
+                    break;
+                case MotionEvent.ACTION_HOVER_EXIT:
+                    ((Button) v).setTextColor(Color.BLACK);
+                    break;
+                default:
+                    break;
+            }
+            return false;
+        }
+    };
 }
