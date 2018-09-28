@@ -16,7 +16,8 @@
 package org.gearvrf.arpet.mode;
 
 import android.view.View;
-import android.widget.Button;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import org.gearvrf.GVRScene;
@@ -29,10 +30,11 @@ import org.gearvrf.utility.Log;
 public class HudView extends BasePetView implements View.OnClickListener, IViewEvents {
     private static final String TAG = "HudView";
 
-    private LinearLayout MenuHud;
-    private Button menuButton, closeButton, editModeButton, playBallButton, shareAnchorButton, cameraButton;
+    private LinearLayout MenuHud, menuButton, closeButton, playBallButton, shareAnchorButton, cameraButton, editModeButton;
     private GVRViewSceneObject mHudMenu;
     private OnHudItemClicked mListener;
+    private Animation openAnimation;
+    private Animation closeAnimation;
 
     public HudView(PetContext petContext) {
         super(petContext);
@@ -66,6 +68,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                 menuButton.post(new Runnable() {
                     @Override
                     public void run() {
+                        MenuHud.startAnimation(openAnimation);
                         MenuHud.setVisibility(View.VISIBLE);
                         closeButton.setVisibility(View.VISIBLE);
                         menuButton.setVisibility(View.GONE);
@@ -77,6 +80,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                 closeButton.post(new Runnable() {
                     @Override
                     public void run() {
+                        MenuHud.startAnimation(closeAnimation);
                         MenuHud.setVisibility(View.INVISIBLE);
                         closeButton.setVisibility(View.INVISIBLE);
                         menuButton.setVisibility(View.VISIBLE);
@@ -135,11 +139,13 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
         playBallButton.setOnClickListener(this);
         shareAnchorButton.setOnClickListener(this);
         cameraButton.setOnClickListener(this);
+        openAnimation = AnimationUtils.loadAnimation(mPetContext.getActivity(), R.anim.open);
+        closeAnimation = AnimationUtils.loadAnimation(mPetContext.getActivity(), R.anim.close);
     }
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        gvrViewSceneObject.setTextureBufferSize(1024);
+        gvrViewSceneObject.setTextureBufferSize(2048);
         addChildObject(gvrViewSceneObject);
     }
 

@@ -25,7 +25,6 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -92,7 +91,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     @Override
     public void onStartRendering(GVRViewSceneObject shareAnchorView, View view) {
-        shareAnchorView.setTextureBufferSize(1024);
+        shareAnchorView.setTextureBufferSize(2048);
         addChildObject(shareAnchorView);
     }
 

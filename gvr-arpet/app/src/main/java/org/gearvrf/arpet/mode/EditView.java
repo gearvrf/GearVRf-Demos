@@ -62,7 +62,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
 
     @Override
     public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
-        editSceneObject.setTextureBufferSize(1024);
+        editSceneObject.setTextureBufferSize(2048);
         addChildObject(editSceneObject);
     }
 

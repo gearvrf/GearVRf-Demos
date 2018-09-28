@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright 2015 Samsung Electronics Co., LTD
   ~
@@ -16,64 +17,116 @@
   ~
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/hud"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:layout_marginStart="500dp"
-    android:orientation="vertical"
-    android:id="@+id/hud">
+    android:layout_height="360dp"
+    android:layout_marginStart="500dp">
 
-<LinearLayout
-    android:id="@+id/menuHud"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:clickable="true"
-    android:focusable="true"
-    android:visibility="invisible">
-
-    <Button
-       android:id="@+id/btn_fetchball"
-       android:layout_width="wrap_content"
-       android:layout_height="wrap_content"
-       android:layout_marginBottom="10dp"
-       android:background="@drawable/ripple_ball" />
-
-    <Button
-        android:id="@+id/btn_shareanchor"
+    <LinearLayout
+        android:id="@+id/menuHud"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:background="@drawable/ripple_share_anchor" />
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:visibility="invisible">
 
-    <Button
-        android:id="@+id/btn_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/btn_edit" />
+        <LinearLayout
+            android:id="@+id/btn_fetchball"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_functions_buttons"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/ripple_camera" />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_ball" />
+        </LinearLayout>
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/btn_shareanchor"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_functions_buttons"
+            android:gravity="center"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ripple_options"
-        android:visibility="visible"/>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_share_anchor" />
+        </LinearLayout>
 
-    <Button
-        android:id="@+id/btn_close"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ripple_close"
-        android:visibility="invisible"/>
+        <LinearLayout
+            android:id="@+id/btn_edit"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_functions_buttons"
+            android:gravity="center"
+            android:orientation="vertical">
 
-</LinearLayout>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_edit" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_camera"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_functions_buttons"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_photo" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="280dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/btn_menu"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_menu"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_menu" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_close"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_menu"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon_close" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>
