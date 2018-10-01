@@ -34,12 +34,13 @@
             android:layout_gravity="center"
             android:layout_marginEnd="60dp"
             android:layout_marginStart="65dp"
-            android:layout_marginTop="75dp"
+            android:layout_marginTop="55dp"
             android:src="@drawable/ic_invitation" />
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
             <TextView
@@ -86,7 +87,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="266dp"
+            android:layout_marginTop="246dp"
             tools:ignore="ContentDescription, ButtonStyle">
 
             <LinearLayout
