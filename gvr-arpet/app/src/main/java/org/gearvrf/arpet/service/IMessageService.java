@@ -26,13 +26,13 @@ import java.io.Serializable;
 public interface IMessageService {
 
     /**
-     * @param objects  Scene objects to load in remote side.
+     * @param objects  Scene objects to load on remote side.
      * @param callback Returns nothing.
      */
     void shareScene(@NonNull Serializable[] objects, @NonNull MessageServiceCallback<Void> callback);
 
     /**
-     * @param command  Command to execute in remote side.
+     * @param command  Command to execute on remote side.
      * @param callback Returns nothing.
      */
     void sendCommand(@NonNull @Command String command, @NonNull MessageServiceCallback<Void> callback);

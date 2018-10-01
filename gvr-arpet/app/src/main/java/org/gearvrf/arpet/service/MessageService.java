@@ -61,18 +61,12 @@ public final class MessageService implements IMessageService {
         return InstanceHolder.INSTANCE;
     }
 
-    /**
-     * @param objects  Scene objects to load in remote side.
-     * @param callback Returns nothing.
-     */
+    @Override
     public void shareScene(@NonNull Serializable[] objects, @NonNull MessageServiceCallback<Void> callback) {
         sendRequest(new SceneSharingRequestMessage(objects), callback);
     }
 
-    /**
-     * @param command  Command to execute in remote side.
-     * @param callback Returns nothing.
-     */
+    @Override
     public void sendCommand(@NonNull @Command String command, @NonNull MessageServiceCallback<Void> callback) {
         sendRequest(new CommandRequestMessage(command), callback);
     }
