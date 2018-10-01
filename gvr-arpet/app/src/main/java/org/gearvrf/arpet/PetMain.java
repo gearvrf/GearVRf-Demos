@@ -121,6 +121,7 @@ public class PetMain extends GVRMain {
     public void onPlaneDetected(final GVRPlane plane) {
         mPet.setPlane(plane);
         mPet.enter();
+        mPet.setInitialScale();
 
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");

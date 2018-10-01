@@ -25,7 +25,6 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.arpet.AnchoredObject;
@@ -33,11 +32,13 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
+import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -192,5 +193,23 @@ public class CharacterView extends AnchoredObject implements
     @Override
     public void hide(GVRScene mainScene) {
         mainScene.removeSceneObject(getAnchor());
+    }
+
+    /**
+     * Sets the initial scale according to the distance between the pet and camera
+    */
+    public void setInitialScale() {
+        final float MIN_DISTANCE = 1.0f;
+        Vector3f vectorDistance = new Vector3f();
+        float[] modelCam = mMixedReality.getCameraPoseMatrix();
+        float[] modelCharacter = getAnchor().getPose();
+
+        vectorDistance.set(modelCam[12], modelCam[13], modelCam[14]);
+        // Calculates the distance in meters (coordinates from AR)
+        float distance = vectorDistance.distance(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
+
+        if (distance < MIN_DISTANCE) {
+            scale(ScaleGestureDetector.MIN_FACTOR);
+        }
     }
 }

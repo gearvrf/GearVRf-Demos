@@ -160,6 +160,11 @@ public class CharacterController extends BasePetMode {
         }
     }
 
+    public void setInitialScale() {
+        CharacterView petView = (CharacterView) view();
+        petView.setInitialScale();
+    }
+
     private class DrawFrameHandler implements GVRDrawFrameListener {
         IPetAction activeAction = null;
         @Override
