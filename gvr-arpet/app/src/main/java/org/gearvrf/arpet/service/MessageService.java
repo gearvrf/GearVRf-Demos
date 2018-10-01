@@ -43,7 +43,7 @@ public final class MessageService implements IMessageService {
     private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
     private List<MessageServiceReceiver> mMessageServiceReceivers = new ArrayList<>();
-    private SparseArray<PendingResponseInfo<Void>> mPendingCallbacks = new SparseArray<>();
+    private SparseArray<PendingResponseInfo<Void>> mPendingResponseInfos = new SparseArray<>();
 
     private static class InstanceHolder {
         private static final IMessageService INSTANCE = new MessageService();
@@ -85,12 +85,12 @@ public final class MessageService implements IMessageService {
             return;
         }
 
-        mPendingCallbacks.put(request.getId(), pendingResponseInfo);
+        mPendingResponseInfos.put(request.getId(), pendingResponseInfo);
 
         mConnectionManager.sendMessage(request, totalSent -> {
             logForMessage(request, "Request sent to " + totalSent + " remotes");
             if (totalSent == 0) {
-                mPendingCallbacks.remove(request.getId());
+                mPendingResponseInfos.remove(request.getId());
                 callbackFailure(pendingResponseInfo, new RuntimeException("Failure sending request"));
             }
         });
@@ -121,7 +121,7 @@ public final class MessageService implements IMessageService {
             // Handle request or response
             onMessageReceived((Message) event.getData());
         } else if (event.getType() == PetConnectionEventType.CONNECTION_ONE_LOST) {
-            if (mPendingCallbacks.size() > 0) {
+            if (mPendingResponseInfos.size() > 0) {
                 handleConnectionLost();
             }
         }
@@ -133,11 +133,11 @@ public final class MessageService implements IMessageService {
          * If new connections are accepted during the app experience, you must modify the following
          * code to decrease the pending responses for requests associated with the lost connection.
          */
-        for (int i = mPendingCallbacks.size() - 1; i >= 0; i--) {
-            PendingResponseInfo<Void> pendingResponseInfo = mPendingCallbacks.valueAt(i);
+        for (int i = mPendingResponseInfos.size() - 1; i >= 0; i--) {
+            PendingResponseInfo<Void> pendingResponseInfo = mPendingResponseInfos.valueAt(i);
             pendingResponseInfo.incrementTotalFailure();
-            mPendingCallbacks.removeAt(i);
             if (!pendingResponseInfo.hasPending()) {
+                mPendingResponseInfos.removeAt(i);
                 callbackSuccessVoid(pendingResponseInfo);
             }
         }
@@ -177,16 +177,16 @@ public final class MessageService implements IMessageService {
 
     private synchronized void handleResponseMessage(ResponseMessage response) {
 
-        if (mPendingCallbacks.size() == 0) {
+        if (mPendingResponseInfos.size() == 0) {
             return;
         }
 
-        PendingResponseInfo<Void> pendingResponseInfo = mPendingCallbacks.get(response.getRequestId());
+        PendingResponseInfo<Void> pendingResponseInfo = mPendingResponseInfos.get(response.getRequestId());
 
         if (pendingResponseInfo != null) {
-            mPendingCallbacks.remove(response.getRequestId());
             pendingResponseInfo.updateTotalPending(response);
             if (!pendingResponseInfo.hasPending()) {
+                mPendingResponseInfos.remove(response.getRequestId());
                 if (pendingResponseInfo.mTotalFailure == pendingResponseInfo.mTotalExpected) {
                     callbackFailure(pendingResponseInfo, new MessageServiceException("All remotes returned with error"));
                 } else {
