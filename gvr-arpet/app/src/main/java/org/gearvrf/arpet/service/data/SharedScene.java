@@ -15,13 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet.service.message;
+package org.gearvrf.arpet.service.data;
 
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+import org.gearvrf.arpet.service.IMessageData;
 
-import java.io.Serializable;
-
-public class SharedScene implements Serializable {
+/**
+ * Holds pet and other objects anchors to be
+ * resolved through Google Cloud Anchor API
+ */
+public class SharedScene implements IMessageData {
 
     private CloudAnchor[] sceneObjects;
 

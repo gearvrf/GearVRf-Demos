@@ -15,11 +15,24 @@
  *
  */
 
-package org.gearvrf.arpet.service;
+package org.gearvrf.arpet.common;
 
-public interface MessageServiceCallback<T> {
+import java.io.Serializable;
 
-    void onSuccess(T result);
+public class Dimension implements Serializable {
 
-    void onFailure(Exception error);
+    float width, height;
+
+    public Dimension(float width, float height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public String toString() {
+        return "Dimension{" +
+                "width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

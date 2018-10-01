@@ -15,15 +15,11 @@
  *
  */
 
-package org.gearvrf.arpet.service.message;
+package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
+public interface MessageCallback<T> {
 
-import java.io.Serializable;
+    void onSuccess(T result);
 
-public class RequestMessage<Data extends Serializable> extends BTMessage<Data> {
-
-    public RequestMessage(Data data) {
-        super(data);
-    }
+    void onFailure(Exception error);
 }

@@ -15,20 +15,9 @@
  *
  */
 
-package org.gearvrf.arpet.service.message;
+package org.gearvrf.arpet.service;
 
 import java.io.Serializable;
 
-public class Command implements Serializable {
-
-    @CommandType
-    private String Type;
-
-    public Command(@CommandType String type) {
-        Type = type;
-    }
-
-    public String getType() {
-        return Type;
-    }
+public interface IMessageData extends Serializable {
 }

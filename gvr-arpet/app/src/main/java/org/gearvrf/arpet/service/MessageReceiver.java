@@ -17,21 +17,30 @@
 
 package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.service.message.Command;
-import org.gearvrf.arpet.service.message.SharedScene;
+import org.gearvrf.arpet.service.data.SharedObject;
+import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.service.data.ViewCommand;
 
-public interface MessageServiceReceiver {
+public interface MessageReceiver {
     /**
      * Resolve end load the objects represented by given shared scene.
      *
      * @param sharedScene Object to load.
+     * @throws MessageException If an exception occurs.
      */
-    void onReceiveSharedScene(SharedScene sharedScene) throws MessageServiceException;
+    void onReceiveSharedScene(SharedScene sharedScene) throws MessageException;
 
     /**
      * Execute the given command on this device
      *
      * @param command CommandType to execute.
+     * @throws MessageException If an exception occurs
      */
-    void onReceiveCommand(Command command) throws MessageServiceException;
+    void onReceiveViewCommand(ViewCommand command) throws MessageException;
+
+    /**
+     * @param sharedObject Object to update
+     * @throws MessageException If an exception occurs
+     */
+    void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException;
 }

@@ -17,20 +17,11 @@
 
 package org.gearvrf.arpet.service;
 
-public class MessageServiceException extends Exception {
+import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
-    public MessageServiceException() {
-    }
+public class RequestMessage<Data extends IMessageData> extends BTMessage<Data> {
 
-    public MessageServiceException(String message) {
-        super(message);
-    }
-
-    public MessageServiceException(Throwable cause) {
-        super(cause);
-    }
-
-    public MessageServiceException(String message, Throwable cause) {
-        super(message, cause);
+    public RequestMessage(Data data) {
+        super(data);
     }
 }

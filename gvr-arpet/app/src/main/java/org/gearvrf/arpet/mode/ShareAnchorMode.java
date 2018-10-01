@@ -42,12 +42,15 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.IMessageService;
+import org.gearvrf.arpet.service.MessageCallback;
+import org.gearvrf.arpet.service.MessageException;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.service.MessageServiceCallback;
-import org.gearvrf.arpet.service.MessageServiceException;
-import org.gearvrf.arpet.service.message.Command;
-import org.gearvrf.arpet.service.message.CommandType;
-import org.gearvrf.arpet.service.message.SharedScene;
+import org.gearvrf.arpet.service.SimpleMessageReceiver;
+import org.gearvrf.arpet.service.data.SharedCamera;
+import org.gearvrf.arpet.service.data.SharedObject;
+import org.gearvrf.arpet.service.data.SharedPlane;
+import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
@@ -79,7 +82,7 @@ public class ShareAnchorMode extends BasePetMode {
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
 
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new MessageServiceReceiver());
+        mMessageService.addMessageReceiver(new MessageReceiver());
     }
 
     @Override
@@ -275,7 +278,8 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowPairingView() {
-        mMessageService.sendCommand(new Command(CommandType.SHOW_PAIRING_VIEW), new MessageServiceCallback<Void>() {
+        ViewCommand command = new ViewCommand(ViewCommand.SHOW_PAIRING_VIEW);
+        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "command to show 'pairing view' was performed successfully");
@@ -289,7 +293,8 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowStayInPosition() {
-        mMessageService.sendCommand(new Command(CommandType.SHOW_STAY_IN_POSITION_TO_PAIR), new MessageServiceCallback<Void>() {
+        ViewCommand command = new ViewCommand(ViewCommand.SHOW_STAY_IN_POSITION_TO_PAIR);
+        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "command to show 'stay in position' was performed successfully");
@@ -303,7 +308,8 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowPairedView() {
-        mMessageService.sendCommand(new Command(CommandType.SHOW_PAIRED_VIEW), new MessageServiceCallback<Void>() {
+        ViewCommand command = new ViewCommand(ViewCommand.SHOW_PAIRED_VIEW);
+        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 showParedView();
@@ -317,7 +323,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void shareScene(CloudAnchor[] anchors) {
-        mMessageService.shareScene(new SharedScene(anchors), new MessageServiceCallback<Void>() {
+        mMessageService.shareScene(new SharedScene(anchors), new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "all guests have resolved their cloud anchors");
@@ -347,35 +353,48 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
-    private class MessageServiceReceiver implements org.gearvrf.arpet.service.MessageServiceReceiver {
+    private class MessageReceiver extends SimpleMessageReceiver {
+
         @Override
-        public void onReceiveSharedScene(SharedScene sharedScene) throws MessageServiceException {
+        public void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
             Log.d(TAG, "Sharing received: " + Arrays.toString(sharedScene.getSceneObjects()));
-            // This method will return only after loader finish
             Task task = new SharedSceneLoader(sharedScene);
+            // This method gets locked and will return after loader finish
             task.start();
+            // Lock released, now checks thread result
             if (task.getError() != null) {
                 showToast("Error loading objects: " + task.getError().getMessage());
-                throw new MessageServiceException(task.getError());
+                throw new MessageException(task.getError());
             } else {
                 showToast("All objects successfully loaded");
             }
         }
 
         @Override
-        public void onReceiveCommand(Command command) {
-            Log.d(TAG, "CommandType received: " + command);
+        public void onReceiveViewCommand(ViewCommand command) {
+            Log.d(TAG, "View command received: " + command);
             switch (command.getType()) {
-                case CommandType.SHOW_PAIRED_VIEW:
+                case ViewCommand.SHOW_PAIRED_VIEW:
                     showParedView();
                     break;
-                case CommandType.SHOW_STAY_IN_POSITION_TO_PAIR:
+                case ViewCommand.SHOW_STAY_IN_POSITION_TO_PAIR:
                     showStayInPositionToPair();
                     break;
-                case CommandType.SHOW_PAIRING_VIEW:
+                case ViewCommand.SHOW_PAIRING_VIEW:
                     showParingScreen(mConnectionManager.getConnectionMode());
                     break;
                 default:
+                    Log.d(TAG, "Unknown view command: " + command.getType());
+                    break;
+            }
+        }
+
+        @Override
+        public void onReceiveUpdateSharedObject(SharedObject sharedObject) {
+            if (sharedObject instanceof SharedCamera) {
+                SharedCamera sharedCamera = sharedObject.get();
+            } else if (sharedObject instanceof SharedPlane) {
+                SharedPlane sharedPlane = sharedObject.get();
             }
         }
     }

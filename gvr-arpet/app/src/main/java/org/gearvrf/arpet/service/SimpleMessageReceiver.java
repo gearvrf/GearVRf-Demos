@@ -17,19 +17,21 @@
 
 package org.gearvrf.arpet.service;
 
-import android.support.annotation.NonNull;
-
 import org.gearvrf.arpet.service.data.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
 
-public interface IMessageService {
+public class SimpleMessageReceiver implements MessageReceiver {
 
-    void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageCallback<Void> callback);
+    @Override
+    public void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
+    }
 
-    void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback);
+    @Override
+    public void onReceiveViewCommand(ViewCommand command) throws MessageException {
+    }
 
-    void updateSharedObject(@NonNull SharedObject sharedObject, @NonNull MessageCallback<Void> callback);
-
-    void addMessageReceiver(MessageReceiver receiver);
+    @Override
+    public void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException {
+    }
 }

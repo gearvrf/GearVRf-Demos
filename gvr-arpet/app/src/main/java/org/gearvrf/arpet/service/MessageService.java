@@ -27,10 +27,9 @@ import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.service.message.Command;
-import org.gearvrf.arpet.service.message.RequestMessage;
-import org.gearvrf.arpet.service.message.ResponseMessage;
-import org.gearvrf.arpet.service.message.SharedScene;
+import org.gearvrf.arpet.service.data.SharedObject;
+import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.service.data.ViewCommand;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +41,7 @@ public final class MessageService implements IMessageService {
 
     private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
-    private List<MessageServiceReceiver> mMessageServiceReceivers = new ArrayList<>();
+    private List<MessageReceiver> mMessageReceivers = new ArrayList<>();
     private SparseArray<PendingResponseInfo<Void>> mPendingResponseInfos = new SparseArray<>();
 
     private static class InstanceHolder {
@@ -60,22 +59,27 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
-    public void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageServiceCallback<Void> callback) {
+    public void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageCallback<Void> callback) {
         sendRequest(new RequestMessage<>(sharedScene), callback);
     }
 
     @Override
-    public void sendCommand(@NonNull Command command, @NonNull MessageServiceCallback<Void> callback) {
+    public void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback) {
         sendRequest(new RequestMessage<>(command), callback);
     }
 
     @Override
-    public void addMessageReceiver(MessageServiceReceiver receiver) {
-        mMessageServiceReceivers.remove(receiver);
-        mMessageServiceReceivers.add(receiver);
+    public void updateSharedObject(@NonNull SharedObject sharedObject, @NonNull MessageCallback<Void> callback) {
+        sendRequest(new RequestMessage<>(sharedObject), callback);
     }
 
-    private synchronized void sendRequest(RequestMessage request, MessageServiceCallback<Void> callback) {
+    @Override
+    public void addMessageReceiver(MessageReceiver receiver) {
+        mMessageReceivers.remove(receiver);
+        mMessageReceivers.add(receiver);
+    }
+
+    private synchronized void sendRequest(RequestMessage request, MessageCallback<Void> callback) {
 
         PendingResponseInfo<Void> pendingResponseInfo = new PendingResponseInfo<>(
                 request.getId(), mConnectionManager.getTotalConnected(), callback);
@@ -96,8 +100,8 @@ public final class MessageService implements IMessageService {
         });
     }
 
-    private void onReceiveSharedScene(SharedScene sharedScene) throws MessageServiceException {
-        for (MessageServiceReceiver receiver : mMessageServiceReceivers) {
+    private void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
+        for (MessageReceiver receiver : mMessageReceivers) {
             receiver.onReceiveSharedScene(sharedScene);
         }
     }
@@ -110,9 +114,15 @@ public final class MessageService implements IMessageService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveCommand(Command command) throws MessageServiceException {
-        for (MessageServiceReceiver receiver : mMessageServiceReceivers) {
-            receiver.onReceiveCommand(command);
+    private void onReceiveViewCommand(ViewCommand command) throws MessageException {
+        for (MessageReceiver receiver : mMessageReceivers) {
+            receiver.onReceiveViewCommand(command);
+        }
+    }
+
+    private void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException {
+        for (MessageReceiver receiver : mMessageReceivers) {
+            receiver.onReceiveUpdateSharedObject(sharedObject);
         }
     }
 
@@ -159,17 +169,27 @@ public final class MessageService implements IMessageService {
                 onReceiveSharedScene((SharedScene) request.getData());
                 logForMessage(request, "Shared objects received and processed.");
                 sendDefaultResponseForRequest(request);
-            } catch (MessageServiceException error) {
+            } catch (MessageException error) {
                 sendResponseError(request, error);
             }
 
-        } else if (request.getData() instanceof Command) {
+        } else if (request.getData() instanceof ViewCommand) {
 
             try {
-                onReceiveCommand((Command) request.getData());
+                onReceiveViewCommand((ViewCommand) request.getData());
                 logForMessage(request, "CommandType received and processed.");
                 sendDefaultResponseForRequest(request);
-            } catch (MessageServiceException error) {
+            } catch (MessageException error) {
+                sendResponseError(request, error);
+            }
+
+        } else if (request.getData() instanceof SharedObject) {
+
+            try {
+                onReceiveUpdateSharedObject((SharedObject) request.getData());
+                logForMessage(request, "Shared object received and processed.");
+                sendDefaultResponseForRequest(request);
+            } catch (MessageException error) {
                 sendResponseError(request, error);
             }
         }
@@ -188,7 +208,7 @@ public final class MessageService implements IMessageService {
             if (!pendingResponseInfo.hasPending()) {
                 mPendingResponseInfos.remove(response.getRequestId());
                 if (pendingResponseInfo.mTotalFailure == pendingResponseInfo.mTotalExpected) {
-                    callbackFailure(pendingResponseInfo, new MessageServiceException("All remotes returned with error"));
+                    callbackFailure(pendingResponseInfo, new MessageException("All remotes returned with error"));
                 } else {
                     callbackSuccessVoid(pendingResponseInfo);
                 }
@@ -202,7 +222,7 @@ public final class MessageService implements IMessageService {
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
-    private void sendResponseError(RequestMessage request, MessageServiceException error) {
+    private void sendResponseError(RequestMessage request, MessageException error) {
         ResponseMessage response = new ResponseMessage.Builder(request.getId()).error(error).build();
         mConnectionManager.sendMessage(response, totalSent ->
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
@@ -217,9 +237,9 @@ public final class MessageService implements IMessageService {
 
         final int mTotalExpected, mRequestId;
         int mTotalSuccess, mTotalFailure;
-        MessageServiceCallback<T> mCallback;
+        MessageCallback<T> mCallback;
 
-        PendingResponseInfo(int requestId, int totalExpected, MessageServiceCallback<T> mCallback) {
+        PendingResponseInfo(int requestId, int totalExpected, MessageCallback<T> mCallback) {
             this.mRequestId = requestId;
             this.mTotalExpected = totalExpected;
             this.mCallback = mCallback;
