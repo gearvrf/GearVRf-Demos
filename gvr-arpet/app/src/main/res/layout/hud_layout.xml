@@ -28,7 +28,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="20dp"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
@@ -36,96 +35,96 @@
 
         <LinearLayout
             android:id="@+id/btn_fetchball"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
                 android:src="@drawable/icon_ball" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btn_shareanchor"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
                 android:src="@drawable/icon_share_anchor" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btn_edit"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
                 android:src="@drawable/icon_edit" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btn_camera"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
                 android:src="@drawable/icon_photo" />
         </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="280dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="245dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/btn_menu"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
                 android:src="@drawable/icon_menu" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/btn_close"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical"
             android:visibility="gone">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/icon_close" />
         </LinearLayout>
     </LinearLayout>
