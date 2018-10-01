@@ -186,7 +186,7 @@ public class CloudAnchorManager {
                         mPendingToResolve--;
                         if (resolvedAnchor != null && !resolvedAnchor.getCloudAnchorId().isEmpty()) {
                             String successString = String.format(Locale.getDefault(),
-                                    "Success resolving anchor id %s for object of type %d",
+                                    "Success resolving anchor id %s for object of type %s",
                                     resolvedAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
                             Log.i(TAG, successString);
                             mResolvedCloudAnchors.add(new ResolvedCloudAnchor(cloudAnchor, resolvedAnchor));
@@ -194,7 +194,7 @@ public class CloudAnchorManager {
                             mIsResolvingAnchors = false;
                             mResolvedCloudAnchors = null;
                             String errorString = String.format(Locale.getDefault(),
-                                    "Failed resolving anchor id %s for object of type %d",
+                                    "Failed resolving anchor id %s for object of type %s",
                                     cloudAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
                             mResolveCallback.onError(new CloudAnchorException(errorString));
                             Log.e(TAG, errorString);

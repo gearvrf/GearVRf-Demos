@@ -21,13 +21,12 @@ import org.gearvrf.arpet.AnchoredObject;
 import java.io.Serializable;
 
 public class CloudAnchor implements Serializable {
-    private final String TAG = CloudAnchor.class.getSimpleName();
 
     private String mCloudAnchorId;
     @AnchoredObject.ObjectType
-    private int mObjectType;
+    private String mObjectType;
 
-    public CloudAnchor(@AnchoredObject.ObjectType int type) {
+    public CloudAnchor(@AnchoredObject.ObjectType String type) {
         mObjectType = type;
     }
 
@@ -35,7 +34,7 @@ public class CloudAnchor implements Serializable {
         return mCloudAnchorId;
     }
 
-    public int getObjectType() {
+    public String getObjectType() {
         return mObjectType;
     }
 

@@ -27,6 +27,8 @@ import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.PlaneHandler;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.common.Task;
+import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
@@ -40,11 +42,9 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.IMessageService;
-import org.gearvrf.arpet.service.MessageServiceException;
-import org.gearvrf.arpet.service.MessageServiceCallback;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.common.Task;
-import org.gearvrf.arpet.common.TaskException;
+import org.gearvrf.arpet.service.MessageServiceCallback;
+import org.gearvrf.arpet.service.MessageServiceException;
 import org.gearvrf.arpet.service.message.Command;
 import org.gearvrf.mixedreality.GVRAnchor;
 
@@ -195,7 +195,7 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
-    private void loadModel(int type, GVRAnchor anchor) {
+    private void loadModel(@AnchoredObject.ObjectType String type, GVRAnchor anchor) {
         Log.d(TAG, "loading model...");
         switch (type) {
             case AnchoredObject.ObjectType.CHARACTER:
@@ -399,12 +399,12 @@ public class ShareAnchorMode extends BasePetMode {
                         try {
                             loadModel(resolvedCloudAnchor.getCloudAnchor().getObjectType(), resolvedCloudAnchor.getAnchor());
                             String successString = String.format(Locale.getDefault(),
-                                    "Success loading model for object of type %d",
+                                    "Success loading model for object of type %s",
                                     resolvedCloudAnchor.getCloudAnchor().getObjectType());
                             Log.i(TAG, successString);
                         } catch (Exception e) {
                             String errorString = String.format(Locale.getDefault(),
-                                    "Error loading model for object of type %d",
+                                    "Error loading model for object of type %s",
                                     resolvedCloudAnchor.getCloudAnchor().getObjectType());
                             setError(new TaskException(errorString, e));
                             Log.e(TAG, errorString);

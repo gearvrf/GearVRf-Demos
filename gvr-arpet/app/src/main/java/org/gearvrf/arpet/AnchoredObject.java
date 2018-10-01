@@ -17,8 +17,8 @@
 
 package org.gearvrf.arpet;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
@@ -35,35 +35,33 @@ public abstract class AnchoredObject extends GVRSceneObject {
 
     final String TAG = getClass().getSimpleName();
 
-    @IntDef({ObjectType.NONE,
+    @StringDef({ObjectType.NONE,
             ObjectType.CHARACTER,
             ObjectType.BED,
             ObjectType.BOWL,
             ObjectType.HYDRANT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ObjectType {
-        int NONE = -1;
-        int CHARACTER = 0;
-        int BED = 1;
-        int BOWL = 2;
-        int HYDRANT = 3;
+        String NONE = "NONE";
+        String CHARACTER = "CHARACTER";
+        String BED = "BED";
+        String BOWL = "BOWL";
+        String HYDRANT = "HYDRANT";
     }
 
     private GVRAnchor mAnchor;
     private float[] mPoseMatrix;
     private GVRMixedReality mMixedReality;
     @ObjectType
-    private int mObjectType;
+    private String mObjectType;
 
     public AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality,
-                          @NonNull float[] poseMatrix, @ObjectType int objectType) {
+                          @NonNull float[] poseMatrix, @ObjectType String objectType) {
         super(context);
         this.mMixedReality = mixedReality;
         this.mPoseMatrix = poseMatrix;
-        if (mPoseMatrix != null) {
-            this.mAnchor = mixedReality.createAnchor(poseMatrix);
-            this.mAnchor.attachSceneObject(this);
-        }
+        this.mAnchor = mixedReality.createAnchor(poseMatrix);
+        this.mAnchor.attachSceneObject(this);
         this.mObjectType = objectType;
     }
 
@@ -94,7 +92,7 @@ public abstract class AnchoredObject extends GVRSceneObject {
     }
 
     @ObjectType
-    public int getObjectType() {
+    public String getObjectType() {
         return mObjectType;
     }
 }
