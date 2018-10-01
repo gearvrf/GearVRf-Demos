@@ -15,13 +15,24 @@
  *
  */
 
-package org.gearvrf.arpet.sharing.message;
+package org.gearvrf.arpet.service;
+
+import org.gearvrf.arpet.service.message.Command;
 
 import java.io.Serializable;
 
-public class CommandRequestMessage extends RequestMessage {
+public interface MessageServiceReceiver {
+    /**
+     * Resolve end load the objects represented by given metadata array.
+     *
+     * @param sharedObjects Metadata for objects to load.
+     */
+    void onReceiveSharedScene(Serializable[] sharedObjects) throws MessageServiceException;
 
-    public CommandRequestMessage(Serializable data) {
-        super(data);
-    }
+    /**
+     * Execute the given command on this device
+     *
+     * @param command Command to execute.
+     */
+    void onReceiveCommand(@Command String command) throws MessageServiceException;
 }

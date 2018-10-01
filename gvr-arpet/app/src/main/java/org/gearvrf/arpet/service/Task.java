@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.service;
 
 public abstract class Task implements Thread.UncaughtExceptionHandler {
 

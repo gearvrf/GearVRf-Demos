@@ -39,13 +39,12 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.sharing.SharingException;
-import org.gearvrf.arpet.sharing.SharingMessageCallback;
-import org.gearvrf.arpet.sharing.SharingService;
-import org.gearvrf.arpet.sharing.SharingServiceMessageReceiver;
-import org.gearvrf.arpet.sharing.Task;
-import org.gearvrf.arpet.sharing.TaskException;
-import org.gearvrf.arpet.sharing.message.Command;
+import org.gearvrf.arpet.service.MessageServiceException;
+import org.gearvrf.arpet.service.MessageServiceCallback;
+import org.gearvrf.arpet.service.MessageService;
+import org.gearvrf.arpet.service.Task;
+import org.gearvrf.arpet.service.TaskException;
+import org.gearvrf.arpet.service.message.Command;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.io.Serializable;
@@ -66,7 +65,7 @@ public class ShareAnchorMode extends BasePetMode {
     private ShareAnchorView mShareAnchorView;
     private final List<AnchoredObject> mAnchoredObjects;
     private CloudAnchorManager mCloudAnchorManager;
-    private SharingService mSharingService;
+    private MessageService mMessageService;
 
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects) {
         super(petContext, new ShareAnchorView(petContext));
@@ -77,8 +76,8 @@ public class ShareAnchorMode extends BasePetMode {
         mAnchoredObjects = anchoredObjects;
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
 
-        mSharingService = SharingService.getInstance();
-        mSharingService.addMessageReceiver(new MessageReceiver());
+        mMessageService = MessageService.getInstance();
+        mMessageService.addMessageReceiver(new MessageServiceReceiver());
     }
 
     @Override
@@ -274,7 +273,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowPairingView() {
-        mSharingService.sendCommand(Command.SHOW_PAIRING_VIEW, new SharingMessageCallback<Void>() {
+        mMessageService.sendCommand(Command.SHOW_PAIRING_VIEW, new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "command to show 'pairing view' was performed successfully");
@@ -288,7 +287,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowStayInPosition() {
-        mSharingService.sendCommand(Command.SHOW_STAY_IN_POSITION_TO_PAIR, new SharingMessageCallback<Void>() {
+        mMessageService.sendCommand(Command.SHOW_STAY_IN_POSITION_TO_PAIR, new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "command to show 'stay in position' was performed successfully");
@@ -302,7 +301,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowPairedView() {
-        mSharingService.sendCommand(Command.SHOW_PAIRED_VIEW, new SharingMessageCallback<Void>() {
+        mMessageService.sendCommand(Command.SHOW_PAIRED_VIEW, new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 showParedView();
@@ -316,7 +315,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void shareScene(CloudAnchor[] anchors) {
-        mSharingService.shareScene(anchors, new SharingMessageCallback<Void>() {
+        mMessageService.shareScene(anchors, new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "all guests have resolved their cloud anchors");
@@ -346,16 +345,16 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
-    private class MessageReceiver implements SharingServiceMessageReceiver {
+    private class MessageServiceReceiver implements org.gearvrf.arpet.service.MessageServiceReceiver {
         @Override
-        public void onReceiveSharedScene(Serializable[] sharedObjects) throws SharingException {
+        public void onReceiveSharedScene(Serializable[] sharedObjects) throws MessageServiceException {
             Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
             // This method will return only after loader finish
             Task task = new SharedSceneLoader((CloudAnchor[]) sharedObjects);
             task.start();
             if (task.getError() != null) {
                 showToast("Error loading objects: " + task.getError().getMessage());
-                throw new SharingException(task.getError());
+                throw new MessageServiceException(task.getError());
             } else {
                 showToast("All objects successfully loaded");
             }

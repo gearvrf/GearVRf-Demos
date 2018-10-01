@@ -15,21 +15,11 @@
  *
  */
 
-package org.gearvrf.arpet.sharing.message;
+package org.gearvrf.arpet.service;
 
-import android.support.annotation.StringDef;
+public interface MessageServiceCallback<T> {
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+    void onSuccess(T result);
 
-@Retention(RetentionPolicy.SOURCE)
-@StringDef({Command.FETCH_BALL,
-        Command.SHOW_PAIRED_VIEW,
-        Command.SHOW_STAY_IN_POSITION_TO_PAIR,
-        Command.SHOW_PAIRING_VIEW})
-public @interface Command {
-    String FETCH_BALL = "FETCH_BALL";
-    String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
-    String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";
-    String SHOW_PAIRING_VIEW = "SHOW_PAIRING_VIEW";
+    void onFailure(Exception error);
 }

@@ -15,22 +15,15 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.service.message;
 
-public class SharingException extends Exception {
+import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
-    public SharingException() {
-    }
+import java.io.Serializable;
 
-    public SharingException(String message) {
-        super(message);
-    }
+public class RequestMessage extends BTMessage {
 
-    public SharingException(Throwable cause) {
-        super(cause);
-    }
-
-    public SharingException(String message, Throwable cause) {
-        super(message, cause);
+    public RequestMessage(Serializable data) {
+        super(data);
     }
 }

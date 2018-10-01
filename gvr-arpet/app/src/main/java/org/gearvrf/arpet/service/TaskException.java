@@ -15,13 +15,22 @@
  *
  */
 
-package org.gearvrf.arpet.sharing.message;
+package org.gearvrf.arpet.service;
 
-import java.io.Serializable;
+public class TaskException extends Throwable {
 
-public class SceneSharingRequestMessage extends RequestMessage {
+    public TaskException() {
+    }
 
-    public SceneSharingRequestMessage(Serializable data) {
-        super(data);
+    public TaskException(String message) {
+        super(message);
+    }
+
+    public TaskException(Throwable cause) {
+        super(cause);
+    }
+
+    public TaskException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

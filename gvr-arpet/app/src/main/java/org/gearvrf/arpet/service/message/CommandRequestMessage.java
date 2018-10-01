@@ -15,15 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.sharing.message;
-
-import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
+package org.gearvrf.arpet.service.message;
 
 import java.io.Serializable;
 
-public class RequestMessage extends BTMessage {
+public class CommandRequestMessage extends RequestMessage {
 
-    public RequestMessage(Serializable data) {
+    public CommandRequestMessage(Serializable data) {
         super(data);
     }
 }

@@ -15,11 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.service.message;
 
-public interface SharingMessageCallback<T> {
+import java.io.Serializable;
 
-    void onSuccess(T result);
+public class SceneSharingRequestMessage extends RequestMessage {
 
-    void onFailure(Exception error);
+    public SceneSharingRequestMessage(Serializable data) {
+        super(data);
+    }
 }

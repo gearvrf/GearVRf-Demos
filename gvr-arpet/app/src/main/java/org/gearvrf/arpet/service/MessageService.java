@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.service;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -27,37 +27,37 @@ import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.sharing.message.Command;
-import org.gearvrf.arpet.sharing.message.CommandRequestMessage;
-import org.gearvrf.arpet.sharing.message.RequestMessage;
-import org.gearvrf.arpet.sharing.message.ResponseMessage;
-import org.gearvrf.arpet.sharing.message.SceneSharingRequestMessage;
+import org.gearvrf.arpet.service.message.Command;
+import org.gearvrf.arpet.service.message.CommandRequestMessage;
+import org.gearvrf.arpet.service.message.RequestMessage;
+import org.gearvrf.arpet.service.message.ResponseMessage;
+import org.gearvrf.arpet.service.message.SceneSharingRequestMessage;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public final class SharingService {
+public final class MessageService {
 
-    private static final String TAG = SharingService.class.getSimpleName();
+    private static final String TAG = MessageService.class.getSimpleName();
 
     private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
-    private List<SharingServiceMessageReceiver> mSharingServiceMessageReceivers = new ArrayList<>();
+    private List<MessageServiceReceiver> mMessageServiceReceivers = new ArrayList<>();
     private SparseArray<PendingResponseInfo<Void>> mPendingCallbacks = new SparseArray<>();
 
     private static class InstanceHolder {
-        private static final SharingService INSTANCE = new SharingService();
+        private static final MessageService INSTANCE = new MessageService();
     }
 
-    private SharingService() {
+    private MessageService() {
         this.mConnectionManager = PetConnectionManager.getInstance();
         this.mConnectionManager.addEventHandler(this::handleConnectionEvent);
         this.mContext = this.mConnectionManager.getContext();
     }
 
-    public static SharingService getInstance() {
+    public static MessageService getInstance() {
         return InstanceHolder.INSTANCE;
     }
 
@@ -65,7 +65,7 @@ public final class SharingService {
      * @param objects  Scene objects to load in remote side.
      * @param callback Returns nothing.
      */
-    public void shareScene(@NonNull Serializable[] objects, @NonNull SharingMessageCallback<Void> callback) {
+    public void shareScene(@NonNull Serializable[] objects, @NonNull MessageServiceCallback<Void> callback) {
         sendRequest(new SceneSharingRequestMessage(objects), callback);
     }
 
@@ -73,11 +73,11 @@ public final class SharingService {
      * @param command  Command to execute in remote side.
      * @param callback Returns nothing.
      */
-    public void sendCommand(@NonNull @Command String command, @NonNull SharingMessageCallback<Void> callback) {
+    public void sendCommand(@NonNull @Command String command, @NonNull MessageServiceCallback<Void> callback) {
         sendRequest(new CommandRequestMessage(command), callback);
     }
 
-    private synchronized void sendRequest(RequestMessage request, SharingMessageCallback<Void> callback) {
+    private synchronized void sendRequest(RequestMessage request, MessageServiceCallback<Void> callback) {
 
         PendingResponseInfo<Void> pendingResponseInfo = new PendingResponseInfo<>(
                 request.getId(), mConnectionManager.getTotalConnected(), callback);
@@ -98,13 +98,13 @@ public final class SharingService {
         });
     }
 
-    public void addMessageReceiver(SharingServiceMessageReceiver receiver) {
-        mSharingServiceMessageReceivers.remove(receiver);
-        mSharingServiceMessageReceivers.add(receiver);
+    public void addMessageReceiver(MessageServiceReceiver receiver) {
+        mMessageServiceReceivers.remove(receiver);
+        mMessageServiceReceivers.add(receiver);
     }
 
-    private void onReceiveSharedScene(Serializable[] objects) throws SharingException {
-        for (SharingServiceMessageReceiver receiver : mSharingServiceMessageReceivers) {
+    private void onReceiveSharedScene(Serializable[] objects) throws MessageServiceException {
+        for (MessageServiceReceiver receiver : mMessageServiceReceivers) {
             receiver.onReceiveSharedScene(objects);
         }
     }
@@ -117,8 +117,8 @@ public final class SharingService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveCommand(@Command String command) throws SharingException {
-        for (SharingServiceMessageReceiver receiver : mSharingServiceMessageReceivers) {
+    private void onReceiveCommand(@Command String command) throws MessageServiceException {
+        for (MessageServiceReceiver receiver : mMessageServiceReceivers) {
             receiver.onReceiveCommand(command);
         }
     }
@@ -166,7 +166,7 @@ public final class SharingService {
                 onReceiveSharedScene((Serializable[]) request.getData());
                 logForMessage(request, "Shared objects received and processed.");
                 sendDefaultResponseForRequest(request);
-            } catch (SharingException error) {
+            } catch (MessageServiceException error) {
                 sendResponseError(request, error);
             }
 
@@ -176,7 +176,7 @@ public final class SharingService {
                 onReceiveCommand((String) request.getData());
                 logForMessage(request, "Command received and processed.");
                 sendDefaultResponseForRequest(request);
-            } catch (SharingException error) {
+            } catch (MessageServiceException error) {
                 sendResponseError(request, error);
             }
         }
@@ -195,7 +195,7 @@ public final class SharingService {
             pendingResponseInfo.updateTotalPending(response);
             if (!pendingResponseInfo.hasPending()) {
                 if (pendingResponseInfo.mTotalFailure == pendingResponseInfo.mTotalExpected) {
-                    callbackFailure(pendingResponseInfo, new SharingException("All remotes returned with error"));
+                    callbackFailure(pendingResponseInfo, new MessageServiceException("All remotes returned with error"));
                 } else {
                     callbackSuccessVoid(pendingResponseInfo);
                 }
@@ -209,7 +209,7 @@ public final class SharingService {
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
-    private void sendResponseError(RequestMessage request, SharingException error) {
+    private void sendResponseError(RequestMessage request, MessageServiceException error) {
         ResponseMessage response = new ResponseMessage.Builder(request.getId()).error(error).build();
         mConnectionManager.sendMessage(response, totalSent ->
                 logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
@@ -224,9 +224,9 @@ public final class SharingService {
 
         final int mTotalExpected, mRequestId;
         int mTotalSuccess, mTotalFailure;
-        SharingMessageCallback<T> mCallback;
+        MessageServiceCallback<T> mCallback;
 
-        PendingResponseInfo(int requestId, int totalExpected, SharingMessageCallback<T> mCallback) {
+        PendingResponseInfo(int requestId, int totalExpected, MessageServiceCallback<T> mCallback) {
             this.mRequestId = requestId;
             this.mTotalExpected = totalExpected;
             this.mCallback = mCallback;

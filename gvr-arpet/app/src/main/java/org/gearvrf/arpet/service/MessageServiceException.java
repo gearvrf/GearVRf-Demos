@@ -15,22 +15,22 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.service;
 
-public class TaskException extends Throwable {
+public class MessageServiceException extends Exception {
 
-    public TaskException() {
+    public MessageServiceException() {
     }
 
-    public TaskException(String message) {
+    public MessageServiceException(String message) {
         super(message);
     }
 
-    public TaskException(Throwable cause) {
+    public MessageServiceException(Throwable cause) {
         super(cause);
     }
 
-    public TaskException(String message, Throwable cause) {
+    public MessageServiceException(String message, Throwable cause) {
         super(message, cause);
     }
 }

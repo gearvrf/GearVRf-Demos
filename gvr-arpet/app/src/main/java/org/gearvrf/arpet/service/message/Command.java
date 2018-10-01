@@ -15,24 +15,21 @@
  *
  */
 
-package org.gearvrf.arpet.sharing;
+package org.gearvrf.arpet.service.message;
 
-import org.gearvrf.arpet.sharing.message.Command;
+import android.support.annotation.StringDef;
 
-import java.io.Serializable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-public interface SharingServiceMessageReceiver {
-    /**
-     * Resolve end load the objects represented by given metadata array.
-     *
-     * @param sharedObjects Metadata for objects to load.
-     */
-    void onReceiveSharedScene(Serializable[] sharedObjects) throws SharingException;
-
-    /**
-     * Execute the given command on this device
-     *
-     * @param command Command to execute.
-     */
-    void onReceiveCommand(@Command String command) throws SharingException;
+@Retention(RetentionPolicy.SOURCE)
+@StringDef({Command.FETCH_BALL,
+        Command.SHOW_PAIRED_VIEW,
+        Command.SHOW_STAY_IN_POSITION_TO_PAIR,
+        Command.SHOW_PAIRING_VIEW})
+public @interface Command {
+    String FETCH_BALL = "FETCH_BALL";
+    String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
+    String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";
+    String SHOW_PAIRING_VIEW = "SHOW_PAIRING_VIEW";
 }

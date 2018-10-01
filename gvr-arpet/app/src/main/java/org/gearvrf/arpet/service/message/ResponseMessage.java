@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.sharing.message;
+package org.gearvrf.arpet.service.message;
 
 import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
