@@ -91,6 +91,7 @@ public class CheckList extends Widget {
 
     public synchronized void enable() {
         mItemsGroup.addOnCheckChangedListener(mInternalOnFilterChangedListener);
+        mItemsGroup.check(0);
     }
 
     private CheckableGroup.OnCheckChangedListener mInternalOnFilterChangedListener =

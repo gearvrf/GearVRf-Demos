@@ -109,7 +109,7 @@ public class ViewerMain extends GVRMain {
             mLight.loadLights(gvrContext);
             mLight.getLightScene().getTransform().setPosition(0, 10, 0);
             mLight.getLightScene().getTransform().rotateByAxis(-90, 1, 0, 0);
-            gvrContext.getMainScene().addSceneObject(mLight.getLightScene());
+            mMainScene.addSceneObject(mLight.getLightScene());
 
 
         } catch (Exception e) {
