@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public final class MessageService {
+public final class MessageService implements IMessageService {
 
     private static final String TAG = MessageService.class.getSimpleName();
 
@@ -48,7 +48,7 @@ public final class MessageService {
     private SparseArray<PendingResponseInfo<Void>> mPendingCallbacks = new SparseArray<>();
 
     private static class InstanceHolder {
-        private static final MessageService INSTANCE = new MessageService();
+        private static final IMessageService INSTANCE = new MessageService();
     }
 
     private MessageService() {
@@ -57,7 +57,7 @@ public final class MessageService {
         this.mContext = this.mConnectionManager.getContext();
     }
 
-    public static MessageService getInstance() {
+    public static IMessageService getInstance() {
         return InstanceHolder.INSTANCE;
     }
 
@@ -75,6 +75,12 @@ public final class MessageService {
      */
     public void sendCommand(@NonNull @Command String command, @NonNull MessageServiceCallback<Void> callback) {
         sendRequest(new CommandRequestMessage(command), callback);
+    }
+
+    @Override
+    public void addMessageReceiver(MessageServiceReceiver receiver) {
+        mMessageServiceReceivers.remove(receiver);
+        mMessageServiceReceivers.add(receiver);
     }
 
     private synchronized void sendRequest(RequestMessage request, MessageServiceCallback<Void> callback) {
@@ -96,11 +102,6 @@ public final class MessageService {
                 callbackFailure(pendingResponseInfo, new RuntimeException("Failure sending request"));
             }
         });
-    }
-
-    public void addMessageReceiver(MessageServiceReceiver receiver) {
-        mMessageServiceReceivers.remove(receiver);
-        mMessageServiceReceivers.add(receiver);
     }
 
     private void onReceiveSharedScene(Serializable[] objects) throws MessageServiceException {

@@ -39,6 +39,7 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageServiceException;
 import org.gearvrf.arpet.service.MessageServiceCallback;
 import org.gearvrf.arpet.service.MessageService;
@@ -65,7 +66,7 @@ public class ShareAnchorMode extends BasePetMode {
     private ShareAnchorView mShareAnchorView;
     private final List<AnchoredObject> mAnchoredObjects;
     private CloudAnchorManager mCloudAnchorManager;
-    private MessageService mMessageService;
+    private IMessageService mMessageService;
 
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects) {
         super(petContext, new ShareAnchorView(petContext));
