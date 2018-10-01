@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2015 Samsung Electronics Co., LTD
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,40 +17,53 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/editMode"
-    android:layout_width="640dp"
-    android:layout_height="60dp">
+    android:layout_width="590dp"
+    android:layout_height="85dp">
 
-    <Button
+    <LinearLayout
         android:id="@+id/btn_back"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="20.5dp"
-        android:layout_alignParentStart="true"
-        android:background="@drawable/btn_back" />
+        android:layout_width="46dp"
+        android:layout_height="46dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15.5dp"
+        android:background="@drawable/bg_functions_buttons"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="20.5dp"
+            android:layout_height="20.5dp"
+            android:src="@drawable/icon_back_sharing" />
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="35dp"
-        android:layout_marginTop="15.5dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="23.5dp"
         android:background="#00000000"
         android:drawablePadding="10dp"
         android:fontFamily="@font/roboto_medium"
         android:text="@string/editing_mode"
-        android:textColor="#717171"
+        android:textColor="#fff"
         android:textSize="24sp" />
 
     <Button
         android:id="@+id/btn_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="520dp"
-        android:layout_marginTop="16.5dp"
-        android:background="#00000000"
+        android:layout_width="119.50dp"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="22dp"
+        android:background="@drawable/rounded_button_save"
         android:fontFamily="@font/roboto_medium"
+        android:gravity="center"
+        android:paddingBottom="6dp"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
+        android:paddingTop="6dp"
         android:text="@string/save"
-        android:textColor="#717171"
-        android:textSize="23sp" />
+        android:textColor="#cc1586"
+        android:textSize="20sp" />
 
 </RelativeLayout>

@@ -17,6 +17,7 @@ package org.gearvrf.arpet.mode;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -28,7 +29,8 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class EditView extends BasePetView implements View.OnClickListener, IViewEvents {
     private GVRSceneObject mEditModeObject;
-    private Button mBackButton, mSaveButton;
+    private Button mSaveButton;
+    private LinearLayout mBackButton;
     private OnEditModeClickedListener mListenerEditMode;
 
     public EditView(PetContext petContext) {
@@ -36,7 +38,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
         mEditModeObject = new GVRViewSceneObject(petContext.getGVRContext(),
                 R.layout.edit_mode_layout, this);
 
-        getTransform().setPosition(0.0f, 0.25f, -0.85f);
+        getTransform().setPosition(0.0f, 0.23f, -0.85f);
     }
 
     @Override
