@@ -20,4 +20,5 @@ package org.gearvrf.arpet.constant;
 public interface ApiConstants {
     String GOOGLE_CLOUD_ANCHOR_KEY_NAME = "com.google.android.ar.API_KEY";
     int DISCOVERABLE_DURATION = 25; // in seconds
+    int TEXTURE_BUFFER_SIZE = 2048;
 }
