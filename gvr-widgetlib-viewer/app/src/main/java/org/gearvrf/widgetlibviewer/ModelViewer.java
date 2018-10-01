@@ -1,7 +1,5 @@
 package org.gearvrf.widgetlibviewer;
 
-import android.graphics.Shader;
-
 import org.gearvrf.GVRContext;
 import org.gearvrf.widgetlib.log.Log;
 import org.gearvrf.widgetlib.main.WidgetLib;
@@ -56,7 +54,6 @@ public class ModelViewer extends BaseContentScene {
         shaders.add(new CheckList.Item(gvrContext, "Lines", labelProperties, new ShaderAction(SHADER.Lines)));
         shaders.add(new CheckList.Item(gvrContext, "Lines_Loop", labelProperties, new ShaderAction(SHADER.LinesLoop)));
         shaders.add(new CheckList.Item(gvrContext, "Points", labelProperties, new ShaderAction(SHADER.Points)));
-
         mShaderList = new CheckList(gvrContext, "ShaderList", shaders);
     }
 
