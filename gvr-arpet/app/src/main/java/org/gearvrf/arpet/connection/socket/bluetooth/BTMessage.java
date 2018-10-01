@@ -22,13 +22,13 @@ import org.gearvrf.arpet.connection.Message;
 
 import java.io.Serializable;
 
-public class BTMessage implements Message {
+public class BTMessage<Data extends Serializable> implements Message<Data> {
 
-    private Serializable mData;
+    private Data mData;
     private static int sId;
     private int mId;
 
-    public BTMessage(Serializable data) {
+    public BTMessage(Data data) {
         mId = incrementId();
         mData = data;
     }
@@ -48,7 +48,7 @@ public class BTMessage implements Message {
     }
 
     @Override
-    public Serializable getData() {
+    public Data getData() {
         return mData;
     }
 

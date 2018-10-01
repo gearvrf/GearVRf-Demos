@@ -46,9 +46,10 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.MessageServiceCallback;
 import org.gearvrf.arpet.service.MessageServiceException;
 import org.gearvrf.arpet.service.message.Command;
+import org.gearvrf.arpet.service.message.CommandType;
+import org.gearvrf.arpet.service.message.SharedScene;
 import org.gearvrf.mixedreality.GVRAnchor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -274,7 +275,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowPairingView() {
-        mMessageService.sendCommand(Command.SHOW_PAIRING_VIEW, new MessageServiceCallback<Void>() {
+        mMessageService.sendCommand(new Command(CommandType.SHOW_PAIRING_VIEW), new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "command to show 'pairing view' was performed successfully");
@@ -288,7 +289,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowStayInPosition() {
-        mMessageService.sendCommand(Command.SHOW_STAY_IN_POSITION_TO_PAIR, new MessageServiceCallback<Void>() {
+        mMessageService.sendCommand(new Command(CommandType.SHOW_STAY_IN_POSITION_TO_PAIR), new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "command to show 'stay in position' was performed successfully");
@@ -302,7 +303,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void sendCommandToShowPairedView() {
-        mMessageService.sendCommand(Command.SHOW_PAIRED_VIEW, new MessageServiceCallback<Void>() {
+        mMessageService.sendCommand(new Command(CommandType.SHOW_PAIRED_VIEW), new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 showParedView();
@@ -316,7 +317,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void shareScene(CloudAnchor[] anchors) {
-        mMessageService.shareScene(anchors, new MessageServiceCallback<Void>() {
+        mMessageService.shareScene(new SharedScene(anchors), new MessageServiceCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 Log.d(TAG, "all guests have resolved their cloud anchors");
@@ -348,10 +349,10 @@ public class ShareAnchorMode extends BasePetMode {
 
     private class MessageServiceReceiver implements org.gearvrf.arpet.service.MessageServiceReceiver {
         @Override
-        public void onReceiveSharedScene(Serializable[] sharedObjects) throws MessageServiceException {
-            Log.d(TAG, "Sharing received: " + Arrays.toString(sharedObjects));
+        public void onReceiveSharedScene(SharedScene sharedScene) throws MessageServiceException {
+            Log.d(TAG, "Sharing received: " + Arrays.toString(sharedScene.getSceneObjects()));
             // This method will return only after loader finish
-            Task task = new SharedSceneLoader((CloudAnchor[]) sharedObjects);
+            Task task = new SharedSceneLoader(sharedScene);
             task.start();
             if (task.getError() != null) {
                 showToast("Error loading objects: " + task.getError().getMessage());
@@ -362,16 +363,16 @@ public class ShareAnchorMode extends BasePetMode {
         }
 
         @Override
-        public void onReceiveCommand(@Command String command) {
-            Log.d(TAG, "Command received: " + command);
-            switch (command) {
-                case Command.SHOW_PAIRED_VIEW:
+        public void onReceiveCommand(Command command) {
+            Log.d(TAG, "CommandType received: " + command);
+            switch (command.getType()) {
+                case CommandType.SHOW_PAIRED_VIEW:
                     showParedView();
                     break;
-                case Command.SHOW_STAY_IN_POSITION_TO_PAIR:
+                case CommandType.SHOW_STAY_IN_POSITION_TO_PAIR:
                     showStayInPositionToPair();
                     break;
-                case Command.SHOW_PAIRING_VIEW:
+                case CommandType.SHOW_PAIRING_VIEW:
                     showParingScreen(mConnectionManager.getConnectionMode());
                     break;
                 default:
@@ -381,17 +382,17 @@ public class ShareAnchorMode extends BasePetMode {
 
     private class SharedSceneLoader extends Task {
 
-        CloudAnchor[] mSharedObjects;
+        SharedScene mSharedScene;
 
-        SharedSceneLoader(CloudAnchor[] sharedObjects) {
-            this.mSharedObjects = sharedObjects;
+        SharedSceneLoader(SharedScene sharedScene) {
+            this.mSharedScene = sharedScene;
         }
 
         @Override
         public void execute() {
 
             Log.d(TAG, "Loading shared objects");
-            mCloudAnchorManager.resolveAnchors(mSharedObjects, new CloudAnchorManager.OnResolveCallback() {
+            mCloudAnchorManager.resolveAnchors(mSharedScene.getSceneObjects(), new CloudAnchorManager.OnResolveCallback() {
                 @Override
                 public void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors) {
                     Log.i(TAG, "All anchors successfully resolved");

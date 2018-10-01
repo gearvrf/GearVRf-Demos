@@ -19,11 +19,11 @@ package org.gearvrf.arpet.connection;
 
 import java.io.Serializable;
 
-public interface Message extends Serializable {
+public interface Message<Data extends Serializable> extends Serializable {
 
     int getId();
 
     Device getDevice();
 
-    Object getData();
+    Data getData();
 }

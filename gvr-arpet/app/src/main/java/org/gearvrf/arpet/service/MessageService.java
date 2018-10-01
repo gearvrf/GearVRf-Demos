@@ -28,12 +28,10 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.message.Command;
-import org.gearvrf.arpet.service.message.CommandRequestMessage;
 import org.gearvrf.arpet.service.message.RequestMessage;
 import org.gearvrf.arpet.service.message.ResponseMessage;
-import org.gearvrf.arpet.service.message.SceneSharingRequestMessage;
+import org.gearvrf.arpet.service.message.SharedScene;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -62,13 +60,13 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
-    public void shareScene(@NonNull Serializable[] objects, @NonNull MessageServiceCallback<Void> callback) {
-        sendRequest(new SceneSharingRequestMessage(objects), callback);
+    public void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageServiceCallback<Void> callback) {
+        sendRequest(new RequestMessage<>(sharedScene), callback);
     }
 
     @Override
-    public void sendCommand(@NonNull @Command String command, @NonNull MessageServiceCallback<Void> callback) {
-        sendRequest(new CommandRequestMessage(command), callback);
+    public void sendCommand(@NonNull Command command, @NonNull MessageServiceCallback<Void> callback) {
+        sendRequest(new RequestMessage<>(command), callback);
     }
 
     @Override
@@ -98,9 +96,9 @@ public final class MessageService implements IMessageService {
         });
     }
 
-    private void onReceiveSharedScene(Serializable[] objects) throws MessageServiceException {
+    private void onReceiveSharedScene(SharedScene sharedScene) throws MessageServiceException {
         for (MessageServiceReceiver receiver : mMessageServiceReceivers) {
-            receiver.onReceiveSharedScene(objects);
+            receiver.onReceiveSharedScene(sharedScene);
         }
     }
 
@@ -112,7 +110,7 @@ public final class MessageService implements IMessageService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveCommand(@Command String command) throws MessageServiceException {
+    private void onReceiveCommand(Command command) throws MessageServiceException {
         for (MessageServiceReceiver receiver : mMessageServiceReceivers) {
             receiver.onReceiveCommand(command);
         }
@@ -155,21 +153,21 @@ public final class MessageService implements IMessageService {
 
     private void handleRequestMessage(RequestMessage request) {
 
-        if (request instanceof SceneSharingRequestMessage) {
+        if (request.getData() instanceof SharedScene) {
 
             try {
-                onReceiveSharedScene((Serializable[]) request.getData());
+                onReceiveSharedScene((SharedScene) request.getData());
                 logForMessage(request, "Shared objects received and processed.");
                 sendDefaultResponseForRequest(request);
             } catch (MessageServiceException error) {
                 sendResponseError(request, error);
             }
 
-        } else if (request instanceof CommandRequestMessage) {
+        } else if (request.getData() instanceof Command) {
 
             try {
-                onReceiveCommand((String) request.getData());
-                logForMessage(request, "Command received and processed.");
+                onReceiveCommand((Command) request.getData());
+                logForMessage(request, "CommandType received and processed.");
                 sendDefaultResponseForRequest(request);
             } catch (MessageServiceException error) {
                 sendResponseError(request, error);

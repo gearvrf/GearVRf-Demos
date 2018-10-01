@@ -17,19 +17,18 @@
 
 package org.gearvrf.arpet.service.message;
 
-import android.support.annotation.StringDef;
+import java.io.Serializable;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public class Command implements Serializable {
 
-@Retention(RetentionPolicy.SOURCE)
-@StringDef({Command.FETCH_BALL,
-        Command.SHOW_PAIRED_VIEW,
-        Command.SHOW_STAY_IN_POSITION_TO_PAIR,
-        Command.SHOW_PAIRING_VIEW})
-public @interface Command {
-    String FETCH_BALL = "FETCH_BALL";
-    String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
-    String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";
-    String SHOW_PAIRING_VIEW = "SHOW_PAIRING_VIEW";
+    @CommandType
+    private String Type;
+
+    public Command(@CommandType String type) {
+        Type = type;
+    }
+
+    public String getType() {
+        return Type;
+    }
 }

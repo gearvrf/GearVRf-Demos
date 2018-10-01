@@ -17,11 +17,19 @@
 
 package org.gearvrf.arpet.service.message;
 
+import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+
 import java.io.Serializable;
 
-public class SceneSharingRequestMessage extends RequestMessage {
+public class SharedScene implements Serializable {
 
-    public SceneSharingRequestMessage(Serializable data) {
-        super(data);
+    private CloudAnchor[] sceneObjects;
+
+    public SharedScene(CloudAnchor[] sceneObjects) {
+        this.sceneObjects = sceneObjects;
+    }
+
+    public CloudAnchor[] getSceneObjects() {
+        return sceneObjects;
     }
 }

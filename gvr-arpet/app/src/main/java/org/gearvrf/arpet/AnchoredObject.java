@@ -56,12 +56,14 @@ public abstract class AnchoredObject extends GVRSceneObject {
     private String mObjectType;
 
     public AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality,
-                          @NonNull float[] poseMatrix, @ObjectType String objectType) {
+                          float[] poseMatrix, @ObjectType String objectType) {
         super(context);
         this.mMixedReality = mixedReality;
         this.mPoseMatrix = poseMatrix;
-        this.mAnchor = mixedReality.createAnchor(poseMatrix);
-        this.mAnchor.attachSceneObject(this);
+        if (mPoseMatrix != null) {
+            this.mAnchor = mixedReality.createAnchor(poseMatrix);
+            this.mAnchor.attachSceneObject(this);
+        }
         this.mObjectType = objectType;
     }
 

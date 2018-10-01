@@ -20,22 +20,13 @@ package org.gearvrf.arpet.service;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.service.message.Command;
-
-import java.io.Serializable;
+import org.gearvrf.arpet.service.message.SharedScene;
 
 public interface IMessageService {
 
-    /**
-     * @param objects  Scene objects to load on remote side.
-     * @param callback Returns nothing.
-     */
-    void shareScene(@NonNull Serializable[] objects, @NonNull MessageServiceCallback<Void> callback);
+    void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageServiceCallback<Void> callback);
 
-    /**
-     * @param command  Command to execute on remote side.
-     * @param callback Returns nothing.
-     */
-    void sendCommand(@NonNull @Command String command, @NonNull MessageServiceCallback<Void> callback);
+    void sendCommand(@NonNull Command command, @NonNull MessageServiceCallback<Void> callback);
 
     void addMessageReceiver(MessageServiceReceiver receiver);
 }

@@ -18,21 +18,20 @@
 package org.gearvrf.arpet.service;
 
 import org.gearvrf.arpet.service.message.Command;
-
-import java.io.Serializable;
+import org.gearvrf.arpet.service.message.SharedScene;
 
 public interface MessageServiceReceiver {
     /**
-     * Resolve end load the objects represented by given metadata array.
+     * Resolve end load the objects represented by given shared scene.
      *
-     * @param sharedObjects Metadata for objects to load.
+     * @param sharedScene Object to load.
      */
-    void onReceiveSharedScene(Serializable[] sharedObjects) throws MessageServiceException;
+    void onReceiveSharedScene(SharedScene sharedScene) throws MessageServiceException;
 
     /**
      * Execute the given command on this device
      *
-     * @param command Command to execute.
+     * @param command CommandType to execute.
      */
-    void onReceiveCommand(@Command String command) throws MessageServiceException;
+    void onReceiveCommand(Command command) throws MessageServiceException;
 }

@@ -31,7 +31,6 @@ import org.gearvrf.arpet.connection.SendMessageCallback;
 import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTDevice;
-import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTServerDeviceFinder;
 import org.gearvrf.arpet.constant.ApiConstants;
 
@@ -253,10 +252,6 @@ public final class PetConnectionManager extends BTConnectionManager implements I
                 notifyManagerEvent(PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE);
             }
         }
-    }
-
-    public static Message newMessage(Serializable data) {
-        return new BTMessage(data);
     }
 
     private void notifyManagerEvent(@PetConnectionEventType int type) {
