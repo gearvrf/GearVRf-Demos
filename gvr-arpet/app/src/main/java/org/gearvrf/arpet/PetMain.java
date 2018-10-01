@@ -166,7 +166,7 @@ public class PetMain extends GVRMain {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new ShareAnchorMode(mPetContext, mAnchoredObjects);
+            mCurrentMode = new ShareAnchorMode(mPetContext, mAnchoredObjects, mHandlerBackToHud);
             mCurrentMode.enter();
             mPet.stopBall();
         }

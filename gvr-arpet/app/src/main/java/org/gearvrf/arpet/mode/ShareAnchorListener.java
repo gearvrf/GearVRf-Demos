@@ -17,10 +17,11 @@
 
 package org.gearvrf.arpet.mode;
 
-public interface OnGuestOrHostListener {
+public interface ShareAnchorListener {
 
-        void OnHost();
+    void OnHost();
 
-        void OnGuest();
+    void OnGuest();
 
+    void OnBackShareAnchor();
 }

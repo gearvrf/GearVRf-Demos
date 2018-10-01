@@ -27,6 +27,23 @@
         android:layout_height="400dp"
         android:background="@drawable/bg_overlay">
 
+        <LinearLayout
+            android:id="@+id/button_back_sharing"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/bg_menu"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="20.5dp"
+                android:layout_height="20.5dp"
+                android:src="@drawable/icon_back_sharing" />
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/image_action"
             android:layout_width="match_parent"

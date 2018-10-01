@@ -71,16 +71,17 @@ public class ShareAnchorMode extends BasePetMode {
     private final List<AnchoredObject> mAnchoredObjects;
     private CloudAnchorManager mCloudAnchorManager;
     private IMessageService mMessageService;
+    private OnBackToHudModeListener mBackToHudModeListener;
 
-    public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects) {
+    public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects, OnBackToHudModeListener listener) {
         super(petContext, new ShareAnchorView(petContext));
         mConnectionManager = PetConnectionManager.getInstance();
         mConnectionManager.addEventHandler(new AppConnectionMessageHandler());
         mShareAnchorView = (ShareAnchorView) mModeScene;
-        mShareAnchorView.setListenerShareAnchorMode(new HandlerSendingInvitation());
+        mShareAnchorView.setListenerShareAnchorMode(new HandlerActionsShareAnchorMode());
         mAnchoredObjects = anchoredObjects;
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
-
+        mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
         mMessageService.addMessageReceiver(new MessageReceiver());
     }
@@ -100,7 +101,7 @@ public class ShareAnchorMode extends BasePetMode {
 
     }
 
-    public class HandlerSendingInvitation implements OnGuestOrHostListener {
+    public class HandlerActionsShareAnchorMode implements ShareAnchorListener {
 
         @Override
         public void OnHost() {
@@ -116,6 +117,11 @@ public class ShareAnchorMode extends BasePetMode {
             mShareAnchorView.modeGuest();
             mShareAnchorView.getProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
             mShareAnchorView.getProgressHandler().start();
+        }
+
+        @Override
+        public void OnBackShareAnchor() {
+            mBackToHudModeListener.OnBackToHud();
         }
     }
 

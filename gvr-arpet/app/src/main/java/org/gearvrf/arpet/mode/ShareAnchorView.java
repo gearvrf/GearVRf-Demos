@@ -25,6 +25,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,7 +45,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     private ProgressBar mProgressBar;
     private ImageView mCheckIcon, mPairing, mSpinner, mCheckBiggerIcon;
     private RelativeLayout mOverlayLayout;
-    OnGuestOrHostListener mGuestOrHostListener;
+    private LinearLayout mBackButtonShareAnchor;
+    ShareAnchorListener mShareAnchorListener;
     private ProgressHandler mProgressHandler;
 
     public ShareAnchorView(PetContext petContext) {
@@ -65,8 +67,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mainScene.getMainCameraRig().removeChildObject(this);
     }
 
-    public void setListenerShareAnchorMode(OnGuestOrHostListener listener) {
-        mGuestOrHostListener = listener;
+    public void setListenerShareAnchorMode(ShareAnchorListener listener) {
+        mShareAnchorListener = listener;
     }
 
     public ProgressHandler getProgressHandler() {
@@ -85,7 +87,9 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mSpinner = view.findViewById(R.id.spinner);
         mStatusMode = view.findViewById(R.id.status_sharing_anchor);
         mOverlayLayout = view.findViewById(R.id.overlay);
+        mBackButtonShareAnchor = view.findViewById(R.id.button_back_sharing);
         mProgressHandler = new ProgressHandler(mProgressBar);
+        mBackButtonShareAnchor.setOnClickListener(this);
         mGuestButton.setOnClickListener(this);
         mHostButton.setOnClickListener(this);
     }
@@ -99,9 +103,11 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.guest_button) {
-            mGuestOrHostListener.OnGuest();
+            mShareAnchorListener.OnGuest();
         } else if (view.getId() == R.id.host_button) {
-            mGuestOrHostListener.OnHost();
+            mShareAnchorListener.OnHost();
+        }else if(view.getId() == R.id.button_back_sharing){
+            mShareAnchorListener.OnBackShareAnchor();
         }
     }
 
