@@ -45,7 +45,7 @@ public final class SharingService {
     private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
     private List<SharingServiceMessageReceiver> mSharingServiceMessageReceivers = new ArrayList<>();
-    private SparseArray<CallbackInfo<Void>> mPendingCallbacks = new SparseArray<>();
+    private SparseArray<PendingResponseInfo<Void>> mPendingCallbacks = new SparseArray<>();
 
     private static class InstanceHolder {
         private static final SharingService INSTANCE = new SharingService();
@@ -79,20 +79,21 @@ public final class SharingService {
 
     private synchronized void sendRequest(RequestMessage request, SharingMessageCallback<Void> callback) {
 
-        CallbackInfo<Void> callbackInfo = new CallbackInfo<>(mConnectionManager.getTotalConnected(), callback);
+        PendingResponseInfo<Void> pendingResponseInfo = new PendingResponseInfo<>(
+                request.getId(), mConnectionManager.getTotalConnected(), callback);
 
         if (mConnectionManager.getTotalConnected() == 0) {
-            callbackFailure(callbackInfo, new IllegalStateException("No connection found"));
+            callbackFailure(pendingResponseInfo, new IllegalStateException("No connection found"));
             return;
         }
 
-        mPendingCallbacks.put(request.getId(), callbackInfo);
+        mPendingCallbacks.put(request.getId(), pendingResponseInfo);
 
         mConnectionManager.sendMessage(request, totalSent -> {
             logForMessage(request, "Request sent to " + totalSent + " remotes");
             if (totalSent == 0) {
                 mPendingCallbacks.remove(request.getId());
-                callbackFailure(callbackInfo, new RuntimeException("Failure sending request"));
+                callbackFailure(pendingResponseInfo, new RuntimeException("Failure sending request"));
             }
         });
     }
@@ -108,11 +109,11 @@ public final class SharingService {
         }
     }
 
-    private void callbackFailure(CallbackInfo callback, Exception e) {
+    private void callbackFailure(PendingResponseInfo callback, Exception e) {
         mContext.runOnPetThread(() -> callback.mCallback.onFailure(e));
     }
 
-    private void callbackSuccessVoid(CallbackInfo<Void> callback) {
+    private void callbackSuccessVoid(PendingResponseInfo<Void> callback) {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
@@ -140,11 +141,11 @@ public final class SharingService {
          * code to decrease the pending responses for requests associated with the lost connection.
          */
         for (int i = mPendingCallbacks.size() - 1; i >= 0; i--) {
-            CallbackInfo<Void> callbackInfo = mPendingCallbacks.valueAt(i);
-            callbackInfo.decreaseTotalPendingResponses();
-            if (!callbackInfo.hasPendingResponses()) {
-                callbackSuccessVoid(callbackInfo);
-                mPendingCallbacks.removeAt(i);
+            PendingResponseInfo<Void> pendingResponseInfo = mPendingCallbacks.valueAt(i);
+            pendingResponseInfo.incrementTotalFailure();
+            mPendingCallbacks.removeAt(i);
+            if (!pendingResponseInfo.hasPending()) {
+                callbackSuccessVoid(pendingResponseInfo);
             }
         }
     }
@@ -187,13 +188,17 @@ public final class SharingService {
             return;
         }
 
-        CallbackInfo<Void> callbackInfo = mPendingCallbacks.get(response.getRequestId());
+        PendingResponseInfo<Void> pendingResponseInfo = mPendingCallbacks.get(response.getRequestId());
 
-        if (callbackInfo != null) {
-            callbackInfo.decreaseTotalPendingResponses();
-            if (!callbackInfo.hasPendingResponses()) {
-                callbackSuccessVoid(callbackInfo);
-                mPendingCallbacks.remove(response.getRequestId());
+        if (pendingResponseInfo != null) {
+            mPendingCallbacks.remove(response.getRequestId());
+            pendingResponseInfo.updateTotalPending(response);
+            if (!pendingResponseInfo.hasPending()) {
+                if (pendingResponseInfo.mTotalFailure == pendingResponseInfo.mTotalExpected) {
+                    callbackFailure(pendingResponseInfo, new SharingException("All remotes returned with error"));
+                } else {
+                    callbackSuccessVoid(pendingResponseInfo);
+                }
             }
         }
     }
@@ -215,22 +220,36 @@ public final class SharingService {
                 message.getClass().getSimpleName(), message.getId(), text));
     }
 
-    private static class CallbackInfo<T> {
+    private static class PendingResponseInfo<T> {
 
-        int mTotalPendingResponses;
+        final int mTotalExpected, mRequestId;
+        int mTotalSuccess, mTotalFailure;
         SharingMessageCallback<T> mCallback;
 
-        CallbackInfo(int totalPendingResponses, SharingMessageCallback<T> mCallback) {
-            this.mTotalPendingResponses = totalPendingResponses;
+        PendingResponseInfo(int requestId, int totalExpected, SharingMessageCallback<T> mCallback) {
+            this.mRequestId = requestId;
+            this.mTotalExpected = totalExpected;
             this.mCallback = mCallback;
         }
 
-        synchronized void decreaseTotalPendingResponses() {
-            this.mTotalPendingResponses = Math.max(0, this.mTotalPendingResponses - 1);
+        boolean hasPending() {
+            return (mTotalSuccess + mTotalFailure) < mTotalExpected;
         }
 
-        synchronized boolean hasPendingResponses() {
-            return mTotalPendingResponses > 0;
+        void incrementTotalFailure() {
+            if (hasPending()) {
+                mTotalFailure++;
+            }
+        }
+
+        void updateTotalPending(ResponseMessage response) {
+            if (hasPending()) {
+                if (response.getError() == null) {
+                    mTotalSuccess++;
+                } else {
+                    mTotalFailure++;
+                }
+            }
         }
     }
 }
