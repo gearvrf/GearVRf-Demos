@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.service;
+package org.gearvrf.arpet.common;
 
 public class TaskException extends Throwable {
 

@@ -42,8 +42,8 @@ import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.MessageServiceException;
 import org.gearvrf.arpet.service.MessageServiceCallback;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.service.Task;
-import org.gearvrf.arpet.service.TaskException;
+import org.gearvrf.arpet.common.Task;
+import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.service.message.Command;
 import org.gearvrf.mixedreality.GVRAnchor;
 
