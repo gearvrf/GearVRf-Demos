@@ -26,14 +26,14 @@ android {
 dependencies {
     if(project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':widgetLib')) {
-            compile project (':widgetLib')
+            implementation project (':widgetLib')
         } else {
-            compile(name: 'widgetLib-debug', ext: 'aar')
+            implementation(name: 'widgetLib-debug', ext: 'aar')
         }
 
     } else {
-        compile "org.gearvrf:widgetlib:$gearvrfVersion"
+        implementation "org.gearvrf:widgetlib:$gearvrfVersion"
     }
 
-    compile 'com.android.support:support-v4:23.4.0'
+    implementation 'com.android.support:support-v4:23.4.0'
 }

@@ -11,10 +11,11 @@ import org.gearvrf.GVRMain;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.GVRSceneObject;
 import android.graphics.Color;
-import android.util.Log;
+
 
 
 public class AvatarMain extends GVRMain {
+
     private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh"};
     private static final String TAG = "AVATAR";
     private GVRContext mContext;
@@ -23,13 +24,15 @@ public class AvatarMain extends GVRMain {
     private GVRActivity mActivity;
     private GVRAndroidResource res;
 
+
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
     }
 
 
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext)
+    {
         mContext = gvrContext;
         mScene = gvrContext.getMainScene();
         GVRCameraRig rig = mScene.getMainCameraRig();
@@ -49,6 +52,7 @@ public class AvatarMain extends GVRMain {
                mScene.addSceneObject(root);
 
         } catch (IOException e) {
+
             e.printStackTrace();
             mActivity.finish();
             mActivity = null;
@@ -62,6 +66,7 @@ public class AvatarMain extends GVRMain {
 
 
     }
+
 
 
 }
