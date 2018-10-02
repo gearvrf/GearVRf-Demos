@@ -30,7 +30,7 @@
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <LinearLayout
             android:id="@+id/btn_fetchball"

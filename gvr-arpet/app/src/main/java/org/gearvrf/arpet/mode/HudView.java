@@ -101,6 +101,11 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                 playBallButton.post(new Runnable() {
                     @Override
                     public void run() {
+                        MenuHud.startAnimation(closeAnimation);
+                        MenuHud.setVisibility(View.INVISIBLE);
+                        closeButton.setVisibility(View.INVISIBLE);
+                        menuButton.setVisibility(View.VISIBLE);
+                        playBallButton.setBackgroundResource(R.drawable.bg_button_ball);
                         mListener.onBallClicked();
                     }
                 });
