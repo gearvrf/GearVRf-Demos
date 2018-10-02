@@ -23,7 +23,8 @@ import android.os.SystemClock;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
-import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.mixedreality.IMRCommon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class PetContext {
     private boolean mPaused;
     private long mResumeTime;
     private GVRContext mGvrContext;
-    private GVRMixedReality mMixedReality;
+    private IMRCommon mMixedReality;
     private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
 
     public PetContext(GVRActivity activity) {
@@ -65,7 +66,7 @@ public class PetContext {
     public void init(GVRContext context) {
         mGvrContext = context;
 
-        mMixedReality = new GVRMixedReality(context, true);
+        mMixedReality = new SharedMixedReality(this);
         mMixedReality.resume();
 
         // FIXME: Workaround to
@@ -81,7 +82,7 @@ public class PetContext {
         return mGvrContext;
     }
 
-    public GVRMixedReality getMixedReality() {
+    public IMRCommon getMixedReality() {
         return mMixedReality;
     }
 

@@ -28,7 +28,7 @@ import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.mixedreality.GVRHitResult;
-import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.physics.GVRRigidBody;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -46,7 +46,7 @@ public class BallThrowHandler {
     private static final float defaultScaleZ = 40f;
 
     private static final float MIN_Y_OFFSET = -100;
-    private final GVRMixedReality mMixedReality;
+    private final IMRCommon mMixedReality;
 
     private GVRContext mContext;
     private GVRScene mScene;

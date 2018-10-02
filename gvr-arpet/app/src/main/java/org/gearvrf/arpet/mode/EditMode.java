@@ -15,11 +15,8 @@
 
 package org.gearvrf.arpet.mode;
 
-import android.gesture.Gesture;
-import android.opengl.Matrix;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.TouchDelegate;
 import android.view.ViewConfiguration;
 
 import org.gearvrf.GVRCameraRig;
@@ -35,13 +32,13 @@ import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.mixedreality.GVRHitResult;
-import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.mixedreality.IMRCommon;
 import org.joml.Vector3f;
 
 public class EditMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
     private final CharacterView mCharacterView;
-    private final GVRMixedReality mMixedReality;
+    private final IMRCommon mMixedReality;
     private GestureDetector mRotationDetector;
     private GestureDetector mScaleDetector;
     private GVRCursorController mCursorController = null;

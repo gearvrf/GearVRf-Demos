@@ -35,8 +35,8 @@ import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.util.LoadModelHelper;
-import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
+import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.joml.Vector3f;
 
@@ -49,7 +49,7 @@ public class CharacterView extends AnchoredObject implements
 
     private final String TAG = getClass().getSimpleName();
 
-    private GVRMixedReality mMixedReality;
+    private IMRCommon mMixedReality;
     private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
 
     private GVRContext mContext;

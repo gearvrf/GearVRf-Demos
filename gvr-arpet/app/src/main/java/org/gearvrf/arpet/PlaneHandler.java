@@ -28,9 +28,9 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
+import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.greenrobot.eventbus.EventBus;
@@ -138,7 +138,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private LinkedList<GVRPlane> mPlanes = new LinkedList<>();
 
-    private GVRMixedReality mixedReality;
+    private IMRCommon mixedReality;
 
     // All objects that have physics attached to it will be children of this object
     private GVRSceneObject physicsRoot;

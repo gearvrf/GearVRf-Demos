@@ -23,7 +23,7 @@ import android.support.annotation.StringDef;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.GVRMixedReality;
+import org.gearvrf.mixedreality.IMRCommon;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -51,11 +51,11 @@ public abstract class AnchoredObject extends GVRSceneObject {
 
     private GVRAnchor mAnchor;
     private float[] mPoseMatrix;
-    private GVRMixedReality mMixedReality;
+    private IMRCommon mMixedReality;
     @ObjectType
     private String mObjectType;
 
-    public AnchoredObject(@NonNull GVRContext context, @NonNull GVRMixedReality mixedReality,
+    public AnchoredObject(@NonNull GVRContext context, @NonNull IMRCommon mixedReality,
                           float[] poseMatrix, @ObjectType String objectType) {
         super(context);
         this.mMixedReality = mixedReality;
@@ -81,7 +81,7 @@ public abstract class AnchoredObject extends GVRSceneObject {
         return mPoseMatrix;
     }
 
-    public GVRMixedReality getMixedReality() {
+    public IMRCommon getMixedReality() {
         return mMixedReality;
     }
 
