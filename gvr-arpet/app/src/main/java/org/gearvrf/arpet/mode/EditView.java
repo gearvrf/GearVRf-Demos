@@ -38,7 +38,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
         mEditModeObject = new GVRViewSceneObject(petContext.getGVRContext(),
                 R.layout.edit_mode_layout, this);
 
-        getTransform().setPosition(0.0f, 0.23f, -0.85f);
+        getTransform().setPosition(0.0f, 0.22f, -0.78f);
     }
 
     @Override

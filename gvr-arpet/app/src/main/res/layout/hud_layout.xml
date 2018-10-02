@@ -19,24 +19,23 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/hud"
-    android:layout_width="wrap_content"
-    android:layout_height="360dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_marginStart="500dp">
 
     <LinearLayout
         android:id="@+id/menuHud"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
-        android:visibility="invisible">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/btn_fetchball"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
@@ -50,8 +49,8 @@
 
         <LinearLayout
             android:id="@+id/btn_shareanchor"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
@@ -65,8 +64,8 @@
 
         <LinearLayout
             android:id="@+id/btn_edit"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
@@ -80,8 +79,8 @@
 
         <LinearLayout
             android:id="@+id/btn_camera"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
             android:background="@drawable/bg_functions_buttons"
             android:gravity="center"
             android:orientation="vertical">
@@ -94,15 +93,15 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="245dp"
+        android:layout_width="49dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="235dp"
         android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/btn_menu"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical">
@@ -115,8 +114,8 @@
 
         <LinearLayout
             android:id="@+id/btn_close"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="49dp"
+            android:layout_height="49dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical"

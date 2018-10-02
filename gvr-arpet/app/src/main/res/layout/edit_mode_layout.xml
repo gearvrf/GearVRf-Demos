@@ -17,8 +17,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/editMode"
-    android:layout_width="590dp"
-    android:layout_height="85dp">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/btn_back"
@@ -45,6 +45,10 @@
         android:background="#00000000"
         android:drawablePadding="10dp"
         android:fontFamily="@font/roboto_medium"
+        android:shadowColor="@color/black"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="5"
         android:text="@string/editing_mode"
         android:textColor="#fff"
         android:textSize="24sp" />
