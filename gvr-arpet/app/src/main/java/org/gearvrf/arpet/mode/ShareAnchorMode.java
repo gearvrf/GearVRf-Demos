@@ -363,7 +363,7 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
-            Log.d(TAG, "Sharing received: " + Arrays.toString(sharedScene.getSceneObjects()));
+            Log.d(TAG, "Sharing received: " + Arrays.toString(sharedScene.getCloudAnchors()));
             Task task = new SharedSceneLoader(sharedScene);
             // This method gets locked and will return after loader finish
             task.start();
@@ -417,7 +417,7 @@ public class ShareAnchorMode extends BasePetMode {
         public void execute() {
 
             Log.d(TAG, "Loading shared objects");
-            mCloudAnchorManager.resolveAnchors(mSharedScene.getSceneObjects(), new CloudAnchorManager.OnResolveCallback() {
+            mCloudAnchorManager.resolveAnchors(mSharedScene.getCloudAnchors(), new CloudAnchorManager.OnResolveCallback() {
                 @Override
                 public void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors) {
                     Log.i(TAG, "All anchors successfully resolved");

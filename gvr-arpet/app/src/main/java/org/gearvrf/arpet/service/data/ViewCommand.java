@@ -49,4 +49,11 @@ public class ViewCommand implements IMessageData {
     public String getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return "ViewCommand{" +
+                "type='" + type + '\'' +
+                '}';
+    }
 }

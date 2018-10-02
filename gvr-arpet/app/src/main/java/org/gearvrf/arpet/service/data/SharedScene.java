@@ -20,19 +20,38 @@ package org.gearvrf.arpet.service.data;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.service.IMessageData;
 
+import java.util.Arrays;
+
 /**
  * Holds pet and other objects anchors to be
  * resolved through Google Cloud Anchor API
  */
 public class SharedScene implements IMessageData {
 
-    private CloudAnchor[] sceneObjects;
+    private CloudAnchor[] cloudAnchors; // Objects to resolve through ARCore
+    private SharedObject[] sharedObjects; // Scene objects shared directly
 
-    public SharedScene(CloudAnchor[] sceneObjects) {
-        this.sceneObjects = sceneObjects;
+    public SharedScene(CloudAnchor[] cloudAnchors) {
+        this.cloudAnchors = cloudAnchors;
     }
 
-    public CloudAnchor[] getSceneObjects() {
-        return sceneObjects;
+    public CloudAnchor[] getCloudAnchors() {
+        return cloudAnchors;
+    }
+
+    public SharedObject[] getSharedObjects() {
+        return sharedObjects;
+    }
+
+    public void setSharedObjects(SharedObject[] sharedObjects) {
+        this.sharedObjects = sharedObjects;
+    }
+
+    @Override
+    public String toString() {
+        return "SharedScene{" +
+                "cloudAnchors=" + Arrays.toString(cloudAnchors) +
+                ", sharedObjects=" + Arrays.toString(sharedObjects) +
+                '}';
     }
 }

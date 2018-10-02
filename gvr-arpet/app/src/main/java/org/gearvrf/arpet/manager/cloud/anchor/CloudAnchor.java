@@ -41,4 +41,12 @@ public class CloudAnchor implements Serializable {
     public void setCloudAnchorId(String id) {
         mCloudAnchorId = id;
     }
+
+    @Override
+    public String toString() {
+        return "CloudAnchor{" +
+                "mCloudAnchorId='" + mCloudAnchorId + '\'' +
+                ", mObjectType='" + mObjectType + '\'' +
+                '}';
+    }
 }
