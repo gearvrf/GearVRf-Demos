@@ -10,8 +10,10 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.GVRSceneObject;
-import android.graphics.Color;
+import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
 
+import android.graphics.Color;
+import android.view.MotionEvent;
 
 
 public class AvatarMain extends GVRMain {
@@ -57,16 +59,27 @@ public class AvatarMain extends GVRMain {
             mActivity.finish();
             mActivity = null;
                    }
+
         gvrContext.getInputManager().selectController();
     }
-
+    private void loadAnimation() throws IOException {
+        mAvatar.start(0);
+    }
 
     @Override
     public void onStep() {
 
 
     }
+    public void onSingleTapUp(MotionEvent event) {
 
+        try {
+            loadAnimation();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+    }
 
 
 }
