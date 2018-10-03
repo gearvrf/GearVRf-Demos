@@ -1,6 +1,8 @@
 package org.gearvrf.avatardemo;
 
 import java.io.IOException;
+import java.io.InputStream;
+
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
@@ -8,6 +10,8 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRepeatMode;
@@ -31,11 +35,7 @@ public class AvatarMain extends GVRMain
             "animation/captured/Video6_BVH.bvh"
     };
     private final String mBoneMapPath = "animation/captured/bonemap.txt";
-    private String mBoneMap;
-
-    private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh"};
     private static final String TAG = "AVATAR";
-
     private GVRContext      mContext;
     private GVRScene        mScene;
     private GVRAvatar       mAvatar;
@@ -43,6 +43,7 @@ public class AvatarMain extends GVRMain
     private GVRSceneObject  mSkeletonGeometry;
     private int             mNumAnimsLoaded = 0;
     private int             mCurrentAnimIndex = -1;
+    private String          mBoneMap;
 
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
@@ -60,6 +61,7 @@ public class AvatarMain extends GVRMain
                     public void run()
                     {
                         mAvatar.centerModel(avatarRoot);
+                        avatarRoot.getTransform().setPositionX(5);
                         mScene.addSceneObject(avatarRoot);
                     }
                 });
@@ -88,15 +90,10 @@ public class AvatarMain extends GVRMain
             {
                 mSkeletonGeometry = new GVRSceneObject(mContext);
                 mSkeletonGeometry.setName("SkeletonGeometry");
-                mSkeletonGeometry.getTransform().setPosition(-5, 0, -10);
                 skel.createSkeletonGeometry(mSkeletonGeometry);
+                mAvatar.centerModel(mSkeletonGeometry);
+                mSkeletonGeometry.getTransform().setPositionX(-5);
                 mScene.addSceneObject(mSkeletonGeometry);
-            }
-            else
-            {
-                mSkeletonGeometry.detachComponent(GVRSkeleton.getComponentType());
-                mSkeletonGeometry.attachComponent(skel);
-                skel.createSkeletonGeometry(mSkeletonGeometry);
             }
             if (!mAvatar.isRunning())
             {
@@ -112,6 +109,12 @@ public class AvatarMain extends GVRMain
 
         public void onAnimationStarted(GVRAnimator animator)
         {
+            if (mSkeletonGeometry != null)
+            {
+                GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animator.getAnimation(0);
+                mSkeletonGeometry.detachComponent(GVRSkeleton.getComponentType());
+                mSkeletonGeometry.attachComponent(skelAnim.getSkeleton());
+            }
             loadNextAnimation(mAvatar, mBoneMap);
         }
 
