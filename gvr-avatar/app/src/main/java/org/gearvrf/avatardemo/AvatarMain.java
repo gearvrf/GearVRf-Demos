@@ -15,6 +15,8 @@ import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRepeatMode;
+import org.gearvrf.animation.GVRSkeleton;
+import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
 
 import android.graphics.Color;
 import android.util.Log;
@@ -41,6 +43,7 @@ public class AvatarMain extends GVRMain
     private GVRScene        mScene;
     private GVRAvatar       mAvatar;
     private GVRActivity     mActivity;
+    private GVRSceneObject  mSkeletonGeometry;
     private int             mNumAnimsLoaded = 0;
     private int             mCurrentAnimIndex = -1;
 
@@ -78,9 +81,26 @@ public class AvatarMain extends GVRMain
         @Override
         public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors)
         {
+            GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animation.getAnimation(0);
+            GVRSkeleton skel = skelAnim.getSkeleton();
+
             animation.setRepeatMode(GVRRepeatMode.ONCE);
             animation.setSpeed(1f);
             ++mNumAnimsLoaded;
+            if (mSkeletonGeometry == null)
+            {
+                mSkeletonGeometry = new GVRSceneObject(mContext);
+                mSkeletonGeometry.setName("SkeletonGeometry");
+                mSkeletonGeometry.getTransform().setPosition(-5, 0, -10);
+                skel.createSkeletonGeometry(mSkeletonGeometry);
+                mScene.addSceneObject(mSkeletonGeometry);
+            }
+            else
+            {
+                mSkeletonGeometry.detachComponent(GVRSkeleton.getComponentType());
+                mSkeletonGeometry.attachComponent(skel);
+                skel.createSkeletonGeometry(mSkeletonGeometry);
+            }
             if (!mAvatar.isRunning())
             {
                 mCurrentAnimIndex = -1;
