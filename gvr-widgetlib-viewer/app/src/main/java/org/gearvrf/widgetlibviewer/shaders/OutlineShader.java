@@ -24,26 +24,31 @@ public class OutlineShader extends GVRShader {
     public static final String COLOR_KEY = "u_color";
     public static final String THICKNESS_KEY = "u_thickness";
     private static final String VERTEX_SHADER =
-            "precision mediump float;\n"
-                    +            "layout(location = 0) in  vec3 a_position;\n"
+            "#extension GL_ARB_separate_shader_objects : enable \n" +
+                    "#extension GL_ARB_shading_language_420pack : enable \n" +
+                    "precision highp float;\n"
+                    + "layout(location = 0) in  vec3 a_position;\n"
                     + "layout(location = 1) in vec3 a_normal;\n"
                     + "@MATRIX_UNIFORMS\n"
-                    +  "@MATERIAL_UNIFORMS\n"
+                    + "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
                     + "  vec4 pos = vec4(a_position.xyz + a_normal * u_thickness, 1.0);\n"
                     + "  gl_Position = u_mvp * pos;\n"
                     + "}\n";
 
     private static final String FRAGMENT_SHADER =
-            "precision mediump float;\n"
-                    + "out vec4 outColor;\n"
-                    +  "@MATERIAL_UNIFORMS\n"
+            "#extension GL_ARB_separate_shader_objects : enable \n" +
+                    "#extension GL_ARB_shading_language_420pack : enable \n" +
+                    "precision highp float;\n"
+                    + "layout(location = 0)out vec4 outColor;\n"
+                    + "@MATERIAL_UNIFORMS\n"
                     + "void main() {\n"
-                    + "  outColor = u_color;\n"
+                    + "  outColor =u_color;\n"
                     + "}\n";
 
+
     public OutlineShader(GVRContext gvrcontext) {
-        super("float4 u_color; float u_thickness", "", "float3 a_position float3 a_normal", GLSLESVersion.VULKAN);
+        super("float4 u_color; float u_thickness", "", "float3 a_position  float3 a_normal", GLSLESVersion.VULKAN);
         setSegment("FragmentTemplate", FRAGMENT_SHADER);
         setSegment("VertexTemplate", VERTEX_SHADER);
     }
@@ -54,4 +59,3 @@ public class OutlineShader extends GVRShader {
         material.setFloat("u_thickness", 1);
     }
 }
-
