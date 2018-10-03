@@ -179,6 +179,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mCheckBiggerIcon.setVisibility(View.GONE);
         mMessage.setVisibility(View.GONE);
         mOverlayLayout.setBackground(null);
+        mBackButtonShareAnchor.setVisibility(View.GONE);
     }
 
     class ProgressHandler extends Handler {

@@ -15,6 +15,7 @@
 
 package org.gearvrf.arpet.mode;
 
+import android.graphics.Color;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -82,6 +83,8 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
             mSaveButton.post(new Runnable() {
                 @Override
                 public void run() {
+                    mSaveButton.setBackgroundResource(R.drawable.bg_save_button);
+                    mSaveButton.setTextColor(Color.parseColor("#ffffff"));
                     mListenerEditMode.OnSave();
                 }
             });
