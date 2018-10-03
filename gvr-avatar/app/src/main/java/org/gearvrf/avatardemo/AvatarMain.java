@@ -1,6 +1,10 @@
 package org.gearvrf.avatardemo;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
@@ -8,9 +12,15 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.animation.GVRRepeatMode;
+import org.gearvrf.animation.GVRSkeleton;
+import org.gearvrf.animation.keyframe.BVHImporter;
 import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
+import org.gearvrf.utility.Log;
 
 import android.graphics.Color;
 import android.view.MotionEvent;
@@ -25,11 +35,50 @@ public class AvatarMain extends GVRMain {
     private GVRAvatar mAvatar;
     private GVRActivity mActivity;
     private GVRAndroidResource res;
+    private GVRAnimator mAnimator;
+    GVRSceneObject root;
 
 
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
     }
+    private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents()
+    {
+        @Override
+        public void onModelLoaded(GVRSceneObject avatarRoot, String filePath, String errors) {
+
+        }
+
+        @Override
+        public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors)
+        {
+
+        }
+
+        @Override
+        public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors)
+        {
+            GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animation.getAnimation(0);
+           // root.attachComponent(skelAnim);
+            mAnimator = animation;
+            if (mAnimator == null)
+            {
+                mAnimator = new GVRAnimator(root.getGVRContext());
+                root.attachComponent(mAnimator);
+            }
+            mAnimator.setRepeatMode(GVRRepeatMode.REPEATED);
+            mAnimator.setRepeatCount(-1);
+            mAnimator.start();
+        }
+
+        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation)
+        {
+
+        }
+
+        public void onAnimationStarted(GVRAnimator animator) { }
+    };
+
 
 
     @Override
@@ -42,9 +91,9 @@ public class AvatarMain extends GVRMain {
         rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
         rig.getHeadTransformObject().attachComponent(new GVRDirectLight(mContext));
         mAvatar = new GVRAvatar(gvrContext, "BVHSkeleton");
-
+        mAvatar.getEventReceiver().addListener(mAvatarListener);
         try {
-               GVRSceneObject root = new GVRSceneObject(mContext);
+                root = new GVRSceneObject(mContext);
 
                res = new GVRAndroidResource(mContext, mAnimationPaths[0]);
 
@@ -63,7 +112,7 @@ public class AvatarMain extends GVRMain {
         gvrContext.getInputManager().selectController();
     }
     private void loadAnimation() throws IOException {
-        mAvatar.start(0);
+        mAvatar.loadAnimation(res, null);
     }
 
     @Override
