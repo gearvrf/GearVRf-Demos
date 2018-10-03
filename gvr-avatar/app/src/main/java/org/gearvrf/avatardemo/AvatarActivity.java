@@ -12,7 +12,7 @@ public class AvatarActivity extends GVRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMain = new AvatarMain(this);
-        setMain(mMain, "gvr.xml");
+        setMain(mMain);
         enableGestureDetector();
     }
 }

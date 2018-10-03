@@ -1,8 +1,6 @@
 package org.gearvrf.avatardemo;
 
 import java.io.IOException;
-import java.io.InputStream;
-
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
@@ -10,9 +8,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
-import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAvatar;
-import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRSkeleton;
@@ -37,6 +33,7 @@ public class AvatarMain extends GVRMain
     private final String mBoneMapPath = "animation/captured/bonemap.txt";
     private String mBoneMap;
 
+    private final String[] mAnimationPaths = {"YBot/Zombie_Stand_Up_mixamo.com.bvh"};
     private static final String TAG = "AVATAR";
 
     private GVRContext      mContext;
@@ -149,8 +146,7 @@ public class AvatarMain extends GVRMain
             e.printStackTrace();
             mActivity.finish();
             mActivity = null;
-            Log.e(TAG, "One or more assets could not be loaded.");
-        }
+                   }
         gvrContext.getInputManager().selectController();
     }
 
@@ -207,4 +203,7 @@ public class AvatarMain extends GVRMain
             return null;
         }
     }
+
+
+
 }
