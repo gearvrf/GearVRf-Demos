@@ -46,11 +46,11 @@ import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageException;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
-import org.gearvrf.arpet.service.data.SharedCamera;
-import org.gearvrf.arpet.service.data.SharedObject;
-import org.gearvrf.arpet.service.data.SharedPlane;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.share.SharedCamera;
+import org.gearvrf.arpet.service.share.SharedObject;
+import org.gearvrf.arpet.service.share.SharedPlane;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
@@ -398,9 +398,9 @@ public class ShareAnchorMode extends BasePetMode {
         @Override
         public void onReceiveUpdateSharedObject(SharedObject sharedObject) {
             if (sharedObject instanceof SharedCamera) {
-                SharedCamera sharedCamera = sharedObject.get();
+                SharedCamera sharedCamera = (SharedCamera) sharedObject;
             } else if (sharedObject instanceof SharedPlane) {
-                SharedPlane sharedPlane = sharedObject.get();
+                SharedPlane sharedPlane = (SharedPlane) sharedObject;
             }
         }
     }

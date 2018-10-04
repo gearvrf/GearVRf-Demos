@@ -17,7 +17,7 @@
 
 package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.service.data.SharedObject;
+import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
 

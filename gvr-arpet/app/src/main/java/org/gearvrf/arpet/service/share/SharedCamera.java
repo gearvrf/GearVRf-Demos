@@ -15,11 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet.service.data;
+package org.gearvrf.arpet.service.share;
 
 public class SharedCamera extends SharedObject {
 
     public SharedCamera(float[] modelMatrix) {
         super(modelMatrix);
+    }
+
+    @Override
+    public String toString() {
+        return "SharedCamera{} " + super.toString();
     }
 }

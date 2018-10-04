@@ -15,23 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet.service.data;
+package org.gearvrf.arpet.service.share;
 
-import org.gearvrf.arpet.service.IMessageData;
+public class SharedPlane extends SharedObject {
 
-public abstract class SharedObject implements IMessageData {
-
-    private float[] modelMatrix;
-
-    public SharedObject(float[] modelMatrix) {
-        this.modelMatrix = modelMatrix;
+    public SharedPlane(float[] modelMatrix) {
+        super(modelMatrix);
     }
 
-    public float[] getModelMatrix() {
-        return modelMatrix;
-    }
-
-    public <T extends SharedObject> T get() {
-        return (T) this;
+    @Override
+    public String toString() {
+        return "SharedPlane{} " + super.toString();
     }
 }

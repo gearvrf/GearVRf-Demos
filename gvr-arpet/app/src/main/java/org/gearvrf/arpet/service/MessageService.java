@@ -27,7 +27,7 @@ import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.service.data.SharedObject;
+import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
 

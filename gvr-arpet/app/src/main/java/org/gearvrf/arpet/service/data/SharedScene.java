@@ -19,6 +19,7 @@ package org.gearvrf.arpet.service.data;
 
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.service.IMessageData;
+import org.gearvrf.arpet.service.share.SharedObject;
 
 import java.util.Arrays;
 
