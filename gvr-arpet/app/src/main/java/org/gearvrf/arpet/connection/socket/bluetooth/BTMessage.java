@@ -34,7 +34,9 @@ public class BTMessage<Data extends Serializable> implements Message<Data> {
     }
 
     private static int incrementId() {
-        return ++sId;
+        synchronized (BTMessage.class) {
+            return ++sId;
+        }
     }
 
     @Override
