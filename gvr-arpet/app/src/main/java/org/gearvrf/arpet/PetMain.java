@@ -15,10 +15,10 @@
 
 package org.gearvrf.arpet;
 
+import android.os.Handler;
 import android.util.Log;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRMain;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
@@ -42,7 +42,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.util.ArrayList;
 
 
-public class PetMain extends GVRMain {
+public class PetMain extends DisableNativeSplashScreen {
     private static final String TAG = "GVR_ARPET";
 
     private GVRScene mScene;
@@ -61,6 +61,8 @@ public class PetMain extends GVRMain {
     private ArrayList<AnchoredObject> mAnchoredObjects;
     private GVRCursorController mCursorController = null;
 
+    private CurrentSplashScreen mCurrentSplashScreen;
+
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
         EventBus.getDefault().register(this);
@@ -71,6 +73,9 @@ public class PetMain extends GVRMain {
         super.onInit(gvrContext);
         mPetContext.init(gvrContext);
         mScene = gvrContext.getMainScene();
+
+        mCurrentSplashScreen = new CurrentSplashScreen(mPetContext);
+        splashScreenBehavior();
 
         GVRWorld world = new GVRWorld(gvrContext);
         world.setGravity(0f, -200f, 0f);
@@ -92,6 +97,11 @@ public class PetMain extends GVRMain {
         mAnchoredObjects.add((AnchoredObject) mPet.view());
 
         configTouchScreen();
+    }
+
+    private void splashScreenBehavior() {
+        mCurrentSplashScreen.onShow(mScene);
+        new Handler().postDelayed(() -> mCurrentSplashScreen.onHide(mScene), 3000);
     }
 
     private void configTouchScreen() {
