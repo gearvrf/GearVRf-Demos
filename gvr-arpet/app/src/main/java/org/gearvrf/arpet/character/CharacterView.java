@@ -88,10 +88,6 @@ public class CharacterView extends AnchoredObject implements
 
         addChildObject(m3DModel);
 
-        GVRMaterial material = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Color.ID);
-        material.setColor(1, 0, 0);
-
-
         final boolean showCollider = false;
         GVRSceneObject cube;
 
@@ -99,6 +95,8 @@ public class CharacterView extends AnchoredObject implements
         if (!showCollider) {
             cube = new GVRSceneObject(mContext);
         }  else {
+            GVRMaterial material = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Color.ID);
+            material.setColor(1, 0, 0);
             cube = new GVRCubeSceneObject(mContext, true, material);
             cube.getRenderData().setDrawMode(GLES30.GL_LINE_LOOP);
         }
