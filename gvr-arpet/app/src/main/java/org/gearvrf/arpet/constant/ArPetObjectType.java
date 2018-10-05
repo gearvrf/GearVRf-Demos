@@ -15,16 +15,22 @@
  *
  */
 
-package org.gearvrf.arpet.service.share;
+package org.gearvrf.arpet.constant;
 
-public class SharedPlane extends SharedObject {
+import android.support.annotation.StringDef;
 
-    public SharedPlane(float[] modelMatrix) {
-        super(modelMatrix);
-    }
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    @Override
-    public String toString() {
-        return "SharedPlane{} " + super.toString();
-    }
+@StringDef({
+        ArPetObjectType.PET, ArPetObjectType.BED, ArPetObjectType.BOWL,
+        ArPetObjectType.HYDRANT, ArPetObjectType.CAMERA, ArPetObjectType.PLANE})
+@Retention(RetentionPolicy.SOURCE)
+public @interface ArPetObjectType {
+    String PET = "PET";
+    String BED = "BED";
+    String BOWL = "BOWL";
+    String HYDRANT = "HYDRANT";
+    String CAMERA = "CAMERA";
+    String PLANE = "PLANE";
 }

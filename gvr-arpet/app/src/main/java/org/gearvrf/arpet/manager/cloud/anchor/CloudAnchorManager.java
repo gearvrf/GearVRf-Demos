@@ -25,7 +25,6 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ApiConstants;
 import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.ICloudAnchorListener;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -60,14 +59,16 @@ public class CloudAnchorManager {
     }
 
     public void hostAnchor(AnchoredObject object) {
+
         if (!isCloudAnchorApiKeySet()) {
             Log.e(TAG, "Cloud Anchor API key is not set!");
             return;
         }
 
-        CloudAnchor cloudAnchor = new CloudAnchor(object.getObjectType());
+        CloudAnchor cloudAnchor = CloudAnchor.getFor(object);
         mCloudAnchors.add(cloudAnchor);
         Log.d(TAG, "hosting anchor...");
+
         mPetContext.getMixedReality().hostAnchor(
                 object.getAnchor(),
                 (anchor) -> {
@@ -82,15 +83,6 @@ public class CloudAnchorManager {
                         onHostResult(ResponseType.FAILURE);
                     }
                 });
-    }
-
-    public void resolveAnchor(String anchorId, ICloudAnchorListener listener) {
-        if (!isCloudAnchorApiKeySet()) {
-            Log.e(TAG, "Cloud Anchor API key is not set!");
-            return;
-        }
-        Log.d(TAG, "resolving anchor ID...");
-        mPetContext.getMixedReality().resolveCloudAnchor(anchorId, listener);
     }
 
     public void clearAnchors() {
@@ -143,7 +135,7 @@ public class CloudAnchorManager {
     private OnResolveCallback mResolveCallback;
 
     /**
-     * Retrieve the given anchors from ARCore.
+     * Retrieve from cloud the anchors indicated by the given ids.
      *
      * @param anchors  Anchors to retrieve.
      * @param callback The success callback will be called if and only if all anchors are successfully resolved.

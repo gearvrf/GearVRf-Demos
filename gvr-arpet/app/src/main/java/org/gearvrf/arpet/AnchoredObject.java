@@ -18,15 +18,11 @@
 package org.gearvrf.arpet;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.StringDef;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.IMRCommon;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 /**
  * Class representing a {@link GVRSceneObject} with an {@link GVRAnchor} and its AR pose matrix
@@ -35,28 +31,11 @@ public abstract class AnchoredObject extends GVRSceneObject {
 
     final String TAG = getClass().getSimpleName();
 
-    @StringDef({ObjectType.NONE,
-            ObjectType.CHARACTER,
-            ObjectType.BED,
-            ObjectType.BOWL,
-            ObjectType.HYDRANT})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ObjectType {
-        String NONE = "NONE";
-        String CHARACTER = "CHARACTER";
-        String BED = "BED";
-        String BOWL = "BOWL";
-        String HYDRANT = "HYDRANT";
-    }
-
     private GVRAnchor mAnchor;
     private float[] mPoseMatrix;
     private IMRCommon mMixedReality;
-    @ObjectType
-    private String mObjectType;
 
-    public AnchoredObject(@NonNull GVRContext context, @NonNull IMRCommon mixedReality,
-                          float[] poseMatrix, @ObjectType String objectType) {
+    public AnchoredObject(@NonNull GVRContext context, @NonNull IMRCommon mixedReality, float[] poseMatrix) {
         super(context);
         this.mMixedReality = mixedReality;
         this.mPoseMatrix = poseMatrix;
@@ -64,7 +43,6 @@ public abstract class AnchoredObject extends GVRSceneObject {
             this.mAnchor = mixedReality.createAnchor(poseMatrix);
             this.mAnchor.attachSceneObject(this);
         }
-        this.mObjectType = objectType;
     }
 
     public boolean updatePose(float[] poseMatrix) {
@@ -93,8 +71,4 @@ public abstract class AnchoredObject extends GVRSceneObject {
         mAnchor.attachSceneObject(this);
     }
 
-    @ObjectType
-    public String getObjectType() {
-        return mObjectType;
-    }
 }

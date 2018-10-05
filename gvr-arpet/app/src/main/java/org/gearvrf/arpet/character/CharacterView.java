@@ -61,10 +61,8 @@ public class CharacterView extends AnchoredObject implements
 
     private GVRSceneObject m3DModel;
 
-    CharacterView(
-            @NonNull PetContext petContext) {
-
-        super(petContext.getGVRContext(), petContext.getMixedReality(), null, ObjectType.CHARACTER);
+    CharacterView(@NonNull PetContext petContext) {
+        super(petContext.getGVRContext(), petContext.getMixedReality(), null);
 
         mContext = petContext.getGVRContext();
         mMixedReality = petContext.getMixedReality();
@@ -102,7 +100,7 @@ public class CharacterView extends AnchoredObject implements
         }
 
         GVRBoxCollider collider = new GVRBoxCollider(mContext);
-        collider.setHalfExtents(0.5f, 0.5f , 0.5f);
+        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
         cube.attachCollider(collider);
 
         cube.getTransform().setPosition(0, 0.2f, 0);
@@ -195,7 +193,7 @@ public class CharacterView extends AnchoredObject implements
 
     /**
      * Sets the initial scale according to the distance between the pet and camera
-    */
+     */
     public void setInitialScale() {
         final float MIN_DISTANCE = 1.0f;
         Vector3f vectorDistance = new Vector3f();

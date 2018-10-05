@@ -17,18 +17,23 @@
 
 package org.gearvrf.arpet.service.share;
 
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.service.IMessageData;
 
 import java.util.Arrays;
 
-public abstract class SharedObject implements IMessageData {
+public class SharedObject implements IMessageData {
 
     private static int sId;
     private int id;
+
+    @ArPetObjectType
+    private String objectType;
     private float[] modelMatrix;
 
-    public SharedObject(float[] modelMatrix) {
+    public SharedObject(@ArPetObjectType String objectType, float[] modelMatrix) {
         this.id = incrementId();
+        this.objectType = objectType;
         this.modelMatrix = modelMatrix;
     }
 
@@ -44,6 +49,11 @@ public abstract class SharedObject implements IMessageData {
 
     public float[] getModelMatrix() {
         return modelMatrix;
+    }
+
+    @ArPetObjectType
+    public String getObjectType() {
+        return objectType;
     }
 
     @Override
@@ -63,6 +73,7 @@ public abstract class SharedObject implements IMessageData {
     public String toString() {
         return "SharedObject{" +
                 "id=" + id +
+                ", objectType='" + objectType + '\'' +
                 ", modelMatrix=" + Arrays.toString(modelMatrix) +
                 '}';
     }
