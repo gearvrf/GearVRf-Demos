@@ -148,6 +148,10 @@ public class EditMode extends BasePetMode {
         @Override
         public void onTouchStart(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
             Log.d(TAG, "onTouchStart " + sceneObject.getName());
+            if (mCharacterView.isDragging()) {
+                return;
+            }
+
             if (CharacterView.PET_COLLIDER.equals(sceneObject.getName()) && mDraggingOffset == null) {
                 mDraggingOffset = pickedObject.hitLocation;
                 mPetContext.runDelayedOnPetThread(this, ViewConfiguration.getLongPressTimeout());
