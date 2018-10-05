@@ -14,24 +14,24 @@ dependencies {
         if (findProject(':script')) {
 			implementation project (':script')
 		} else {
-			debugCompile(name: 'script-debug', ext: 'aar')
-			releaseCompile(name: 'script-release', ext: 'aar')
+			debugImplementation(name: 'script-debug', ext: 'aar')
+			releaseImplementation(name: 'script-release', ext: 'aar')
 		}
     } else {
-        compile "org.gearvrf:script:$gearvrfVersion"
+        implementation "org.gearvrf:script:$gearvrfVersion"
     }
 
     if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
         if (findProject(':x3d')) {
-            compile project(':x3d')
+            implementation project(':x3d')
         } else {
-            debugCompile(name: 'x3d-debug', ext: 'aar')
-            releaseCompile(name: 'x3d-release', ext: 'aar')
+            debugImplementation(name: 'x3d-debug', ext: 'aar')
+            releaseImplementation(name: 'x3d-release', ext: 'aar')
         }
     } else {
-        compile "org.gearvrf:x3d:$gearvrfVersion"
+        implementation "org.gearvrf:x3d:$gearvrfVersion"
     }
-    compile 'com.google.android.exoplayer:exoplayer:2.6.0'
+    implementation 'com.google.android.exoplayer:exoplayer:2.6.0'
 }
 
 android {
