@@ -17,10 +17,16 @@ package org.gearvrf.arcore.simplesample;
 
 import android.util.Log;
 
+import org.gearvrf.GVRBehavior;
+import org.gearvrf.GVRCollider;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -31,7 +37,9 @@ import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,20 +73,59 @@ public class SampleMain extends GVRMain {
         helper.initCursorController(gvrContext, mTouchHandler);
 
 
-        mixedReality = new GVRMixedReality(gvrContext, mainScene);
+        mixedReality = new GVRMixedReality(mainScene);
         mixedReality.registerPlaneListener(planeEventsListener);
         mixedReality.registerAnchorListener(anchorEventsListener);
         mixedReality.resume();
 
     }
 
+
+    private GVRSceneObject load3dModel(final GVRContext gvrContext) throws IOException
+    {
+        final GVRSceneObject sceneObject = gvrContext.getAssetLoader().loadModel("objects/andy.obj");
+        sceneObject.forAllComponents(new GVRSceneObject.ComponentVisitor()
+        {
+            @Override
+            public boolean visit(GVRComponent component)
+            {
+                component.getOwnerObject().attachComponent(new GVRMeshCollider(component.getGVRContext(), false));
+                return false;
+            }
+        }, GVRRenderData.getComponentType());
+        return sceneObject;
+    }
+
+    GVRSceneObject.SceneVisitor lightEstimator = new GVRSceneObject.SceneVisitor()
+    {
+        @Override
+        public boolean visit(GVRSceneObject obj)
+        {
+            GVRRenderData rdata = obj.getRenderData();
+            if (rdata != null)
+            {
+                GVRMaterial mtl = rdata.getMaterial();
+                float[] color = mtl.getDiffuseColor();
+                float lightEstimate = mixedReality.getLightEstimate().getPixelIntensity();
+
+                mtl.setDiffuseColor(
+                    color[0] * lightEstimate, color[1] * lightEstimate,
+                    color[2] * lightEstimate, color[3]);
+            }
+            return false;
+        }
+    };
+
     @Override
-    public void onStep() {
+    public void onStep()
+    {
         super.onStep();
-        for (GVRAnchor anchor: mVirtualObjects) {
-            for (GVRSceneObject obj: anchor.getChildren()) {
-                ((VirtualObject)obj).reactToLightEnvironment(
-                        mixedReality.getLightEstimate().getPixelIntensity());
+        for (GVRAnchor anchor: mVirtualObjects)
+        {
+            GVRSceneObject owner = anchor.getOwnerObject();
+            if (owner != null)
+            {
+                owner.forAllDescendants(lightEstimator);
             }
         }
     }
@@ -86,8 +133,10 @@ public class SampleMain extends GVRMain {
     private IPlaneEventsListener planeEventsListener = new IPlaneEventsListener() {
         @Override
         public void onPlaneDetection(GVRPlane gvrPlane) {
-            gvrPlane.setSceneObject(helper.createQuadPlane(getGVRContext()));
-            mainScene.addSceneObject(gvrPlane);
+            GVRSceneObject planeMesh = helper.createQuadPlane(getGVRContext());
+
+            planeMesh.attachComponent(gvrPlane);
+            mainScene.addSceneObject(planeMesh);
         }
 
         @Override
@@ -129,27 +178,31 @@ public class SampleMain extends GVRMain {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             super.onEnter(sceneObj, pickInfo);
 
-            if (sceneObj == mixedReality.getPassThroughObject() || mDraggingObject != null) {
+            if (sceneObj == mixedReality.getPassThroughObject() || mDraggingObject != null)
+            {
                 return;
             }
-
-            ((VirtualObject)sceneObj).onPickEnter();
+            Selector selector = (Selector) sceneObj.getComponent(Selector.getComponentType());
+            if (selector == null)
+            {
+                selector = new Selector(sceneObj.getGVRContext());
+                sceneObj.attachComponent(selector);
+            }
+            selector.onPickEnter();
         }
 
         @Override
         public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             super.onExit(sceneObj, pickInfo);
 
-            if (sceneObj == mixedReality.getPassThroughObject()) {
-                if (mDraggingObject != null) {
-                    ((VirtualObject) mDraggingObject).onPickExit();
-                    mDraggingObject = null;
+            if (sceneObj == mixedReality.getPassThroughObject())
+            {
+                Selector selector = (Selector) mDraggingObject.getComponent(Selector.getComponentType());
+                if (selector != null)
+                {
+                    selector.onPickExit();
                 }
-                return;
-            }
-
-            if (mDraggingObject == null) {
-                ((VirtualObject) sceneObj).onPickExit();
+                mDraggingObject = null;
             }
         }
 
@@ -171,25 +224,37 @@ public class SampleMain extends GVRMain {
                 mHitY = pickInfo.motionEvent.getY();
 
                 Log.d(TAG, "onStartDragging");
-                ((VirtualObject)sceneObj).onTouchStart();
+                Selector selector = (Selector) mDraggingObject.getComponent(Selector.getComponentType());
+                if (selector != null)
+                {
+                    selector.onTouchStart();
+                }
             }
         }
 
         @Override
         public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             super.onTouchEnd(sceneObj, pickInfo);
-
-
-            if (mDraggingObject != null) {
+            if (mDraggingObject != null)
+            {
                 Log.d(TAG, "onStopDragging");
+                Selector selector = (Selector) mDraggingObject.getComponent(Selector.getComponentType());
 
-                if (pickSceneObject(mDraggingObject) == null) {
-                    ((VirtualObject) mDraggingObject).onPickExit();
-                } else {
-                    ((VirtualObject)mDraggingObject).onTouchEnd();
+                if (selector != null)
+                {
+                    if(pickSceneObject(mDraggingObject) == null)
+                    {
+                        selector.onPickExit();
+                    }
+                    else
+                    {
+                        selector.onTouchEnd();
+                    }
+                    mDraggingObject = null;
                 }
-                mDraggingObject = null;
-            } else if (sceneObj == mixedReality.getPassThroughObject()) {
+            }
+            else if (sceneObj == mixedReality.getPassThroughObject())
+            {
                 onSingleTap(sceneObj, pickInfo);
             }
         }
@@ -225,13 +290,16 @@ public class SampleMain extends GVRMain {
 
 
             pickInfo = pickSceneObject(mixedReality.getPassThroughObject());
-            if (pickInfo != null) {
-                GVRHitResult gvrHitResult = mixedReality.hitTest(
-                        mixedReality.getPassThroughObject(), pickInfo);
-
-                if (gvrHitResult != null) {
-                    mixedReality.updateAnchorPose((GVRAnchor)mDraggingObject.getParent(),
-                            gvrHitResult.getPose());
+            if (pickInfo != null)
+            {
+                GVRHitResult gvrHitResult = mixedReality.hitTest(mixedReality.getPassThroughObject(), pickInfo);
+                if (gvrHitResult != null)
+                {
+                    GVRAnchor anchor = (GVRAnchor) mDraggingObject.getComponent(GVRAnchor.getComponentType());
+                    if (anchor != null)
+                    {
+                        mixedReality.updateAnchorPose(anchor, gvrHitResult.getPose());
+                    }
                 }
             }
         }
@@ -248,33 +316,73 @@ public class SampleMain extends GVRMain {
 
         private void onSingleTap(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
             GVRHitResult gvrHitResult = mixedReality.hitTest(sceneObj, collision);
-            VirtualObject andy = new VirtualObject(mGVRContext);
 
-            if (gvrHitResult == null) {
+            if (gvrHitResult == null)
+            {
                 return;
             }
+            try
+            {
+                GVRSceneObject andy = load3dModel(getGVRContext());
+                addVirtualObject(gvrHitResult.getPose(), andy);
+            }
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+                Log.e(TAG, ex.getMessage());
+            }
 
-            addVirtualObject(gvrHitResult.getPose(), andy);
         }
     }
 
-    private void addVirtualObject(float[] pose, VirtualObject andy) {
+    private void addVirtualObject(float[] pose, GVRSceneObject andy)
+    {
         GVRAnchor anchor;
 
-        if (mVirtObjCount < MAX_VIRTUAL_OBJECTS) {
-             anchor = mixedReality.createAnchor(pose, andy);
-
-            mainScene.addSceneObject(anchor);
+        if (mVirtObjCount < MAX_VIRTUAL_OBJECTS)
+        {
+            anchor = mixedReality.createAnchor(pose, andy);
             mVirtualObjects.add(anchor);
+            mainScene.addSceneObject(andy);
         }
-        else {
+        else
+        {
             anchor = mVirtualObjects.get(mVirtObjCount % mVirtualObjects.size());
             mixedReality.updateAnchorPose(anchor, pose);
         }
-
-        anchor.setName("id: " + mVirtObjCount);
-        Log.d(TAG, "New virtual object " + anchor.getName());
-
         mVirtObjCount++;
+    }
+
+    static class Selector extends GVRBehavior
+    {
+        private static long TYPE_SELECTIONHILITE = newComponentType(Selector.class);
+        private static final float[] UNPICKED_COLOR = {0.7f, 0.7f, 0.7f, 1.0f};
+        private static final float[] PICKED_COLOR = {1.0f, 0.0f, 0.0f, 1.0f};
+        private static final float[] CLICKED_COLOR = {0.5f, 0.5f, 1.0f, 1.0f};
+        private float[] current_color = UNPICKED_COLOR;
+
+        public Selector(GVRContext gvrContext)
+        {
+            super(gvrContext);
+        }
+
+        static public long getComponentType() { return TYPE_SELECTIONHILITE; }
+
+        public void onPickEnter()
+        {
+            current_color = PICKED_COLOR;
+        }
+
+        public void onPickExit() {
+            current_color = UNPICKED_COLOR;
+        }
+
+        public void onTouchStart() {
+            current_color = CLICKED_COLOR;
+        }
+
+        public void onTouchEnd() {
+            current_color = PICKED_COLOR;
+        }
     }
 }
