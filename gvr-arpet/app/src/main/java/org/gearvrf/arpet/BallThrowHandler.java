@@ -34,6 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class BallThrowHandler {
@@ -56,7 +57,6 @@ public class BallThrowHandler {
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
 
-    private float[] mForce = {0f, 0f, -40000f};
 
     private GVRSceneObject physicsRoot = null;
 
@@ -65,6 +65,10 @@ public class BallThrowHandler {
 
     private BallWrapper mBallWrapper;
 
+    private final float mDirTan;
+    private float mForce;
+    private final Vector3f mForceVector;
+
     private BallThrowHandler(PetContext petContext) {
         mContext = petContext.getGVRContext();
         mScene = petContext.getMainScene();
@@ -72,6 +76,10 @@ public class BallThrowHandler {
 
         createBall();
         initController();
+
+        mDirTan = (float)Math.tan(Math.PI / 4.0);
+        mForce = 1f;
+        mForceVector = new Vector3f(mDirTan, mDirTan, -1.0f);
 
         EventBus.getDefault().register(this);
     }
@@ -82,12 +90,6 @@ public class BallThrowHandler {
             sInstance = new BallThrowHandler(petContext);
         }
         return sInstance;
-    }
-
-    public void setForceVector(float x, float y, float z) {
-        mForce[0] = x;
-        mForce[1] = y;
-        mForce[2] = z;
     }
 
     public void enable() {
@@ -144,18 +146,19 @@ public class BallThrowHandler {
         final GVRTouchPadGestureListener gestureListener = new GVRTouchPadGestureListener() {
             @Override
             public boolean onDown(MotionEvent arg0) {
-
-                if (physicsRoot == null) {
-                    return true; // or false?
-                }
-
-                if (!mResetOnTouchEnabled) {
-                    return true;
-                }
-
-                if (thrown) {
+                if (physicsRoot != null && mResetOnTouchEnabled && thrown) {
                     reset();
-                } else {
+                }
+
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float vx, float vy) {
+                if (physicsRoot != null) {
+                    final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
+                    final float vz = vlen / mDirTan;
+
                     Matrix4f rootMatrix = physicsRoot.getTransform().getModelMatrix4f();
                     rootMatrix.invert();
 
@@ -170,7 +173,8 @@ public class BallThrowHandler {
                     // ... And set its model matrix to keep the same world matrix
                     mBall.getTransform().setModelMatrix(ballMatrix);
 
-                    Vector3f force = new Vector3f(mForce[0], mForce[1], mForce[2]);
+                    mForce = 50 * vlen / (float)(e2.getEventTime() - e1.getDownTime());
+                    mForceVector.set(mForce * -vx, mForce * vy, mForce * -vz);
 
                     // Force vector will be based on camera head rotation...
                     Matrix4f cameraMatrix = mScene.getMainCameraRig().getHeadTransform().getModelMatrix4f();
@@ -179,21 +183,18 @@ public class BallThrowHandler {
                     rootMatrix.mul(cameraMatrix, cameraMatrix);
                     Quaternionf q = new Quaternionf();
                     q.setFromNormalized(cameraMatrix);
-                    force.rotate(q);
+                    mForceVector.rotate(q);
 
                     mRigidBody.setEnable(true);
-                    mRigidBody.applyCentralForce(force.x(), force.y(), force.z());
+                    mRigidBody.applyCentralForce(mForceVector.x(), mForceVector.y(), mForceVector.z());
                     thrown = true;
 
                     EventBus.getDefault().post(mBallWrapper);
+
+                    return true;
                 }
 
-                return true;
-            }
-
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                return super.onSingleTapUp(e);
+                return false;
             }
         };
 
