@@ -15,6 +15,9 @@
 
 package org.gearvrf.renderableview;
 
+import android.graphics.Color;
+import android.widget.TextView;
+
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
@@ -37,7 +40,7 @@ public class Main extends GVRMain {
         GVRCubeSceneObject cube = new GVRCubeSceneObject(gvrContext);
 
         mLayoutLeftSceneObject = new GVRViewSceneObject(gvrContext,
-                mActivity.getFrameLayoutLeft(), cube.getRenderData().getMesh());
+                R.layout.activity_main, cube.getRenderData().getMesh());
 
         gvrContext.getMainScene().addSceneObject(mLayoutLeftSceneObject);
 
@@ -50,8 +53,11 @@ public class Main extends GVRMain {
 
         mWebSceneObject.getTransform().setPosition(1.0f, 0.0f, -2.5f);
 
-        mTextSceneObject = new GVRViewSceneObject(gvrContext,
-                mActivity.getTextView(), 2.0f, 1.0f);
+        TextView  textView = new TextView(gvrContext.getActivity());
+        textView.setText("Android's Renderable Views");
+        textView.setTextColor(Color.WHITE);
+
+        mTextSceneObject = new GVRViewSceneObject(gvrContext, textView, 2.0f, 1.0f);
         gvrContext.getMainScene().addSceneObject(mTextSceneObject);
         mTextSceneObject.getTransform().setPosition(0.0f, -2.0f, -2.5f);
     }
