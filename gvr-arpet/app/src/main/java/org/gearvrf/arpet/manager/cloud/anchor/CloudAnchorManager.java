@@ -181,7 +181,7 @@ public class CloudAnchorManager {
                                     "Success resolving anchor id %s for object of type %s",
                                     resolvedAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
                             Log.i(TAG, successString);
-                            mResolvedCloudAnchors.add(new ResolvedCloudAnchor(cloudAnchor, resolvedAnchor));
+                            mResolvedCloudAnchors.add(new ResolvedCloudAnchor(cloudAnchor.getObjectType(), resolvedAnchor));
                         } else {
                             mIsResolvingAnchors = false;
                             mResolvedCloudAnchors = null;

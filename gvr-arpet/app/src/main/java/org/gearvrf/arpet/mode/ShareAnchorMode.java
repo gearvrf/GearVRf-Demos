@@ -49,6 +49,7 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
@@ -70,6 +71,7 @@ public class ShareAnchorMode extends BasePetMode {
     private CloudAnchorManager mCloudAnchorManager;
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
+    private SharedMixedReality mSharedMixedReality;
 
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects, OnBackToHudModeListener listener) {
         super(petContext, new ShareAnchorView(petContext));
@@ -82,6 +84,7 @@ public class ShareAnchorMode extends BasePetMode {
         mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
         mMessageService.addMessageReceiver(new MessageReceiver());
+        mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
     }
 
     @Override
@@ -362,7 +365,7 @@ public class ShareAnchorMode extends BasePetMode {
         @Override
         public void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
             Log.d(TAG, "Sharing received: " + Arrays.toString(sharedScene.getCloudAnchors()));
-            Task task = new SharedSceneLoader(sharedScene);
+            SharedSceneLoader task = new SharedSceneLoader(sharedScene);
             // This method gets locked and will return after loader finish
             task.start();
             // Lock released, now checks thread result
@@ -371,6 +374,12 @@ public class ShareAnchorMode extends BasePetMode {
                 throw new MessageException(task.getError());
             } else {
                 showToast("All objects successfully loaded");
+//                // Start sharing using resolved pet pose as guest's world center
+//                ResolvedCloudAnchor cloudAnchor = task.getResolvedCloudAnchorByType(ArPetObjectType.PET);
+//                if (cloudAnchor != null) {
+//                    float[] petPose = cloudAnchor.getAnchor().getPose();
+//                    mSharedMixedReality.startSharing(petPose, SharedMixedReality.GUEST);
+//                }
             }
         }
 
@@ -397,6 +406,7 @@ public class ShareAnchorMode extends BasePetMode {
     private class SharedSceneLoader extends Task {
 
         SharedScene mSharedScene;
+        List<ResolvedCloudAnchor> mResolvedCloudAnchors;
 
         SharedSceneLoader(SharedScene sharedScene) {
             this.mSharedScene = sharedScene;
@@ -410,17 +420,18 @@ public class ShareAnchorMode extends BasePetMode {
                 @Override
                 public void onAllResolved(List<ResolvedCloudAnchor> resolvedCloudAnchors) {
                     Log.i(TAG, "All anchors successfully resolved");
+                    mResolvedCloudAnchors = new ArrayList<>(resolvedCloudAnchors);
                     for (ResolvedCloudAnchor resolvedCloudAnchor : resolvedCloudAnchors) {
                         try {
-                            loadModel(resolvedCloudAnchor.getCloudAnchor().getObjectType(), resolvedCloudAnchor.getAnchor());
+                            loadModel(resolvedCloudAnchor.getObjectType(), resolvedCloudAnchor.getAnchor());
                             String successString = String.format(Locale.getDefault(),
                                     "Success loading model for object of type %s",
-                                    resolvedCloudAnchor.getCloudAnchor().getObjectType());
+                                    resolvedCloudAnchor.getObjectType());
                             Log.i(TAG, successString);
                         } catch (Exception e) {
                             String errorString = String.format(Locale.getDefault(),
                                     "Error loading model for object of type %s",
-                                    resolvedCloudAnchor.getCloudAnchor().getObjectType());
+                                    resolvedCloudAnchor.getObjectType());
                             setError(new TaskException(errorString, e));
                             Log.e(TAG, errorString);
                             break;
@@ -437,6 +448,13 @@ public class ShareAnchorMode extends BasePetMode {
                     notifyExecuted();
                 }
             });
+        }
+
+        ResolvedCloudAnchor getResolvedCloudAnchorByType(@ArPetObjectType String type) {
+            return mResolvedCloudAnchors.stream()
+                    .filter(a -> a.getObjectType().equals(type))
+                    .findFirst()
+                    .orElse(null);
         }
     }
 }

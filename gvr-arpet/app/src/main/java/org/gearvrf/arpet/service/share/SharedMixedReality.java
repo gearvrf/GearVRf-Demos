@@ -2,6 +2,7 @@ package org.gearvrf.arpet.service.share;
 
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
+import android.support.annotation.IntDef;
 
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
@@ -22,6 +23,8 @@ import org.gearvrf.mixedreality.ICloudAnchorListener;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,11 @@ public class SharedMixedReality implements IMRCommon {
 
     private int mMode = OFF;
     private float[] mSpaceMatrix = new float[16];
+
+    @IntDef({OFF, HOST, GUEST})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Mode {
+    }
 
     public SharedMixedReality(PetContext petContext) {
         mMixedReality = new GVRMixedReality(petContext.getGVRContext(), true);
@@ -63,19 +71,21 @@ public class SharedMixedReality implements IMRCommon {
      *
      * @param mode {@link SharedMixedReality#HOST} or {@link SharedMixedReality#GUEST}
      */
-    public void startSharing(float[] originPose, int mode) {
-        if (mMode != OFF)
+    public void startSharing(float[] originPose, @Mode int mode) {
+
+        if (mMode != OFF) {
             return;
+        }
+
+        mMode = mode;
 
         if (mode == HOST) {
             Matrix.invertM(mSpaceMatrix, 0, originPose, 0);
+            mPetContext.runOnPetThread(mSharingLoop);
         } else {
             mSpaceMatrix = originPose;
             startGuest();
         }
-
-        mMode = mode;
-        mPetContext.runOnPetThread(mSharingLoop);
     }
 
     public void stopSharing() {
@@ -85,7 +95,7 @@ public class SharedMixedReality implements IMRCommon {
         mMode = OFF;
     }
 
-    private void startGuest() {
+    private synchronized void startGuest() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             shared.parent = shared.object.getParent();
             if (shared.parent != null) {
@@ -94,7 +104,7 @@ public class SharedMixedReality implements IMRCommon {
         }
     }
 
-    private void stopGuest() {
+    private synchronized void stopGuest() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.parent != null) {
                 shared.parent.addChildObject(shared.object);
@@ -102,17 +112,16 @@ public class SharedMixedReality implements IMRCommon {
         }
     }
 
-    public void registerSharedObject(GVRSceneObject object) {
+    public synchronized void registerSharedObject(GVRSceneObject object) {
         SharedSceneObject shared = new SharedSceneObject();
         shared.object = object;
         mSharedSceneObjects.add(shared);
     }
 
-    public void unregisterSharedObject(GVRSceneObject object) {
+    public synchronized void unregisterSharedObject(GVRSceneObject object) {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.object == object)
                 mSharedSceneObjects.remove(shared);
-
         }
     }
 
@@ -211,10 +220,9 @@ public class SharedMixedReality implements IMRCommon {
         return mMixedReality.getCameraPoseMatrix();
     }
 
-    private void sendSharedSceneObjects() {
+    private synchronized void sendSharedSceneObjects() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
-            onSendSharedObject(shared.object.getTransform().getModelMatrix(),
-                    shared.object.getTag());
+            onSendSharedObject(shared.object.getTransform().getModelMatrix(), shared.object.getTag());
         }
     }
 
@@ -224,18 +232,18 @@ public class SharedMixedReality implements IMRCommon {
         Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose, 0);
     }
 
-    private void onSharedObjectReceived(float[] pose, Object id) {
+    private synchronized void onSharedObjectReceived(float[] pose, Object id) {
         for (SharedSceneObject shared : mSharedSceneObjects) {
-            if (!shared.object.getTag().equals(id)) // FIXME: Use type
-                continue;
-            float[] result = new float[16];
-            Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose, 0);
-
-            shared.object.getTransform().setModelMatrix(result);
+            if (shared.object.getTag().equals(id)) {
+                float[] result = new float[16];
+                Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose, 0);
+                shared.object.getTransform().setModelMatrix(result);
+            }
         }
     }
 
-    Runnable mSharingLoop = new Runnable() {
+    private Runnable mSharingLoop = new Runnable() {
+
         final int LOOP_TIME = 1000;
 
         @Override
@@ -243,7 +251,6 @@ public class SharedMixedReality implements IMRCommon {
             if (mMode != OFF) {
                 // TOOD: Share plance, anchors and camera pose
                 sendSharedSceneObjects();
-
                 mPetContext.runDelayedOnPetThread(this, LOOP_TIME);
             }
         }
