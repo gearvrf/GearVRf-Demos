@@ -27,10 +27,11 @@ import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.share.SharedObject;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -60,23 +61,28 @@ public final class MessageService implements IMessageService {
 
     @Override
     public void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageCallback<Void> callback) {
-        sendRequest(new RequestMessage<>(sharedScene), callback);
+        sendRequest(createRequest(sharedScene), callback);
     }
 
     @Override
     public void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback) {
-        sendRequest(new RequestMessage<>(command), callback);
+        sendRequest(createRequest(command), callback);
     }
 
     @Override
     public void updateSharedObject(@NonNull SharedObject sharedObject, @NonNull MessageCallback<Void> callback) {
-        sendRequest(new RequestMessage<>(sharedObject), callback);
+        sendRequest(createRequest(sharedObject), callback);
     }
 
     @Override
     public void addMessageReceiver(MessageReceiver receiver) {
         mMessageReceivers.remove(receiver);
         mMessageReceivers.add(receiver);
+    }
+
+    private <Data extends IMessageData> RequestMessage<Data> createRequest(Data data) {
+        String actionName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        return new RequestMessage<>(actionName, data);
     }
 
     private synchronized void sendRequest(RequestMessage request, MessageCallback<Void> callback) {
@@ -100,12 +106,6 @@ public final class MessageService implements IMessageService {
         });
     }
 
-    private void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
-        for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveSharedScene(sharedScene);
-        }
-    }
-
     private void callbackFailure(PendingResponseInfo callback, Exception e) {
         mContext.runOnPetThread(() -> callback.mCallback.onFailure(e));
     }
@@ -114,7 +114,13 @@ public final class MessageService implements IMessageService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveViewCommand(ViewCommand command) throws MessageException {
+    private void onReceiveShareScene(SharedScene sharedScene) throws MessageException {
+        for (MessageReceiver receiver : mMessageReceivers) {
+            receiver.onReceiveSharedScene(sharedScene);
+        }
+    }
+
+    private void onReceiveSendViewCommand(ViewCommand command) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
             receiver.onReceiveViewCommand(command);
         }
@@ -161,37 +167,28 @@ public final class MessageService implements IMessageService {
         }
     }
 
+    private void callRequestedAction(RequestMessage request) throws MessageException {
+
+        String actionName = request.getActionName();
+        actionName = "onReceive" + Character.toUpperCase(actionName.charAt(0)) + actionName.substring(1);
+
+        try {
+            this.getClass().getMethod(actionName, request.getData().getClass()).invoke(this, request.getData());
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new MessageException(e);
+        }
+    }
+
     private void handleRequestMessage(RequestMessage request) {
 
-        if (request.getData() instanceof SharedScene) {
-
-            try {
-                onReceiveSharedScene((SharedScene) request.getData());
-                logForMessage(request, "Shared objects received and processed.");
-                sendDefaultResponseForRequest(request);
-            } catch (MessageException error) {
-                sendResponseError(request, error);
-            }
-
-        } else if (request.getData() instanceof ViewCommand) {
-
-            try {
-                onReceiveViewCommand((ViewCommand) request.getData());
-                logForMessage(request, "CommandType received and processed.");
-                sendDefaultResponseForRequest(request);
-            } catch (MessageException error) {
-                sendResponseError(request, error);
-            }
-
-        } else if (request.getData() instanceof SharedObject) {
-
-            try {
-                onReceiveUpdateSharedObject((SharedObject) request.getData());
-                logForMessage(request, "Shared object received and processed.");
-                sendDefaultResponseForRequest(request);
-            } catch (MessageException error) {
-                sendResponseError(request, error);
-            }
+        try {
+            callRequestedAction(request);
+            logForMessage(request, "Request processing succeeded: " + request);
+            sendDefaultResponseForRequest(request);
+        } catch (MessageException error) {
+            logForMessage(request, "Request processing failed: " +
+                    request + ". Error: " + error.getMessage());
+            sendResponseError(request, error);
         }
     }
 

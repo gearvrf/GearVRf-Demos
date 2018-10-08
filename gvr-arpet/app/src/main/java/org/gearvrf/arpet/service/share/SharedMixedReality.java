@@ -3,11 +3,13 @@ package org.gearvrf.arpet.service.share;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 
-import org.gearvrf.GVRContext;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.service.IMessageService;
+import org.gearvrf.arpet.service.MessageException;
+import org.gearvrf.arpet.service.MessageService;
+import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRAugmentedImage;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -21,11 +23,10 @@ import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SharedMixedReality implements IMRCommon {
+
     private static final int OFF = 0;
     public static final int HOST = 1;
     public static final int GUEST = 2;
@@ -33,6 +34,7 @@ public class SharedMixedReality implements IMRCommon {
     private final IMRCommon mMixedReality;
     private final PetContext mPetContext;
     private final List<SharedSceneObject> mSharedSceneObjects;
+    private final IMessageService mMessageService;
 
     private int mMode = OFF;
     private float[] mSpaceMatrix = new float[16];
@@ -41,7 +43,8 @@ public class SharedMixedReality implements IMRCommon {
         mMixedReality = new GVRMixedReality(petContext.getGVRContext(), true);
         mPetContext = petContext;
         mSharedSceneObjects = new ArrayList<>();
-
+        mMessageService = MessageService.getInstance();
+        mMessageService.addMessageReceiver(new LocalMessageReceiver());
         Matrix.setIdentityM(mSpaceMatrix, 0);
     }
 
@@ -83,7 +86,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     private void startGuest() {
-        for (SharedSceneObject shared: mSharedSceneObjects) {
+        for (SharedSceneObject shared : mSharedSceneObjects) {
             shared.parent = shared.object.getParent();
             if (shared.parent != null) {
                 shared.parent.removeChildObject(shared.object);
@@ -92,7 +95,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     private void stopGuest() {
-        for (SharedSceneObject shared: mSharedSceneObjects) {
+        for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.parent != null) {
                 shared.parent.addChildObject(shared.object);
             }
@@ -106,7 +109,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public void unregisterSharedObject(GVRSceneObject object) {
-        for (SharedSceneObject shared: mSharedSceneObjects) {
+        for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.object == object)
                 mSharedSceneObjects.remove(shared);
 
@@ -209,7 +212,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     private void sendSharedSceneObjects() {
-        for (SharedSceneObject shared: mSharedSceneObjects) {
+        for (SharedSceneObject shared : mSharedSceneObjects) {
             onSendSharedObject(shared.object.getTransform().getModelMatrix(),
                     shared.object.getTag());
         }
@@ -218,11 +221,11 @@ public class SharedMixedReality implements IMRCommon {
     private void onSendSharedObject(float[] pose, Object id) {
         // FIXME: use shared object matrix
         float[] result = new float[16];
-        Matrix.multiplyMM(result, 0, mSpaceMatrix,0, pose, 0);
+        Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose, 0);
     }
 
     private void onSharedObjectReceived(float[] pose, Object id) {
-        for (SharedSceneObject shared: mSharedSceneObjects) {
+        for (SharedSceneObject shared : mSharedSceneObjects) {
             if (!shared.object.getTag().equals(id)) // FIXME: Use type
                 continue;
             float[] result = new float[16];
@@ -234,6 +237,7 @@ public class SharedMixedReality implements IMRCommon {
 
     Runnable mSharingLoop = new Runnable() {
         final int LOOP_TIME = 1000;
+
         @Override
         public void run() {
             if (mMode != OFF) {
@@ -250,5 +254,12 @@ public class SharedMixedReality implements IMRCommon {
         GVRSceneObject object;
         // Parent of shared object.
         GVRSceneObject parent;
+    }
+
+    private class LocalMessageReceiver extends SimpleMessageReceiver {
+        @Override
+        public void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException {
+
+        }
     }
 }

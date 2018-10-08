@@ -21,7 +21,21 @@ import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
 public class RequestMessage<Data extends IMessageData> extends BTMessage<Data> {
 
-    public RequestMessage(Data data) {
+    private String mActionName;
+
+    public RequestMessage(String mActionName, Data data) {
         super(data);
+        this.mActionName = mActionName;
+    }
+
+    public String getActionName() {
+        return mActionName;
+    }
+
+    @Override
+    public String toString() {
+        return "RequestMessage{" +
+                "mActionName='" + mActionName + '\'' +
+                "} " + super.toString();
     }
 }

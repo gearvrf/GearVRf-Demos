@@ -56,7 +56,7 @@ public class BTMessage<Data extends Serializable> implements Message<Data> {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "{" +
+        return "BTMessage{" +
                 "id=" + getId() +
                 ", device=" + getDevice() +
                 ", data=" + getData() +
