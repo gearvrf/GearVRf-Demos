@@ -1,7 +1,7 @@
 package org.gearvrf.widgetlibviewer;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.widgetlib.content_scene.ContentSceneController;
+import org.gearvrf.widgetlib.content_scene.ScrollableContentScene;
 import org.gearvrf.widgetlib.main.MainScene;
 import org.gearvrf.widgetlib.main.WidgetLib;
 import org.gearvrf.widgetlib.widget.GroupWidget;
@@ -16,7 +16,7 @@ import static org.gearvrf.utility.Log.tag;
 import static org.gearvrf.widgetlib.widget.properties.JSONHelpers.optFloat;
 import static org.gearvrf.widgetlib.widget.properties.JSONHelpers.optJSONObject;
 
-public abstract class BaseContentScene implements ContentSceneController.ContentScene {
+public abstract class BaseContentScene extends ScrollableContentScene {
     public BaseContentScene(GVRContext gvrContext) {
         mGvrContext = gvrContext;
         JSONObject properties = WidgetLib.getPropertyManager().getInstanceProperties(getClass(), TAG);
@@ -63,8 +63,6 @@ public abstract class BaseContentScene implements ContentSceneController.Content
             setContentWidget(createContent());
             mFirstShow = false;
         }
-
-        mIsShowing = true;
         mMainWidget.addChild(mControlBar);
         mMainScene.addSceneObject(mMainWidget);
     }
@@ -73,11 +71,6 @@ public abstract class BaseContentScene implements ContentSceneController.Content
     public void hide() {
         mMainWidget.removeChild(mControlBar);
         mMainScene.removeSceneObject(mMainWidget);
-        mIsShowing = false;
-    }
-
-    protected boolean isShowing() {
-        return  mIsShowing;
     }
 
     @Override
@@ -91,7 +84,7 @@ public abstract class BaseContentScene implements ContentSceneController.Content
     }
 
     private static float CONTROL_BAR_PADDING = 1.5f;
-    private boolean mIsShowing = false;
+
     protected final GVRContext mGvrContext;
     private Widget mContent;
     private GroupWidget mMainWidget;
