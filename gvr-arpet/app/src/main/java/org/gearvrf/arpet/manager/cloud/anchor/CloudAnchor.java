@@ -36,6 +36,7 @@ public class CloudAnchor implements Serializable {
         return mCloudAnchorId;
     }
 
+    @ArPetObjectType
     public String getObjectType() {
         return mObjectType;
     }
@@ -46,9 +47,10 @@ public class CloudAnchor implements Serializable {
 
     public static CloudAnchor getFor(AnchoredObject object) {
         if (CharacterView.class.isInstance(object)) {
-            new CloudAnchor(ArPetObjectType.PET);
+            return new CloudAnchor(ArPetObjectType.PET);
         }
-        return null;
+        throw new RuntimeException("The given object is not mapped " +
+                "to one of constants in ArPetObjectType: " + object.getClass().getName());
     }
 
     @Override

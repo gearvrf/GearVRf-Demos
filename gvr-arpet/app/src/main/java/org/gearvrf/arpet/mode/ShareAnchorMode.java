@@ -30,8 +30,8 @@ import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
@@ -49,7 +49,6 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
-import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
@@ -185,7 +184,7 @@ public class ShareAnchorMode extends BasePetMode {
                         showToast("No connection found");
                         break;
                     case PetConnectionEventType.CONNECTION_ALL_LOST:
-                        showToast("No active connection");
+                        showToast("Connection lost");
                         break;
                     case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
                         showToast("Ready to accept connections");
@@ -195,7 +194,7 @@ public class ShareAnchorMode extends BasePetMode {
                         showToast("Bluetooth is disabled");
                         break;
                     case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
-                        showToast("Device is not visible to other devices");
+                        showToast("This device is not visible to other devices");
                         break;
                     default:
                         break;
@@ -392,11 +391,6 @@ public class ShareAnchorMode extends BasePetMode {
                     Log.d(TAG, "Unknown view command: " + command.getType());
                     break;
             }
-        }
-
-        @Override
-        public void onReceiveUpdateSharedObject(SharedObject sharedObject) {
-            Log.d(TAG, "Received object updated: " + sharedObject);
         }
     }
 

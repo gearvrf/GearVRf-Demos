@@ -67,12 +67,12 @@ public class CloudAnchorManager {
 
         CloudAnchor cloudAnchor = CloudAnchor.getFor(object);
         mCloudAnchors.add(cloudAnchor);
-        Log.d(TAG, "hosting anchor...");
+        Log.d(TAG, "hosting anchor for " + cloudAnchor.getObjectType());
 
         mPetContext.getMixedReality().hostAnchor(
                 object.getAnchor(),
-                (anchor) -> {
-                    String id = anchor.getCloudAnchorId();
+                (hostedAnchor) -> {
+                    String id = hostedAnchor.getCloudAnchorId();
                     if (!id.isEmpty()) {
                         Log.d(TAG, "Success hosting anchor for object of type " + cloudAnchor.getObjectType());
                         cloudAnchor.setCloudAnchorId(id);
