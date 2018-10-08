@@ -24,4 +24,8 @@ public interface ShareAnchorListener {
     void OnGuest();
 
     void OnBackShareAnchor();
+
+    void OnCancel();
+
+    void OnTry();
 }

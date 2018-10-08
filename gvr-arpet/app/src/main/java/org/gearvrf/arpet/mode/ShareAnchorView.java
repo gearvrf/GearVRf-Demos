@@ -19,6 +19,7 @@ package org.gearvrf.arpet.mode;
 
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.IntDef;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
@@ -40,7 +41,7 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class ShareAnchorView extends BasePetView implements IViewEvents, View.OnClickListener {
     private GVRSceneObject mShareAnchorObject;
-    private Button mGuestButton, mHostButton, mStatusMode;
+    private Button mGuestButton, mHostButton, mStatusMode, mCancelButton, mTryButton;
     private TextView mMessage;
     private ProgressBar mProgressBar;
     private ImageView mCheckIcon, mPairing, mSpinner, mCheckBiggerIcon;
@@ -48,6 +49,14 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     private LinearLayout mBackButtonShareAnchor;
     ShareAnchorListener mShareAnchorListener;
     private ProgressHandler mProgressHandler;
+    private @UserType
+    int userType;
+
+    @IntDef({UserType.GUEST, UserType.HOST})
+    public @interface UserType {
+        int GUEST = 0;
+        int HOST = 1;
+    }
 
     public ShareAnchorView(PetContext petContext) {
         super(petContext);
@@ -71,6 +80,10 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mShareAnchorListener = listener;
     }
 
+    public int getUserType() {
+        return userType;
+    }
+
     public ProgressHandler getProgressHandler() {
         return mProgressHandler;
     }
@@ -88,10 +101,14 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mStatusMode = view.findViewById(R.id.status_sharing_anchor);
         mOverlayLayout = view.findViewById(R.id.overlay);
         mBackButtonShareAnchor = view.findViewById(R.id.button_back_sharing);
+        mCancelButton = view.findViewById(R.id.cancel_button);
+        mTryButton = view.findViewById(R.id.try_button);
         mProgressHandler = new ProgressHandler(mProgressBar);
         mBackButtonShareAnchor.setOnClickListener(this);
         mGuestButton.setOnClickListener(this);
         mHostButton.setOnClickListener(this);
+        mCancelButton.setOnClickListener(this);
+        mTryButton.setOnClickListener(this);
     }
 
     @Override
@@ -103,11 +120,17 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.guest_button) {
+            userType = UserType.GUEST;
             mShareAnchorListener.OnGuest();
         } else if (view.getId() == R.id.host_button) {
+            userType = UserType.HOST;
             mShareAnchorListener.OnHost();
-        }else if(view.getId() == R.id.button_back_sharing){
+        } else if (view.getId() == R.id.button_back_sharing) {
             mShareAnchorListener.OnBackShareAnchor();
+        } else if (view.getId() == R.id.cancel_button) {
+            mShareAnchorListener.OnCancel();
+        } else if (view.getId() == R.id.try_button) {
+            mShareAnchorListener.OnTry();
         }
     }
 
@@ -116,6 +139,9 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
+        mPairing.setImageResource(R.drawable.icon_waiting_gest);
+        mCancelButton.setVisibility(View.GONE);
+        mTryButton.setVisibility(View.GONE);
     }
 
     public void modeHost() {
@@ -123,6 +149,9 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
+        mPairing.setImageResource(R.drawable.icon_waiting_gest);
+        mCancelButton.setVisibility(View.GONE);
+        mTryButton.setVisibility(View.GONE);
     }
 
     public void inviteAcceptedGuest() {
@@ -140,6 +169,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mHostButton.setVisibility(View.GONE);
         mCheckIcon.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+        mPairing.setImageResource(R.drawable.icon_connect);
     }
 
     public void invitationView() {
@@ -147,10 +177,12 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mProgressBar.setVisibility(View.GONE);
         mGuestButton.setVisibility(View.VISIBLE);
         mHostButton.setVisibility(View.VISIBLE);
+        mCancelButton.setVisibility(View.GONE);
+        mTryButton.setVisibility(View.GONE);
     }
 
     public void pairingView() {
-        mPairing.setImageResource(R.drawable.ic_pairing);
+        mPairing.setImageResource(R.drawable.icon_to_pair);
         mMessage.setText(R.string.looking_the_same_thing);
         mSpinner.setVisibility(View.VISIBLE);
         mCheckIcon.setVisibility(View.GONE);
@@ -180,6 +212,16 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mMessage.setVisibility(View.GONE);
         mOverlayLayout.setBackground(null);
         mBackButtonShareAnchor.setVisibility(View.GONE);
+    }
+
+    public void notFound(String type) {
+        mPairing.setImageResource(R.drawable.icon_error_start_sharing);
+        mMessage.setText(getGVRContext().getContext().getResources().getString(R.string.not_found, type));
+        mGuestButton.setVisibility(View.GONE);
+        mHostButton.setVisibility(View.GONE);
+        mCancelButton.setVisibility(View.VISIBLE);
+        mTryButton.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.GONE);
     }
 
     class ProgressHandler extends Handler {
@@ -212,7 +254,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
             removeMessages(0);
         }
 
-        void setDuration (int duration) {
+        void setDuration(int duration) {
             this.duration = duration;
         }
     }

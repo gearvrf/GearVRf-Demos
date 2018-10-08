@@ -57,6 +57,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import static org.gearvrf.arpet.mode.ShareAnchorView.UserType.GUEST;
+
 public class ShareAnchorMode extends BasePetMode {
     private final String TAG = getClass().getSimpleName();
 
@@ -124,6 +126,20 @@ public class ShareAnchorMode extends BasePetMode {
         public void OnBackShareAnchor() {
             mBackToHudModeListener.OnBackToHud();
         }
+
+        @Override
+        public void OnCancel() {
+            mBackToHudModeListener.OnBackToHud();
+        }
+
+        @Override
+        public void OnTry() {
+            if (mShareAnchorView.getUserType() == GUEST) {
+                OnGuest();
+            } else {
+                OnHost();
+            }
+        }
     }
 
     private void clearSceneObjects() {
@@ -169,6 +185,22 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
+    private void notFound() {
+        final String[] type = {""};
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mShareAnchorView.getUserType() == GUEST) {
+                    type[0] = "Host";
+                    mShareAnchorView.notFound(type[0]);
+                } else {
+                    type[0] = "Guest";
+                    mShareAnchorView.notFound(type[0]);
+                }
+            }
+        });
+    }
+
     @SuppressLint("HandlerLeak")
     private class AppConnectionMessageHandler implements PetConnectionEventHandler {
 
@@ -183,8 +215,7 @@ public class ShareAnchorMode extends BasePetMode {
                         handleConnectionEstablished();
                         break;
                     case PetConnectionEventType.CONNECTION_NOT_FOUND:
-                        showInviteMain();
-                        showToast("No connection found");
+                        notFound();
                         break;
                     case PetConnectionEventType.CONNECTION_ALL_LOST:
                         showToast("Connection lost");

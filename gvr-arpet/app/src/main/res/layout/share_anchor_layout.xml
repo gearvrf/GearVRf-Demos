@@ -44,15 +44,19 @@
                 android:src="@drawable/icon_back_sharing" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/image_action"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginEnd="60dp"
-            android:layout_marginStart="65dp"
-            android:layout_marginTop="55dp"
-            android:src="@drawable/ic_invitation" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="73.3dp"
+            android:layout_marginTop="45dp">
+
+            <ImageView
+                android:id="@+id/image_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/icon_start_sharing" />
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -114,9 +118,20 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/host_button"
+                    android:layout_width="144dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_guest_host_button"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/host"
+                    android:textColor="#ffffff"
+                    android:textSize="14sp" />
+
+                <Button
                     android:id="@+id/guest_button"
                     android:layout_width="144dp"
                     android:layout_height="48dp"
+                    android:layout_marginStart="17dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
                     android:text="@string/guest"
@@ -124,16 +139,27 @@
                     android:textSize="14sp" />
 
                 <Button
-                    android:id="@+id/host_button"
+                    android:id="@+id/cancel_button"
+                    android:layout_width="144dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_guest_host_button"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/cancel"
+                    android:textColor="#ffffff"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/try_button"
                     android:layout_width="144dp"
                     android:layout_height="48dp"
                     android:layout_marginStart="17dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/host"
+                    android:text="@string/try_message"
                     android:textColor="#ffffff"
-                    android:textSize="14sp" />
-
+                    android:textSize="14sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <ProgressBar
