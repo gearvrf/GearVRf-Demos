@@ -23,6 +23,7 @@ import android.os.SystemClock;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.IMRCommon;
 
@@ -65,7 +66,7 @@ public class PetContext {
 
     public void init(GVRContext context) {
         mGvrContext = context;
-
+        PetConnectionManager.getInstance().init(this);
         mMixedReality = new SharedMixedReality(this);
         mMixedReality.resume();
 

@@ -21,8 +21,6 @@ import android.util.Log;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
-import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
@@ -54,8 +52,6 @@ public class PetMain extends DisableNativeSplashScreen {
     private HandlerModeChange mHandlerModeChange;
     private HandlerBackToHud mHandlerBackToHud;
 
-    private IPetConnectionManager mConnectionManager;
-
     private CharacterController mPet = null;
 
     private ArrayList<AnchoredObject> mAnchoredObjects;
@@ -80,9 +76,6 @@ public class PetMain extends DisableNativeSplashScreen {
         GVRWorld world = new GVRWorld(gvrContext);
         world.setGravity(0f, -200f, 0f);
         mScene.getRoot().attachComponent(world);
-
-        mConnectionManager = PetConnectionManager.getInstance();
-        mConnectionManager.init(mPetContext);
 
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
