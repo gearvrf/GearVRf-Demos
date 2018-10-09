@@ -17,6 +17,8 @@
 
 package org.gearvrf.arpet.character;
 
+import android.util.SparseArray;
+
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRTransform;
@@ -29,25 +31,23 @@ import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class CharacterController extends BasePetMode {
+
     private IPetAction mCurrentAction; // default action IDLE
-    private final Map<Integer, IPetAction> mPetActions;
+    private final SparseArray<IPetAction> mPetActions;
     private GVRDrawFrameListener mDrawFrameHandler;
     private BallThrowHandler mBallThrowHandler;
 
     public CharacterController(PetContext petContext) {
         super(petContext, new CharacterView(petContext));
 
-        mPetActions = new HashMap<>();
+        mPetActions = new SparseArray<>();
         mCurrentAction = null;
         mDrawFrameHandler = null;
 
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
-        // Put at same thread that is loading the pet 3dmodel.
+        // Put at same thread that is loading the pet 3d model.
         mPetContext.runOnPetThread(new Runnable() {
             @Override
             public void run() {
@@ -134,8 +134,7 @@ public class CharacterController extends BasePetMode {
     }
 
     public CharacterView getView() {
-        CharacterView view = (CharacterView) view();
-        return view;
+        return (CharacterView) view();
     }
 
     public void addAction(IPetAction action) {
@@ -167,6 +166,7 @@ public class CharacterController extends BasePetMode {
 
     private class DrawFrameHandler implements GVRDrawFrameListener {
         IPetAction activeAction = null;
+
         @Override
         public void onDrawFrame(float frameTime) {
             if (mCurrentAction != activeAction) {
