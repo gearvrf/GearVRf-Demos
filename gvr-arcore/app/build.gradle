@@ -9,6 +9,15 @@ else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
     apply from: '../../../../GearVRf-Demos/common.gradle'
 }
 
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
 android {
     buildTypes {
         release {
@@ -29,8 +38,12 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.2'
 
     if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
-        debugImplementation(name: 'MixedReality-debug', ext: 'aar')
-        releaseImplementation(name: 'MixedReality-release', ext: 'aar')
+        if (findProject(':MixedReality')) {
+            implementation project(':MixedReality')
+        } else {
+            debugImplementation(name: 'MixedReality-debug', ext: 'aar')
+            releaseImplementation(name: 'MixedReality-release', ext: 'aar')
+        }
     } else {
         implementation "org.gearvrf:MixedReality:$gearvrfVersion"
     }
