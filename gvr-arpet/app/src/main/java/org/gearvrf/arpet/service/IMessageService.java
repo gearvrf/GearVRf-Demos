@@ -19,9 +19,9 @@ package org.gearvrf.arpet.service;
 
 import android.support.annotation.NonNull;
 
-import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public interface IMessageService {
 
@@ -29,7 +29,7 @@ public interface IMessageService {
 
     void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback);
 
-    void updateSharedObject(@NonNull SharedObject sharedObject, @NonNull MessageCallback<Void> callback);
+    void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback);
 
     void addMessageReceiver(MessageReceiver receiver);
 }

@@ -29,8 +29,9 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
-import org.gearvrf.arpet.service.share.SharedObject;
+import org.gearvrf.arpet.service.share.SharedObjectPose;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +71,8 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
-    public void updateSharedObject(@NonNull SharedObject sharedObject, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(sharedObject), callback);
+    public void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback) {
+        sendRequest(createRequest(poses), callback);
     }
 
     @Override
@@ -80,7 +81,7 @@ public final class MessageService implements IMessageService {
         mMessageReceivers.add(receiver);
     }
 
-    private <Data extends IMessageData> RequestMessage<Data> createRequest(Data data) {
+    private <Data extends Serializable> RequestMessage<Data> createRequest(Data data) {
         String actionName = Thread.currentThread().getStackTrace()[3].getMethodName();
         return new RequestMessage<>(actionName, data);
     }
@@ -126,9 +127,9 @@ public final class MessageService implements IMessageService {
         }
     }
 
-    private void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException {
+    private void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveUpdateSharedObject(sharedObject);
+            receiver.onReceiveUpdatePoses(poses);
         }
     }
 

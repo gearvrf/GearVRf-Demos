@@ -19,7 +19,9 @@ package org.gearvrf.arpet.service;
 
 import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
 
-public class RequestMessage<Data extends IMessageData> extends BTMessage<Data> {
+import java.io.Serializable;
+
+public class RequestMessage<Data extends Serializable> extends BTMessage<Data> {
 
     private String mActionName;
 

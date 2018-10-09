@@ -17,9 +17,9 @@
 
 package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public class SimpleMessageReceiver implements MessageReceiver {
 
@@ -32,6 +32,6 @@ public class SimpleMessageReceiver implements MessageReceiver {
     }
 
     @Override
-    public void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException {
+    public void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
     }
 }

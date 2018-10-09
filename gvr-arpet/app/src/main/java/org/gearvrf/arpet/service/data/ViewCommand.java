@@ -19,12 +19,11 @@ package org.gearvrf.arpet.service.data;
 
 import android.support.annotation.StringDef;
 
-import org.gearvrf.arpet.service.IMessageData;
-
+import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class ViewCommand implements IMessageData {
+public class ViewCommand implements Serializable {
 
     public static final String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
     public static final String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";

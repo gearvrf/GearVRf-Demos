@@ -17,9 +17,9 @@
 
 package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.service.share.SharedObject;
 import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public interface MessageReceiver {
     /**
@@ -39,8 +39,8 @@ public interface MessageReceiver {
     void onReceiveViewCommand(ViewCommand command) throws MessageException;
 
     /**
-     * @param sharedObject Object to update
+     * @param poses Objects to update
      * @throws MessageException If an exception occurs
      */
-    void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException;
+    void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException;
 }

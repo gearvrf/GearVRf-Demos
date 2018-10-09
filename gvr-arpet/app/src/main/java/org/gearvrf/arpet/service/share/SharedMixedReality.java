@@ -3,11 +3,14 @@ package org.gearvrf.arpet.service.share;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.service.IMessageService;
+import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageException;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
@@ -33,12 +36,14 @@ public class SharedMixedReality implements IMRCommon {
     private static final int OFF = 0;
     public static final int HOST = 1;
     public static final int GUEST = 2;
+    private static final String TAG = SharedMixedReality.class.getSimpleName();
 
     private final IMRCommon mMixedReality;
     private final PetContext mPetContext;
     private final List<SharedSceneObject> mSharedSceneObjects;
     private final IMessageService mMessageService;
 
+    @Mode
     private int mMode = OFF;
     private float[] mSpaceMatrix = new float[16];
 
@@ -100,6 +105,7 @@ public class SharedMixedReality implements IMRCommon {
             shared.parent = shared.object.getParent();
             if (shared.parent != null) {
                 shared.parent.removeChildObject(shared.object);
+                shared.parent.getGVRContext().getMainScene().addSceneObject(shared.object);
             }
         }
     }
@@ -107,13 +113,15 @@ public class SharedMixedReality implements IMRCommon {
     private synchronized void stopGuest() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.parent != null) {
+                shared.parent.getGVRContext().getMainScene().removeSceneObject(shared.object);
                 shared.parent.addChildObject(shared.object);
             }
         }
     }
 
-    public synchronized void registerSharedObject(GVRSceneObject object) {
-        SharedSceneObject shared = new SharedSceneObject();
+    public synchronized void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
+        SharedSceneObject shared = new SharedSceneObject(mMode == HOST);
+        shared.type = type;
         shared.object = object;
         mSharedSceneObjects.add(shared);
     }
@@ -220,24 +228,42 @@ public class SharedMixedReality implements IMRCommon {
         return mMixedReality.getCameraPoseMatrix();
     }
 
-    private synchronized void sendSharedSceneObjects() {
-        for (SharedSceneObject shared : mSharedSceneObjects) {
-            onSendSharedObject(shared.object.getTransform().getModelMatrix(), shared.object.getTag());
-        }
-    }
+    private void sendSharedSceneObjects() {
 
-    private void onSendSharedObject(float[] pose, Object id) {
-        // FIXME: use shared object matrix
-        float[] result = new float[16];
-        Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose, 0);
-    }
+        List<SharedObjectPose> poses = new ArrayList<>();
 
-    private synchronized void onSharedObjectReceived(float[] pose, Object id) {
-        for (SharedSceneObject shared : mSharedSceneObjects) {
-            if (shared.object.getTag().equals(id)) {
+        synchronized (this) {
+            for (SharedSceneObject shared : mSharedSceneObjects) {
                 float[] result = new float[16];
-                Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose, 0);
-                shared.object.getTransform().setModelMatrix(result);
+                Matrix.multiplyMM(result, 0, mSpaceMatrix, 0,
+                        shared.object.getTransform().getModelMatrix(), 0);
+                poses.add(new SharedObjectPose(shared.id, shared.type, result));
+            }
+        }
+
+        mMessageService.updatePoses(poses.toArray(new SharedObjectPose[0]), new MessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "Success updating positions for " + poses);
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.d(TAG, "Failed updating positions for "
+                        + poses + ". Error: " + error.getMessage());
+            }
+        });
+    }
+
+    private synchronized void onUpdatePosesReceived(SharedObjectPose[] poses) {
+        for (SharedObjectPose pose : poses) {
+            for (SharedSceneObject shared : mSharedSceneObjects) {
+                if (shared.id == pose.getId()) {
+                    float[] result = new float[16];
+                    Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose.getModelMatrix(), 0);
+                    shared.object.getTransform().setModelMatrix(result);
+                    break;
+                }
             }
         }
     }
@@ -249,7 +275,6 @@ public class SharedMixedReality implements IMRCommon {
         @Override
         public void run() {
             if (mMode != OFF) {
-                // TOOD: Share plance, anchors and camera pose
                 sendSharedSceneObjects();
                 mPetContext.runDelayedOnPetThread(this, LOOP_TIME);
             }
@@ -257,16 +282,45 @@ public class SharedMixedReality implements IMRCommon {
     };
 
     private static class SharedSceneObject {
+
+        private static int sId;
+        private int id;
+
+        @ArPetObjectType
+        String type;
+
         // Shared object
         GVRSceneObject object;
         // Parent of shared object.
         GVRSceneObject parent;
+
+        SharedSceneObject(boolean autoGeneratedId) {
+            this.id = autoGeneratedId ? incrementId() : -1;
+        }
+
+        static int incrementId() {
+            synchronized (SharedObjectPose.class) {
+                return ++sId;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "SharedSceneObject{" +
+                    "id=" + id +
+                    ", type='" + type + '\'' +
+                    '}';
+        }
     }
 
     private class LocalMessageReceiver extends SimpleMessageReceiver {
         @Override
-        public void onReceiveUpdateSharedObject(SharedObject sharedObject) throws MessageException {
-
+        public void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
+            try {
+                onUpdatePosesReceived(poses);
+            } catch (Throwable t) {
+                throw new MessageException("Error updating object position", t);
+            }
         }
     }
 }

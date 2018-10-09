@@ -17,30 +17,29 @@
 
 package org.gearvrf.arpet.service.share;
 
-import org.gearvrf.arpet.constant.ArPetObjectType;
-import org.gearvrf.arpet.service.IMessageData;
+import android.support.annotation.NonNull;
 
+import org.gearvrf.arpet.constant.ArPetObjectType;
+
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class SharedObject implements IMessageData {
+public class SharedObjectPose implements Serializable {
 
-    private static int sId;
     private int id;
 
     @ArPetObjectType
     private String objectType;
     private float[] modelMatrix;
 
-    public SharedObject(@ArPetObjectType String objectType, float[] modelMatrix) {
-        this.id = incrementId();
+    public SharedObjectPose(
+            int id,
+            @NonNull @ArPetObjectType String objectType,
+            @NonNull float[] modelMatrix) {
+
+        this.id = id;
         this.objectType = objectType;
         this.modelMatrix = modelMatrix;
-    }
-
-    private static int incrementId() {
-        synchronized (SharedObject.class) {
-            return ++sId;
-        }
     }
 
     public int getId() {
@@ -60,7 +59,7 @@ public class SharedObject implements IMessageData {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SharedObject that = (SharedObject) o;
+        SharedObjectPose that = (SharedObjectPose) o;
         return id == that.id;
     }
 
@@ -71,7 +70,7 @@ public class SharedObject implements IMessageData {
 
     @Override
     public String toString() {
-        return "SharedObject{" +
+        return "SharedObjectPose{" +
                 "id=" + id +
                 ", objectType='" + objectType + '\'' +
                 ", modelMatrix=" + Arrays.toString(modelMatrix) +
