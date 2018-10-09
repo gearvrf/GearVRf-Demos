@@ -81,7 +81,7 @@ public final class MessageService implements IMessageService {
     }
 
     private <Data extends IMessageData> RequestMessage<Data> createRequest(Data data) {
-        String actionName = Thread.currentThread().getStackTrace()[2].getMethodName();
+        String actionName = Thread.currentThread().getStackTrace()[3].getMethodName();
         return new RequestMessage<>(actionName, data);
     }
 
