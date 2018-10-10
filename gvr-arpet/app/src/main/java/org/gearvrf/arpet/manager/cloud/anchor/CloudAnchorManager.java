@@ -178,16 +178,14 @@ public class CloudAnchorManager {
                         mPendingToResolve--;
                         if (resolvedAnchor != null && !resolvedAnchor.getCloudAnchorId().isEmpty()) {
                             String successString = String.format(Locale.getDefault(),
-                                    "Success resolving anchor id %s for object of type %s",
-                                    resolvedAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
+                                    "Success resolving anchor for %s", cloudAnchor);
                             Log.i(TAG, successString);
                             mResolvedCloudAnchors.add(new ResolvedCloudAnchor(cloudAnchor.getObjectType(), resolvedAnchor));
                         } else {
                             mIsResolvingAnchors = false;
                             mResolvedCloudAnchors = null;
                             String errorString = String.format(Locale.getDefault(),
-                                    "Failed resolving anchor id %s for object of type %s",
-                                    cloudAnchor.getCloudAnchorId(), cloudAnchor.getObjectType());
+                                    "Failed resolving anchor for %s. Returned empty id.", cloudAnchor);
                             mResolveCallback.onError(new CloudAnchorException(errorString));
                             Log.e(TAG, errorString);
                         }
@@ -204,7 +202,9 @@ public class CloudAnchorManager {
                     mIsResolvingAnchors = false;
                     mResolvedCloudAnchors = null;
                 }
-                mResolveCallback.onError(new CloudAnchorException("Unknown error", e));
+                String errorString = "Error resolving anchor for " + cloudAnchor + ". " + e.getMessage();
+                Log.e(TAG, errorString);
+                mResolveCallback.onError(new CloudAnchorException(errorString, e));
                 break;
             }
         }

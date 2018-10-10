@@ -62,7 +62,7 @@ public class CharacterView extends AnchoredObject implements
     private GVRSceneObject m3DModel;
 
     CharacterView(@NonNull PetContext petContext) {
-        super(petContext.getGVRContext(), petContext.getMixedReality(), null);
+        super(petContext.getGVRContext(), petContext.getMixedReality());
 
         mContext = petContext.getGVRContext();
         mMixedReality = petContext.getMixedReality();

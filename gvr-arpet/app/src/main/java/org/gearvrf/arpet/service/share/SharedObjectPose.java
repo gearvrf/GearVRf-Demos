@@ -26,24 +26,16 @@ import java.util.Arrays;
 
 public class SharedObjectPose implements Serializable {
 
-    private int id;
-
     @ArPetObjectType
     private String objectType;
     private float[] modelMatrix;
 
     public SharedObjectPose(
-            int id,
             @NonNull @ArPetObjectType String objectType,
             @NonNull float[] modelMatrix) {
 
-        this.id = id;
         this.objectType = objectType;
         this.modelMatrix = modelMatrix;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public float[] getModelMatrix() {
@@ -56,23 +48,9 @@ public class SharedObjectPose implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SharedObjectPose that = (SharedObjectPose) o;
-        return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-        return id;
-    }
-
-    @Override
     public String toString() {
         return "SharedObjectPose{" +
-                "id=" + id +
-                ", objectType='" + objectType + '\'' +
+                "objectType='" + objectType + '\'' +
                 ", modelMatrix=" + Arrays.toString(modelMatrix) +
                 '}';
     }

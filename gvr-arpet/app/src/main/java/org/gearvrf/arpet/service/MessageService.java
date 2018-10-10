@@ -31,7 +31,9 @@ import org.gearvrf.arpet.service.data.SharedScene;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,26 +94,26 @@ public final class MessageService implements IMessageService {
                 request.getId(), mConnectionManager.getTotalConnected(), callback);
 
         if (mConnectionManager.getTotalConnected() == 0) {
-            callbackFailure(pendingResponseInfo, new IllegalStateException("No connection found"));
+            onCallbackFailure(pendingResponseInfo, new IllegalStateException("No connection found"));
             return;
         }
 
         mPendingResponseInfos.put(request.getId(), pendingResponseInfo);
 
         mConnectionManager.sendMessage(request, totalSent -> {
-            logForMessage(request, "Request sent to " + totalSent + " remotes");
+            logForRequest(request, "Request sent: " + request);
             if (totalSent == 0) {
                 mPendingResponseInfos.remove(request.getId());
-                callbackFailure(pendingResponseInfo, new RuntimeException("Failure sending request"));
+                onCallbackFailure(pendingResponseInfo, new RuntimeException("Failure sending request: " + request));
             }
         });
     }
 
-    private void callbackFailure(PendingResponseInfo callback, Exception e) {
+    private void onCallbackFailure(PendingResponseInfo callback, Exception e) {
         mContext.runOnPetThread(() -> callback.mCallback.onFailure(e));
     }
 
-    private void callbackSuccessVoid(PendingResponseInfo<Void> callback) {
+    private void onCallbackSuccessVoid(PendingResponseInfo<Void> callback) {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
@@ -155,7 +157,7 @@ public final class MessageService implements IMessageService {
             pendingResponseInfo.incrementTotalFailure();
             if (!pendingResponseInfo.hasPending()) {
                 mPendingResponseInfos.removeAt(i);
-                callbackSuccessVoid(pendingResponseInfo);
+                onCallbackSuccessVoid(pendingResponseInfo);
             }
         }
     }
@@ -174,7 +176,8 @@ public final class MessageService implements IMessageService {
         actionName = "onReceive" + Character.toUpperCase(actionName.charAt(0)) + actionName.substring(1);
 
         try {
-            this.getClass().getDeclaredMethod(actionName, request.getData().getClass()).invoke(this, request.getData());
+            Object[] params = {request.getData()};
+            this.getClass().getDeclaredMethod(actionName, request.getData().getClass()).invoke(this, params);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new MessageException(e);
         }
@@ -184,11 +187,10 @@ public final class MessageService implements IMessageService {
 
         try {
             callRequestedAction(request);
-            logForMessage(request, "Request processing succeeded: " + request);
+            logForRequest(request, "Request processing succeeded: " + request);
             sendDefaultResponseForRequest(request);
         } catch (MessageException error) {
-            logForMessage(request, "Request processing failed: " +
-                    request + ". Error: " + error.getMessage());
+            logForRequest(request, "Request processing failed: " + getStackTraceString(error));
             sendResponseError(request, error);
         }
     }
@@ -206,9 +208,9 @@ public final class MessageService implements IMessageService {
             if (!pendingResponseInfo.hasPending()) {
                 mPendingResponseInfos.remove(response.getRequestId());
                 if (pendingResponseInfo.mTotalFailure == pendingResponseInfo.mTotalExpected) {
-                    callbackFailure(pendingResponseInfo, new MessageException("All remotes returned with error"));
+                    onCallbackFailure(pendingResponseInfo, new MessageException("All remotes returned with error"));
                 } else {
-                    callbackSuccessVoid(pendingResponseInfo);
+                    onCallbackSuccessVoid(pendingResponseInfo);
                 }
             }
         }
@@ -217,18 +219,17 @@ public final class MessageService implements IMessageService {
     private void sendDefaultResponseForRequest(RequestMessage request) {
         ResponseMessage response = ResponseMessage.createDefaultForRequest(request);
         mConnectionManager.sendMessage(response, totalSent ->
-                logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
+                logForRequest(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
     private void sendResponseError(RequestMessage request, MessageException error) {
         ResponseMessage response = new ResponseMessage.Builder(request.getId()).error(error).build();
         mConnectionManager.sendMessage(response, totalSent ->
-                logForMessage(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
+                logForRequest(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
-    private void logForMessage(Message message, CharSequence text) {
-        Log.d(TAG, String.format(Locale.getDefault(), "%s(%d): %s",
-                message.getClass().getSimpleName(), message.getId(), text));
+    private void logForRequest(RequestMessage message, CharSequence text) {
+        Log.d(TAG, String.format(Locale.getDefault(), "Request(%d): %s", message.getId(), text));
     }
 
     private static class PendingResponseInfo<T> {
@@ -262,5 +263,12 @@ public final class MessageService implements IMessageService {
                 }
             }
         }
+    }
+
+    private static String getStackTraceString(Throwable t) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        t.printStackTrace(writer);
+        return stringWriter.toString();
     }
 }

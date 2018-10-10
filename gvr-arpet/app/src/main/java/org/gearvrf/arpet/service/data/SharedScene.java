@@ -20,6 +20,7 @@ package org.gearvrf.arpet.service.data;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 /**
  * Holds objects anchors to be resolved through Google Cloud Anchor API
@@ -34,5 +35,12 @@ public class SharedScene implements Serializable {
 
     public CloudAnchor[] getCloudAnchors() {
         return cloudAnchors;
+    }
+
+    @Override
+    public String toString() {
+        return "SharedScene{" +
+                "cloudAnchors=" + Arrays.toString(cloudAnchors) +
+                '}';
     }
 }

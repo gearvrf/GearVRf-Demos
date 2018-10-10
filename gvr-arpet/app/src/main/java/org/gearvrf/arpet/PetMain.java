@@ -21,6 +21,7 @@ import android.util.Log;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.IPetMode;
@@ -29,6 +30,7 @@ import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -126,6 +128,9 @@ public class PetMain extends DisableNativeSplashScreen {
         mPet.enter();
         mPet.setInitialScale();
 
+        ((SharedMixedReality) mPetContext.getMixedReality())
+                .registerSharedObject(plane.getSceneObject(), ArPetObjectType.PLANE);
+
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");
         }
@@ -135,7 +140,6 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode.enter();
             mPet.stopBall();
         }
-
     }
 
     @Override

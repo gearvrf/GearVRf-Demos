@@ -24,7 +24,7 @@ import java.lang.annotation.RetentionPolicy;
 
 @StringDef({
         ArPetObjectType.PET, ArPetObjectType.BED, ArPetObjectType.BOWL,
-        ArPetObjectType.HYDRANT, ArPetObjectType.CAMERA, ArPetObjectType.PLANE})
+        ArPetObjectType.HYDRANT, ArPetObjectType.CAMERA, ArPetObjectType.PLANE, ArPetObjectType.PLAYER})
 @Retention(RetentionPolicy.SOURCE)
 public @interface ArPetObjectType {
     String PET = "PET";
@@ -33,4 +33,5 @@ public @interface ArPetObjectType {
     String HYDRANT = "HYDRANT";
     String CAMERA = "CAMERA";
     String PLANE = "PLANE";
+    String PLAYER = "PLAYER";
 }

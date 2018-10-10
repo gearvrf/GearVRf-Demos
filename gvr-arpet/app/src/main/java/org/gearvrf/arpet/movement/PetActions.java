@@ -17,6 +17,9 @@
 
 package org.gearvrf.arpet.movement;
 
+import android.support.annotation.IntDef;
+
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.arpet.character.CharacterView;
@@ -30,22 +33,25 @@ import org.joml.Vector3f;
 public class PetActions {
     private static final String TAG = "CharacterStates";
 
+    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID})
+    public @interface Action{
+    }
+
     private static abstract class PetAction implements IPetAction {
         protected final CharacterView mCharacter;
-        protected final GVRTransform mTargetTransform;
         protected final OnPetActionListener mListener;
         protected final float mCharacterHalfSize = 25.0f;
         protected final float mTurnSpeed = 0.1f;
         protected final float mWalkingSpeed = 0.02f;
         protected final float mRunningSpeed = 0.04f;
         protected long mElapsedTime = 0;
-
         protected GVRAnimation mAnimation;
+        protected GVRSceneObject mTarget;
 
-        protected PetAction(CharacterView character, GVRTransform target,
+        protected PetAction(CharacterView character, GVRSceneObject target,
                             OnPetActionListener listener) {
             mCharacter = character;
-            mTargetTransform = target;
+            mTarget = target;
             mListener = listener;
             mAnimation = null;
         }
@@ -58,7 +64,7 @@ public class PetActions {
         }
 
         protected void animate(float frameTime) {
-            int duration = (int)mAnimation.getDuration() * 1000;
+            int duration = (int) mAnimation.getDuration() * 1000;
             mElapsedTime += (frameTime * 1000);
             mElapsedTime = mElapsedTime % duration;
             // mAnimation.animate((float)mElapsedTime / (float)duration);
@@ -80,20 +86,24 @@ public class PetActions {
         }
 
         protected abstract void onEntry();
+
         protected abstract void onExit();
+
         protected abstract void onRun(float fimeTime);
     }
 
     public static class IDLE extends PetAction {
         public static final int ID = 0;
 
-        public IDLE(CharacterView character, GVRTransform target) {
-            super(character, target, null);
+        public IDLE(CharacterView character, GVRSceneObject player) {
+            super(character, player, null);
             setAnimation(character.getAnimation(1));
         }
 
         @Override
-        public int id() { return ID; }
+        public int id() {
+            return ID;
+        }
 
         @Override
         public void onEntry() {
@@ -132,7 +142,7 @@ public class PetActions {
 
             // Vector of Character toward to Camera
             float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
-            float[] modelCam = mTargetTransform.getModelMatrix();
+            float[] modelCam = mTarget.getTransform().getModelMatrix();
             mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
             mLookAt.sub(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
             float y = mLookAt.y;
@@ -162,16 +172,18 @@ public class PetActions {
         }
     }
 
-    public static class TO_CAMERA extends PetAction {
+    public static class TO_PLAYER extends PetAction {
         public static final int ID = 1;
 
-        public TO_CAMERA(CharacterView character, GVRTransform target,
+        public TO_PLAYER(CharacterView character, GVRSceneObject player,
                          OnPetActionListener listener) {
-            super(character, target, listener);
+            super(character, player, listener);
         }
 
         @Override
-        public int id() { return ID; }
+        public int id() {
+            return ID;
+        }
 
         @Override
         public void onEntry() {
@@ -210,7 +222,7 @@ public class PetActions {
 
             // Vector of Character toward to Camera
             float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
-            float[] modelCam = mTargetTransform.getModelMatrix();
+            float[] modelCam = mTarget.getTransform().getModelMatrix();
             mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
             mLookAt.sub(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
             float y = mLookAt.y;
@@ -257,13 +269,15 @@ public class PetActions {
     public static class TO_BALL extends PetAction {
         public static final int ID = 2;
 
-        public TO_BALL(CharacterView character, GVRTransform target,
+        public TO_BALL(CharacterView character, GVRSceneObject target,
                        OnPetActionListener listener) {
             super(character, target, listener);
         }
 
         @Override
-        public int id() { return ID; }
+        public int id() {
+            return ID;
+        }
 
         @Override
         public void onEntry() {
@@ -302,7 +316,7 @@ public class PetActions {
 
             // Vector of Character toward to ball
             float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
-            float[] modelCam = mTargetTransform.getModelMatrix();
+            float[] modelCam = mTarget.getTransform().getModelMatrix();
             mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
             mLookAt.sub(modelCharacter[12], modelCharacter[13] + mCharacterHalfSize, // Center
                     modelCharacter[14]);

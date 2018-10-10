@@ -21,13 +21,14 @@ import android.util.SparseArray;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRDrawFrameListener;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.movement.IPetAction;
-import org.gearvrf.arpet.movement.OnPetActionListener;
 import org.gearvrf.arpet.movement.PetActions;
+import org.gearvrf.arpet.service.share.PlayerSceneObject;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 
@@ -37,6 +38,7 @@ public class CharacterController extends BasePetMode {
     private final SparseArray<IPetAction> mPetActions;
     private GVRDrawFrameListener mDrawFrameHandler;
     private BallThrowHandler mBallThrowHandler;
+    private SharedMixedReality mMixedReality;
 
     public CharacterController(PetContext petContext) {
         super(petContext, new CharacterView(petContext));
@@ -44,70 +46,48 @@ public class CharacterController extends BasePetMode {
         mPetActions = new SparseArray<>();
         mCurrentAction = null;
         mDrawFrameHandler = null;
-
+        mMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
         // Put at same thread that is loading the pet 3d model.
-        mPetContext.runOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                intPet((CharacterView) mModeScene);
-            }
-        });
+        mPetContext.runOnPetThread(() -> initPet((CharacterView) mModeScene));
     }
 
     @Override
     protected void onEnter() {
-        mPetContext.runOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                setCurrentAction(PetActions.TO_CAMERA.ID);
-            }
-        });
+        mPetContext.runOnPetThread(() -> setCurrentAction(PetActions.TO_PLAYER.ID));
     }
 
     @Override
     protected void onExit() {
-        mPetContext.runOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                disableActions();
-            }
-        });
+        mPetContext.runOnPetThread(this::disableActions);
     }
 
     @Override
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
-
     }
 
-    private void intPet(CharacterView pet) {
+    private void initPet(CharacterView pet) {
 
-        // TODO: move this to the Character class
-        GVRTransform camTrans = mPetContext.getMainScene().getMainCameraRig().getTransform();
+        mMixedReality.registerSharedObject(pet, ArPetObjectType.PET);
 
-        addAction(new PetActions.IDLE(pet, camTrans));
+        PlayerSceneObject player = new PlayerSceneObject(mPetContext);
+        mMixedReality.registerSharedObject(player, ArPetObjectType.PLAYER);
 
-        addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall().getTransform(),
-                new OnPetActionListener() {
-                    @Override
-                    public void onActionEnd(IPetAction action) {
-                        setCurrentAction(PetActions.TO_CAMERA.ID);
-                        mBallThrowHandler.disable();
-                        // TODO: Pet take the ball
-                    }
-                }));
+        addAction(new PetActions.IDLE(pet, player));
 
-        addAction(new PetActions.TO_CAMERA(pet, camTrans,
-                new OnPetActionListener() {
-                    @Override
-                    public void onActionEnd(IPetAction action) {
-                        setCurrentAction(PetActions.IDLE.ID);
-                        // TODO: Improve this Ball handler api
-                        mBallThrowHandler.enable();
-                        mBallThrowHandler.reset();
-                    }
-                }));
+        addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall(), action -> {
+            setCurrentAction(PetActions.TO_PLAYER.ID);
+            mBallThrowHandler.disable();
+            // TODO: Pet take the ball
+        }));
+
+        addAction(new PetActions.TO_PLAYER(pet, player, action -> {
+            setCurrentAction(PetActions.IDLE.ID);
+            // TODO: Improve this Ball handler api
+            mBallThrowHandler.enable();
+            mBallThrowHandler.reset();
+        }));
     }
 
     public void playBall() {
@@ -137,12 +117,12 @@ public class CharacterController extends BasePetMode {
         return (CharacterView) view();
     }
 
-    public void addAction(IPetAction action) {
-        mPetActions.put(action.id(), action);
+    public void setCurrentAction(@PetActions.Action int action) {
+        mCurrentAction = mPetActions.get(action);
     }
 
-    public void setCurrentAction(int action) {
-        mCurrentAction = mPetActions.get(action);
+    private void addAction(IPetAction action) {
+        mPetActions.put(action.id(), action);
     }
 
     private void enableActions() {
@@ -181,7 +161,7 @@ public class CharacterController extends BasePetMode {
 
             // FIXME: Move this to a proper place
             if (mBallThrowHandler.canBeReseted()) {
-                setCurrentAction(PetActions.TO_CAMERA.ID);
+                setCurrentAction(PetActions.TO_PLAYER.ID);
                 mBallThrowHandler.reset();
             }
         }

@@ -27,6 +27,7 @@ import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.PlaneHandler;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
@@ -218,6 +219,7 @@ public class ShareAnchorMode extends BasePetMode {
                         notFound();
                         break;
                     case PetConnectionEventType.CONNECTION_ALL_LOST:
+                        onSharingOff();
                         showToast("Connection lost");
                         break;
                     case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
@@ -235,6 +237,10 @@ public class ShareAnchorMode extends BasePetMode {
                 }
             });
         }
+    }
+
+    private void onSharingOff() {
+        mSharedMixedReality.stopSharing();
     }
 
     private void loadModel(@ArPetObjectType String type, GVRAnchor anchor) {
@@ -367,6 +373,12 @@ public class ShareAnchorMode extends BasePetMode {
                 Log.d(TAG, "all guests have resolved their cloud anchors");
                 // Inform the guests to change their view
                 sendCommandToShowPairedView();
+
+                mAnchoredObjects.stream()
+                        .filter(CharacterView.class::isInstance)
+                        .findFirst()
+                        .ifPresent(petView -> mSharedMixedReality.
+                                startSharing(petView.getAnchor().getPose(), SharedMixedReality.HOST));
             }
 
             @Override
@@ -405,31 +417,35 @@ public class ShareAnchorMode extends BasePetMode {
                 throw new MessageException(task.getError());
             } else {
                 showToast("All objects successfully loaded");
-//                // Start sharing using resolved pet pose as guest's world center
-//                ResolvedCloudAnchor cloudAnchor = task.getResolvedCloudAnchorByType(ArPetObjectType.PET);
-//                if (cloudAnchor != null) {
-//                    float[] petPose = cloudAnchor.getAnchor().getPose();
-//                    mSharedMixedReality.startSharing(petPose, SharedMixedReality.GUEST);
-//                }
+                // Start sharing using resolved pet pose as guest's world center
+                ResolvedCloudAnchor cloudAnchor = task.getResolvedCloudAnchorByType(ArPetObjectType.PET);
+                if (cloudAnchor != null) {
+                    float[] petPose = cloudAnchor.getAnchor().getPose();
+                    mSharedMixedReality.startSharing(petPose, SharedMixedReality.GUEST);
+                }
             }
         }
 
         @Override
-        public void onReceiveViewCommand(ViewCommand command) {
-            Log.d(TAG, "View command received: " + command);
-            switch (command.getType()) {
-                case ViewCommand.SHOW_PAIRED_VIEW:
-                    showParedView();
-                    break;
-                case ViewCommand.SHOW_STAY_IN_POSITION_TO_PAIR:
-                    showStayInPositionToPair();
-                    break;
-                case ViewCommand.SHOW_PAIRING_VIEW:
-                    showParingScreen(mConnectionManager.getConnectionMode());
-                    break;
-                default:
-                    Log.d(TAG, "Unknown view command: " + command.getType());
-                    break;
+        public void onReceiveViewCommand(ViewCommand command) throws MessageException {
+            try {
+                Log.d(TAG, "View command received: " + command);
+                switch (command.getType()) {
+                    case ViewCommand.SHOW_PAIRED_VIEW:
+                        showParedView();
+                        break;
+                    case ViewCommand.SHOW_STAY_IN_POSITION_TO_PAIR:
+                        showStayInPositionToPair();
+                        break;
+                    case ViewCommand.SHOW_PAIRING_VIEW:
+                        showParingScreen(mConnectionManager.getConnectionMode());
+                        break;
+                    default:
+                        Log.d(TAG, "Unknown view command: " + command.getType());
+                        break;
+                }
+            } catch (Throwable t) {
+                throw new MessageException("Error processing view command", t);
             }
         }
     }

@@ -21,6 +21,7 @@ import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class BTMessage<Data extends Serializable> implements Message<Data> {
 
@@ -57,9 +58,9 @@ public class BTMessage<Data extends Serializable> implements Message<Data> {
     @Override
     public String toString() {
         return "BTMessage{" +
-                "id=" + getId() +
+                "id=" + mId +
                 ", device=" + getDevice() +
-                ", data=" + getData() +
+                ", data=" + (mData.getClass().isArray() ? Arrays.toString((Data[]) mData) : mData) +
                 '}';
     }
 

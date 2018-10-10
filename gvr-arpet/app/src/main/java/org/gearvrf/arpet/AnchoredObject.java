@@ -32,31 +32,20 @@ public abstract class AnchoredObject extends GVRSceneObject {
     final String TAG = getClass().getSimpleName();
 
     private GVRAnchor mAnchor;
-    private float[] mPoseMatrix;
     private IMRCommon mMixedReality;
 
-    public AnchoredObject(@NonNull GVRContext context, @NonNull IMRCommon mixedReality, float[] poseMatrix) {
+    public AnchoredObject(@NonNull GVRContext context, @NonNull IMRCommon mixedReality) {
         super(context);
         this.mMixedReality = mixedReality;
-        this.mPoseMatrix = poseMatrix;
-        if (mPoseMatrix != null) {
-            this.mAnchor = mixedReality.createAnchor(poseMatrix);
-            this.mAnchor.attachSceneObject(this);
-        }
     }
 
     public boolean updatePose(float[] poseMatrix) {
-        mPoseMatrix = poseMatrix;
         mMixedReality.updateAnchorPose(mAnchor, poseMatrix);
         return true;
     }
 
     public GVRAnchor getAnchor() {
         return mAnchor;
-    }
-
-    public float[] getPoseMatrix() {
-        return mPoseMatrix;
     }
 
     public IMRCommon getMixedReality() {
