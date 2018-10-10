@@ -26,6 +26,7 @@ import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.joml.Vector4f;
 
 import java.util.EnumSet;
@@ -83,6 +84,7 @@ public class SampleHelper {
         polygonObject.setName("PlaneGeometry" + mPlaneIndex);
         mPlaneIndex++;
         mat.setDiffuseColor(color.x, color.y, color.x, color.w);
+        polygonObject.getRenderData().disableLight();
         polygonObject.getRenderData().setAlphaBlend(true);
         polygonObject.getTransform().setRotationByAxis(-90, 1, 0, 0);
         polygonObject.getTransform().setScale(scale, scale, scale);
@@ -100,10 +102,11 @@ public class SampleHelper {
                 gvrContext.getAssetLoader().loadTexture(new GVRAndroidResource(gvrContext,
                         R.raw.cursor)));
         mCursor.getRenderData().setDepthTest(false);
+        mCursor.getRenderData().disableLight();
         mCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
                 GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
-                GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
+                GVRPicker.EventOptions.SEND_TO_LISTENERS);
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
             public void onCursorControllerSelected(GVRCursorController newController, GVRCursorController oldController)
@@ -115,8 +118,9 @@ public class SampleHelper {
                 mCursorController = newController;
                 newController.setCursor(mCursor);
                 newController.setCursorDepth(-cursorDepth);
-                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
+                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 newController.getPicker().setEventOptions(eventOptions);
+                newController.addPickEventListener(handler);
             }
         });
     }

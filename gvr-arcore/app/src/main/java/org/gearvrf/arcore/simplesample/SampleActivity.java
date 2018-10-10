@@ -27,7 +27,7 @@ public class SampleActivity extends GVRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        enableGestureDetector();
         Log.d(TAG, "onCreate");
         mMain = new SampleMain();
         setMain(mMain, "gvr.xml");
