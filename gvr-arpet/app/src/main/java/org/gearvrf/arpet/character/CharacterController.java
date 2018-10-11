@@ -55,7 +55,8 @@ public class CharacterController extends BasePetMode {
 
     @Override
     protected void onEnter() {
-        mPetContext.runOnPetThread(() -> setCurrentAction(PetActions.TO_PLAYER.ID));
+        //mPetContext.runOnPetThread(() -> setCurrentAction(PetActions.TO_PLAYER.ID));
+        mPetContext.runDelayedOnPetThread(this::startIdle, 500);
     }
 
     @Override
@@ -93,6 +94,11 @@ public class CharacterController extends BasePetMode {
     public void playBall() {
         mBallThrowHandler.enable();
         enableActions();
+    }
+
+    private void startIdle() {
+        enableActions();
+        setCurrentAction(PetActions.IDLE.ID);
     }
 
     public void stopBall() {
@@ -133,10 +139,10 @@ public class CharacterController extends BasePetMode {
     }
 
     private void disableActions() {
-        if (mDrawFrameHandler != null) {
-            mPetContext.getGVRContext().unregisterDrawFrameListener(mDrawFrameHandler);
-            mDrawFrameHandler = null;
-        }
+//        if (mDrawFrameHandler != null) {
+//            mPetContext.getGVRContext().unregisterDrawFrameListener(mDrawFrameHandler);
+//            mDrawFrameHandler = null;
+//        }
     }
 
     public void setInitialScale() {
