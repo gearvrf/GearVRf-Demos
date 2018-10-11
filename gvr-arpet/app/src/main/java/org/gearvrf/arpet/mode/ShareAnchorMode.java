@@ -161,10 +161,14 @@ public class ShareAnchorMode extends BasePetMode {
         if (mConnectionManager.getConnectionMode() == ConnectionMode.SERVER) {
             Log.d(TAG, "host");
             mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
-            mHandler.postDelayed(() -> showParingScreen(ConnectionMode.SERVER), DEFAULT_SCREEN_TIMEOUT);
+            mHandler.postDelayed(() -> showStayInPositionToPair(), DEFAULT_SCREEN_TIMEOUT);
+            for (AnchoredObject object : mAnchoredObjects) {
+                mCloudAnchorManager.hostAnchor(object);
+            }
         } else {
             Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
+            mHandler.postDelayed(() -> showParingScreen(), DEFAULT_SCREEN_TIMEOUT);
         }
     }
 
@@ -181,12 +185,12 @@ public class ShareAnchorMode extends BasePetMode {
         Log.d(TAG, "OnWaitingForConnection: time up");
         mConnectionManager.stopUsersInvitation();
         if (mConnectionManager.getTotalConnected() > 0) {
-            Log.d(TAG, "Total" + mConnectionManager.getTotalConnected());
+            Log.d(TAG, "Total " + mConnectionManager.getTotalConnected());
             mShareAnchorView.inviteAcceptedGuest();
         }
     }
 
-    private void notFound() {
+    private void showNotFound() {
         final String[] type = {""};
         mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -198,6 +202,15 @@ public class ShareAnchorMode extends BasePetMode {
                     type[0] = "Guest";
                     mShareAnchorView.notFound(type[0]);
                 }
+            }
+        });
+    }
+
+    private void showPairingError(){
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mShareAnchorView.pairingError();
             }
         });
     }
@@ -216,7 +229,7 @@ public class ShareAnchorMode extends BasePetMode {
                         handleConnectionEstablished();
                         break;
                     case PetConnectionEventType.CONNECTION_NOT_FOUND:
-                        notFound();
+                        showNotFound();
                         break;
                     case PetConnectionEventType.CONNECTION_ALL_LOST:
                         onSharingOff();
@@ -277,20 +290,13 @@ public class ShareAnchorMode extends BasePetMode {
         Toast.makeText(mPetContext.getActivity(), text, Toast.LENGTH_LONG).show();
     }
 
-    private void showParingScreen(@ConnectionMode int mode) {
+    private void showParingScreen() {
         mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mShareAnchorView.pairingView();
             }
         });
-
-        if (mode == ConnectionMode.SERVER) {
-            sendCommandToShowPairingView();
-            for (AnchoredObject object : mAnchoredObjects) {
-                mCloudAnchorManager.hostAnchor(object);
-            }
-        }
     }
 
     private void showStayInPositionToPair() {
@@ -320,6 +326,8 @@ public class ShareAnchorMode extends BasePetMode {
             }
         });
     }
+
+
 
     private void sendCommandToShowPairingView() {
         ViewCommand command = new ViewCommand(ViewCommand.SHOW_PAIRING_VIEW);
@@ -383,6 +391,7 @@ public class ShareAnchorMode extends BasePetMode {
 
             @Override
             public void onFailure(Exception error) {
+                showPairingError();
                 Log.e(TAG, "some guest didn't get to resolve a cloud anchor");
             }
         });
@@ -438,7 +447,7 @@ public class ShareAnchorMode extends BasePetMode {
                         showStayInPositionToPair();
                         break;
                     case ViewCommand.SHOW_PAIRING_VIEW:
-                        showParingScreen(mConnectionManager.getConnectionMode());
+                        showParingScreen();
                         break;
                     default:
                         Log.d(TAG, "Unknown view command: " + command.getType());

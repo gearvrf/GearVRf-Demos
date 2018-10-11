@@ -27,6 +27,27 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg_overlay">
 
+        <ImageView
+            android:id="@+id/point"
+            android:layout_width="11dp"
+            android:layout_height="11dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/bg_point"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/message_stayInPosition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
+            android:fontFamily="@font/roboto_medium"
+            android:gravity="center"
+            android:text="@string/stay_in_this_position"
+            android:textColor="#ffffff"
+            android:textSize="21sp"
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/button_back_sharing"
             android:layout_width="46dp"
@@ -78,30 +99,30 @@
         </RelativeLayout>
 
         <ImageView
-            android:id="@+id/check_bigger"
+            android:id="@+id/ic_paired"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginEnd="60dp"
-            android:layout_marginStart="85dp"
-            android:layout_marginTop="110dp"
-            android:src="@drawable/icn_check_bigger"
+            android:layout_marginStart="65dp"
+            android:layout_marginTop="90dp"
+            android:padding="10dp"
+            android:src="@drawable/icon_paired"
             android:visibility="gone" />
 
         <Button
             android:id="@+id/status_sharing_anchor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="144dp"
+            android:layout_height="30dp"
             android:layout_marginStart="30dp"
             android:layout_marginTop="35dp"
             android:background="@drawable/rounded_button"
-            android:gravity="center_horizontal"
             android:paddingBottom="6dp"
-            android:paddingEnd="12dp"
-            android:paddingStart="12dp"
+            android:paddingEnd="31dp"
+            android:paddingStart="20dp"
             android:paddingTop="6dp"
-            android:text="@string/sharing_anchor"
-            android:textColor="#4b279f"
+            android:text="@string/connected"
+            android:textColor="#FFFFFF"
             android:textSize="14sp"
             android:visibility="gone" />
 

@@ -29,6 +29,8 @@
     <string name="not_found">No %1$s found!\n Would you like to try again?</string>
     <string name="try_message">TRY</string>
     <string name="cancel">CANCEL</string>
+    <string name="stay_in_this_position">Stay in this position while we connect the phones</string>
+    <string name="connected">CONNECTED</string>
     <plurals name="connected_guests" >
         <item quantity="one">1 guest entered\n on Sharing Anchor.</item>
         <item quantity="other">%d guests entered\n on Sharing Anchor.</item>

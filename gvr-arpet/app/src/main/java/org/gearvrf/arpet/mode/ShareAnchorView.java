@@ -42,9 +42,9 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 public class ShareAnchorView extends BasePetView implements IViewEvents, View.OnClickListener {
     private GVRSceneObject mShareAnchorObject;
     private Button mGuestButton, mHostButton, mStatusMode, mCancelButton, mTryButton;
-    private TextView mMessage;
+    private TextView mMessage, message_stayInPosition;
     private ProgressBar mProgressBar;
-    private ImageView mCheckIcon, mPairing, mSpinner, mCheckBiggerIcon;
+    private ImageView mCheckIcon, mPairing, mSpinner, mPaired, mPoint;
     private RelativeLayout mOverlayLayout;
     private LinearLayout mBackButtonShareAnchor;
     ShareAnchorListener mShareAnchorListener;
@@ -95,7 +95,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mMessage = view.findViewById(R.id.message);
         mProgressBar = view.findViewById(R.id.progress);
         mCheckIcon = view.findViewById(R.id.check);
-        mCheckBiggerIcon = view.findViewById(R.id.check_bigger);
+        mPaired = view.findViewById(R.id.ic_paired);
         mPairing = view.findViewById(R.id.image_action);
         mSpinner = view.findViewById(R.id.spinner);
         mStatusMode = view.findViewById(R.id.status_sharing_anchor);
@@ -103,6 +103,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mBackButtonShareAnchor = view.findViewById(R.id.button_back_sharing);
         mCancelButton = view.findViewById(R.id.cancel_button);
         mTryButton = view.findViewById(R.id.try_button);
+        mPoint = view.findViewById(R.id.point);
+        message_stayInPosition = view.findViewById(R.id.message_stayInPosition);
         mProgressHandler = new ProgressHandler(mProgressBar);
         mBackButtonShareAnchor.setOnClickListener(this);
         mGuestButton.setOnClickListener(this);
@@ -142,6 +144,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mPairing.setImageResource(R.drawable.icon_waiting_gest);
         mCancelButton.setVisibility(View.GONE);
         mTryButton.setVisibility(View.GONE);
+        mBackButtonShareAnchor.setVisibility(View.GONE);
     }
 
     public void modeHost() {
@@ -152,6 +155,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mPairing.setImageResource(R.drawable.icon_waiting_gest);
         mCancelButton.setVisibility(View.GONE);
         mTryButton.setVisibility(View.GONE);
+        mBackButtonShareAnchor.setVisibility(View.GONE);
     }
 
     public void inviteAcceptedGuest() {
@@ -160,6 +164,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mHostButton.setVisibility(View.GONE);
         mCheckIcon.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+        mPairing.setImageResource(R.drawable.icon_connect);
     }
 
     public void inviteAcceptedHost(int total) {
@@ -195,23 +200,33 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     }
 
     public void toPairView() {
-        mMessage.setText(R.string.stay_in_position);
+        mPairing.setVisibility(View.GONE);
+        mMessage.setVisibility(View.GONE);
+        message_stayInPosition.setVisibility(View.VISIBLE);
+        mOverlayLayout.setBackgroundResource(R.drawable.circle_mask);
+        mPoint.setVisibility(View.VISIBLE);
+        mSpinner.clearAnimation();
+        mSpinner.setVisibility(View.GONE);
+        mCheckIcon.setVisibility(View.GONE);
     }
 
     public void paredView() {
-        mPairing.setVisibility(View.GONE);
+        mPaired.setVisibility(View.VISIBLE);
+        mOverlayLayout.setBackgroundResource(R.drawable.bg_overlay);
         mSpinner.clearAnimation();
         mSpinner.setVisibility(View.GONE);
-        mCheckBiggerIcon.setVisibility(View.VISIBLE);
+        mMessage.setVisibility(View.VISIBLE);
         mMessage.setText(R.string.paired);
+        message_stayInPosition.setVisibility(View.GONE);
+        mPoint.setVisibility(View.GONE);
     }
 
     public void modeView() {
         mStatusMode.setVisibility(View.VISIBLE);
-        mCheckBiggerIcon.setVisibility(View.GONE);
-        mMessage.setVisibility(View.GONE);
         mOverlayLayout.setBackground(null);
         mBackButtonShareAnchor.setVisibility(View.GONE);
+        mPaired.setVisibility(View.GONE);
+        mMessage.setVisibility(View.GONE);
     }
 
     public void notFound(String type) {
@@ -222,6 +237,17 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mCancelButton.setVisibility(View.VISIBLE);
         mTryButton.setVisibility(View.VISIBLE);
         mProgressBar.setVisibility(View.GONE);
+    }
+
+    public void pairingError(){
+        mPairing.setImageResource(R.drawable.icon_error_to_pair);
+        mMessage.setText("Pairing error!\n Would you like to try again?");
+        mGuestButton.setVisibility(View.GONE);
+        mHostButton.setVisibility(View.GONE);
+        mCancelButton.setVisibility(View.VISIBLE);
+        mTryButton.setVisibility(View.VISIBLE);
+        mSpinner.clearAnimation();
+        mSpinner.setVisibility(View.GONE);
     }
 
     class ProgressHandler extends Handler {
