@@ -143,7 +143,8 @@ public class ModelsListContentScene extends BaseContentScene {
 
 
         horizontalPicker.applyLayout(listLayout);
-        horizontalPicker.applyLayout(archLayout);
+        horizontalPicker.setPositionZ(-radius);
+       // horizontalPicker.applyLayout(archLayout);
 
         ListWidget.OnItemFocusListener focusListener = new ListWidget.OnItemFocusListener() {
             public void onFocus(ListWidget list, boolean focused, int dataIndex) {
@@ -182,10 +183,12 @@ public class ModelsListContentScene extends BaseContentScene {
         return mLayoutScroller;
     }
 
+    @Override
     protected void scrollLeft() {
         getLayoutScroller().scrollToPrevItem();
     }
 
+    @Override
     protected void scrollRight() {
         getLayoutScroller().scrollToNextItem();
     }
