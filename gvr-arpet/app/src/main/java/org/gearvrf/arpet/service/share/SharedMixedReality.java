@@ -7,6 +7,7 @@ import android.util.Log;
 
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.service.IMessageService;
@@ -120,10 +121,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public synchronized void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
-        SharedSceneObject shared = new SharedSceneObject();
-        shared.type = type;
-        shared.object = object;
-        mSharedSceneObjects.add(shared);
+        mSharedSceneObjects.add(new SharedSceneObject(type, object));
     }
 
     public synchronized void unregisterSharedObject(GVRSceneObject object) {
@@ -238,9 +236,18 @@ public class SharedMixedReality implements IMRCommon {
         List<SharedObjectPose> poses = new ArrayList<>();
 
         for (SharedSceneObject shared : mSharedSceneObjects) {
+
+            GVRTransform transform = shared.object.getTransform();
+
+            // Update player position based on your camera position
+            if (ArPetObjectType.PLAYER.equals(shared.type)) {
+                float[] cameraPose = mPetContext.getMainScene()
+                        .getMainCameraRig().getTransform().getModelMatrix();
+                transform.setModelMatrix(cameraPose);
+            }
+
             float[] result = new float[16];
-            Matrix.multiplyMM(result, 0, mSpaceMatrix, 0,
-                    shared.object.getTransform().getModelMatrix(), 0);
+            Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, transform.getModelMatrix(), 0);
             poses.add(new SharedObjectPose(shared.type, result));
         }
 
@@ -273,19 +280,11 @@ public class SharedMixedReality implements IMRCommon {
 
     private Runnable mSharingLoop = new Runnable() {
 
-        final int LOOP_TIME = 1000;
+        final int LOOP_TIME = 500;
 
         @Override
         public void run() {
             if (mMode != OFF) {
-                mSharedSceneObjects.stream()
-                        .filter(e -> ArPetObjectType.PLAYER.equals(e.type))
-                        .findFirst()
-                        .ifPresent(player -> {
-                            float[] cameraPose = mPetContext.getMainScene()
-                                    .getMainCameraRig().getTransform().getModelMatrix();
-                            player.object.getTransform().setModelMatrix(cameraPose);
-                        });
                 sendSharedSceneObjects();
                 mPetContext.runDelayedOnPetThread(this, LOOP_TIME);
             }
@@ -302,24 +301,16 @@ public class SharedMixedReality implements IMRCommon {
         // Parent of shared object.
         GVRSceneObject parent;
 
+        SharedSceneObject(String type, GVRSceneObject object) {
+            this.type = type;
+            this.object = object;
+        }
+
         @Override
         public String toString() {
             return "SharedSceneObject{" +
                     ", type='" + type + '\'' +
                     '}';
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            SharedSceneObject that = (SharedSceneObject) o;
-            return type != null ? type.equals(that.type) : that.type == null;
-        }
-
-        @Override
-        public int hashCode() {
-            return type != null ? type.hashCode() : 0;
         }
     }
 
