@@ -176,10 +176,10 @@ public final class MessageService implements IMessageService {
         actionName = "onReceive" + Character.toUpperCase(actionName.charAt(0)) + actionName.substring(1);
 
         try {
-            Object[] params = {request.getData()};
-            this.getClass().getDeclaredMethod(actionName, request.getData().getClass()).invoke(this, params);
+            Serializable argument = request.getData();
+            this.getClass().getDeclaredMethod(actionName, argument.getClass()).invoke(this, argument);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new MessageException(e);
+            throw new MessageException("Error executing the requested action: " + actionName, e);
         }
     }
 
