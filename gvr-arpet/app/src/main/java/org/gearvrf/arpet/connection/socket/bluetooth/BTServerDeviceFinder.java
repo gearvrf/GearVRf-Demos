@@ -194,7 +194,7 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
     }
 
     private void notifyResult() {
-        new Handler().post(() -> mOnFindCallback.onResult(mServersFound.toArray(new BTDevice[mServersFound.size()])));
+        new Handler().post(() -> mOnFindCallback.onResult(mServersFound.toArray(new BTDevice[0])));
     }
 
     @FunctionalInterface
