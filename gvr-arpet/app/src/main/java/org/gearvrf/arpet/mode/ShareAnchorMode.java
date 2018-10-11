@@ -206,7 +206,7 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
-    private void showPairingError(){
+    private void showPairingError() {
         mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -326,7 +326,6 @@ public class ShareAnchorMode extends BasePetMode {
             }
         });
     }
-
 
 
     private void sendCommandToShowPairingView() {
@@ -479,7 +478,7 @@ public class ShareAnchorMode extends BasePetMode {
                     mResolvedCloudAnchors = new ArrayList<>(resolvedCloudAnchors);
                     for (ResolvedCloudAnchor resolvedCloudAnchor : resolvedCloudAnchors) {
                         try {
-                            loadModel(resolvedCloudAnchor.getObjectType(), resolvedCloudAnchor.getAnchor());
+                            //loadModel(resolvedCloudAnchor.getObjectType(), resolvedCloudAnchor.getAnchor());
                             String successString = String.format(Locale.getDefault(),
                                     "Success loading model for object of type %s",
                                     resolvedCloudAnchor.getObjectType());
