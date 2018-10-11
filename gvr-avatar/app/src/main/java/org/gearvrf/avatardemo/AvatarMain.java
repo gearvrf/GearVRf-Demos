@@ -40,9 +40,7 @@ public class AvatarMain extends GVRMain
     private GVRScene        mScene;
     private GVRAvatar       mAvatar;
     private GVRActivity     mActivity;
-    private GVRSceneObject  mSkeletonGeometry;
     private int             mNumAnimsLoaded = 0;
-    private int             mCurrentAnimIndex = -1;
     private String          mBoneMap;
 
     public AvatarMain(GVRActivity activity) {
@@ -61,63 +59,38 @@ public class AvatarMain extends GVRMain
                     public void run()
                     {
                         mAvatar.centerModel(avatarRoot);
-                        avatarRoot.getTransform().setPositionX(5);
                         mScene.addSceneObject(avatarRoot);
                     }
                 });
             }
-            if ((mNumAnimsLoaded == 0) &&
-                (mAvatar.getSkeleton() != null))
-            {
-                loadNextAnimation(mAvatar, mBoneMap);
-            }
-
+            loadNextAnimation(mAvatar, mBoneMap);
         }
-
-        @Override
-        public void onModelLoaded(final GVRSceneObject avatarRoot, String filePath, String errors) { }
 
         @Override
         public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors)
         {
-            GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animation.getAnimation(0);
-            GVRSkeleton skel = skelAnim.getSkeleton();
-
             animation.setRepeatMode(GVRRepeatMode.ONCE);
             animation.setSpeed(1f);
             ++mNumAnimsLoaded;
-            if (mSkeletonGeometry == null)
-            {
-                mSkeletonGeometry = new GVRSceneObject(mContext);
-                mSkeletonGeometry.setName("SkeletonGeometry");
-                skel.createSkeletonGeometry(mSkeletonGeometry);
-                mAvatar.centerModel(mSkeletonGeometry);
-                mSkeletonGeometry.getTransform().setPositionX(-5);
-                mScene.addSceneObject(mSkeletonGeometry);
-            }
             if (!mAvatar.isRunning())
             {
-                mCurrentAnimIndex = -1;
-                startNextAnimation();
+                mAvatar.startAll(GVRRepeatMode.REPEATED);
             }
-        }
-
-        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation)
-        {
-            startNextAnimation();
-        }
-
-        public void onAnimationStarted(GVRAnimator animator)
-        {
-            if (mSkeletonGeometry != null)
+            else
             {
-                GVRSkeletonAnimation skelAnim = (GVRSkeletonAnimation) animator.getAnimation(0);
-                mSkeletonGeometry.detachComponent(GVRSkeleton.getComponentType());
-                mSkeletonGeometry.attachComponent(skelAnim.getSkeleton());
+                mAvatar.start(animation.getName());
             }
-            loadNextAnimation(mAvatar, mBoneMap);
+            if (mNumAnimsLoaded < mAnimationPaths.length)
+            {
+                loadNextAnimation(mAvatar, mBoneMap);
+            }
         }
 
+        public void onModelLoaded(final GVRSceneObject avatarRoot, String filePath, String errors) { }
+
+        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation) { }
+
+        public void onAnimationStarted(GVRAnimator animator) { }
     };
 
 
@@ -149,40 +122,23 @@ public class AvatarMain extends GVRMain
             e.printStackTrace();
             mActivity.finish();
             mActivity = null;
-                   }
+        }
         gvrContext.getInputManager().selectController();
-    }
-
-
-    private int startNextAnimation()
-    {
-        if (++mCurrentAnimIndex >= mAvatar.getAnimationCount())
-        {
-            mCurrentAnimIndex = 0;
-        }
-        if (mAvatar.getAnimationCount() > 0)
-        {
-            mAvatar.start(mCurrentAnimIndex);
-        }
-        return mCurrentAnimIndex;
     }
 
     private void loadNextAnimation(GVRAvatar avatar, String bonemap)
     {
-        if (mNumAnimsLoaded < mAnimationPaths.length)
+        try
         {
-            try
-            {
-                GVRAndroidResource res = new GVRAndroidResource(mContext, mAnimationPaths[mNumAnimsLoaded]);
-                avatar.loadAnimation(res, bonemap);
-            }
-            catch (IOException ex)
-            {
-                ex.printStackTrace();
-                mActivity.finish();
-                mActivity = null;
-                Log.e(TAG, "Animation could not be loaded from " + mAnimationPaths[mNumAnimsLoaded]);
-            }
+            GVRAndroidResource res = new GVRAndroidResource(mContext, mAnimationPaths[mNumAnimsLoaded]);
+            avatar.loadAnimation(res, bonemap);
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+            mActivity.finish();
+            mActivity = null;
+            Log.e(TAG, "Animation could not be loaded from " + mAnimationPaths[mNumAnimsLoaded]);
         }
     }
 
