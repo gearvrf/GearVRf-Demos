@@ -1,45 +1,47 @@
 package org.gearvrf.arpet;
 
-import android.view.View;
+import android.util.DisplayMetrics;
 
-import org.gearvrf.GVRScene;
-import org.gearvrf.IViewEvents;
+import org.gearvrf.GVRAndroidResource;
+import org.gearvrf.GVRContext;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.animation.GVROpacityAnimation;
-import org.gearvrf.arpet.constant.ApiConstants;
-import org.gearvrf.arpet.mode.BasePetView;
-import org.gearvrf.scene_objects.GVRViewSceneObject;
 
-public class CurrentSplashScreen extends BasePetView implements IViewEvents {
-    private GVRViewSceneObject mSplashScreenObject;
+public class CurrentSplashScreen {
+    private GVRSceneObject mSplashScreen;
+    private GVRContext mContext;
 
     public CurrentSplashScreen(PetContext petContext) {
-        super(petContext);
-        mSplashScreenObject = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.splash_layout, this);
-        getTransform().setPosition(0.0f, 0.0f, -0.7f);
+        mContext = petContext.getGVRContext();
+
+        onInit();
     }
 
-    @Override
-    public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+    private void onInit() {
+        final int mDisplayWidth;
+        final int mDisplayHeight;
 
+        GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.splash_view));
+        final DisplayMetrics metrics = new DisplayMetrics();
+        mContext.getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+        mDisplayWidth = metrics.widthPixels;
+        mDisplayHeight = metrics.heightPixels;
+        final float size = (float) Math.max(mDisplayWidth, mDisplayHeight);
+        mSplashScreen = new GVRSceneObject(mContext, mDisplayWidth / size, mDisplayHeight / size);
+        mSplashScreen.getRenderData().getMaterial().setMainTexture(tex);
+        mSplashScreen.getTransform().setPosition(0.0f, 0.0f, -0.7f);
     }
 
-    @Override
-    public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        gvrViewSceneObject.setTextureBufferSize(ApiConstants.TEXTURE_BUFFER_SIZE);
-        addChildObject(gvrViewSceneObject);
+    protected void onShow() {
+        mContext.getMainScene().getMainCameraRig().addChildObject(mSplashScreen);
     }
 
-    @Override
-    protected void onShow(GVRScene mainScene) {
-        mainScene.getMainCameraRig().addChildObject(this);
-    }
-
-    @Override
-    protected void onHide(GVRScene mainScene) {
+    protected void onHide() {
         GVROpacityAnimation mAnimation;
-        mAnimation = new GVROpacityAnimation(mSplashScreenObject, .8f, 0);
-        mAnimation.setOnFinish(gvrAnimation -> mainScene.getMainCameraRig().removeChildObject(CurrentSplashScreen.this));
-        mAnimation.start(getGVRContext().getAnimationEngine());
+        mAnimation = new GVROpacityAnimation(mSplashScreen, .8f, 0);
+        mAnimation.setOnFinish(gvrAnimation -> mContext.getMainScene().getMainCameraRig().removeChildObject(mSplashScreen));
+        mAnimation.start(mContext.getAnimationEngine());
     }
 
 }

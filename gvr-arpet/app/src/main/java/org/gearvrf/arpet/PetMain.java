@@ -95,8 +95,8 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     private void splashScreenBehavior() {
-        mCurrentSplashScreen.onShow(mScene);
-        new Handler().postDelayed(() -> mCurrentSplashScreen.onHide(mScene), 3000);
+        mCurrentSplashScreen.onShow();
+        new Handler().postDelayed(() -> mCurrentSplashScreen.onHide(), 3000);
     }
 
     private void configTouchScreen() {
