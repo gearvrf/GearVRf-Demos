@@ -35,7 +35,6 @@ public class AvatarMain extends GVRMain
             "animation/captured/Video6_BVH.bvh"
     };
     private final String mBoneMapPath = "animation/captured/bonemap.txt";
-    private String mBoneMap;
     private static final String TAG = "AVATAR";
     private GVRContext      mContext;
     private GVRScene        mScene;
