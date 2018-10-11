@@ -45,6 +45,7 @@ public class Main extends GVRMain {
         gvrContext.getMainScene().addSceneObject(mLayoutLeftSceneObject);
 
         mLayoutLeftSceneObject.getTransform().setPosition(-1.0f, 0.0f, -2.5f);
+        mLayoutLeftSceneObject.setTextureBufferSize(512);
 
         mWebSceneObject = new GVRViewSceneObject(gvrContext,
                 mActivity.getWebView(), cube.getRenderData().getMesh());
@@ -52,6 +53,7 @@ public class Main extends GVRMain {
         gvrContext.getMainScene().addSceneObject(mWebSceneObject);
 
         mWebSceneObject.getTransform().setPosition(1.0f, 0.0f, -2.5f);
+        mWebSceneObject.setTextureBufferSize(512);
 
         TextView  textView = new TextView(gvrContext.getActivity());
         textView.setText("Android's Renderable Views");
@@ -60,6 +62,7 @@ public class Main extends GVRMain {
         mTextSceneObject = new GVRViewSceneObject(gvrContext, textView, 2.0f, 1.0f);
         gvrContext.getMainScene().addSceneObject(mTextSceneObject);
         mTextSceneObject.getTransform().setPosition(0.0f, -2.0f, -2.5f);
+        mTextSceneObject.setTextureBufferSize(512);
     }
 
     @Override
