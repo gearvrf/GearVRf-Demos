@@ -130,8 +130,16 @@ public class Main extends GVRMain {
         }
     };
 
-    private void showKeyboard(EditText editText) {
-        int keyboard;
+    private void showKeyboard(final EditText editText) {
+        getGVRContext().runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                onShowKeyboard(editText);
+            }
+        });
+    }
+
+    private void onShowKeyboard(EditText editText) {
         switch (editText.getInputType()) {
             case EditorInfo.TYPE_CLASS_PHONE:
                 mKeyboardSceneObject.setKeyboard(R.xml.numkbd);
@@ -146,6 +154,15 @@ public class Main extends GVRMain {
     }
 
     private void hideKeyboard() {
+        getGVRContext().runOnGlThread(new Runnable() {
+            @Override
+            public void run() {
+                onHideKeyboard();
+            }
+        });
+    }
+
+    private void onHideKeyboard() {
         mKeyboardSceneObject.stopInput();
         GVRSceneObject parent = mKeyboardSceneObject.getParent();
         if (parent != null) {

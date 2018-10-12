@@ -89,7 +89,7 @@ public class PlayNextDialog extends FadeableObject implements View.OnClickListen
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        addChildObject(mPlayNextObject);
+        addChildObject(gvrViewSceneObject);
     }
 
     private void setTime(final int time) {

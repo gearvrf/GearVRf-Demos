@@ -19,6 +19,7 @@ import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.Gravity;
+import android.webkit.WebView;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
@@ -36,7 +37,6 @@ import org.gearvrf.scene_objects.GVRTextViewSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject.GVRVideoType;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.scene_objects.view.GVRWebView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -129,7 +129,8 @@ public class SampleMain extends GVRMain {
         cylinderObject.getTransform().setPosition(0.0f, 0.0f, -3.0f);
         coneObject.getTransform().setPosition(0.0f, 0.0f, -3.0f);
         sphereObject.getTransform().setPosition(0.0f, -1.0f, -3.0f);
-        cameraObject.getTransform().setPosition(0.0f, 0.0f, -4.0f);
+        if (cameraObject != null)
+            cameraObject.getTransform().setPosition(0.0f, 0.0f, -4.0f);
         videoObject.getTransform().setPosition(0.0f, 0.0f, -4.0f);
         textViewSceneObject.getTransform().setPosition(0.0f, 0.0f, -2.0f);
 
@@ -157,7 +158,7 @@ public class SampleMain extends GVRMain {
     }
 
     private GVRViewSceneObject createWebViewObject(GVRContext gvrContext) {
-        GVRWebView webView = mActivity.getWebView();
+        WebView webView = mActivity.getWebView();
         GVRViewSceneObject webObject = new GVRViewSceneObject(gvrContext,
                 webView, 8.0f, 4.0f);
         webObject.setName("web view object");

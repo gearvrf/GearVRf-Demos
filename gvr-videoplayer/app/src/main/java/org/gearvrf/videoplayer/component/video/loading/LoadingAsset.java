@@ -38,7 +38,6 @@ public class LoadingAsset extends GVRSceneObject implements IViewEvents {
     public LoadingAsset(GVRContext gvrContext) {
         super(gvrContext);
         mLoadingObject = new GVRViewSceneObject(gvrContext, R.layout.layout_loading, this);
-        mLoadingObject.waitFor();
     }
 
     @Override
@@ -48,7 +47,7 @@ public class LoadingAsset extends GVRSceneObject implements IViewEvents {
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        addChildObject(mLoadingObject);
+        addChildObject(gvrViewSceneObject);
         mAnimation = new GVRRotationByAxisWithPivotAnimation(this, 2, -360f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f, 0.0f).start(getGVRContext().getAnimationEngine());
         mAnimation.setRepeatMode(1);
