@@ -74,7 +74,7 @@ public class AvatarMain extends GVRMain
             ++mNumAnimsLoaded;
             if (!mAvatar.isRunning())
             {
-                mAvatar.startAll(GVRRepeatMode.REPEATED);
+                mAvatar.start(GVRRepeatMode.REPEATED);
             }
             else
             {
