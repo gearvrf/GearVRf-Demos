@@ -7,7 +7,6 @@ import android.util.Log;
 
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.service.IMessageService;
@@ -236,20 +235,9 @@ public class SharedMixedReality implements IMRCommon {
         List<SharedObjectPose> poses = new ArrayList<>();
 
         for (SharedSceneObject shared : mSharedSceneObjects) {
-
-            GVRTransform transform = shared.object.getTransform();
-
-            // Update player position based on your camera position
-
-            // FIXME: Should not be necessary
-            if (ArPetObjectType.PLAYER.equals(shared.type)) {
-                float[] cameraPose = mPetContext.getMainScene()
-                        .getMainCameraRig().getTransform().getModelMatrix();
-                transform.setModelMatrix(cameraPose);
-            }
-
             float[] result = new float[16];
-            Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, transform.getModelMatrix(), 0);
+            Matrix.multiplyMM(result, 0, mSpaceMatrix, 0,
+                    shared.object.getTransform().getModelMatrix(), 0);
             poses.add(new SharedObjectPose(shared.type, result));
         }
 

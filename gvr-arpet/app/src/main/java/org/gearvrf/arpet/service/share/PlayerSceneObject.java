@@ -18,24 +18,12 @@
 package org.gearvrf.arpet.service.share;
 
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.PetContext;
 
 public class PlayerSceneObject extends GVRSceneObject {
 
-    private PetContext mPetContext;
-    private SharedMixedReality mSharedMixedReality;
-
     public PlayerSceneObject(PetContext context) {
         super(context.getGVRContext());
-        this.mPetContext = context;
-        this.mSharedMixedReality = (SharedMixedReality) context.getMixedReality();
-    }
-
-    @Override
-    public GVRTransform getTransform() {
-        return mSharedMixedReality.getMode() != SharedMixedReality.GUEST
-                ? mPetContext.getMainScene().getMainCameraRig().getTransform()
-                : super.getTransform();
+        context.getGVRContext().getMainScene().getMainCameraRig().addChildObject(this);
     }
 }

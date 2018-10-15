@@ -26,7 +26,6 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.PlaneHandler;
-import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
@@ -50,7 +49,6 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
-import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -252,20 +250,6 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void onSharingOff() {
         mSharedMixedReality.stopSharing();
-    }
-
-    private void loadModel(@ArPetObjectType String type, GVRAnchor anchor) {
-        Log.d(TAG, "loading model...");
-        switch (type) {
-            case ArPetObjectType.PET:
-                CharacterController pet = new CharacterController(mPetContext);
-                pet.setAnchor(anchor);
-                pet.enter();
-                Log.d(TAG, "pet model has been loaded successfully!");
-                break;
-            default:
-                Log.d(TAG, "invalid object type to load");
-        }
     }
 
     private void handleConnectionEstablished() {
