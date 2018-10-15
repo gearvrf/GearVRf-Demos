@@ -19,6 +19,8 @@ package org.gearvrf.arpet.service.data;
 
 import android.support.annotation.StringDef;
 
+import org.joml.Vector3f;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -34,6 +36,7 @@ public class BallCommand implements Command {
 
     @Type
     private String type;
+    private Vector3f mForceVector;
 
     public BallCommand(@Type String type) {
         this.type = type;
@@ -43,6 +46,14 @@ public class BallCommand implements Command {
     @Override
     public String getType() {
         return type;
+    }
+
+    public Vector3f getForceVector() {
+        return mForceVector;
+    }
+
+    public void setForceVector(Vector3f forceVector) {
+        this.mForceVector = forceVector;
     }
 
     @Override

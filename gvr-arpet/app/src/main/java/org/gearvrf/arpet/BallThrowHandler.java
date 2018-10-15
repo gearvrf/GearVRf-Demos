@@ -20,21 +20,17 @@ import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
-import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
+import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
-import org.gearvrf.mixedreality.GVRHitResult;
-import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.physics.GVRRigidBody;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 public class BallThrowHandler {
@@ -47,19 +43,16 @@ public class BallThrowHandler {
     private static final float defaultScaleZ = 40f;
 
     private static final float MIN_Y_OFFSET = -100;
-    private final IMRCommon mMixedReality;
 
+    private PlayerSceneObject mPlayer;
     private GVRContext mContext;
-    private GVRScene mScene;
     private GVRSceneObject mBall;
     private GVRRigidBody mRigidBody;
 
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
 
-
     private GVRSceneObject physicsRoot = null;
-
     private static BallThrowHandler sInstance;
     private boolean mResetOnTouchEnabled = true;
 
@@ -70,14 +63,14 @@ public class BallThrowHandler {
     private final Vector3f mForceVector;
 
     private BallThrowHandler(PetContext petContext) {
+
+        mPlayer = petContext.getPlayer();
         mContext = petContext.getGVRContext();
-        mScene = petContext.getMainScene();
-        mMixedReality = petContext.getMixedReality();
 
         createBall();
         initController();
 
-        mDirTan = (float)Math.tan(Math.PI / 4.0);
+        mDirTan = (float) Math.tan(Math.PI / 4.0);
         mForce = 1f;
         mForceVector = new Vector3f(mDirTan, mDirTan, -1.0f);
 
@@ -93,14 +86,15 @@ public class BallThrowHandler {
     }
 
     public void enable() {
-        final GVRSceneObject parent = mBall.getParent();
 
+        final GVRSceneObject parent = mBall.getParent();
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
+
         if (parent != null) {
             parent.removeChildObject(mBall);
         }
 
-        mScene.getMainCameraRig().addChildObject(mBall);
+        mPlayer.addChildObject(mBall);
         mContext.getApplication().getEventReceiver().addListener(mEventListener);
     }
 
@@ -133,10 +127,6 @@ public class BallThrowHandler {
         mBallWrapper = new BallWrapper(mBall);
     }
 
-    public void disablePhysics() {
-        mRigidBody.setEnable(false);
-    }
-
     @Subscribe
     public void onGVRWorldReady(GVRSceneObject physicsRoot) {
         this.physicsRoot = physicsRoot;
@@ -149,13 +139,13 @@ public class BallThrowHandler {
                 if (physicsRoot != null && mResetOnTouchEnabled && thrown) {
                     reset();
                 }
-
                 return false;
             }
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float vx, float vy) {
                 if (physicsRoot != null) {
+
                     final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
                     final float vz = vlen / mDirTan;
 
@@ -173,16 +163,16 @@ public class BallThrowHandler {
                     // ... And set its model matrix to keep the same world matrix
                     mBall.getTransform().setModelMatrix(ballMatrix);
 
-                    mForce = 50 * vlen / (float)(e2.getEventTime() - e1.getDownTime());
+                    mForce = 50 * vlen / (float) (e2.getEventTime() - e1.getDownTime());
                     mForceVector.set(mForce * -vx, mForce * vy, mForce * -vz);
 
-                    // Force vector will be based on camera head rotation...
-                    Matrix4f cameraMatrix = mScene.getMainCameraRig().getHeadTransform().getModelMatrix4f();
+                    // Force vector will be based on player rotation...
+                    Matrix4f playerMatrix = mPlayer.getTransform().getModelMatrix4f();
 
                     // ... And same transformation is required
-                    rootMatrix.mul(cameraMatrix, cameraMatrix);
+                    rootMatrix.mul(playerMatrix, playerMatrix);
                     Quaternionf q = new Quaternionf();
-                    q.setFromNormalized(cameraMatrix);
+                    q.setFromNormalized(playerMatrix);
                     mForceVector.rotate(q);
 
                     mRigidBody.setEnable(true);
@@ -217,16 +207,15 @@ public class BallThrowHandler {
         return mBall;
     }
 
-    public BallWrapper getBallWrapper() {
-        return mBallWrapper;
-    }
-
     public void reset() {
         resetRigidBody();
-        mBall.getParent().removeChildObject(mBall);
+        GVRSceneObject parent = mBall.getParent();
+        if (parent != null) {
+            parent.removeChildObject(mBall);
+        }
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
-        mScene.getMainCameraRig().addChildObject(mBall);
+        mPlayer.addChildObject(mBall);
         mResetOnTouchEnabled = true;
         thrown = false;
     }
@@ -244,34 +233,5 @@ public class BallThrowHandler {
         GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
         ball.getParent().removeChildObject(ball);
         mBall = ball;
-    }
-
-    public float[] getBallHitPose() {
-
-        GVRPicker.GVRPickedObject pickObj = pickedObject(mBall);
-
-        if (pickObj != null) {
-            GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(), pickObj);
-            if (gvrHitResult != null) {
-                return gvrHitResult.getPose();
-            }
-        }
-
-        return null;
-    }
-
-    private GVRPicker.GVRPickedObject pickedObject(GVRSceneObject sceneObject) {
-
-        Vector3f direction = new Vector3f();
-        float[] matrix = sceneObject.getTransform().getModelMatrix();
-        float x = matrix[12];
-        float y = matrix[13];
-        float z = matrix[14];
-
-        direction.set(x, y, z);
-        direction.normalize();
-
-
-        return GVRPicker.pickSceneObject(mMixedReality.getPassThroughObject(), 0, 0, 0, direction.x, direction.y, direction.z);
     }
 }

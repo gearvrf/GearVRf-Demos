@@ -23,7 +23,9 @@ import android.os.SystemClock;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.IMRCommon;
 
@@ -40,6 +42,7 @@ public class PetContext {
     private GVRContext mGvrContext;
     private IMRCommon mMixedReality;
     private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
+    private PlayerSceneObject mPlayer;
 
     public PetContext(GVRActivity activity) {
         mActivity = activity;
@@ -70,6 +73,9 @@ public class PetContext {
         mMixedReality = new SharedMixedReality(this);
         mMixedReality.resume();
 
+        mPlayer = new PlayerSceneObject(mGvrContext);
+        ((SharedMixedReality) mMixedReality).registerSharedObject(mPlayer, ArPetObjectType.PLAYER);
+
         // FIXME: Workaround to
         // You may only use GestureDetector constructor from a {@link android.os.Looper} thread.
         BallThrowHandler.getInstance(this);
@@ -89,6 +95,10 @@ public class PetContext {
 
     public GVRScene getMainScene() {
         return mGvrContext.getMainScene();
+    }
+
+    public PlayerSceneObject getPlayer() {
+        return mPlayer;
     }
 
     public long getResumeTime() {

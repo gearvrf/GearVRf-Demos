@@ -27,7 +27,6 @@ import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.movement.IPetAction;
 import org.gearvrf.arpet.movement.PetActions;
-import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -72,10 +71,7 @@ public class CharacterController extends BasePetMode {
 
         mMixedReality.registerSharedObject(pet, ArPetObjectType.PET);
 
-        PlayerSceneObject player = new PlayerSceneObject(mPetContext);
-        mMixedReality.registerSharedObject(player, ArPetObjectType.PLAYER);
-
-        addAction(new PetActions.IDLE(pet, player));
+        addAction(new PetActions.IDLE(pet, mPetContext.getPlayer()));
 
         addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall(), action -> {
             setCurrentAction(PetActions.TO_PLAYER.ID);
@@ -83,7 +79,7 @@ public class CharacterController extends BasePetMode {
             // TODO: Pet take the ball
         }));
 
-        addAction(new PetActions.TO_PLAYER(pet, player, action -> {
+        addAction(new PetActions.TO_PLAYER(pet, mPetContext.getPlayer(), action -> {
             setCurrentAction(PetActions.IDLE.ID);
             // TODO: Improve this Ball handler api
             mBallThrowHandler.enable();

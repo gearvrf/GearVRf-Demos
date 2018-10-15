@@ -17,13 +17,13 @@
 
 package org.gearvrf.arpet.service.share;
 
+import org.gearvrf.GVRContext;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.arpet.PetContext;
 
 public class PlayerSceneObject extends GVRSceneObject {
 
-    public PlayerSceneObject(PetContext context) {
-        super(context.getGVRContext());
-        context.getGVRContext().getMainScene().getMainCameraRig().addChildObject(this);
+    public PlayerSceneObject(GVRContext context) {
+        super(context);
+        context.getMainScene().getMainCameraRig().addChildObject(this);
     }
 }
