@@ -15,27 +15,31 @@
  *
  */
 
-package org.gearvrf.arpet.movement.targetwrapper;
+package org.gearvrf.arpet;
 
-import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRTransform;
-import org.gearvrf.arpet.movement.TargetObject;
+import android.support.annotation.StringDef;
 
-public class BallWrapper implements TargetObject {
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-    private GVRSceneObject mBall;
+public class BallThrowHandlerEvent {
 
-    public BallWrapper(GVRSceneObject ball) {
-        this.mBall = ball;
+    public static final String THROWN = "THROWN";
+
+    @StringDef({THROWN})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface Action {
     }
 
-    @Override
-    public float[] getPoseMatrix() {
-        return mBall.getTransform().getModelMatrix();
+    @Action
+    private String performedAction;
+
+    public BallThrowHandlerEvent(@Action String performedAction) {
+        this.performedAction = performedAction;
     }
 
-    @Override
-    public GVRTransform getTransform() {
-        return mBall.getTransform();
+    @Action
+    public String getPerformedAction() {
+        return performedAction;
     }
 }

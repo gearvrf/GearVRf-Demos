@@ -29,7 +29,6 @@ import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
-import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
@@ -151,8 +150,10 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     @Subscribe
-    public void onBallThrown(BallWrapper ballWrapper) {
-        mPet.setCurrentAction(PetActions.TO_BALL.ID);
+    public void handleBallEvent(BallThrowHandlerEvent event) {
+        if (event.getPerformedAction().equals(BallThrowHandlerEvent.THROWN)) {
+            mPet.setCurrentAction(PetActions.TO_BALL.ID);
+        }
     }
 
     public class HandlerModeChange implements OnModeChange {

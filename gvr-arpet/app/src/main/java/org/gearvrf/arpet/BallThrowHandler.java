@@ -22,7 +22,9 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
-import org.gearvrf.arpet.movement.targetwrapper.BallWrapper;
+import org.gearvrf.arpet.service.MessageService;
+import org.gearvrf.arpet.service.SimpleMessageReceiver;
+import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
@@ -56,8 +58,6 @@ public class BallThrowHandler {
     private static BallThrowHandler sInstance;
     private boolean mResetOnTouchEnabled = true;
 
-    private BallWrapper mBallWrapper;
-
     private final float mDirTan;
     private float mForce;
     private final Vector3f mForceVector;
@@ -75,6 +75,16 @@ public class BallThrowHandler {
         mForceVector = new Vector3f(mDirTan, mDirTan, -1.0f);
 
         EventBus.getDefault().register(this);
+
+        MessageService.getInstance().addMessageReceiver(new SimpleMessageReceiver() {
+            @Override
+            public void onReceiveBallCommand(BallCommand command) {
+                if (BallCommand.THROW.equals(command.getType())) {
+                    mForceVector.set(command.getForceVector());
+                    throwBall();
+                }
+            }
+        });
     }
 
     // FIXME: look for a different approach for this
@@ -123,8 +133,6 @@ public class BallThrowHandler {
         mRigidBody.setFriction(0.5f);
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
-
-        mBallWrapper = new BallWrapper(mBall);
     }
 
     @Subscribe
@@ -175,11 +183,7 @@ public class BallThrowHandler {
                     q.setFromNormalized(playerMatrix);
                     mForceVector.rotate(q);
 
-                    mRigidBody.setEnable(true);
-                    mRigidBody.applyCentralForce(mForceVector.x(), mForceVector.y(), mForceVector.z());
-                    thrown = true;
-
-                    EventBus.getDefault().post(mBallWrapper);
+                    throwBall();
 
                     return true;
                 }
@@ -195,6 +199,13 @@ public class BallThrowHandler {
                 gestureDetector.onTouchEvent(event);
             }
         };
+    }
+
+    private void throwBall() {
+        mRigidBody.setEnable(true);
+        mRigidBody.applyCentralForce(mForceVector.x(), mForceVector.y(), mForceVector.z());
+        thrown = true;
+        EventBus.getDefault().post(new BallThrowHandlerEvent(BallThrowHandlerEvent.THROWN));
     }
 
     private void resetRigidBody() {
