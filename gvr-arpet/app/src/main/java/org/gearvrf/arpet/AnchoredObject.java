@@ -55,6 +55,7 @@ public abstract class AnchoredObject extends GVRSceneObject {
     public void setAnchor(GVRAnchor anchor) {
         if (mAnchor != null) {
             mAnchor.detachSceneObject(this);
+            mMixedReality.removeAnchor(mAnchor);
         }
         mAnchor = anchor;
         mAnchor.attachSceneObject(this);
