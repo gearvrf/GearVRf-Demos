@@ -34,6 +34,7 @@ import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.mode.IPetView;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.IMRCommon;
@@ -133,7 +134,8 @@ public class CharacterView extends AnchoredObject implements
         mBoundaryPlane.getCenterPose(mPlaneCenterPose);
         poseMatrix[13] = mPlaneCenterPose[13];
 
-        if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)) {
+        if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)
+        || ((SharedMixedReality)mMixedReality).getMode() == SharedMixedReality.GUEST) {
             return super.updatePose(poseMatrix);
         }
         return false;
