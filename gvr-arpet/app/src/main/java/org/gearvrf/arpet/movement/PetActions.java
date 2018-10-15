@@ -24,8 +24,10 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.utility.Log;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * Represents a state of the Character.
@@ -39,14 +41,23 @@ public class PetActions {
 
     private static abstract class PetAction implements IPetAction {
         protected final CharacterView mCharacter;
+        protected final GVRSceneObject mTarget;
         protected final OnPetActionListener mListener;
+
+        protected Matrix4f mPetMtx = null;
+        protected Matrix4f mTargetMtx = null;
+
+        protected final Quaternionf mRotation = new Quaternionf();
+        protected final Vector4f mPetDirection = new Vector4f();
+        protected final Vector3f mTargetDirection = new Vector3f();
+        protected final Vector3f mMoveTo = new Vector3f();
+
         protected final float mCharacterHalfSize = 25.0f;
         protected final float mTurnSpeed = 0.1f;
         protected final float mWalkingSpeed = 0.02f;
         protected final float mRunningSpeed = 0.04f;
         protected long mElapsedTime = 0;
         protected GVRAnimation mAnimation;
-        protected GVRSceneObject mTarget;
 
         protected PetAction(CharacterView character, GVRSceneObject target,
                             OnPetActionListener listener) {
@@ -82,6 +93,33 @@ public class PetActions {
 
         @Override
         public void run(float frameTime) {
+            GVRTransform petTrans = mCharacter.getTransform();
+            // Vector of Character toward to Camera
+            mPetMtx = petTrans.getModelMatrix4f();
+            mTargetMtx = mTarget.getTransform().getModelMatrix4f();
+
+            /* Pet world space vector */
+            mPetDirection.set(0, 0, 1, 0);
+            mPetDirection.mul(mPetMtx);
+            mPetDirection.normalize();
+
+            mTargetDirection.set(mTargetMtx.m30(), mTargetMtx.m31(), mTargetMtx.m32());
+            mTargetDirection.sub(mPetMtx.m30(), mPetMtx.m31(), mPetMtx.m32());
+
+            /* Target direction to look at */
+            mMoveTo.set(mTargetDirection);
+            mMoveTo.normalize();
+            // Speed vector to create a smooth rotation
+            mMoveTo.mul(mTurnSpeed);
+            mMoveTo.add(mPetDirection.x, 0, mPetDirection.z);
+            mMoveTo.normalize();
+
+            // Calc the rotation toward the camera and put it in pRot
+            mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
+                    mMoveTo.x, 0, mMoveTo.z);
+
+            petTrans.rotate(mRotation.w, mRotation.x, mRotation.y, mRotation.z);
+
             onRun(frameTime);
         }
 
@@ -115,56 +153,8 @@ public class PetActions {
             Log.w(TAG, "exit => IDLE");
         }
 
-        // p prefix for parent and c prefix for child
-        private Quaternionf pRot = new Quaternionf();
-        private Quaternionf cRot = new Quaternionf();
-
-        private Vector3f mLookToward = new Vector3f();
-        private Vector3f mLookAt = new Vector3f();
-
         @Override
         public void onRun(float frameTime) {
-            GVRTransform pTrans = mCharacter.getParent().getTransform();
-            GVRTransform cTrans = mCharacter.getTransform();
-            pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
-                    pTrans.getRotationZ(), pTrans.getRotationW());
-            cRot.set(cTrans.getRotationX(), cTrans.getRotationY(),
-                    cTrans.getRotationZ(), cTrans.getRotationW());
-
-            // Character toward to
-            mLookToward.set(0, 0, 1);
-            // Set the global rotation
-            mLookToward.rotate(pRot);
-            mLookToward.rotate(cRot);
-            mLookToward.normalize();
-            // Remove y vector
-            mLookToward.y = 0;
-
-            // Vector of Character toward to Camera
-            float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
-            float[] modelCam = mTarget.getTransform().getModelMatrix();
-            mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
-            mLookAt.sub(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
-            float y = mLookAt.y;
-            // Remove y vector
-            mLookAt.y = 0;
-
-            // Keep a angle of 45 degree of distance
-            //boolean moveTowardToCam = mLookAt.length() > (y * Math.tan(Math.PI * 0.25));
-            // Normalize after calc the distance
-            mLookAt.normalize();
-
-            // Speed vector to create a smooth rotation
-            mLookAt.mul(mTurnSpeed);
-            mLookAt.add(mLookToward);
-            mLookAt.normalize();
-            // Calc the rotation toward the camera and put it in pRot
-            mLookToward.rotationTo(mLookAt, pRot);
-            // Multiply by character rotation.
-            cRot.mul(pRot);
-            // Set the new rotation to the Character
-            cTrans.setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
-
             if (mAnimation != null) {
                 //animate(frameTime);
                 //cTrans.setPosition(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
@@ -195,68 +185,23 @@ public class PetActions {
             Log.w(TAG, "exit => MOVING_TO_CAMERA");
         }
 
-        // p prefix for parent and c prefix for child
-        private Quaternionf pRot = new Quaternionf();
-        private Quaternionf cRot = new Quaternionf();
-
-        private Vector3f mLookToward = new Vector3f();
-        private Vector3f mLookAt = new Vector3f();
-
         @Override
         public void onRun(float frameTime) {
-            GVRTransform pTrans = mCharacter.getParent().getTransform();
-            GVRTransform cTrans = mCharacter.getTransform();
-            pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
-                    pTrans.getRotationZ(), pTrans.getRotationW());
-            cRot.set(cTrans.getRotationX(), cTrans.getRotationY(),
-                    cTrans.getRotationZ(), cTrans.getRotationW());
-
-            // Character toward to
-            mLookToward.set(0, 0, 1);
-            // Set the global rotation
-            mLookToward.rotate(pRot);
-            mLookToward.rotate(cRot);
-            mLookToward.normalize();
-            // Remove y vector
-            mLookToward.y = 0;
-
-            // Vector of Character toward to Camera
-            float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
-            float[] modelCam = mTarget.getTransform().getModelMatrix();
-            mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
-            mLookAt.sub(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
-            float y = mLookAt.y;
-            // Remove y vector
-            mLookAt.y = 0;
-
+            mTargetDirection.y = 0;
             // Keep a angle of 45 degree of distance
-            boolean moveTowardToCam = mLookAt.length() > (y * Math.tan(Math.PI * 0.25));
+            boolean moveTowardToCam = mTargetDirection.length() > 2 * mCharacterHalfSize;
 
             if (moveTowardToCam) {
-                // Total angle difference
-                mLookToward.rotationTo(mLookAt, pRot);
-                float angle = pRot.angle();
-                // Normalize after calc the distance
-                mLookAt.normalize();
+                mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
+                        mTargetDirection.x, 0, mTargetDirection.z);
 
-                // Speed vector to create a smooth rotation
-                mLookAt.mul(mTurnSpeed);
-                mLookAt.add(mLookToward);
-                mLookAt.normalize();
-                // Calc the rotation toward the camera and put it in pRot
-                mLookToward.rotationTo(mLookAt, pRot);
-                // Multiply by character rotation.
-                cRot.mul(pRot);
-                // Set the new rotation to the Character
-                mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
-
-                if (angle < Math.PI / 4.0f) {
+                if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
                     float[] pose = mCharacter.getAnchor().getPose();
-                    mLookAt.mul(mWalkingSpeed);
+                    mMoveTo.mul(mWalkingSpeed);
 
-                    pose[12] = pose[12] + mLookAt.x;
-                    pose[14] = pose[14] + mLookAt.z;
+                    pose[12] = pose[12] + mMoveTo.x;
+                    pose[14] = pose[14] + mMoveTo.z;
 
                     mCharacter.updatePose(pose);
                 }
@@ -289,68 +234,23 @@ public class PetActions {
             Log.w(TAG, "exit => MOVING_TO_BALL");
         }
 
-        // p prefix for parent and c prefix for child
-        private Quaternionf pRot = new Quaternionf();
-        private Quaternionf cRot = new Quaternionf();
-
-        private Vector3f mLookToward = new Vector3f();
-        private Vector3f mLookAt = new Vector3f();
-
         @Override
         public void onRun(float frameTime) {
-            GVRTransform pTrans = mCharacter.getParent().getTransform();
-            GVRTransform cTrans = mCharacter.getTransform();
-            pRot.set(pTrans.getRotationX(), pTrans.getRotationY(),
-                    pTrans.getRotationZ(), pTrans.getRotationW());
-            cRot.set(cTrans.getRotationX(), cTrans.getRotationY(),
-                    cTrans.getRotationZ(), cTrans.getRotationW());
-
-            // Character toward to
-            mLookToward.set(0, 0, 1);
-            // Set the global rotation
-            mLookToward.rotate(pRot);
-            mLookToward.rotate(cRot);
-            mLookToward.normalize();
-            // Remove y vector
-            mLookToward.y = 0;
-
-            // Vector of Character toward to ball
-            float[] modelCharacter = mCharacter.getTransform().getModelMatrix();
-            float[] modelCam = mTarget.getTransform().getModelMatrix();
-            mLookAt.set(modelCam[12], modelCam[13], modelCam[14]);
-            mLookAt.sub(modelCharacter[12], modelCharacter[13] + mCharacterHalfSize, // Center
-                    modelCharacter[14]);
 
             // Min distance to ball
-            boolean moveTowardToBall = mLookAt.length() > mCharacterHalfSize * 1.1f;
+            boolean moveTowardToBall = mTargetDirection.length() > mCharacterHalfSize * 1.1f;
 
             if (moveTowardToBall) {
-                // Remove y vector
-                mLookAt.y = 0;
-                // Total angle difference
-                mLookToward.rotationTo(mLookAt, pRot);
-                float angle = pRot.angle();
-                // Normalize after calc the distance
-                mLookAt.normalize();
+                mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
+                        mTargetDirection.x, 0, mTargetDirection.z);
 
-                // Speed vector to create a smooth rotation
-                mLookAt.mul(mTurnSpeed);
-                mLookAt.add(mLookToward);
-                mLookAt.normalize();
-                // Calc the rotation toward the camera and put it in pRot
-                mLookToward.rotationTo(mLookAt, pRot);
-                // Multiply by character rotation.
-                cRot.mul(pRot);
-                // Set the new rotation to the Character
-                mCharacter.getTransform().setRotation(cRot.w, cRot.x, cRot.y, cRot.z);
-
-                if (angle < Math.PI / 4.0f) {
+                if (mRotation.angle() < Math.PI * 0.25f) {
                     float[] pose = mCharacter.getAnchor().getPose();
                     // TODO: Create pose
-                    mLookAt.mul(mRunningSpeed);
+                    mMoveTo.mul(mRunningSpeed);
 
-                    pose[12] = pose[12] + mLookAt.x;
-                    pose[14] = pose[14] + mLookAt.z;
+                    pose[12] = pose[12] + mMoveTo.x;
+                    pose[14] = pose[14] + mMoveTo.z;
 
                     mCharacter.updatePose(pose);
                 }

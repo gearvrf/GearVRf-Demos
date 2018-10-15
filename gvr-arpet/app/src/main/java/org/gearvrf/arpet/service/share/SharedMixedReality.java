@@ -240,6 +240,8 @@ public class SharedMixedReality implements IMRCommon {
             GVRTransform transform = shared.object.getTransform();
 
             // Update player position based on your camera position
+
+            // FIXME: Should not be necessary
             if (ArPetObjectType.PLAYER.equals(shared.type)) {
                 float[] cameraPose = mPetContext.getMainScene()
                         .getMainCameraRig().getTransform().getModelMatrix();
