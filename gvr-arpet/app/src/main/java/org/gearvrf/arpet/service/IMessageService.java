@@ -19,15 +19,18 @@ package org.gearvrf.arpet.service;
 
 import android.support.annotation.NonNull;
 
-import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public interface IMessageService {
 
-    void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageCallback<Void> callback);
+    void shareCloudAnchors(@NonNull CloudAnchor[] cloudAnchors, @NonNull MessageCallback<Void> callback);
 
     void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback);
+
+    void sendBallCommand(@NonNull BallCommand command, @NonNull MessageCallback<Void> callback);
 
     void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback);
 

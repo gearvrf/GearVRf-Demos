@@ -17,7 +17,8 @@
 
 package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
@@ -25,18 +26,26 @@ public interface MessageReceiver {
     /**
      * Resolve end load the objects represented by given shared scene.
      *
-     * @param sharedScene Object to load.
-     * @throws MessageException If an exception occurs.
+     * @param cloudAnchors Anchors to resolve.
+     * @throws MessageException If any exception occurs.
      */
-    void onReceiveSharedScene(SharedScene sharedScene) throws MessageException;
+    void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException;
 
     /**
      * Execute the given command on this device
      *
-     * @param command CommandType to execute.
-     * @throws MessageException If an exception occurs
+     * @param command View command to execute.
+     * @throws MessageException If any exception occurs
      */
     void onReceiveViewCommand(ViewCommand command) throws MessageException;
+
+    /**
+     * Execute the given command on this device
+     *
+     * @param command Ball command to execute.
+     * @throws MessageException If any exception occurs
+     */
+    void onReceiveBallCommand(BallCommand command) throws MessageException;
 
     /**
      * @param poses Objects to update

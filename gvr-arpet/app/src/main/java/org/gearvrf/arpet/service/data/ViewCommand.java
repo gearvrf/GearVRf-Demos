@@ -19,11 +19,10 @@ package org.gearvrf.arpet.service.data;
 
 import android.support.annotation.StringDef;
 
-import java.io.Serializable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public class ViewCommand implements Serializable {
+public class ViewCommand implements Command {
 
     public static final String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
     public static final String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";
@@ -45,6 +44,7 @@ public class ViewCommand implements Serializable {
     }
 
     @Type
+    @Override
     public String getType() {
         return type;
     }

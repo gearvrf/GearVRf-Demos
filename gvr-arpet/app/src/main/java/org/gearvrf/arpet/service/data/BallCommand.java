@@ -17,30 +17,38 @@
 
 package org.gearvrf.arpet.service.data;
 
-import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+import android.support.annotation.StringDef;
 
-import java.io.Serializable;
-import java.util.Arrays;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
-/**
- * Holds objects anchors to be resolved through Google Cloud Anchor API
- */
-public class SharedScene implements Serializable {
+public class BallCommand implements Command {
 
-    private CloudAnchor[] cloudAnchors;
+    public static final String THROW = "THROW";
+    public static final String RESET = "RESET";
 
-    public SharedScene(CloudAnchor[] cloudAnchors) {
-        this.cloudAnchors = cloudAnchors;
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({THROW, RESET})
+    public @interface Type {
     }
 
-    public CloudAnchor[] getCloudAnchors() {
-        return cloudAnchors;
+    @Type
+    private String type;
+
+    public BallCommand(@Type String type) {
+        this.type = type;
+    }
+
+    @Type
+    @Override
+    public String getType() {
+        return type;
     }
 
     @Override
     public String toString() {
-        return "SharedScene{" +
-                "cloudAnchors=" + Arrays.toString(cloudAnchors) +
+        return "BallCommand{" +
+                "type='" + type + '\'' +
                 '}';
     }
 }

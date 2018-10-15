@@ -17,18 +17,23 @@
 
 package org.gearvrf.arpet.service;
 
-import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
+import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public class SimpleMessageReceiver implements MessageReceiver {
 
     @Override
-    public void onReceiveSharedScene(SharedScene sharedScene) throws MessageException {
+    public void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
     }
 
     @Override
     public void onReceiveViewCommand(ViewCommand command) throws MessageException {
+    }
+
+    @Override
+    public void onReceiveBallCommand(BallCommand command) {
     }
 
     @Override

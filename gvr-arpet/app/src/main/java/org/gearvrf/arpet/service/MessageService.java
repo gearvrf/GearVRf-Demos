@@ -23,11 +23,12 @@ import android.util.SparseArray;
 
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.connection.Message;
+import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.service.data.SharedScene;
+import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
@@ -63,12 +64,17 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
-    public void shareScene(@NonNull SharedScene sharedScene, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(sharedScene), callback);
+    public void shareCloudAnchors(@NonNull CloudAnchor[] cloudAnchors, @NonNull MessageCallback<Void> callback) {
+        sendRequest(createRequest(cloudAnchors), callback);
     }
 
     @Override
     public void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback) {
+        sendRequest(createRequest(command), callback);
+    }
+
+    @Override
+    public void sendBallCommand(@NonNull BallCommand command, @NonNull MessageCallback<Void> callback) {
         sendRequest(createRequest(command), callback);
     }
 
@@ -117,15 +123,21 @@ public final class MessageService implements IMessageService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveShareScene(SharedScene sharedScene) throws MessageException {
+    private void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveSharedScene(sharedScene);
+            receiver.onReceiveShareCloudAnchors(cloudAnchors);
         }
     }
 
     private void onReceiveSendViewCommand(ViewCommand command) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
             receiver.onReceiveViewCommand(command);
+        }
+    }
+
+    private void onReceiveSendBallCommand(BallCommand command) throws MessageException {
+        for (MessageReceiver receiver : mMessageReceivers) {
+            receiver.onReceiveBallCommand(command);
         }
     }
 
