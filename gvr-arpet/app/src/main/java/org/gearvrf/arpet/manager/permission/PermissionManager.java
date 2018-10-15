@@ -19,10 +19,8 @@ package org.gearvrf.arpet.manager.permission;
 
 import android.Manifest;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.pm.PackageManager;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -31,7 +29,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 public class PermissionManager {
-    private static final String TAG = PermissionManager.class.getName();
+    private static final String TAG = PermissionManager.class.getSimpleName();
 
     @IntDef({PermissionType.CAMERA, PermissionType.LOCATION})
     @Retention(RetentionPolicy.SOURCE)
@@ -42,67 +40,52 @@ public class PermissionManager {
 
     private static final String LOCATION_PERMISSION = Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final String CAMERA_PERMISSION = Manifest.permission.CAMERA;
-    private static final int LOCATION_PERMISSION_CODE = 0;
-    private static final int CAMERA_PERMISSION_CODE = 1;
+    private static final int PERMISSIONS_CODE = 0;
 
+    private Activity mActivity;
     private OnPermissionResultListener mPermissionResultListener;
 
-    public PermissionManager() {
-
+    public PermissionManager(Activity activity) {
+        mActivity = activity;
     }
 
-    public boolean hasLocationPermission(@NonNull Activity activity) {
-        return ContextCompat.checkSelfPermission(activity, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED;
+    private boolean hasLocationPermission() {
+        return ContextCompat.checkSelfPermission(mActivity, LOCATION_PERMISSION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public void requestLocationPermission(@NonNull Activity activity) {
-        ActivityCompat.requestPermissions(activity, new String[] {
-                LOCATION_PERMISSION}, LOCATION_PERMISSION_CODE);
+    private boolean hasCameraPermission() {
+        return ContextCompat.checkSelfPermission(mActivity, CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public boolean hasCameraPermission(@NonNull Activity activity) {
-        return ContextCompat.checkSelfPermission(activity, CAMERA_PERMISSION) == PackageManager.PERMISSION_GRANTED;
+    public boolean hasPermissions() {
+        return hasCameraPermission() && hasLocationPermission();
     }
 
-    public boolean shouldShowRequestPermission(@NonNull Activity activity, int type) {
+    public boolean shouldShowRequestPermission(int type) {
         switch (type) {
             case PermissionType.CAMERA:
-                return ActivityCompat.shouldShowRequestPermissionRationale(activity, CAMERA_PERMISSION);
+                return ActivityCompat.shouldShowRequestPermissionRationale(mActivity, CAMERA_PERMISSION);
             case PermissionType.LOCATION:
-                return ActivityCompat.shouldShowRequestPermissionRationale(activity, LOCATION_PERMISSION);
+                return ActivityCompat.shouldShowRequestPermissionRationale(mActivity, LOCATION_PERMISSION);
             default:
                 return false;
         }
     }
 
-    public void requestCameraPermission(@NonNull Activity activity) {
-        ActivityCompat.requestPermissions(activity, new String[] {
-                CAMERA_PERMISSION}, CAMERA_PERMISSION_CODE);
+    public void requestPermissions() {
+        ActivityCompat.requestPermissions(mActivity, new String[] {
+                CAMERA_PERMISSION, LOCATION_PERMISSION}, PERMISSIONS_CODE);
     }
 
-    public boolean isBluetoothEnabled() {
-        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        return bluetoothAdapter != null && bluetoothAdapter.isEnabled();
-    }
-
-    public void handlePermissionResults(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case CAMERA_PERMISSION_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mPermissionResultListener.onPermissionGranted(PermissionType.CAMERA);
-                } else {
-                    mPermissionResultListener.onPermissionDenied(PermissionType.CAMERA);
-                }
-                break;
-            case LOCATION_PERMISSION_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mPermissionResultListener.onPermissionGranted(PermissionType.LOCATION);
-                } else {
-                    mPermissionResultListener.onPermissionDenied(PermissionType.LOCATION);
-                }
-                break;
-            default:
-                Log.d(TAG, "unknown request code");
+    public void handlePermissionResults(int requestCode) {
+        if (requestCode == PERMISSIONS_CODE) {
+            if (hasPermissions()) {
+                mPermissionResultListener.onPermissionGranted();
+            } else {
+                mPermissionResultListener.onPermissionDenied();
+            }
+        } else {
+            Log.d(TAG, "invalid permission request code");
         }
     }
 

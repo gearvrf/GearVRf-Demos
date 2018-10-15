@@ -19,7 +19,7 @@ package org.gearvrf.arpet.manager.permission;
 
 public interface OnPermissionResultListener {
 
-    void onPermissionGranted(@PermissionManager.PermissionType int type);
+    void onPermissionGranted();
 
-    void onPermissionDenied(@PermissionManager.PermissionType int type);
+    void onPermissionDenied();
 }

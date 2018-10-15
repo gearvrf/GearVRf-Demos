@@ -38,14 +38,8 @@ public class PetActivity extends GVRActivity {
 
         Log.d(TAG, "onCreate");
 
-        mPermissionManager = new PermissionManager();
+        mPermissionManager = new PermissionManager(this);
         mPermissionManager.setPermissionResultListener(new PermissionListener());
-
-        if (!mPermissionManager.hasCameraPermission(this)) {
-            mPermissionManager.requestCameraPermission(this);
-        } else {
-            startPetMain();
-        }
     }
 
     private void startPetMain() {
@@ -57,27 +51,21 @@ public class PetActivity extends GVRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!mPermissionManager.hasCameraPermission(this)) {
-            if (mPermissionManager.shouldShowRequestPermission(this, PermissionManager.PermissionType.CAMERA)) {
-                // TODO: show a prompt here to inform the user that the app needs camera permission
-                // This prompt should be async and after the user sees the explanation, request the permission
-                // again
-                Log.d(TAG, "onResume: should show a prompt to request camera permission");
-            } else {
-                // Don't show any prompt and request the permission again
-                mPermissionManager.requestCameraPermission(this);
-            }
+        Log.d(TAG, "onResume");
+        if (!mPermissionManager.hasPermissions()) {
+            mPermissionManager.requestPermissions();
+        } else if (mPetContext == null) {
+            startPetMain();
         } else {
             mPetContext.resume();
             mMain.resume();
         }
-        Log.d(TAG, "onResume");
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        mPermissionManager.handlePermissionResults(requestCode, permissions, grantResults);
+        mPermissionManager.handlePermissionResults(requestCode);
     }
 
     @Override
@@ -93,19 +81,20 @@ public class PetActivity extends GVRActivity {
 
     private class PermissionListener implements OnPermissionResultListener {
         @Override
-        public void onPermissionGranted(int type) {
-            if (type == PermissionManager.PermissionType.CAMERA) {
-                startPetMain();
-            }
+        public void onPermissionGranted() {
+            startPetMain();
         }
 
         @Override
-        public void onPermissionDenied(int type) {
-            if (type == PermissionManager.PermissionType.CAMERA) {
-                Toast.makeText(getApplicationContext(), "The application needs camera permission", Toast.LENGTH_LONG).show();
-                // TODO: maybe we need to call settings here to enable permission again
-                finish();
-            }
+        public void onPermissionDenied() {
+            Log.d(TAG, "on permission denied");
+            showMessage(getString(R.string.application_permissions));
+            // TODO: maybe we need to call settings here to enable permission again
+            finish();
+        }
+
+        private void showMessage(String text) {
+            Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
         }
     }
 

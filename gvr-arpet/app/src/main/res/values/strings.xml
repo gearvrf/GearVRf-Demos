@@ -31,6 +31,7 @@
     <string name="cancel">CANCEL</string>
     <string name="stay_in_this_position">Stay in this position while we connect the phones</string>
     <string name="connected">CONNECTED</string>
+    <string name="application_permissions">The application needs camera and location permissions</string>
     <plurals name="connected_guests" >
         <item quantity="one">1 guest entered\n on Sharing Anchor.</item>
         <item quantity="other">%d guests entered\n on Sharing Anchor.</item>
