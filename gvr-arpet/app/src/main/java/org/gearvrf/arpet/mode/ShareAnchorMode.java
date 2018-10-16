@@ -113,7 +113,14 @@ public class ShareAnchorMode extends BasePetMode {
             // Clear the scene once the user is in Guest mode and the objects will
             // be shared by the Host.
             clearSceneObjects();
+
+            // Disable the planes detection
+            mPetContext.unregisterPlaneListener();
+
+            // Start to accept invitation from the host
             mConnectionManager.acceptInvitation();
+
+            // Change the views
             mShareAnchorView.modeGuest();
             mShareAnchorView.getProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
             mShareAnchorView.getProgressHandler().start();

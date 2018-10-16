@@ -47,7 +47,7 @@ public class PetMain extends DisableNativeSplashScreen {
     private GVRScene mScene;
     private PetContext mPetContext;
 
-    private PlaneHandler planeHandler;
+    private PlaneHandler mPlaneHandler;
 
     private IPetMode mCurrentMode;
     private HandlerModeChange mHandlerModeChange;
@@ -81,8 +81,7 @@ public class PetMain extends DisableNativeSplashScreen {
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
 
-        planeHandler = new PlaneHandler(mPetContext);
-        mPetContext.getMixedReality().registerPlaneListener(planeHandler);
+        mPlaneHandler = new PlaneHandler(mPetContext);
 
         mPet = new CharacterController(mPetContext);
 
@@ -204,6 +203,7 @@ public class PetMain extends DisableNativeSplashScreen {
 
         @Override
         public void OnBackToHud() {
+            mPetContext.registerPlaneListener(mPlaneHandler);
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();

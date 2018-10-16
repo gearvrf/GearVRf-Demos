@@ -147,6 +147,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         mContext = petContext.getGVRContext();
         mScene = petContext.getMainScene();
         mixedReality = petContext.getMixedReality();
+        petContext.registerPlaneListener(this);
 
         physicsRoot = new GVRSceneObject(mContext);
         physicsRoot.getTransform().setScale(0.01f, 0.01f, 0.01f);

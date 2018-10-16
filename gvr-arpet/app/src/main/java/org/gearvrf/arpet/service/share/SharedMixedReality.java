@@ -141,6 +141,11 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     @Override
+    public void unregisterPlaneListener(IPlaneEventsListener iPlaneEventsListener) {
+        mMixedReality.unregisterPlaneListener(iPlaneEventsListener);
+    }
+
+    @Override
     public void registerAnchorListener(IAnchorEventsListener listener) {
         mMixedReality.registerAnchorListener(listener);
     }
