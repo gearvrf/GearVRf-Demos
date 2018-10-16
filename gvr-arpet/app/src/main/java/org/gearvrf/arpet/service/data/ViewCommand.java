@@ -24,15 +24,16 @@ import java.lang.annotation.RetentionPolicy;
 
 public class ViewCommand implements Command {
 
-    public static final String SHOW_PAIRED_VIEW = "SHOW_PAIRED_VIEW";
-    public static final String SHOW_STAY_IN_POSITION_TO_PAIR = "SHOW_STAY_IN_POSITION_TO_PAIR";
-    public static final String SHOW_PAIRING_VIEW = "SHOW_PAIRING_VIEW";
+    public static final String SHOW_MODE_SHARE_ANCHOR_VIEW = "SHOW_MODE_SHARE_ANCHOR_VIEW";
+    public static final String LOOKING_SIDE_BY_SIDE = "LOOKING_SIDE_BY_SIDE";
+    public static final String SHARED_HOST = "SHARED_HOST";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
-            SHOW_PAIRED_VIEW,
-            SHOW_STAY_IN_POSITION_TO_PAIR,
-            SHOW_PAIRING_VIEW})
+            SHOW_MODE_SHARE_ANCHOR_VIEW,
+            LOOKING_SIDE_BY_SIDE,
+            SHARED_HOST
+    })
     public @interface Type {
     }
 

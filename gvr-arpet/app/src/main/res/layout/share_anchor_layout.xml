@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="20dp"
             android:fontFamily="@font/roboto_medium"
             android:gravity="center"
             android:text="@string/stay_in_this_position"
@@ -97,6 +97,22 @@
                 android:textColor="#ffffff"
                 android:textSize="21sp" />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="190dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/spinner"
+                android:layout_width="56.6dp"
+                android:layout_height="58.3dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/loading"
+                android:visibility="gone" />
+        </RelativeLayout>
+
 
         <ImageView
             android:id="@+id/ic_paired"
@@ -181,6 +197,29 @@
                     android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/cancel_button_back_share_anchor"
+                    android:layout_width="144dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_guest_host_button"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/cancel"
+                    android:textColor="#ffffff"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/disconnect_button"
+                    android:layout_width="144dp"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="17dp"
+                    android:background="@drawable/bg_guest_host_button"
+                    android:fontFamily="@font/roboto_bold"
+                    android:text="@string/disconnect"
+                    android:textColor="#ffffff"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
             </LinearLayout>
 
             <ProgressBar
@@ -200,14 +239,6 @@
                 android:layout_height="40dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/icn_check"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/spinner"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerInParent="true"
-                android:src="@drawable/loading"
                 android:visibility="gone" />
 
         </RelativeLayout>

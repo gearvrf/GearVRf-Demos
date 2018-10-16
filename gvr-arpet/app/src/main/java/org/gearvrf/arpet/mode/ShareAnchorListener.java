@@ -28,4 +28,8 @@ public interface ShareAnchorListener {
     void OnCancel();
 
     void OnTry();
+
+    void OnDisconnectScreen();
+
+    void OnConnectedScreen();
 }

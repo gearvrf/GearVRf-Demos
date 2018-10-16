@@ -144,6 +144,21 @@ public class ShareAnchorMode extends BasePetMode {
                 OnHost();
             }
         }
+
+        @Override
+        public void OnDisconnectScreen() {
+            if (mShareAnchorView.getUserType() == GUEST) {
+                mShareAnchorView.disconnectScreenGuest();
+            } else {
+                mShareAnchorView.disconnectScreenHost();
+            }
+
+        }
+
+        @Override
+        public void OnConnectedScreen() {
+            mShareAnchorView.modeView();
+        }
     }
 
     private void clearSceneObjects() {
@@ -164,22 +179,26 @@ public class ShareAnchorMode extends BasePetMode {
         if (mConnectionManager.getConnectionMode() == ConnectionMode.SERVER) {
             Log.d(TAG, "host");
             mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
-            mHandler.postDelayed(() -> showStayInPositionToPair(), DEFAULT_SCREEN_TIMEOUT);
+            mHandler.postDelayed(() -> {
+                mShareAnchorView.centerPetView();
+                mHandler.postDelayed(() -> showMoveAround(), DEFAULT_SCREEN_TIMEOUT);
+            }, DEFAULT_SCREEN_TIMEOUT);
+
             for (AnchoredObject object : mAnchoredObjects) {
                 mCloudAnchorManager.hostAnchor(object);
             }
         } else {
             Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
-            mHandler.postDelayed(() -> showParingScreen(), DEFAULT_SCREEN_TIMEOUT);
+            mHandler.postDelayed(() -> showWaitingScreen(), DEFAULT_SCREEN_TIMEOUT);
         }
     }
 
-    private void showInviteMain() {
+    private void showSharedHost() {
         mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mShareAnchorView.invitationView();
+                mShareAnchorView.sharedHost();
             }
         });
     }
@@ -279,11 +298,11 @@ public class ShareAnchorMode extends BasePetMode {
         Toast.makeText(mPetContext.getActivity(), text, Toast.LENGTH_LONG).show();
     }
 
-    private void showParingScreen() {
+    private void showWaitingScreen() {
         mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mShareAnchorView.pairingView();
+                mShareAnchorView.waitingView();
             }
         });
     }
@@ -297,11 +316,28 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
-    private void showParedView() {
+    private void showCenterPet() {
         mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mShareAnchorView.paredView();
+                mShareAnchorView.centerPetView();
+            }
+        });
+    }
+
+    private void showMoveAround() {
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mShareAnchorView.moveAroundView();
+            }
+        });
+    }
+
+    private void showModeShareAnchorView() {
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
                 mHandler.postDelayed(() -> showStatusModeView(), DEFAULT_SCREEN_TIMEOUT);
             }
         });
@@ -316,48 +352,57 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
-
-    private void sendCommandToShowPairingView() {
-        ViewCommand command = new ViewCommand(ViewCommand.SHOW_PAIRING_VIEW);
-        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
+    private void showLookingSidebySide() {
+        mPetContext.getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "command to show 'pairing view' was performed successfully");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.d(TAG, "command to show 'pairing view' has failed");
+            public void run() {
+                mShareAnchorView.lookingSidebySide();
             }
         });
     }
 
-    private void sendCommandToShowStayInPosition() {
-        ViewCommand command = new ViewCommand(ViewCommand.SHOW_STAY_IN_POSITION_TO_PAIR);
+
+    private void sendCommandToShowModeShareAnchorView() {
+        ViewCommand command = new ViewCommand(ViewCommand.SHOW_MODE_SHARE_ANCHOR_VIEW);
         mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                Log.d(TAG, "command to show 'stay in position' was performed successfully");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "command to show 'stay in position' has failed");
-            }
-        });
-    }
-
-    private void sendCommandToShowPairedView() {
-        ViewCommand command = new ViewCommand(ViewCommand.SHOW_PAIRED_VIEW);
-        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                showParedView();
+                showModeShareAnchorView();
             }
 
             @Override
             public void onFailure(Exception error) {
                 Log.e(TAG, "command to show 'paired view' has failed");
+            }
+        });
+    }
+
+    private void sendCommandLookingSideBySide() {
+        ViewCommand command = new ViewCommand(ViewCommand.LOOKING_SIDE_BY_SIDE);
+        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "command to show 'looking side by  view' was performed successfully");
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.e(TAG, "command to show 'looking side by  view' has failed");
+            }
+        });
+    }
+
+    private void sendCommandSharedHost() {
+        ViewCommand command = new ViewCommand(ViewCommand.SHARED_HOST);
+        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "command to show 'shared host view' was performed successfully");
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.e(TAG, "command to show 'shared host view' has failed");
             }
         });
     }
@@ -368,7 +413,7 @@ public class ShareAnchorMode extends BasePetMode {
             public void onSuccess(Void result) {
                 Log.d(TAG, "all guests have resolved their cloud anchors");
                 // Inform the guests to change their view
-                sendCommandToShowPairedView();
+                sendCommandToShowModeShareAnchorView();
 
                 mAnchoredObjects.stream()
                         .filter(CharacterView.class::isInstance)
@@ -389,7 +434,8 @@ public class ShareAnchorMode extends BasePetMode {
         @Override
         public void onHostReady() {
             // Just inform the guests to change their view
-            sendCommandToShowStayInPosition();
+            sendCommandSharedHost();
+            sendCommandLookingSideBySide();
             // Change the host view
             showStayInPositionToPair();
 
@@ -429,14 +475,14 @@ public class ShareAnchorMode extends BasePetMode {
             try {
                 Log.d(TAG, "View command received: " + command);
                 switch (command.getType()) {
-                    case ViewCommand.SHOW_PAIRED_VIEW:
-                        showParedView();
+                    case ViewCommand.SHOW_MODE_SHARE_ANCHOR_VIEW:
+                        showModeShareAnchorView();
                         break;
-                    case ViewCommand.SHOW_STAY_IN_POSITION_TO_PAIR:
-                        showStayInPositionToPair();
+                    case ViewCommand.LOOKING_SIDE_BY_SIDE:
+                        mHandler.postDelayed(() -> showLookingSidebySide(), DEFAULT_SCREEN_TIMEOUT);
                         break;
-                    case ViewCommand.SHOW_PAIRING_VIEW:
-                        showParingScreen();
+                    case ViewCommand.SHARED_HOST:
+                        showSharedHost();
                         break;
                     default:
                         Log.d(TAG, "Unknown view command: " + command.getType());

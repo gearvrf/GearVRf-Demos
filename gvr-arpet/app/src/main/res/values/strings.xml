@@ -16,24 +16,30 @@
 <resources>
     <string name="editing_mode">Editing Mode</string>
     <string name="save">SAVE</string>
-    <string name="looking_the_same_thing">Make sure you and your friends are \n side-by-side looking at the same thing.</string>
-    <string name="paired">Paired</string>
+    <string name="looking_the_same_thing">Make sure you and your friends are side-by-side looking\n at the same thing.</string>
     <string name="sharing_anchor">SHARING ANCHOR</string>
     <string name="host">HOST</string>
     <string name="guest">GUEST</string>
     <string name="waiting_guests">Waiting for the guests to\n enter on the Sharing Anchor.</string>
     <string name="waiting_host">Waiting for a host to\n start the Sharing Anchor.</string>
-    <string name="connected_host">Connected to the\n  host successfully.</string>
+    <string name="shared">Shared</string>
     <string name="invitation">Let’s start Sharing Anchor!\n What role do you want to play?</string>
-    <string name="stay_in_position">Stay in this position while\n we connect the phones.</string>
+    <string name="stay_in_position">Stay in this position while we connect the phones.</string>
     <string name="not_found">No %1$s found!\n Would you like to try again?</string>
     <string name="try_message">TRY</string>
     <string name="cancel">CANCEL</string>
     <string name="stay_in_this_position">Stay in this position while we connect the phones</string>
     <string name="connected">CONNECTED</string>
     <string name="application_permissions">The application needs camera and location permissions</string>
-    <plurals name="connected_guests" >
-        <item quantity="one">1 guest entered\n on Sharing Anchor.</item>
-        <item quantity="other">%d guests entered\n on Sharing Anchor.</item>
+    <string name="disconnect_host">Do you want to disconnect from Sharing Anchor?\n Your friends will also be disconnected.</string>
+    <string name="disconnect">DISCONNECT</string>
+    <string name="disconnect_guest">Do you want to disconnect from\n Sharing Anchor?</string>
+    <string name="host_found">1 host found  on sharing achor</string>
+    <string name="center_pet">Center the pet in your scene</string>
+    <string name="move_around">Move around the device for at least a few second</string>
+    <string name="waiting">Waiting for host sharing</string>
+    <plurals name="found_guests" >
+        <item quantity="one">1 guest found\n on Sharing Anchor.</item>
+        <item quantity="other">%d guests found\n on Sharing Anchor.</item>
     </plurals>
 </resources>
