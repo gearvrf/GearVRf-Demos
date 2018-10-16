@@ -125,6 +125,7 @@ public class PetMain extends DisableNativeSplashScreen {
         mPet.setPlane(plane);
         mPet.enter();
         mPet.setInitialScale();
+        mPet.enableActions();
 
         ((SharedMixedReality) mPetContext.getMixedReality())
                 .registerSharedObject(plane.getSceneObject(), ArPetObjectType.PLANE);
@@ -136,7 +137,6 @@ public class PetMain extends DisableNativeSplashScreen {
         if (mCurrentMode == null) {
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
-            mPet.stopBall();
         }
     }
 
@@ -160,6 +160,7 @@ public class PetMain extends DisableNativeSplashScreen {
         @Override
         public void onPlayBall() {
             mPet.playBall();
+            mPet.enableActions();
         }
 
         @Override
@@ -191,6 +192,7 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode.enter();
             ((EditMode) mCurrentMode).onEnableGesture(mCursorController);
             mPet.stopBall();
+            mPet.disableActions();
         }
 
         @Override
@@ -207,6 +209,7 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
+            mPet.enableActions();
         }
     }
 }

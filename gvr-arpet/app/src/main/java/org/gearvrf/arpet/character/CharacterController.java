@@ -30,10 +30,11 @@ import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
+import org.gearvrf.utility.Log;
 
 public class CharacterController extends BasePetMode {
 
-    private IPetAction mCurrentAction; // default action IDLE
+    private IPetAction mCurrentAction = null; // default action IDLE
     private final SparseArray<IPetAction> mPetActions;
     private GVRDrawFrameListener mDrawFrameHandler;
     private BallThrowHandler mBallThrowHandler;
@@ -47,19 +48,15 @@ public class CharacterController extends BasePetMode {
         mMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
-        // Put at same thread that is loading the pet 3d model.
-        mPetContext.runOnPetThread(() -> initPet((CharacterView) mModeScene));
+        initPet((CharacterView) mModeScene);
     }
 
     @Override
     protected void onEnter() {
-        setCurrentAction(PetActions.IDLE.ID);
-        mPetContext.runOnPetThread(this::enableActions);
     }
 
     @Override
     protected void onExit() {
-        mPetContext.runOnPetThread(this::disableActions);
     }
 
     @Override
@@ -90,12 +87,10 @@ public class CharacterController extends BasePetMode {
 
     public void playBall() {
         mBallThrowHandler.enable();
-        enableActions();
     }
 
     public void stopBall() {
         mBallThrowHandler.disable();
-        disableActions();
     }
 
     public void setPlane(GVRPlane plane) {
@@ -123,15 +118,17 @@ public class CharacterController extends BasePetMode {
         mPetActions.put(action.id(), action);
     }
 
-    private void enableActions() {
+    public void enableActions() {
         if (mDrawFrameHandler == null) {
+            Log.w(TAG, "On actions enabled");
             mDrawFrameHandler = new DrawFrameHandler();
             mPetContext.getGVRContext().registerDrawFrameListener(mDrawFrameHandler);
         }
     }
 
-    private void disableActions() {
+    public void disableActions() {
         if (mDrawFrameHandler != null) {
+            Log.w(TAG, "On actions disabled");
             mPetContext.getGVRContext().unregisterDrawFrameListener(mDrawFrameHandler);
             mDrawFrameHandler = null;
         }
@@ -158,7 +155,7 @@ public class CharacterController extends BasePetMode {
             }
 
             // FIXME: Move this to a proper place
-            if (mBallThrowHandler.canBeReseted()) {
+            if (mBallThrowHandler.canBeReseted() && activeAction != null) {
                 setCurrentAction(PetActions.TO_PLAYER.ID);
                 mBallThrowHandler.reset();
             }
