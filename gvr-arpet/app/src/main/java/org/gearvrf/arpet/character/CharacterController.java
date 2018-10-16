@@ -43,7 +43,6 @@ public class CharacterController extends BasePetMode {
         super(petContext, new CharacterView(petContext));
 
         mPetActions = new SparseArray<>();
-        mCurrentAction = null;
         mDrawFrameHandler = null;
         mMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
@@ -54,8 +53,8 @@ public class CharacterController extends BasePetMode {
 
     @Override
     protected void onEnter() {
-        //mPetContext.runOnPetThread(() -> setCurrentAction(PetActions.TO_PLAYER.ID));
-        mPetContext.runDelayedOnPetThread(this::startIdle, 500);
+        setCurrentAction(PetActions.IDLE.ID);
+        mPetContext.runOnPetThread(this::enableActions);
     }
 
     @Override
@@ -85,16 +84,13 @@ public class CharacterController extends BasePetMode {
             mBallThrowHandler.enable();
             mBallThrowHandler.reset();
         }));
+
+        setCurrentAction(PetActions.IDLE.ID);
     }
 
     public void playBall() {
         mBallThrowHandler.enable();
         enableActions();
-    }
-
-    private void startIdle() {
-        enableActions();
-        setCurrentAction(PetActions.IDLE.ID);
     }
 
     public void stopBall() {
@@ -135,10 +131,10 @@ public class CharacterController extends BasePetMode {
     }
 
     private void disableActions() {
-//        if (mDrawFrameHandler != null) {
-//            mPetContext.getGVRContext().unregisterDrawFrameListener(mDrawFrameHandler);
-//            mDrawFrameHandler = null;
-//        }
+        if (mDrawFrameHandler != null) {
+            mPetContext.getGVRContext().unregisterDrawFrameListener(mDrawFrameHandler);
+            mDrawFrameHandler = null;
+        }
     }
 
     public void setInitialScale() {
