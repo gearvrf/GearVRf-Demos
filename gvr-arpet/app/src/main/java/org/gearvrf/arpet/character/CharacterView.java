@@ -197,13 +197,13 @@ public class CharacterView extends AnchoredObject implements
      * Sets the initial scale according to the distance between the pet and camera
      */
     public void setInitialScale() {
-        final float MIN_DISTANCE = 1.0f;
+        final float MIN_DISTANCE = 100f;
         Vector3f vectorDistance = new Vector3f();
-        float[] modelCam = mMixedReality.getCameraPoseMatrix();
-        float[] modelCharacter = getAnchor().getPose();
+        float[] modelCam = mContext.getMainScene().getMainCameraRig().getTransform().getModelMatrix();
+        float[] modelCharacter = getAnchor().getTransform().getModelMatrix();
 
         vectorDistance.set(modelCam[12], modelCam[13], modelCam[14]);
-        // Calculates the distance in meters (coordinates from AR)
+        // Calculates the distance in centimeters
         float distance = vectorDistance.distance(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
 
         if (distance < MIN_DISTANCE) {
