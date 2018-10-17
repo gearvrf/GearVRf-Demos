@@ -148,10 +148,10 @@ public final class MessageService implements IMessageService {
     }
 
     private void handleConnectionEvent(PetConnectionEvent event) {
-        if (event.getType() == PetConnectionEventType.MESSAGE_RECEIVED) {
+        if (event.getType() == PetConnectionEventType.MSG_MESSAGE_RECEIVED) {
             // Handle request or response
             onMessageReceived((Message) event.getData());
-        } else if (event.getType() == PetConnectionEventType.CONNECTION_ONE_LOST) {
+        } else if (event.getType() == PetConnectionEventType.CONN_ONE_CONNECTION_LOST) {
             if (mPendingResponseInfos.size() > 0) {
                 handleConnectionLost();
             }

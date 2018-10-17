@@ -10,7 +10,7 @@ import org.gearvrf.GVRScene;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.utility.Log;
 
@@ -143,7 +143,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        gvrViewSceneObject.setTextureBufferSize(ApiConstants.TEXTURE_BUFFER_SIZE);
+        gvrViewSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
         addChildObject(gvrViewSceneObject);
     }
 

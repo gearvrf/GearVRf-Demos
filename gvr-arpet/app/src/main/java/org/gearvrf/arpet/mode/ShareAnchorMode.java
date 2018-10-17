@@ -29,8 +29,9 @@ import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.connection.socket.bluetooth.BTDevice;
 import org.gearvrf.arpet.constant.ArPetObjectType;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
@@ -58,7 +59,7 @@ import static org.gearvrf.arpet.mode.ShareAnchorView.UserType.GUEST;
 public class ShareAnchorMode extends BasePetMode {
     private final String TAG = getClass().getSimpleName();
 
-    private static final int DEFAULT_SERVER_LISTENING_TIMEOUT = ApiConstants.DISCOVERABLE_DURATION * 1000; // time in ms
+    private static final int DEFAULT_SERVER_LISTENING_TIMEOUT = PetConstants.HOST_VISIBILITY_DURATION * 1000; // time in ms
     private static final int DEFAULT_GUEST_TIMEOUT = 10000;  // 10s for waiting to connect to the host
     private final int DEFAULT_SCREEN_TIMEOUT = 5000;  // 5s to change between screens
 
@@ -105,7 +106,7 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnHost() {
-            mConnectionManager.startUsersInvitation();
+            mConnectionManager.startInvitation();
         }
 
         @Override
@@ -114,7 +115,7 @@ public class ShareAnchorMode extends BasePetMode {
             mPetContext.unregisterPlaneListener();
 
             // Start to accept invitation from the host
-            mConnectionManager.acceptInvitation();
+            mConnectionManager.findInvitationThenConnect();
 
             // Change the views
             mShareAnchorView.modeGuest();
@@ -189,7 +190,7 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void OnWaitingForConnection() {
         Log.d(TAG, "OnWaitingForConnection: time up");
-        mConnectionManager.stopUsersInvitation();
+        mConnectionManager.stopInvitation();
         if (mConnectionManager.getTotalConnected() > 0) {
             Log.d(TAG, "Total " + mConnectionManager.getTotalConnected());
             mShareAnchorView.inviteAcceptedGuest();
@@ -223,24 +224,30 @@ public class ShareAnchorMode extends BasePetMode {
                 @PetConnectionEventType
                 int messageType = message.getType();
                 switch (messageType) {
-                    case PetConnectionEventType.CONNECTION_ESTABLISHED:
+                    case PetConnectionEventType.CONN_CONNECTION_ESTABLISHED:
                         handleConnectionEstablished();
                         break;
-                    case PetConnectionEventType.CONNECTION_NOT_FOUND:
+                    case PetConnectionEventType.CONN_NO_CONNECTION_FOUND:
                         showNotFound();
                         break;
-                    case PetConnectionEventType.CONNECTION_ALL_LOST:
+                    case PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST:
                         onSharingOff();
                         showToast("Connection lost");
                         break;
-                    case PetConnectionEventType.CONNECTION_LISTENER_STARTED:
+                    case PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS:
                         showToast("Ready to accept connections");
                         showWaitingForScreen();
                         break;
-                    case PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED:
+                    case PetConnectionEventType.CONN_GUEST_CONNECTION_ESTABLISHED:
+                        BTDevice remote = (BTDevice) message.getData();
+                        showToast("Guest connected: " + remote.getName() + ". Total: "
+                                + mConnectionManager.getTotalConnected());
+                        showWaitingForScreen();
+                        break;
+                    case PetConnectionEventType.ERR_ENABLE_BLUETOOTH_DENIED:
                         showToast("Bluetooth is disabled");
                         break;
-                    case PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE:
+                    case PetConnectionEventType.ERR_HOST_VISIBILITY_DENIED:
                         showToast("This device is not visible to other devices");
                         break;
                     default:

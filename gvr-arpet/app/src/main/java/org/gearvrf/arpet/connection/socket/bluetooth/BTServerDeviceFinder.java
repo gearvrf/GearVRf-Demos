@@ -24,7 +24,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.ParcelUuid;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -36,37 +35,50 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class BTServerDeviceFinder extends BroadcastReceiver {
+public class BTServerDeviceFinder {
 
     private static final String TAG = BTServerDeviceFinder.class.getSimpleName();
 
-    private IntentFilter mIntentFilter;
     private Context mContext;
     private OnFindCallback mOnFindCallback;
-    private List<BTDevice> mServersFound = new ArrayList<>();
-    private List<BluetoothDevice> mPendingDevices = Collections.synchronizedList(new ArrayList<>());
+    private List<BTDevice> mServersFound;
+    private List<BluetoothDevice> mPendingDevices;
     private BluetoothAdapter mBluetoothAdapter;
+    private LocalReceiver mReceiver;
+    private boolean isFinding;
 
     public BTServerDeviceFinder(@NonNull Context context) {
-
         this.mContext = context;
         this.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-
-        this.mIntentFilter = new IntentFilter();
-        this.mIntentFilter.addAction(BluetoothDevice.ACTION_UUID);
-        this.mIntentFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        this.mIntentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
     }
 
     public void find(@NonNull OnFindCallback callback) {
 
+        if (isFinding) {
+            throw new IllegalStateException("Already is finding for servers");
+        }
+
+        isFinding = true;
         mOnFindCallback = callback;
-        mPendingDevices.clear();
-        mServersFound.clear();
+        mPendingDevices = Collections.synchronizedList(new ArrayList<>());
+        mServersFound = Collections.synchronizedList(new ArrayList<>());
 
         findInPairedDevices();
         setReceiverEnabled(true);
         doDiscovery();
+    }
+
+    public void cancel() {
+        if (isFinding) {
+            setReceiverEnabled(false);
+            if (mBluetoothAdapter.isDiscovering()) {
+                mBluetoothAdapter.cancelDiscovery();
+            }
+            mPendingDevices = null;
+            mServersFound = null;
+            mOnFindCallback = null;
+            isFinding = false;
+        }
     }
 
     private void findInPairedDevices() {
@@ -74,11 +86,11 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
         for (BluetoothDevice paired : pairedDevices) {
             if (isPhoneDevice(paired)) {
                 if (paired.getUuids() == null) {
-                    Log.d(TAG, "Paired device added to pending " + deviceToString(paired));
+                    Log.d(TAG, "Server candidate found in paired list: " + deviceToString(paired));
                     mPendingDevices.add(paired);
                 } else {
                     if (isServerDevice(paired)) {
-                        Log.d(TAG, "Server found in paired " + deviceToString(paired));
+                        Log.d(TAG, "Server found in paired list: " + deviceToString(paired));
                         mServersFound.add(new BTDevice(paired));
                     }
                 }
@@ -109,9 +121,19 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
     private void setReceiverEnabled(boolean enabled) {
         try {
             if (enabled) {
-                mContext.registerReceiver(this, mIntentFilter);
+                if (mReceiver == null) {
+                    mReceiver = new LocalReceiver();
+                    IntentFilter filter = new IntentFilter();
+                    filter.addAction(BluetoothDevice.ACTION_UUID);
+                    filter.addAction(BluetoothDevice.ACTION_FOUND);
+                    filter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                    mContext.registerReceiver(mReceiver, filter);
+                }
             } else {
-                mContext.unregisterReceiver(this);
+                if (mReceiver != null) {
+                    mContext.unregisterReceiver(mReceiver);
+                    mReceiver = null;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,54 +145,6 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
             mBluetoothAdapter.cancelDiscovery();
         }
         mBluetoothAdapter.startDiscovery();
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-
-        String action = intent.getAction();
-
-        if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            if (!isPaired(device) && isPhoneDevice(device)) {
-                // Check cached SDP records
-                if (isServerDevice(device)) {
-                    Log.d(TAG, "Cached server found" + deviceToString(device));
-                    mServersFound.add(new BTDevice(device));
-                } else {
-                    mPendingDevices.add(device);
-                    Log.d(TAG, "Candidate device found added to pending " + deviceToString(device));
-                }
-            }
-
-        } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-            if (hasNextPendingToFetchUuid()) {
-                fetchUuidForNextPending();
-            } else {
-                Log.d(TAG, "Notify result on discovery finished");
-                setReceiverEnabled(false);
-                notifyResult();
-            }
-
-        } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
-
-            BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-            if (isServerDevice(device)) {
-                Log.d(TAG, "Server found " + deviceToString(device));
-                mServersFound.add(new BTDevice(device));
-            }
-
-            if (hasNextPendingToFetchUuid()) {
-                fetchUuidForNextPending();
-            } else {
-                Log.d(TAG, "Notify result on all pending processed");
-                setReceiverEnabled(false);
-                notifyResult();
-            }
-        }
     }
 
     private boolean hasNextPendingToFetchUuid() {
@@ -193,8 +167,68 @@ public class BTServerDeviceFinder extends BroadcastReceiver {
                 Arrays.toString(device.getUuids()));
     }
 
-    private void notifyResult() {
-        new Handler().post(() -> mOnFindCallback.onResult(mServersFound.toArray(new BTDevice[0])));
+    private class LocalReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            String action = intent.getAction();
+
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                if (!isPaired(device) && isPhoneDevice(device)) {
+                    // Check cached SDP records
+                    if (isServerDevice(device)) {
+                        Log.d(TAG, "Cached server found: " + deviceToString(device));
+                        mServersFound.add(new BTDevice(device));
+                    } else {
+                        mPendingDevices.add(device);
+                        Log.d(TAG, "New phone found and added to pending: " + deviceToString(device));
+                    }
+                }
+
+            } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
+                if (hasNextPendingToFetchUuid()) {
+                    Log.d(TAG, "Discovery finished. Start UUIDs fetching for phones found");
+                    fetchUuidForNextPending();
+                } else {
+                    Log.d(TAG, "Discovery finished. No phone found");
+                    notifyFoundOrRetry();
+                }
+
+            } else if (BluetoothDevice.ACTION_UUID.equals(action)) {
+
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+                if (isServerDevice(device)) {
+                    Log.d(TAG, "New server found: " + deviceToString(device));
+                    mServersFound.add(new BTDevice(device));
+                }
+
+                if (hasNextPendingToFetchUuid()) {
+                    fetchUuidForNextPending();
+                } else {
+                    Log.d(TAG, "UUIDs fetching finished");
+                    notifyFoundOrRetry();
+                }
+            }
+        }
+    }
+
+    private void notifyFoundOrRetry() {
+        if (!mServersFound.isEmpty()) {
+            BTDevice[] result = mServersFound.toArray(new BTDevice[0]);
+            setReceiverEnabled(false);
+            mPendingDevices = null;
+            mServersFound = null;
+            mOnFindCallback.onResult(result);
+            mOnFindCallback = null;
+            isFinding = false;
+        } else {
+            find(mOnFindCallback);
+        }
     }
 
     @FunctionalInterface

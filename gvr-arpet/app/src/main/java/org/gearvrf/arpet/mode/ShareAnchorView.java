@@ -37,7 +37,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class ShareAnchorView extends BasePetView implements IViewEvents, View.OnClickListener {
@@ -122,7 +122,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     @Override
     public void onStartRendering(GVRViewSceneObject shareAnchorView, View view) {
-        shareAnchorView.setTextureBufferSize(ApiConstants.TEXTURE_BUFFER_SIZE);
+        shareAnchorView.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
         addChildObject(shareAnchorView);
     }
 

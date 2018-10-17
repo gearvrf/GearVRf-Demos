@@ -24,7 +24,7 @@ import android.util.Log;
 
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
 
@@ -110,7 +110,7 @@ public class CloudAnchorManager {
 
     private boolean isCloudAnchorApiKeySet() {
         return ContextUtils.isMetaDataSet(mPetContext.getGVRContext().getContext(),
-                ApiConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
+                PetConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
     }
 
     private void onHostResult(int type) {

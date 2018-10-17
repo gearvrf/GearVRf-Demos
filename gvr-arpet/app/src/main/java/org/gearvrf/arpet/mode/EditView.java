@@ -26,7 +26,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class EditView extends BasePetView implements View.OnClickListener, IViewEvents {
@@ -68,7 +68,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
 
     @Override
     public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
-        editSceneObject.setTextureBufferSize(ApiConstants.TEXTURE_BUFFER_SIZE);
+        editSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
         addChildObject(editSceneObject);
     }
 

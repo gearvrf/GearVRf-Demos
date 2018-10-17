@@ -32,7 +32,7 @@ import org.gearvrf.arpet.connection.exception.ConnectionException;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTDevice;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTServerDeviceFinder;
-import org.gearvrf.arpet.constant.ApiConstants;
+import org.gearvrf.arpet.constant.PetConstants;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,19 +42,17 @@ import java.util.List;
 public final class PetConnectionManager extends BTConnectionManager implements IPetConnectionManager {
 
     private static final int REQUEST_ENABLE_BT = 1000;
-    private static final int REQUEST_ENABLE_DISCOVERABLE = 1001;
+    private static final int REQUEST_ENABLE_HOST_VISIBILITY = 1001;
 
     private PetContext mContext;
     private BluetoothAdapter mBluetoothAdapter;
     private BTServerDeviceFinder mServerFinder;
     private OnEnableBluetoothCallback mEnableBTCallback;
-    private OnEnableDiscoverableCallback mEnableDiscoverableCallback;
+    private OnEnableDiscoverableCallback mEnableVisibilityCallback;
     private List<PetConnectionEventHandler> mPetConnectionEventHandlers = new ArrayList<>();
+    private DeviceVisibilityMonitor mDeviceVisibilityMonitor;
 
     private static volatile PetConnectionManager sInstance;
-
-    private PetConnectionManager() {
-    }
 
     public static IPetConnectionManager getInstance() {
         if (sInstance == null) {
@@ -73,6 +71,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             mContext = context;
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mServerFinder = new BTServerDeviceFinder(mContext.getActivity());
+            mDeviceVisibilityMonitor = new DeviceVisibilityMonitor(context, this::onVisibilitySateChanged);
             mContext.addOnPetContextListener((requestCode, resultCode, data)
                     -> onActivityResult(requestCode, resultCode));
         }
@@ -86,52 +85,58 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public void removeMessageHandlers(PetConnectionEventHandler handler) {
+    public void removeMessageHandler(PetConnectionEventHandler handler) {
         checkInitialization();
         mPetConnectionEventHandlers.remove(handler);
     }
 
     @Override
-    public void startUsersInvitation() {
+    public void startInvitation() {
         checkInitialization();
-        Log.d(TAG, "startUsersInvitation: ");
         if (stateIs(ManagerState.IDLE)) {
-            Log.d(TAG, "startUsersInvitation: request enable BT");
+            Log.d(TAG, "Request enable BT");
             enableBluetooth(() -> {
-                Log.d(TAG, "startUsersInvitation: OK, BT enabled. Request device discoverable");
-                enableDiscoverable(() -> {
-                    Log.d(TAG, "startUsersInvitation: OK, now this device is discoverable for "
-                            + ApiConstants.DISCOVERABLE_DURATION + " seconds. Waiting for connections");
-                    startConnectionListener(this::onMessageReceived);
-                    notifyManagerEvent(PetConnectionEventType.CONNECTION_LISTENER_STARTED);
+                Log.d(TAG, "OK, BT enabled. Request device visible");
+                enableHostVisibility(() -> {
+                    Log.d(TAG, "OK, now this device is visible for "
+                            + PetConstants.HOST_VISIBILITY_DURATION + " seconds. Waiting for connections");
+                    mDeviceVisibilityMonitor.setEnabled(true);
+                    notifyManagerEvent(PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS);
+                    super.startConnectionListener(this::onMessageReceived);
                 });
             });
         }
     }
 
     @Override
-    public void stopUsersInvitation() {
+    public void stopInvitation() {
         checkInitialization();
+        mDeviceVisibilityMonitor.setEnabled(false);
         this.stopConnectionListener();
     }
 
     @Override
-    public void acceptInvitation() {
+    public void stopInvitationAndDisconnect() {
         checkInitialization();
-        Log.d(TAG, "acceptInvitation: ");
+        stopInvitation();
+        disconnect();
+    }
+
+    @Override
+    public void findInvitationThenConnect() {
+        checkInitialization();
         if (stateIs(ManagerState.IDLE)) {
             enableBluetooth(() -> {
-                Log.d(TAG, "acceptInvitation: finding server devices...");
+                Log.d(TAG, "Finding a server device...");
                 // Broadcast all devices found and saves the first successfully connection
-                mServerFinder.find(this::onServerFinderResult);
+                notifyManagerEvent(PetConnectionEventType.CONN_ON_REQUEST_CONNECTION_TO_HOST);
+                mServerFinder.find(this::onServersFound);
             });
         }
     }
 
-    @Override
-    public boolean isConnectedAs(int mode) {
-        checkInitialization();
-        return super.isConnectedAs(mode);
+    public void cancelFindInvitation() {
+        mServerFinder.cancel();
     }
 
     @Override
@@ -147,14 +152,27 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public synchronized void sendMessage(Message message, @NonNull SendMessageCallback callback) {
+    public void sendMessage(Message message, @NonNull SendMessageCallback callback) {
         checkInitialization();
         super.sendMessage(message, callback);
     }
 
     private void checkInitialization() {
         if (mContext == null) {
-            throw new IllegalStateException("The manager must be initialized with the init() method.");
+            throw new IllegalStateException("The manager must be initialized calling init() method");
+        }
+    }
+
+    private void onVisibilitySateChanged(@DeviceVisibilityMonitor.State int state) {
+        switch (state) {
+            case DeviceVisibilityMonitor.VISIBILITY_OFF:
+                enableHostVisibility(() -> Log.d(TAG, "Host visibility allowed again"));
+                break;
+            case DeviceVisibilityMonitor.VISIBILITY_ON:
+                Log.d(TAG, "Host visibility ON");
+                break;
+            default:
+                break;
         }
     }
 
@@ -163,13 +181,13 @@ public final class PetConnectionManager extends BTConnectionManager implements I
      *
      * @param servers Servers found.
      */
-    private void onServerFinderResult(BTDevice[] servers) {
-        Log.d(TAG, "onServerFinderResult: found = " + servers.length);
+    private void onServersFound(BTDevice[] servers) {
+        Log.d(TAG, "Servers found = " + servers.length);
         if (servers.length > 0) {
-            Log.d(TAG, "onDevicesFound: Trying connect to servers " + Arrays.toString(servers));
+            Log.d(TAG, "Trying connect to servers " + Arrays.toString(servers));
             connectToDevices(this::onMessageReceived, servers);
         } else {
-            notifyManagerEvent(PetConnectionEventType.CONNECTION_NOT_FOUND);
+            notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
         }
     }
 
@@ -180,7 +198,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
      */
     private void onMessageReceived(Message message) {
         Log.d(TAG, "onMessageReceived: " + message);
-        notifyManagerEvent(PetConnectionEventType.MESSAGE_RECEIVED, message);
+        notifyManagerEvent(PetConnectionEventType.MSG_MESSAGE_RECEIVED, message);
     }
 
     @Override
@@ -190,9 +208,11 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         if (stateIs(ManagerState.CONNECTING_TO_REMOTE)) {
             super.onConnectionEstablished(connection);
             cancelOutgoingConnectionsThreads();
-            notifyManagerEvent(PetConnectionEventType.CONNECTION_ESTABLISHED);
+            notifyManagerEvent(PetConnectionEventType.CONN_CONNECTION_ESTABLISHED);
         } else {
             super.onConnectionEstablished(connection);
+            notifyManagerEvent(PetConnectionEventType.CONN_GUEST_CONNECTION_ESTABLISHED,
+                    connection.getRemoteDevice());
         }
     }
 
@@ -203,7 +223,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             super.onConnectionFailure(error);
             if (stateIs(ManagerState.IDLE)) {
                 Log.d(TAG, "onConnectionFailure: No connection found.");
-                notifyManagerEvent(PetConnectionEventType.CONNECTION_NOT_FOUND);
+                notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
             }
         } else {
             super.onConnectionFailure(error);
@@ -214,9 +234,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
         Log.d(TAG, "onConnectionLost: " + connection.getRemoteDevice());
-        notifyManagerEvent(PetConnectionEventType.CONNECTION_ONE_LOST, connection.getRemoteDevice());
+        notifyManagerEvent(PetConnectionEventType.CONN_ONE_CONNECTION_LOST, connection.getRemoteDevice());
         if (getTotalConnected() == 0) {
-            notifyManagerEvent(PetConnectionEventType.CONNECTION_ALL_LOST);
+            notifyManagerEvent(PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST);
         }
     }
 
@@ -226,9 +246,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             Log.d(TAG, "stopConnectionListener: force stop connection listener");
             super.stopConnectionListener();
             if (getTotalConnected() > 0) {
-                notifyManagerEvent(PetConnectionEventType.CONNECTION_ESTABLISHED);
+                notifyManagerEvent(PetConnectionEventType.CONN_CONNECTION_ESTABLISHED);
             } else {
-                notifyManagerEvent(PetConnectionEventType.CONNECTION_NOT_FOUND);
+                notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
             }
         }
     }
@@ -243,13 +263,13 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             if (resultCode == Activity.RESULT_OK) {
                 mEnableBTCallback.onEnabled();
             } else {
-                notifyManagerEvent(PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED);
+                notifyManagerEvent(PetConnectionEventType.ERR_ENABLE_BLUETOOTH_DENIED);
             }
-        } else if (requestCode == REQUEST_ENABLE_DISCOVERABLE) {
+        } else if (requestCode == REQUEST_ENABLE_HOST_VISIBILITY) {
             if (resultCode != Activity.RESULT_CANCELED) {
-                mEnableDiscoverableCallback.onEnabled();
+                mEnableVisibilityCallback.onEnabled();
             } else {
-                notifyManagerEvent(PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE);
+                notifyManagerEvent(PetConnectionEventType.ERR_HOST_VISIBILITY_DENIED);
             }
         }
     }
@@ -261,9 +281,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     private void notifyManagerEvent(@PetConnectionEventType int type, Serializable data) {
         for (PetConnectionEventHandler petConnectionEventHandler : mPetConnectionEventHandlers) {
             mContext.runOnPetThread(() ->
-                    petConnectionEventHandler.handleEvent(
-                            new PetConnectionEvent(type, data)));
-
+                    petConnectionEventHandler.handleEvent(new PetConnectionEvent(type, data)));
         }
     }
 
@@ -277,14 +295,14 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         }
     }
 
-    private void enableDiscoverable(OnEnableDiscoverableCallback callback) {
-        mEnableDiscoverableCallback = callback;
+    private void enableHostVisibility(OnEnableDiscoverableCallback callback) {
+        mEnableVisibilityCallback = callback;
         if (mBluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, ApiConstants.DISCOVERABLE_DURATION);
-            mContext.getActivity().startActivityForResult(discoverableIntent, REQUEST_ENABLE_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, PetConstants.HOST_VISIBILITY_DURATION);
+            mContext.getActivity().startActivityForResult(discoverableIntent, REQUEST_ENABLE_HOST_VISIBILITY);
         } else {
-            mEnableDiscoverableCallback.onEnabled();
+            mEnableVisibilityCallback.onEnabled();
         }
     }
 

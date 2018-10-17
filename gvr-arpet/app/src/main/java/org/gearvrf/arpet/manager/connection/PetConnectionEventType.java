@@ -24,14 +24,16 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.SOURCE)
 @IntDef({
-        PetConnectionEventType.CONNECTION_ESTABLISHED,
-        PetConnectionEventType.CONNECTION_NOT_FOUND,
-        PetConnectionEventType.CONNECTION_ALL_LOST,
-        PetConnectionEventType.CONNECTION_ONE_LOST,
-        PetConnectionEventType.CONNECTION_LISTENER_STARTED,
-        PetConnectionEventType.MESSAGE_RECEIVED,
-        PetConnectionEventType.ERROR_BLUETOOTH_NOT_ENABLED,
-        PetConnectionEventType.ERROR_DEVICE_NOT_DISCOVERABLE})
+        PetConnectionEventType.CONN_CONNECTION_ESTABLISHED,
+        PetConnectionEventType.CONN_NO_CONNECTION_FOUND,
+        PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST,
+        PetConnectionEventType.CONN_ONE_CONNECTION_LOST,
+        PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS,
+        PetConnectionEventType.CONN_ON_REQUEST_CONNECTION_TO_HOST,
+        PetConnectionEventType.CONN_GUEST_CONNECTION_ESTABLISHED,
+        PetConnectionEventType.MSG_MESSAGE_RECEIVED,
+        PetConnectionEventType.ERR_ENABLE_BLUETOOTH_DENIED,
+        PetConnectionEventType.ERR_HOST_VISIBILITY_DENIED})
 public @interface PetConnectionEventType {
 
     // Connection status
@@ -39,44 +41,54 @@ public @interface PetConnectionEventType {
     /**
      * At least one connection is active
      */
-    int CONNECTION_ESTABLISHED = 10;
+    int CONN_CONNECTION_ESTABLISHED = 10;
 
     /**
-     * Connection timeout or no BT device discovered
+     * Connection timeout or no BT device found
      */
-    int CONNECTION_NOT_FOUND = 11;
+    int CONN_NO_CONNECTION_FOUND = 11;
 
     /**
      * All connections lost
      */
-    int CONNECTION_ALL_LOST = 12;
+    int CONN_ALL_CONNECTIONS_LOST = 12;
 
     /**
      * A connection was lost
      */
-    int CONNECTION_ONE_LOST = 13;
+    int CONN_ONE_CONNECTION_LOST = 13;
 
     /**
-     * Listener ready to accept connections
+     * Ready to accept connections from guests
      */
-    int CONNECTION_LISTENER_STARTED = 14;
+    int CONN_ON_LISTENING_TO_GUESTS = 14;
+
+    /**
+     * A connection to host was requested
+     */
+    int CONN_ON_REQUEST_CONNECTION_TO_HOST = 15;
+
+    /**
+     * Connection from guest established
+     */
+    int CONN_GUEST_CONNECTION_ESTABLISHED = 16;
 
     // Message exchange for ongoing connections
 
     /**
      * Message received from remote device
      */
-    int MESSAGE_RECEIVED = 20; //
+    int MSG_MESSAGE_RECEIVED = 20; //
 
     // Bluetooth errors
 
     /**
      * User denied enable bluetooth
      */
-    int ERROR_BLUETOOTH_NOT_ENABLED = 30;
+    int ERR_ENABLE_BLUETOOTH_DENIED = 30;
 
     /**
-     * User denied enable bluetooth discoverable
+     * User denied device visibility
      */
-    int ERROR_DEVICE_NOT_DISCOVERABLE = 31;
+    int ERR_HOST_VISIBILITY_DENIED = 31;
 }

@@ -46,6 +46,7 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
     private IncomingSocketConnectionThread mIncomingSocketConnection;
     private int mTotalConnectionsDesired, mTotalConnectionsFailed;
     private List<OutgoingSocketConnectionThread> mOutgoingSocketConnections;
+    private boolean isDisconnectCalled;
 
     @ConnectionMode
     private int mConnectionMode;
@@ -175,17 +176,18 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @Override
     public synchronized void disconnect() {
-        if (stateIs(ManagerState.CONNECTED)) {
-            try {
-                for (Connection connection : mOngoingConnections) {
-                    connection.close();
-                }
-                mOngoingConnections.clear();
-                setState(ManagerState.IDLE);
-                mConnectionMode = ConnectionMode.NONE;
-            } catch (Exception e) {
-                e.printStackTrace();
+        isDisconnectCalled = true;
+        try {
+            for (Connection connection : mOngoingConnections) {
+                connection.close();
             }
+            mOngoingConnections.clear();
+            setState(ManagerState.IDLE);
+            mConnectionMode = ConnectionMode.NONE;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            isDisconnectCalled = false;
         }
     }
 
@@ -223,10 +225,12 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @Override
     public synchronized void onConnectionLost(Connection connection, ConnectionException error) {
-        mOngoingConnections.remove(connection);
-        if (getTotalConnected() == 0) {
-            setState(ManagerState.IDLE);
-            mConnectionMode = ConnectionMode.NONE;
+        if (!isDisconnectCalled) {
+            mOngoingConnections.remove(connection);
+            if (getTotalConnected() == 0) {
+                setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
+            }
         }
     }
 

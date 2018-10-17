@@ -29,20 +29,41 @@ import java.util.List;
 
 public interface IPetConnectionManager {
 
+    /**
+     * This method must be called before to use the manager,
+     * otherwise an {@link IllegalStateException} will be thrown
+     *
+     * @param context A context
+     */
     void init(@NonNull PetContext context);
 
-    void startUsersInvitation();
+    void startInvitation();
 
-    void stopUsersInvitation();
+    /**
+     * Stop listening to connections
+     */
+    void stopInvitation();
 
-    void acceptInvitation();
+    /**
+     * Stop listening to new connections and close all
+     * devices previously connected.
+     */
+    void stopInvitationAndDisconnect();
+
+    /**
+     * Find for a server then connect to it immediately.
+     */
+    void findInvitationThenConnect();
+
+    /**
+     * Cancels the process of finding a server.
+     */
+    void cancelFindInvitation();
 
     List<Device> getConnectedDevices();
 
     @ConnectionMode
     int getConnectionMode();
-
-    boolean isConnectedAs(@ConnectionMode int mode);
 
     int getTotalConnected();
 
@@ -50,7 +71,7 @@ public interface IPetConnectionManager {
 
     void addEventHandler(PetConnectionEventHandler handler);
 
-    void removeMessageHandlers(PetConnectionEventHandler handler);
+    void removeMessageHandler(PetConnectionEventHandler handler);
 
     PetContext getContext();
 }
