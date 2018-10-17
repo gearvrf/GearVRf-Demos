@@ -25,7 +25,6 @@ import android.widget.Toast;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.PlaneHandler;
 import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
@@ -284,6 +283,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showToast(String text) {
+        Log.d(TAG, "showToast: " + text);
         Toast.makeText(mPetContext.getActivity(), text, Toast.LENGTH_LONG).show();
     }
 
@@ -400,21 +400,21 @@ public class ShareAnchorMode extends BasePetMode {
         mMessageService.shareCloudAnchors(anchors, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                Log.d(TAG, "all guests have resolved their cloud anchors");
+                showToast("Pet anchor successfully resolved on guest");
                 // Inform the guests to change their view
                 sendCommandToShowModeShareAnchorView();
 
                 mAnchoredObjects.stream()
                         .filter(CharacterView.class::isInstance)
                         .findFirst()
-                        .ifPresent(petView -> mSharedMixedReality.
-                                startSharing(petView.getAnchor().getPose(), SharedMixedReality.HOST));
+                        .ifPresent(petView -> mSharedMixedReality.startSharing(
+                                petView.getAnchor().getPose(), SharedMixedReality.HOST));
             }
 
             @Override
             public void onFailure(Exception error) {
+                showToast("Error resolving pet anchor on guest: " + error.getMessage());
                 showPairingError();
-                Log.e(TAG, "some guest didn't get to resolve a cloud anchor");
             }
         });
     }
@@ -444,9 +444,10 @@ public class ShareAnchorMode extends BasePetMode {
             // This method gets locked and will return after loader finish
             Log.d(TAG, "Resolving anchors...");
             task.start();
+            Log.d(TAG, "Task ended");
             // Lock released, now checks thread result
             if (task.getError() != null) {
-                showToast("Error resolving anchors: " + task.getError().getMessage());
+                showToast(task.getError().getMessage());
                 throw new MessageException(task.getError());
             } else {
                 showToast("All anchors successfully resolved");

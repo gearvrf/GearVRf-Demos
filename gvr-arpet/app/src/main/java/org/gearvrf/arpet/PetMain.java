@@ -59,6 +59,7 @@ public class PetMain extends DisableNativeSplashScreen {
     private GVRCursorController mCursorController = null;
 
     private CurrentSplashScreen mCurrentSplashScreen;
+    private SharedMixedReality mSharedMixedReality;
 
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
@@ -90,6 +91,8 @@ public class PetMain extends DisableNativeSplashScreen {
         mAnchoredObjects.add((AnchoredObject) mPet.view());
 
         configTouchScreen();
+
+        mSharedMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
     }
 
     private void splashScreenBehavior() {
@@ -127,8 +130,7 @@ public class PetMain extends DisableNativeSplashScreen {
         mPet.setInitialScale();
         mPet.enableActions();
 
-        ((SharedMixedReality) mPetContext.getMixedReality())
-                .registerSharedObject(plane.getSceneObject(), ArPetObjectType.PLANE);
+        mSharedMixedReality.registerSharedObject(plane.getSceneObject(), ArPetObjectType.PLANE);
 
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");
@@ -152,6 +154,7 @@ public class PetMain extends DisableNativeSplashScreen {
     public void handleBallEvent(BallThrowHandlerEvent event) {
         if (event.getPerformedAction().equals(BallThrowHandlerEvent.THROWN)) {
             mPet.setCurrentAction(PetActions.TO_BALL.ID);
+        } else if (event.getPerformedAction().equals(BallThrowHandlerEvent.RESET)) {
         }
     }
 

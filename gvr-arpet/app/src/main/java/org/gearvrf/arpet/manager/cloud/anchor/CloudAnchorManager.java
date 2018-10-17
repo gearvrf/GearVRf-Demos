@@ -197,14 +197,15 @@ public class CloudAnchorManager {
                         }
                     }
                 });
-            } catch (Throwable e) {
+            } catch (Throwable cause) {
                 synchronized (RESOLVER_LOCK) {
                     mIsResolvingAnchors = false;
                     mResolvedCloudAnchors = null;
                 }
-                String errorString = "Error resolving anchor for " + cloudAnchor + ". " + e.getMessage();
-                Log.e(TAG, errorString);
-                mResolveCallback.onError(new CloudAnchorException(errorString, e));
+                String errorString = "Error resolving anchor for " + cloudAnchor;
+                Log.e(TAG, errorString + ". " + cause);
+                CloudAnchorException error = new CloudAnchorException(errorString, cause);
+                mResolveCallback.onError(error);
                 break;
             }
         }

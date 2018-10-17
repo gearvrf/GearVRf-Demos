@@ -27,10 +27,10 @@ import java.lang.annotation.RetentionPolicy;
 public class BallCommand implements Command {
 
     public static final String THROW = "THROW";
-    public static final String RESET = "RESET";
+    public static final String ENABLE = "ENABLE";
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({THROW, RESET})
+    @StringDef({THROW, ENABLE})
     public @interface Type {
     }
 
@@ -60,6 +60,7 @@ public class BallCommand implements Command {
     public String toString() {
         return "BallCommand{" +
                 "type='" + type + '\'' +
+                ", mForceVector=" + mForceVector +
                 '}';
     }
 }

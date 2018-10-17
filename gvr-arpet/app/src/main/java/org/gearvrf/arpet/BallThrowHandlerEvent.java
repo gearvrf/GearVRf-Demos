@@ -25,8 +25,9 @@ import java.lang.annotation.RetentionPolicy;
 public class BallThrowHandlerEvent {
 
     public static final String THROWN = "THROWN";
+    public static final String RESET = "RESET";
 
-    @StringDef({THROWN})
+    @StringDef({THROWN, RESET})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Action {
     }

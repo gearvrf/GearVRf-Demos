@@ -15,6 +15,7 @@
 
 package org.gearvrf.arpet;
 
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -22,10 +23,13 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRSphereCollider;
+import org.gearvrf.arpet.service.IMessageService;
+import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.physics.GVRRigidBody;
@@ -36,6 +40,9 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class BallThrowHandler {
+
+    private static final String TAG = BallThrowHandler.class.getSimpleName();
+
     private static final float defaultPositionX = 0f;
     private static final float defaultPositionY = 0f;
     private static final float defaultPositionZ = -40f;
@@ -62,10 +69,14 @@ public class BallThrowHandler {
     private float mForce;
     private final Vector3f mForceVector;
 
+    private IMessageService mMessageService;
+    private SharedMixedReality mSharedMixedReality;
+
     private BallThrowHandler(PetContext petContext) {
 
         mPlayer = petContext.getPlayer();
         mContext = petContext.getGVRContext();
+        mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
 
         createBall();
         initController();
@@ -76,12 +87,13 @@ public class BallThrowHandler {
 
         EventBus.getDefault().register(this);
 
-        MessageService.getInstance().addMessageReceiver(new SimpleMessageReceiver() {
+        mMessageService = MessageService.getInstance();
+        mMessageService.addMessageReceiver(new SimpleMessageReceiver() {
             @Override
             public void onReceiveBallCommand(BallCommand command) {
                 if (BallCommand.THROW.equals(command.getType())) {
                     mForceVector.set(command.getForceVector());
-                    throwBall();
+                    throwLocalBall();
                 }
             }
         });
@@ -183,7 +195,8 @@ public class BallThrowHandler {
                     q.setFromNormalized(playerMatrix);
                     mForceVector.rotate(q);
 
-                    throwBall();
+                    throwLocalBall();
+                    throwRemoteBall();
 
                     return true;
                 }
@@ -201,7 +214,26 @@ public class BallThrowHandler {
         };
     }
 
-    private void throwBall() {
+    private void throwRemoteBall() {
+        if (mSharedMixedReality.getMode() != SharedMixedReality.HOST) {
+            return;
+        }
+        BallCommand throwCommand = new BallCommand(BallCommand.THROW);
+        throwCommand.setForceVector(mForceVector);
+        mMessageService.sendBallCommand(throwCommand, new MessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "Success executing throw command on guests");
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.d(TAG, "Failure executing throw command on guests: " + error.getMessage());
+            }
+        });
+    }
+
+    private void throwLocalBall() {
         mRigidBody.setEnable(true);
         mRigidBody.applyCentralForce(mForceVector.x(), mForceVector.y(), mForceVector.z());
         thrown = true;
@@ -229,14 +261,11 @@ public class BallThrowHandler {
         mPlayer.addChildObject(mBall);
         mResetOnTouchEnabled = true;
         thrown = false;
+        EventBus.getDefault().post(new BallThrowHandlerEvent(BallThrowHandlerEvent.RESET));
     }
 
     public boolean canBeReseted() {
         return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
-    }
-
-    public void setResetOnTouchEnabled(boolean enabled) {
-        mResetOnTouchEnabled = enabled;
     }
 
     private void load3DModel() {

@@ -102,11 +102,15 @@ public class SharedMixedReality implements IMRCommon {
 
     private synchronized void startGuest() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
-            shared.parent = shared.object.getParent();
-            if (shared.parent != null) {
-                shared.parent.removeChildObject(shared.object);
-                shared.parent.getGVRContext().getMainScene().addSceneObject(shared.object);
-            }
+            initAsGuest(shared);
+        }
+    }
+
+    private synchronized void initAsGuest(SharedSceneObject shared) {
+        shared.parent = shared.object.getParent();
+        if (shared.parent != null) {
+            shared.parent.removeChildObject(shared.object);
+            shared.parent.getGVRContext().getMainScene().addSceneObject(shared.object);
         }
     }
 
@@ -120,7 +124,11 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public synchronized void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
-        mSharedSceneObjects.add(new SharedSceneObject(type, object));
+        SharedSceneObject shared = new SharedSceneObject(type, object);
+        if (mMode == GUEST) {
+            initAsGuest(shared);
+        }
+        mSharedSceneObjects.add(shared);
     }
 
     public synchronized void unregisterSharedObject(GVRSceneObject object) {
@@ -275,7 +283,7 @@ public class SharedMixedReality implements IMRCommon {
 
     private Runnable mSharingLoop = new Runnable() {
 
-        final int LOOP_TIME = 500;
+        final int LOOP_TIME = 300;
 
         @Override
         public void run() {
