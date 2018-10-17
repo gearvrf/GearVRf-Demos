@@ -67,7 +67,7 @@
         android:paddingStart="12dp"
         android:paddingTop="6dp"
         android:text="@string/save"
-        android:textColor="#cc1586"
+        android:textColor="#ffffff"
         android:textSize="20sp" />
 
 </RelativeLayout>
