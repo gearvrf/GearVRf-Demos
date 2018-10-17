@@ -16,6 +16,8 @@
 
 package org.gearvrf.arpet.manager.cloud.anchor;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -151,14 +153,14 @@ public class CloudAnchorManager {
         if (anchors.length == 0) {
             String errorString = "Nothing to resolve. Anchors array is empty";
             Log.e(TAG, errorString);
-            callback.onError(new CloudAnchorException(errorString));
+            new Handler(Looper.getMainLooper()).post(() -> callback.onError(new CloudAnchorException(errorString)));
             return;
         }
 
         if (!isCloudAnchorApiKeySet()) {
             String errorString = "Unable to resolver anchors. Cloud anchor API key is not set.";
             Log.e(TAG, errorString);
-            callback.onError(new CloudAnchorException(errorString));
+            new Handler(Looper.getMainLooper()).post(() -> callback.onError(new CloudAnchorException(errorString)));
             return;
         }
 
@@ -205,7 +207,7 @@ public class CloudAnchorManager {
                 String errorString = "Error resolving anchor for " + cloudAnchor;
                 Log.e(TAG, errorString + ". " + cause);
                 CloudAnchorException error = new CloudAnchorException(errorString, cause);
-                mResolveCallback.onError(error);
+                new Handler(Looper.getMainLooper()).post(() -> mResolveCallback.onError(error));
                 break;
             }
         }
