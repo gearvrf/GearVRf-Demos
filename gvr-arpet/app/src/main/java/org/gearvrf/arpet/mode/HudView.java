@@ -1,3 +1,5 @@
+package org.gearvrf.arpet.mode;
+
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;

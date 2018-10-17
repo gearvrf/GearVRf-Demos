@@ -18,7 +18,6 @@ package org.gearvrf.arpet.mode;
 import android.util.Log;
 
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.GVRContext;
 import org.gearvrf.arpet.PetContext;
 
 public class HudMode extends BasePetMode {
