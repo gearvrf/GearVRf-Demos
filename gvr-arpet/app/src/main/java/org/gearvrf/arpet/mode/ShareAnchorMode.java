@@ -124,22 +124,12 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnBackShareAnchor() {
-            mPetContext.getGVRContext().runOnGlThread(new Runnable() {
-                @Override
-                public void run() {
-                    mBackToHudModeListener.OnBackToHud();
-                }
-            });
+            mPetContext.getGVRContext().runOnGlThread(() -> mBackToHudModeListener.OnBackToHud());
         }
 
         @Override
         public void OnCancel() {
-            mPetContext.getGVRContext().runOnGlThread(new Runnable() {
-                @Override
-                public void run() {
-                    mBackToHudModeListener.OnBackToHud();
-                }
-            });
+            mPetContext.getGVRContext().runOnGlThread(() -> mBackToHudModeListener.OnBackToHud());
         }
 
         @Override
@@ -194,12 +184,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showSharedHost() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.sharedHost();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.sharedHost());
     }
 
     private void OnWaitingForConnection() {
@@ -213,27 +198,19 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void showNotFound() {
         final String[] type = {""};
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (mShareAnchorView.getUserType() == GUEST) {
-                    type[0] = "Host";
-                    mShareAnchorView.notFound(type[0]);
-                } else {
-                    type[0] = "Guest";
-                    mShareAnchorView.notFound(type[0]);
-                }
+        mPetContext.getActivity().runOnUiThread(() -> {
+            if (mShareAnchorView.getUserType() == GUEST) {
+                type[0] = "Host";
+                mShareAnchorView.notFound(type[0]);
+            } else {
+                type[0] = "Guest";
+                mShareAnchorView.notFound(type[0]);
             }
         });
     }
 
     private void showPairingError() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.pairingError();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.pairingError());
     }
 
     @SuppressLint("HandlerLeak")
@@ -299,66 +276,31 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showWaitingScreen() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.waitingView();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.waitingView());
     }
 
     private void showStayInPositionToPair() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.toPairView();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.toPairView());
     }
 
     private void showCenterPet() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.centerPetView();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.centerPetView());
     }
 
     private void showMoveAround() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.moveAroundView();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.moveAroundView());
     }
 
     private void showModeShareAnchorView() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.postDelayed(() -> showStatusModeView(), DEFAULT_SCREEN_TIMEOUT);
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mHandler.postDelayed(() -> showStatusModeView(), DEFAULT_SCREEN_TIMEOUT));
     }
 
     private void showStatusModeView() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.modeView();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.modeView());
     }
 
     private void showLookingSidebySide() {
-        mPetContext.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mShareAnchorView.lookingSidebySide();
-            }
-        });
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.lookingSidebySide());
     }
 
 
