@@ -110,10 +110,6 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnGuest() {
-            // Clear the scene once the user is in Guest mode and the objects will
-            // be shared by the Host.
-            clearSceneObjects();
-
             // Disable the planes detection
             mPetContext.unregisterPlaneListener();
 
@@ -159,13 +155,6 @@ public class ShareAnchorMode extends BasePetMode {
         public void OnConnectedScreen() {
             mShareAnchorView.modeView();
         }
-    }
-
-    private void clearSceneObjects() {
-        for (AnchoredObject object : mAnchoredObjects) {
-            mPetContext.getMainScene().removeSceneObject(object.getAnchor());
-        }
-        mPetContext.getMainScene().removeSceneObjectByName(PlaneHandler.PLANE_NAME);
     }
 
     private void showWaitingForScreen() {
