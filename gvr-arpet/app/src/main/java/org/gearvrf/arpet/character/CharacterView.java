@@ -61,7 +61,6 @@ public class CharacterView extends AnchoredObject implements
     private GVRContext mContext;
     private GVRPlane mBoundaryPlane;
     private float[] mPlaneCenterPose = new float[16];
-    private GVRSceneObject mCursor;
     private GVRSceneObject mShadow;
     private GVRSceneObject mInfinityPlan;
     public final static String PET_COLLIDER = "Pet collider";
@@ -110,7 +109,7 @@ public class CharacterView extends AnchoredObject implements
         }
 
         GVRBoxCollider collider = new GVRBoxCollider(mContext);
-        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
+        collider.setHalfExtents(0.4f, 0.4f, 0.4f);
         cube.attachCollider(collider);
 
         cube.getTransform().setPosition(0, 0.2f, 0);
@@ -139,26 +138,44 @@ public class CharacterView extends AnchoredObject implements
     }
 
     private void createInfinityPlan() {
+        final float width = 2.0f;
+        final float height = 2.0f;
+
+        final float[] vertices = new float[]{
+                0.0f, 0.0f, 0.0f,
+                width * -0.25f, height * 0.5f, 0.0F,
+                width * -0.5f, height * 0.25f, 0.0F,
+                width * -0.5f, height * -0.25f, 0.0f,
+                width * -0.25f, height * -0.5f, 0.0f,
+                width * 0.25f, height * -0.5f, 0.0f,
+                width * 0.5f, height * -0.25f, 0.0f,
+                width * 0.5f, height * 0.25f, 0.0f,
+                width * 0.25f, height * 0.5f, 0.0f,
+                width * -0.25f, height * 0.5f, 0.0F
+        };
+
         mInfinityPlan = new GVRSceneObject(mContext);
         final GVRTextureParameters texParams = new GVRTextureParameters(mContext);
         final GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.infinity_plan));
         final GVRMaterial material = new GVRMaterial(mContext, new GVRShaderId(GVRTiledMaskShader.class));
         final GVRRenderData renderData = new GVRRenderData(mContext);
+        final GVRMesh mesh = new GVRMesh(mContext, "float3 a_position");
 
         texParams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_MIRRORED_REPEAT);
         texParams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_MIRRORED_REPEAT);
         tex.updateTextureParameters(texParams);
 
-        renderData.setMesh(GVRMesh.createQuad(mContext,
-                        "float3 a_position float2 a_texcoord",
-                        2, 2));
+        mesh.setVertices(vertices);
+        renderData.setMesh(mesh);
+
         renderData.setAlphaBlend(true);
         material.setMainTexture(tex);
         renderData.setMaterial(material);
+        renderData.setDrawMode(GLES30.GL_TRIANGLE_FAN);
 
         mInfinityPlan.attachComponent(renderData);
-        mInfinityPlan.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
         mInfinityPlan.getTransform().setPosition(0f, 0.01f, -0.02f);
+        mInfinityPlan.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
         mInfinityPlan.setName("infinityPlan");
     }
 

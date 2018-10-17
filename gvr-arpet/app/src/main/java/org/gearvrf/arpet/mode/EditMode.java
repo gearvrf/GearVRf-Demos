@@ -101,7 +101,12 @@ public class EditMode extends BasePetMode {
 
         @Override
         public void OnBack() {
-            mBackToHudModeListener.OnBackToHud();
+            mPetContext.getGVRContext().runOnGlThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBackToHudModeListener.OnBackToHud();
+                }
+            });
             Log.d(TAG, "On Back");
         }
 

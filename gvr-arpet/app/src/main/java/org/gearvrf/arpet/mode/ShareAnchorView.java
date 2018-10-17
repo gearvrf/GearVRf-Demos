@@ -31,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
@@ -62,6 +63,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         super(petContext);
         mShareAnchorObject = new GVRViewSceneObject(petContext.getGVRContext(),
                 R.layout.share_anchor_layout, this);
+        mShareAnchorObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         getTransform().setPosition(0.0f, 0.0f, -0.72f);
     }

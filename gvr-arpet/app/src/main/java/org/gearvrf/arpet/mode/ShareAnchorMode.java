@@ -63,7 +63,7 @@ public class ShareAnchorMode extends BasePetMode {
     private final int DEFAULT_SCREEN_TIMEOUT = 5000;  // 5s to change between screens
 
     private IPetConnectionManager mConnectionManager;
-    private final Handler mHandler = new Handler();
+    private final Handler mHandler;
     private ShareAnchorView mShareAnchorView;
     private final List<AnchoredObject> mAnchoredObjects;
     private CloudAnchorManager mCloudAnchorManager;
@@ -74,6 +74,7 @@ public class ShareAnchorMode extends BasePetMode {
     public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects, OnBackToHudModeListener listener) {
         super(petContext, new ShareAnchorView(petContext));
         mConnectionManager = PetConnectionManager.getInstance();
+        mHandler = new Handler(petContext.getActivity().getMainLooper());
         mConnectionManager.addEventHandler(new AppConnectionMessageHandler());
         mShareAnchorView = (ShareAnchorView) mModeScene;
         mShareAnchorView.setListenerShareAnchorMode(new HandlerActionsShareAnchorMode());
@@ -123,12 +124,22 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnBackShareAnchor() {
-            mBackToHudModeListener.OnBackToHud();
+            mPetContext.getGVRContext().runOnGlThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBackToHudModeListener.OnBackToHud();
+                }
+            });
         }
 
         @Override
         public void OnCancel() {
-            mBackToHudModeListener.OnBackToHud();
+            mPetContext.getGVRContext().runOnGlThread(new Runnable() {
+                @Override
+                public void run() {
+                    mBackToHudModeListener.OnBackToHud();
+                }
+            });
         }
 
         @Override

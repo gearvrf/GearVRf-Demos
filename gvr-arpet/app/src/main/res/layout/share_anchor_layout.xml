@@ -17,14 +17,14 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="640dp"
-    android:layout_height="360dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="640dp"
+        android:layout_height="360dp"
         android:background="@drawable/bg_overlay">
 
         <ImageView
@@ -54,7 +54,7 @@
             android:layout_height="46dp"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="15.5dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical">

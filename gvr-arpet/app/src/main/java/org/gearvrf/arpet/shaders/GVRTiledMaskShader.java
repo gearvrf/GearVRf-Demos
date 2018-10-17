@@ -39,7 +39,7 @@ public class GVRTiledMaskShader extends GVRShaderTemplate
     {
         super("float3 u_color float u_opacity float2 u_scale",
               "sampler2D u_texture",
-              "float3 a_position float2 a_texcoord", GLSLESVersion.VULKAN);
+              "float3 a_position", GLSLESVersion.VULKAN);
         Context context = gvrContext.getContext();
         setSegment("FragmentTemplate", TextFile.readTextFile(context, R.raw.tex_tiled_frag));
         setSegment("VertexTemplate", TextFile.readTextFile(context, R.raw.tex_tiled_vert));

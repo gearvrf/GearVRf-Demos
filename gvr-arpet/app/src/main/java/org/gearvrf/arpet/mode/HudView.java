@@ -1,25 +1,9 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.gearvrf.arpet.mode;
-
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
@@ -40,6 +24,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
     public HudView(PetContext petContext) {
         super(petContext);
         mHudMenu = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.hud_layout, this);
+        mHudMenu.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         mListener = null;
         getTransform().setPosition(0.95f, 0.0f,-1.6f);
     }
@@ -90,7 +75,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                 });
                 break;
             case R.id.btn_edit:
-                editModeButton.post(new Runnable() {
+                mPetContext.getGVRContext().runOnGlThread(new Runnable() {
                     @Override
                     public void run() {
                         mListener.onEditModeClicked();
@@ -106,12 +91,17 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                         closeButton.setVisibility(View.INVISIBLE);
                         menuButton.setVisibility(View.VISIBLE);
                         playBoneButton.setBackgroundResource(R.drawable.bg_button_ball);
+                    }
+                });
+                mPetContext.getGVRContext().runOnGlThread(new Runnable() {
+                    @Override
+                    public void run() {
                         mListener.onBallClicked();
                     }
                 });
                 break;
             case R.id.btn_shareanchor:
-                shareAnchorButton.post(new Runnable() {
+                mPetContext.getGVRContext().runOnGlThread(new Runnable() {
                     @Override
                     public void run() {
                         mListener.onShareAnchorClicked();
@@ -119,7 +109,7 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                 });
                 break;
             case R.id.btn_camera:
-                cameraButton.post(new Runnable() {
+                mPetContext.getGVRContext().runOnGlThread(new Runnable() {
                     @Override
                     public void run() {
                         mListener.onCameraClicked();

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.IViewEvents;
@@ -38,6 +39,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
         super(petContext);
         mEditModeObject = new GVRViewSceneObject(petContext.getGVRContext(),
                 R.layout.edit_mode_layout, this);
+        mEditModeObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         getTransform().setPosition(0.0f, 0.22f, -0.78f);
     }
