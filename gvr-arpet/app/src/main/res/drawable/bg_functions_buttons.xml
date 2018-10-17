@@ -25,7 +25,7 @@
     </item>
     <item android:state_pressed="true">
         <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
-            <solid android:color="#9d226e" />
+            <solid android:color="#9b1066" />
         </shape>
     </item>
 </selector>

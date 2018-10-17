@@ -31,7 +31,7 @@ import org.gearvrf.utility.Log;
 public class HudView extends BasePetView implements View.OnClickListener, IViewEvents {
     private static final String TAG = "HudView";
 
-    private LinearLayout MenuHud, menuButton, closeButton, playBallButton, shareAnchorButton, cameraButton, editModeButton;
+    private LinearLayout MenuHud, menuButton, closeButton, playBoneButton, shareAnchorButton, cameraButton, editModeButton;
     private GVRViewSceneObject mHudMenu;
     private OnHudItemClicked mListener;
     private Animation openAnimation;
@@ -97,15 +97,15 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
                     }
                 });
                 break;
-            case R.id.btn_fetchball:
-                playBallButton.post(new Runnable() {
+            case R.id.btn_fetchbone:
+                playBoneButton.post(new Runnable() {
                     @Override
                     public void run() {
                         MenuHud.startAnimation(closeAnimation);
                         MenuHud.setVisibility(View.INVISIBLE);
                         closeButton.setVisibility(View.INVISIBLE);
                         menuButton.setVisibility(View.VISIBLE);
-                        playBallButton.setBackgroundResource(R.drawable.bg_button_ball);
+                        playBoneButton.setBackgroundResource(R.drawable.bg_button_ball);
                         mListener.onBallClicked();
                     }
                 });
@@ -136,13 +136,13 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
         menuButton = view.findViewById(R.id.btn_menu);
         closeButton = view.findViewById(R.id.btn_close);
         editModeButton = view.findViewById(R.id.btn_edit);
-        playBallButton = view.findViewById(R.id.btn_fetchball);
+        playBoneButton = view.findViewById(R.id.btn_fetchbone);
         shareAnchorButton = view.findViewById(R.id.btn_shareanchor);
         cameraButton = view.findViewById(R.id.btn_camera);
         menuButton.setOnClickListener(this);
         closeButton.setOnClickListener(this);
         editModeButton.setOnClickListener(this);
-        playBallButton.setOnClickListener(this);
+        playBoneButton.setOnClickListener(this);
         shareAnchorButton.setOnClickListener(this);
         cameraButton.setOnClickListener(this);
         openAnimation = AnimationUtils.loadAnimation(mPetContext.getActivity(), R.anim.open);

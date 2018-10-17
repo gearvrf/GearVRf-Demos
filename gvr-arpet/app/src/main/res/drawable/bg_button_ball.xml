@@ -19,6 +19,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <corners android:radius="14dp"/>
-    <solid android:color="#cc1586"/>
-    <stroke android:width="7px" android:color="#ffffff" />
+    <solid android:color="#9b1066"/>
 </shape>
