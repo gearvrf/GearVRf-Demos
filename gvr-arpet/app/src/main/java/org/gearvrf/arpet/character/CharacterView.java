@@ -23,9 +23,13 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
+import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
+import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
@@ -35,6 +39,7 @@ import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.arpet.shaders.GVRTiledMaskShader;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.IMRCommon;
@@ -58,6 +63,7 @@ public class CharacterView extends AnchoredObject implements
     private float[] mPlaneCenterPose = new float[16];
     private GVRSceneObject mCursor;
     private GVRSceneObject mShadow;
+    private GVRSceneObject mInfinityPlan;
     public final static String PET_COLLIDER = "Pet collider";
 
     private GVRSceneObject m3DModel;
@@ -69,6 +75,8 @@ public class CharacterView extends AnchoredObject implements
         mMixedReality = petContext.getMixedReality();
 
         createShadow();
+
+        createInfinityPlan();
 
         // TODO: Load at thread
         petContext.runOnPetThread(new Runnable() {
@@ -84,6 +92,7 @@ public class CharacterView extends AnchoredObject implements
     private void load3DModel() {
         m3DModel = LoadModelHelper.loadModelSceneObject(mContext, LoadModelHelper.PET_MODEL_PATH);
         m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
+        m3DModel.getTransform().setPosition(0, 0.03f, 0);
 
         addChildObject(m3DModel);
 
@@ -122,10 +131,35 @@ public class CharacterView extends AnchoredObject implements
         mShadow = new GVRSceneObject(mContext, 0.3f, 0.6f);
         mShadow.getRenderData().setMaterial(mat);
         mShadow.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
-        mShadow.getTransform().setPosition(0f, 0.01f, -0.02f);
+        mShadow.getTransform().setPosition(0f, 0.02f, -0.02f);
+        mShadow.getRenderData().setAlphaBlend(true);
         mShadow.setName("shadow");
         mShadow.setEnable(false);
         addChildObject(mShadow);
+    }
+
+    private void createInfinityPlan() {
+        mInfinityPlan = new GVRSceneObject(mContext);
+        final GVRTextureParameters texParams = new GVRTextureParameters(mContext);
+        final GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.infinity_plan));
+        final GVRMaterial material = new GVRMaterial(mContext, new GVRShaderId(GVRTiledMaskShader.class));
+        final GVRRenderData renderData = new GVRRenderData(mContext);
+
+        texParams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_MIRRORED_REPEAT);
+        texParams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_MIRRORED_REPEAT);
+        tex.updateTextureParameters(texParams);
+
+        renderData.setMesh(GVRMesh.createQuad(mContext,
+                        "float3 a_position float2 a_texcoord",
+                        2, 2));
+        renderData.setAlphaBlend(true);
+        material.setMainTexture(tex);
+        renderData.setMaterial(material);
+
+        mInfinityPlan.attachComponent(renderData);
+        mInfinityPlan.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
+        mInfinityPlan.getTransform().setPosition(0f, 0.01f, -0.02f);
+        mInfinityPlan.setName("infinityPlan");
     }
 
     @Override
@@ -186,11 +220,13 @@ public class CharacterView extends AnchoredObject implements
     @Override
     public void show(GVRScene mainScene) {
         mainScene.addSceneObject(getAnchor());
+        getAnchor().attachSceneObject(mInfinityPlan);
     }
 
     @Override
     public void hide(GVRScene mainScene) {
         mainScene.removeSceneObject(getAnchor());
+        getAnchor().detachSceneObject(mInfinityPlan);
     }
 
     /**
