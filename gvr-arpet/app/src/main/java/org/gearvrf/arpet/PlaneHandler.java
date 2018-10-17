@@ -131,8 +131,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             }
 
             // This will update rigid body according to owner's transform
-            board.disable();
-            board.enable();
+            board.reset(false);
         }
     }
 
