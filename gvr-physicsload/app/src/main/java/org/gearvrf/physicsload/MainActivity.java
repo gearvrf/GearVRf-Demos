@@ -191,7 +191,11 @@ public class MainActivity extends GVRActivity {
 
             // This bullet file was created from a bullet application to add fixed and slider
             // constraints that are not available on Blender
-            GVRPhysicsLoader.loadPhysicsFile(gvrContext, "fixed_slider.bullet", mainScene);
+            try {
+                GVRPhysicsLoader.loadPhysicsFile(gvrContext, "fixed_slider.bullet", mainScene);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
             // This object will replace the "Plane" exported by Blender as the floor of this scene
             GVRMaterial orangeMat = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
