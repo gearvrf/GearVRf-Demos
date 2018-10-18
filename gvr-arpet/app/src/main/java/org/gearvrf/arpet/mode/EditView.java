@@ -41,7 +41,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
                 R.layout.edit_mode_layout, this);
         mEditModeObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
-        getTransform().setPosition(0.0f, 0.22f, -0.78f);
+        getTransform().setPosition(0.0f, 0.0f, -0.78f);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
     }
 
     @Override
-    public void onInitView(GVRViewSceneObject EditModeSceneObject, View view) {
+    public void onInitView(GVRViewSceneObject editModeSceneObject, View view) {
         mBackButton = view.findViewById(R.id.btn_back);
         mSaveButton = view.findViewById(R.id.btn_save);
         mBackButton.setOnClickListener(this);

@@ -22,57 +22,61 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="590dp"
-    android:layout_height="wrap_content">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="640dp"
+        android:layout_height="360dp">
 
-    <LinearLayout
-        android:id="@+id/btn_back"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="15.5dp"
-        android:background="@drawable/bg_functions_buttons"
-        android:gravity="center"
-        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/btn_back"
+            android:layout_width="43.2dp"
+            android:layout_height="43.2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15.5dp"
+            android:background="@drawable/bg_functions_buttons"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="20.5dp"
-            android:src="@drawable/icon_back_sharing" />
-    </LinearLayout>
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="15.8dp"
+                android:src="@drawable/icon_back_sharing" />
+        </LinearLayout>
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
-        android:layout_marginTop="23.5dp"
-        android:background="#00000000"
-        android:drawablePadding="10dp"
-        android:fontFamily="@font/roboto_medium"
-        android:shadowColor="@color/black"
-        android:shadowDx="5"
-        android:shadowDy="5"
-        android:shadowRadius="5"
-        android:text="@string/editing_mode"
-        android:textColor="#fff" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="71dp"
+            android:layout_marginTop="23.5dp"
+            android:background="#00000000"
+            android:drawablePadding="10dp"
+            android:fontFamily="@font/roboto_medium"
+            android:shadowColor="@color/black"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowRadius="5"
+            android:text="@string/editing_mode"
+            android:textColor="#fff"
+            android:textSize="20sp" />
 
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/rounded_button_save"
-        android:fontFamily="@font/roboto_medium"
-        android:gravity="center"
-        android:paddingBottom="6dp"
-        android:paddingEnd="12dp"
-        android:paddingStart="12dp"
-        android:paddingTop="6dp"
-        android:text="@string/save"
-        android:textColor="#ffffff" />
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="117dp"
+            android:layout_height="40.5dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="19.5dp"
+            android:layout_marginTop="13dp"
+            android:background="@drawable/rounded_button_save"
+            android:fontFamily="@font/roboto_bold"
+            android:gravity="center"
+            android:paddingBottom="6dp"
+            android:paddingEnd="12dp"
+            android:paddingStart="12dp"
+            android:paddingTop="6dp"
+            android:text="@string/save"
+            android:textColor="#ffffff"
+            android:textSize="14sp" />
 
-</RelativeLayout>
+    </RelativeLayout>
 </LinearLayout>
