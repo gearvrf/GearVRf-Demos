@@ -15,7 +15,7 @@
 
 <resources>
     <string name="editing_mode">Editing Mode</string>
-    <string name="save">Save</string>
+    <string name="save">SAVE</string>
     <string name="looking_the_same_thing">Make sure you and your friends are side-by-side looking\n at the same thing.</string>
     <string name="sharing_anchor">SHARING ANCHOR</string>
     <string name="host">HOST</string>
