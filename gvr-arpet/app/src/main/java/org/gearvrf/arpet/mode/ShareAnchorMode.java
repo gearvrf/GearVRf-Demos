@@ -368,7 +368,7 @@ public class ShareAnchorMode extends BasePetMode {
                         .filter(CharacterView.class::isInstance)
                         .findFirst()
                         .ifPresent(petView -> mSharedMixedReality.startSharing(
-                                petView.getAnchor().getPose(), SharedMixedReality.HOST));
+                                petView.getAnchor().getTransform().getModelMatrix(), SharedMixedReality.HOST));
             }
 
             @Override
@@ -420,7 +420,7 @@ public class ShareAnchorMode extends BasePetMode {
                 // Start sharing using resolved pet pose as guest's world center
                 ResolvedCloudAnchor cloudAnchor = task.getResolvedCloudAnchorByType(ArPetObjectType.PET);
                 if (cloudAnchor != null) {
-                    float[] petPose = cloudAnchor.getAnchor().getPose();
+                    float[] petPose = cloudAnchor.getAnchor().getTransform().getModelMatrix();
                     mSharedMixedReality.startSharing(petPose, SharedMixedReality.GUEST);
                 }
             }
