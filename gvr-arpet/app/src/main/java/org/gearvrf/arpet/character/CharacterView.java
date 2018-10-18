@@ -182,7 +182,7 @@ public class CharacterView extends AnchoredObject implements
     @Override
     public boolean updatePose(float[] poseMatrix) {
         // Update y position to plane's y pos
-        mBoundaryPlane.getCenterPose(mPlaneCenterPose);
+        mPlaneCenterPose = mBoundaryPlane.getTransform().getModelMatrix();
         poseMatrix[13] = mPlaneCenterPose[13];
 
         if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)
@@ -193,7 +193,7 @@ public class CharacterView extends AnchoredObject implements
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {
-        boundary.getCenterPose(mPlaneCenterPose);
+        mPlaneCenterPose = boundary.getTransform().getModelMatrix();
         mBoundaryPlane = boundary;
     }
 

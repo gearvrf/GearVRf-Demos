@@ -54,8 +54,8 @@ public class PetActions {
 
         protected final float mCharacterHalfSize = 25.0f;
         protected final float mTurnSpeed = 0.1f;
-        protected final float mWalkingSpeed = 0.02f;
-        protected final float mRunningSpeed = 0.04f;
+        protected final float mWalkingSpeed = 2f;
+        protected final float mRunningSpeed = 4f;
         protected long mElapsedTime = 0;
         protected GVRAnimation mAnimation;
 
@@ -197,7 +197,7 @@ public class PetActions {
 
                 if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
-                    float[] pose = mCharacter.getAnchor().getPose();
+                    float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     mMoveTo.mul(mWalkingSpeed);
 
                     pose[12] = pose[12] + mMoveTo.x;
@@ -245,15 +245,17 @@ public class PetActions {
                         mTargetDirection.x, 0, mTargetDirection.z);
 
                 if (mRotation.angle() < Math.PI * 0.25f) {
-                    float[] pose = mCharacter.getAnchor().getPose();
+                    float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     // TODO: Create pose
                     mMoveTo.mul(mRunningSpeed);
 
                     pose[12] = pose[12] + mMoveTo.x;
                     pose[14] = pose[14] + mMoveTo.z;
 
+
                     mCharacter.updatePose(pose);
                 }
+
             } else {
                 mListener.onActionEnd(this);
             }
