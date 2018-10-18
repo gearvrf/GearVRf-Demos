@@ -18,4 +18,5 @@ package org.gearvrf.arpet.manager.cloud.anchor;
 
 public interface OnCloudAnchorManagerListener {
     void onHostReady();
+    void onHostFailure();
 }

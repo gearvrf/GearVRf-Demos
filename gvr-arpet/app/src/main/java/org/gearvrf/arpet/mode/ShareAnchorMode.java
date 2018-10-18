@@ -386,6 +386,12 @@ public class ShareAnchorMode extends BasePetMode {
             int listSize = cloudAnchors.size();
             shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]));
         }
+
+        @Override
+        public void onHostFailure() {
+            // TODO: handle this error on UI
+            Log.d(TAG, "host failure");
+        }
     }
 
     private class MessageReceiver extends SimpleMessageReceiver {

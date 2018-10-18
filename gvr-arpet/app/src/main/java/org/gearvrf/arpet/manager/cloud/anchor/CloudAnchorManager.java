@@ -64,6 +64,7 @@ public class CloudAnchorManager {
 
         if (!isCloudAnchorApiKeySet()) {
             Log.e(TAG, "Cloud Anchor API key is not set!");
+            mListener.onHostFailure();
             return;
         }
 
@@ -71,20 +72,25 @@ public class CloudAnchorManager {
         mCloudAnchors.add(cloudAnchor);
         Log.d(TAG, "hosting anchor for " + cloudAnchor.getObjectType());
 
-        mPetContext.getMixedReality().hostAnchor(
-                object.getAnchor(),
-                (hostedAnchor) -> {
-                    String id = hostedAnchor.getCloudAnchorId();
-                    if (!id.isEmpty()) {
-                        Log.d(TAG, "Success hosting anchor for object of type " + cloudAnchor.getObjectType());
-                        cloudAnchor.setCloudAnchorId(id);
-                        onHostResult(ResponseType.SUCCESS);
-                    } else {
-                        Log.d(TAG, "cloud anchor ID is empty");
-                        Log.d(TAG, "Failure hosting anchor for object of type " + cloudAnchor.getObjectType());
-                        onHostResult(ResponseType.FAILURE);
-                    }
-                });
+        try {
+            mPetContext.getMixedReality().hostAnchor(
+                    object.getAnchor(),
+                    (hostedAnchor) -> {
+                        String id = hostedAnchor.getCloudAnchorId();
+                        if (!id.isEmpty()) {
+                            Log.d(TAG, "Success hosting anchor for object of type " + cloudAnchor.getObjectType());
+                            cloudAnchor.setCloudAnchorId(id);
+                            onHostResult(ResponseType.SUCCESS);
+                        } else {
+                            Log.d(TAG, "cloud anchor ID is empty");
+                            Log.d(TAG, "Failure hosting anchor for object of type " + cloudAnchor.getObjectType());
+                            onHostResult(ResponseType.FAILURE);
+                        }
+                    });
+        } catch (Throwable cause) {
+            Log.d(TAG, "hostAnchor: cause " + cause);
+            mListener.onHostFailure();
+        }
     }
 
     public void clearAnchors() {
@@ -122,8 +128,8 @@ public class CloudAnchorManager {
                 Log.d(TAG, "the manager is ready");
                 mListener.onHostReady();
             } else {
-                // TODO: handle this exception in UI
                 Log.d(TAG, "the manager is ready but some anchor was not hosted correctly");
+                mListener.onHostFailure();
             }
             mCountSuccess = 0;
             mCountFailure = 0;
