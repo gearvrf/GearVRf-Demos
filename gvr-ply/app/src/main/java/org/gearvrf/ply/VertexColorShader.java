@@ -5,7 +5,6 @@ import android.content.Context;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRShader;
 import org.gearvrf.utility.TextFile;
-import org.gearvrf.x3ddemo.R;
 
 public class VertexColorShader extends GVRShader
 {

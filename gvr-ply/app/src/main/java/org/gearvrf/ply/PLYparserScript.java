@@ -45,9 +45,7 @@ import java.util.List;
 /**
  *
  * @author m1.williams
- * X3d Demo comes with test files in the assets directory:
- *         cylindersandplanes.x3d, helloworldtext.x3d, multipleanimations.x3d,
- *         multiplepointlights.x3d, navigationinfo.x3d, teapotandtorus.x3d
+ * PLY Demo comes with test files in the assets directory:
  *
  *         In the line: "String filename = ", change to one of the above file
  *         names or supply you own.
