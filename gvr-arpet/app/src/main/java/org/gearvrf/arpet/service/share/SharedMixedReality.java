@@ -45,6 +45,7 @@ public class SharedMixedReality implements IMRCommon {
 
     @Mode
     private int mMode = OFF;
+    GVRAnchor mSharedAnchor = null;
     private float[] mSpaceMatrix = new float[16];
 
     @IntDef({OFF, HOST, GUEST})
@@ -76,19 +77,18 @@ public class SharedMixedReality implements IMRCommon {
      *
      * @param mode {@link SharedMixedReality#HOST} or {@link SharedMixedReality#GUEST}
      */
-    public void startSharing(float[] originPose, @Mode int mode) {
-
+    public void startSharing(GVRAnchor sharedAnchor, @Mode int mode) {
         if (mMode != OFF) {
             return;
         }
 
+        mSharedAnchor = sharedAnchor;
+
         mMode = mode;
 
         if (mode == HOST) {
-            Matrix.invertM(mSpaceMatrix, 0, originPose, 0);
             mPetContext.runOnPetThread(mSharingLoop);
         } else {
-            mSpaceMatrix = originPose;
             startGuest();
         }
     }
@@ -244,6 +244,8 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     private synchronized void sendSharedSceneObjects() {
+        Matrix.invertM(mSpaceMatrix, 0,
+                mSharedAnchor.getTransform().getModelMatrix(), 0);
 
         List<SharedObjectPose> poses = new ArrayList<>();
 
@@ -269,6 +271,8 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     private synchronized void onUpdatePosesReceived(SharedObjectPose[] poses) {
+        mSpaceMatrix = mSharedAnchor.getTransform().getModelMatrix();
+
         for (SharedObjectPose pose : poses) {
             for (SharedSceneObject shared : mSharedSceneObjects) {
                 if (shared.type.equals(pose.getObjectType())) {
