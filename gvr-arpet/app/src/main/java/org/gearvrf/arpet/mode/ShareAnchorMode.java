@@ -369,6 +369,8 @@ public class ShareAnchorMode extends BasePetMode {
                         .findFirst()
                         .ifPresent(petView -> mSharedMixedReality.startSharing(
                                 petView.getAnchor().getTransform().getModelMatrix(), SharedMixedReality.HOST));
+
+                mBackToHudModeListener.OnBackToHud();
             }
 
             @Override
@@ -422,6 +424,7 @@ public class ShareAnchorMode extends BasePetMode {
                 if (cloudAnchor != null) {
                     float[] petPose = cloudAnchor.getAnchor().getTransform().getModelMatrix();
                     mSharedMixedReality.startSharing(petPose, SharedMixedReality.GUEST);
+                    mBackToHudModeListener.OnBackToHud();
                 }
             }
         }
