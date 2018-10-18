@@ -186,7 +186,7 @@ public class CharacterView extends AnchoredObject implements
         poseMatrix[13] = mPlaneCenterPose[13];
 
         if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)
-        || ((SharedMixedReality)mMixedReality).getMode() == SharedMixedReality.GUEST) {
+        || ((SharedMixedReality)mMixedReality).getMode() != SharedMixedReality.OFF) {
             return super.updatePose(poseMatrix);
         }
         return false;
