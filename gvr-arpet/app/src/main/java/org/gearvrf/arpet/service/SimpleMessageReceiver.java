@@ -19,6 +19,7 @@ package org.gearvrf.arpet.service;
 
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.service.data.BallCommand;
+import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
@@ -30,6 +31,10 @@ public class SimpleMessageReceiver implements MessageReceiver {
 
     @Override
     public void onReceiveViewCommand(ViewCommand command) throws MessageException {
+    }
+
+    @Override
+    public void onReceivePetActionCommand(PetActionCommand command) throws MessageException {
     }
 
     @Override
