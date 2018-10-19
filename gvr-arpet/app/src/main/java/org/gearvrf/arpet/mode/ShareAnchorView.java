@@ -43,7 +43,7 @@ import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 public class ShareAnchorView extends BasePetView implements IViewEvents, View.OnClickListener {
     private GVRSceneObject mShareAnchorObject;
-    private Button mGuestButton, mHostButton, mStatusMode, mCancelButton, mTryButton, mCancelBackShareAnchor, mDisconnect;
+    private Button mGuestButton, mHostButton, mStatusMode, mCancelButton, mTryButton, mCancelBackShareAnchor, mDisconnect, mTryPairingError;
     private TextView mMessage, message_stayInPosition;
     private ProgressBar mProgressBar;
     private ImageView mCheckIcon, mPairing, mSpinner, mPaired, mPoint;
@@ -110,6 +110,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         message_stayInPosition = view.findViewById(R.id.message_stayInPosition);
         mCancelBackShareAnchor = view.findViewById(R.id.cancel_button_back_share_anchor);
         mDisconnect = view.findViewById(R.id.disconnect_button);
+        mTryPairingError = view.findViewById(R.id.try_button_pairing_error);
         mProgressHandler = new ProgressHandler(mProgressBar);
         mBackButtonShareAnchor.setOnClickListener(this);
         mGuestButton.setOnClickListener(this);
@@ -119,6 +120,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mStatusMode.setOnClickListener(this);
         mCancelBackShareAnchor.setOnClickListener(this);
         mDisconnect.setOnClickListener(this);
+        mTryPairingError.setOnClickListener(this);
     }
 
     @Override
@@ -147,6 +149,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
             mShareAnchorListener.OnConnectedScreen();
         } else if (view.getId() == R.id.disconnect_button) {
             mShareAnchorListener.OnCancel();
+        }else if (view.getId() == R.id.try_button_pairing_error){
+            mShareAnchorListener.OnTryPairingError();
         }
     }
 
@@ -205,7 +209,14 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     }
 
     public void toPairView() {
+        mOverlayLayout.setBackgroundResource(R.drawable.circle_mask);
+        message_stayInPosition.setVisibility(View.VISIBLE);
         message_stayInPosition.setText(R.string.stay_in_position);
+        mPoint.setVisibility(View.VISIBLE);
+        mPairing.setVisibility(View.GONE);
+        mMessage.setVisibility(View.GONE);
+        mCancelButton.setVisibility(View.GONE);
+        mTryPairingError.setVisibility(View.GONE);
     }
 
     public void modeView() {
@@ -232,14 +243,18 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     }
 
     public void pairingError() {
+        mPairing.setVisibility(View.VISIBLE);
         mPairing.setImageResource(R.drawable.icon_error_to_pair);
+        mMessage.setVisibility(View.VISIBLE);
         mMessage.setText("Pairing error!\n Would you like to try again?");
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCancelButton.setVisibility(View.VISIBLE);
-        mTryButton.setVisibility(View.VISIBLE);
-        mSpinner.clearAnimation();
-        mSpinner.setVisibility(View.GONE);
+        mTryPairingError.setVisibility(View.VISIBLE);
+        message_stayInPosition.setVisibility(View.GONE);
+        mOverlayLayout.setBackgroundResource(R.drawable.bg_overlay);
+        mPoint.setVisibility(View.GONE);
+        mCheckIcon.setVisibility(View.GONE);
     }
 
     public void disconnectScreenHost() {

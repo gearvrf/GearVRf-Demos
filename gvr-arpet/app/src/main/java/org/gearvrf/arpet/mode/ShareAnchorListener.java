@@ -32,4 +32,6 @@ public interface ShareAnchorListener {
     void OnDisconnectScreen();
 
     void OnConnectedScreen();
+
+    void OnTryPairingError();
 }

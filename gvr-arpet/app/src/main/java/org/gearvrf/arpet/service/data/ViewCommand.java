@@ -27,12 +27,14 @@ public class ViewCommand implements Command {
     public static final String SHOW_MODE_SHARE_ANCHOR_VIEW = "SHOW_MODE_SHARE_ANCHOR_VIEW";
     public static final String LOOKING_SIDE_BY_SIDE = "LOOKING_SIDE_BY_SIDE";
     public static final String SHARED_HOST = "SHARED_HOST";
+    public static final String PAIRING_ERROR_VIEW = "PAIRING_ERROR_VIEW";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
             SHOW_MODE_SHARE_ANCHOR_VIEW,
             LOOKING_SIDE_BY_SIDE,
-            SHARED_HOST
+            SHARED_HOST,
+            PAIRING_ERROR_VIEW
     })
     public @interface Type {
     }

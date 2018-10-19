@@ -156,12 +156,24 @@ public class ShareAnchorMode extends BasePetMode {
             } else {
                 mShareAnchorView.disconnectScreenHost();
             }
-
+            onSharingOff();
         }
 
         @Override
         public void OnConnectedScreen() {
             mShareAnchorView.modeView();
+        }
+
+        @Override
+        public void OnTryPairingError() {
+            if (mShareAnchorView.getUserType() == GUEST) {
+                mShareAnchorView.lookingSidebySide();
+                doResolveGuest();
+            } else {
+                mShareAnchorView.toPairView();
+                mCloudAnchorManager.clearAnchors();
+                doHostAnchor();
+            }
         }
     }
 
@@ -182,7 +194,6 @@ public class ShareAnchorMode extends BasePetMode {
             }, DEFAULT_SCREEN_TIMEOUT);
 
             doHostAnchor();
-
         } else {
             Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
@@ -333,17 +344,17 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
-    private void sendCommandLookingSideBySide() {
-        ViewCommand command = new ViewCommand(ViewCommand.LOOKING_SIDE_BY_SIDE);
+    private void sendCommandPairingErrorView() {
+        ViewCommand command = new ViewCommand(ViewCommand.PAIRING_ERROR_VIEW);
         mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                Log.d(TAG, "command to show 'looking side by  view' was performed successfully");
+                Log.d(TAG, "command to show 'pairing error  view' was performed successfully");
             }
 
             @Override
             public void onFailure(Exception error) {
-                Log.e(TAG, "command to show 'looking side by  view' has failed");
+                Log.e(TAG, "command to show 'pairing error view' has failed");
             }
         });
     }
@@ -363,6 +374,21 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
+    private void sendCommandLookingSideBySide() {
+        ViewCommand command = new ViewCommand(ViewCommand.LOOKING_SIDE_BY_SIDE);
+        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d(TAG, "command to show 'looking side by  view' was performed successfully");
+            }
+
+            @Override
+            public void onFailure(Exception error) {
+                Log.e(TAG, "command to show 'looking side by  view' has failed");
+            }
+        });
+    }
+
     private void shareScene(CloudAnchor[] anchors) {
         mMessageService.shareCloudAnchors(anchors, new MessageCallback<Void>() {
             @Override
@@ -378,6 +404,7 @@ public class ShareAnchorMode extends BasePetMode {
             @Override
             public void onFailure(Exception error) {
                 showPairingError();
+                mBackToHudModeListener.OnBackToHud();
             }
         });
     }
@@ -392,16 +419,21 @@ public class ShareAnchorMode extends BasePetMode {
             showStayInPositionToPair();
 
             Log.d(TAG, "sending a list of CloudAnchor objects to the guests");
-            ArrayList<CloudAnchor> cloudAnchors = mCloudAnchorManager.getCloudAnchors();
-            int listSize = cloudAnchors.size();
-            shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]));
+            doResolveGuest();
         }
 
         @Override
         public void onHostFailure() {
             // TODO: handle this error on UI
             Log.d(TAG, "host failure");
+            showPairingError();
         }
+    }
+
+    private void doResolveGuest() {
+        ArrayList<CloudAnchor> cloudAnchors = mCloudAnchorManager.getCloudAnchors();
+        int listSize = cloudAnchors.size();
+        shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]));
     }
 
     private class MessageReceiver extends SimpleMessageReceiver {
@@ -416,6 +448,7 @@ public class ShareAnchorMode extends BasePetMode {
             Log.d(TAG, "Task ended");
             // Lock released, now checks thread result
             if (task.getError() != null) {
+                sendCommandPairingErrorView();
                 throw new MessageException(task.getError());
             } else {
                 // Start sharing using resolved pet pose as guest's world center
@@ -440,6 +473,9 @@ public class ShareAnchorMode extends BasePetMode {
                         break;
                     case ViewCommand.SHARED_HOST:
                         showSharedHost();
+                        break;
+                    case ViewCommand.PAIRING_ERROR_VIEW:
+                        showPairingError();
                         break;
                     default:
                         Log.d(TAG, "Unknown view command: " + command.getType());
