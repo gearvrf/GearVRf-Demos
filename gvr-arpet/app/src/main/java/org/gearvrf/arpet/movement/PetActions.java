@@ -35,10 +35,6 @@ import org.joml.Vector4f;
 public class PetActions {
     private static final String TAG = "CharacterStates";
 
-    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID})
-    public @interface Action{
-    }
-
     private static abstract class PetAction implements IPetAction {
         protected final CharacterView mCharacter;
         protected final GVRSceneObject mTarget;
@@ -261,4 +257,32 @@ public class PetActions {
             }
         }
     }
+
+    public static class EDIT extends PetAction {
+        public static final int ID = 3;
+
+        public EDIT(CharacterView character, GVRSceneObject player) {
+            super(character, player, null);
+        }
+
+        @Override
+        public void onEntry() {
+            Log.w(TAG, "entry => IN_EDIT_MODE");
+        }
+
+        @Override
+        public void onExit() {
+            Log.w(TAG, "exit => IN_EDIT_MODE");
+        }
+
+        @Override
+        protected void onRun(float fimeTime) {
+        }
+
+        @Override
+        public int id() {
+            return 0;
+        }
+    }
+
 }

@@ -26,7 +26,11 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.movement.IPetAction;
+import org.gearvrf.arpet.movement.PetActionType;
 import org.gearvrf.arpet.movement.PetActions;
+import org.gearvrf.arpet.service.IMessageService;
+import org.gearvrf.arpet.service.MessageService;
+import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -39,6 +43,11 @@ public class CharacterController extends BasePetMode {
     private GVRDrawFrameListener mDrawFrameHandler;
     private BallThrowHandler mBallThrowHandler;
     private SharedMixedReality mMixedReality;
+    private IMessageService mMessageService;
+
+    private class LocalMessageReceiver extends SimpleMessageReceiver{
+
+    }
 
     public CharacterController(PetContext petContext) {
         super(petContext, new CharacterView(petContext));
@@ -47,6 +56,7 @@ public class CharacterController extends BasePetMode {
         mDrawFrameHandler = null;
         mMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
+        mMessageService = MessageService.getInstance();
 
         initPet((CharacterView) mModeScene);
     }
@@ -82,6 +92,8 @@ public class CharacterController extends BasePetMode {
             mBallThrowHandler.reset();
         }));
 
+        addAction(new PetActions.EDIT(pet, mPetContext.getPlayer()));
+
         setCurrentAction(PetActions.IDLE.ID);
     }
 
@@ -110,7 +122,7 @@ public class CharacterController extends BasePetMode {
         return (CharacterView) view();
     }
 
-    public void setCurrentAction(@PetActions.Action int action) {
+    public void setCurrentAction(@PetActionType int action) {
         mCurrentAction = mPetActions.get(action);
     }
 

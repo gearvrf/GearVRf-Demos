@@ -29,6 +29,7 @@ import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.data.BallCommand;
+import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
@@ -79,6 +80,11 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
+    public void sendPetActionCommand(@NonNull PetActionCommand command, @NonNull MessageCallback<Void> callback) {
+        sendRequest(createRequest(command), callback);
+    }
+
+    @Override
     public void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback) {
         sendRequest(createRequest(poses), callback);
     }
@@ -125,7 +131,7 @@ public final class MessageService implements IMessageService {
 
     private void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveShareCloudAnchors(cloudAnchors);
+            receiver.onReceiveSharedCloudAnchors(cloudAnchors);
         }
     }
 
@@ -138,6 +144,12 @@ public final class MessageService implements IMessageService {
     private void onReceiveSendBallCommand(BallCommand command) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
             receiver.onReceiveBallCommand(command);
+        }
+    }
+
+    private void onReceiveSendPetActionCommand(PetActionCommand command) throws MessageException {
+        for (MessageReceiver receiver : mMessageReceivers) {
+            receiver.onReceivePetActionCommand(command);
         }
     }
 

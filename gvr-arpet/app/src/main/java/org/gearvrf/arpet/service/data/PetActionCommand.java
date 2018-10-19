@@ -17,8 +17,27 @@
 
 package org.gearvrf.arpet.service.data;
 
-import java.io.Serializable;
+import org.gearvrf.arpet.movement.PetActionType;
 
-public interface Command extends Serializable {
-    Serializable getType();
+public class PetActionCommand implements Command {
+
+    @PetActionType
+    private int type;
+
+    public PetActionCommand(int type) {
+        this.type = type;
+    }
+
+    @PetActionType
+    @Override
+    public Integer getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return "PetActionCommand{" +
+                "type=" + type +
+                '}';
+    }
 }

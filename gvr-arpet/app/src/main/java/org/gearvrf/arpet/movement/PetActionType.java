@@ -15,10 +15,15 @@
  *
  */
 
-package org.gearvrf.arpet.service.data;
+package org.gearvrf.arpet.movement;
 
-import java.io.Serializable;
+import android.support.annotation.IntDef;
 
-public interface Command extends Serializable {
-    Serializable getType();
+@IntDef({
+        PetActions.IDLE.ID,
+        PetActions.TO_BALL.ID,
+        PetActions.TO_PLAYER.ID,
+        PetActions.EDIT.ID
+})
+public @interface PetActionType {
 }

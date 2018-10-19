@@ -19,6 +19,7 @@ package org.gearvrf.arpet.service;
 
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.service.data.BallCommand;
+import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
@@ -29,7 +30,7 @@ public interface MessageReceiver {
      * @param cloudAnchors Anchors to resolve.
      * @throws MessageException If any exception occurs.
      */
-    void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException;
+    void onReceiveSharedCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException;
 
     /**
      * Execute the given command on this device
@@ -38,6 +39,14 @@ public interface MessageReceiver {
      * @throws MessageException If any exception occurs
      */
     void onReceiveViewCommand(ViewCommand command) throws MessageException;
+
+    /**
+     * Execute the given command on this device
+     *
+     * @param command View command to execute.
+     * @throws MessageException If any exception occurs
+     */
+    void onReceivePetActionCommand(PetActionCommand command) throws MessageException;
 
     /**
      * Execute the given command on this device

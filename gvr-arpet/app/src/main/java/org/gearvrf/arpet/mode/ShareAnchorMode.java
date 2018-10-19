@@ -405,7 +405,7 @@ public class ShareAnchorMode extends BasePetMode {
     private class MessageReceiver extends SimpleMessageReceiver {
 
         @Override
-        public void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
+        public void onReceiveSharedCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
             Log.d(TAG, "Sharing received: " + Arrays.toString(cloudAnchors));
             CloudAnchorResolverTask task = new CloudAnchorResolverTask(cloudAnchors);
             // This method gets locked and will return after loader finish

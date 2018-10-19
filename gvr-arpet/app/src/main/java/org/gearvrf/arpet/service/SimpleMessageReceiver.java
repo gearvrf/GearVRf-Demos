@@ -25,7 +25,7 @@ import org.gearvrf.arpet.service.share.SharedObjectPose;
 public class SimpleMessageReceiver implements MessageReceiver {
 
     @Override
-    public void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
+    public void onReceiveSharedCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
     }
 
     @Override
