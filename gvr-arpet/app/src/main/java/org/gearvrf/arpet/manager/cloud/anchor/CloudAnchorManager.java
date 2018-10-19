@@ -16,11 +16,13 @@
 
 package org.gearvrf.arpet.manager.cloud.anchor;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
@@ -109,8 +111,15 @@ public class CloudAnchorManager {
     }
 
     private boolean isCloudAnchorApiKeySet() {
-        return ContextUtils.isMetaDataSet(mPetContext.getGVRContext().getContext(),
+        boolean isKeySet = ContextUtils.isMetaDataSet(mPetContext.getGVRContext().getContext(),
                 PetConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
+        if (!isKeySet) {
+            Context context = mPetContext.getActivity().getApplicationContext();
+            mPetContext.runOnPetThread(() -> {
+                Toast.makeText(context, "Cloud anchor API is not set", Toast.LENGTH_LONG).show();
+            });
+        }
+        return isKeySet;
     }
 
     private void onHostResult(int type) {
