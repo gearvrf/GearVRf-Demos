@@ -21,14 +21,12 @@ import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-import org.gearvrf.arpet.connection.socket.bluetooth.BTDevice;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
@@ -244,23 +242,18 @@ public class ShareAnchorMode extends BasePetMode {
                         break;
                     case PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST:
                         onSharingOff();
-                        showToast("Connection lost");
                         break;
                     case PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS:
-                        showToast("Ready to accept connections");
                         showWaitingForScreen();
                         break;
                     case PetConnectionEventType.CONN_GUEST_CONNECTION_ESTABLISHED:
-                        BTDevice remote = (BTDevice) message.getData();
-                        showToast("Guest connected: " + remote.getName() + ". Total: "
-                                + mConnectionManager.getTotalConnected());
                         showWaitingForScreen();
                         break;
                     case PetConnectionEventType.ERR_ENABLE_BLUETOOTH_DENIED:
-                        showToast("Bluetooth is disabled");
+                        showBluetoothDisabledMessage();
                         break;
                     case PetConnectionEventType.ERR_HOST_VISIBILITY_DENIED:
-                        showToast("This device is not visible to other devices");
+                        showDeviceNotVisibleMessage();
                         break;
                     default:
                         break;
@@ -289,9 +282,12 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
-    private void showToast(String text) {
-        Log.d(TAG, "showToast: " + text);
-        Toast.makeText(mPetContext.getActivity(), text, Toast.LENGTH_LONG).show();
+    private void showBluetoothDisabledMessage() {
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.showBluetoothDisabledMessage());
+    }
+
+    private void showDeviceNotVisibleMessage() {
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.showDeviceNotVisibleMessage());
     }
 
     private void showWaitingScreen() {
@@ -321,7 +317,6 @@ public class ShareAnchorMode extends BasePetMode {
     private void showLookingSidebySide() {
         mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.lookingSidebySide());
     }
-
 
     private void sendCommandToShowModeShareAnchorView() {
         ViewCommand command = new ViewCommand(ViewCommand.SHOW_MODE_SHARE_ANCHOR_VIEW);
@@ -372,7 +367,6 @@ public class ShareAnchorMode extends BasePetMode {
         mMessageService.shareCloudAnchors(anchors, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                showToast("Pet anchor successfully resolved on guest");
                 // Inform the guests to change their view
                 sendCommandToShowModeShareAnchorView();
 
@@ -383,7 +377,6 @@ public class ShareAnchorMode extends BasePetMode {
 
             @Override
             public void onFailure(Exception error) {
-                showToast("Error resolving pet anchor on guest: " + error.getMessage());
                 showPairingError();
             }
         });
@@ -423,10 +416,8 @@ public class ShareAnchorMode extends BasePetMode {
             Log.d(TAG, "Task ended");
             // Lock released, now checks thread result
             if (task.getError() != null) {
-                showToast(task.getError().getMessage());
                 throw new MessageException(task.getError());
             } else {
-                showToast("All anchors successfully resolved");
                 // Start sharing using resolved pet pose as guest's world center
                 ResolvedCloudAnchor cloudAnchor = task.getResolvedCloudAnchorByType(ArPetObjectType.PET);
                 if (cloudAnchor != null) {

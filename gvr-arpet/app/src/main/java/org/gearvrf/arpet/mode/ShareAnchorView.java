@@ -311,6 +311,13 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         Toast.makeText(mPetContext.getActivity(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
     }
 
+    public void showBluetoothDisabledMessage() {
+        Toast.makeText(mPetContext.getActivity(), R.string.bluetooth_disabled, Toast.LENGTH_LONG).show();
+    }
+
+    public void showDeviceNotVisibleMessage() {
+        Toast.makeText(mPetContext.getActivity(), R.string.device_not_visible, Toast.LENGTH_LONG).show();
+    }
 
     class ProgressHandler extends Handler {
 

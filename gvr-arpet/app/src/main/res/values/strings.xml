@@ -39,6 +39,8 @@
     <string name="move_around">Move around the device for at least a few second</string>
     <string name="waiting">Waiting for host sharing</string>
     <string name="no_internet_connection">No internet connection available</string>
+    <string name="bluetooth_disabled">Bluetooth is disabled</string>
+    <string name="device_not_visible">This device is not visible to other devices</string>
     <plurals name="found_guests" >
         <item quantity="one">1 guest found\n on Sharing Anchor.</item>
         <item quantity="other">%d guests found\n on Sharing Anchor.</item>
