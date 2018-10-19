@@ -166,6 +166,10 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnTryPairingError() {
+            if (!mCloudAnchorManager.hasInternetConnection()) {
+                mShareAnchorView.showNoInternetMessage();
+                return;
+            }
             if (mShareAnchorView.getUserType() == GUEST) {
                 mShareAnchorView.lookingSidebySide();
                 doResolveGuest();
