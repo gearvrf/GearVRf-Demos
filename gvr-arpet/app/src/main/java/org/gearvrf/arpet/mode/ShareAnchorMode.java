@@ -106,11 +106,20 @@ public class ShareAnchorMode extends BasePetMode {
 
         @Override
         public void OnHost() {
+            if (!mCloudAnchorManager.hasInternetConnection()) {
+                mShareAnchorView.showNoInternetMessage();
+                return;
+            }
             mConnectionManager.startInvitation();
         }
 
         @Override
         public void OnGuest() {
+            if (!mCloudAnchorManager.hasInternetConnection()) {
+                mShareAnchorView.showNoInternetMessage();
+                return;
+            }
+
             // Disable the planes detection
             mPetContext.unregisterPlaneListener();
 

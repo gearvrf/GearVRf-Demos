@@ -38,6 +38,7 @@
     <string name="center_pet">Center the pet in your scene</string>
     <string name="move_around">Move around the device for at least a few second</string>
     <string name="waiting">Waiting for host sharing</string>
+    <string name="no_internet_connection">No internet connection available</string>
     <plurals name="found_guests" >
         <item quantity="one">1 guest found\n on Sharing Anchor.</item>
         <item quantity="other">%d guests found\n on Sharing Anchor.</item>

@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
@@ -304,6 +305,10 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mOverlayLayout.setBackgroundResource(R.drawable.bg_overlay);
         mPoint.setVisibility(View.GONE);
         message_stayInPosition.setVisibility(View.GONE);
+    }
+
+    public void showNoInternetMessage() {
+        Toast.makeText(mPetContext.getActivity(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
     }
 
 

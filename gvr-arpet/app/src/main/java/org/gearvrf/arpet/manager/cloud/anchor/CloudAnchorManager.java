@@ -17,6 +17,8 @@
 package org.gearvrf.arpet.manager.cloud.anchor;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.IntDef;
@@ -144,6 +146,18 @@ public class CloudAnchorManager {
             mCountSuccess = 0;
             mCountFailure = 0;
         }
+    }
+
+    public boolean hasInternetConnection() {
+        Context context = mPetContext.getGVRContext().getContext();
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = null;
+
+        if (cm != null) {
+            activeNetwork = cm.getActiveNetworkInfo();
+        }
+
+        return activeNetwork != null && activeNetwork.isConnected();
     }
 
     private int mPendingToResolve;
