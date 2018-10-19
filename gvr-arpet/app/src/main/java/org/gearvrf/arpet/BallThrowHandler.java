@@ -149,8 +149,8 @@ public class BallThrowHandler {
     }
 
     @Subscribe
-    public void onGVRWorldReady(GVRPlane firstPlane) {
-        this.firstPlane = firstPlane;
+    public void onGVRWorldReady(PlaneDetectedEvent event) {
+        this.firstPlane = event.getPlane();
     }
 
     private void initController() {

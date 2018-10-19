@@ -119,13 +119,14 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     @Subscribe
-    public void onPlaneDetected(final GVRPlane plane) {
-        mPet.setPlane(plane);
+    public void onPlaneDetected(PlaneDetectedEvent event) {
+        GVRPlane detectedPlane = event.getPlane();
+        mPet.setPlane(detectedPlane);
         mPet.enter();
         mPet.setInitialScale();
         mPet.enableActions();
 
-        mSharedMixedReality.registerSharedObject(plane.getSceneObject(), ArPetObjectType.PLANE);
+        mSharedMixedReality.registerSharedObject(detectedPlane.getSceneObject(), ArPetObjectType.PLANE);
 
         if (mCurrentMode instanceof EditMode) {
             Log.e(TAG, "Wrong state at first detection!");

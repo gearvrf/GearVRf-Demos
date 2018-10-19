@@ -27,13 +27,11 @@ import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
-import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.greenrobot.eventbus.EventBus;
 import org.joml.Matrix4f;
 
@@ -51,7 +49,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     // FIXME: move this to a utils or helper class
     private static long newComponentType(Class<? extends GVRComponent> clazz) {
-        long hash = (long)clazz.hashCode() << 32;
+        long hash = (long) clazz.hashCode() << 32;
         long t = System.currentTimeMillis() & 0xfffffff;
         return t | hash;
     }
@@ -96,7 +94,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             }
 
             super.onAttach(newOwner);
-            plane = (GVRPlane)newOwner;
+            plane = (GVRPlane) newOwner;
             mScene.addSceneObject(box);
         }
 
@@ -123,7 +121,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
             setBoxTransform();
 
-            GVRRigidBody board = (GVRRigidBody)box.getComponent(GVRRigidBody.getComponentType());
+            GVRRigidBody board = (GVRRigidBody) box.getComponent(GVRRigidBody.getComponentType());
             if (board == null) {
                 board = new GVRRigidBody(mContext, 0f);
                 board.setRestitution(0.5f);
@@ -157,10 +155,11 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         hsvHUE += 35;
         float[] hsv = new float[3];
         hsv[0] = hsvHUE % 360;
-        hsv[1] = 1f; hsv[2] = 1f;
+        hsv[1] = 1f;
+        hsv[2] = 1f;
 
-        int c =  Color.HSVToColor(50, hsv);
-        mat.setDiffuseColor(Color.red(c) / 255f,Color.green(c) / 255f,
+        int c = Color.HSVToColor(50, hsv);
+        mat.setDiffuseColor(Color.red(c) / 255f, Color.green(c) / 255f,
                 Color.blue(c) / 255f, 0.2f);
 
         polygonObject.getRenderData().setMaterial(mat);
@@ -195,7 +194,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             // Now physics starts working and then boards must be continuously updated
             mContext.registerDrawFrameListener(this);
 
-            EventBus.getDefault().post(firstPlane);
+            EventBus.getDefault().post(new PlaneDetectedEvent(firstPlane));
         }
     }
 
@@ -203,8 +202,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     public void onPlaneStateChange(GVRPlane plane, GVRTrackingState trackingState) {
         if (trackingState != GVRTrackingState.TRACKING) {
             plane.setEnable(false);
-        }
-        else {
+        } else {
             plane.setEnable(true);
         }
     }
@@ -232,7 +230,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         rootInvMat.set(mScene.getRoot().getTransform().getModelMatrix());
         rootInvMat.invert();
         for (GVRPlane plane : mPlanes) {
-            ((PlaneBoard)plane.getComponent(PLANEBOARD_COMP_TYPE)).update();
+            ((PlaneBoard) plane.getComponent(PLANEBOARD_COMP_TYPE)).update();
         }
     }
 }
