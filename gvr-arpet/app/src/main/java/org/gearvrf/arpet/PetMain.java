@@ -33,12 +33,11 @@ import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
+import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.physics.GVRWorld;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import java.util.ArrayList;
 
 
 public class PetMain extends DisableNativeSplashScreen {
@@ -54,8 +53,8 @@ public class PetMain extends DisableNativeSplashScreen {
     private HandlerBackToHud mHandlerBackToHud;
 
     private CharacterController mPet = null;
+    private GVRAnchor mWorldCenterAnchor = null;
 
-    private ArrayList<AnchoredObject> mAnchoredObjects;
     private GVRCursorController mCursorController = null;
 
     private CurrentSplashScreen mCurrentSplashScreen;
@@ -85,10 +84,6 @@ public class PetMain extends DisableNativeSplashScreen {
         mPlaneHandler = new PlaneHandler(mPetContext);
 
         mPet = new CharacterController(mPetContext);
-
-        // Add in this array all objects that will be hosted by Cloud Anchor
-        mAnchoredObjects = new ArrayList<>();
-        mAnchoredObjects.add((AnchoredObject) mPet.view());
 
         configTouchScreen();
 
@@ -176,7 +171,14 @@ public class PetMain extends DisableNativeSplashScreen {
                 mCurrentMode.exit();
             }
 
-            mCurrentMode = new ShareAnchorMode(mPetContext, mAnchoredObjects, mHandlerBackToHud);
+            // Get the model matrix from the actual Pet's position and create an anchor to be
+            // hosted by Cloud Anchor service
+            float[] anchorMatrix = mPet.getView().getAnchor().getTransform().getModelMatrix();
+            if (mWorldCenterAnchor != null) {
+                mSharedMixedReality.removeAnchor(mWorldCenterAnchor);
+            }
+            mWorldCenterAnchor = mSharedMixedReality.createAnchor(anchorMatrix);
+            mCurrentMode = new ShareAnchorMode(mPetContext, mWorldCenterAnchor, mHandlerBackToHud);
             mCurrentMode.enter();
             mPet.stopBall();
         }

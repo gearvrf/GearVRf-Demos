@@ -97,7 +97,7 @@ public class CharacterController extends BasePetMode {
         CharacterView petView = (CharacterView) view();
 
         petView.setBoundaryPlane(plane);
-        petView.setAnchor(mPetContext.getMixedReality().createAnchor(plane.getCenterPose()));
+        petView.setAnchor(mPetContext.getMixedReality().createAnchor(plane.getTransform().getModelMatrix()));
     }
 
     public void setAnchor(GVRAnchor anchor) {

@@ -19,13 +19,12 @@ package org.gearvrf.arpet.mode;
 
 import android.annotation.SuppressLint;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
 import org.gearvrf.GVRCameraRig;
-import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
@@ -49,6 +48,7 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,20 +66,20 @@ public class ShareAnchorMode extends BasePetMode {
     private IPetConnectionManager mConnectionManager;
     private final Handler mHandler;
     private ShareAnchorView mShareAnchorView;
-    private final List<AnchoredObject> mAnchoredObjects;
+    private final GVRAnchor mWorldCenterAnchor;
     private CloudAnchorManager mCloudAnchorManager;
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
     private SharedMixedReality mSharedMixedReality;
 
-    public ShareAnchorMode(PetContext petContext, List<AnchoredObject> anchoredObjects, OnBackToHudModeListener listener) {
+    public ShareAnchorMode(PetContext petContext, @NonNull GVRAnchor anchor, OnBackToHudModeListener listener) {
         super(petContext, new ShareAnchorView(petContext));
         mConnectionManager = PetConnectionManager.getInstance();
         mHandler = new Handler(petContext.getActivity().getMainLooper());
         mConnectionManager.addEventHandler(new AppConnectionMessageHandler());
         mShareAnchorView = (ShareAnchorView) mModeScene;
         mShareAnchorView.setListenerShareAnchorMode(new HandlerActionsShareAnchorMode());
-        mAnchoredObjects = anchoredObjects;
+        mWorldCenterAnchor = anchor;
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
         mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
@@ -174,14 +174,17 @@ public class ShareAnchorMode extends BasePetMode {
                 mHandler.postDelayed(() -> showMoveAround(), DEFAULT_SCREEN_TIMEOUT);
             }, DEFAULT_SCREEN_TIMEOUT);
 
-            for (AnchoredObject object : mAnchoredObjects) {
-                mCloudAnchorManager.hostAnchor(object);
-            }
+            doHostAnchor();
+
         } else {
             Log.d(TAG, "guest");
             mShareAnchorView.inviteAcceptedGuest();
             mHandler.postDelayed(() -> showWaitingScreen(), DEFAULT_SCREEN_TIMEOUT);
         }
+    }
+
+    private void doHostAnchor() {
+        mCloudAnchorManager.hostAnchor(mWorldCenterAnchor);
     }
 
     private void showSharedHost() {
@@ -364,11 +367,7 @@ public class ShareAnchorMode extends BasePetMode {
                 // Inform the guests to change their view
                 sendCommandToShowModeShareAnchorView();
 
-                mAnchoredObjects.stream()
-                        .filter(CharacterView.class::isInstance)
-                        .findFirst()
-                        .ifPresent(petView -> mSharedMixedReality.startSharing(
-                                petView.getAnchor(), SharedMixedReality.HOST));
+                mSharedMixedReality.startSharing(mWorldCenterAnchor, SharedMixedReality.HOST);
 
                 mBackToHudModeListener.OnBackToHud();
             }

@@ -205,7 +205,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
             // Physics root will be anchored to A.R. world so that all physics simulation will
             // work as if it was running at the A.R. world
-            GVRAnchor anchor = mixedReality.createAnchor(plane.getCenterPose());
+            GVRAnchor anchor = mixedReality.createAnchor(plane.getTransform().getModelMatrix());
             anchor.attachSceneObject(physicsRoot);
             mScene.addSceneObject(anchor);
 

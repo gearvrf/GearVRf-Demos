@@ -24,8 +24,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -62,7 +62,7 @@ public class CloudAnchorManager {
         mListener = listener;
     }
 
-    public void hostAnchor(AnchoredObject object) {
+    public void hostAnchor(GVRAnchor anchor) {
 
         if (!isCloudAnchorApiKeySet()) {
             Log.e(TAG, "Cloud Anchor API key is not set!");
@@ -70,13 +70,13 @@ public class CloudAnchorManager {
             return;
         }
 
-        CloudAnchor cloudAnchor = CloudAnchor.getFor(object);
+        CloudAnchor cloudAnchor = new CloudAnchor(ArPetObjectType.PET);
         mCloudAnchors.add(cloudAnchor);
         Log.d(TAG, "hosting anchor for " + cloudAnchor.getObjectType());
 
         try {
             mPetContext.getMixedReality().hostAnchor(
-                    object.getAnchor(),
+                    anchor,
                     (hostedAnchor) -> {
                         String id = hostedAnchor.getCloudAnchorId();
                         if (!id.isEmpty()) {
