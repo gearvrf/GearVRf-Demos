@@ -253,6 +253,7 @@ public class ShareAnchorMode extends BasePetMode {
                         break;
                     case PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST:
                         onSharingOff();
+                        showMainView();
                         break;
                     case PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS:
                         showWaitingForScreen();
@@ -327,6 +328,10 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void showLookingSidebySide() {
         mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.lookingSidebySide());
+    }
+
+    private void showMainView() {
+        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.mainView());
     }
 
     private void sendCommandToShowModeShareAnchorView() {

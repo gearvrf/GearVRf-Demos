@@ -322,6 +322,22 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         message_stayInPosition.setVisibility(View.GONE);
     }
 
+    public void mainView(){
+        mStatusMode.setVisibility(View.GONE);
+        mPairing.setVisibility(View.VISIBLE);
+        mPairing.setImageResource(R.drawable.icon_start_sharing);
+        mBackButtonShareAnchor.setVisibility(View.VISIBLE);
+        mHostButton.setVisibility(View.VISIBLE);
+        mGuestButton.setVisibility(View.VISIBLE);
+        mOverlayLayout.setBackgroundResource(R.drawable.bg_overlay);
+        message_stayInPosition.setVisibility(View.GONE);
+        mPoint.setVisibility(View.GONE);
+        mSpinner.clearAnimation();
+        mSpinner.setVisibility(View.GONE);
+        mCheckIcon.setVisibility(View.GONE);
+        mStatusMode.setVisibility(View.VISIBLE);
+    }
+
     public void showNoInternetMessage() {
         Toast.makeText(mPetContext.getActivity(), R.string.no_internet_connection, Toast.LENGTH_LONG).show();
     }
