@@ -42,7 +42,7 @@ public class PetContext {
     private boolean mPaused;
     private long mResumeTime;
     private GVRContext mGvrContext;
-    private IMRCommon mMixedReality;
+    private SharedMixedReality mMixedReality;
     private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
     private PlayerSceneObject mPlayer;
     private IPlaneEventsListener mPlaneListener;
@@ -77,7 +77,7 @@ public class PetContext {
         mMixedReality.resume();
 
         mPlayer = new PlayerSceneObject(mGvrContext);
-        ((SharedMixedReality) mMixedReality).registerSharedObject(mPlayer, ArPetObjectType.PLAYER);
+        mMixedReality.registerSharedObject(mPlayer, ArPetObjectType.PLAYER);
 
         // FIXME: Workaround to
         // You may only use GestureDetector constructor from a {@link android.os.Looper} thread.
@@ -167,5 +167,9 @@ public class PetContext {
 
     public interface OnPetContextListener {
         void onActivityResult(int requestCode, int resultCode, Intent data);
+    }
+
+    public int getMode() {
+        return mMixedReality.getMode();
     }
 }

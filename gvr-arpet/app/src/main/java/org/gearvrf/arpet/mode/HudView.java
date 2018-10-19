@@ -11,6 +11,7 @@ import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.constant.PetConstants;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.utility.Log;
 
@@ -18,7 +19,8 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
     private static final String TAG = "HudView";
 
     private LinearLayout MenuHud, menuButton, closeButton, playBoneButton, shareAnchorButton, cameraButton, editModeButton;
-    private GVRViewSceneObject mHudMenu;
+    private final GVRViewSceneObject mHudMenu;
+    private final GVRViewSceneObject mConnectedLabel;
     private OnHudItemClicked mListener;
     private Animation openAnimation;
     private Animation closeAnimation;
@@ -28,11 +30,19 @@ public class HudView extends BasePetView implements View.OnClickListener, IViewE
         mHudMenu = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.hud_layout, this);
         mHudMenu.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         mListener = null;
-        getTransform().setPosition(0.95f, 0.0f,-1.6f);
+        mHudMenu.getTransform().setPosition(0.95f, 0.0f,-1.6f);
+
+        mConnectedLabel = new GVRViewSceneObject(petContext.getGVRContext(), R.layout.share_connected_layout);
+        mConnectedLabel.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        mConnectedLabel.getTransform().setPosition(-1.7f, 0.95f,-3.6f);
+        addChildObject(mConnectedLabel);
     }
 
     @Override
     protected void onShow(GVRScene mainScene) {
+        mConnectedLabel.setEnable(mPetContext.getMode() != SharedMixedReality.OFF);
+        mHudMenu.setEnable(mPetContext.getMode() != SharedMixedReality.GUEST);
+
         mainScene.getMainCameraRig().addChildObject(this);
     }
 
