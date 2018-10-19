@@ -33,6 +33,7 @@ import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.greenrobot.eventbus.EventBus;
 import org.joml.Matrix4f;
 
@@ -96,7 +97,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
             super.onAttach(newOwner);
             plane = (GVRPlane)newOwner;
-            physicsRoot.addChildObject(box);
+            mScene.addSceneObject(box);
         }
 
         @Override
@@ -104,7 +105,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             super.onDetach(oldOwner);
 
             plane = null;
-            physicsRoot.removeChildObject(box);
+            mScene.removeSceneObject(box);
         }
 
         private void setBoxTransform() {
@@ -139,26 +140,11 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private IMRCommon mixedReality;
 
-    // All objects that have physics attached to it will be children of this object
-    private GVRSceneObject physicsRoot;
-
     PlaneHandler(PetContext petContext) {
         mContext = petContext.getGVRContext();
         mScene = petContext.getMainScene();
         mixedReality = petContext.getMixedReality();
         petContext.registerPlaneListener(this);
-
-        physicsRoot = new GVRSceneObject(mContext);
-        physicsRoot.getTransform().setScale(0.01f, 0.01f, 0.01f);
-
-        // Uncomment if you want a black box to visually mark where is the physics root
-//        GVRMaterial black = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.Phong.ID);
-//        black.setDiffuseColor(0f, 0f, 0f, 1f);
-//        GVRSceneObject cube = new GVRCubeSceneObject(gvrContext, true);
-//        cube.getRenderData().setMaterial(black);
-//        cube.getRenderData().setAlphaBlend(true);
-//        cube.getTransform().setScale(5f, 4f, 8f);
-//        physicsRoot.addChildObject(cube);
     }
 
     private GVRSceneObject createQuadPlane() {
@@ -198,26 +184,19 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         plane.setSceneObject(createQuadPlane());
         mScene.addSceneObject(plane);
 
-        if (firstPlane == null && planeType == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
-            firstPlane = plane;
-            firstPlane.setName(PLANE_NAME);
-            EventBus.getDefault().post(firstPlane);
-
-            // Physics root will be anchored to A.R. world so that all physics simulation will
-            // work as if it was running at the A.R. world
-            GVRAnchor anchor = mixedReality.createAnchor(plane.getTransform().getModelMatrix());
-            anchor.attachSceneObject(physicsRoot);
-            mScene.addSceneObject(anchor);
-
-            EventBus.getDefault().post(physicsRoot);
-
-            // Now physics starts working and then boards must be continuously updated
-            mContext.registerDrawFrameListener(this);
-        }
-
         PlaneBoard board = new PlaneBoard(mContext);
         plane.attachComponent(board);
         mPlanes.add(plane);
+
+        if (firstPlane == null && planeType == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
+            firstPlane = plane;
+            firstPlane.setName(PLANE_NAME);
+
+            // Now physics starts working and then boards must be continuously updated
+            mContext.registerDrawFrameListener(this);
+
+            EventBus.getDefault().post(firstPlane);
+        }
     }
 
     @Override
@@ -250,7 +229,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         // the next cycle
         if (!updatePlanes) return;
 
-        rootInvMat.set(physicsRoot.getTransform().getModelMatrix());
+        rootInvMat.set(mScene.getRoot().getTransform().getModelMatrix());
         rootInvMat.invert();
         for (GVRPlane plane : mPlanes) {
             ((PlaneBoard)plane.getComponent(PLANEBOARD_COMP_TYPE)).update();

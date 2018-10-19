@@ -32,6 +32,7 @@ import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
+import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.physics.GVRRigidBody;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -61,7 +62,7 @@ public class BallThrowHandler {
     private GVREventListeners.ActivityEvents mEventListener;
     private boolean thrown = false;
 
-    private GVRSceneObject physicsRoot = null;
+    private GVRPlane firstPlane = null; // Maybe this could be replaced by a boolean
     private static BallThrowHandler sInstance;
     private boolean mResetOnTouchEnabled = true;
 
@@ -148,15 +149,15 @@ public class BallThrowHandler {
     }
 
     @Subscribe
-    public void onGVRWorldReady(GVRSceneObject physicsRoot) {
-        this.physicsRoot = physicsRoot;
+    public void onGVRWorldReady(GVRPlane firstPlane) {
+        this.firstPlane = firstPlane;
     }
 
     private void initController() {
         final GVRTouchPadGestureListener gestureListener = new GVRTouchPadGestureListener() {
             @Override
             public boolean onDown(MotionEvent arg0) {
-                if (physicsRoot != null && mResetOnTouchEnabled && thrown) {
+                if (firstPlane != null && mResetOnTouchEnabled && thrown) {
                     reset();
                 }
                 return false;
@@ -164,12 +165,12 @@ public class BallThrowHandler {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float vx, float vy) {
-                if (physicsRoot != null) {
+                if (firstPlane != null) {
 
                     final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
                     final float vz = vlen / mDirTan;
 
-                    Matrix4f rootMatrix = physicsRoot.getTransform().getModelMatrix4f();
+                    Matrix4f rootMatrix = mContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
                     rootMatrix.invert();
 
                     // Calculating the new model matrix (T') for the ball: T' = iP x T
@@ -178,7 +179,7 @@ public class BallThrowHandler {
 
                     // Add the ball as physics root child...
                     mBall.getParent().removeChildObject(mBall);
-                    physicsRoot.addChildObject(mBall);
+                    mContext.getMainScene().addSceneObject(mBall);
 
                     // ... And set its model matrix to keep the same world matrix
                     mBall.getTransform().setModelMatrix(ballMatrix);
