@@ -227,6 +227,7 @@ public class BTServerDeviceFinder {
             mOnFindCallback = null;
             isFinding = false;
         } else {
+            isFinding = false;
             find(mOnFindCallback);
         }
     }
