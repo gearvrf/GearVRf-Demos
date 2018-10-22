@@ -77,6 +77,16 @@
                 android:layout_centerInParent="true"
                 android:src="@drawable/icon_start_sharing" />
 
+            <TextView
+                android:id="@+id/quantity_guest"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="430dp"
+                android:text="00"
+                android:textSize="15sp"
+                android:visibility="gone"
+                android:fontFamily="@font/roboto_medium"
+                android:textColor="#ffffff"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -234,23 +244,52 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <ProgressBar
-                android:id="@+id/progress"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_centerInParent="true"
-                android:indeterminate="false"
-                android:progress="0"
-                android:progressDrawable="@drawable/rotate_progress_bar"
-                android:visibility="gone" />
-
             <ImageView
                 android:id="@+id/check"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/icn_check"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/spinner_waiting"
+            android:layout_marginTop="200dp"
+            android:layout_marginStart="300dp"
+            android:layout_width="56.6dp"
+            android:layout_height="58.3dp"
+            android:src="@drawable/loading"
+            android:visibility="gone" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="290dp">
+
+            <Button
+                android:id="@+id/continue_button"
+                android:layout_width="144dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="168dp"
+                android:background="@drawable/bg_guest_host_button"
+                android:fontFamily="@font/roboto_bold"
+                android:text="CONTINUE"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/cancel_waiting_button"
+                android:layout_width="144dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="330dp"
+                android:background="@drawable/bg_guest_host_button"
+                android:fontFamily="@font/roboto_bold"
+                android:text="CANCEL"
+                android:textColor="#ffffff"
+                android:textSize="14sp"
                 android:visibility="gone" />
 
         </RelativeLayout>

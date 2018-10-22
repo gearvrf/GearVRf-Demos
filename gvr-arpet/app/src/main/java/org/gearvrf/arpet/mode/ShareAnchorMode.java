@@ -126,8 +126,6 @@ public class ShareAnchorMode extends BasePetMode {
 
             // Change the views
             mShareAnchorView.modeGuest();
-            mShareAnchorView.getProgressHandler().setDuration(DEFAULT_GUEST_TIMEOUT);
-            mShareAnchorView.getProgressHandler().start();
         }
 
         @Override
@@ -179,12 +177,25 @@ public class ShareAnchorMode extends BasePetMode {
                 doHostAnchor();
             }
         }
+
+        @Override
+        public void OnContinue() {
+            mConnectionManager.stopInvitation();
+        }
+
+        @Override
+        public void OnCancelConnection() {
+            if (mShareAnchorView.getUserType() == GUEST){
+                mConnectionManager.cancelFindInvitation();
+            }else {
+                mConnectionManager.stopInvitationAndDisconnect();
+                OnCancel();
+            }
+        }
     }
 
     private void showWaitingForScreen() {
         mShareAnchorView.modeHost();
-        mShareAnchorView.getProgressHandler().setDuration(DEFAULT_SERVER_LISTENING_TIMEOUT);
-        mShareAnchorView.getProgressHandler().start();
         mHandler.postDelayed(this::OnWaitingForConnection, DEFAULT_SERVER_LISTENING_TIMEOUT);
     }
 
@@ -257,12 +268,13 @@ public class ShareAnchorMode extends BasePetMode {
                         break;
                     case PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST:
                         onSharingOff();
-                        showMainView();
+                        mPetContext.getGVRContext().runOnGlThread(() -> mBackToHudModeListener.OnBackToHud());
                         break;
                     case PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS:
                         showWaitingForScreen();
                         break;
                     case PetConnectionEventType.CONN_GUEST_CONNECTION_ESTABLISHED:
+                        mShareAnchorView.updateQuantityGuest(mConnectionManager.getTotalConnected());
                         showWaitingForScreen();
                         break;
                     case PetConnectionEventType.ERR_ENABLE_BLUETOOTH_DENIED:
