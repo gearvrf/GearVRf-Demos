@@ -119,7 +119,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     public void stopInvitationAndDisconnect() {
         checkInitialization();
         stopInvitation();
-        disconnect();
+        super.disconnect();
     }
 
     @Override
@@ -251,6 +251,12 @@ public final class PetConnectionManager extends BTConnectionManager implements I
                 notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
             }
         }
+    }
+
+    @Override
+    public synchronized void disconnect() {
+        checkInitialization();
+        super.disconnect();
     }
 
     @Override

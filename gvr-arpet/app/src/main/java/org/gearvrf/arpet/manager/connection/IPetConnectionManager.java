@@ -62,6 +62,8 @@ public interface IPetConnectionManager {
 
     List<Device> getConnectedDevices();
 
+    void disconnect();
+
     @ConnectionMode
     int getConnectionMode();
 
