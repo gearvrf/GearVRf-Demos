@@ -237,11 +237,6 @@ public class SharedMixedReality implements IMRCommon {
         return mMixedReality.makeInterpolated(poseA, poseB, t);
     }
 
-    @Override
-    public float[] getCameraPoseMatrix() {
-        return mMixedReality.getCameraPoseMatrix();
-    }
-
     @Mode
     public int getMode() {
         return mMode;
