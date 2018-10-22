@@ -24,7 +24,7 @@ public class PetActionCommand implements Command {
     @PetActionType
     private int type;
 
-    public PetActionCommand(int type) {
+    public PetActionCommand(@PetActionType int type) {
         this.type = type;
     }
 
