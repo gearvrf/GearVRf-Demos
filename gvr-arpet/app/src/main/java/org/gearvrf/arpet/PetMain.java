@@ -159,7 +159,7 @@ public class PetMain extends DisableNativeSplashScreen {
         @Override
         public void onPlayBall() {
             mPet.playBall();
-            mPet.enableActions();
+            mPet.setCurrentAction(PetActions.IDLE.ID);
         }
 
         @Override
@@ -182,6 +182,7 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode = new ShareAnchorMode(mPetContext, mWorldCenterAnchor, mHandlerBackToHud);
             mCurrentMode.enter();
             mPet.stopBall();
+            mPet.setCurrentAction(PetActions.AT_SHARE.ID);
         }
 
         @Override
@@ -198,7 +199,7 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode.enter();
             ((EditMode) mCurrentMode).onEnableGesture(mCursorController);
             mPet.stopBall();
-            mPet.disableActions();
+            mPet.setCurrentAction(PetActions.AT_EDIT.ID);
         }
 
         @Override
@@ -215,7 +216,11 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
             mCurrentMode.enter();
-            mPet.enableActions();
+
+            if (mPetContext.getMode() != SharedMixedReality.OFF) {
+                mPet.playBall();
+            }
+            mPet.setCurrentAction(PetActions.IDLE.ID);
         }
     }
 }

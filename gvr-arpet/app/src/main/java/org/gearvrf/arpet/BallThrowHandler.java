@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
@@ -34,6 +33,7 @@ import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.physics.GVRRigidBody;
+import org.gearvrf.utility.Log;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
@@ -52,7 +52,7 @@ public class BallThrowHandler {
     private static final float defaultScaleY = 40f;
     private static final float defaultScaleZ = 40f;
 
-    private static final float MIN_Y_OFFSET = -100;
+    private static final float MIN_Y_OFFSET = 3 * 100;
 
     private PlayerSceneObject mPlayer;
     private GVRContext mContext;
@@ -82,6 +82,7 @@ public class BallThrowHandler {
         createBall();
         initController();
 
+        // Throw the ball at 45 degrees
         mDirTan = (float) Math.tan(Math.PI / 4.0);
         mForce = 1f;
         mForceVector = new Vector3f(mDirTan, mDirTan, -1.0f);
@@ -93,8 +94,7 @@ public class BallThrowHandler {
             @Override
             public void onReceiveBallCommand(BallCommand command) {
                 if (BallCommand.THROW.equals(command.getType())) {
-                    mForceVector.set(command.getForceVector());
-                    throwLocalBall();
+                    throwLocalBall(command.getForceVector());
                 }
             }
         });
@@ -165,40 +165,17 @@ public class BallThrowHandler {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float vx, float vy) {
-                if (firstPlane != null) {
-
+                if (mSharedMixedReality.getMode() != SharedMixedReality.GUEST
+                        && firstPlane != null) {
                     final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
                     final float vz = vlen / mDirTan;
-
-                    Matrix4f rootMatrix = mContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
-                    rootMatrix.invert();
-
-                    // Calculating the new model matrix (T') for the ball: T' = iP x T
-                    Matrix4f ballMatrix = mBall.getTransform().getModelMatrix4f();
-                    rootMatrix.mul(ballMatrix, ballMatrix);
-
-                    // Add the ball as physics root child...
-                    mBall.getParent().removeChildObject(mBall);
-                    mContext.getMainScene().addSceneObject(mBall);
-
-                    // ... And set its model matrix to keep the same world matrix
-                    mBall.getTransform().setModelMatrix(ballMatrix);
 
                     mForce = 50 * vlen / (float) (e2.getEventTime() - e1.getDownTime());
                     mForceVector.set(mForce * -vx, mForce * vy, mForce * -vz);
 
-                    // Force vector will be based on player rotation...
-                    Matrix4f playerMatrix = mPlayer.getTransform().getModelMatrix4f();
+                    throwRemoteBall(mForceVector);
 
-                    // ... And same transformation is required
-                    rootMatrix.mul(playerMatrix, playerMatrix);
-                    Quaternionf q = new Quaternionf();
-                    q.setFromNormalized(playerMatrix);
-                    mForceVector.rotate(q);
-
-                    throwLocalBall();
-                    throwRemoteBall();
-
+                    throwLocalBall(mForceVector);
                     return true;
                 }
 
@@ -215,12 +192,9 @@ public class BallThrowHandler {
         };
     }
 
-    private void throwRemoteBall() {
-        if (mSharedMixedReality.getMode() != SharedMixedReality.HOST) {
-            return;
-        }
+    private void throwRemoteBall(Vector3f forceVector) {
         BallCommand throwCommand = new BallCommand(BallCommand.THROW);
-        throwCommand.setForceVector(mForceVector);
+        throwCommand.setForceVector(forceVector);
         mMessageService.sendBallCommand(throwCommand, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
@@ -234,9 +208,33 @@ public class BallThrowHandler {
         });
     }
 
-    private void throwLocalBall() {
+    // FIXME: Why multiply by root matrix?
+    private void throwLocalBall(Vector3f forceVector) {
+        Matrix4f rootMatrix = mContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
+        rootMatrix.invert();
+
+        // Calculating the new model matrix (T') for the ball: T' = iP x T
+        Matrix4f ballMatrix = mBall.getTransform().getModelMatrix4f();
+        rootMatrix.mul(ballMatrix, ballMatrix);
+
+        // Add the ball as physics root child...
+        mBall.getParent().removeChildObject(mBall);
+        mContext.getMainScene().addSceneObject(mBall);
+
+        // ... And set its model matrix to keep the same world matrix
+        mBall.getTransform().setModelMatrix(ballMatrix);
+
+        // Force vector will be based on player rotation...
+        Matrix4f playerMatrix = mPlayer.getTransform().getModelMatrix4f();
+
+        // ... And same transformation is required
+        rootMatrix.mul(playerMatrix, playerMatrix);
+        Quaternionf q = new Quaternionf();
+        q.setFromNormalized(playerMatrix);
+        forceVector.rotate(q);
+
         mRigidBody.setEnable(true);
-        mRigidBody.applyCentralForce(mForceVector.x(), mForceVector.y(), mForceVector.z());
+        mRigidBody.applyCentralForce(forceVector.x(), forceVector.y(), forceVector.z());
         thrown = true;
         EventBus.getDefault().post(new BallThrowHandlerEvent(BallThrowHandlerEvent.THROWN));
     }
@@ -266,7 +264,7 @@ public class BallThrowHandler {
     }
 
     public boolean canBeReseted() {
-        return mBall.getTransform().getPositionY() < MIN_Y_OFFSET;
+        return mPlayer.getTransform().getPositionY() - mBall.getTransform().getPositionY() > MIN_Y_OFFSET;
     }
 
     private void load3DModel() {

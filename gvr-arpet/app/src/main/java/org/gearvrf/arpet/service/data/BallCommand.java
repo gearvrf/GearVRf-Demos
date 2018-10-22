@@ -36,7 +36,7 @@ public class BallCommand implements Command {
 
     @Type
     private String type;
-    private Vector3f mForceVector;
+    private Vector3f mForceVector = new Vector3f();
 
     public BallCommand(@Type String type) {
         this.type = type;
@@ -53,7 +53,7 @@ public class BallCommand implements Command {
     }
 
     public void setForceVector(Vector3f forceVector) {
-        this.mForceVector = forceVector;
+        this.mForceVector.set(forceVector);
     }
 
     @Override

@@ -185,11 +185,7 @@ public class CharacterView extends AnchoredObject implements
         mPlaneCenterPose = mBoundaryPlane.getTransform().getModelMatrix();
         poseMatrix[13] = mPlaneCenterPose[13];
 
-        if (mBoundaryPlane == null || mBoundaryPlane.isPoseInPolygon(poseMatrix)
-        || ((SharedMixedReality)mMixedReality).getMode() != SharedMixedReality.OFF) {
-            return super.updatePose(poseMatrix);
-        }
-        return false;
+        return super.updatePose(poseMatrix);
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {

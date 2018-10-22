@@ -24,10 +24,12 @@ import android.support.annotation.NonNull;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 
@@ -77,7 +79,7 @@ public class PetContext {
         mMixedReality.resume();
 
         mPlayer = new PlayerSceneObject(mGvrContext);
-        mMixedReality.registerSharedObject(mPlayer, ArPetObjectType.PLAYER);
+        registerSharedObject(mPlayer, ArPetObjectType.PLAYER);
 
         // FIXME: Workaround to
         // You may only use GestureDetector constructor from a {@link android.os.Looper} thread.
@@ -171,5 +173,17 @@ public class PetContext {
 
     public int getMode() {
         return mMixedReality.getMode();
+    }
+
+    public void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
+        mMixedReality.registerSharedObject(object, type);
+    }
+
+    public void unregisterSharedObject(GVRSceneObject object) {
+        mMixedReality.unregisterSharedObject(object);
+    }
+
+    public GVRAnchor getSharedAnchor() {
+        return mMixedReality.getSharedAnchor();
     }
 }

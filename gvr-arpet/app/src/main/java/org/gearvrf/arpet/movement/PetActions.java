@@ -22,7 +22,9 @@ import android.support.annotation.IntDef;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterView;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -34,6 +36,10 @@ import org.joml.Vector4f;
  */
 public class PetActions {
     private static final String TAG = "CharacterStates";
+
+    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, AT_EDIT.ID, AT_SHARE.ID})
+    public @interface Action{
+    }
 
     private static abstract class PetAction implements IPetAction {
         protected final CharacterView mCharacter;
@@ -258,31 +264,70 @@ public class PetActions {
         }
     }
 
-    public static class EDIT extends PetAction {
+    public static class AT_EDIT implements IPetAction {
         public static final int ID = 3;
 
-        public EDIT(CharacterView character, GVRSceneObject player) {
-            super(character, player, null);
-        }
+        private final PetContext mPetContext;
+        private final CharacterView mCharacter;
 
-        @Override
-        public void onEntry() {
-            Log.w(TAG, "entry => IN_EDIT_MODE");
-        }
-
-        @Override
-        public void onExit() {
-            Log.w(TAG, "exit => IN_EDIT_MODE");
-        }
-
-        @Override
-        protected void onRun(float fimeTime) {
+        public AT_EDIT(PetContext petContext, CharacterView character) {
+            mPetContext = petContext;
+            mCharacter = character;
         }
 
         @Override
         public int id() {
-            return 0;
+            return ID;
+        }
+
+        @Override
+        public void entry() {
+            Log.w(TAG, "entry => AT_EDIT");
+            mPetContext.registerSharedObject(mCharacter, ArPetObjectType.PET);
+        }
+
+        @Override
+        public void exit() {
+            Log.w(TAG, "exit => AT_EDIT");
+            mPetContext.unregisterSharedObject(mCharacter);
+        }
+
+        @Override
+        public void run(float frameTime) {
+
         }
     }
 
+    public static class AT_SHARE implements IPetAction {
+        public static final int ID = 4;
+
+        private final PetContext mPetContext;
+        private final CharacterView mCharacter;
+
+        public AT_SHARE(PetContext petContext, CharacterView character) {
+            mPetContext = petContext;
+            mCharacter = character;
+        }
+
+        @Override
+        public int id() {
+            return ID;
+        }
+
+        @Override
+        public void entry() {
+            Log.w(TAG, "entry => AT_SHARE");
+        }
+
+        @Override
+        public void exit() {
+            Log.w(TAG, "exit => AT_SHARE");
+            mCharacter.updatePose(mPetContext.getSharedAnchor().getTransform().getModelMatrix());
+        }
+
+        @Override
+        public void run(float frameTime) {
+
+        }
+    }
 }

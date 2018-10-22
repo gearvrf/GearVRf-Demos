@@ -53,7 +53,7 @@ public class CharacterController extends BasePetMode {
         @Override
         public void onReceivePetActionCommand(PetActionCommand command) throws MessageException {
             try {
-                setCurrentAction(command.getType());
+                onSetCurrentAction(command.getType());
             } catch (Throwable t) {
                 throw new MessageException("Error processing pet action: " + command, t);
             }
@@ -67,6 +67,7 @@ public class CharacterController extends BasePetMode {
         mDrawFrameHandler = null;
         mMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
+
         mMessageService = MessageService.getInstance();
         mMessageService.addMessageReceiver(new LocalMessageReceiver());
 
@@ -86,9 +87,6 @@ public class CharacterController extends BasePetMode {
     }
 
     private void initPet(CharacterView pet) {
-
-        mMixedReality.registerSharedObject(pet, ArPetObjectType.PET);
-
         addAction(new PetActions.IDLE(pet, mPetContext.getPlayer()));
 
         addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall(), action -> {
@@ -104,7 +102,9 @@ public class CharacterController extends BasePetMode {
             mBallThrowHandler.reset();
         }));
 
-        addAction(new PetActions.EDIT(pet, mPetContext.getPlayer()));
+        addAction(new PetActions.AT_EDIT(mPetContext, pet));
+
+        addAction(new PetActions.AT_SHARE(mPetContext, pet));
 
         setCurrentAction(PetActions.IDLE.ID);
     }
@@ -135,24 +135,29 @@ public class CharacterController extends BasePetMode {
     }
 
     public void setCurrentAction(@PetActionType int action) {
-        mCurrentAction = mPetActions.get(action);
-        if (mMixedReality.getMode() == SharedMixedReality.HOST) {
-            setGuestCurrentAction(action);
-        }
+        onSetCurrentAction(action);
+        onSendCurrentAction(action);
     }
 
-    private void setGuestCurrentAction(@PetActionType int action) {
-        mMessageService.sendPetActionCommand(new PetActionCommand(action), new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Success executing pet action on remote: " + action);
-            }
+    private void onSetCurrentAction(@PetActionType int action) {
+        mCurrentAction = mPetActions.get(action);
+    }
 
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "Failure executing pet action on remote: " + action);
-            }
-        });
+    private void onSendCurrentAction(@PetActionType int action) {
+        if (mPetContext.getMode() == SharedMixedReality.HOST) {
+            PetActionCommand command = new PetActionCommand(action);
+            mMessageService.sendPetActionCommand(command, new MessageCallback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    Log.d(TAG, "Success sending current %d action to guest(s)", action);
+                }
+
+                @Override
+                public void onFailure(Exception error) {
+                    Log.w(TAG, "Failure sending current %d action to guest(s)", action);
+                }
+            });
+        }
     }
 
     private void addAction(IPetAction action) {

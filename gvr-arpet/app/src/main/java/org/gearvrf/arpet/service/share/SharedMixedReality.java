@@ -100,6 +100,10 @@ public class SharedMixedReality implements IMRCommon {
         mMode = OFF;
     }
 
+    public GVRAnchor getSharedAnchor() {
+        return mSharedAnchor;
+    }
+
     private synchronized void startGuest() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             initAsGuest(shared);
