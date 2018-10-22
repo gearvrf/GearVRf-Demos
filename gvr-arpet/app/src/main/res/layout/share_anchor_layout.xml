@@ -52,9 +52,9 @@
             android:id="@+id/button_back_sharing"
             android:layout_width="46dp"
             android:layout_height="46dp"
-            android:layout_marginBottom="10dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="40dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/bg_menu"
             android:gravity="center"
             android:orientation="vertical">
@@ -82,11 +82,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="430dp"
-                android:text="00"
-                android:textSize="15sp"
-                android:visibility="gone"
                 android:fontFamily="@font/roboto_medium"
-                android:textColor="#ffffff"/>
+                android:text="00"
+                android:textColor="#ffffff"
+                android:textSize="15sp"
+                android:visibility="gone" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -123,15 +123,14 @@
                 android:visibility="gone" />
         </RelativeLayout>
 
-
         <ImageView
             android:id="@+id/ic_paired"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginEnd="60dp"
             android:layout_marginStart="65dp"
             android:layout_marginTop="90dp"
+            android:layout_marginEnd="60dp"
             android:padding="10dp"
             android:src="@drawable/icon_paired"
             android:visibility="gone" />
@@ -143,10 +142,10 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="35dp"
             android:background="@drawable/rounded_button"
-            android:paddingBottom="6dp"
-            android:paddingEnd="31dp"
             android:paddingStart="20dp"
             android:paddingTop="6dp"
+            android:paddingEnd="31dp"
+            android:paddingBottom="6dp"
             android:text="@string/connected"
             android:textColor="#FFFFFF"
             android:textSize="14sp"
@@ -191,7 +190,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/cancel"
+                    android:text="@string/common_text_cancel"
                     android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:visibility="gone" />
@@ -226,7 +225,8 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/cancel"
+                    android:text="@string/common_text_cancel"
+                    android:textAllCaps="true"
                     android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:visibility="gone" />
@@ -256,43 +256,34 @@
 
         <ImageView
             android:id="@+id/spinner_waiting"
-            android:layout_marginTop="200dp"
+            android:layout_width="42.2dp"
+            android:layout_height="43.4dp"
             android:layout_marginStart="300dp"
-            android:layout_width="56.6dp"
-            android:layout_height="58.3dp"
+            android:layout_marginTop="215dp"
             android:src="@drawable/loading"
             android:visibility="gone" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="290dp">
-
-            <Button
-                android:id="@+id/continue_button"
-                android:layout_width="144dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="168dp"
-                android:background="@drawable/bg_guest_host_button"
-                android:fontFamily="@font/roboto_bold"
-                android:text="CONTINUE"
-                android:textColor="#ffffff"
-                android:textSize="14sp"
-                android:visibility="gone" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="277dp"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/cancel_waiting_button"
-                android:layout_width="144dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="330dp"
-                android:background="@drawable/bg_guest_host_button"
-                android:fontFamily="@font/roboto_bold"
-                android:text="CANCEL"
-                android:textColor="#ffffff"
-                android:textSize="14sp"
+                style="@style/Button"
+                android:text="@string/common_text_cancel"
                 android:visibility="gone" />
 
-        </RelativeLayout>
+            <Button
+                android:id="@+id/continue_button"
+                style="@style/Button"
+                android:layout_marginStart="17dp"
+                android:text="@string/common_text_continue"
+                android:visibility="gone" />
+
+        </LinearLayout>
 
     </RelativeLayout>
 

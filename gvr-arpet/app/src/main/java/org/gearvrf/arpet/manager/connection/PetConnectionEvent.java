@@ -21,16 +21,16 @@ import java.io.Serializable;
 
 public class PetConnectionEvent {
 
-    @PetConnectionEventType
+    @IPetConnectionManager.EventType
     private int type;
     private Serializable data;
 
-    public PetConnectionEvent(@PetConnectionEventType int type, Serializable data) {
+    public PetConnectionEvent(@IPetConnectionManager.EventType int type, Serializable data) {
         this.type = type;
         this.data = data;
     }
 
-    @PetConnectionEventType
+    @IPetConnectionManager.EventType
     public int getType() {
         return type;
     }

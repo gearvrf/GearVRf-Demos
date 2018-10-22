@@ -58,6 +58,8 @@ public class BTServerDeviceFinder {
             throw new IllegalStateException("Already is finding for servers");
         }
 
+        Log.d(TAG, "Finding servers...");
+
         isFinding = true;
         mOnFindCallback = callback;
         mPendingDevices = Collections.synchronizedList(new ArrayList<>());
@@ -78,6 +80,7 @@ public class BTServerDeviceFinder {
             mServersFound = null;
             mOnFindCallback = null;
             isFinding = false;
+            Log.d(TAG, "Discovery canceled");
         }
     }
 

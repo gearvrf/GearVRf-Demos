@@ -19,9 +19,9 @@ package org.gearvrf.arpet.mode;
 
 public interface ShareAnchorListener {
 
-    void OnHost();
+    void onHostButtonClicked();
 
-    void OnGuest();
+    void onGuestButtonClicked();
 
     void OnBackShareAnchor();
 

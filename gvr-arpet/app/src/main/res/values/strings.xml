@@ -27,7 +27,8 @@
     <string name="stay_in_position">Stay in this position while we connect the phones.</string>
     <string name="not_found">No %1$s found!\n Would you like to try again?</string>
     <string name="try_message">TRY</string>
-    <string name="cancel">CANCEL</string>
+    <string name="common_text_cancel">Cancel</string>
+    <string name="common_text_continue">Continue</string>
     <string name="stay_in_this_position">Stay in this position while we connect the phones</string>
     <string name="connected">CONNECTED</string>
     <string name="application_permissions">The application needs camera and location permissions</string>

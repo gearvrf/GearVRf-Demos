@@ -101,7 +101,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
                     Log.d(TAG, "OK, now this device is visible for "
                             + PetConstants.HOST_VISIBILITY_DURATION + " seconds. Waiting for connections");
                     mDeviceVisibilityMonitor.setEnabled(true);
-                    notifyManagerEvent(PetConnectionEventType.CONN_ON_LISTENING_TO_GUESTS);
+                    notifyManagerEvent(PetConnectionManager.EVENT_ON_LISTENING_TO_GUESTS);
                     super.startConnectionListener(this::onMessageReceived);
                 });
             });
@@ -129,13 +129,13 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             enableBluetooth(() -> {
                 Log.d(TAG, "Finding a server device...");
                 // Broadcast all devices found and saves the first successfully connection
-                notifyManagerEvent(PetConnectionEventType.CONN_ON_REQUEST_CONNECTION_TO_HOST);
+                notifyManagerEvent(EVENT_ON_REQUEST_CONNECTION_TO_HOST);
                 mServerFinder.find(this::onServersFound);
             });
         }
     }
 
-    public void cancelFindInvitation() {
+    public void stopFindInvitation() {
         mServerFinder.cancel();
     }
 
@@ -166,6 +166,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     private void onVisibilitySateChanged(@DeviceVisibilityMonitor.State int state) {
         switch (state) {
             case DeviceVisibilityMonitor.VISIBILITY_OFF:
+                Log.d(TAG, "Host visibility expired");
                 enableHostVisibility(() -> Log.d(TAG, "Host visibility allowed again"));
                 break;
             case DeviceVisibilityMonitor.VISIBILITY_ON:
@@ -187,7 +188,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             Log.d(TAG, "Trying connect to servers " + Arrays.toString(servers));
             connectToDevices(this::onMessageReceived, servers);
         } else {
-            notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
+            notifyManagerEvent(EVENT_NO_CONNECTION_FOUND);
         }
     }
 
@@ -198,7 +199,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
      */
     private void onMessageReceived(Message message) {
         Log.d(TAG, "onMessageReceived: " + message);
-        notifyManagerEvent(PetConnectionEventType.MSG_MESSAGE_RECEIVED, message);
+        notifyManagerEvent(EVENT_MESSAGE_RECEIVED, message);
     }
 
     @Override
@@ -208,10 +209,10 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         if (stateIs(ManagerState.CONNECTING_TO_REMOTE)) {
             super.onConnectionEstablished(connection);
             cancelOutgoingConnectionsThreads();
-            notifyManagerEvent(PetConnectionEventType.CONN_CONNECTION_ESTABLISHED);
+            notifyManagerEvent(EVENT_CONNECTION_ESTABLISHED);
         } else {
             super.onConnectionEstablished(connection);
-            notifyManagerEvent(PetConnectionEventType.CONN_GUEST_CONNECTION_ESTABLISHED,
+            notifyManagerEvent(EVENT_GUEST_CONNECTION_ESTABLISHED,
                     connection.getRemoteDevice());
         }
     }
@@ -223,7 +224,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             super.onConnectionFailure(error);
             if (stateIs(ManagerState.IDLE)) {
                 Log.d(TAG, "onConnectionFailure: No connection found.");
-                notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
+                notifyManagerEvent(EVENT_NO_CONNECTION_FOUND);
             }
         } else {
             super.onConnectionFailure(error);
@@ -234,9 +235,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
         Log.d(TAG, "onConnectionLost: " + connection.getRemoteDevice());
-        notifyManagerEvent(PetConnectionEventType.CONN_ONE_CONNECTION_LOST, connection.getRemoteDevice());
+        notifyManagerEvent(EVENT_ONE_CONNECTION_LOST, connection.getRemoteDevice());
         if (getTotalConnected() == 0) {
-            notifyManagerEvent(PetConnectionEventType.CONN_ALL_CONNECTIONS_LOST);
+            notifyManagerEvent(EVENT_ALL_CONNECTIONS_LOST);
         }
     }
 
@@ -246,9 +247,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             Log.d(TAG, "stopConnectionListener: force stop connection listener");
             super.stopConnectionListener();
             if (getTotalConnected() > 0) {
-                notifyManagerEvent(PetConnectionEventType.CONN_CONNECTION_ESTABLISHED);
+                notifyManagerEvent(EVENT_CONNECTION_ESTABLISHED);
             } else {
-                notifyManagerEvent(PetConnectionEventType.CONN_NO_CONNECTION_FOUND);
+                notifyManagerEvent(EVENT_NO_CONNECTION_FOUND);
             }
         }
     }
@@ -269,22 +270,23 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             if (resultCode == Activity.RESULT_OK) {
                 mEnableBTCallback.onEnabled();
             } else {
-                notifyManagerEvent(PetConnectionEventType.ERR_ENABLE_BLUETOOTH_DENIED);
+                notifyManagerEvent(EVENT_ENABLE_BLUETOOTH_DENIED);
             }
         } else if (requestCode == REQUEST_ENABLE_HOST_VISIBILITY) {
             if (resultCode != Activity.RESULT_CANCELED) {
                 mEnableVisibilityCallback.onEnabled();
             } else {
-                notifyManagerEvent(PetConnectionEventType.ERR_HOST_VISIBILITY_DENIED);
+                Log.d(TAG, "Host visibility denied by user");
+                notifyManagerEvent(EVENT_HOST_VISIBILITY_DENIED);
             }
         }
     }
 
-    private void notifyManagerEvent(@PetConnectionEventType int type) {
+    private void notifyManagerEvent(@EventType int type) {
         notifyManagerEvent(type, null);
     }
 
-    private void notifyManagerEvent(@PetConnectionEventType int type, Serializable data) {
+    private void notifyManagerEvent(@EventType int type, Serializable data) {
         for (PetConnectionEventHandler petConnectionEventHandler : mPetConnectionEventHandlers) {
             mContext.runOnPetThread(() ->
                     petConnectionEventHandler.handleEvent(new PetConnectionEvent(type, data)));

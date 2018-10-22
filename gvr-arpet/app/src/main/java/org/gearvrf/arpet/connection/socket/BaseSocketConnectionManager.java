@@ -176,18 +176,20 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @Override
     public synchronized void disconnect() {
-        isDisconnectCalled = true;
-        try {
-            for (Connection connection : mOngoingConnections) {
-                connection.close();
+        if (mOngoingConnections.size() > 0) {
+            isDisconnectCalled = true;
+            try {
+                for (Connection connection : mOngoingConnections) {
+                    connection.close();
+                }
+                mOngoingConnections.clear();
+                setState(ManagerState.IDLE);
+                mConnectionMode = ConnectionMode.NONE;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                isDisconnectCalled = false;
             }
-            mOngoingConnections.clear();
-            setState(ManagerState.IDLE);
-            mConnectionMode = ConnectionMode.NONE;
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            isDisconnectCalled = false;
         }
     }
 

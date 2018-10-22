@@ -26,7 +26,6 @@ import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
-import org.gearvrf.arpet.manager.connection.PetConnectionEventType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.PetActionCommand;
@@ -160,10 +159,10 @@ public final class MessageService implements IMessageService {
     }
 
     private void handleConnectionEvent(PetConnectionEvent event) {
-        if (event.getType() == PetConnectionEventType.MSG_MESSAGE_RECEIVED) {
+        if (event.getType() == IPetConnectionManager.EVENT_MESSAGE_RECEIVED) {
             // Handle request or response
             onMessageReceived((Message) event.getData());
-        } else if (event.getType() == PetConnectionEventType.CONN_ONE_CONNECTION_LOST) {
+        } else if (event.getType() == IPetConnectionManager.EVENT_ONE_CONNECTION_LOST) {
             if (mPendingResponseInfos.size() > 0) {
                 handleConnectionLost();
             }
