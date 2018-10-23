@@ -88,11 +88,9 @@ public class PLYparserScript extends GVRMain
       GVRCameraRig mainCameraRig = gvrContext.getMainScene().getMainCameraRig();
       mainCameraRig.getTransform().setPosition(0, 2.75f,2.25f);
 
-      GVRMaterial vertexColorMtl = new GVRMaterial(gvrContext, new GVRShaderId(VertexColorShader.class));
       List<GVRRenderData> rdatas = model.getAllComponents(GVRRenderData.getComponentType());
       for (GVRRenderData rdata : rdatas)
       {
-        rdata.setMaterial(vertexColorMtl);
         rdata.setCullFace( GVRRenderPass.GVRCullFaceEnum.None );
       }
 
