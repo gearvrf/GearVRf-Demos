@@ -27,21 +27,57 @@ import org.gearvrf.IViewEvents;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.constant.PetConstants;
+import org.gearvrf.arpet.util.LayoutViewUtils;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
-public class EditView extends BasePetView implements View.OnClickListener, IViewEvents {
-    private GVRSceneObject mEditModeObject;
+public class EditView extends BasePetView implements View.OnClickListener {
+    private GVRSceneObject mEditBackObject;
+    private GVRSceneObject mEditSaveObject;
     private Button mSaveButton;
     private LinearLayout mBackButton;
     private OnEditModeClickedListener mListenerEditMode;
 
     public EditView(PetContext petContext) {
         super(petContext);
-        mEditModeObject = new GVRViewSceneObject(petContext.getGVRContext(),
-                R.layout.edit_mode_layout, this);
-        mEditModeObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+        mEditBackObject = new GVRViewSceneObject(petContext.getGVRContext(),
+                R.layout.edit_back_layout, new IViewEvents() {
+            @Override
+            public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+                mBackButton = view.findViewById(R.id.btn_back);
+                mBackButton.setOnClickListener(EditView.this);
+            }
 
-        getTransform().setPosition(0.0f, 0.0f, -0.78f);
+            @Override
+            public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+                gvrViewSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
+                gvrViewSceneObject.getRenderData().setRenderingOrder(
+                        GVRRenderData.GVRRenderingOrder.OVERLAY);
+                LayoutViewUtils.setWorldPosition(mPetContext.getMainScene(),
+                        gvrViewSceneObject, 15f, 11f, 44 + 136, 44);
+
+                EditView.this.addChildObject(gvrViewSceneObject);
+            }
+        });
+
+        mEditSaveObject = new GVRViewSceneObject(petContext.getGVRContext(),
+                R.layout.edit_save_layout, new IViewEvents() {
+            @Override
+            public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+                mSaveButton = view.findViewById(R.id.btn_save);
+                mSaveButton.setOnClickListener(EditView.this);
+            }
+
+            @Override
+            public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
+                gvrViewSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
+                gvrViewSceneObject.getRenderData().setRenderingOrder(
+                        GVRRenderData.GVRRenderingOrder.OVERLAY);
+                LayoutViewUtils.setWorldPosition(mPetContext.getMainScene(),
+                        gvrViewSceneObject, 500f, 14f, 121, 44);
+
+                EditView.this.addChildObject(gvrViewSceneObject);
+            }
+        });
     }
 
     @Override
@@ -56,20 +92,6 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
 
     public void setListenerEditMode(OnEditModeClickedListener listenerEditMode) {
         mListenerEditMode = listenerEditMode;
-    }
-
-    @Override
-    public void onInitView(GVRViewSceneObject editModeSceneObject, View view) {
-        mBackButton = view.findViewById(R.id.btn_back);
-        mSaveButton = view.findViewById(R.id.btn_save);
-        mBackButton.setOnClickListener(this);
-        mSaveButton.setOnClickListener(this);
-    }
-
-    @Override
-    public void onStartRendering(GVRViewSceneObject editSceneObject, View view) {
-        editSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
-        addChildObject(editSceneObject);
     }
 
     @Override
@@ -88,6 +110,7 @@ public class EditView extends BasePetView implements View.OnClickListener, IView
                     mSaveButton.setBackgroundResource(R.drawable.bg_save_button);
                     mSaveButton.setTextColor(Color.parseColor("#ffffff"));
                     mListenerEditMode.OnSave();
+                    mListenerEditMode.OnBack();
                 }
             });
         }
