@@ -170,7 +170,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mMessage.setText(R.string.waiting_host);
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
-        mPairing.setImageResource(R.drawable.icon_waiting_gest);
+        mPairing.setImageResource(R.drawable.ic_waiting_for_connection);
         mCancelButton.setVisibility(View.GONE);
         mBackButtonShareAnchor.setVisibility(View.GONE);
         mTryButton.setVisibility(View.GONE);
@@ -185,10 +185,10 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     }
 
     public void modeHost() {
-        mMessage.setText(R.string.waiting_guests);
+        mMessage.setText(R.string.view_waiting_for_guests_status_text);
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
-        mPairing.setImageResource(R.drawable.icon_waiting_gest);
+        mPairing.setImageResource(R.drawable.ic_waiting_for_connection);
         mCancelButton.setVisibility(View.GONE);
         mTryButton.setVisibility(View.GONE);
         mBackButtonShareAnchor.setVisibility(View.GONE);
@@ -214,7 +214,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCheckIcon.setVisibility(View.VISIBLE);
-        mPairing.setImageResource(R.drawable.ic_host_found);
+        mPairing.setImageResource(R.drawable.ic_connection_established);
         mCancel_waiting.setVisibility(View.GONE);
         mContinue.setVisibility(View.GONE);
         mSpinner_waiting.clearAnimation();
@@ -223,11 +223,11 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public void inviteAcceptedHost(int total) {
         mMessage.setText(getGVRContext().getContext().getResources().
-                getQuantityString(R.plurals.found_guests, total, total));
+                getQuantityString(R.plurals.guests_found, total, total));
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCheckIcon.setVisibility(View.VISIBLE);
-        mPairing.setImageResource(R.drawable.ic_host_found);
+        mPairing.setImageResource(R.drawable.ic_connection_established);
         mCancel_waiting.setVisibility(View.GONE);
         mContinue.setVisibility(View.GONE);
         mSpinner_waiting.clearAnimation();
@@ -272,8 +272,8 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     }
 
     public void notFound(String type) {
-        mPairing.setImageResource(R.drawable.icon_error_start_sharing);
-        mMessage.setText(getGVRContext().getContext().getResources().getString(R.string.not_found, type));
+        mPairing.setImageResource(R.drawable.ic_no_connection_found);
+        mMessage.setText(getGVRContext().getContext().getResources().getString(R.string.view_no_connection_found_status_text, type));
         mGuestButton.setVisibility(View.GONE);
         mHostButton.setVisibility(View.GONE);
         mCancelButton.setVisibility(View.VISIBLE);
@@ -284,7 +284,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public void pairingError() {
         mPairing.setVisibility(View.VISIBLE);
-        mPairing.setImageResource(R.drawable.icon_error_to_pair);
+        mPairing.setImageResource(R.drawable.ic_sharing_error);
         mMessage.setVisibility(View.VISIBLE);
         mMessage.setText("Pairing error!\n Would you like to try again?");
         mGuestButton.setVisibility(View.GONE);
@@ -352,7 +352,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
         mPairing.setVisibility(View.VISIBLE);
         mPairing.setImageResource(R.drawable.icon_connect);
         mMessage.setVisibility(View.VISIBLE);
-        mMessage.setText(R.string.shared);
+        mMessage.setText(R.string.common_text_shared);
         mSpinner.clearAnimation();
         mSpinner.setVisibility(View.GONE);
         mCheckIcon.setVisibility(View.VISIBLE);

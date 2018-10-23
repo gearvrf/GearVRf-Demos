@@ -18,15 +18,17 @@
     <string name="save">SAVE</string>
     <string name="looking_the_same_thing">Make sure you and your friends are side-by-side looking\n at the same thing.</string>
     <string name="sharing_anchor">SHARING ANCHOR</string>
-    <string name="host">HOST</string>
-    <string name="guest">GUEST</string>
-    <string name="waiting_guests">Waiting for the guests to\n enter on the Sharing Anchor.</string>
+    <string name="common_text_host">Host</string>
+    <string name="common_text_guest">Guest</string>
+    <string name="view_waiting_for_guests_status_text">Waiting for the guests to\nenter on the Sharing Anchor.</string>
+    <string name="view_waiting_for_host_status_text">Waiting for the host to\nenter on the Sharing Anchor.</string>
+    <string name="view_sharing_error_status_text">Pairing error!\nWould you like to try again?</string>
     <string name="waiting_host">Waiting for a host to\n start the Sharing Anchor.</string>
-    <string name="shared">Shared</string>
-    <string name="invitation">Let’s start Sharing Anchor!\n What role do you want to play?</string>
+    <string name="common_text_shared">Shared</string>
     <string name="stay_in_position">Stay in this position while we connect the phones.</string>
-    <string name="not_found">No %1$s found!\n Would you like to try again?</string>
-    <string name="try_message">TRY</string>
+    <string name="view_no_connection_found_status_text">No %1$s found!\nWould you like to try again?</string>
+    <string name="common_text_try">Try</string>
+    <string name="common_text_retry">Retry</string>
     <string name="common_text_cancel">Cancel</string>
     <string name="common_text_continue">Continue</string>
     <string name="stay_in_this_position">Stay in this position while we connect the phones</string>
@@ -35,15 +37,20 @@
     <string name="disconnect_host">Do you want to disconnect from Sharing Anchor?\n Your friends will also be disconnected.</string>
     <string name="disconnect">DISCONNECT</string>
     <string name="disconnect_guest">Do you want to disconnect from\n Sharing Anchor?</string>
-    <string name="host_found">1 host found  on sharing achor</string>
+    <string name="host_found">1 connection found\non sharing anchor</string>
     <string name="center_pet">Center the pet in your scene</string>
     <string name="move_around">Move around the device for at least a few second</string>
     <string name="waiting">Waiting for host sharing</string>
     <string name="no_internet_connection">No internet connection available</string>
     <string name="bluetooth_disabled">Bluetooth is disabled</string>
     <string name="device_not_visible">This device is not visible to other devices</string>
-    <plurals name="found_guests" >
-        <item quantity="one">1 guest found\n on Sharing Anchor.</item>
-        <item quantity="other">%d guests found\n on Sharing Anchor.</item>
+    <string name="view_lets_start_status_text">Let’s start Sharing Anchor!\nWhat role do you want to play?</string>
+    <plurals name="guests_found">
+        <item quantity="one">1 guest found\non sharing anchor.</item>
+        <item quantity="other">%$1d guests found\non sharing anchor.</item>
+    </plurals>
+    <plurals name="hosts_found">
+        <item quantity="one">1 host found\non sharing anchor</item>
+        <item quantity="other">%d hosts found\non sharing anchor</item>
     </plurals>
 </resources>

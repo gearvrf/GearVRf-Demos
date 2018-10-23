@@ -14,8 +14,16 @@
   ~ limitations under the License.
   ~
   -->
-<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
-    <font app:font="@font/roboto_medium" />
-    <font app:font="@font/roboto_bold" />
-    <font app:font="@font/roboto_light" />
-</font-family>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_overlay">
+
+    <LinearLayout
+        android:layout_width="@dimen/view_width"
+        android:layout_height="@dimen/view_height"
+        tools:ignore="UselessLeaf" />
+
+</LinearLayout>

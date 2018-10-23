@@ -14,8 +14,8 @@
   ~ limitations under the License.
   ~
   -->
-<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
-    <font app:font="@font/roboto_medium" />
-    <font app:font="@font/roboto_bold" />
-    <font app:font="@font/roboto_light" />
-</font-family>
+
+<resources>
+    <dimen name="view_width">640dp</dimen>
+    <dimen name="view_height">360dp</dimen>
+</resources>

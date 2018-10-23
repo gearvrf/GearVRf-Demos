@@ -102,7 +102,7 @@
                 android:layout_centerInParent="true"
                 android:fontFamily="@font/roboto_medium"
                 android:gravity="center"
-                android:text="@string/invitation"
+                android:text="@string/view_lets_start_status_text"
                 android:textAlignment="center"
                 android:textColor="#ffffff"
                 android:textSize="21sp" />
@@ -119,7 +119,7 @@
                 android:layout_width="56.6dp"
                 android:layout_height="58.3dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/loading"
+                android:src="@drawable/ic_loading"
                 android:visibility="gone" />
         </RelativeLayout>
 
@@ -169,7 +169,7 @@
                     android:layout_height="48dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/host"
+                    android:text="@string/common_text_host"
                     android:textColor="#ffffff"
                     android:textSize="14sp" />
 
@@ -180,7 +180,7 @@
                     android:layout_marginStart="17dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/guest"
+                    android:text="@string/common_text_guest"
                     android:textColor="#ffffff"
                     android:textSize="14sp" />
 
@@ -202,7 +202,7 @@
                     android:layout_marginStart="17dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/try_message"
+                    android:text="@string/common_text_retry"
                     android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:visibility="gone" />
@@ -214,7 +214,7 @@
                     android:layout_marginStart="17dp"
                     android:background="@drawable/bg_guest_host_button"
                     android:fontFamily="@font/roboto_bold"
-                    android:text="@string/try_message"
+                    android:text="@string/common_text_retry"
                     android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:visibility="gone" />
@@ -249,7 +249,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_centerInParent="true"
-                android:src="@drawable/icn_check"
+                android:src="@drawable/ic_check"
                 android:visibility="gone" />
 
         </RelativeLayout>
@@ -260,7 +260,7 @@
             android:layout_height="43.4dp"
             android:layout_marginStart="300dp"
             android:layout_marginTop="215dp"
-            android:src="@drawable/loading"
+            android:src="@drawable/ic_loading"
             android:visibility="gone" />
 
         <LinearLayout

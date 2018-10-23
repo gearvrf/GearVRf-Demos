@@ -14,8 +14,21 @@
   ~ limitations under the License.
   ~
   -->
-<font-family xmlns:app="http://schemas.android.com/apk/res-auto">
-    <font app:font="@font/roboto_medium" />
-    <font app:font="@font/roboto_bold" />
-    <font app:font="@font/roboto_light" />
-</font-family>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/view_connection_found"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_overlay">
+
+    <TextView
+        style="@style/StatusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="51dp"
+        android:drawableTop="@drawable/ic_connection_established"
+        android:drawablePadding="51dp"
+        android:text="@string/host_found" />
+
+</RelativeLayout>
