@@ -18,12 +18,12 @@ public class LayoutViewUtils {
         final float h = (float)(near * Math.tan(fov * 0.5f));
         final float w = aspect * h;
 
-        final float s = Math.max(width, height) / Math.max(DISPLAY_WIDTH_DP, DISPLAY_HEIGHT_DP);
+        final float s = (width * height) / (DISPLAY_WIDTH_DP * DISPLAY_HEIGHT_DP);
 
         x = (Math.min(DISPLAY_WIDTH_DP, x + (width / 2.0f)) / DISPLAY_WIDTH_DP - 0.5f) * w * 2;
         y = (0.5f - Math.min(DISPLAY_HEIGHT_DP, y + (height / 2.0f)) / DISPLAY_HEIGHT_DP) * h * 2;
 
         view.getTransform().setPosition(x / near, y / near, -near / near);
-        view.getTransform().setScale(s + near, s + near, 1);
+        view.getTransform().setScale(s / near, s / near, 1);
     }
 }
