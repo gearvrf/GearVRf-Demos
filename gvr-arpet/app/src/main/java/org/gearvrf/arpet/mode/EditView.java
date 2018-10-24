@@ -53,7 +53,7 @@ public class EditView extends BasePetView implements View.OnClickListener {
                 gvrViewSceneObject.getRenderData().setRenderingOrder(
                         GVRRenderData.GVRRenderingOrder.OVERLAY);
                 LayoutViewUtils.setWorldPosition(mPetContext.getMainScene(),
-                        gvrViewSceneObject, 15f, 11f, 44 + 136, 44);
+                        gvrViewSceneObject, 5f, 11f, 44 + 136, 44);
 
                 EditView.this.addChildObject(gvrViewSceneObject);
             }
@@ -73,7 +73,7 @@ public class EditView extends BasePetView implements View.OnClickListener {
                 gvrViewSceneObject.getRenderData().setRenderingOrder(
                         GVRRenderData.GVRRenderingOrder.OVERLAY);
                 LayoutViewUtils.setWorldPosition(mPetContext.getMainScene(),
-                        gvrViewSceneObject, 500f, 14f, 121, 44);
+                        gvrViewSceneObject, 510f, 12f, 121, 44);
 
                 EditView.this.addChildObject(gvrViewSceneObject);
             }
