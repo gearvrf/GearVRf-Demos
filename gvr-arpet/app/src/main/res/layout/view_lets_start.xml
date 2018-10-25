@@ -69,13 +69,13 @@
             <Button
                 android:id="@+id/button_host"
                 style="@style/Button"
-                android:text="@string/common_text_guest" />
+                android:text="@string/common_text_host" />
 
             <Button
                 android:id="@+id/button_guest"
                 style="@style/Button"
                 android:layout_marginStart="17dp"
-                android:text="@string/common_text_host" />
+                android:text="@string/common_text_guest" />
 
         </LinearLayout>
 

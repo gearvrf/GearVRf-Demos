@@ -17,11 +17,11 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/view_connection_found"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_overlay">
+    android:layout_width="@dimen/view_width"
+    android:layout_height="@dimen/view_height">
 
     <TextView
+        android:id="@+id/text_status"
         style="@style/StatusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

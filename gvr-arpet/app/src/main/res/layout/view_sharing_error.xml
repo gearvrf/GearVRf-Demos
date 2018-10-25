@@ -18,9 +18,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/view_sharing_error"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/bg_overlay"
+    android:layout_width="@dimen/view_width"
+    android:layout_height="@dimen/view_height"
     android:gravity="center"
     android:orientation="vertical">
 

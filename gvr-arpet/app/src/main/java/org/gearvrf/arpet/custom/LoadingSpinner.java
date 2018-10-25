@@ -15,7 +15,7 @@
  *
  */
 
-package custom;
+package org.gearvrf.arpet.custom;
 
 import android.content.Context;
 import android.support.annotation.Nullable;

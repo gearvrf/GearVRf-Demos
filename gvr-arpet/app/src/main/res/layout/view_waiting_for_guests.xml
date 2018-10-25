@@ -51,7 +51,7 @@
         android:layout_marginTop="29.9dp"
         android:text="@string/view_waiting_for_guests_status_text" />
 
-    <custom.LoadingSpinner
+    <org.gearvrf.arpet.custom.LoadingSpinner
         android:layout_width="42.2dp"
         android:layout_height="43.4dp"
         android:layout_marginTop="17dp" />

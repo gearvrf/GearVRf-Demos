@@ -15,15 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.mode.viewholder;
+package org.gearvrf.arpet.mode.view;
 
-import android.view.View;
-
-public class LetsStartViewHolder {
-
-    private View mView;
-
-    public LetsStartViewHolder(View mView) {
-        this.mView = mView;
-    }
+public interface IWaitingMessageView extends ISharingAnchorView {
 }
