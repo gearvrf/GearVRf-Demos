@@ -34,7 +34,9 @@ public class HudView extends BasePetView implements View.OnClickListener {
                     @Override
                     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
                         menuButton = view.findViewById(R.id.btn_start_menu);
+                        closeButton = view.findViewById(R.id.btn_close);
                         menuButton.setOnClickListener(HudView.this);
+                        closeButton.setOnClickListener(HudView.this);
                     }
 
                     @Override
@@ -42,9 +44,7 @@ public class HudView extends BasePetView implements View.OnClickListener {
                         gvrViewSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
                         gvrViewSceneObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
                         LayoutViewUtils.setWorldPosition(mPetContext.getMainScene(),
-                                gvrViewSceneObject, 590f, 302f, 44f, 44f);
-                        gvrViewSceneObject.getTransform().setPositionZ(
-                                gvrViewSceneObject.getTransform().getPositionZ() - 0.001f);
+                                gvrViewSceneObject, 590f, 304f, 44f, 44f);
                         addChildObject(gvrViewSceneObject);
                     }
                 });
@@ -54,12 +54,10 @@ public class HudView extends BasePetView implements View.OnClickListener {
                     @Override
                     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
                         menuHud = view.findViewById(R.id.menuHud);
-                        closeButton = view.findViewById(R.id.btn_close);
                         editModeButton = view.findViewById(R.id.btn_edit);
                         playBoneButton = view.findViewById(R.id.btn_fetchbone);
                         shareAnchorButton = view.findViewById(R.id.btn_shareanchor);
                         cameraButton = view.findViewById(R.id.btn_camera);
-                        closeButton.setOnClickListener(HudView.this);
                         editModeButton.setOnClickListener(HudView.this);
                         playBoneButton.setOnClickListener(HudView.this);
                         shareAnchorButton.setOnClickListener(HudView.this);
@@ -73,7 +71,7 @@ public class HudView extends BasePetView implements View.OnClickListener {
                         gvrViewSceneObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
                         gvrViewSceneObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
                         LayoutViewUtils.setWorldPosition(mPetContext.getMainScene(),
-                                gvrViewSceneObject, 590f, 20f, 44f, 314f);
+                                gvrViewSceneObject, 590f, 20f, 44f, 270f);
                         gvrViewSceneObject.setEnable(false);
                         addChildObject(gvrViewSceneObject);
                     }
@@ -121,13 +119,9 @@ public class HudView extends BasePetView implements View.OnClickListener {
                         mHudMenuObject.setEnable(true);
                     }
                 });
+                menuButton.setVisibility(View.GONE);
+                closeButton.setVisibility(View.VISIBLE);
 
-                menuButton.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mStartMenuObject.setEnable(false);
-                    }
-                }, 100);
                 break;
             case R.id.btn_close:
                 closeButton.post(new Runnable() {
@@ -144,12 +138,8 @@ public class HudView extends BasePetView implements View.OnClickListener {
                     }
                 });
 
-                closeButton.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mStartMenuObject.setEnable(true);
-                    }
-                }, 100);
+                menuButton.setVisibility(View.VISIBLE);
+                closeButton.setVisibility(View.GONE);
 
                 break;
             case R.id.btn_edit:

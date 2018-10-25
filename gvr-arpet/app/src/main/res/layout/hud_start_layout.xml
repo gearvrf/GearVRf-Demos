@@ -21,19 +21,31 @@
 android:layout_width="wrap_content"
 android:layout_height="wrap_content"
 android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/btn_start_menu"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_menu"
+        android:gravity="center"
+        android:orientation="vertical">
+        <ImageView
+            android:layout_width="15.4dp"
+            android:layout_height="15.4dp"
+            android:src="@drawable/icon_menu" />
+    </LinearLayout>
 
-<LinearLayout
-    android:id="@+id/btn_start_menu"
-    android:layout_width="44dp"
-    android:layout_height="44dp"
-    android:background="@drawable/bg_menu"
-    android:gravity="center"
-    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/btn_close"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_menu"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-    <ImageView
-        android:layout_width="15.4dp"
-        android:layout_height="15.4dp"
-        android:src="@drawable/icon_menu" />
-</LinearLayout>
-
+        <ImageView
+            android:layout_width="12.3dp"
+            android:layout_height="12.3dp"
+            android:src="@drawable/icon_close" />
+    </LinearLayout>
 </LinearLayout>
