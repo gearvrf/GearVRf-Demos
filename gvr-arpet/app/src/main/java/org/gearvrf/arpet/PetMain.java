@@ -133,7 +133,7 @@ public class PetMain extends DisableNativeSplashScreen {
         }
 
         if (mCurrentMode == null) {
-            mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
+            mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
             mCurrentMode.enter();
         }
     }
@@ -214,7 +214,7 @@ public class PetMain extends DisableNativeSplashScreen {
         public void OnBackToHud() {
             mPetContext.registerPlaneListener(mPlaneHandler);
             mCurrentMode.exit();
-            mCurrentMode = new HudMode(mPetContext, mHandlerModeChange);
+            mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
             mCurrentMode.enter();
 
             if (mPetContext.getMode() != SharedMixedReality.OFF) {

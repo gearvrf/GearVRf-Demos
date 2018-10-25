@@ -20,16 +20,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <Button
-            android:id="@+id/connected"
+            android:id="@+id/btn_connected"
             android:layout_width="144dp"
-            android:layout_height="30dp"
+            android:layout_height="28dp"
             android:background="@drawable/rounded_button"
-            android:paddingBottom="6dp"
-            android:paddingEnd="31dp"
-            android:paddingStart="20dp"
-            android:paddingTop="6dp"
             android:text="@string/connected"
             android:textColor="#FFFFFF"
-            android:clickable="false"
-            android:textSize="14sp"/>
+            android:clickable="true"
+            android:focusable="true"
+            android:textSize="14sp" />
 </LinearLayout>

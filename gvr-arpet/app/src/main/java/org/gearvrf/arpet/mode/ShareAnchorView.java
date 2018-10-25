@@ -299,7 +299,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public void disconnectScreenHost() {
         mPairing.setVisibility(View.VISIBLE);
-        mPairing.setImageResource(R.drawable.disconnet);
+        mPairing.setImageResource(R.drawable.disconnect);
         mMessage.setVisibility(View.VISIBLE);
         mMessage.setText(R.string.disconnect_host);
         mStatusMode.setVisibility(View.GONE);
@@ -311,7 +311,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
 
     public void disconnectScreenGuest() {
         mPairing.setVisibility(View.VISIBLE);
-        mPairing.setImageResource(R.drawable.disconnet);
+        mPairing.setImageResource(R.drawable.disconnect);
         mMessage.setVisibility(View.VISIBLE);
         mMessage.setText(R.string.disconnect_guest);
         mStatusMode.setVisibility(View.GONE);

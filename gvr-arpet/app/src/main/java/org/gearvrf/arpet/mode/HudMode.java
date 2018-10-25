@@ -15,20 +15,39 @@
 
 package org.gearvrf.arpet.mode;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
+import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
+import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+
+import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST;
 
 public class HudMode extends BasePetMode {
     private OnModeChange mModeChangeListener;
+    private HudView mHudView;
 
-    public HudMode(PetContext petContext, OnModeChange listener) {
+    private PetConnectionManager mConnectionManager;
+    private SharedMixedReality mSharedMixedReality;
+    private CharacterController mPetController;
+
+    public HudMode(PetContext petContext, CharacterController petController, OnModeChange listener) {
         super(petContext, new HudView(petContext));
         mModeChangeListener = listener;
+        mPetController = petController;
 
-        ((HudView) mModeScene).setListener(new OnHudItemClickedHandler());
+        mHudView = (HudView) mModeScene;
+        mHudView.setListener(new OnHudItemClickedHandler());
+        mHudView.setDisconnectListener(new OnDisconnectClickedHandler());
+
+        mConnectionManager = (PetConnectionManager) PetConnectionManager.getInstance();
+        mConnectionManager.addEventHandler(new LocalConnectionEventHandler());
+        mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
     }
 
     @Override
@@ -72,6 +91,62 @@ public class HudMode extends BasePetMode {
         public void onCameraClicked() {
             mModeChangeListener.onScreenshot();
             Log.d(TAG, "Camera Mode");
+        }
+
+        @Override
+        public void onConnectedClicked() {
+            Log.d(TAG, "Connected label clicked");
+            mPetContext.getActivity().runOnUiThread(() -> {
+                mHudView.showDisconnectView(mConnectionManager.getConnectionMode());
+                mHudView.hideConnectedLabel();
+            });
+        }
+    }
+
+    private class OnDisconnectClickedHandler implements OnDisconnectClicked {
+        @Override
+        public void onCancel() {
+            mPetContext.getActivity().runOnUiThread(() -> {
+                mHudView.hideDisconnectView();
+                mHudView.showConnectedLabel();
+            });
+        }
+
+        @Override
+        public void onDisconnect() {
+            mSharedMixedReality.stopSharing();
+            mConnectionManager.disconnect();
+            mPetContext.getActivity().runOnUiThread(() -> {
+                mHudView.hideDisconnectView();
+                mHudView.hideConnectedLabel();
+            });
+            mPetController.stopBall();
+        }
+    }
+
+    private class LocalConnectionEventHandler implements PetConnectionEventHandler {
+
+        @SuppressLint("SwitchIntDef")
+        @Override
+        public void handleEvent(PetConnectionEvent message) {
+            mPetContext.getActivity().runOnUiThread(() -> {
+                switch (message.getType()) {
+                    case EVENT_ALL_CONNECTIONS_LOST:
+                        onSharingOff();
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
+
+        private void onSharingOff() {
+            mSharedMixedReality.stopSharing();
+            mPetController.stopBall();
+            mPetContext.getActivity().runOnUiThread(() -> {
+                mHudView.hideDisconnectView();
+                mHudView.hideConnectedLabel();
+            });
         }
     }
 }

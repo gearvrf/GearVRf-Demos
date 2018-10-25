@@ -1,10 +1,11 @@
-/* Copyright 2015 Samsung Electronics Co., LTD
+/*
+ * Copyright 2015 Samsung Electronics Co., LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,15 +16,9 @@
 
 package org.gearvrf.arpet.mode;
 
-public interface OnHudItemClicked {
+public interface OnDisconnectClicked {
 
-    void onBallClicked();
+    void onCancel();
 
-    void onShareAnchorClicked();
-
-    void onEditModeClicked();
-
-    void onCameraClicked();
-
-    void onConnectedClicked();
+    void onDisconnect();
 }
