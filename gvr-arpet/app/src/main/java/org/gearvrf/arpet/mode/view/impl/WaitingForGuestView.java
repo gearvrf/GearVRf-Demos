@@ -31,8 +31,8 @@ class WaitingForGuestView implements IWaitingForGuestView {
 
     public WaitingForGuestView(View view) {
         this.mTotalConnected = view.findViewById(R.id.text_total);
-        this.mCancelButton = view.findViewById(R.id.cancel_button);
-        this.mContinueButton = view.findViewById(R.id.continue_button);
+        this.mCancelButton = view.findViewById(R.id.button_cancel);
+        this.mContinueButton = view.findViewById(R.id.button_continue);
     }
 
     @Override
