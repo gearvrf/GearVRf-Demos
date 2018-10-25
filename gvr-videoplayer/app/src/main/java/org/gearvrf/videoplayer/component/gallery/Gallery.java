@@ -70,7 +70,6 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                     public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
                         onInitRecyclerView(view);
                         onInitBreadcrumb(view);
-                        onInitMessageText();
                     }
 
                     @Override
@@ -81,6 +80,8 @@ public class Gallery extends FadeableObject implements OnItemsSelectionListener 
                         addChildObject(gvrViewSceneObject);
                     }
                 });
+
+        onInitMessageText();
     }
 
     private OnMessageListener mOnMessageListener = new OnMessageListener() {

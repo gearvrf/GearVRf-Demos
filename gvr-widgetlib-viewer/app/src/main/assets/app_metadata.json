@@ -253,6 +253,7 @@
       "mesh": {
         "id": "backgrounds/sphere.obj"
       },
+      "scale": 10,
       "level": 0,
       "levels": [
         {

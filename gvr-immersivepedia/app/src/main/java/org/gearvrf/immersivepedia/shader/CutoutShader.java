@@ -18,12 +18,12 @@ package org.gearvrf.immersivepedia.shader;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.utility.TextFile;
 
-public class CutoutShader extends GVRShader{
+public class CutoutShader extends GVRShaderTemplate {
 
     public static final String TEXTURE_KEY = "u_texture";
     public static final String CUTOUT = "cutout";

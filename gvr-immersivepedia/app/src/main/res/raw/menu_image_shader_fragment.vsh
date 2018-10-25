@@ -20,6 +20,4 @@ void main() {
 
 	outColor = textureColor;
 	outColor.a = outColor.a * u_opacity;
-
-	//outColor = vec4(1,0,0,1);
 }

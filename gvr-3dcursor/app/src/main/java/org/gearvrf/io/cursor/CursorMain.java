@@ -21,6 +21,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gearvrf.io.gearwear.GearWearableDevice;
@@ -50,7 +51,6 @@ import org.gearvrf.io.cursor3d.IoDevice;
 import org.gearvrf.io.cursor3d.MovableBehavior;
 import org.gearvrf.io.cursor3d.SelectableBehavior;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.scene_objects.view.GVRTextView;
 import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 
@@ -485,8 +485,8 @@ public class CursorMain extends GVRMain {
 
     private TextView getTextView(GVRApplication application, int index) {
         Resources resources = application.getActivity().getResources();
-        TextView textView = new GVRTextView(application, TEXT_VIEW_WIDTH,
-                getTextViewHeightFromIndex(index));
+        TextView textView = new TextView(application.getActivity());
+        textView.setLayoutParams(new ViewGroup.LayoutParams(TEXT_VIEW_WIDTH, getTextViewHeightFromIndex(index)));
         textView.setTextSize(STANDARD_TEXT_SIZE);
         textView.setTextColor(LIGHT_BLUE_COLOR);
         setTextViewProperties(textView, resources);
@@ -495,8 +495,8 @@ public class CursorMain extends GVRMain {
 
     private void addCircleGVRTextViews(GVRApplication application, Resources resources) {
         for (int count = 0; count < NUM_TEXT_VIEWS; count++) {
-            GVRTextView textView = new GVRTextView(application, CIRCLE_TEXT_VIEW_WIDTH,
-                    CIRCLE_TEXT_VIEW_HEIGHT);
+            TextView textView = new TextView(application.getActivity());
+            textView.setLayoutParams(new ViewGroup.LayoutParams(CIRCLE_TEXT_VIEW_WIDTH, CIRCLE_TEXT_VIEW_HEIGHT));
             textView.setTextSize(CIRCLE_TEXT_SIZE);
             textView.setTextColor(Color.BLACK);
             textView.setBackground(resources.getDrawable(R.drawable.circle));
