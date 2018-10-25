@@ -25,6 +25,7 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.constant.ArPetObjectType;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -322,7 +323,9 @@ public class PetActions {
         @Override
         public void exit() {
             Log.w(TAG, "exit => AT_SHARE");
-            mCharacter.updatePose(mPetContext.getSharedAnchor().getTransform().getModelMatrix());
+            if (mPetContext.getMode() != SharedMixedReality.OFF) {
+                mCharacter.updatePose(mPetContext.getSharedAnchor().getTransform().getModelMatrix());
+            }
         }
 
         @Override
