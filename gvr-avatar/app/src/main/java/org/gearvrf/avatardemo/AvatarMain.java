@@ -10,44 +10,45 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.animation.GVRSkeleton;
-import org.gearvrf.animation.keyframe.GVRSkeletonAnimation;
+
 
 import android.graphics.Color;
 import android.util.Log;
+import android.view.MotionEvent;
 
 public class AvatarMain extends GVRMain
 {
     private final String mModelPath = "YBot/ybot.fbx";
-    //    private final String[] mAnimationPaths =  { "animation/mixamo/Ybot_SambaDancing.bvh" };
-//    private final String mBoneMapPath = "animation/mixamo/bonemap.txt";
+    private final String mModelPathOne = "Eva/Eva.dae";
+    private final String mBoneMapPath = "animation/mixamo/pet_map.txt";
     private final String[] mAnimationPaths =  {
-            "animation/captured/Video1_BVH.bvh",
-            "animation/captured/Video2_BVH.bvh",
-            "animation/captured/Video3_BVH.bvh",
-            "animation/captured/Video4_BVH.bvh",
-            "animation/captured/Video5_BVH.bvh",
-            "animation/captured/Video6_BVH.bvh"
+            "Eva/bvhExport_GRAB_BONE.bvh",
+             "Eva/bvhExport_RUN.bvh",
+             "Eva/bvhExport_WALK"
+
     };
-    private final String mBoneMapPath = "animation/captured/bonemap.txt";
     private static final String TAG = "AVATAR";
     private GVRContext      mContext;
     private GVRScene        mScene;
     private GVRAvatar       mAvatar;
+    private GVRAvatar       mAvatarOne;
     private GVRActivity     mActivity;
     private int             mNumAnimsLoaded = 0;
     private String          mBoneMap;
+    private GVRSceneObject model = null;
+    GVRTransform t;
 
     public AvatarMain(GVRActivity activity) {
         mActivity = activity;
     }
 
-    private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents()
+    private GVRAvatar.IAvatarEvents mAvatarListenerone = new GVRAvatar.IAvatarEvents()
     {
         @Override
         public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors)
@@ -58,12 +59,16 @@ public class AvatarMain extends GVRMain
                 {
                     public void run()
                     {
-                        mAvatar.centerModel(avatarRoot);
+                        centerModel(avatarRoot, t);
+                        avatarRoot.getTransform().setPosition(0,-0.01f,-0.15f);
+                       // avatarRoot.getTransform().setRotationByAxis(-180,0,1,0);
+                        avatarRoot.getTransform().setScale(0.0004f,0.0004f,0.0004f);
                         mScene.addSceneObject(avatarRoot);
                     }
                 });
             }
-            loadNextAnimation(mAvatar, mBoneMap);
+            loadNextAnimation(mAvatarOne, mBoneMap);
+
         }
 
         @Override
@@ -72,27 +77,28 @@ public class AvatarMain extends GVRMain
             animation.setRepeatMode(GVRRepeatMode.ONCE);
             animation.setSpeed(1f);
             ++mNumAnimsLoaded;
-            if (!mAvatar.isRunning())
+            if (!mAvatarOne.isRunning())
             {
-                mAvatar.startAll(GVRRepeatMode.REPEATED);
+                mAvatarOne.startAll(GVRRepeatMode.REPEATED);
             }
             else
             {
-                mAvatar.start(animation.getName());
+                mAvatarOne.start(animation.getName());
             }
             if (mNumAnimsLoaded < mAnimationPaths.length)
             {
-                loadNextAnimation(mAvatar, mBoneMap);
+                loadNextAnimation(mAvatarOne, mBoneMap);
             }
         }
 
-        public void onModelLoaded(final GVRSceneObject avatarRoot, String filePath, String errors) { }
+        public void onModelLoaded(final GVRSceneObject avatarRoot, String filePath, String errors) {
+
+        }
 
         public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation) { }
 
         public void onAnimationStarted(GVRAnimator animator) { }
     };
-
 
     @Override
     public void onInit(GVRContext gvrContext)
@@ -101,21 +107,22 @@ public class AvatarMain extends GVRMain
         mScene = gvrContext.getMainScene();
         GVRCameraRig rig = mScene.getMainCameraRig();
         GVRDirectLight topLight = new GVRDirectLight(gvrContext);
+        topLight.setAmbientIntensity(0.5f,0.5f,0.5f,1f);
         GVRSceneObject topLightObj = new GVRSceneObject(gvrContext);
 
+        t = mScene.getMainCameraRig().getTransform();
         topLightObj.attachComponent(topLight);
-        topLightObj.getTransform().rotateByAxis(-90, 1, 0, 0);
-        mScene.addSceneObject(topLightObj);
+        topLightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
+       // mScene.addSceneObject(topLightObj);
         rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
         rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
-        rig.getOwnerObject().attachComponent(new GVRDirectLight(mContext));
-
-        mAvatar = new GVRAvatar(gvrContext, "YBot");
-        mAvatar.getEventReceiver().addListener(mAvatarListener);
+        mAvatarOne = new GVRAvatar(gvrContext, "pet");
+        mAvatarOne.getEventReceiver().addListener(mAvatarListenerone);
         mBoneMap = readFile(mBoneMapPath);
+
         try
         {
-            mAvatar.loadModel(new GVRAndroidResource(gvrContext, mModelPath));
+            mAvatarOne.loadModel(new GVRAndroidResource(gvrContext, mModelPathOne));
         }
         catch (IOException e)
         {
@@ -124,8 +131,20 @@ public class AvatarMain extends GVRMain
             mActivity = null;
         }
         gvrContext.getInputManager().selectController();
-    }
 
+        try
+        {
+            model = mContext.getAssetLoader().loadModel("environment/environment_test_2.fbx");
+        }
+        catch (IOException ex)
+        {
+        }
+        centerModel(model, t);
+        model.getTransform().setPositionZ(-1.25f);
+        mScene.addSceneObject(model);
+
+
+    }
     private void loadNextAnimation(GVRAvatar avatar, String bonemap)
     {
         try
@@ -141,10 +160,11 @@ public class AvatarMain extends GVRMain
             Log.e(TAG, "Animation could not be loaded from " + mAnimationPaths[mNumAnimsLoaded]);
         }
     }
-
     @Override
     public void onStep() {
+
     }
+
 
     private String readFile(String filePath)
     {
@@ -163,6 +183,24 @@ public class AvatarMain extends GVRMain
         }
     }
 
+    public void onSingleTapUp(MotionEvent event) {
+   // mScene.removeSceneObject(model);
+
+    }
+
+    public void centerModel(GVRSceneObject model, GVRTransform camTrans)
+    {
+        GVRSceneObject.BoundingVolume bv = model.getBoundingVolume();
+        float x = camTrans.getPositionX();
+        float y = camTrans.getPositionY();
+        float z = camTrans.getPositionZ();
+        float sf = 1 / bv.radius;
+        model.getTransform().setScale(sf, sf, sf);
+        bv = model.getBoundingVolume();
+        model.getTransform()
+                .setPosition(x , y , z );
+        model.getTransform().setRotation(1f, 0.1f,0.4f,0f);
+    }
 
 
 }
