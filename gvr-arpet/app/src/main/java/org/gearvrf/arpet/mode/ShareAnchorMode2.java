@@ -41,7 +41,9 @@ import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.mode.view.IConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ILetsStartView;
+import org.gearvrf.arpet.mode.view.ILookAtTargetView;
 import org.gearvrf.arpet.mode.view.INoConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ISharingAnchorView;
 import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
@@ -69,8 +71,6 @@ import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_N
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ONE_CONNECTION_LOST;
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ON_LISTENING_TO_GUESTS;
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ON_REQUEST_CONNECTION_TO_HOST;
-import static org.gearvrf.arpet.mode.ShareAnchorView.UserType.GUEST;
-import static org.gearvrf.arpet.mode.ShareAnchorView.UserType.HOST;
 
 public class ShareAnchorMode2 extends BasePetMode {
 
@@ -98,7 +98,8 @@ public class ShareAnchorMode2 extends BasePetMode {
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
     private SharedMixedReality mSharedMixedReality;
-
+    private LocalConnectionEventHandler mConnectionEventHandler;
+    private Resources mResources;
     @Mode
     private int mCurrentMode = MODE_NONE;
 
@@ -106,12 +107,13 @@ public class ShareAnchorMode2 extends BasePetMode {
         super(petContext, new ShareAnchorView2(petContext));
         mConnectionManager = PetConnectionManager.getInstance();
         mHandler = new Handler(petContext.getActivity().getMainLooper());
-        mConnectionManager.addEventHandler(new LocalConnectionEventHandler());
+        mConnectionManager.addEventHandler(mConnectionEventHandler = new LocalConnectionEventHandler());
 //        mShareAnchorView = (ShareAnchorView) mModeScene;
 //        mShareAnchorView.setListenerShareAnchorMode(new HandlerActionsShareAnchorMode());
         mShareAnchorView2 = (ShareAnchorView2) mModeScene;
 
-        mShareAnchorView2.showView(ILetsStartView.class, this::onShowLetsStartView);
+        mResources = mPetContext.getActivity().getResources();
+        onShowLetsStartView(mShareAnchorView2.makeView(ILetsStartView.class));
 
         mWorldCenterAnchor = anchor;
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
@@ -130,69 +132,58 @@ public class ShareAnchorMode2 extends BasePetMode {
         return true;
     }
 
-    private void onShowWaitingForGuestView(IWaitingForGuestView view) {
-        view.setCancelClickListener(v -> {
-            onAbandonSharing();
-        });
-        view.setContinueClickListener(v -> {
-            mConnectionManager.stopInvitation();
-        });
-    }
-
     private void onShowLetsStartView(ILetsStartView view) {
-        view.setBackClickListener(v -> {
-            onAbandonSharing();
-        });
+        view.setBackClickListener(v -> onCancelSharing());
         view.setHostClickListener(v -> {
             if (checkInternetConnection()) {
-                mCurrentMode = MODE_HOST;
                 mConnectionManager.startInvitation();
             }
         });
         view.setGuestClickListener(v -> {
             if (checkInternetConnection()) {
-                mCurrentMode = MODE_GUEST;
                 // Disable the planes detection
                 mPetContext.unregisterPlaneListener();
                 // Start to accept invitation from the host
                 mConnectionManager.findInvitationThenConnect();
             }
         });
+        view.show();
+    }
+
+    private void onShowWaitingForGuestView(IWaitingForGuestView view) {
+        mCurrentMode = MODE_HOST;
+        view.setCancelClickListener(v -> onCancelSharing());
+        view.setContinueClickListener(v -> mConnectionManager.stopInvitation());
+        view.show();
     }
 
     private void onShowWaitingForHostView(IWaitingForHostView view) {
-        view.setCancelClickListener(v -> {
-            onAbandonSharing();
-        });
+        mCurrentMode = MODE_GUEST;
+        view.setCancelClickListener(v -> onCancelSharing());
+        view.show();
     }
 
     private void onShowNoConnectionFoundView(INoConnectionFoundView view) {
         view.setStatusText(getNoConnectionFoundString());
-        view.setCancelClickListener(v -> {
-            onAbandonSharing();
-        });
+        view.setCancelClickListener(v -> onCancelSharing());
         view.setRetryClickListener(v -> {
             if (mCurrentMode == MODE_HOST) {
-                mShareAnchorView2.showView(
-                        IWaitingForGuestView.class,
-                        this::onShowWaitingForGuestView);
+                onShowWaitingForGuestView(mShareAnchorView2.makeView(IWaitingForGuestView.class));
             } else {
-                mShareAnchorView2.showView(
-                        IWaitingForHostView.class,
-                        this::onShowWaitingForHostView);
+                onShowWaitingForHostView(mShareAnchorView2.makeView(IWaitingForHostView.class));
             }
         });
+        view.show();
     }
 
     private String getNoConnectionFoundString() {
         if (mCurrentMode == MODE_NONE) {
             return "";
         }
-        Resources resources = mPetContext.getActivity().getResources();
         String mode = mCurrentMode == MODE_GUEST
-                ? resources.getString(R.string.common_text_guest)
-                : resources.getString(R.string.common_text_host);
-        return resources.getString(
+                ? mResources.getString(R.string.common_text_guest)
+                : mResources.getString(R.string.common_text_host);
+        return mResources.getString(
                 R.string.view_no_connection_found_status_text, mode.toLowerCase());
     }
 
@@ -202,79 +193,11 @@ public class ShareAnchorMode2 extends BasePetMode {
 
     @Override
     protected void onExit() {
+        mConnectionManager.removeMessageHandler(mConnectionEventHandler);
     }
 
     @Override
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
-    }
-
-    public class HandlerActionsShareAnchorMode implements ShareAnchorListener {
-
-        @Override
-        public void onHostButtonClicked() {
-        }
-
-        @Override
-        public void onGuestButtonClicked() {
-        }
-
-        @Override
-        public void OnBackShareAnchor() {
-        }
-
-        @Override
-        public void OnCancel() {
-            onAbandonSharing();
-        }
-
-        @Override
-        public void OnTry() {
-            if (mShareAnchorView.getUserType() == GUEST) {
-                onGuestButtonClicked();
-            } else {
-                onHostButtonClicked();
-            }
-        }
-
-        @Override
-        public void OnDisconnectScreen() {
-            if (mShareAnchorView.getUserType() == GUEST) {
-                mShareAnchorView.disconnectScreenGuest();
-            } else {
-                mShareAnchorView.disconnectScreenHost();
-            }
-        }
-
-        @Override
-        public void OnConnectedScreen() {
-            mShareAnchorView.modeView();
-        }
-
-        @Override
-        public void OnTryPairingError() {
-            if (!mCloudAnchorManager.hasInternetConnection()) {
-                mShareAnchorView.showNoInternetMessage();
-                return;
-            }
-            if (mShareAnchorView.getUserType() == GUEST) {
-                mShareAnchorView.lookingSidebySide();
-                doResolveGuest();
-            } else {
-                mShareAnchorView.toPairView();
-                mCloudAnchorManager.clearAnchors();
-                doHostAnchor();
-            }
-        }
-
-        @Override
-        public void OnContinue() {
-            mConnectionManager.stopInvitation();
-        }
-
-        @Override
-        public void OnCancelConnection() {
-            onAbandonSharing();
-        }
     }
 
     private void showInviteAcceptedScreen() {
@@ -306,28 +229,29 @@ public class ShareAnchorMode2 extends BasePetMode {
         mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.pairingError());
     }
 
-    private void handleConnectionEstablished() {
-        switch (mConnectionManager.getConnectionMode()) {
-            case ConnectionMode.CLIENT: {
-                showInviteAcceptedScreen();
-                break;
-            }
-            case ConnectionMode.SERVER: {
-                showInviteAcceptedScreen();
-                break;
-            }
-            case ConnectionMode.NONE:
-            default:
-                break;
+    private void onConnectionEstablished() {
+
+        int total = mConnectionManager.getTotalConnected();
+
+        IConnectionFoundView view = mShareAnchorView2.makeView(IConnectionFoundView.class);
+        view.setStatusText(mResources.getQuantityString(
+                mCurrentMode == MODE_GUEST ? R.plurals.hosts_found : R.plurals.guests_found,
+                total, total));
+        view.show();
+
+        if (mCurrentMode == MODE_HOST) {
+            new Handler().postDelayed(this::showLookAtTargetView, 3000);
         }
     }
 
-    private void showBluetoothDisabledMessage() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.showBluetoothDisabledMessage());
-    }
-
-    private void showDeviceNotVisibleMessage() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.showDeviceNotVisibleMessage());
+    private void showLookAtTargetView() {
+        ILookAtTargetView viewLookAt = mShareAnchorView2.makeView(ILookAtTargetView.class);
+        viewLookAt.setStatusText(mResources.getString(R.string.center_pet));
+        viewLookAt.show();
+        // Change text after a few seconds
+        new Handler().postDelayed(
+                () -> viewLookAt.setStatusText(mResources.getString(R.string.move_around)),
+                5000);
     }
 
     private void showWaitingScreen() {
@@ -356,10 +280,6 @@ public class ShareAnchorMode2 extends BasePetMode {
 
     private void showLookingSideBySide() {
         mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.lookingSidebySide());
-    }
-
-    private void showMainView() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.mainView());
     }
 
     private void sendCommandToShowModeShareAnchorView() {
@@ -467,13 +387,13 @@ public class ShareAnchorMode2 extends BasePetMode {
         shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]));
     }
 
-    private void onAbandonSharing() {
+    private void onCancelSharing() {
 
         // Turn sharing OFF
         mSharedMixedReality.stopSharing();
 
         // Disconnect from remotes
-        if (mShareAnchorView.getUserType() == GUEST) {
+        if (mCurrentMode == MODE_GUEST) {
             mConnectionManager.stopFindInvitation();
             mConnectionManager.disconnect();
         } else {
@@ -482,6 +402,8 @@ public class ShareAnchorMode2 extends BasePetMode {
 
         mCurrentMode = MODE_NONE;
         backToHud();
+
+        Log.d(TAG, "Sharing canceled");
     }
 
     private void backToHud() {
@@ -489,7 +411,7 @@ public class ShareAnchorMode2 extends BasePetMode {
     }
 
     private void updateTotalConnectedUI() {
-        if (mCurrentMode == HOST) {
+        if (mCurrentMode == MODE_HOST) {
             ISharingAnchorView view = mShareAnchorView2.getCurrentView();
             if (IWaitingForGuestView.class.isInstance(view)) {
                 ((IWaitingForGuestView) view).setTotalConnected(
@@ -500,18 +422,18 @@ public class ShareAnchorMode2 extends BasePetMode {
 
     private class LocalConnectionEventHandler implements PetConnectionEventHandler {
 
+        private final String HANDLER_ID = ShareAnchorView2.class.getName();
+
         @SuppressLint("SwitchIntDef")
         @Override
         public void handleEvent(PetConnectionEvent message) {
             mPetContext.getActivity().runOnUiThread(() -> {
                 switch (message.getType()) {
                     case EVENT_CONNECTION_ESTABLISHED:
-                        handleConnectionEstablished();
+                        onConnectionEstablished();
                         break;
                     case EVENT_NO_CONNECTION_FOUND:
-                        mShareAnchorView2.showView(
-                                INoConnectionFoundView.class,
-                                ShareAnchorMode2.this::onShowNoConnectionFoundView);
+                        onShowNoConnectionFoundView(mShareAnchorView2.makeView(INoConnectionFoundView.class));
                         break;
                     case EVENT_GUEST_CONNECTION_ESTABLISHED:
                     case EVENT_ONE_CONNECTION_LOST:
@@ -521,25 +443,43 @@ public class ShareAnchorMode2 extends BasePetMode {
                         backToHud();
                         break;
                     case EVENT_ON_LISTENING_TO_GUESTS:
-                        mShareAnchorView2.showView(
-                                IWaitingForGuestView.class,
-                                ShareAnchorMode2.this::onShowWaitingForGuestView);
+                        onShowWaitingForGuestView(mShareAnchorView2.makeView(IWaitingForGuestView.class));
                         break;
                     case EVENT_ON_REQUEST_CONNECTION_TO_HOST:
-                        mShareAnchorView2.showView(
-                                IWaitingForHostView.class,
-                                ShareAnchorMode2.this::onShowWaitingForHostView);
+                        onShowWaitingForHostView(mShareAnchorView2.makeView(IWaitingForHostView.class));
                         break;
                     case EVENT_ENABLE_BLUETOOTH_DENIED:
-                        showBluetoothDisabledMessage();
+                        Toast.makeText(mPetContext.getActivity(),
+                                R.string.bluetooth_disabled, Toast.LENGTH_LONG).show();
                         break;
                     case EVENT_HOST_VISIBILITY_DENIED:
-                        showDeviceNotVisibleMessage();
+                        Toast.makeText(mPetContext.getActivity(),
+                                R.string.device_not_visible, Toast.LENGTH_LONG).show();
                         break;
                     default:
                         break;
                 }
             });
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LocalConnectionEventHandler that = (LocalConnectionEventHandler) o;
+            return HANDLER_ID != null ? HANDLER_ID.equals(that.HANDLER_ID) : that.HANDLER_ID == null;
+        }
+
+        @Override
+        public int hashCode() {
+            return HANDLER_ID != null ? HANDLER_ID.hashCode() : 0;
+        }
+
+        @Override
+        public String toString() {
+            return "LocalConnectionEventHandler{" +
+                    "HANDLER_ID='" + HANDLER_ID + '\'' +
+                    '}';
         }
     }
 

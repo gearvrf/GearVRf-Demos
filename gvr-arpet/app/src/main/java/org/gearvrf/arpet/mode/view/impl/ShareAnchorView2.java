@@ -19,6 +19,8 @@ package org.gearvrf.arpet.mode.view.impl;
 
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -31,12 +33,13 @@ import org.gearvrf.arpet.mode.BasePetView;
 import org.gearvrf.arpet.mode.view.IAnchorSharedView;
 import org.gearvrf.arpet.mode.view.IConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ILetsStartView;
+import org.gearvrf.arpet.mode.view.ILookAtTargetView;
 import org.gearvrf.arpet.mode.view.INoConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ISharingAnchorView;
 import org.gearvrf.arpet.mode.view.ISharingErrorView;
+import org.gearvrf.arpet.mode.view.IWaitingDialogView;
 import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
 import org.gearvrf.arpet.mode.view.IWaitingForHostView;
-import org.gearvrf.arpet.mode.view.IWaitingMessageView;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 import java.lang.reflect.Constructor;
@@ -46,7 +49,9 @@ import java.util.Map;
 
 public class ShareAnchorView2 extends BasePetView {
 
+    private static final String TAG = ShareAnchorView2.class.getSimpleName();
     private static final Map<Class<? extends ISharingAnchorView>, ViewInfo> sViewInfo;
+
     private ViewGroup mMainView;
     private ISharingAnchorView mCurrentView;
 
@@ -57,7 +62,8 @@ public class ShareAnchorView2 extends BasePetView {
         sViewInfo.put(IWaitingForGuestView.class, new ViewInfo(R.layout.view_waiting_for_guests, WaitingForGuestView.class));
         sViewInfo.put(IConnectionFoundView.class, new ViewInfo(R.layout.view_connection_found, ConnectionFoundView.class));
         sViewInfo.put(INoConnectionFoundView.class, new ViewInfo(R.layout.view_no_connection_found, NoConnectionFoundView.class));
-        sViewInfo.put(IWaitingMessageView.class, new ViewInfo(R.layout.view_waiting_message, WaitingMessageView.class));
+        sViewInfo.put(ILookAtTargetView.class, new ViewInfo(R.layout.view_look_at_target, LookAtTargetView.class));
+        sViewInfo.put(IWaitingDialogView.class, new ViewInfo(R.layout.view_waiting_dialog, WaitingDialogView.class));
         sViewInfo.put(IAnchorSharedView.class, new ViewInfo(R.layout.view_anchor_shared, AnchorSharedView.class));
         sViewInfo.put(ISharingErrorView.class, new ViewInfo(R.layout.view_sharing_error, SharingErrorView.class));
     }
@@ -65,36 +71,62 @@ public class ShareAnchorView2 extends BasePetView {
     public ShareAnchorView2(PetContext petContext) {
         super(petContext);
 
-        mMainView = (ViewGroup) View.inflate(petContext.getGVRContext().getContext(), R.layout.view_sharing_anchor_main, null);
-        GVRViewSceneObject viewObject = new GVRViewSceneObject(petContext.getGVRContext(), mMainView);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        petContext.getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
 
+        mMainView = (ViewGroup) View.inflate(petContext.getGVRContext().getContext(), R.layout.view_sharing_anchor_main, null);
+        mMainView.setLayoutParams(new ViewGroup.LayoutParams(displayMetrics.widthPixels, displayMetrics.heightPixels));
+
+        GVRViewSceneObject viewObject = new GVRViewSceneObject(petContext.getGVRContext(), mMainView);
         viewObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         viewObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
 
-        getTransform().setPosition(0.0f, 0.0f, -0.9f);
+        getTransform().setPosition(0.0f, 0.0f, -0.74f);
         addChildObject(viewObject);
     }
 
-    public <T extends ISharingAnchorView> void showView(@NonNull Class<T> type, @NonNull OnShowViewListener<T> listener) {
+    @SuppressWarnings("unchecked")
+    public <T extends ISharingAnchorView> T makeView(@NonNull Class<T> type) {
+
+        ViewInfo viewInfo = sViewInfo.get(type);
+        View view = View.inflate(mPetContext.getGVRContext().getContext(), viewInfo.layoutId, null);
+        T viewModel = null;
+
+        try {
+            Constructor constructor = viewInfo.viewType.getConstructor(View.class, ShareAnchorView2.class);
+            viewModel = (T) constructor.newInstance(view, this);
+        } catch (NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException e) {
+            Log.e(TAG, "Error showing view of type " + type.getName(), e);
+        }
+
+        return viewModel;
+    }
+
+    void showView(ISharingAnchorView viewModel) {
         mPetContext.getActivity().runOnUiThread(() -> {
-            mMainView.removeAllViews();
-            ViewInfo viewInfo = sViewInfo.get(type);
-            View view = View.inflate(mPetContext.getGVRContext().getContext(), viewInfo.layoutId, mMainView);
-            T viewModel = null;
-            try {
-                Constructor constructor = viewInfo.viewType.getConstructor(View.class);
-                viewModel = (T) constructor.newInstance(view);
-            } catch (NoSuchMethodException | IllegalAccessException
-                    | InstantiationException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
+
+            View view = ((BaseSharingAnchorView) viewModel).getView();
+
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            mPetContext.getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(displayMetrics);
+            view.setLayoutParams(new ViewGroup.LayoutParams(displayMetrics.widthPixels, displayMetrics.heightPixels));
+
+            removeChildView();
+            mMainView.addView(((BaseSharingAnchorView) viewModel).getView());
             mCurrentView = viewModel;
-            listener.onShown(viewModel);
         });
     }
 
     public ISharingAnchorView getCurrentView() {
         return mCurrentView;
+    }
+
+    private void removeChildView() {
+        mPetContext.getActivity().runOnUiThread(() -> {
+            mMainView.removeAllViews();
+            mCurrentView = null;
+        });
     }
 
     @Override
@@ -104,6 +136,7 @@ public class ShareAnchorView2 extends BasePetView {
 
     @Override
     protected void onHide(GVRScene mainScene) {
+        removeChildView();
         mainScene.getMainCameraRig().removeChildObject(this);
     }
 
@@ -118,10 +151,5 @@ public class ShareAnchorView2 extends BasePetView {
             this.layoutId = layoutId;
             this.viewType = viewType;
         }
-    }
-
-    @FunctionalInterface
-    public interface OnShowViewListener<T extends ISharingAnchorView> {
-        void onShown(T view);
     }
 }

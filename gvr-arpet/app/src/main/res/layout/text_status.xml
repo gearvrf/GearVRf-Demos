@@ -15,7 +15,10 @@
   ~
   -->
 
-<resources>
-    <dimen name="view_width">640dp</dimen>
-    <dimen name="view_height">360dp</dimen>
-</resources>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/StatusText"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="look at target"
+    tools:ignore="HardcodedText" />

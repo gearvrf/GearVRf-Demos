@@ -21,11 +21,9 @@ import android.view.View;
 
 import org.gearvrf.arpet.mode.view.IAnchorSharedView;
 
-class AnchorSharedView implements IAnchorSharedView {
+class AnchorSharedView extends BaseSharingAnchorView implements IAnchorSharedView {
 
-    private View mView;
-
-    public AnchorSharedView(View view) {
-        this.mView = view;
+    public AnchorSharedView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
     }
 }

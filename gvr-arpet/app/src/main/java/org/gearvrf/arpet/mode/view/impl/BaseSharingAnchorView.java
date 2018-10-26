@@ -15,8 +15,28 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.view.impl;
 
-public interface ISharingAnchorView {
-    void show();
+import android.view.View;
+
+import org.gearvrf.arpet.mode.view.ISharingAnchorView;
+
+abstract class BaseSharingAnchorView implements ISharingAnchorView {
+
+    private View mView;
+    private ShareAnchorView2 mViewController;
+
+    public BaseSharingAnchorView(View view, ShareAnchorView2 viewController) {
+        this.mView = view;
+        this.mViewController = viewController;
+    }
+
+    @Override
+    public void show() {
+        mViewController.showView(this);
+    }
+
+    View getView() {
+        return mView;
+    }
 }

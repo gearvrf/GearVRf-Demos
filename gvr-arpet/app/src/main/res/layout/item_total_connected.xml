@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/roboto_light"
         android:includeFontPadding="false"
-        android:text="guests"
+        android:text="guest"
         android:textColor="#FFFFFF"
         android:textSize="15sp" />
 

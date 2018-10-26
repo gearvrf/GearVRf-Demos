@@ -15,8 +15,25 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.view.impl;
 
-public interface ISharingAnchorView {
-    void show();
+import android.view.View;
+import android.widget.TextView;
+
+import org.gearvrf.arpet.R;
+import org.gearvrf.arpet.mode.view.IWaitingDialogView;
+
+class WaitingDialogView extends BaseSharingAnchorView implements IWaitingDialogView {
+
+    private TextView mStatusText;
+
+    public WaitingDialogView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
+        mStatusText = view.findViewById(R.id.text_status);
+    }
+
+    @Override
+    public void setStatusText(CharSequence text) {
+        mStatusText.post(() -> mStatusText.setText(text));
+    }
 }

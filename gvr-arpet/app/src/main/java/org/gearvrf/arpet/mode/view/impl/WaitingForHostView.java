@@ -22,12 +22,13 @@ import android.view.View;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.mode.view.IWaitingForHostView;
 
-class WaitingForHostView implements IWaitingForHostView {
+class WaitingForHostView extends BaseSharingAnchorView implements IWaitingForHostView {
 
     private View mCancelButton;
 
-    public WaitingForHostView(View view) {
-        this.mCancelButton = view.findViewById(R.id.cancel_button);
+    public WaitingForHostView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
+        this.mCancelButton = view.findViewById(R.id.button_cancel);
     }
 
     @Override

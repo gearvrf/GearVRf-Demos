@@ -46,11 +46,15 @@
     <string name="device_not_visible">This device is not visible to other devices</string>
     <string name="view_lets_start_status_text">Let’s start Sharing Anchor!\nWhat role do you want to play?</string>
     <plurals name="guests_found">
-        <item quantity="one">1 guest found\non sharing anchor.</item>
-        <item quantity="other">%$1d guests found\non sharing anchor.</item>
+        <item quantity="one">1 guest found\non sharing anchor</item>
+        <item quantity="other">%d guests found\non sharing anchor</item>
     </plurals>
     <plurals name="hosts_found">
         <item quantity="one">1 host found\non sharing anchor</item>
         <item quantity="other">%d hosts found\non sharing anchor</item>
+    </plurals>
+    <plurals name="common_text_guest">
+        <item quantity="one">Guest</item>
+        <item quantity="other">Guests</item>
     </plurals>
 </resources>

@@ -26,4 +26,6 @@ public interface IWaitingForGuestView extends ISharingAnchorView {
     void setCancelClickListener(View.OnClickListener listener);
 
     void setContinueClickListener(View.OnClickListener listener);
+
+    void setContinueButtonEnabled(boolean enabled);
 }

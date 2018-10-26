@@ -18,14 +18,24 @@
 package org.gearvrf.arpet.mode.view.impl;
 
 import android.view.View;
+import android.widget.TextSwitcher;
 
-import org.gearvrf.arpet.mode.view.IWaitingMessageView;
+import org.gearvrf.arpet.R;
+import org.gearvrf.arpet.mode.view.ILookAtTargetView;
 
-class WaitingMessageView implements IWaitingMessageView {
+class LookAtTargetView extends BaseSharingAnchorView implements ILookAtTargetView {
 
-    private View mView;
+    private TextSwitcher mStatusText;
 
-    public WaitingMessageView(View view) {
-        this.mView = view;
+    public LookAtTargetView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
+        this.mStatusText = view.findViewById(R.id.text_status);
+        this.mStatusText.setFactory(() ->
+                View.inflate(view.getContext(), R.layout.text_status, null));
+    }
+
+    @Override
+    public void setStatusText(CharSequence text) {
+        mStatusText.post(() -> mStatusText.setText(text));
     }
 }

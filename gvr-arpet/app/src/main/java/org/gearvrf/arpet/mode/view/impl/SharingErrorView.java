@@ -22,12 +22,13 @@ import android.view.View;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.mode.view.ISharingErrorView;
 
-class SharingErrorView implements ISharingErrorView {
+class SharingErrorView extends BaseSharingAnchorView implements ISharingErrorView {
 
     private View mCancelButton;
     private View mRetryButton;
 
-    public SharingErrorView(View view) {
+    public SharingErrorView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
         this.mCancelButton = view.findViewById(R.id.button_cancel);
         this.mRetryButton = view.findViewById(R.id.button_retry);
     }

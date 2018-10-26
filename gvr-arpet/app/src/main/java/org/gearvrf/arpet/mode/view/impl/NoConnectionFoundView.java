@@ -23,13 +23,14 @@ import android.widget.TextView;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.mode.view.INoConnectionFoundView;
 
-class NoConnectionFoundView implements INoConnectionFoundView {
+class NoConnectionFoundView extends BaseSharingAnchorView implements INoConnectionFoundView {
 
     private TextView mStatusText;
     private View mCancelButton;
     private View mRetryButton;
 
-    public NoConnectionFoundView(View view) {
+    public NoConnectionFoundView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
         this.mCancelButton = view.findViewById(R.id.button_cancel);
         this.mRetryButton = view.findViewById(R.id.button_retry);

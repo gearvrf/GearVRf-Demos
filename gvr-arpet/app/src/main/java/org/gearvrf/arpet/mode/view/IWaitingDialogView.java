@@ -17,5 +17,7 @@
 
 package org.gearvrf.arpet.mode.view;
 
-public interface IWaitingMessageView extends ISharingAnchorView {
+public interface IWaitingDialogView extends ISharingAnchorView {
+
+    void setStatusText(CharSequence text);
 }

@@ -22,13 +22,14 @@ import android.view.View;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.mode.view.ILetsStartView;
 
-class LetsStartView implements ILetsStartView {
+class LetsStartView extends BaseSharingAnchorView implements ILetsStartView {
 
     private View mBackButton;
     private View mHostButton;
     private View mGuestButton;
 
-    public LetsStartView(View view) {
+    public LetsStartView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
         this.mBackButton = view.findViewById(R.id.button_back);
         this.mHostButton = view.findViewById(R.id.button_host);
         this.mGuestButton = view.findViewById(R.id.button_guest);

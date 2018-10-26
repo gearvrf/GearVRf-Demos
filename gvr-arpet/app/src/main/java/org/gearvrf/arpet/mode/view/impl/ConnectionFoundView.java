@@ -23,11 +23,12 @@ import android.widget.TextView;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.mode.view.IConnectionFoundView;
 
-class ConnectionFoundView implements IConnectionFoundView {
+class ConnectionFoundView extends BaseSharingAnchorView implements IConnectionFoundView {
 
     private TextView mStatusText;
 
-    public ConnectionFoundView(View view) {
+    public ConnectionFoundView(View view, ShareAnchorView2 controller) {
+        super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
     }
 
