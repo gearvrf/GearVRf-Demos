@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+
+System.setProperty("appName", "gvr-aravatar")
+
+if(file("../../common.gradle").exists()) {
+    apply from: '../../common.gradle'
+}
+else if(file("../../../../GearVRf-Demos/common.gradle").exists()) {
+    apply from: '../../../../GearVRf-Demos/common.gradle'
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
+android {
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] // no auto generation of Android.mk
+        jniLibs.srcDir 'libs' // pre-compiled libraries
+    }
+}
+
+dependencies {
+    // ARCore library
+    implementation "com.google.ar:core:1.2.0"
+    implementation 'com.android.support:support-v4:27.0.2'
+
+    if (project.hasProperty("useLocalDependencies") && project.useLocalDependencies) {
+        if (findProject(':MixedReality')) {
+            implementation project(':MixedReality')
+        } else {
+            debugImplementation(name: 'MixedReality-debug', ext: 'aar')
+            releaseImplementation(name: 'MixedReality-release', ext: 'aar')
+        }
+    } else {
+        implementation "org.gearvrf:MixedReality:$gearvrfVersion"
+    }
+}

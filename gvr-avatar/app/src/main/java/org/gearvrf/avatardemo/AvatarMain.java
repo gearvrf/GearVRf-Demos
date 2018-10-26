@@ -24,8 +24,6 @@ import android.util.Log;
 public class AvatarMain extends GVRMain
 {
     private final String mModelPath = "YBot/ybot.fbx";
-    //    private final String[] mAnimationPaths =  { "animation/mixamo/Ybot_SambaDancing.bvh" };
-//    private final String mBoneMapPath = "animation/mixamo/bonemap.txt";
     private final String[] mAnimationPaths =  {
             "animation/captured/Video1_BVH.bvh",
             "animation/captured/Video2_BVH.bvh",
@@ -38,7 +36,6 @@ public class AvatarMain extends GVRMain
     private static final String TAG = "AVATAR";
     private GVRContext      mContext;
     private GVRScene        mScene;
-    private GVRAvatar       mAvatar;
     private GVRActivity     mActivity;
     private int             mNumAnimsLoaded = 0;
     private String          mBoneMap;
@@ -50,7 +47,7 @@ public class AvatarMain extends GVRMain
     private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents()
     {
         @Override
-        public void onAvatarLoaded(final GVRSceneObject avatarRoot, String filePath, String errors)
+        public void onAvatarLoaded(final GVRAvatar avatar, final GVRSceneObject avatarRoot, String filePath, String errors)
         {
             if (avatarRoot.getParent() == null)
             {
@@ -58,39 +55,39 @@ public class AvatarMain extends GVRMain
                 {
                     public void run()
                     {
-                        mAvatar.centerModel(avatarRoot);
+                        avatar.centerModel(avatarRoot);
                         mScene.addSceneObject(avatarRoot);
                     }
                 });
             }
-            loadNextAnimation(mAvatar, mBoneMap);
+            loadNextAnimation(avatar, mBoneMap);
         }
 
         @Override
-        public void onAnimationLoaded(GVRAnimator animation, String filePath, String errors)
+        public void onAnimationLoaded(GVRAvatar avatar, GVRAnimator animation, String filePath, String errors)
         {
             animation.setRepeatMode(GVRRepeatMode.ONCE);
             animation.setSpeed(1f);
             ++mNumAnimsLoaded;
-            if (!mAvatar.isRunning())
+            if (!avatar.isRunning())
             {
-                mAvatar.startAll(GVRRepeatMode.REPEATED);
+                avatar.startAll(GVRRepeatMode.REPEATED);
             }
             else
             {
-                mAvatar.start(animation.getName());
+                avatar.start(animation.getName());
             }
             if (mNumAnimsLoaded < mAnimationPaths.length)
             {
-                loadNextAnimation(mAvatar, mBoneMap);
+                loadNextAnimation(avatar, mBoneMap);
             }
         }
 
-        public void onModelLoaded(final GVRSceneObject avatarRoot, String filePath, String errors) { }
+        public void onModelLoaded(GVRAvatar avatar, GVRSceneObject avatarRoot, String filePath, String errors) { }
 
-        public void onAnimationFinished(GVRAnimator animator, GVRAnimation animation) { }
+        public void onAnimationFinished(GVRAvatar avatar, GVRAnimator animator, GVRAnimation animation) { }
 
-        public void onAnimationStarted(GVRAnimator animator) { }
+        public void onAnimationStarted(GVRAvatar avatar, GVRAnimator animator) { }
     };
 
 
@@ -110,8 +107,8 @@ public class AvatarMain extends GVRMain
         rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
         rig.getOwnerObject().attachComponent(new GVRDirectLight(mContext));
 
-        mAvatar = new GVRAvatar(gvrContext, "YBot");
-        mAvatar.getEventReceiver().addListener(mAvatarListener);
+        GVRAvatar avatar = new GVRAvatar(gvrContext, "YBot");
+        avatar.getEventReceiver().addListener(mAvatarListener);
         mBoneMap = readFile(mBoneMapPath);
         try
         {
