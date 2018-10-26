@@ -24,6 +24,5 @@ public class PlayerSceneObject extends GVRSceneObject {
 
     public PlayerSceneObject(GVRContext context) {
         super(context);
-        context.getMainScene().getMainCameraRig().addChildObject(this);
     }
 }

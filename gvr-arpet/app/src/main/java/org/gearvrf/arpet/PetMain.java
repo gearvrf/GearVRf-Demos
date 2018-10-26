@@ -43,7 +43,6 @@ import org.greenrobot.eventbus.Subscribe;
 public class PetMain extends DisableNativeSplashScreen {
     private static final String TAG = "GVR_ARPET";
 
-    private GVRScene mScene;
     private PetContext mPetContext;
 
     private PlaneHandler mPlaneHandler;
@@ -68,15 +67,10 @@ public class PetMain extends DisableNativeSplashScreen {
     @Override
     public void onInit(final GVRContext gvrContext) throws Throwable {
         super.onInit(gvrContext);
-        mPetContext.init(gvrContext);
-        mScene = gvrContext.getMainScene();
-
-        mCurrentSplashScreen = new CurrentSplashScreen(mPetContext);
+        mCurrentSplashScreen = new CurrentSplashScreen(gvrContext);
         mCurrentSplashScreen.onShow();
 
-        GVRWorld world = new GVRWorld(gvrContext);
-        world.setGravity(0f, -200f, 0f);
-        mScene.getRoot().attachComponent(world);
+        mPetContext.init(gvrContext);
 
         mHandlerModeChange = new HandlerModeChange();
         mHandlerBackToHud = new HandlerBackToHud();
@@ -91,7 +85,8 @@ public class PetMain extends DisableNativeSplashScreen {
         mPet.load(new ILoadEvents() {
             @Override
             public void onSuccess() {
-                mCurrentSplashScreen.onHide();
+                // Will wet pet's scene as the main scene
+                mCurrentSplashScreen.onHide(mPetContext.getMainScene());
             }
 
             @Override

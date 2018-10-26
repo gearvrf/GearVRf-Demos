@@ -59,10 +59,9 @@ public class CharacterView extends AnchoredObject implements
 
     private final String TAG = getClass().getSimpleName();
 
-    private IMRCommon mMixedReality;
+    private final PetContext mPetContext;
     private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
 
-    private GVRContext mContext;
     private GVRPlane mBoundaryPlane;
     private float[] mPlaneCenterPose = new float[16];
     private GVRSceneObject mShadow;
@@ -77,8 +76,7 @@ public class CharacterView extends AnchoredObject implements
     CharacterView(@NonNull PetContext petContext) {
         super(petContext.getGVRContext(), petContext.getMixedReality());
 
-        mContext = petContext.getGVRContext();
-        mMixedReality = petContext.getMixedReality();
+        mPetContext = petContext;
     }
 
     private void createDragCollider() {
@@ -87,15 +85,17 @@ public class CharacterView extends AnchoredObject implements
 
         // To debug the  collision
         if (!showCollider) {
-            cube = new GVRSceneObject(mContext);
+            cube = new GVRSceneObject(mPetContext.getGVRContext());
         }  else {
-            GVRMaterial material = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Color.ID);
+            GVRMaterial material = new GVRMaterial(mPetContext.getGVRContext(),
+                    GVRMaterial.GVRShaderType.Color.ID);
             material.setColor(1, 0, 0);
-            cube = new GVRCubeSceneObject(mContext, true, material);
+            cube = new GVRCubeSceneObject(mPetContext.getGVRContext(),
+                    true, material);
             cube.getRenderData().setDrawMode(GLES30.GL_LINE_LOOP);
         }
 
-        GVRBoxCollider collider = new GVRBoxCollider(mContext);
+        GVRBoxCollider collider = new GVRBoxCollider(mPetContext.getGVRContext());
         collider.setHalfExtents(0.4f, 0.4f, 0.4f);
         cube.attachCollider(collider);
 
@@ -111,10 +111,12 @@ public class CharacterView extends AnchoredObject implements
     }
 
     private void createShadow() {
-        GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.drag_shadow));
-        GVRMaterial mat = new GVRMaterial(mContext);
+        final GVRContext gvrContext = mPetContext.getGVRContext();
+        GVRTexture tex = gvrContext.getAssetLoader().loadTexture(
+                new GVRAndroidResource(gvrContext, R.drawable.drag_shadow));
+        GVRMaterial mat = new GVRMaterial(gvrContext);
         mat.setMainTexture(tex);
-        mShadow = new GVRSceneObject(mContext, 0.3f, 0.6f);
+        mShadow = new GVRSceneObject(gvrContext, 0.3f, 0.6f);
         mShadow.getRenderData().setMaterial(mat);
         mShadow.getTransform().setRotationByAxis(-90f, 1f, 0f, 0f);
         mShadow.getTransform().setPosition(0f, 0.02f, -0.02f);
@@ -125,6 +127,7 @@ public class CharacterView extends AnchoredObject implements
     }
 
     private void createInfinityPlan() {
+        final GVRContext gvrContext = mPetContext.getGVRContext();
         final float width = 2.0f;
         final float height = 2.0f;
 
@@ -141,12 +144,13 @@ public class CharacterView extends AnchoredObject implements
                 width * -0.25f, height * 0.5f, 0.0F
         };
 
-        mInfinityPlan = new GVRSceneObject(mContext);
-        final GVRTextureParameters texParams = new GVRTextureParameters(mContext);
-        final GVRTexture tex = mContext.getAssetLoader().loadTexture(new GVRAndroidResource(mContext, R.drawable.infinity_plan));
-        final GVRMaterial material = new GVRMaterial(mContext, new GVRShaderId(GVRTiledMaskShader.class));
-        final GVRRenderData renderData = new GVRRenderData(mContext);
-        final GVRMesh mesh = new GVRMesh(mContext, "float3 a_position");
+        mInfinityPlan = new GVRSceneObject(gvrContext);
+        final GVRTextureParameters texParams = new GVRTextureParameters(gvrContext);
+        final GVRTexture tex = gvrContext.getAssetLoader().loadTexture(
+                new GVRAndroidResource(gvrContext, R.drawable.infinity_plan));
+        final GVRMaterial material = new GVRMaterial(gvrContext, new GVRShaderId(GVRTiledMaskShader.class));
+        final GVRRenderData renderData = new GVRRenderData(gvrContext);
+        final GVRMesh mesh = new GVRMesh(gvrContext, "float3 a_position");
 
         texParams.setWrapSType(GVRTextureParameters.TextureWrapType.GL_MIRRORED_REPEAT);
         texParams.setWrapTType(GVRTextureParameters.TextureWrapType.GL_MIRRORED_REPEAT);
@@ -231,6 +235,7 @@ public class CharacterView extends AnchoredObject implements
 
     @Override
     public void load(ILoadEvents listener) {
+        final GVRContext gvrContext = mPetContext.getGVRContext();
         mLoadListener = listener;
 
         createShadow();
@@ -239,12 +244,12 @@ public class CharacterView extends AnchoredObject implements
 
         createDragCollider();
 
-        mBoneMap = LoadModelHelper.readFile(mContext, LoadModelHelper.PET_BONES_MAP_PATH);
-        mPetAvatar = new GVRAvatar(mContext, "PetModel");
+        mBoneMap = LoadModelHelper.readFile(gvrContext, LoadModelHelper.PET_BONES_MAP_PATH);
+        mPetAvatar = new GVRAvatar(gvrContext, "PetModel");
         mPetAvatar.getEventReceiver().addListener(mAvatarListener);
         try
         {
-            mPetAvatar.loadModel(new GVRAndroidResource(mContext, LoadModelHelper.PET_MODEL_PATH));
+            mPetAvatar.loadModel(new GVRAndroidResource(gvrContext, LoadModelHelper.PET_MODEL_PATH));
         }
         catch (IOException e)
         {
@@ -266,7 +271,7 @@ public class CharacterView extends AnchoredObject implements
     public void setInitialScale() {
         final float MIN_DISTANCE = 100f;
         Vector3f vectorDistance = new Vector3f();
-        float[] modelCam = mContext.getMainScene().getMainCameraRig().getTransform().getModelMatrix();
+        float[] modelCam = mPetContext.getMainScene().getMainCameraRig().getTransform().getModelMatrix();
         float[] modelCharacter = getAnchor().getTransform().getModelMatrix();
 
         vectorDistance.set(modelCam[12], modelCam[13], modelCam[14]);
@@ -279,11 +284,12 @@ public class CharacterView extends AnchoredObject implements
     }
 
     private void loadAnimations() {
+        final GVRContext gvrContext = mPetContext.getGVRContext();
         int i = 0;
         try
         {
             for (i = 0; i < LoadModelHelper.PET_ANIMATIONS_PATH.length; i++) {
-                GVRAndroidResource res = new GVRAndroidResource(mContext,
+                GVRAndroidResource res = new GVRAndroidResource(gvrContext,
                         LoadModelHelper.PET_ANIMATIONS_PATH[i]);
                 mPetAvatar.loadAnimation(res, mBoneMap);
             }
@@ -304,11 +310,12 @@ public class CharacterView extends AnchoredObject implements
         int contAnim = 0;
         @Override
         public void onAvatarLoaded(GVRSceneObject gvrSceneObject, String s, String s1) {
+            final GVRContext gvrContext = mPetContext.getGVRContext();
             Log.d(TAG, "onAvatarLoaded %s => %s", s, s1);
 
             if (gvrSceneObject.getParent() == null)
             {
-                mContext.runOnGlThread(new Runnable()
+                gvrContext.runOnGlThread(new Runnable()
                 {
                     public void run()
                     {

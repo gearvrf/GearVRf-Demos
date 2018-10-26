@@ -55,7 +55,7 @@ public class BallThrowHandler {
     private static final float MIN_Y_OFFSET = 3 * 100;
 
     private PlayerSceneObject mPlayer;
-    private GVRContext mContext;
+    private final PetContext mPetContext;
     private GVRSceneObject mBall;
     private GVRRigidBody mRigidBody;
 
@@ -71,13 +71,10 @@ public class BallThrowHandler {
     private final Vector3f mForceVector;
 
     private IMessageService mMessageService;
-    private SharedMixedReality mSharedMixedReality;
 
     private BallThrowHandler(PetContext petContext) {
-
+        mPetContext = petContext;
         mPlayer = petContext.getPlayer();
-        mContext = petContext.getGVRContext();
-        mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
 
         createBall();
         initController();
@@ -118,7 +115,7 @@ public class BallThrowHandler {
         }
 
         mPlayer.addChildObject(mBall);
-        mContext.getApplication().getEventReceiver().addListener(mEventListener);
+        mPetContext.getGVRContext().getApplication().getEventReceiver().addListener(mEventListener);
     }
 
     public void disable() {
@@ -128,7 +125,7 @@ public class BallThrowHandler {
         if (parent != null) {
             parent.removeChildObject(mBall);
         }
-        mContext.getApplication().getEventReceiver().removeListener(mEventListener);
+        mPetContext.getGVRContext().getApplication().getEventReceiver().removeListener(mEventListener);
     }
 
     private void createBall() {
@@ -137,11 +134,11 @@ public class BallThrowHandler {
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
 
-        GVRSphereCollider collider = new GVRSphereCollider(mContext);
+        GVRSphereCollider collider = new GVRSphereCollider(mPetContext.getGVRContext());
         collider.setRadius(0.1f);
         mBall.attachComponent(collider);
 
-        mRigidBody = new GVRRigidBody(mContext, 5.0f);
+        mRigidBody = new GVRRigidBody(mPetContext.getGVRContext(), 5.0f);
         mRigidBody.setRestitution(1.5f);
         mRigidBody.setFriction(0.5f);
         mBall.attachComponent(mRigidBody);
@@ -165,7 +162,7 @@ public class BallThrowHandler {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float vx, float vy) {
-                if (mSharedMixedReality.getMode() != SharedMixedReality.GUEST
+                if (mPetContext.getMode() != SharedMixedReality.GUEST
                         && firstPlane != null) {
                     final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
                     final float vz = vlen / mDirTan;
@@ -183,7 +180,7 @@ public class BallThrowHandler {
             }
         };
 
-        final GestureDetector gestureDetector = new GestureDetector(mContext.getActivity(), gestureListener);
+        final GestureDetector gestureDetector = new GestureDetector(mPetContext.getActivity(), gestureListener);
         mEventListener = new GVREventListeners.ActivityEvents() {
             @Override
             public void dispatchTouchEvent(MotionEvent event) {
@@ -210,7 +207,7 @@ public class BallThrowHandler {
 
     // FIXME: Why multiply by root matrix?
     private void throwLocalBall(Vector3f forceVector) {
-        Matrix4f rootMatrix = mContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
+        Matrix4f rootMatrix = mPetContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
         rootMatrix.invert();
 
         // Calculating the new model matrix (T') for the ball: T' = iP x T
@@ -219,7 +216,7 @@ public class BallThrowHandler {
 
         // Add the ball as physics root child...
         mBall.getParent().removeChildObject(mBall);
-        mContext.getMainScene().addSceneObject(mBall);
+        mPetContext.getMainScene().addSceneObject(mBall);
 
         // ... And set its model matrix to keep the same world matrix
         mBall.getTransform().setModelMatrix(ballMatrix);
@@ -268,7 +265,8 @@ public class BallThrowHandler {
     }
 
     private void load3DModel() {
-        GVRSceneObject sceneObject = LoadModelHelper.loadSceneObject(mContext, LoadModelHelper.BALL_MODEL_PATH);
+        GVRSceneObject sceneObject = LoadModelHelper.loadSceneObject(mPetContext.getGVRContext(),
+                LoadModelHelper.BALL_MODEL_PATH);
         GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
         ball.getParent().removeChildObject(ball);
         mBall = ball;

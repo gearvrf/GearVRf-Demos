@@ -11,7 +11,7 @@ public class LayoutViewUtils {
 
     public static void setWorldPosition(GVRScene scene, GVRSceneObject view, float x, float y,
                                         float width, float height) {
-        final GVRPerspectiveCamera cam= scene.getMainCameraRig().getCenterCamera();
+        final GVRPerspectiveCamera cam = scene.getMainCameraRig().getCenterCamera();
         final float aspect = cam.getAspectRatio();
         final float near = cam.getNearClippingDistance();
         final double fov = Math.toRadians(cam.getFovY());

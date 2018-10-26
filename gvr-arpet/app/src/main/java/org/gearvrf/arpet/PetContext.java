@@ -32,6 +32,7 @@ import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.physics.GVRWorld;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class PetContext {
     private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
     private PlayerSceneObject mPlayer;
     private IPlaneEventsListener mPlaneListener;
+    private GVRScene mMainScene = null;
 
     public PetContext(GVRActivity activity) {
         mActivity = activity;
@@ -74,11 +76,19 @@ public class PetContext {
 
     public void init(GVRContext context) {
         mGvrContext = context;
+        mMainScene = new GVRScene(context);
+
+        GVRWorld world = new GVRWorld(mGvrContext);
+        world.setGravity(0f, -200f, 0f);
+        mMainScene.getRoot().attachComponent(world);
+
         PetConnectionManager.getInstance().init(this);
         mMixedReality = new SharedMixedReality(this);
         mMixedReality.resume();
 
         mPlayer = new PlayerSceneObject(mGvrContext);
+        mMainScene.getMainCameraRig().addChildObject(mPlayer);
+
         registerSharedObject(mPlayer, ArPetObjectType.PLAYER);
 
         // FIXME: Workaround to
@@ -109,7 +119,7 @@ public class PetContext {
     }
 
     public GVRScene getMainScene() {
-        return mGvrContext.getMainScene();
+        return mMainScene;
     }
 
     public PlayerSceneObject getPlayer() {

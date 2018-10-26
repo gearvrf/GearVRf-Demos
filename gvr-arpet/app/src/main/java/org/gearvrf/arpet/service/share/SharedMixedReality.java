@@ -6,6 +6,7 @@ import android.support.annotation.IntDef;
 import android.util.Log;
 
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
@@ -54,7 +55,8 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public SharedMixedReality(PetContext petContext) {
-        mMixedReality = new GVRMixedReality(petContext.getGVRContext(), true);
+        mMixedReality = new GVRMixedReality(petContext.getGVRContext(), true,
+                petContext.getMainScene());
         mPetContext = petContext;
         mSharedSceneObjects = new ArrayList<>();
         mMessageService = MessageService.getInstance();
@@ -114,14 +116,14 @@ public class SharedMixedReality implements IMRCommon {
         shared.parent = shared.object.getParent();
         if (shared.parent != null) {
             shared.parent.removeChildObject(shared.object);
-            shared.parent.getGVRContext().getMainScene().addSceneObject(shared.object);
+            mPetContext.getMainScene().addSceneObject(shared.object);
         }
     }
 
     private synchronized void stopGuest() {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.parent != null) {
-                shared.parent.getGVRContext().getMainScene().removeSceneObject(shared.object);
+                mPetContext.getMainScene().removeSceneObject(shared.object);
                 shared.parent.addChildObject(shared.object);
             }
         }
