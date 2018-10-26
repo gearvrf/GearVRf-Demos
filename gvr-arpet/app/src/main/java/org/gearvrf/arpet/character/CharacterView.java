@@ -17,7 +17,6 @@ package org.gearvrf.arpet.character;
 
 import android.opengl.GLES30;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRBoxCollider;
@@ -31,6 +30,9 @@ import org.gearvrf.GVRShaderId;
 import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTextureParameters;
 import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
+import org.gearvrf.animation.GVRAvatar;
+import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
@@ -38,14 +40,15 @@ import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.mode.IPetView;
-import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.shaders.GVRTiledMaskShader;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +69,8 @@ public class CharacterView extends AnchoredObject implements
     public final static String PET_COLLIDER = "Pet collider";
 
     private GVRSceneObject m3DModel;
+    private final GVRAvatar mPetAvatar;
+    private final String mBoneMap;
 
     CharacterView(@NonNull PetContext petContext) {
         super(petContext.getGVRContext(), petContext.getMixedReality());
@@ -77,7 +82,20 @@ public class CharacterView extends AnchoredObject implements
 
         createInfinityPlan();
 
+        mBoneMap = LoadModelHelper.readFile(mContext, LoadModelHelper.PET_BONES_MAP_PATH);
+        mPetAvatar = new GVRAvatar(mContext, "PetModel");
+        mPetAvatar.getEventReceiver().addListener(mAvatarListener);
+        try
+        {
+            mPetAvatar.loadModel(new GVRAndroidResource(mContext, LoadModelHelper.PET_MODEL_PATH));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         // TODO: Load at thread
+        /*
         petContext.runOnPetThread(new Runnable() {
             @Override
             public void run() {
@@ -85,7 +103,7 @@ public class CharacterView extends AnchoredObject implements
                 load3DModel();
                 Log.d(TAG, "Pet 3D model loaded!");
             }
-        });
+        });*/
     }
 
     private void load3DModel() {
@@ -259,4 +277,72 @@ public class CharacterView extends AnchoredObject implements
             scale(ScaleGestureDetector.MIN_FACTOR);
         }
     }
+
+    private void loadAnimations() {
+        int i = 0;
+        try
+        {
+            for (i = 0; i < LoadModelHelper.PET_ANIMATIONS_PATH.length; i++) {
+                GVRAndroidResource res = new GVRAndroidResource(mContext,
+                        LoadModelHelper.PET_ANIMATIONS_PATH[i]);
+                mPetAvatar.loadAnimation(res, mBoneMap);
+            }
+        }
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+            Log.e(TAG, "Animation could not be loaded from "
+                    + LoadModelHelper.PET_ANIMATIONS_PATH[i]);
+        }
+    }
+
+    private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents() {
+        int contAnim = 0;
+        @Override
+        public void onAvatarLoaded(GVRSceneObject gvrSceneObject, String s, String s1) {
+            Log.d(TAG, "onAvatarLoaded %s => %s", s, s1);
+
+            if (gvrSceneObject.getParent() == null)
+            {
+                mContext.runOnGlThread(new Runnable()
+                {
+                    public void run()
+                    {
+                        m3DModel = gvrSceneObject;
+
+                        m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
+                        m3DModel.getTransform().setPosition(0, 0.4f, 0);
+                        CharacterView.this.addChildObject(m3DModel);
+                    }
+                });
+            }
+            loadAnimations();
+        }
+
+        @Override
+        public void onModelLoaded(GVRSceneObject gvrSceneObject, String s, String s1) {
+            Log.d(TAG, "onModelLoaded %s => %s", s, s1);
+        }
+
+        @Override
+        public void onAnimationLoaded(GVRAnimator animation, String s, String s1) {
+            Log.d(TAG, "onAnimationLoaded %s => %s", s, s1);
+            contAnim++;
+
+            //animation.setRepeatMode(GVRRepeatMode.PINGPONG);
+            animation.setSpeed(1f);
+            mPetAvatar.startAll(GVRRepeatMode.REPEATED);
+            //mPetAvatar.start(animation.getName());
+        }
+
+        @Override
+        public void onAnimationStarted(GVRAnimator gvrAnimator) {
+            Log.d(TAG, "onAnimationStarted");
+        }
+
+        @Override
+        public void onAnimationFinished(GVRAnimator gvrAnimator, GVRAnimation gvrAnimation) {
+            Log.d(TAG, "onAnimationFinished");
+        }
+    };
 }
