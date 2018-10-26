@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.os.Handler;
 import android.util.Log;
 
 import org.gearvrf.GVRContext;
@@ -24,6 +23,7 @@ import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
+import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
@@ -72,7 +72,7 @@ public class PetMain extends DisableNativeSplashScreen {
         mScene = gvrContext.getMainScene();
 
         mCurrentSplashScreen = new CurrentSplashScreen(mPetContext);
-        splashScreenBehavior();
+        mCurrentSplashScreen.onShow();
 
         GVRWorld world = new GVRWorld(gvrContext);
         world.setGravity(0f, -200f, 0f);
@@ -83,16 +83,22 @@ public class PetMain extends DisableNativeSplashScreen {
 
         mPlaneHandler = new PlaneHandler(mPetContext);
 
-        mPet = new CharacterController(mPetContext);
-
         configTouchScreen();
 
         mSharedMixedReality = (SharedMixedReality) mPetContext.getMixedReality();
-    }
 
-    private void splashScreenBehavior() {
-        mCurrentSplashScreen.onShow();
-        new Handler().postDelayed(() -> mCurrentSplashScreen.onHide(), 3000);
+        mPet = new CharacterController(mPetContext);
+        mPet.load(new ILoadEvents() {
+            @Override
+            public void onSuccess() {
+                mCurrentSplashScreen.onHide();
+            }
+
+            @Override
+            public void onFailure() {
+                mPetContext.getActivity().finish();
+            }
+        });
     }
 
     private void configTouchScreen() {

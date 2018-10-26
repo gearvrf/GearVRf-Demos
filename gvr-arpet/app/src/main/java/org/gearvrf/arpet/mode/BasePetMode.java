@@ -26,11 +26,13 @@ public abstract class BasePetMode implements IPetMode {
 
     protected final PetContext mPetContext;
     protected final IPetView mModeScene;
+    protected ILoadEvents mLoadListener;
 
     public BasePetMode(PetContext petContext, IPetView sceneMode) {
         TAG = sceneMode.getClass().getSimpleName();
         mPetContext = petContext;
         mModeScene = sceneMode;
+        mLoadListener = null;
     }
 
     @Override
@@ -45,6 +47,16 @@ public abstract class BasePetMode implements IPetMode {
         Log.w(TAG, "exit");
         mModeScene.hide(mPetContext.getMainScene());
         onExit();
+    }
+
+    @Override
+    public void load(ILoadEvents listener) {
+        mLoadListener = listener;
+    }
+
+    @Override
+    public void unload() {
+        mLoadListener = null;
     }
 
     @Override

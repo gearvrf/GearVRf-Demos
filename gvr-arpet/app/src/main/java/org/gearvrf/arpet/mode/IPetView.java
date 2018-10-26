@@ -22,4 +22,7 @@ import org.gearvrf.GVRScene;
 public interface IPetView {
     void show(GVRScene mainScene);
     void hide(GVRScene mainScene);
+
+    void load(ILoadEvents listener);
+    void unload();
 }

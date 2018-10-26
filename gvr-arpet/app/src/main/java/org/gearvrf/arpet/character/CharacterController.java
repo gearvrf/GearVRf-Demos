@@ -25,6 +25,7 @@ import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
+import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.movement.IPetAction;
 import org.gearvrf.arpet.movement.PetActionType;
 import org.gearvrf.arpet.movement.PetActions;
@@ -80,6 +81,20 @@ public class CharacterController extends BasePetMode {
 
     @Override
     protected void onExit() {
+    }
+
+    @Override
+    public void load(ILoadEvents listener) {
+        super.load(listener);
+
+        mModeScene.load(listener);
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+
+        mModeScene.unload();
     }
 
     @Override

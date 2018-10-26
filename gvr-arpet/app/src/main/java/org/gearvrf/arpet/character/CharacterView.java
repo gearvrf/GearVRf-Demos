@@ -39,6 +39,7 @@ import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
+import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.shaders.GVRTiledMaskShader;
 import org.gearvrf.arpet.util.LoadModelHelper;
@@ -69,32 +70,15 @@ public class CharacterView extends AnchoredObject implements
     public final static String PET_COLLIDER = "Pet collider";
 
     private GVRSceneObject m3DModel;
-    private final GVRAvatar mPetAvatar;
-    private final String mBoneMap;
+    private GVRAvatar mPetAvatar;
+    private String mBoneMap;
+    protected ILoadEvents mLoadListener = null;
 
     CharacterView(@NonNull PetContext petContext) {
         super(petContext.getGVRContext(), petContext.getMixedReality());
 
         mContext = petContext.getGVRContext();
         mMixedReality = petContext.getMixedReality();
-
-        createShadow();
-
-        createInfinityPlan();
-
-        createDragCollider();
-
-        mBoneMap = LoadModelHelper.readFile(mContext, LoadModelHelper.PET_BONES_MAP_PATH);
-        mPetAvatar = new GVRAvatar(mContext, "PetModel");
-        mPetAvatar.getEventReceiver().addListener(mAvatarListener);
-        try
-        {
-            mPetAvatar.loadModel(new GVRAndroidResource(mContext, LoadModelHelper.PET_MODEL_PATH));
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     private void createDragCollider() {
@@ -245,6 +229,37 @@ public class CharacterView extends AnchoredObject implements
         getAnchor().detachSceneObject(mInfinityPlan);
     }
 
+    @Override
+    public void load(ILoadEvents listener) {
+        mLoadListener = listener;
+
+        createShadow();
+
+        createInfinityPlan();
+
+        createDragCollider();
+
+        mBoneMap = LoadModelHelper.readFile(mContext, LoadModelHelper.PET_BONES_MAP_PATH);
+        mPetAvatar = new GVRAvatar(mContext, "PetModel");
+        mPetAvatar.getEventReceiver().addListener(mAvatarListener);
+        try
+        {
+            mPetAvatar.loadModel(new GVRAndroidResource(mContext, LoadModelHelper.PET_MODEL_PATH));
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            if (mLoadListener != null) {
+                mLoadListener.onFailure();
+            }
+        }
+    }
+
+    @Override
+    public void unload() {
+
+    }
+
     /**
      * Sets the initial scale according to the distance between the pet and camera
      */
@@ -278,6 +293,10 @@ public class CharacterView extends AnchoredObject implements
             ex.printStackTrace();
             Log.e(TAG, "Animation could not be loaded from "
                     + LoadModelHelper.PET_ANIMATIONS_PATH[i]);
+
+            if (mLoadListener != null) {
+                mLoadListener.onFailure();
+            }
         }
     }
 
@@ -322,6 +341,12 @@ public class CharacterView extends AnchoredObject implements
 
             }
             //mPetAvatar.start(animation.getName());
+
+            if (contAnim == LoadModelHelper.PET_ANIMATIONS_PATH.length) {
+                if (mLoadListener != null) {
+                    mLoadListener.onSuccess();
+                }
+            }
         }
 
         @Override

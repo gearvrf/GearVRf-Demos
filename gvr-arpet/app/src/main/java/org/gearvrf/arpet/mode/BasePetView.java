@@ -22,6 +22,7 @@ import org.gearvrf.arpet.PetContext;
 
 public abstract class BasePetView extends GVRSceneObject implements IPetView {
     protected final PetContext mPetContext;
+    protected ILoadEvents mLoadListener;
 
     public BasePetView(PetContext petContext) {
         super(petContext.getGVRContext());
@@ -36,6 +37,16 @@ public abstract class BasePetView extends GVRSceneObject implements IPetView {
     @Override
     public void hide(GVRScene mainScene) {
         onHide(mainScene);
+    }
+
+    @Override
+    public void load(ILoadEvents listener) {
+        mLoadListener = listener;
+    }
+
+    @Override
+    public void unload() {
+        mLoadListener = null;
     }
 
     protected abstract void onShow(GVRScene mainScene);

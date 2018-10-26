@@ -20,4 +20,7 @@ public interface IPetMode {
     void exit();
     IPetView view();
     void handleOrientation();
+
+    void load(ILoadEvents listener);
+    void unload();
 }
