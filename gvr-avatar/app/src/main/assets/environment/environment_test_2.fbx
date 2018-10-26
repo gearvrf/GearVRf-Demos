@@ -4001,7 +4001,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 2371354381824, "Model::Floor", "Mesh" {
+	Model: 2371354381824, "Model::topWall", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "RotationPivot", "Vector3D", "Vector", "",-0.359330142351841,0,0.273439370089528
@@ -4972,74 +4972,74 @@ Objects:  {
 	Video: 2371892892096, "Video::file3", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2016_2_24_fst_822291ebf24-4424-4334-9ce7-b522e5c2dbfc.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\floor.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2016_2_24_fst_822291ebf24-4424-4334-9ce7-b522e5c2dbfc.jpg"
-		RelativeFilename: "photos_2016_2_24_fst_822291ebf24-4424-4334-9ce7-b522e5c2dbfc.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\floor.jpg"
+		RelativeFilename: "floor.jpg"
 	}
 	Video: 2371892884096, "Video::file1", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2016_1_26_fst_8126d235ec9-0649-433c-b050-b299429e2fb6.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\topWall.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2016_1_26_fst_8126d235ec9-0649-433c-b050-b299429e2fb6.jpg"
-		RelativeFilename: "photos_2016_1_26_fst_8126d235ec9-0649-433c-b050-b299429e2fb6.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\topWall.jpg"
+		RelativeFilename: "topWall.jpg"
 	}
 	Video: 2371892885696, "Video::file15", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2017_8_21_fst_wall-graffiti.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\wall-graffiti.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2017_8_21_fst_wall-graffiti.jpg"
-		RelativeFilename: "photos_2017_8_21_fst_wall-graffiti.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\wall-graffiti.jpg"
+		RelativeFilename: "wall-graffiti.jpg"
 	}
 	Video: 2371892877696, "Video::file9", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 	}
 	Video: 2371892880896, "Video::file8", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 	}
 	Video: 2371892875696, "Video::file10", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 	}
 	Video: 2371892873696, "Video::file12", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2017_8_21_fst_wall-graffiti.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\wall-graffiti.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2017_8_21_fst_wall-graffiti.jpg"
-		RelativeFilename: "photos_2017_8_21_fst_wall-graffiti.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\wall-graffiti.jpg"
+		RelativeFilename: "wall-graffiti.jpg"
 	}
 	Video: 2371892890896, "Video::file14", "Clip" {
 		Type: "Clip"
 		Properties70:  {
-			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+			P: "Path", "KString", "XRefUrl", "", "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
 		}
 		UseMipMap: 0
-		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		Filename: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 	}
 	Texture: 2371835069968, "Texture::file3", "" {
 		Type: "TextureVideoClip"
@@ -5052,8 +5052,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file3"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2016_2_24_fst_822291ebf24-4424-4334-9ce7-b522e5c2dbfc.jpg"
-		RelativeFilename: "photos_2016_2_24_fst_822291ebf24-4424-4334-9ce7-b522e5c2dbfc.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\floor.jpg"
+		RelativeFilename: "floor.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5069,8 +5069,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file1"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2016_1_26_fst_8126d235ec9-0649-433c-b050-b299429e2fb6.jpg"
-		RelativeFilename: "photos_2016_1_26_fst_8126d235ec9-0649-433c-b050-b299429e2fb6.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\topWall.jpg"
+		RelativeFilename: "topWall.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5086,8 +5086,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file15"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2017_8_21_fst_wall-graffiti.jpg"
-		RelativeFilename: "photos_2017_8_21_fst_wall-graffiti.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\wall-graffiti.jpg"
+		RelativeFilename: "wall-graffiti.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5104,8 +5104,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file9"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5122,8 +5122,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file8"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5140,8 +5140,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file10"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5160,8 +5160,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file12"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2017_8_21_fst_wall-graffiti.jpg"
-		RelativeFilename: "photos_2017_8_21_fst_wall-graffiti.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\wall-graffiti.jpg"
+		RelativeFilename: "wall-graffiti.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5195,8 +5195,8 @@ Objects:  {
 			P: "UseMaterial", "bool", "", "",1
 		}
 		Media: "Video::file14"
-		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
-		RelativeFilename: "photos_2018_4_3_fst_pomegranate-seeds-texture.jpg"
+		FileName: "C:\Users\sah.pod\Documents\maya\projects\default\scenes\pomegranate-seeds-texture.jpg"
+		RelativeFilename: "pomegranate-seeds-texture.jpg"
 		ModelUVTranslation: 0,0
 		ModelUVScaling: 1,1
 		Texture_Alpha_Source: "None"
@@ -5215,7 +5215,7 @@ Objects:  {
 
 Connections:  {
 	
-	;Model::Floor, Model::RootNode
+	;Model::topWall, Model::RootNode
 	C: "OO",2371354381824,0
 	
 	;Model::Lamp, Model::RootNode
@@ -5248,10 +5248,10 @@ Connections:  {
 	;Video::file3, Texture::file3
 	C: "OO",2371892892096,2371835069968
 	
-	;Geometry::, Model::Floor
+	;Geometry::, Model::topWall
 	C: "OO",2371891178320,2371354381824
 	
-	;Material::lambert5, Model::Floor
+	;Material::lambert5, Model::topWall
 	C: "OO",2371892863696,2371354381824
 	
 	;NodeAttribute::, Model::Lamp
@@ -5719,7 +5719,7 @@ Connections:  {
 	;Model::pCube1, DisplayLayer::walls
 	C: "OO",2371964754384,2372174370720
 	
-	;Model::Floor, DisplayLayer::walls
+	;Model::topWall, DisplayLayer::walls
 	C: "OO",2371354381824,2372174370720
 	
 	;Model::pCube5, DisplayLayer::walls
