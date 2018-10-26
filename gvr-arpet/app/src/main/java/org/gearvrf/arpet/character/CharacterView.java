@@ -82,6 +82,8 @@ public class CharacterView extends AnchoredObject implements
 
         createInfinityPlan();
 
+        createDragCollider();
+
         mBoneMap = LoadModelHelper.readFile(mContext, LoadModelHelper.PET_BONES_MAP_PATH);
         mPetAvatar = new GVRAvatar(mContext, "PetModel");
         mPetAvatar.getEventReceiver().addListener(mAvatarListener);
@@ -93,26 +95,9 @@ public class CharacterView extends AnchoredObject implements
         {
             e.printStackTrace();
         }
-
-        // TODO: Load at thread
-        /*
-        petContext.runOnPetThread(new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "Loading pet 3D model...");
-                load3DModel();
-                Log.d(TAG, "Pet 3D model loaded!");
-            }
-        });*/
     }
 
-    private void load3DModel() {
-        m3DModel = LoadModelHelper.loadModelSceneObject(mContext, LoadModelHelper.PET_MODEL_PATH);
-        m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
-        m3DModel.getTransform().setPosition(0, 0.03f, 0);
-
-        addChildObject(m3DModel);
-
+    private void createDragCollider() {
         final boolean showCollider = false;
         GVRSceneObject cube;
 
@@ -138,7 +123,7 @@ public class CharacterView extends AnchoredObject implements
     }
 
     public GVRAnimation getAnimation(int i) {
-        return null;//m3DModel.getAnimations().get(i);
+        return null;//mPetAvatar.getAnimation(i).getAnimation(0);
     }
 
     private void createShadow() {
@@ -329,9 +314,13 @@ public class CharacterView extends AnchoredObject implements
             Log.d(TAG, "onAnimationLoaded %s => %s", s, s1);
             contAnim++;
 
-            //animation.setRepeatMode(GVRRepeatMode.PINGPONG);
+            animation.setRepeatMode(GVRRepeatMode.ONCE);
             animation.setSpeed(1f);
-            mPetAvatar.startAll(GVRRepeatMode.REPEATED);
+            if (!mPetAvatar.isRunning())
+            {
+                mPetAvatar.startAll(GVRRepeatMode.REPEATED);
+
+            }
             //mPetAvatar.start(animation.getName());
         }
 

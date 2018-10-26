@@ -29,7 +29,9 @@ public class LoadModelHelper {
     public static String BALL_MODEL_PATH = "objects/ball.fbx";
     public static String PET_BONES_MAP_PATH = "objects/anim/pet_skeleton_map.txt";
     public static String[] PET_ANIMATIONS_PATH = {
-            "objects/anim/pet_anim_idle.bvh"
+            "objects/anim/pet_anim_idle.bvh",
+            "objects/anim/pet_anim_walk.bvh",
+            "objects/anim/pet_anim_run.bvh"
     };
 
     public static GVRSceneObject loadModelSceneObject(GVRContext gvrContext, String modelPath) {
