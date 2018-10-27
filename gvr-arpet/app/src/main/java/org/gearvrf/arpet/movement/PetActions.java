@@ -22,6 +22,7 @@ import android.support.annotation.IntDef;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.constant.ArPetObjectType;
@@ -31,6 +32,8 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+
+import java.util.Iterator;
 
 /**
  * Represents a state of the Character.
@@ -57,10 +60,11 @@ public class PetActions {
 
         protected final float mCharacterHalfSize = 25.0f;
         protected final float mTurnSpeed = 0.1f;
-        protected final float mWalkingSpeed = 2f;
+        protected final float mWalkingSpeed = 1.5f;
         protected final float mRunningSpeed = 4f;
-        protected long mElapsedTime = 0;
-        protected GVRAnimation mAnimation;
+        protected float mElapsedTime = 0;
+        protected float mAnimDuration = 0;
+        protected GVRAnimator mAnimation;
 
         protected PetAction(CharacterView character, GVRSceneObject target,
                             OnPetActionListener listener) {
@@ -70,23 +74,35 @@ public class PetActions {
             mAnimation = null;
         }
 
-        public void setAnimation(GVRAnimation animation) {
+        public void setAnimation(GVRAnimator animation) {
             mAnimation = animation;
             if (animation != null) {
+                int count = mAnimation.getAnimationCount();
+
+                for (int i = 0; i < count; i++) {
+                    final float duration = mAnimation.getAnimation(i).getDuration();
+                    if (duration > mAnimDuration) {
+                        mAnimDuration = duration;
+                    }
+                }
                 mAnimation.reset();
             }
         }
 
         protected void animate(float frameTime) {
-            int duration = (int) mAnimation.getDuration() * 1000;
-            mElapsedTime += (frameTime * 1000);
-            mElapsedTime = mElapsedTime % duration;
-            // mAnimation.animate((float)mElapsedTime / (float)duration);
+            mAnimation.animate(mElapsedTime);
+
+            mElapsedTime += frameTime;
+            mElapsedTime = ((int)(mElapsedTime * 1000)) % ((int)(mAnimDuration * 1000));
+            mElapsedTime /= 1000f;
         }
 
         @Override
         public void entry() {
             onEntry();
+            if (mAnimation != null) {
+                mAnimation.animate(0);
+            }
         }
 
         @Override
@@ -138,7 +154,6 @@ public class PetActions {
 
         public IDLE(CharacterView character, GVRSceneObject player) {
             super(character, player, null);
-            setAnimation(character.getAnimation(1));
         }
 
         @Override
@@ -149,6 +164,7 @@ public class PetActions {
         @Override
         public void onEntry() {
             Log.w(TAG, "entry => IDLE");
+            setAnimation(mCharacter.getAnimation(0));
         }
 
         @Override
@@ -159,8 +175,7 @@ public class PetActions {
         @Override
         public void onRun(float frameTime) {
             if (mAnimation != null) {
-                //animate(frameTime);
-                //cTrans.setPosition(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
+                animate(frameTime);
             }
         }
     }
@@ -180,12 +195,13 @@ public class PetActions {
 
         @Override
         public void onEntry() {
-            Log.w(TAG, "entry => MOVING_TO_CAMERA");
+            Log.w(TAG, "entry => MOVING_TO_PLAYER");
+            setAnimation(mCharacter.getAnimation(1));
         }
 
         @Override
         public void onExit() {
-            Log.w(TAG, "exit => MOVING_TO_CAMERA");
+            Log.w(TAG, "exit => MOVING_TO_PLAYER");
         }
 
         @Override
@@ -207,6 +223,10 @@ public class PetActions {
                     pose[14] = pose[14] + mMoveTo.z;
 
                     mCharacter.updatePose(pose);
+
+                    if (mAnimation != null) {
+                        animate(frameTime);
+                    }
                 }
             } else {
                 mListener.onActionEnd(this);
@@ -230,6 +250,7 @@ public class PetActions {
         @Override
         public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_BALL");
+            setAnimation(mCharacter.getAnimation(2));
         }
 
         @Override
@@ -255,8 +276,11 @@ public class PetActions {
                     pose[12] = pose[12] + mMoveTo.x;
                     pose[14] = pose[14] + mMoveTo.z;
 
-
                     mCharacter.updatePose(pose);
+
+                    if (mAnimation != null) {
+                        animate(frameTime);
+                    }
                 }
 
             } else {

@@ -125,6 +125,7 @@ public class PetMain extends DisableNativeSplashScreen {
         mPet.setPlane(detectedPlane);
         mPet.enter();
         mPet.setInitialScale();
+        // FIXME: enable after loaded
         mPet.enableActions();
 
         mSharedMixedReality.registerSharedObject(detectedPlane.getSceneObject(), ArPetObjectType.PLANE);

@@ -106,8 +106,12 @@ public class CharacterView extends AnchoredObject implements
         addChildObject(cube);
     }
 
-    public GVRAnimation getAnimation(int i) {
-        return null;//mPetAvatar.getAnimation(i).getAnimation(0);
+    public GVRAnimator getAnimation(int i) {
+        if (mPetAvatar != null && mPetAvatar.getAnimationCount() > i) {
+            return mPetAvatar.getAnimation(i);
+        }
+
+        return null;
     }
 
     private void createShadow() {
@@ -340,13 +344,14 @@ public class CharacterView extends AnchoredObject implements
             Log.d(TAG, "onAnimationLoaded %s => %s", s, s1);
             contAnim++;
 
-            animation.setRepeatMode(GVRRepeatMode.ONCE);
+            animation.setRepeatMode(GVRRepeatMode.REPEATED);
             animation.setSpeed(1f);
+            /*
             if (!mPetAvatar.isRunning())
             {
                 mPetAvatar.startAll(GVRRepeatMode.REPEATED);
 
-            }
+            }*/
             //mPetAvatar.start(animation.getName());
 
             if (contAnim == LoadModelHelper.PET_ANIMATIONS_PATH.length) {
