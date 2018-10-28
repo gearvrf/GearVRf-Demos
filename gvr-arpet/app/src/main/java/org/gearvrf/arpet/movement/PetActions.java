@@ -59,7 +59,7 @@ public class PetActions {
         protected final Vector3f mMoveTo = new Vector3f();
 
         protected final float mCharacterHalfSize = 25.0f;
-        protected final float mTurnSpeed = 0.1f;
+        protected float mTurnSpeed = 0.1f;
         protected final float mWalkingSpeed = 1.5f;
         protected final float mRunningSpeed = 4f;
         protected float mElapsedTime = 0;
@@ -196,6 +196,7 @@ public class PetActions {
         @Override
         public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_PLAYER");
+            mTurnSpeed = 0.05f;
             setAnimation(mCharacter.getAnimation(1));
         }
 
@@ -211,10 +212,15 @@ public class PetActions {
             boolean moveTowardToCam = mTargetDirection.length() > 2 * mCharacterHalfSize;
 
             if (moveTowardToCam) {
+                if (mAnimation != null) {
+                    animate(frameTime);
+                }
+
                 mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
                         mTargetDirection.x, 0, mTargetDirection.z);
 
-                if (mRotation.angle() < Math.PI * 0.25f) {
+                // Looks better without this if for walking movement
+                //if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
                     float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     mMoveTo.mul(mWalkingSpeed);
@@ -223,11 +229,7 @@ public class PetActions {
                     pose[14] = pose[14] + mMoveTo.z;
 
                     mCharacter.updatePose(pose);
-
-                    if (mAnimation != null) {
-                        animate(frameTime);
-                    }
-                }
+                //}
             } else {
                 mListener.onActionEnd(this);
             }
@@ -265,6 +267,10 @@ public class PetActions {
             boolean moveTowardToBall = mTargetDirection.length() > mCharacterHalfSize * 1.1f;
 
             if (moveTowardToBall) {
+                if (mAnimation != null) {
+                    animate(frameTime);
+                }
+
                 mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
                         mTargetDirection.x, 0, mTargetDirection.z);
 
@@ -277,12 +283,7 @@ public class PetActions {
                     pose[14] = pose[14] + mMoveTo.z;
 
                     mCharacter.updatePose(pose);
-
-                    if (mAnimation != null) {
-                        animate(frameTime);
-                    }
                 }
-
             } else {
                 mListener.onActionEnd(this);
             }
