@@ -152,6 +152,12 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         GVRSceneObject polygonObject = new GVRSceneObject(mContext, mesh, mat);
 
+        GVRBoxCollider collider = new GVRBoxCollider(mContext);
+        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
+        polygonObject.setName("Plane");
+
+        polygonObject.attachCollider(collider);
+
         hsvHUE += 35;
         float[] hsv = new float[3];
         hsv[0] = hsvHUE % 360;

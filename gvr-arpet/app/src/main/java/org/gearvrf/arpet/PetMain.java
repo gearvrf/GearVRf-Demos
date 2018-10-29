@@ -20,7 +20,6 @@ import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.character.CharacterController;
@@ -39,9 +38,9 @@ import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.gearvrf.physics.GVRWorld;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.joml.Matrix4f;
 
 
 public class PetMain extends DisableNativeSplashScreen {
@@ -126,27 +125,6 @@ public class PetMain extends DisableNativeSplashScreen {
     public void pause() {
         if (EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().unregister(this);
-        }
-    }
-
-    @Subscribe
-    public void onPlaneDetected(PlaneDetectedEvent event) {
-        GVRPlane detectedPlane = event.getPlane();
-        mPet.setPlane(detectedPlane);
-        mPet.enter();
-        mPet.setInitialScale();
-        // FIXME: enable after loaded
-        mPet.enableActions();
-
-        mSharedMixedReality.registerSharedObject(detectedPlane.getSceneObject(), ArPetObjectType.PLANE);
-
-        if (mCurrentMode instanceof EditMode) {
-            Log.e(TAG, "Wrong state at first detection!");
-        }
-
-        if (mCurrentMode == null) {
-            mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
-            mCurrentMode.enter();
         }
     }
 
@@ -262,6 +240,27 @@ public class PetMain extends DisableNativeSplashScreen {
         @Override
         public void onTouchEnd(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
             Log.d(TAG, "onTouchEnd " + gvrSceneObject.getName());
+
+            // TODO: Improve this if
+            if (gvrSceneObject != null && gvrSceneObject.getParent() instanceof GVRPlane) {
+                final float[] modelMtx = gvrSceneObject.getParent().getTransform().getModelMatrix();
+                final float[] hitPos = gvrPickedObject.hitLocation;
+
+                if (!mPet.isRunning()) {
+                    mPet.setPlane((GVRPlane)gvrSceneObject.getParent());
+                    mPet.setAnchor(mPetContext.getMixedReality().createAnchor(modelMtx));
+                    mPet.enter();
+                    mPet.setInitialScale();
+                    mPet.enableActions();
+
+                    if (mCurrentMode == null) {
+                        mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
+                        mCurrentMode.enter();
+                    }
+                }
+
+                mPet.goToTap(hitPos[0], hitPos[1], hitPos[2]);
+            }
         }
 
         @Override

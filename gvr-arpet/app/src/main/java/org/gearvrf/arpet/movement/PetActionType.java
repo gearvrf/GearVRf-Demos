@@ -23,6 +23,7 @@ import android.support.annotation.IntDef;
         PetActions.IDLE.ID,
         PetActions.TO_BALL.ID,
         PetActions.TO_PLAYER.ID,
+        PetActions.TO_TAP.ID,
         PetActions.AT_EDIT.ID,
         PetActions.AT_SHARE.ID
 })

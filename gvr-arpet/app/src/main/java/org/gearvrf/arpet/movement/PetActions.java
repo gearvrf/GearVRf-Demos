@@ -41,7 +41,7 @@ import java.util.Iterator;
 public class PetActions {
     private static final String TAG = "CharacterStates";
 
-    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, AT_EDIT.ID, AT_SHARE.ID})
+    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, TO_TAP.ID, AT_EDIT.ID, AT_SHARE.ID})
     public @interface Action{
     }
 
@@ -290,8 +290,63 @@ public class PetActions {
         }
     }
 
-    public static class AT_EDIT implements IPetAction {
+    public static class TO_TAP extends PetAction {
         public static final int ID = 3;
+
+        public TO_TAP(CharacterView character, GVRSceneObject tapObject,
+                         OnPetActionListener listener) {
+            super(character, tapObject, listener);
+        }
+
+        @Override
+        public int id() {
+            return ID;
+        }
+
+        @Override
+        public void onEntry() {
+            Log.w(TAG, "entry => MOVING_TO_TAP");
+            mTurnSpeed = 0.05f;
+            setAnimation(mCharacter.getAnimation(1));
+        }
+
+        @Override
+        public void onExit() {
+            Log.w(TAG, "exit => MOVING_TO_TAP");
+        }
+
+        @Override
+        public void onRun(float frameTime) {
+            mTargetDirection.y = 0;
+            // Keep a angle of 45 degree of distance
+            boolean moveTowardToCam = mTargetDirection.length() > mCharacterHalfSize * 0.5f;
+
+            if (moveTowardToCam) {
+                if (mAnimation != null) {
+                    animate(frameTime);
+                }
+
+                mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
+                        mTargetDirection.x, 0, mTargetDirection.z);
+
+                if (mRotation.angle() < Math.PI * 0.25f) {
+                    // acceleration logic
+                    float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
+                    mMoveTo.mul(mWalkingSpeed);
+
+                    pose[12] = pose[12] + mMoveTo.x;
+                    pose[14] = pose[14] + mMoveTo.z;
+
+                    mCharacter.updatePose(pose);
+                }
+            } else {
+                mListener.onActionEnd(this);
+            }
+        }
+    }
+
+    public static class AT_EDIT implements IPetAction {
+        public static final int ID = 4;
 
         private final PetContext mPetContext;
         private final CharacterView mCharacter;
@@ -325,7 +380,7 @@ public class PetActions {
     }
 
     public static class AT_SHARE implements IPetAction {
-        public static final int ID = 4;
+        public static final int ID = 5;
 
         private final PetContext mPetContext;
         private final CharacterView mCharacter;

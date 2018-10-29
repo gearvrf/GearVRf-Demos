@@ -27,12 +27,16 @@ public abstract class BasePetMode implements IPetMode {
     protected final PetContext mPetContext;
     protected final IPetView mModeScene;
     protected ILoadEvents mLoadListener;
+    protected boolean mIsRunning;
+    protected boolean mIsLoaded;
 
     public BasePetMode(PetContext petContext, IPetView sceneMode) {
         TAG = sceneMode.getClass().getSimpleName();
         mPetContext = petContext;
         mModeScene = sceneMode;
         mLoadListener = null;
+        mIsRunning = false;
+        mIsLoaded = false;
     }
 
     @Override
@@ -40,6 +44,8 @@ public abstract class BasePetMode implements IPetMode {
         Log.w(TAG, "enter");
         mModeScene.show(mPetContext.getMainScene());
         onEnter();
+
+        mIsRunning = true;
     }
 
     @Override
@@ -47,16 +53,20 @@ public abstract class BasePetMode implements IPetMode {
         Log.w(TAG, "exit");
         mModeScene.hide(mPetContext.getMainScene());
         onExit();
+
+        mIsRunning = false;
     }
 
     @Override
     public void load(ILoadEvents listener) {
         mLoadListener = listener;
+        mIsLoaded = true;
     }
 
     @Override
     public void unload() {
         mLoadListener = null;
+        mIsLoaded = false;
     }
 
     @Override
@@ -66,6 +76,14 @@ public abstract class BasePetMode implements IPetMode {
 
     public void handleOrientation() {
         onHandleOrientation(mPetContext.getMainScene().getMainCameraRig());
+    }
+
+    public boolean isRunning() {
+        return mIsRunning;
+    }
+
+    public boolean isLoaded() {
+        return mIsLoaded;
     }
 
     abstract protected void onEnter();

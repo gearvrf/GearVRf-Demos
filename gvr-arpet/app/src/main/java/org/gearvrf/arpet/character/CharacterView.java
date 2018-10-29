@@ -188,6 +188,10 @@ public class CharacterView extends AnchoredObject implements
         mBoundaryPlane = boundary;
     }
 
+    public GVRPlane getBoundaryPlane() {
+         return mBoundaryPlane;
+    }
+
     @Override
     public void scale(float factor) {
         getTransform().setScale(factor, factor, factor);
@@ -228,13 +232,13 @@ public class CharacterView extends AnchoredObject implements
     @Override
     public void show(GVRScene mainScene) {
         mainScene.addSceneObject(getAnchor());
-        getAnchor().attachSceneObject(mInfinityPlan);
+        //getAnchor().attachSceneObject(mInfinityPlan);
     }
 
     @Override
     public void hide(GVRScene mainScene) {
         mainScene.removeSceneObject(getAnchor());
-        getAnchor().detachSceneObject(mInfinityPlan);
+        //getAnchor().detachSceneObject(mInfinityPlan);
     }
 
     @Override
@@ -244,7 +248,7 @@ public class CharacterView extends AnchoredObject implements
 
         createShadow();
 
-        createInfinityPlan();
+        // createInfinityPlan();
 
         createDragCollider();
 
