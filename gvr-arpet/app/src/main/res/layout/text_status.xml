@@ -20,5 +20,5 @@
     style="@style/StatusText"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="look at target"
+    android:text="This is a sample text"
     tools:ignore="HardcodedText" />

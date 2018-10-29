@@ -27,7 +27,7 @@ import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public interface IMessageService {
 
-    void shareCloudAnchors(@NonNull CloudAnchor[] cloudAnchors, @NonNull MessageCallback<Void> callback);
+    void sharePetAnchor(@NonNull CloudAnchor petAnchor, @NonNull MessageCallback<Void> callback);
 
     void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback);
 
@@ -38,4 +38,6 @@ public interface IMessageService {
     void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback);
 
     void addMessageReceiver(MessageReceiver receiver);
+
+    void removeMessageReceiver(MessageReceiver receiver);
 }

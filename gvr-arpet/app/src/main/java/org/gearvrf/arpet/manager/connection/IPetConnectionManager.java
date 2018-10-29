@@ -154,7 +154,7 @@ public interface IPetConnectionManager {
 
     void addEventHandler(PetConnectionEventHandler handler);
 
-    void removeMessageHandler(PetConnectionEventHandler handler);
+    void removeEventHandler(PetConnectionEventHandler handler);
 
     PetContext getContext();
 }

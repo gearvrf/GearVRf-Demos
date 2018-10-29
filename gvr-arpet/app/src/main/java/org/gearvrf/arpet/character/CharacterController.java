@@ -17,6 +17,7 @@
 
 package org.gearvrf.arpet.character;
 
+import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import org.gearvrf.GVRCameraRig;
@@ -24,7 +25,6 @@ import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.movement.IPetAction;
@@ -54,6 +54,11 @@ public class CharacterController extends BasePetMode {
     private GVRSceneObject mTapObject;
 
     private class LocalMessageReceiver extends SimpleMessageReceiver {
+
+        public LocalMessageReceiver(@NonNull String name) {
+            super(name);
+        }
+
         @Override
         public void onReceivePetActionCommand(PetActionCommand command) throws MessageException {
             try {
@@ -73,7 +78,7 @@ public class CharacterController extends BasePetMode {
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new LocalMessageReceiver());
+        mMessageService.addMessageReceiver(new LocalMessageReceiver(TAG));
 
         initPet((CharacterView) mModeScene);
     }

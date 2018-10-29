@@ -237,7 +237,7 @@ public class ShareAnchorView extends BasePetView implements IViewEvents, View.On
     public void waitingView() {
         mPairing.setVisibility(View.GONE);
         mSpinner.setVisibility(View.VISIBLE);
-        mMessage.setText(R.string.waiting);
+        mMessage.setText(R.string.waiting_for_host_sharing);
         mCheckIcon.setVisibility(View.GONE);
         RotateAnimation anim = new RotateAnimation(0f, 350f,
                 Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);

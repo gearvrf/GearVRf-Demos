@@ -30,22 +30,24 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.common.Task;
 import org.gearvrf.arpet.common.TaskException;
-import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.OnCloudAnchorManagerListener;
 import org.gearvrf.arpet.manager.cloud.anchor.ResolvedCloudAnchor;
+import org.gearvrf.arpet.manager.connection.BasePetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
-import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.mode.view.IAnchorSharedView;
 import org.gearvrf.arpet.mode.view.IConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ILetsStartView;
 import org.gearvrf.arpet.mode.view.ILookAtTargetView;
 import org.gearvrf.arpet.mode.view.INoConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ISharingAnchorView;
+import org.gearvrf.arpet.mode.view.ISharingErrorView;
+import org.gearvrf.arpet.mode.view.IWaitingDialogView;
 import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
 import org.gearvrf.arpet.mode.view.IWaitingForHostView;
 import org.gearvrf.arpet.mode.view.impl.ShareAnchorView2;
@@ -59,7 +61,6 @@ import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST;
@@ -74,12 +75,12 @@ import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_O
 
 public class ShareAnchorMode2 extends BasePetMode {
 
-    private final String TAG = getClass().getSimpleName();
-    private final int DEFAULT_SCREEN_TIMEOUT = 5000;  // 5s to change between screens
+    private final String TAG = ShareAnchorMode2.class.getSimpleName();
 
     private static final int MODE_NONE = 0;
     private static final int MODE_HOST = 1;
     private static final int MODE_GUEST = 2;
+    private OnHostAnchorCallback mOnHostAnchorCallback;
 
     @IntDef({
             MODE_NONE,
@@ -90,10 +91,8 @@ public class ShareAnchorMode2 extends BasePetMode {
     }
 
     private IPetConnectionManager mConnectionManager;
-    private final Handler mHandler;
-    private ShareAnchorView mShareAnchorView;
-    private ShareAnchorView2 mShareAnchorView2;
-    private final GVRAnchor mWorldCenterAnchor;
+    private ShareAnchorView2 mShareAnchorView;
+    private final GVRAnchor mPetAnchor;
     private CloudAnchorManager mCloudAnchorManager;
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
@@ -105,21 +104,19 @@ public class ShareAnchorMode2 extends BasePetMode {
 
     public ShareAnchorMode2(PetContext petContext, @NonNull GVRAnchor anchor, OnBackToHudModeListener listener) {
         super(petContext, new ShareAnchorView2(petContext));
+
         mConnectionManager = PetConnectionManager.getInstance();
-        mHandler = new Handler(petContext.getActivity().getMainLooper());
-        mConnectionManager.addEventHandler(mConnectionEventHandler = new LocalConnectionEventHandler());
-//        mShareAnchorView = (ShareAnchorView) mModeScene;
-//        mShareAnchorView.setListenerShareAnchorMode(new HandlerActionsShareAnchorMode());
-        mShareAnchorView2 = (ShareAnchorView2) mModeScene;
+        mConnectionManager.addEventHandler(mConnectionEventHandler = new LocalConnectionEventHandler(TAG));
+        mShareAnchorView = (ShareAnchorView2) mModeScene;
 
         mResources = mPetContext.getActivity().getResources();
-        onShowLetsStartView(mShareAnchorView2.makeView(ILetsStartView.class));
+        showViewLetsStart();
 
-        mWorldCenterAnchor = anchor;
+        mPetAnchor = anchor;
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
         mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new MessageReceiver());
+        mMessageService.addMessageReceiver(new LocalMessageReceiver(TAG));
         mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
     }
 
@@ -132,8 +129,9 @@ public class ShareAnchorMode2 extends BasePetMode {
         return true;
     }
 
-    private void onShowLetsStartView(ILetsStartView view) {
-        view.setBackClickListener(v -> onCancelSharing());
+    private void showViewLetsStart() {
+        ILetsStartView view = mShareAnchorView.makeView(ILetsStartView.class);
+        view.setBackClickListener(v -> cancelSharing());
         view.setHostClickListener(v -> {
             if (checkInternetConnection()) {
                 mConnectionManager.startInvitation();
@@ -150,36 +148,87 @@ public class ShareAnchorMode2 extends BasePetMode {
         view.show();
     }
 
-    private void onShowWaitingForGuestView(IWaitingForGuestView view) {
+    private void showViewWaitingForGuest() {
         mCurrentMode = MODE_HOST;
-        view.setCancelClickListener(v -> onCancelSharing());
+        IWaitingForGuestView view = mShareAnchorView.makeView(IWaitingForGuestView.class);
+        view.setCancelClickListener(v -> cancelSharing());
         view.setContinueClickListener(v -> mConnectionManager.stopInvitation());
         view.show();
     }
 
-    private void onShowWaitingForHostView(IWaitingForHostView view) {
+    private void showViewWaitingForHost() {
         mCurrentMode = MODE_GUEST;
-        view.setCancelClickListener(v -> onCancelSharing());
+        IWaitingForHostView view = mShareAnchorView.makeView(IWaitingForHostView.class);
+        view.setCancelClickListener(v -> cancelSharing());
         view.show();
     }
 
-    private void onShowNoConnectionFoundView(INoConnectionFoundView view) {
+    private void showViewNoConnectionFound() {
+        INoConnectionFoundView view = mShareAnchorView.makeView(INoConnectionFoundView.class);
         view.setStatusText(getNoConnectionFoundString());
-        view.setCancelClickListener(v -> onCancelSharing());
+        view.setCancelClickListener(v -> cancelSharing());
         view.setRetryClickListener(v -> {
-            if (mCurrentMode == MODE_HOST) {
-                onShowWaitingForGuestView(mShareAnchorView2.makeView(IWaitingForGuestView.class));
-            } else {
-                onShowWaitingForHostView(mShareAnchorView2.makeView(IWaitingForHostView.class));
+            if (checkInternetConnection()) {
+                if (mCurrentMode == MODE_HOST) {
+                    mConnectionManager.findInvitationThenConnect();
+                } else {
+                    mConnectionManager.startInvitation();
+                }
             }
         });
         view.show();
     }
 
-    private String getNoConnectionFoundString() {
-        if (mCurrentMode == MODE_NONE) {
-            return "";
+    private void showViewLookAtTarget(String text) {
+        ILookAtTargetView viewLookAt;
+        if (ILookAtTargetView.class.isInstance(mShareAnchorView.getCurrentView())) {
+            viewLookAt = (ILookAtTargetView) mShareAnchorView.getCurrentView();
+            viewLookAt.setStatusText(text, true);
+        } else {
+            viewLookAt = mShareAnchorView.makeView(ILookAtTargetView.class);
+            viewLookAt.setStatusText(text, false);
+            viewLookAt.show();
         }
+    }
+
+    private void showViewWaitingDialog(String text) {
+        IWaitingDialogView view = mShareAnchorView.makeView(IWaitingDialogView.class);
+        view.setStatusText(text);
+        view.show();
+    }
+
+    private void showViewAnchorShared() {
+        IAnchorSharedView view = mShareAnchorView.makeView(IAnchorSharedView.class);
+        view.show();
+    }
+
+    private void showViewSharingError() {
+        ISharingErrorView view = mShareAnchorView.makeView(ISharingErrorView.class);
+        view.setCancelClickListener(v -> cancelSharing());
+        view.setRetryClickListener(v -> {
+            if (checkInternetConnection()) {
+                if (mCurrentMode == MODE_HOST) {
+
+                } else {
+
+                }
+            }
+        });
+        view.show();
+    }
+
+    private void hostPetAnchor(OnHostAnchorCallback callback) {
+        Log.d(TAG, "Hosting pet anchor");
+        mOnHostAnchorCallback = callback;
+        mCloudAnchorManager.hostAnchor(mPetAnchor);
+    }
+
+    private void onPetAnchorHosted(CloudAnchor petAnchor) {
+        showViewLookAtTarget(mResources.getString(R.string.stay_in_position));
+        sharePetAnchorWithGuests(petAnchor);
+    }
+
+    private String getNoConnectionFoundString() {
         String mode = mCurrentMode == MODE_GUEST
                 ? mResources.getString(R.string.common_text_guest)
                 : mResources.getString(R.string.common_text_host);
@@ -193,169 +242,70 @@ public class ShareAnchorMode2 extends BasePetMode {
 
     @Override
     protected void onExit() {
-        mConnectionManager.removeMessageHandler(mConnectionEventHandler);
+        mConnectionManager.removeEventHandler(mConnectionEventHandler);
     }
 
     @Override
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
     }
 
-    private void showInviteAcceptedScreen() {
-        if (mConnectionManager.getConnectionMode() == ConnectionMode.SERVER) {
-            Log.d(TAG, "host");
-            mShareAnchorView.inviteAcceptedHost(mConnectionManager.getTotalConnected());
-            mHandler.postDelayed(() -> {
-                mShareAnchorView.centerPetView();
-                mHandler.postDelayed(() -> showMoveAround(), DEFAULT_SCREEN_TIMEOUT);
-            }, DEFAULT_SCREEN_TIMEOUT);
-
-            doHostAnchor();
-        } else {
-            Log.d(TAG, "guest");
-            mShareAnchorView.inviteAcceptedGuest();
-            mHandler.postDelayed(() -> showWaitingScreen(), DEFAULT_SCREEN_TIMEOUT);
-        }
-    }
-
-    private void doHostAnchor() {
-        mCloudAnchorManager.hostAnchor(mWorldCenterAnchor);
-    }
-
-    private void showSharedHost() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.sharedHost());
-    }
-
-    private void showPairingError() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.pairingError());
-    }
-
     private void onConnectionEstablished() {
 
         int total = mConnectionManager.getTotalConnected();
 
-        IConnectionFoundView view = mShareAnchorView2.makeView(IConnectionFoundView.class);
+        IConnectionFoundView view = mShareAnchorView.makeView(IConnectionFoundView.class);
         view.setStatusText(mResources.getQuantityString(
                 mCurrentMode == MODE_GUEST ? R.plurals.hosts_found : R.plurals.guests_found,
                 total, total));
         view.show();
 
         if (mCurrentMode == MODE_HOST) {
-            new Handler().postDelayed(this::showLookAtTargetView, 3000);
+            new Handler().postDelayed(() -> {
+
+                showViewLookAtTarget(mResources.getString(R.string.center_pet));
+
+                // Make guests waiting while host prepare pet anchor
+                showRemoteView(ViewCommand.SHOW_VIEW_WAITING_DIALOG);
+
+                new Handler().postDelayed(() -> {
+                            Log.d(TAG, "Look at pet position and move around it while hosting its anchor");
+                            showViewLookAtTarget(mResources.getString(R.string.move_around));
+                            hostPetAnchor(this::onPetAnchorHosted);
+                        }, 5000
+                );
+            }, 3000);
         }
     }
 
-    private void showLookAtTargetView() {
-        ILookAtTargetView viewLookAt = mShareAnchorView2.makeView(ILookAtTargetView.class);
-        viewLookAt.setStatusText(mResources.getString(R.string.center_pet));
-        viewLookAt.show();
-        // Change text after a few seconds
-        new Handler().postDelayed(
-                () -> viewLookAt.setStatusText(mResources.getString(R.string.move_around)),
-                5000);
-    }
-
-    private void showWaitingScreen() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.waitingView());
-    }
-
-    private void showStayInPositionToPair() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.toPairView());
-    }
-
-    private void showCenterPet() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.centerPetView());
-    }
-
-    private void showMoveAround() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.moveAroundView());
-    }
-
-    private void showModeShareAnchorView() {
-        mPetContext.getActivity().runOnUiThread(() -> mHandler.postDelayed(() -> showStatusModeView(), DEFAULT_SCREEN_TIMEOUT));
-    }
-
-    private void showStatusModeView() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.modeView());
-    }
-
-    private void showLookingSideBySide() {
-        mPetContext.getActivity().runOnUiThread(() -> mShareAnchorView.lookingSidebySide());
-    }
-
-    private void sendCommandToShowModeShareAnchorView() {
-        ViewCommand command = new ViewCommand(ViewCommand.SHOW_MODE_SHARE_ANCHOR_VIEW);
+    private void showRemoteView(@ViewCommand.Type String commandType) {
+        Log.d(TAG, "Request to show remote view: " + commandType);
+        ViewCommand command = new ViewCommand(commandType);
         mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                showModeShareAnchorView();
+                Log.d(TAG, "Success showing view on remote: " + commandType);
             }
 
             @Override
             public void onFailure(Exception error) {
-                Log.e(TAG, "command to show 'paired view' has failed");
+                Log.e(TAG, "Failed showing view on remote: " + commandType);
             }
         });
     }
 
-    private void sendCommandPairingErrorView() {
-        ViewCommand command = new ViewCommand(ViewCommand.PAIRING_ERROR_VIEW);
-        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
+    private void sharePetAnchorWithGuests(CloudAnchor petAnchor) {
+        Log.d(TAG, "Sharing pet anchor with guests");
+        mMessageService.sharePetAnchor(petAnchor, new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
-                Log.d(TAG, "command to show 'pairing error  view' was performed successfully");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "command to show 'pairing error view' has failed");
-            }
-        });
-    }
-
-    private void sendCommandSharedHost() {
-        ViewCommand command = new ViewCommand(ViewCommand.SHARED_HOST);
-        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "command to show 'shared host view' was performed successfully");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "command to show 'shared host view' has failed");
-            }
-        });
-    }
-
-    private void sendCommandLookingSideBySide() {
-        ViewCommand command = new ViewCommand(ViewCommand.LOOKING_SIDE_BY_SIDE);
-        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "command to show 'looking side by  view' was performed successfully");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "command to show 'looking side by  view' has failed");
-            }
-        });
-    }
-
-    private void shareScene(CloudAnchor[] anchors) {
-        mMessageService.shareCloudAnchors(anchors, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                // Inform the guests to change their view
-                sendCommandToShowModeShareAnchorView();
-                mSharedMixedReality.startSharing(mWorldCenterAnchor, SharedMixedReality.HOST);
+                mSharedMixedReality.startSharing(mPetAnchor, SharedMixedReality.HOST);
                 backToHud();
             }
 
             @Override
             public void onFailure(Exception error) {
-                showPairingError();
-                backToHud();
+                Log.e(TAG, "Error sharing pet anchor with guests", error);
+                showViewSharingError();
             }
         });
     }
@@ -363,31 +313,18 @@ public class ShareAnchorMode2 extends BasePetMode {
     private class CloudAnchorManagerReadyListener implements OnCloudAnchorManagerListener {
         @Override
         public void onHostReady() {
-            // Just inform the guests to change their view
-            sendCommandSharedHost();
-            sendCommandLookingSideBySide();
-            // Change the host view
-            showStayInPositionToPair();
-
-            Log.d(TAG, "sending a list of CloudAnchor objects to the guests");
-            doResolveGuest();
+            CloudAnchor[] cloudAnchors = mCloudAnchorManager.getCloudAnchors().toArray(new CloudAnchor[0]);
+            mOnHostAnchorCallback.onHostDone(cloudAnchors[0]);
         }
 
         @Override
         public void onHostFailure() {
-            // TODO: handle this error on UI
             Log.d(TAG, "host failure");
-            showPairingError();
+            showViewSharingError();
         }
     }
 
-    private void doResolveGuest() {
-        ArrayList<CloudAnchor> cloudAnchors = mCloudAnchorManager.getCloudAnchors();
-        int listSize = cloudAnchors.size();
-        shareScene(cloudAnchors.toArray(new CloudAnchor[listSize]));
-    }
-
-    private void onCancelSharing() {
+    private void cancelSharing() {
 
         // Turn sharing OFF
         mSharedMixedReality.stopSharing();
@@ -412,7 +349,7 @@ public class ShareAnchorMode2 extends BasePetMode {
 
     private void updateTotalConnectedUI() {
         if (mCurrentMode == MODE_HOST) {
-            ISharingAnchorView view = mShareAnchorView2.getCurrentView();
+            ISharingAnchorView view = mShareAnchorView.getCurrentView();
             if (IWaitingForGuestView.class.isInstance(view)) {
                 ((IWaitingForGuestView) view).setTotalConnected(
                         mConnectionManager.getTotalConnected());
@@ -420,9 +357,11 @@ public class ShareAnchorMode2 extends BasePetMode {
         }
     }
 
-    private class LocalConnectionEventHandler implements PetConnectionEventHandler {
+    private class LocalConnectionEventHandler extends BasePetConnectionEventHandler {
 
-        private final String HANDLER_ID = ShareAnchorView2.class.getName();
+        LocalConnectionEventHandler(@NonNull String name) {
+            super(name);
+        }
 
         @SuppressLint("SwitchIntDef")
         @Override
@@ -433,20 +372,22 @@ public class ShareAnchorMode2 extends BasePetMode {
                         onConnectionEstablished();
                         break;
                     case EVENT_NO_CONNECTION_FOUND:
-                        onShowNoConnectionFoundView(mShareAnchorView2.makeView(INoConnectionFoundView.class));
+                        showViewNoConnectionFound();
                         break;
                     case EVENT_GUEST_CONNECTION_ESTABLISHED:
                     case EVENT_ONE_CONNECTION_LOST:
                         updateTotalConnectedUI();
                         break;
                     case EVENT_ALL_CONNECTIONS_LOST:
-                        backToHud();
+                        cancelSharing();
+                        Toast.makeText(mPetContext.getActivity(),
+                                R.string.common_text_connection_lost, Toast.LENGTH_LONG).show();
                         break;
                     case EVENT_ON_LISTENING_TO_GUESTS:
-                        onShowWaitingForGuestView(mShareAnchorView2.makeView(IWaitingForGuestView.class));
+                        showViewWaitingForGuest();
                         break;
                     case EVENT_ON_REQUEST_CONNECTION_TO_HOST:
-                        onShowWaitingForHostView(mShareAnchorView2.makeView(IWaitingForHostView.class));
+                        showViewWaitingForHost();
                         break;
                     case EVENT_ENABLE_BLUETOOTH_DENIED:
                         Toast.makeText(mPetContext.getActivity(),
@@ -461,44 +402,34 @@ public class ShareAnchorMode2 extends BasePetMode {
                 }
             });
         }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            LocalConnectionEventHandler that = (LocalConnectionEventHandler) o;
-            return HANDLER_ID != null ? HANDLER_ID.equals(that.HANDLER_ID) : that.HANDLER_ID == null;
-        }
-
-        @Override
-        public int hashCode() {
-            return HANDLER_ID != null ? HANDLER_ID.hashCode() : 0;
-        }
-
-        @Override
-        public String toString() {
-            return "LocalConnectionEventHandler{" +
-                    "HANDLER_ID='" + HANDLER_ID + '\'' +
-                    '}';
-        }
     }
 
-    private class MessageReceiver extends SimpleMessageReceiver {
+    private class LocalMessageReceiver extends SimpleMessageReceiver {
+
+        LocalMessageReceiver(@NonNull String name) {
+            super(name);
+        }
 
         @Override
-        public void onReceiveSharedCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
-            Log.d(TAG, "Sharing received: " + Arrays.toString(cloudAnchors));
-            CloudAnchorResolverTask task = new CloudAnchorResolverTask(cloudAnchors);
+        public void onReceivePetAnchor(CloudAnchor petAnchor) throws MessageException {
+            Log.d(TAG, "Pet anchor received: " + petAnchor);
+
+            showViewAnchorShared();
+
+            new Handler().postDelayed(() -> {
+                String status = mResources.getString(R.string.looking_the_same_thing);
+                showViewLookAtTarget(status);
+            }, 3000);
+
+            CloudAnchorResolverTask task = new CloudAnchorResolverTask(petAnchor);
             // This method gets locked and will return after loader finish
-            Log.d(TAG, "Resolving anchors...");
             task.start();
-            Log.d(TAG, "Task ended");
+
             // Lock released, now checks thread result
             if (task.getError() != null) {
-                sendCommandPairingErrorView();
+                showViewSharingError();
                 throw new MessageException(task.getError());
             } else {
-                // Start sharing using resolved pet pose as guest's world center
                 ResolvedCloudAnchor cloudAnchor = task.getResolvedCloudAnchorByType(ArPetObjectType.PET);
                 if (cloudAnchor != null) {
                     mSharedMixedReality.startSharing(cloudAnchor.getAnchor(), SharedMixedReality.GUEST);
@@ -512,17 +443,8 @@ public class ShareAnchorMode2 extends BasePetMode {
             try {
                 Log.d(TAG, "View command received: " + command);
                 switch (command.getType()) {
-                    case ViewCommand.SHOW_MODE_SHARE_ANCHOR_VIEW:
-                        showModeShareAnchorView();
-                        break;
-                    case ViewCommand.LOOKING_SIDE_BY_SIDE:
-                        mHandler.postDelayed(() -> showLookingSideBySide(), DEFAULT_SCREEN_TIMEOUT);
-                        break;
-                    case ViewCommand.SHARED_HOST:
-                        showSharedHost();
-                        break;
-                    case ViewCommand.PAIRING_ERROR_VIEW:
-                        showPairingError();
+                    case ViewCommand.SHOW_VIEW_WAITING_DIALOG:
+                        showViewWaitingDialog(mResources.getString(R.string.waiting_for_host_sharing));
                         break;
                     default:
                         Log.d(TAG, "Unknown view command: " + command.getType());
@@ -539,7 +461,7 @@ public class ShareAnchorMode2 extends BasePetMode {
         CloudAnchor[] mCloudAnchors;
         List<ResolvedCloudAnchor> mResolvedCloudAnchors;
 
-        CloudAnchorResolverTask(CloudAnchor[] cloudAnchors) {
+        CloudAnchorResolverTask(CloudAnchor... cloudAnchors) {
             this.mCloudAnchors = cloudAnchors;
         }
 
@@ -567,5 +489,10 @@ public class ShareAnchorMode2 extends BasePetMode {
                     .findFirst()
                     .orElse(null);
         }
+    }
+
+    @FunctionalInterface
+    private interface OnHostAnchorCallback {
+        void onHostDone(CloudAnchor cloudAnchor);
     }
 }

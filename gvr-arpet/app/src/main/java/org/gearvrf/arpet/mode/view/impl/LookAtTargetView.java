@@ -35,7 +35,11 @@ class LookAtTargetView extends BaseSharingAnchorView implements ILookAtTargetVie
     }
 
     @Override
-    public void setStatusText(CharSequence text) {
-        mStatusText.post(() -> mStatusText.setText(text));
+    public void setStatusText(CharSequence text, boolean animated) {
+        if (animated) {
+            mStatusText.post(() -> mStatusText.setText(text));
+        } else {
+            mStatusText.post(() -> mStatusText.setCurrentText(text));
+        }
     }
 }

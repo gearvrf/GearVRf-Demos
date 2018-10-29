@@ -89,7 +89,7 @@ public class BallThrowHandler {
         EventBus.getDefault().register(this);
 
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new SimpleMessageReceiver() {
+        mMessageService.addMessageReceiver(new SimpleMessageReceiver(TAG) {
             @Override
             public void onReceiveBallCommand(BallCommand command) {
                 if (BallCommand.THROW.equals(command.getType())) {

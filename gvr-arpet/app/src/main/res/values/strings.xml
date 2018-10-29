@@ -40,11 +40,12 @@
     <string name="host_found">1 connection found\non sharing anchor</string>
     <string name="center_pet">Center the pet in your scene</string>
     <string name="move_around">Move around the device for at least a few second</string>
-    <string name="waiting">Waiting for host sharing</string>
+    <string name="waiting_for_host_sharing">Waiting for host sharing</string>
     <string name="no_internet_connection">No internet connection available</string>
     <string name="bluetooth_disabled">Bluetooth is disabled</string>
     <string name="device_not_visible">This device is not visible to other devices</string>
     <string name="view_lets_start_status_text">Let’s start Sharing Anchor!\nWhat role do you want to play?</string>
+    <string name="common_text_connection_lost">Connection lost</string>
     <plurals name="guests_found">
         <item quantity="one">1 guest found\non sharing anchor</item>
         <item quantity="other">%d guests found\non sharing anchor</item>

@@ -29,12 +29,15 @@ public class ViewCommand implements Command {
     public static final String SHARED_HOST = "SHARED_HOST";
     public static final String PAIRING_ERROR_VIEW = "PAIRING_ERROR_VIEW";
 
+    public static final String SHOW_VIEW_WAITING_DIALOG = "SHOW_VIEW_WAITING_DIALOG";
+
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
             SHOW_MODE_SHARE_ANCHOR_VIEW,
             LOOKING_SIDE_BY_SIDE,
             SHARED_HOST,
-            PAIRING_ERROR_VIEW
+            PAIRING_ERROR_VIEW,
+            SHOW_VIEW_WAITING_DIALOG
     })
     public @interface Type {
     }

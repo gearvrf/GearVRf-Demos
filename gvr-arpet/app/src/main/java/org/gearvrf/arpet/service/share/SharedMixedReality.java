@@ -3,6 +3,7 @@ package org.gearvrf.arpet.service.share;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.GVRPicker;
@@ -34,10 +35,11 @@ import java.util.List;
 
 public class SharedMixedReality implements IMRCommon {
 
+    private static final String TAG = SharedMixedReality.class.getSimpleName();
+
     public static final int OFF = 0;
     public static final int HOST = 1;
     public static final int GUEST = 2;
-    private static final String TAG = SharedMixedReality.class.getSimpleName();
 
     private final IMRCommon mMixedReality;
     private final PetContext mPetContext;
@@ -60,7 +62,7 @@ public class SharedMixedReality implements IMRCommon {
         mPetContext = petContext;
         mSharedSceneObjects = new ArrayList<>();
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new LocalMessageReceiver());
+        mMessageService.addMessageReceiver(new LocalMessageReceiver(TAG));
         Matrix.setIdentityM(mSpaceMatrix, 0);
     }
 
@@ -323,6 +325,11 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     private class LocalMessageReceiver extends SimpleMessageReceiver {
+
+        public LocalMessageReceiver(@NonNull String name) {
+            super(name);
+        }
+
         @Override
         public void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
             try {

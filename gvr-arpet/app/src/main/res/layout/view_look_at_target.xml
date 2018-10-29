@@ -38,13 +38,6 @@
         android:outAnimation="@android:anim/slide_out_right"
         tools:ignore="HardcodedText">
 
-        <!--<TextView-->
-        <!--style="@style/StatusText"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="look at target"-->
-        <!--tools:ignore="HardcodedText" />-->
-
     </TextSwitcher>
 
 </RelativeLayout>

@@ -16,8 +16,6 @@
 
 package org.gearvrf.arpet.manager.cloud.anchor;
 
-import org.gearvrf.arpet.AnchoredObject;
-import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 
 import java.io.Serializable;
@@ -43,14 +41,6 @@ public class CloudAnchor implements Serializable {
 
     public void setCloudAnchorId(String id) {
         mCloudAnchorId = id;
-    }
-
-    public static CloudAnchor getFor(AnchoredObject object) {
-        if (CharacterView.class.isInstance(object)) {
-            return new CloudAnchor(ArPetObjectType.PET);
-        }
-        throw new RuntimeException("The given object is not mapped " +
-                "to one of constants in ArPetObjectType: " + object.getClass().getName());
     }
 
     @Override

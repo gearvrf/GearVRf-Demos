@@ -15,49 +15,27 @@
  *
  */
 
-package org.gearvrf.arpet.service;
+package org.gearvrf.arpet.manager.connection;
 
 import android.support.annotation.NonNull;
 
-import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
-import org.gearvrf.arpet.service.data.BallCommand;
-import org.gearvrf.arpet.service.data.PetActionCommand;
-import org.gearvrf.arpet.service.data.ViewCommand;
-import org.gearvrf.arpet.service.share.SharedObjectPose;
-
-public class SimpleMessageReceiver implements MessageReceiver {
+public class BasePetConnectionEventHandler implements PetConnectionEventHandler {
 
     private String mName;
 
-    public SimpleMessageReceiver(@NonNull String name) {
+    public BasePetConnectionEventHandler(@NonNull String name) {
         this.mName = name;
     }
 
     @Override
-    public void onReceivePetAnchor(CloudAnchor petAnchor) throws MessageException {
-    }
-
-    @Override
-    public void onReceiveViewCommand(ViewCommand command) throws MessageException {
-    }
-
-    @Override
-    public void onReceivePetActionCommand(PetActionCommand command) throws MessageException {
-    }
-
-    @Override
-    public void onReceiveBallCommand(BallCommand command) {
-    }
-
-    @Override
-    public void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
+    public void handleEvent(PetConnectionEvent event) {
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SimpleMessageReceiver that = (SimpleMessageReceiver) o;
+        BasePetConnectionEventHandler that = (BasePetConnectionEventHandler) o;
         return mName != null ? mName.equals(that.mName) : that.mName == null;
     }
 
@@ -68,7 +46,7 @@ public class SimpleMessageReceiver implements MessageReceiver {
 
     @Override
     public String toString() {
-        return "SimpleMessageReceiver{" +
+        return "BasePetConnectionEventHandler{" +
                 "mName='" + mName + '\'' +
                 '}';
     }

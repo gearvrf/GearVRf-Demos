@@ -19,5 +19,5 @@ package org.gearvrf.arpet.mode.view;
 
 public interface ILookAtTargetView extends ISharingAnchorView {
 
-    void setStatusText(CharSequence text);
+    void setStatusText(CharSequence text, boolean animated);
 }

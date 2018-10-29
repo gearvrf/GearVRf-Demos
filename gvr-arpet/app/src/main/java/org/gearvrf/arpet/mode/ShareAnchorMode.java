@@ -48,7 +48,6 @@ import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST;
@@ -89,7 +88,7 @@ public class ShareAnchorMode extends BasePetMode {
         mCloudAnchorManager = new CloudAnchorManager(petContext, new CloudAnchorManagerReadyListener());
         mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new MessageReceiver());
+        mMessageService.addMessageReceiver(new MessageReceiver(TAG));
         mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
     }
 
@@ -361,7 +360,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void shareScene(CloudAnchor[] anchors) {
-        mMessageService.shareCloudAnchors(anchors, new MessageCallback<Void>() {
+        mMessageService.sharePetAnchor(anchors[0], new MessageCallback<Void>() {
             @Override
             public void onSuccess(Void result) {
                 // Inform the guests to change their view
@@ -472,10 +471,14 @@ public class ShareAnchorMode extends BasePetMode {
 
     private class MessageReceiver extends SimpleMessageReceiver {
 
+        public MessageReceiver(@NonNull String name) {
+            super(name);
+        }
+
         @Override
-        public void onReceiveSharedCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
-            Log.d(TAG, "Sharing received: " + Arrays.toString(cloudAnchors));
-            CloudAnchorResolverTask task = new CloudAnchorResolverTask(cloudAnchors);
+        public void onReceivePetAnchor(CloudAnchor petAnchor) throws MessageException {
+            Log.d(TAG, "Pet anchor received: " + petAnchor);
+            CloudAnchorResolverTask task = new CloudAnchorResolverTask(petAnchor);
             // This method gets locked and will return after loader finish
             Log.d(TAG, "Resolving anchors...");
             task.start();
@@ -526,7 +529,7 @@ public class ShareAnchorMode extends BasePetMode {
         CloudAnchor[] mCloudAnchors;
         List<ResolvedCloudAnchor> mResolvedCloudAnchors;
 
-        CloudAnchorResolverTask(CloudAnchor[] cloudAnchors) {
+        CloudAnchorResolverTask(CloudAnchor... cloudAnchors) {
             this.mCloudAnchors = cloudAnchors;
         }
 

@@ -25,12 +25,12 @@ import org.gearvrf.arpet.service.share.SharedObjectPose;
 
 public interface MessageReceiver {
     /**
-     * Resolve end load the objects represented by given shared scene.
+     * Resolve the given anchor.
      *
-     * @param cloudAnchors Anchors to resolve.
+     * @param petAnchor Anchor to resolve.
      * @throws MessageException If any exception occurs.
      */
-    void onReceiveSharedCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException;
+    void onReceivePetAnchor(CloudAnchor petAnchor) throws MessageException;
 
     /**
      * Execute the given command on this device

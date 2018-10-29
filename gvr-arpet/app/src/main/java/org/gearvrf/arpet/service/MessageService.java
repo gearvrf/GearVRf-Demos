@@ -64,8 +64,8 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
-    public void shareCloudAnchors(@NonNull CloudAnchor[] cloudAnchors, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(cloudAnchors), callback);
+    public void sharePetAnchor(@NonNull CloudAnchor petAnchor, @NonNull MessageCallback<Void> callback) {
+        sendRequest(createRequest(petAnchor), callback);
     }
 
     @Override
@@ -90,8 +90,16 @@ public final class MessageService implements IMessageService {
 
     @Override
     public void addMessageReceiver(MessageReceiver receiver) {
-        mMessageReceivers.remove(receiver);
+        removeMessageReceiver(receiver);
         mMessageReceivers.add(receiver);
+        Log.d(TAG, "Receiver added: " + receiver);
+    }
+
+    @Override
+    public void removeMessageReceiver(MessageReceiver receiver) {
+        if (mMessageReceivers.remove(receiver)) {
+            Log.d(TAG, "Receiver removed: " + receiver);
+        }
     }
 
     private <Data extends Serializable> RequestMessage<Data> createRequest(Data data) {
@@ -128,9 +136,9 @@ public final class MessageService implements IMessageService {
         mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
     }
 
-    private void onReceiveShareCloudAnchors(CloudAnchor[] cloudAnchors) throws MessageException {
+    private void onReceiveSharePetAnchor(CloudAnchor petAnchor) throws MessageException {
         for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveSharedCloudAnchors(cloudAnchors);
+            receiver.onReceivePetAnchor(petAnchor);
         }
     }
 
