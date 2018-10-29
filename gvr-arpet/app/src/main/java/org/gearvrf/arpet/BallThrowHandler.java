@@ -18,10 +18,12 @@ package org.gearvrf.arpet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 
-import org.gearvrf.GVRContext;
+import org.gearvrf.GVRCollider;
+import org.gearvrf.GVRComponent;
 import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageService;
@@ -131,18 +133,33 @@ public class BallThrowHandler {
     private void createBall() {
         load3DModel();
 
+        createBoneCollider();
+
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
 
-        GVRSphereCollider collider = new GVRSphereCollider(mPetContext.getGVRContext());
-        collider.setRadius(0.1f);
-        mBall.attachComponent(collider);
-
         mRigidBody = new GVRRigidBody(mPetContext.getGVRContext(), 5.0f);
-        mRigidBody.setRestitution(1.5f);
+        mRigidBody.setRestitution(0.5f);
         mRigidBody.setFriction(0.5f);
+        mRigidBody.setCcdMotionThreshold(0.001f);
+        mRigidBody.setCcdSweptSphereRadius(5f);
+
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
+    }
+
+    private void createBoneCollider() {
+        mBall.forAllComponents(new GVRSceneObject.ComponentVisitor() {
+            @Override
+            public boolean visit(GVRComponent gvrComponent) {
+                if (mBall.getCollider() == null) {
+                    GVRCollider collider = new GVRMeshCollider(mPetContext.getGVRContext(),
+                            ((GVRRenderData)gvrComponent).getMesh().getBoundingBox());
+                    mBall.attachCollider(collider);
+                }
+                return false;
+            }
+        }, GVRRenderData.getComponentType());
     }
 
     @Subscribe
@@ -254,6 +271,8 @@ public class BallThrowHandler {
         }
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
+        mBall.getTransform().setRotation(1, 0, 0, 0);
+
         mPlayer.addChildObject(mBall);
         mResetOnTouchEnabled = true;
         thrown = false;
@@ -265,10 +284,7 @@ public class BallThrowHandler {
     }
 
     private void load3DModel() {
-        GVRSceneObject sceneObject = LoadModelHelper.loadSceneObject(mPetContext.getGVRContext(),
+        mBall = LoadModelHelper.loadSceneObject(mPetContext.getGVRContext(),
                 LoadModelHelper.BALL_MODEL_PATH);
-        GVRSceneObject ball = sceneObject.getSceneObjectByName("tennisball_low");
-        ball.getParent().removeChildObject(ball);
-        mBall = ball;
     }
 }

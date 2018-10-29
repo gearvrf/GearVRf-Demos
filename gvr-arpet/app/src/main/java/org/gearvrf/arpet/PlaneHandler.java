@@ -126,6 +126,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
                 board = new GVRRigidBody(mContext, 0f);
                 board.setRestitution(0.5f);
                 board.setFriction(1.0f);
+                board.setCcdMotionThreshold(0.001f);
+                board.setCcdSweptSphereRadius(5f);
                 box.attachComponent(board);
             }
 

@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 public class LoadModelHelper {
     public static String PET_MODEL_PATH = "objects/pet_model.dae";
-    public static String BALL_MODEL_PATH = "objects/ball.fbx";
+    public static String BALL_MODEL_PATH = "objects/bone_model.obj";
     public static String PET_BONES_MAP_PATH = "objects/anim/pet_skeleton_map.txt";
     public static String[] PET_ANIMATIONS_PATH = {
             "objects/anim/pet_anim_idle.bvh",
