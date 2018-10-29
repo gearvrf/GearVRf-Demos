@@ -131,8 +131,12 @@ public class CharacterController extends BasePetMode {
     }
 
     public void goToTap(float x, float y, float z) {
-        mTapObject.getTransform().setPosition(x, y, z);
-        setCurrentAction(PetActions.TO_TAP.ID);
+        if (mCurrentAction == null
+                || mCurrentAction.id() == PetActions.IDLE.ID
+                || mCurrentAction.id() == PetActions.TO_TAP.ID) {
+            mTapObject.getTransform().setPosition(x, y, z);
+            setCurrentAction(PetActions.TO_TAP.ID);
+        }
     }
 
     public void playBall() {
