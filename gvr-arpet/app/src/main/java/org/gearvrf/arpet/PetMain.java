@@ -16,9 +16,13 @@
 package org.gearvrf.arpet;
 
 import android.util.Log;
+import android.view.MotionEvent;
 
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRScene;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.EditMode;
@@ -97,12 +101,18 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     private void configTouchScreen() {
+        mCursorController = null;
         GVRInputManager inputManager = mPetContext.getGVRContext().getInputManager();
         inputManager.selectController((newController, oldController) -> {
             if (newController instanceof GVRGazeCursorController) {
                 ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
                 newController.setCursor(null);
             }
+
+            if (mCursorController != null) {
+                mCursorController.removePickEventListener(mTouchEventsHandler);
+            }
+            newController.addPickEventListener(mTouchEventsHandler);
             mCursorController = newController;
         });
     }
@@ -202,6 +212,9 @@ public class PetMain extends DisableNativeSplashScreen {
             ((EditMode) mCurrentMode).onEnableGesture(mCursorController);
             mPet.stopBall();
             mPet.setCurrentAction(PetActions.AT_EDIT.ID);
+
+            // Edit mode will handle picker events
+            mCursorController.removePickEventListener(mTouchEventsHandler);
         }
 
         @Override
@@ -214,6 +227,10 @@ public class PetMain extends DisableNativeSplashScreen {
 
         @Override
         public void OnBackToHud() {
+            if (mCurrentMode instanceof EditMode) {
+                mCursorController.addPickEventListener(mTouchEventsHandler);
+            }
+
             mPetContext.registerPlaneListener(mPlaneHandler);
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
@@ -225,5 +242,37 @@ public class PetMain extends DisableNativeSplashScreen {
             mPet.setCurrentAction(PetActions.IDLE.ID);
         }
     }
+
+    ITouchEvents mTouchEventsHandler = new ITouchEvents() {
+        @Override
+        public void onEnter(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
+        }
+
+        @Override
+        public void onExit(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
+        }
+
+        @Override
+        public void onTouchStart(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
+        }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+            Log.d(TAG, "onTouchEnd " + gvrSceneObject.getName());
+        }
+
+        @Override
+        public void onInside(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
+
+        }
+
+        @Override
+        public void onMotionOutside(GVRPicker gvrPicker, MotionEvent motionEvent) {
+
+        }
+    };
 }
 
