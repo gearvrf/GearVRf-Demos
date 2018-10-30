@@ -115,9 +115,7 @@ public class CharacterController extends BasePetMode {
         addAction(new PetActions.IDLE(pet, mPetContext.getPlayer()));
 
         addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall(), action -> {
-            setCurrentAction(PetActions.TO_PLAYER.ID);
-            mBallThrowHandler.disable();
-            grabBall(mBallThrowHandler.getBall());
+            setCurrentAction(PetActions.GRAB.ID);
         }));
 
         addAction(new PetActions.TO_PLAYER(pet, mPetContext.getPlayer(), action -> {
@@ -125,6 +123,15 @@ public class CharacterController extends BasePetMode {
             // TODO: Improve this Ball handler api
             mBallThrowHandler.enable();
             mBallThrowHandler.reset();
+        }));
+
+        addAction( new PetActions.GRAB(pet, mBallThrowHandler.getBall(), new OnPetActionListener() {
+            @Override
+            public void onActionEnd(IPetAction action) {
+                setCurrentAction(PetActions.TO_PLAYER.ID);
+                mBallThrowHandler.disable();
+                grabBall(mBallThrowHandler.getBall());
+            }
         }));
 
         mTapObject = new GVRSceneObject(mPetContext.getGVRContext());

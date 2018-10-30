@@ -41,7 +41,7 @@ import java.util.Iterator;
 public class PetActions {
     private static final String TAG = "CharacterStates";
 
-    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, TO_TAP.ID, AT_EDIT.ID, AT_SHARE.ID})
+    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, TO_TAP.ID, GRAB.ID, AT_EDIT.ID, AT_SHARE.ID})
     public @interface Action{
     }
 
@@ -99,6 +99,7 @@ public class PetActions {
 
         @Override
         public void entry() {
+            mElapsedTime = 0;
             onEntry();
             if (mAnimation != null) {
                 mAnimation.animate(0);
@@ -338,6 +339,46 @@ public class PetActions {
                     pose[14] = pose[14] + mMoveTo.z;
 
                     mCharacter.updatePose(pose);
+                }
+            } else {
+                mListener.onActionEnd(this);
+            }
+        }
+    }
+
+    public static class GRAB extends PetAction {
+        public static final int ID = 4;
+
+        public GRAB(CharacterView character, GVRSceneObject target,
+                       OnPetActionListener listener) {
+            super(character, target, listener);
+        }
+
+        @Override
+        public int id() {
+            return ID;
+        }
+
+        @Override
+        public void onEntry() {
+            Log.w(TAG, "entry => GRAB");
+            setAnimation(mCharacter.getAnimation(4));
+        }
+
+        @Override
+        public void onExit() {
+            Log.w(TAG, "exit => GRAB");
+        }
+
+        @Override
+        public void onRun(float frameTime) {
+            if (mAnimation != null) {
+                float time = mElapsedTime;
+
+                animate(frameTime);
+
+                if (mElapsedTime < time) {
+                    mListener.onActionEnd(this);
                 }
             } else {
                 mListener.onActionEnd(this);
