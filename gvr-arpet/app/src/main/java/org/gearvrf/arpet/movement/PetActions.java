@@ -33,6 +33,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -240,6 +241,19 @@ public class PetActions {
     public static class TO_BALL extends PetAction {
         public static final int ID = 2;
 
+        private float mRunningSpeed2;
+
+        // Used to calculate in frame ball speed
+        private Vector3f mOldBallPos = new Vector3f();
+
+        // Used to calculate the moving average of ball speed
+        private float[] mSpeedSamp = { 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f };
+        private int mSampIdx = 0;
+        private float mSpeedSum;
+
+        private boolean mSpeedingUp;
+        private boolean mApproaching;
+
         public TO_BALL(CharacterView character, GVRSceneObject target,
                        OnPetActionListener listener) {
             super(character, target, listener);
@@ -254,6 +268,14 @@ public class PetActions {
         public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_BALL");
             setAnimation(mCharacter.getAnimation(2));
+
+            Matrix4f m = mTarget.getTransform().getModelMatrix4f();
+            m.getTranslation(mOldBallPos);
+            mSpeedingUp = true;
+            mApproaching = false;
+            mRunningSpeed2 = 0.95f;
+            Arrays.fill(mSpeedSamp, 0f);
+            mSpeedSum = 0f;
         }
 
         @Override
@@ -265,7 +287,7 @@ public class PetActions {
         public void onRun(float frameTime) {
 
             // Min distance to ball
-            boolean moveTowardToBall = mTargetDirection.length() > mCharacterHalfSize * 1.1f;
+            boolean moveTowardToBall = mTargetDirection.length() > mCharacterHalfSize * 0.5f;
 
             if (moveTowardToBall) {
                 if (mAnimation != null) {
@@ -276,9 +298,51 @@ public class PetActions {
                         mTargetDirection.x, 0, mTargetDirection.z);
 
                 if (mRotation.angle() < Math.PI * 0.25f) {
+                    float a = mPetMtx.m30() - mTargetMtx.m30();
+                    float b = mPetMtx.m32() - mTargetMtx.m32();
+                    float toPet = (float)Math.sqrt(a * a + b * b);
+
+                    a = mOldBallPos.x - mTargetMtx.m30();
+                    b = mOldBallPos.z - mTargetMtx.m32();
+                    float d = (float)Math.sqrt(a * a + b * b);
+                    mSpeedSum -= mSpeedSamp[mSampIdx];
+                    mSpeedSamp[mSampIdx] = d / frameTime;
+                    mSpeedSum += mSpeedSamp[mSampIdx];
+                    mSampIdx = (mSampIdx + 1) & 0x7;
+
+                    float speed = mSpeedSum * 0.125f * 0.016f;
+
+                    if (mApproaching) {
+                        speed += 0.5f;
+                        if (speed > 5f) {
+                            speed = 5f;
+                        }
+
+                        if (speed < mRunningSpeed2) {
+                            // Can reduce the speed
+                            float delta = (mRunningSpeed2 - speed) * 0.5f;
+                            mRunningSpeed2 = mRunningSpeed2 - delta;
+                        } else {
+                            mRunningSpeed2 = speed;
+                        }
+                    } else  if (toPet < (mCharacterHalfSize * 0.75f) && speed < mRunningSpeed2) {
+                        mApproaching = true;
+                    } else if (mSpeedingUp) {
+                        // Will increase speed
+                        mRunningSpeed2 = mRunningSpeed2 * 1.06f;
+
+                        if (mRunningSpeed2 > 5f) {
+                            // Maximum speed reached
+                            mRunningSpeed2 = 5f;
+                            mSpeedingUp = false;
+                        }
+                    }
+
+                    mTargetMtx.getTranslation(mOldBallPos);
+
                     float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     // TODO: Create pose
-                    mMoveTo.mul(mRunningSpeed);
+                    mMoveTo.mul(mRunningSpeed2);
 
                     pose[12] = pose[12] + mMoveTo.x;
                     pose[14] = pose[14] + mMoveTo.z;
