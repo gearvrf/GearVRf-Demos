@@ -25,6 +25,7 @@ import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.movement.IPetAction;
