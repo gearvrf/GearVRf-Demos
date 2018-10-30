@@ -129,6 +129,20 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     @Override
+    public boolean onBackPress() {
+        if (mCurrentMode instanceof ShareAnchorMode) {
+            getGVRContext().runOnGlThread(() -> mHandlerBackToHud.OnBackToHud());
+        }
+
+        if (mCurrentMode instanceof HudMode) {
+            getGVRContext().getActivity().finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(1);
+        }
+        return true;
+    }
+
+    @Override
     public void onStep() {
         super.onStep();
         if (mCurrentMode != null) {
