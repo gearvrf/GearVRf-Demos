@@ -86,8 +86,6 @@ public class SharedMixedReality implements IMRCommon {
             return;
         }
 
-        Log.d(TAG, "startSharing => " + mode);
-
         mSharedAnchor = sharedAnchor;
 
         mMode = mode;
@@ -134,17 +132,11 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public synchronized void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
-        for (SharedSceneObject shared : mSharedSceneObjects) {
-            if (shared.object == object) {
-                return;
-            }
-        }
-
-        SharedSceneObject newShared = new SharedSceneObject(type, object);
+        SharedSceneObject shared = new SharedSceneObject(type, object);
         if (mMode == GUEST) {
-            initAsGuest(newShared);
+            initAsGuest(shared);
         }
-        mSharedSceneObjects.add(newShared);
+        mSharedSceneObjects.add(shared);
     }
 
     public synchronized void unregisterSharedObject(GVRSceneObject object) {

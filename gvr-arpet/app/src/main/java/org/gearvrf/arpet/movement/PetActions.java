@@ -41,7 +41,7 @@ import java.util.Iterator;
 public class PetActions {
     private static final String TAG = "CharacterStates";
 
-    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, TO_TAP.ID, GRAB.ID, AT_EDIT.ID})
+    @IntDef({IDLE.ID, TO_BALL.ID, TO_PLAYER.ID, TO_TAP.ID, GRAB.ID, AT_EDIT.ID, AT_SHARE.ID})
     public @interface Action{
     }
 
@@ -152,11 +152,9 @@ public class PetActions {
 
     public static class IDLE extends PetAction {
         public static final int ID = 0;
-        private final PetContext mPetContext;
 
-        public IDLE(PetContext petContext, CharacterView character) {
-            super(character, petContext.getPlayer(), null);
-            mPetContext = petContext;
+        public IDLE(CharacterView character, GVRSceneObject player) {
+            super(character, player, null);
         }
 
         @Override
@@ -168,13 +166,11 @@ public class PetActions {
         public void onEntry() {
             Log.w(TAG, "entry => IDLE");
             setAnimation(mCharacter.getAnimation(0));
-            mPetContext.registerSharedObject(mCharacter, ArPetObjectType.PET);
         }
 
         @Override
         public void onExit() {
             Log.w(TAG, "exit => IDLE");
-            mPetContext.unregisterSharedObject(mCharacter);
         }
 
         @Override
@@ -227,7 +223,7 @@ public class PetActions {
                 // Looks better without this if for walking movement
                 //if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
-                    float[] pose = mCharacter.getTransform().getModelMatrix();
+                    float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     mMoveTo.mul(mWalkingSpeed);
 
                     pose[12] = pose[12] + mMoveTo.x;
@@ -280,7 +276,7 @@ public class PetActions {
                         mTargetDirection.x, 0, mTargetDirection.z);
 
                 if (mRotation.angle() < Math.PI * 0.25f) {
-                    float[] pose = mCharacter.getTransform().getModelMatrix();
+                    float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     // TODO: Create pose
                     mMoveTo.mul(mRunningSpeed);
 
@@ -336,7 +332,7 @@ public class PetActions {
 
                 if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
-                    float[] pose = mCharacter.getTransform().getModelMatrix();
+                    float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
                     mMoveTo.mul(mWalkingSpeed);
 
                     pose[12] = pose[12] + mMoveTo.x;
@@ -416,6 +412,41 @@ public class PetActions {
         public void exit() {
             Log.w(TAG, "exit => AT_EDIT");
             mPetContext.unregisterSharedObject(mCharacter);
+        }
+
+        @Override
+        public void run(float frameTime) {
+
+        }
+    }
+
+    public static class AT_SHARE implements IPetAction {
+        public static final int ID = 21;
+
+        private final PetContext mPetContext;
+        private final CharacterView mCharacter;
+
+        public AT_SHARE(PetContext petContext, CharacterView character) {
+            mPetContext = petContext;
+            mCharacter = character;
+        }
+
+        @Override
+        public int id() {
+            return ID;
+        }
+
+        @Override
+        public void entry() {
+            Log.w(TAG, "entry => AT_SHARE");
+        }
+
+        @Override
+        public void exit() {
+            Log.w(TAG, "exit => AT_SHARE");
+            if (mPetContext.getMode() != SharedMixedReality.OFF) {
+                mCharacter.updatePose(mPetContext.getSharedAnchor().getTransform().getModelMatrix());
+            }
         }
 
         @Override

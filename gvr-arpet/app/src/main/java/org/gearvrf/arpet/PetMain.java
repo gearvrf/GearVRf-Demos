@@ -164,7 +164,7 @@ public class PetMain extends DisableNativeSplashScreen {
 
             // Get the model matrix from the actual Pet's position and create an anchor to be
             // hosted by Cloud Anchor service
-            float[] anchorMatrix = mPet.getView().getTransform().getModelMatrix();
+            float[] anchorMatrix = mPet.getView().getAnchor().getTransform().getModelMatrix();
             if (mWorldCenterAnchor != null) {
                 mSharedMixedReality.removeAnchor(mWorldCenterAnchor);
             }
@@ -172,7 +172,7 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode = new ShareAnchorMode(mPetContext, mWorldCenterAnchor, mHandlerBackToHud);
             mCurrentMode.enter();
             mPet.stopBall();
-            mPet.setCurrentAction(PetActions.IDLE.ID);
+            mPet.setCurrentAction(PetActions.AT_SHARE.ID);
         }
 
         @Override
@@ -248,8 +248,7 @@ public class PetMain extends DisableNativeSplashScreen {
 
                 if (!mPet.isRunning()) {
                     mPet.setPlane((GVRPlane)gvrSceneObject.getParent());
-                    mPet.getView().updatePose(modelMtx);
-                    //mPet.setAnchor(mPetContext.getMixedReality().createAnchor(modelMtx));
+                    mPet.setAnchor(mPetContext.getMixedReality().createAnchor(modelMtx));
                     mPet.enter();
                     mPet.setInitialScale();
                     mPet.enableActions();

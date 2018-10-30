@@ -25,7 +25,8 @@ import android.support.annotation.IntDef;
         PetActions.TO_PLAYER.ID,
         PetActions.TO_TAP.ID,
         PetActions.GRAB.ID,
-        PetActions.AT_EDIT.ID
+        PetActions.AT_EDIT.ID,
+        PetActions.AT_SHARE.ID
 })
 public @interface PetActionType {
 }
