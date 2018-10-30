@@ -23,7 +23,6 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.character.CharacterController;
-import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.ILoadEvents;
@@ -40,7 +39,6 @@ import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.joml.Matrix4f;
 
 
 public class PetMain extends DisableNativeSplashScreen {
@@ -134,7 +132,7 @@ public class PetMain extends DisableNativeSplashScreen {
             getGVRContext().runOnGlThread(() -> mHandlerBackToHud.OnBackToHud());
         }
 
-        if (mCurrentMode instanceof HudMode) {
+        if (mCurrentMode instanceof HudMode || mCurrentMode == null) {
             getGVRContext().getActivity().finish();
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
