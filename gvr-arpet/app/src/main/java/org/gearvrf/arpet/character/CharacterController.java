@@ -23,6 +23,7 @@ import android.util.SparseArray;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
@@ -116,7 +117,7 @@ public class CharacterController extends BasePetMode {
         addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall(), action -> {
             setCurrentAction(PetActions.TO_PLAYER.ID);
             mBallThrowHandler.disable();
-            // TODO: Pet take the ball
+            grabBall(mBallThrowHandler.getBall());
         }));
 
         addAction(new PetActions.TO_PLAYER(pet, mPetContext.getPlayer(), action -> {
@@ -142,6 +143,25 @@ public class CharacterController extends BasePetMode {
                 || mCurrentAction.id() == PetActions.TO_TAP.ID) {
             mTapObject.getTransform().setPosition(x, y, z);
             setCurrentAction(PetActions.TO_TAP.ID);
+        }
+    }
+
+    public void grabBall(GVRSceneObject ball) {
+        GVRSceneObject pivot = ((CharacterView)mModeScene).getGrabPivot();
+
+        if (pivot != null) {
+            if (ball.getParent() != null) {
+                ball.getParent().removeChildObject(ball);
+            }
+            // FIXME: The ball should be attached to pet's bone(pivot) to
+            // have walking animation.
+
+            ball.getTransform().setRotation(1, 0, 0, 0);
+            ball.getTransform().setPosition(0, 0.48f, 0.42f);
+            ball.getTransform().setScale(0.36f, 0.36f, 0.36f);
+
+            ((CharacterView) mModeScene).addChildObject(ball);
+
         }
     }
 
@@ -248,7 +268,7 @@ public class CharacterController extends BasePetMode {
 
             // FIXME: Move this to a proper place
             if (mBallThrowHandler.canBeReseted() && activeAction != null) {
-                setCurrentAction(PetActions.TO_PLAYER.ID);
+                setCurrentAction(PetActions.IDLE.ID);
                 mBallThrowHandler.reset();
             }
         }

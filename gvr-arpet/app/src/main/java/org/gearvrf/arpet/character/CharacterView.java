@@ -291,6 +291,15 @@ public class CharacterView extends AnchoredObject implements
         }
     }
 
+    public GVRSceneObject getGrabPivot() {
+         int i = mPetAvatar.getSkeleton().getBoneIndex(LoadModelHelper.PET_GRAB_PIVOT);
+         if (!(i < 0) && i < mPetAvatar.getSkeleton().getNumBones()) {
+             return mPetAvatar.getSkeleton().getBone(i);
+         }
+
+         return null;
+    }
+
     private void loadAnimations() {
         final GVRContext gvrContext = mPetContext.getGVRContext();
         int i = 0;
@@ -335,6 +344,7 @@ public class CharacterView extends AnchoredObject implements
                     }
                 });
             }
+
             loadAnimations();
         }
 

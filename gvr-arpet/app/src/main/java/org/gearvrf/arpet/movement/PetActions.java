@@ -197,7 +197,7 @@ public class PetActions {
         public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_PLAYER");
             mTurnSpeed = 0.05f;
-            setAnimation(mCharacter.getAnimation(1));
+            setAnimation(mCharacter.getAnimation(3));
         }
 
         @Override
@@ -346,7 +346,7 @@ public class PetActions {
     }
 
     public static class AT_EDIT implements IPetAction {
-        public static final int ID = 4;
+        public static final int ID = 20;
 
         private final PetContext mPetContext;
         private final CharacterView mCharacter;
@@ -380,7 +380,7 @@ public class PetActions {
     }
 
     public static class AT_SHARE implements IPetAction {
-        public static final int ID = 5;
+        public static final int ID = 21;
 
         private final PetContext mPetContext;
         private final CharacterView mCharacter;

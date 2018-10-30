@@ -179,6 +179,10 @@ public class BallThrowHandler {
 
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float vx, float vy) {
+                if (e1 == null || e2 == null) {
+                    return false;
+                }
+
                 if (mPetContext.getMode() != SharedMixedReality.GUEST
                         && firstPlane != null) {
                     final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
@@ -280,7 +284,7 @@ public class BallThrowHandler {
     }
 
     public boolean canBeReseted() {
-        return mPlayer.getTransform().getPositionY() - mBall.getTransform().getPositionY() > MIN_Y_OFFSET;
+        return thrown && mPlayer.getTransform().getPositionY() - mBall.getTransform().getPositionY() > MIN_Y_OFFSET;
     }
 
     private void load3DModel() {
