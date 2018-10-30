@@ -8,6 +8,7 @@ import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTransform;
@@ -29,8 +30,8 @@ public class AvatarMain extends GVRMain
     private final String mBoneMapPath = "animation/mixamo/pet_map.txt";
     private final String[] mAnimationPaths =  {
             "Eva/bvhExport_GRAB_BONE.bvh",
-             "Eva/bvhExport_RUN.bvh",
-             "Eva/bvhExport_WALK"
+            "Eva/bvhExport_RUN.bvh",
+            "Eva/bvhExport_WALK"
 
     };
     private static final String TAG = "AVATAR";
@@ -60,9 +61,10 @@ public class AvatarMain extends GVRMain
                     public void run()
                     {
                         centerModel(avatarRoot, t);
-                        avatarRoot.getTransform().setPosition(0,-0.01f,-0.15f);
-                       // avatarRoot.getTransform().setRotationByAxis(-180,0,1,0);
-                        avatarRoot.getTransform().setScale(0.0004f,0.0004f,0.0004f);
+                        avatarRoot.getTransform().setPosition(0,0.5f,-1.15f);
+                        // avatarRoot.getTransform().setRotationByAxis(-180,0,1,0);
+                        avatarRoot.getTransform().setScale(0.004f,0.004f,0.004f);
+//                        avatarRoot.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
                         mScene.addSceneObject(avatarRoot);
                     }
                 });
@@ -113,7 +115,7 @@ public class AvatarMain extends GVRMain
         t = mScene.getMainCameraRig().getTransform();
         topLightObj.attachComponent(topLight);
         topLightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
-       // mScene.addSceneObject(topLightObj);
+        // mScene.addSceneObject(topLightObj);
         rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
         rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
         mAvatarOne = new GVRAvatar(gvrContext, "pet");
@@ -141,6 +143,7 @@ public class AvatarMain extends GVRMain
         }
         centerModel(model, t);
         model.getTransform().setPositionZ(-1.25f);
+        model.getTransform().setScale(5,5,5);
         mScene.addSceneObject(model);
 
 
@@ -184,7 +187,7 @@ public class AvatarMain extends GVRMain
     }
 
     public void onSingleTapUp(MotionEvent event) {
-   // mScene.removeSceneObject(model);
+         mScene.removeSceneObject(model);
 
     }
 
