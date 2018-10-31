@@ -26,7 +26,6 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.movement.IPetAction;
@@ -40,7 +39,6 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
-import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.utility.Log;
 
 public class CharacterController extends BasePetMode {
@@ -52,7 +50,6 @@ public class CharacterController extends BasePetMode {
 
     private SharedMixedReality mMixedReality;
     private IMessageService mMessageService;
-    private GVRSceneObject mTapObject;
 
     private class LocalMessageReceiver extends SimpleMessageReceiver {
 
@@ -133,8 +130,7 @@ public class CharacterController extends BasePetMode {
             }
         }));
 
-        mTapObject = new GVRSceneObject(mPetContext.getGVRContext());
-        addAction(new PetActions.TO_TAP(pet, mTapObject, action -> setCurrentAction(PetActions.IDLE.ID)));
+        addAction(new PetActions.TO_TAP(pet, pet.getTapObject(), action -> setCurrentAction(PetActions.IDLE.ID)));
 
         addAction(new PetActions.AT_EDIT(mPetContext, pet));
 
@@ -145,7 +141,7 @@ public class CharacterController extends BasePetMode {
         if (mCurrentAction == null
                 || mCurrentAction.id() == PetActions.IDLE.ID
                 || mCurrentAction.id() == PetActions.TO_TAP.ID) {
-            mTapObject.getTransform().setPosition(x, y, z);
+            ((CharacterView)mModeScene).setTapPosition(x, y, z);
             setCurrentAction(PetActions.TO_TAP.ID);
         }
     }
@@ -179,22 +175,16 @@ public class CharacterController extends BasePetMode {
         mBallThrowHandler.disable();
     }
 
-    public void setPlane(GVRPlane plane) {
+    public void setPlane(GVRSceneObject plane) {
         CharacterView petView = (CharacterView) view();
-
-        if (petView.getBoundaryPlane() != null) {
-            petView.getBoundaryPlane().removeChildObject(mTapObject);
-            mPetContext.unregisterSharedObject(petView.getBoundaryPlane().getSceneObject());
-        }
-
-        plane.getSceneObject().addChildObject(mTapObject);
-        mPetContext.registerSharedObject(plane.getSceneObject(), ArPetObjectType.PLANE);
 
         petView.setBoundaryPlane(plane);
     }
 
-    public GVRPlane getPlane() {
-        return ((CharacterView) view()).getBoundaryPlane();
+    public GVRSceneObject getPlane() {
+        CharacterView petView = (CharacterView) view();
+
+        return petView.getBoundaryPlane();
     }
 
     public CharacterView getView() {

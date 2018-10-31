@@ -32,9 +32,9 @@ import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.IMRCommon;
-import org.joml.Vector3f;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 public class EditMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
@@ -168,7 +168,7 @@ public class EditMode extends BasePetMode {
         @Override
         public void onTouchEnd(GVRSceneObject sceneObject, GVRPicker.GVRPickedObject pickedObject) {
             Log.d(TAG, "onTouchEnd");
-            if (mCharacterView.isDragging()) {
+            if (mCharacterView.isDragging() && sceneObject == mCharacterView.getBoundaryPlane()) {
                 Log.d(TAG, "onDrag stop");
                 mCharacterView.stopDragging();
                 mDraggingOffset = null;
@@ -178,13 +178,18 @@ public class EditMode extends BasePetMode {
         @Override
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
             if (mCharacterView.isDragging()) {
-                collision = testDraggingOnPlane(mMixedReality.getPassThroughObject());
-                if (collision != null) {
-                    GVRHitResult gvrHitResult = mMixedReality.hitTest(mMixedReality.getPassThroughObject(),
-                            collision);
-                    if (gvrHitResult != null) {
-                        mCharacterView.updatePose(gvrHitResult.getPose());
-                    }
+                // Use hitlocation from plane only
+                if (sceneObj == mCharacterView.getBoundaryPlane()) {
+                    float[] hit = collision.getHitLocation();
+
+                    Matrix4f mat = sceneObj.getTransform().getModelMatrix4f();
+                    Vector4f hitVector = new Vector4f(hit[0], hit[1], hit[2], 0);
+                    hitVector.mul(mat);
+
+                    // FIXME: make the pet be put inside the plane only
+                    // Set the pet's position according to plane and hit location
+                    mCharacterView.getTransform().setPosition(mat.m30() + hitVector.x,
+                            mat.m31(), mat.m32() + hitVector.z);
                 }
             }
         }
@@ -194,23 +199,10 @@ public class EditMode extends BasePetMode {
 
         }
 
-        private GVRPicker.GVRPickedObject testDraggingOnPlane(GVRSceneObject sceneObject) {
-            Vector3f origin = new Vector3f();
-            Vector3f direction = new Vector3f();
-
-            mCursorController.getPicker().getWorldPickRay(origin, direction);
-            //direction.sub(mDraggingOffset[0], mDraggingOffset[1], mDraggingOffset[2]);
-            direction.normalize();
-
-            return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
-                    direction.x, direction.y, direction.z);
-        }
-
         @Override
         public void run() {
             if (mDraggingOffset != null) {
                 Log.d(TAG, "onDrag start");
-
                 mCharacterView.startDragging();
                 mDraggingOffset = null;
             }

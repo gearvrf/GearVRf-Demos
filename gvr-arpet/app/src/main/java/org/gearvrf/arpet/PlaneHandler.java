@@ -48,6 +48,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     private boolean planeDetected = false;
     private GVRPlane petPlane = null;
     public final static String PLANE_NAME = "Plane";
+    public final static String PLANE_PHYSICS = "Plane Physics";
+    public final static String PLANE_COLLIDER = "Plane Collider";
 
     // FIXME: move this to a utils or helper class
     private static long newComponentType(Class<? extends GVRComponent> clazz) {
@@ -76,7 +78,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             collider.setHalfExtents(0.5f, 0.5f, 0.5f);
             box.attachComponent(collider);
             // To touch debug
-            box.setName("Plane collider");
+            box.setName(PLANE_PHYSICS);
 
             // Uncomment if you want a green box to appear at the center of the invisible board.
             // Notice this green box is smaller than the board
@@ -156,8 +158,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         GVRSceneObject polygonObject = new GVRSceneObject(mContext, mesh, mat);
 
-        polygonObject.setName("Plane");
-
+        polygonObject.setName(PLANE_COLLIDER);
         polygonObject.attachCollider(new GVRMeshCollider(mContext, true));
 
         hsvHUE += 35;

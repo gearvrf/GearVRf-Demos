@@ -40,6 +40,8 @@ import org.gearvrf.mixedreality.GVRPlane;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.EnumSet;
+
 
 public class PetMain extends DisableNativeSplashScreen {
     private static final String TAG = "GVR_ARPET";
@@ -99,7 +101,13 @@ public class PetMain extends DisableNativeSplashScreen {
 
     private void configTouchScreen() {
         mCursorController = null;
+        final int cursorDepth = 5;
         GVRInputManager inputManager = mPetContext.getGVRContext().getInputManager();
+        final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
+                GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
+                GVRPicker.EventOptions.SEND_TO_LISTENERS,
+                GVRPicker.EventOptions.SEND_TO_HIT_OBJECT);
+
         inputManager.selectController((newController, oldController) -> {
             if (newController instanceof GVRGazeCursorController) {
                 ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
@@ -110,6 +118,9 @@ public class PetMain extends DisableNativeSplashScreen {
                 mCursorController.removePickEventListener(mTouchEventsHandler);
             }
             newController.addPickEventListener(mTouchEventsHandler);
+            newController.setCursorDepth(cursorDepth);
+            newController.getPicker().setPickClosest(false);
+            newController.getPicker().setEventOptions(eventOptions);
             mCursorController = newController;
         });
     }
@@ -259,10 +270,8 @@ public class PetMain extends DisableNativeSplashScreen {
 
 
                 if (!mPet.isRunning()) {
-                    mPet.setPlane((GVRPlane)gvrSceneObject.getParent());
                     mPet.getView().updatePose(modelMtx);
-                    //mPet.setAnchor(mPetContext.getMixedReality().createAnchor(modelMtx));
-
+                    mPet.setPlane(gvrSceneObject);
                     mPet.enter();
                     mPet.setInitialScale();
                     mPet.enableActions();
