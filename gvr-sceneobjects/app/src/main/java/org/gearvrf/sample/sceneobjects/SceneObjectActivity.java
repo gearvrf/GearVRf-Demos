@@ -17,18 +17,18 @@ package org.gearvrf.sample.sceneobjects;
 
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.scene_objects.view.GVRWebView;
 
 public class SceneObjectActivity extends GVRActivity {
     private static final String TAG = "SceneObjectActivity";
     private SampleMain mMain;
     private long lastDownTime = 0;
-    private GVRWebView webView;
+    private WebView webView;
 
     /** Called when the activity is first created. */
     @Override
@@ -41,10 +41,9 @@ public class SceneObjectActivity extends GVRActivity {
     }
 
     private void createWebView() {
-        webView = new GVRWebView(getGVRApplication());
+        webView = new WebView(this);
         webView.setInitialScale(100);
-        webView.measure(2000, 1000);
-        webView.layout(0, 0, 2000, 1000);
+        webView.setLayoutParams(new ViewGroup.LayoutParams(2000, 1000));
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webView.loadUrl("http://gearvrf.org");
@@ -57,7 +56,7 @@ public class SceneObjectActivity extends GVRActivity {
         });
     }
 
-    GVRWebView getWebView() {
+    WebView getWebView() {
         return webView;
     }
 

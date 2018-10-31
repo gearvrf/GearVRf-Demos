@@ -18,12 +18,12 @@ package org.gearvrf.immersivepedia.shader;
 import android.content.Context;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRShader;
 import org.gearvrf.GVRShaderData;
+import org.gearvrf.GVRShaderTemplate;
 import org.gearvrf.immersivepedia.R;
 import org.gearvrf.utility.TextFile;
 
-public class MenuImageShader extends GVRShader {
+public class MenuImageShader extends GVRShaderTemplate {
 
     public static final String STATE1_TEXTURE = "state1";
     public static final String STATE2_TEXTURE = "state2";

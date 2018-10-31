@@ -35,7 +35,6 @@ public class OverlayTitle extends FadeableObject implements Focusable, IViewEven
     public OverlayTitle(GVRContext gvrContext) {
         super(gvrContext);
         mTitleObject = new GVRViewSceneObject(gvrContext, R.layout.layout_title_image, this);
-        mTitleObject.waitFor();
     }
 
     @NonNull
@@ -50,7 +49,7 @@ public class OverlayTitle extends FadeableObject implements Focusable, IViewEven
 
     @Override
     public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
-        addChildObject(mTitleObject);
+        addChildObject(gvrViewSceneObject);
     }
 
     @Override

@@ -225,7 +225,7 @@ public class ControlWidget extends FadeableObject implements Focusable, View.OnC
 
     @Override
     public void onStartRendering(GVRViewSceneObject sceneObject, View view) {
-        addChildObject(mMainSceneObject);
+        addChildObject(sceneObject);
     }
 
     private void holdView(View view) {

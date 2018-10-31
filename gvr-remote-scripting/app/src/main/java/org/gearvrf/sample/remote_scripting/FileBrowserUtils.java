@@ -18,8 +18,8 @@ package org.gearvrf.sample.remote_scripting;
 import org.gearvrf.GVRContext;
 
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.IViewEvents;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
-import org.gearvrf.scene_objects.view.GVRFrameLayout;
 import org.gearvrf.GVRSensor;
 import org.gearvrf.SensorEvent;
 import org.gearvrf.ISensorEvents;
@@ -50,99 +50,31 @@ import java.util.List;
 
 public class FileBrowserUtils {
     private GVRContext gvrContext;
-    private boolean inflated = false;
-    private GVRViewSceneObject layoutSceneObject;
+    private final GVRViewSceneObject layoutSceneObject;
     private GearVRScripting activity;
-    private GVRFrameLayout frameLayout;
-    private int frameWidth;
-    private int frameHeight;
-    private Handler mainThreadHandler;
-    private final static PointerProperties[] pointerProperties;
-    private final static PointerCoords[] pointerCoordsArray;
-    private final static PointerCoords pointerCoords;
 
     private static final float QUAD_X = 2.0f;
     private static final float QUAD_Y = 1.0f;
-    private static final float HALF_QUAD_X = QUAD_X / 2.0f;
-    private static final float HALF_QUAD_Y = QUAD_Y / 2.0f;
-    private static final float DEPTH = -1.5f;
 
     private String path;
     private ListView listView;
     private TextView dirView;
     private ProgressBar spinner;
 
-    static {
-        PointerProperties properties = new PointerProperties();
-        properties.id = 0;
-        properties.toolType = MotionEvent.TOOL_TYPE_MOUSE;
-        pointerProperties = new PointerProperties[] { properties };
-        pointerCoords = new PointerCoords();
-        pointerCoordsArray = new PointerCoords[] { pointerCoords };
-    }
+
 
     public FileBrowserUtils(GVRContext context) {
         gvrContext = context;
         activity = (GearVRScripting) context.getActivity();
-    }
 
-    public void inflate() {
-        frameLayout = new GVRFrameLayout(activity.getGVRApplication());
-        frameLayout.setDrawingCacheEnabled(false);
-        View.inflate(activity, R.layout.filebrowser, frameLayout);
-
-        listView = (ListView) frameLayout.findViewById(R.id.list);
-        dirView = (TextView) frameLayout.findViewById(R.id.dirname);
-        spinner = (ProgressBar) frameLayout.findViewById(R.id.progressBar);
-        spinner.setVisibility(View.GONE);
-        init();
-
-        mainThreadHandler = new Handler(activity.getMainLooper()) {
-            @Override
-            public void handleMessage(Message msg) {
-                MotionEvent motionEvent = (MotionEvent) msg.obj;
-                frameLayout.dispatchTouchEvent(motionEvent);
-                frameLayout.invalidate();
-                frameLayout.requestLayout();
-                motionEvent.recycle();
-            }
-        };
-
-        inflated = true;
-    }
-
-    public void show() {
-        if(!inflated) {
-            activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        inflate();
-                    }
-                });
-        }
-
-        while(!inflated) {
-            SystemClock.sleep(500);
-        }
-
-        if(layoutSceneObject != null) {
-            gvrContext.getMainScene().addSceneObject(layoutSceneObject);
-            return;
-        }
-
-        layoutSceneObject = new GVRViewSceneObject(gvrContext, frameLayout, gvrContext.createQuad(QUAD_X, QUAD_Y));
+        layoutSceneObject = new GVRViewSceneObject(gvrContext, R.layout.filebrowser,
+                viewEventsHandler, gvrContext.createQuad(QUAD_X, QUAD_Y));
 
         layoutSceneObject.getTransform().setPosition(0.0f, 0.0f, -1.0f);
         layoutSceneObject.setName("editor");
+    }
 
-        frameWidth = frameLayout.getWidth();
-        frameHeight = frameLayout.getHeight();
-
-        GVRSensor sensor = new GVRSensor(gvrContext);
-        layoutSceneObject.getEventReceiver().addListener(sensorEvents);
-        //@todo broken functionality
-        //layoutSceneObject.setSensor(sensor);
-
+    public void show() {
         gvrContext.getMainScene().addSceneObject(layoutSceneObject);
     }
 
@@ -267,46 +199,20 @@ public class FileBrowserUtils {
             });
     }
 
-    private ISensorEvents sensorEvents = new ISensorEvents() {
-        private static final float SCALE = 1.0f;
-        private float savedMotionEventX, savedMotionEventY, savedHitPointX, savedHitPointY;
+    private IViewEvents viewEventsHandler = new IViewEvents() {
         @Override
-        public void onSensorEvent(final SensorEvent event) {
-            List<MotionEvent> motionEvents = event.getCursorController().getMotionEvents();
-            for (MotionEvent motionEvent : motionEvents) {
-                if (motionEvent.getAction() == MotionEvent.ACTION_MOVE) {
-                    pointerCoords.x = savedHitPointX
-                            + ((motionEvent.getX() - savedMotionEventX) * SCALE);
-                    pointerCoords.y = savedHitPointY
-                            + ((motionEvent.getY() - savedMotionEventY) * SCALE);
-                } else {
-                    float[] hitPoint = event.getPickedObject().getHitLocation();
-                    pointerCoords.x = ((hitPoint[0] + HALF_QUAD_X) / QUAD_X) * frameWidth;
-                    pointerCoords.y = (-(hitPoint[1] - HALF_QUAD_Y) / QUAD_Y) * frameHeight;
+        public void onInitView(GVRViewSceneObject gvrViewSceneObject, View view) {
+            listView = (ListView) view.findViewById(R.id.list);
+            dirView = (TextView) view.findViewById(R.id.dirname);
+            spinner = (ProgressBar) view.findViewById(R.id.progressBar);
+            spinner.setVisibility(View.GONE);
+            init();
+        }
 
-                    if (motionEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                        // save the co ordinates on down
-                        savedMotionEventX = motionEvent.getX();
-                        savedMotionEventY = motionEvent.getY();
+        @Override
+        public void onStartRendering(GVRViewSceneObject gvrViewSceneObject, View view) {
 
-                        savedHitPointX = pointerCoords.x;
-                        savedHitPointY = pointerCoords.y;
-                    }
-                }
-
-                MotionEvent clone = MotionEvent.obtain(
-                        motionEvent.getDownTime(), motionEvent.getEventTime(),
-                        motionEvent.getAction(), 1, pointerProperties,
-                        pointerCoordsArray, 0, 0, 1f, 1f, 0, 0,
-                        InputDevice.SOURCE_TOUCHSCREEN, 0);
-
-                Message message = Message.obtain(mainThreadHandler, 0, 0, 0,
-                        clone);
-                mainThreadHandler.sendMessage(message);
-            }
         }
     };
-
-
 }
 
