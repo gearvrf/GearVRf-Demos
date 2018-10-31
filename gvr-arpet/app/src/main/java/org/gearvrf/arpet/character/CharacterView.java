@@ -53,7 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CharacterView extends AnchoredObject implements
+public class CharacterView extends GVRSceneObject implements
         IPetView,
         ScalableObject {
 
@@ -74,7 +74,7 @@ public class CharacterView extends AnchoredObject implements
     protected ILoadEvents mLoadListener = null;
 
     CharacterView(@NonNull PetContext petContext) {
-        super(petContext.getGVRContext(), petContext.getMixedReality());
+        super(petContext.getGVRContext());
 
         mPetContext = petContext;
     }
@@ -174,13 +174,10 @@ public class CharacterView extends AnchoredObject implements
         mInfinityPlan.setName("infinityPlan");
     }
 
-    @Override
     public boolean updatePose(float[] poseMatrix) {
-        // Update y position to plane's y pos
-        mPlaneCenterPose = mBoundaryPlane.getTransform().getModelMatrix();
-        poseMatrix[13] = mPlaneCenterPose[13];
+        getTransform().setModelMatrix(poseMatrix);
 
-        return super.updatePose(poseMatrix);
+        return true;
     }
 
     public void setBoundaryPlane(GVRPlane boundary) {
@@ -231,13 +228,13 @@ public class CharacterView extends AnchoredObject implements
 
     @Override
     public void show(GVRScene mainScene) {
-        mainScene.addSceneObject(getAnchor());
+        mainScene.addSceneObject(this);
         //getAnchor().attachSceneObject(mInfinityPlan);
     }
 
     @Override
     public void hide(GVRScene mainScene) {
-        mainScene.removeSceneObject(getAnchor());
+        mainScene.removeSceneObject(this);
         //getAnchor().detachSceneObject(mInfinityPlan);
     }
 
@@ -280,7 +277,7 @@ public class CharacterView extends AnchoredObject implements
         final float MIN_DISTANCE = 100f;
         Vector3f vectorDistance = new Vector3f();
         float[] modelCam = mPetContext.getMainScene().getMainCameraRig().getTransform().getModelMatrix();
-        float[] modelCharacter = getAnchor().getTransform().getModelMatrix();
+        float[] modelCharacter = getTransform().getModelMatrix();
 
         vectorDistance.set(modelCam[12], modelCam[13], modelCam[14]);
         // Calculates the distance in centimeters

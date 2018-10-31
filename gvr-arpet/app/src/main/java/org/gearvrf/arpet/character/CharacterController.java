@@ -23,7 +23,6 @@ import android.util.SparseArray;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRSphereCollider;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
@@ -112,7 +111,7 @@ public class CharacterController extends BasePetMode {
     }
 
     private void initPet(CharacterView pet) {
-        addAction(new PetActions.IDLE(pet, mPetContext.getPlayer()));
+        addAction(new PetActions.IDLE(mPetContext, pet));
 
         addAction(new PetActions.TO_BALL(pet, mBallThrowHandler.getBall(), action -> {
             setCurrentAction(PetActions.GRAB.ID);
@@ -138,8 +137,6 @@ public class CharacterController extends BasePetMode {
         addAction(new PetActions.TO_TAP(pet, mTapObject, action -> setCurrentAction(PetActions.IDLE.ID)));
 
         addAction(new PetActions.AT_EDIT(mPetContext, pet));
-
-        addAction(new PetActions.AT_SHARE(mPetContext, pet));
 
         setCurrentAction(PetActions.IDLE.ID);
     }
@@ -196,11 +193,6 @@ public class CharacterController extends BasePetMode {
 
     public GVRPlane getPlane() {
         return ((CharacterView) view()).getBoundaryPlane();
-    }
-
-    public void setAnchor(GVRAnchor anchor) {
-        CharacterView petView = (CharacterView) view();
-        petView.setAnchor(anchor);
     }
 
     public CharacterView getView() {

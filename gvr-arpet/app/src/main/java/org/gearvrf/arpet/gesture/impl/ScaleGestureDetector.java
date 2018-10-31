@@ -26,8 +26,8 @@ import org.gearvrf.arpet.gesture.OnGestureListener;
 
 public class ScaleGestureDetector extends GestureDetector {
 
-    public static final float MIN_FACTOR = 0.5f;
-    private static final float MAX_FACTOR = 3.f;
+    public static final float MIN_FACTOR = 50f;
+    private static final float MAX_FACTOR = 300f;
 
     private android.view.ScaleGestureDetector mScaleGestureDetector;
     private OnGestureListener mOnScaleGestureListener;
