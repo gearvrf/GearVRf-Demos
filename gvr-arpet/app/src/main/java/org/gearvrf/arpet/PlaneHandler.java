@@ -44,7 +44,8 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private int hsvHUE = 0;
 
-    private GVRPlane firstPlane = null;
+    private boolean planeDetected = false;
+    private GVRPlane petPlane = null;
     public final static String PLANE_NAME = "Plane";
 
     // FIXME: move this to a utils or helper class
@@ -184,7 +185,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         GVRPlane.Type planeType = plane.getPlaneType();
 
         // Don't use planes that are downward facing, e.g ceiling
-        if (planeType == GVRPlane.Type.HORIZONTAL_DOWNWARD_FACING) {
+        if (planeType == GVRPlane.Type.HORIZONTAL_DOWNWARD_FACING || petPlane != null) {
             return;
         }
 
@@ -195,14 +196,11 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         plane.attachComponent(board);
         mPlanes.add(plane);
 
-        if (firstPlane == null && planeType == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
-            firstPlane = plane;
-            firstPlane.setName(PLANE_NAME);
+        if (!planeDetected && planeType == GVRPlane.Type.HORIZONTAL_UPWARD_FACING) {
+            planeDetected = true;
 
             // Now physics starts working and then boards must be continuously updated
             mContext.registerDrawFrameListener(this);
-
-            EventBus.getDefault().post(new PlaneDetectedEvent(firstPlane));
         }
     }
 
@@ -224,6 +222,25 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         mPlanes.remove(childPlane);
     }
 
+    public void stopTracking(GVRPlane mainPlane) {
+        for (GVRPlane plane: mPlanes) {
+            if (plane != mainPlane) {
+                plane.setEnable(false);
+            }
+        }
+
+        petPlane = mainPlane;
+        petPlane.setName(PLANE_NAME);
+        EventBus.getDefault().post(new PlaneDetectedEvent(petPlane));
+    }
+
+    public void resumeTracking() {
+        for (GVRPlane plane: mPlanes) {
+            plane.setEnable(true);
+        }
+
+        petPlane = null;
+    }
 
     private Matrix4f rootInvMat = new Matrix4f();
 

@@ -270,6 +270,8 @@ public class PetMain extends DisableNativeSplashScreen {
                         mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
                         mCurrentMode.enter();
                     }
+
+                    mPlaneHandler.stopTracking((GVRPlane)gvrSceneObject.getParent());
                 }
 
                 mPet.goToTap(hitPos[0], hitPos[1], hitPos[2]);

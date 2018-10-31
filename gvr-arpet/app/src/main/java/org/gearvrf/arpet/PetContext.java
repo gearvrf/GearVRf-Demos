@@ -185,8 +185,13 @@ public class PetContext {
         return mMixedReality.getMode();
     }
 
+    public void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type,
+                                     boolean repeat) {
+        mMixedReality.registerSharedObject(object, type, repeat);
+    }
+
     public void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
-        mMixedReality.registerSharedObject(object, type);
+        mMixedReality.registerSharedObject(object, type, true);
     }
 
     public void unregisterSharedObject(GVRSceneObject object) {

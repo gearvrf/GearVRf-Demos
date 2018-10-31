@@ -21,12 +21,10 @@ import android.support.annotation.IntDef;
 
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
-import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.constant.ArPetObjectType;
-import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -60,9 +58,9 @@ public class PetActions {
         protected final Vector3f mMoveTo = new Vector3f();
 
         protected final float mCharacterHalfSize = 25.0f;
-        protected float mTurnSpeed = 0.1f;
-        protected final float mWalkingSpeed = 1.5f;
-        protected final float mRunningSpeed = 4f;
+        protected float mTurnSpeed = 5f;
+        protected final float mWalkingSpeed = 25f;
+        protected final float mRunningSpeed = 100f;
         protected float mElapsedTime = 0;
         protected float mAnimDuration = 0;
         protected GVRAnimator mAnimation;
@@ -131,7 +129,7 @@ public class PetActions {
             mMoveTo.set(mTargetDirection);
             mMoveTo.normalize();
             // Speed vector to create a smooth rotation
-            mMoveTo.mul(mTurnSpeed);
+            mMoveTo.mul(mTurnSpeed * frameTime);
             mMoveTo.add(mPetDirection.x, 0, mPetDirection.z);
             mMoveTo.normalize();
 
@@ -169,7 +167,7 @@ public class PetActions {
         public void onEntry() {
             Log.w(TAG, "entry => IDLE");
             setAnimation(mCharacter.getAnimation(0));
-            mPetContext.registerSharedObject(mCharacter, ArPetObjectType.PET);
+            mPetContext.registerSharedObject(mCharacter, ArPetObjectType.PET, false);
         }
 
         @Override
@@ -180,6 +178,7 @@ public class PetActions {
 
         @Override
         public void onRun(float frameTime) {
+
             if (mAnimation != null) {
                 animate(frameTime);
             }
@@ -202,7 +201,6 @@ public class PetActions {
         @Override
         public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_PLAYER");
-            mTurnSpeed = 0.05f;
             setAnimation(mCharacter.getAnimation(3));
         }
 
@@ -229,7 +227,7 @@ public class PetActions {
                 //if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
                     float[] pose = mCharacter.getTransform().getModelMatrix();
-                    mMoveTo.mul(mWalkingSpeed);
+                    mMoveTo.mul(mWalkingSpeed * frameTime);
 
                     pose[12] = pose[12] + mMoveTo.x;
                     pose[14] = pose[14] + mMoveTo.z;
@@ -298,8 +296,10 @@ public class PetActions {
                     animate(frameTime);
                 }
 
+                /* TODO: test this with share
                 mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
                         mTargetDirection.x, 0, mTargetDirection.z);
+                        */
 
                 if (mRotation.angle() < Math.PI * 0.25f) {
 					/* TODO: test this with share
@@ -346,10 +346,12 @@ public class PetActions {
                     mTargetMtx.getTranslation(mOldBallPos);
 
                     float[] pose = mCharacter.getAnchor().getTransform().getModelMatrix();
+
+                    mMoveTo.mul(mRunningSpeed2);
 					*/
                     float[] pose = mCharacter.getTransform().getModelMatrix();
                     // TODO: Create pose
-                    mMoveTo.mul(mRunningSpeed2);
+                    mMoveTo.mul(mRunningSpeed * frameTime);
 
                     pose[12] = pose[12] + mMoveTo.x;
                     pose[14] = pose[14] + mMoveTo.z;
@@ -378,7 +380,6 @@ public class PetActions {
         @Override
         public void onEntry() {
             Log.w(TAG, "entry => MOVING_TO_TAP");
-            mTurnSpeed = 0.05f;
             setAnimation(mCharacter.getAnimation(1));
         }
 
@@ -404,7 +405,7 @@ public class PetActions {
                 if (mRotation.angle() < Math.PI * 0.25f) {
                     // acceleration logic
                     float[] pose = mCharacter.getTransform().getModelMatrix();
-                    mMoveTo.mul(mWalkingSpeed);
+                    mMoveTo.mul(mWalkingSpeed * frameTime);
 
                     pose[12] = pose[12] + mMoveTo.x;
                     pose[14] = pose[14] + mMoveTo.z;

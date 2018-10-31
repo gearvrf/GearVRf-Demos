@@ -133,14 +133,17 @@ public class SharedMixedReality implements IMRCommon {
         }
     }
 
-    public synchronized void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type) {
+    public synchronized void registerSharedObject(GVRSceneObject object, @ArPetObjectType String type,
+                                                  boolean repeat) {
         for (SharedSceneObject shared : mSharedSceneObjects) {
             if (shared.object == object) {
+                shared.repeat = repeat;
                 return;
             }
         }
 
         SharedSceneObject newShared = new SharedSceneObject(type, object);
+        newShared.repeat = repeat;
         if (mMode == GUEST) {
             initAsGuest(newShared);
         }
@@ -290,6 +293,10 @@ public class SharedMixedReality implements IMRCommon {
                     float[] result = new float[16];
                     Matrix.multiplyMM(result, 0, mSpaceMatrix, 0, pose.getModelMatrix(), 0);
                     shared.object.getTransform().setModelMatrix(result);
+
+                    if (!shared.repeat) {
+                        mSharedSceneObjects.remove(shared);
+                    }
                     break;
                 }
             }
@@ -319,9 +326,12 @@ public class SharedMixedReality implements IMRCommon {
         // Parent of shared object.
         GVRSceneObject parent;
 
+        boolean repeat;
+
         SharedSceneObject(String type, GVRSceneObject object) {
             this.type = type;
             this.object = object;
+            this.repeat = true;
         }
 
         @Override
