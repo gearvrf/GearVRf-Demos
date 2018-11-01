@@ -33,7 +33,6 @@ import org.gearvrf.animation.GVRAnimation;
 import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.animation.GVRRepeatMode;
-import org.gearvrf.arpet.AnchoredObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.gesture.OnScaleListener;
@@ -44,7 +43,6 @@ import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.shaders.GVRTiledMaskShader;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
@@ -274,7 +272,6 @@ public class CharacterView extends GVRSceneObject implements
      * Sets the initial scale according to the distance between the pet and camera
      */
     public void setInitialScale() {
-        final float MIN_DISTANCE = 100f;
         Vector3f vectorDistance = new Vector3f();
         float[] modelCam = mPetContext.getMainScene().getMainCameraRig().getTransform().getModelMatrix();
         float[] modelCharacter = getTransform().getModelMatrix();
@@ -283,7 +280,7 @@ public class CharacterView extends GVRSceneObject implements
         // Calculates the distance in centimeters
         float distance = vectorDistance.distance(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
 
-        if (distance < MIN_DISTANCE) {
+        if (distance < getBoundingVolume().radius) {
             scale(ScaleGestureDetector.MIN_FACTOR);
         }
     }

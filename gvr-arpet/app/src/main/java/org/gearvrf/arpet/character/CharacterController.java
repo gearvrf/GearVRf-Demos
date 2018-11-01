@@ -23,6 +23,7 @@ import android.util.SparseArray;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
@@ -159,8 +160,10 @@ public class CharacterController extends BasePetMode {
             // FIXME: The ball should be attached to pet's bone(pivot) to
             // have walking animation.
 
+            GVRTransform t = ((CharacterView) mModeScene).getTransform();
+
             ball.getTransform().setRotation(1, 0, 0, 0);
-            ball.getTransform().setPosition(0, 0.48f, 0.42f);
+            ball.getTransform().setPosition(0, 0.3f, 0.42f);
             ball.getTransform().setScale(0.36f, 0.36f, 0.36f);
 
             ((CharacterView) mModeScene).addChildObject(ball);

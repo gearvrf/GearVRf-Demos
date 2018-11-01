@@ -57,7 +57,7 @@ public class PetActions {
         protected final Vector3f mTargetDirection = new Vector3f();
         protected final Vector3f mMoveTo = new Vector3f();
 
-        protected final float mCharacterHalfSize = 25.0f;
+        protected float mCharacterHalfSize = 25.0f;
         protected float mTurnSpeed = 5f;
         protected final float mWalkingSpeed = 25f;
         protected final float mRunningSpeed = 100f;
