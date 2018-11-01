@@ -46,13 +46,10 @@
     <string name="device_not_visible">This device is not visible to other devices</string>
     <string name="view_lets_start_status_text">Let’s start Sharing Anchor!\nWhat role do you want to play?</string>
     <string name="common_text_connection_lost">Connection lost</string>
-<<<<<<< HEAD
     <string name="view_host_disconnected">The host has finished sharing</string>
     <string name="view_guests_disconnected">Your friends disconnected</string>
-=======
     <string name="exit_message">Do you want really exit the application?</string>
     <string name="confirm">CONFIRM</string>
->>>>>>> added Application Output Screen
     <plurals name="guests_found">
         <item quantity="one">1 guest found\non sharing anchor</item>
         <item quantity="other">%d guests found\non sharing anchor</item>
