@@ -336,7 +336,7 @@ public class CharacterView extends GVRSceneObject implements
                         m3DModel = gvrSceneObject;
 
                         m3DModel.getTransform().setScale(0.003f, 0.003f, 0.003f);
-                        m3DModel.getTransform().setPosition(0, 0.4f, 0);
+                        m3DModel.getTransform().setPosition(0, 0.2f, 0);
                         CharacterView.this.addChildObject(m3DModel);
                     }
                 });
