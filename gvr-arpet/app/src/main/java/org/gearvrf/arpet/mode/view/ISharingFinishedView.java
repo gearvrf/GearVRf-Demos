@@ -15,15 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mode.view;
 
 import android.view.View;
 
-import org.gearvrf.arpet.mode.view.IAnchorSharedView;
+public interface ISharingFinishedView extends ISharingAnchorView {
 
-class AnchorSharedView extends BaseSharingAnchorView implements IAnchorSharedView {
+    void setStatusText(CharSequence text);
 
-    public AnchorSharedView(View view, ShareAnchorView controller) {
-        super(view, controller);
-    }
+    void setOkClickListener(View.OnClickListener listener);
 }

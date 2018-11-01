@@ -26,6 +26,11 @@ public class CloudAnchor implements Serializable {
     @ArPetObjectType
     private String mObjectType;
 
+    public CloudAnchor(String cloudAnchorId, @ArPetObjectType String objectType) {
+        this.mCloudAnchorId = cloudAnchorId;
+        this.mObjectType = objectType;
+    }
+
     public CloudAnchor(@ArPetObjectType String type) {
         mObjectType = type;
     }

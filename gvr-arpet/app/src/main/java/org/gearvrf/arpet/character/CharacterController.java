@@ -39,7 +39,6 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
-import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.utility.Log;
 
@@ -124,7 +123,7 @@ public class CharacterController extends BasePetMode {
             mBallThrowHandler.reset();
         }));
 
-        addAction( new PetActions.GRAB(pet, mBallThrowHandler.getBall(), new OnPetActionListener() {
+        addAction(new PetActions.GRAB(pet, mBallThrowHandler.getBall(), new OnPetActionListener() {
             @Override
             public void onActionEnd(IPetAction action) {
                 setCurrentAction(PetActions.TO_PLAYER.ID);
@@ -151,7 +150,7 @@ public class CharacterController extends BasePetMode {
     }
 
     public void grabBall(GVRSceneObject ball) {
-        GVRSceneObject pivot = ((CharacterView)mModeScene).getGrabPivot();
+        GVRSceneObject pivot = ((CharacterView) mModeScene).getGrabPivot();
 
         if (pivot != null) {
             if (ball.getParent() != null) {

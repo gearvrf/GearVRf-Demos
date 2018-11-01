@@ -15,29 +15,35 @@
   ~
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/view_connection_found"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/circle_mask">
+    android:background="@drawable/bg_overlay"
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <View
-        android:layout_width="11dp"
-        android:layout_height="11dp"
-        android:layout_centerInParent="true"
-        android:background="@drawable/bg_point" />
-
-    <TextSwitcher
-        android:id="@+id/text_status"
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="37dp"
-        android:inAnimation="@android:anim/slide_in_left"
-        android:outAnimation="@android:anim/slide_out_right"
-        tools:ignore="HardcodedText">
+        android:src="@drawable/ic_sharing_finished"
+        tools:ignore="ContentDescription" />
 
-    </TextSwitcher>
+    <TextView
+        android:id="@+id/text_status"
+        style="@style/StatusText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="38.6dp"
+        android:text="Sharing has finished by remote"
+        tools:ignore="HardcodedText" />
 
-</RelativeLayout>
+    <Button
+        android:id="@+id/button_ok"
+        style="@style/Button"
+        android:layout_marginTop="65dp"
+        android:text="OK"
+        tools:ignore="HardcodedText" />
+
+
+</LinearLayout>

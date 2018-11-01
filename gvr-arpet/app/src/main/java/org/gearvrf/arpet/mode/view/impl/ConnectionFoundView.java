@@ -27,13 +27,13 @@ class ConnectionFoundView extends BaseSharingAnchorView implements IConnectionFo
 
     private TextView mStatusText;
 
-    public ConnectionFoundView(View view, ShareAnchorView2 controller) {
+    public ConnectionFoundView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
     }
 
     @Override
     public void setStatusText(CharSequence text) {
-        mStatusText.post(() -> mStatusText.setText(text));
+        runOnUiThread(() -> mStatusText.setText(text));
     }
 }

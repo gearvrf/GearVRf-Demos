@@ -15,9 +15,22 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.manager.cloud.anchor.exception;
 
-public interface ILookAtTargetView extends ISharingAnchorView {
+public class CloudAnchorException extends Exception {
 
-    void setStatusText(CharSequence text, boolean animated);
+    public CloudAnchorException() {
+    }
+
+    public CloudAnchorException(String message) {
+        super(message);
+    }
+
+    public CloudAnchorException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public CloudAnchorException(Throwable cause) {
+        super(cause);
+    }
 }

@@ -28,7 +28,7 @@ class LetsStartView extends BaseSharingAnchorView implements ILetsStartView {
     private View mHostButton;
     private View mGuestButton;
 
-    public LetsStartView(View view, ShareAnchorView2 controller) {
+    public LetsStartView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mBackButton = view.findViewById(R.id.button_back);
         this.mHostButton = view.findViewById(R.id.button_host);

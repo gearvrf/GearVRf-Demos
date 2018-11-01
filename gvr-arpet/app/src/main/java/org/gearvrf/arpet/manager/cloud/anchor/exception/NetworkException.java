@@ -15,15 +15,11 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.manager.cloud.anchor.exception;
 
-import android.view.View;
+public class NetworkException extends Exception {
 
-import org.gearvrf.arpet.mode.view.IAnchorSharedView;
-
-class AnchorSharedView extends BaseSharingAnchorView implements IAnchorSharedView {
-
-    public AnchorSharedView(View view, ShareAnchorView controller) {
-        super(view, controller);
+    public NetworkException(String message) {
+        super(message);
     }
 }

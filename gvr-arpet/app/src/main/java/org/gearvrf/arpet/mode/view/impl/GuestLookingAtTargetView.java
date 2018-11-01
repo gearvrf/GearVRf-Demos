@@ -12,11 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
 
-package org.gearvrf.arpet.manager.cloud.anchor;
+package org.gearvrf.arpet.mode.view.impl;
 
-public interface OnCloudAnchorManagerListener {
-    void onHostReady();
-    void onHostFailure();
+import android.view.View;
+
+import org.gearvrf.arpet.mode.view.IGuestLookingAtTargetView;
+
+class GuestLookingAtTargetView extends BaseSharingAnchorView implements IGuestLookingAtTargetView {
+
+    public GuestLookingAtTargetView(View view, ShareAnchorView controller) {
+        super(view, controller);
+    }
 }

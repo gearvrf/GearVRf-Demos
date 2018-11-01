@@ -28,6 +28,7 @@
     </style>
 
     <style name="StatusText">
+        <item name="android:includeFontPadding">false</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">@font/roboto_medium</item>
         <item name="android:textColor">#ffffff</item>

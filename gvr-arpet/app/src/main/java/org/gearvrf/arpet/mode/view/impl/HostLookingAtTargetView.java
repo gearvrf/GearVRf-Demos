@@ -18,12 +18,22 @@
 package org.gearvrf.arpet.mode.view.impl;
 
 import android.view.View;
+import android.widget.TextView;
 
-import org.gearvrf.arpet.mode.view.IAnchorSharedView;
+import org.gearvrf.arpet.R;
+import org.gearvrf.arpet.mode.view.IHostLookingAtTargetView;
 
-class AnchorSharedView extends BaseSharingAnchorView implements IAnchorSharedView {
+class HostLookingAtTargetView extends BaseSharingAnchorView implements IHostLookingAtTargetView {
 
-    public AnchorSharedView(View view, ShareAnchorView controller) {
+    private TextView mStatusText;
+
+    public HostLookingAtTargetView(View view, ShareAnchorView controller) {
         super(view, controller);
+        this.mStatusText = view.findViewById(R.id.text_status);
+    }
+
+    @Override
+    public void setStatusText(CharSequence text) {
+        runOnUiThread(() -> mStatusText.setText(text));
     }
 }

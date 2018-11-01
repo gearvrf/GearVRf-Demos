@@ -29,7 +29,7 @@ class NoConnectionFoundView extends BaseSharingAnchorView implements INoConnecti
     private View mCancelButton;
     private View mRetryButton;
 
-    public NoConnectionFoundView(View view, ShareAnchorView2 controller) {
+    public NoConnectionFoundView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
         this.mCancelButton = view.findViewById(R.id.button_cancel);
@@ -38,7 +38,7 @@ class NoConnectionFoundView extends BaseSharingAnchorView implements INoConnecti
 
     @Override
     public void setStatusText(CharSequence text) {
-        mStatusText.post(() -> mStatusText.setText(text));
+        runOnUiThread(() -> mStatusText.setText(text));
     }
 
     @Override

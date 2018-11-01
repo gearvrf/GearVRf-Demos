@@ -37,6 +37,7 @@ import org.gearvrf.arpet.constant.PetConstants;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public final class PetConnectionManager extends BTConnectionManager implements IPetConnectionManager {
@@ -51,6 +52,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     private OnEnableDiscoverableCallback mEnableVisibilityCallback;
     private List<PetConnectionEventHandler> mPetConnectionEventHandlers = new ArrayList<>();
     private DeviceVisibilityMonitor mDeviceVisibilityMonitor;
+    private boolean mDisconnectSilently;
 
     private static volatile PetConnectionManager sInstance;
 
@@ -72,13 +74,14 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mServerFinder = new BTServerDeviceFinder(mContext.getActivity());
             mDeviceVisibilityMonitor = new DeviceVisibilityMonitor(context, this::onVisibilitySateChanged);
+            mPetConnectionEventHandlers = Collections.synchronizedList(new ArrayList<>());
             mContext.addOnPetContextListener((requestCode, resultCode, data)
                     -> onActivityResult(requestCode, resultCode));
         }
     }
 
     @Override
-    public void addEventHandler(PetConnectionEventHandler handler) {
+    public synchronized void addEventHandler(PetConnectionEventHandler handler) {
         checkInitialization();
         removeEventHandler(handler);
         mPetConnectionEventHandlers.add(handler);
@@ -86,7 +89,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public void removeEventHandler(PetConnectionEventHandler handler) {
+    public synchronized void removeEventHandler(PetConnectionEventHandler handler) {
         checkInitialization();
         if (mPetConnectionEventHandlers.remove(handler)) {
             Log.d(TAG, "Handler removed: " + handler);
@@ -121,7 +124,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     @Override
     public void stopInvitationAndDisconnect() {
         checkInitialization();
-        stopInvitation();
+        mDisconnectSilently = true;
+        mDeviceVisibilityMonitor.setEnabled(false);
+        super.stopConnectionListener();
         super.disconnect();
     }
 
@@ -238,9 +243,14 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     public void onConnectionLost(Connection connection, ConnectionException error) {
         super.onConnectionLost(connection, error);
         Log.d(TAG, "onConnectionLost: " + connection.getRemoteDevice());
-        notifyManagerEvent(EVENT_ONE_CONNECTION_LOST, connection.getRemoteDevice());
+        if (!mDisconnectSilently) {
+            notifyManagerEvent(EVENT_ONE_CONNECTION_LOST, connection.getRemoteDevice());
+            if (getTotalConnected() == 0) {
+                notifyManagerEvent(EVENT_ALL_CONNECTIONS_LOST);
+            }
+        }
         if (getTotalConnected() == 0) {
-            notifyManagerEvent(EVENT_ALL_CONNECTIONS_LOST);
+            mDisconnectSilently = false;
         }
     }
 
@@ -250,6 +260,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             Log.d(TAG, "stopConnectionListener: force stop connection listener");
             super.stopConnectionListener();
             if (getTotalConnected() > 0) {
+                Log.d(TAG, "stopConnectionListener: total connected = " + getTotalConnected());
                 notifyManagerEvent(EVENT_CONNECTION_ESTABLISHED);
             } else {
                 notifyManagerEvent(EVENT_NO_CONNECTION_FOUND);
@@ -260,6 +271,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     @Override
     public synchronized void disconnect() {
         checkInitialization();
+        mDisconnectSilently = true;
         super.disconnect();
     }
 
@@ -289,10 +301,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         notifyManagerEvent(type, null);
     }
 
-    private void notifyManagerEvent(@EventType int type, Serializable data) {
+    private synchronized void notifyManagerEvent(@EventType int type, Serializable data) {
         for (PetConnectionEventHandler petConnectionEventHandler : mPetConnectionEventHandlers) {
-            mContext.runOnPetThread(() ->
-                    petConnectionEventHandler.handleEvent(new PetConnectionEvent(type, data)));
+            petConnectionEventHandler.handleEvent(new PetConnectionEvent(type, data));
         }
     }
 

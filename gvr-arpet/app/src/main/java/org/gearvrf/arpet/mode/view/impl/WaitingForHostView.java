@@ -26,7 +26,7 @@ class WaitingForHostView extends BaseSharingAnchorView implements IWaitingForHos
 
     private View mCancelButton;
 
-    public WaitingForHostView(View view, ShareAnchorView2 controller) {
+    public WaitingForHostView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mCancelButton = view.findViewById(R.id.button_cancel);
     }

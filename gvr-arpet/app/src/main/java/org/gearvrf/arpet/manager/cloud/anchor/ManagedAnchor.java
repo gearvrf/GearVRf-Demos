@@ -20,13 +20,13 @@ package org.gearvrf.arpet.manager.cloud.anchor;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.mixedreality.GVRAnchor;
 
-public class ResolvedCloudAnchor {
+public class ManagedAnchor {
 
     @ArPetObjectType
     private String mObjectType;
     private GVRAnchor mAnchor;
 
-    public ResolvedCloudAnchor(@ArPetObjectType String objectType, GVRAnchor mAnchor) {
+    public ManagedAnchor(@ArPetObjectType String objectType, GVRAnchor mAnchor) {
         this.mObjectType = objectType;
         this.mAnchor = mAnchor;
     }

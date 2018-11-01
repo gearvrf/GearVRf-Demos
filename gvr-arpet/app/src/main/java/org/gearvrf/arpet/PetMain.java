@@ -262,6 +262,7 @@ public class PetMain extends DisableNativeSplashScreen {
                     mPet.setPlane((GVRPlane)gvrSceneObject.getParent());
                     mPet.getView().updatePose(modelMtx);
                     //mPet.setAnchor(mPetContext.getMixedReality().createAnchor(modelMtx));
+
                     mPet.enter();
                     mPet.setInitialScale();
                     mPet.enableActions();

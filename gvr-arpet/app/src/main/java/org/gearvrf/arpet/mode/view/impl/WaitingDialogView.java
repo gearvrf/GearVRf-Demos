@@ -27,13 +27,13 @@ class WaitingDialogView extends BaseSharingAnchorView implements IWaitingDialogV
 
     private TextView mStatusText;
 
-    public WaitingDialogView(View view, ShareAnchorView2 controller) {
+    public WaitingDialogView(View view, ShareAnchorView controller) {
         super(view, controller);
         mStatusText = view.findViewById(R.id.text_status);
     }
 
     @Override
     public void setStatusText(CharSequence text) {
-        mStatusText.post(() -> mStatusText.setText(text));
+        runOnUiThread(() -> mStatusText.setText(text));
     }
 }

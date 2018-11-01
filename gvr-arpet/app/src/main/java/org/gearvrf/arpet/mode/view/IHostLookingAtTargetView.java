@@ -15,15 +15,9 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mode.view;
 
-import android.view.View;
+public interface IHostLookingAtTargetView extends ISharingAnchorView {
 
-import org.gearvrf.arpet.mode.view.IAnchorSharedView;
-
-class AnchorSharedView extends BaseSharingAnchorView implements IAnchorSharedView {
-
-    public AnchorSharedView(View view, ShareAnchorView controller) {
-        super(view, controller);
-    }
+    void setStatusText(CharSequence text);
 }

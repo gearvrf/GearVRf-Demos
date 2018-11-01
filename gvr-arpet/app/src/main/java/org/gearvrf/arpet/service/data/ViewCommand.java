@@ -30,6 +30,7 @@ public class ViewCommand implements Command {
     public static final String PAIRING_ERROR_VIEW = "PAIRING_ERROR_VIEW";
 
     public static final String SHOW_VIEW_WAITING_DIALOG = "SHOW_VIEW_WAITING_DIALOG";
+    public static final String SHOW_VIEW_LOOKING_AT_TARGET = "SHOW_VIEW_LOOKING_AT_TARGET";
 
     @Retention(RetentionPolicy.SOURCE)
     @StringDef({
@@ -37,7 +38,8 @@ public class ViewCommand implements Command {
             LOOKING_SIDE_BY_SIDE,
             SHARED_HOST,
             PAIRING_ERROR_VIEW,
-            SHOW_VIEW_WAITING_DIALOG
+            SHOW_VIEW_WAITING_DIALOG,
+            SHOW_VIEW_LOOKING_AT_TARGET
     })
     public @interface Type {
     }

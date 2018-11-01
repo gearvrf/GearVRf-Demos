@@ -34,7 +34,7 @@ public abstract class Task implements Thread.UncaughtExceptionHandler {
         mError = new TaskException(e);
     }
 
-    protected void notifyExecuted() {
+    public void finish() {
         synchronized (this) {
             notify();
         }

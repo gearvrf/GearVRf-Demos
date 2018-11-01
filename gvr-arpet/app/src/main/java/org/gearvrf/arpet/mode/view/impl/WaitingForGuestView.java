@@ -31,21 +31,20 @@ class WaitingForGuestView extends BaseSharingAnchorView implements IWaitingForGu
     private View mCancelButton;
     private View mContinueButton;
 
-    public WaitingForGuestView(View view, ShareAnchorView2 controller) {
+    public WaitingForGuestView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mTotalConnected = view.findViewById(R.id.text_total);
         this.mGuestText = view.findViewById(R.id.text_guests);
         this.mCancelButton = view.findViewById(R.id.button_cancel);
         this.mContinueButton = view.findViewById(R.id.button_continue);
-        setContinueButtonEnabled(false);
-        updatePluralGuestText(0);
+        setTotalConnected(0);
     }
 
     @SuppressLint("DefaultLocale")
     @Override
     public void setTotalConnected(int total) {
         int t = Math.max(0, total);
-        mTotalConnected.post(() -> mTotalConnected.setText(String.format("%02d", t)));
+        runOnUiThread(() -> mTotalConnected.setText(String.format("%02d", t)));
         setContinueButtonEnabled(t > 0);
         updatePluralGuestText(t);
     }
@@ -62,11 +61,11 @@ class WaitingForGuestView extends BaseSharingAnchorView implements IWaitingForGu
 
     @Override
     public void setContinueButtonEnabled(boolean enabled) {
-        mContinueButton.post(() -> mContinueButton.setEnabled(enabled));
+        runOnUiThread(() -> mContinueButton.setEnabled(enabled));
     }
 
     private void updatePluralGuestText(int total) {
-        mGuestText.post(() -> {
+        runOnUiThread(() -> {
             String guestText = mGuestText.getContext().getResources()
                     .getQuantityString(R.plurals.common_text_guest, total);
             mGuestText.setText(guestText.toLowerCase());

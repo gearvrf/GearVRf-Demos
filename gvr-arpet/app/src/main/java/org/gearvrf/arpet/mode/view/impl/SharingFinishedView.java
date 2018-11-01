@@ -18,28 +18,29 @@
 package org.gearvrf.arpet.mode.view.impl;
 
 import android.view.View;
-import android.widget.TextSwitcher;
+import android.widget.TextView;
 
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.ILookAtTargetView;
+import org.gearvrf.arpet.mode.view.ISharingFinishedView;
 
-class LookAtTargetView extends BaseSharingAnchorView implements ILookAtTargetView {
+class SharingFinishedView extends BaseSharingAnchorView implements ISharingFinishedView {
 
-    private TextSwitcher mStatusText;
+    private TextView mStatusText;
+    private View mOkButton;
 
-    public LookAtTargetView(View view, ShareAnchorView2 controller) {
+    public SharingFinishedView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
-        this.mStatusText.setFactory(() ->
-                View.inflate(view.getContext(), R.layout.text_status, null));
+        this.mOkButton = view.findViewById(R.id.button_ok);
     }
 
     @Override
-    public void setStatusText(CharSequence text, boolean animated) {
-        if (animated) {
-            mStatusText.post(() -> mStatusText.setText(text));
-        } else {
-            mStatusText.post(() -> mStatusText.setCurrentText(text));
-        }
+    public void setStatusText(CharSequence text) {
+        runOnUiThread(() -> mStatusText.setText(text));
+    }
+
+    @Override
+    public void setOkClickListener(View.OnClickListener listener) {
+        mOkButton.setOnClickListener(listener);
     }
 }

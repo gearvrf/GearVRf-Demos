@@ -20,48 +20,57 @@ package org.gearvrf.arpet.connection.socket.bluetooth;
 import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 
-import org.gearvrf.arpet.connection.DeviceType;
 import org.gearvrf.arpet.connection.BaseDevice;
+import org.gearvrf.arpet.connection.DeviceType;
 
 import java.io.IOException;
 import java.util.UUID;
 
 public class BTDevice extends BaseDevice {
 
+    private String name;
+    private String address;
+    private int type;
+
     private BluetoothDevice mDevice;
 
-    public BTDevice(BluetoothDevice mDevice) {
-        this.mDevice = mDevice;
+    public BTDevice(BluetoothDevice device) {
+
+        this.mDevice = device;
+        this.name = device.getName();
+        this.address = device.getAddress();
+        int majorType = device.getBluetoothClass().getMajorDeviceClass();
+
+        switch (majorType) {
+            case BluetoothClass.Device.Major.PHONE:
+                this.type = DeviceType.PHONE;
+            default:
+                this.type = DeviceType.UNKNOWN;
+        }
     }
 
     @Override
     public String getName() {
-        return mDevice.getName();
+        return name;
     }
 
     @Override
     public String getAddress() {
-        return mDevice.getAddress();
+        return address;
     }
 
     @Override
     public int getType() {
-        int majorType = mDevice.getBluetoothClass().getMajorDeviceClass();
-        switch (majorType) {
-            case BluetoothClass.Device.Major.PHONE:
-                return DeviceType.PHONE;
-            default:
-                return DeviceType.UNKNOWN;
-        }
+        return type;
     }
 
     @Override
     public String toString() {
         return "BTDevice{" +
-                "Name= " + getName() +
-                ", Address= " + getAddress() +
-                ", Type= " + getType() +
-                '}';
+                "name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", type=" + type +
+                "} " + super.toString();
     }
 
     public BTSocket createSocket(UUID uuid) throws IOException {

@@ -17,6 +17,8 @@
 
 package org.gearvrf.arpet.mode.view.impl;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 
 import org.gearvrf.arpet.mode.view.ISharingAnchorView;
@@ -24,9 +26,10 @@ import org.gearvrf.arpet.mode.view.ISharingAnchorView;
 abstract class BaseSharingAnchorView implements ISharingAnchorView {
 
     private View mView;
-    private ShareAnchorView2 mViewController;
+    private ShareAnchorView mViewController;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public BaseSharingAnchorView(View view, ShareAnchorView2 viewController) {
+    public BaseSharingAnchorView(View view, ShareAnchorView viewController) {
         this.mView = view;
         this.mViewController = viewController;
     }
@@ -38,5 +41,13 @@ abstract class BaseSharingAnchorView implements ISharingAnchorView {
 
     View getView() {
         return mView;
+    }
+
+    void runOnUiThread(Runnable runnable) {
+        mHandler.post(runnable);
+    }
+
+    void runOnUiThread(Runnable runnable, long delay) {
+        mHandler.postDelayed(runnable, delay);
     }
 }

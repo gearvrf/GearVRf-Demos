@@ -16,7 +16,7 @@
 <resources>
     <string name="editing_mode">Editing Mode</string>
     <string name="save">SAVE</string>
-    <string name="looking_the_same_thing">Make sure you and your friends are side-by-side looking\n at the same thing.</string>
+    <string name="guest_looking_at_target">Make sure you and your friends are side-by-side looking\n at the same thing.</string>
     <string name="sharing_anchor">SHARING ANCHOR</string>
     <string name="common_text_host">Host</string>
     <string name="common_text_guest">Guest</string>
@@ -46,6 +46,8 @@
     <string name="device_not_visible">This device is not visible to other devices</string>
     <string name="view_lets_start_status_text">Let’s start Sharing Anchor!\nWhat role do you want to play?</string>
     <string name="common_text_connection_lost">Connection lost</string>
+    <string name="view_host_disconnected">The host has finished sharing</string>
+    <string name="view_guests_disconnected">Your friends disconnected</string>
     <plurals name="guests_found">
         <item quantity="one">1 guest found\non sharing anchor</item>
         <item quantity="other">%d guests found\non sharing anchor</item>

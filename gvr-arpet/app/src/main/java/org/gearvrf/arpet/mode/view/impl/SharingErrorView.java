@@ -27,7 +27,7 @@ class SharingErrorView extends BaseSharingAnchorView implements ISharingErrorVie
     private View mCancelButton;
     private View mRetryButton;
 
-    public SharingErrorView(View view, ShareAnchorView2 controller) {
+    public SharingErrorView(View view, ShareAnchorView controller) {
         super(view, controller);
         this.mCancelButton = view.findViewById(R.id.button_cancel);
         this.mRetryButton = view.findViewById(R.id.button_retry);
