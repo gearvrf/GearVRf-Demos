@@ -15,30 +15,16 @@
 
 package org.gearvrf.arcore.simplesample;
 
-import android.graphics.Point;
-import android.view.Display;
-import android.view.MotionEvent;
-
-import org.gearvrf.GVRBehavior;
 import org.gearvrf.GVRBoxCollider;
-import org.gearvrf.GVRComponent;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMain;
-import org.gearvrf.GVRMaterial;
-import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPointLight;
-import org.gearvrf.GVRRenderData;
-import org.gearvrf.GVRRenderPass;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.GVRShaderId;
-import org.gearvrf.GVRTransform;
-import org.gearvrf.animation.GVRAnimationEngine;
-import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -49,7 +35,6 @@ import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -115,7 +100,7 @@ public class SampleMain extends GVRMain {
         @Override
         public void onPlaneDetection(GVRPlane gvrPlane)
         {
-            if (gvrPlane.getPlaneType() == GVRPlane.PlaneType.VERTICAL)
+            if (gvrPlane.getPlaneType() == GVRPlane.Type.VERTICAL)
             {
                 return;
             }
