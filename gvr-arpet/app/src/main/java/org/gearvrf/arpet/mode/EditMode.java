@@ -30,6 +30,7 @@ import org.gearvrf.arpet.character.CharacterView;
 import org.gearvrf.arpet.gesture.GestureDetector;
 import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
+import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.IMRCommon;
@@ -61,6 +62,7 @@ public class EditMode extends BasePetMode {
 
     @Override
     protected void onEnter() {
+        ((ScaleGestureDetector)mScaleDetector).setScale(mCharacterView.getTransform().getScaleX());
     }
 
     @Override
