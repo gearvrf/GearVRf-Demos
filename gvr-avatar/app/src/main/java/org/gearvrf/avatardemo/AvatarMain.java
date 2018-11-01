@@ -1,16 +1,11 @@
 package org.gearvrf.avatardemo;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.gearvrf.GVRActivity;
-import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
-import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRTransform;
@@ -21,11 +16,10 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.animation.GVRRepeatMode;
 
 import android.graphics.Color;
-import android.util.Log;
+
 
 public class AvatarMain extends GVRMain
 {
-
     private GVRContext mContext;
     private GVRScene mScene;
     private GVRActivity mActivity;
@@ -50,7 +44,7 @@ public class AvatarMain extends GVRMain
 
                         GVRTransform t = avatarRoot.getTransform();
                         avatar.centerModel(avatarRoot);
-                        t.setPosition(0, -0.01f, -0.15f);
+                        t.setPosition(0, -0.01f, -0.2f);
                         // avatarRoot.getTransform().setRotationByAxis(-180,0,1,0);
                         t.setScale(0.0004f, 0.0004f, 0.0004f);
                         mScene.addSceneObject(avatarRoot);
