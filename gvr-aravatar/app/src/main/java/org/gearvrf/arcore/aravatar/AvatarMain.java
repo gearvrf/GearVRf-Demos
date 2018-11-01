@@ -139,7 +139,7 @@ public class AvatarMain extends GVRMain {
             GVRSceneObject lightParent = mSelectionLight.getParent();
             GVRSceneObject pickedParent = sceneObj.getParent();
 
-            mSelectionLight.getTransform().setPositionZ(bv.radius);
+            mSelectionLight.getTransform().setPositionY(bv.radius);
             if (lightParent == pickedParent)
             {
                 GVRLight light = mSelectionLight.getLight();

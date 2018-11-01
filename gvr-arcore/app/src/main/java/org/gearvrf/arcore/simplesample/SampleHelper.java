@@ -25,6 +25,7 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.io.GVRCursorController;
+import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.joml.Vector4f;
@@ -116,9 +117,13 @@ public class SampleHelper {
                     oldController.removePickEventListener(handler);
                 }
                 mCursorController = newController;
+                if (newController instanceof GVRGazeCursorController)
+                {
+                    ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
+                }
                 newController.setCursor(mCursor);
-                newController.setCursorDepth(-cursorDepth);
-                newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
+                newController.setCursorDepth(cursorDepth);
+                newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
                 newController.getPicker().setEventOptions(eventOptions);
                 newController.addPickEventListener(handler);
             }

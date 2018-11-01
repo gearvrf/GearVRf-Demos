@@ -16,7 +16,6 @@
 package org.gearvrf.arcore.simplesample;
 
 import android.graphics.Point;
-import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 
@@ -41,7 +40,6 @@ import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRAnimationEngine;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
-import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
@@ -49,6 +47,7 @@ import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -109,39 +108,6 @@ public class SampleMain extends GVRMain {
         mSceneLight.setAmbientIntensity(lightEstimate, lightEstimate, lightEstimate, 1);
         mSceneLight.setDiffuseIntensity(0.4f, 0.4f, 0.4f, 1);
         mSceneLight.setSpecularIntensity(0.2f, 0.2f, 0.2f, 1);
-    }
-
-    public void onSwipe(GVRTouchPadGestureListener.Action action, float vx)
-    {
-        if (mSelector.getSelected() == null)
-        {
-            return;
-        }
-        int newdir = (vx > 0) ? 1 : -1;
-        if (mOrbit == null)
-        {
-            mOrbit = new GVRRotationByAxisAnimation(mSelector.getSelected(), 60, newdir * 0.05f, 0, 1, 0);
-            mOrbit.setRepeatMode(GVRRepeatMode.REPEATED);
-            mOrbit.setRepeatCount(-1);
-        }
-        else if (newdir != mOrbitDirection)
-        {
-            GVRAnimationEngine.getInstance(mGVRContext).stop(mOrbit);
-            mOrbit = new GVRRotationByAxisAnimation(mSelector.getSelected(), 60, newdir * 0.05f, 0, 1, 0);
-            mOrbit.setRepeatMode(GVRRepeatMode.REPEATED);
-            mOrbit.setRepeatCount(-1);
-        }
-        mOrbitDirection = newdir;
-    }
-
-    public void onSingleTapUp(MotionEvent e)
-    {
-        if (mOrbit != null)
-        {
-            GVRAnimationEngine.getInstance(mGVRContext).stop(mOrbit);
-            mOrbit = null;
-            mOrbitDirection = 0;
-        }
     }
 
     private IPlaneEventsListener planeEventsListener = new IPlaneEventsListener()
@@ -205,7 +171,7 @@ public class SampleMain extends GVRMain {
             GVRPointLight light = new GVRPointLight(mGVRContext);
             light.setSpecularIntensity(0.1f, 0.1f, 0.1f, 0.1f);
             mSelectionLight.attachComponent(light);
-            mSelectionLight.getTransform().rotateByAxis((float) Math.PI / 2.0f, 1, 0, 0);
+            mSelectionLight.getTransform().setPositionZ(1.0f);
         }
 
         public GVRSceneObject getSelected() { return mTarget; }
@@ -267,6 +233,7 @@ public class SampleMain extends GVRMain {
 
     public class TouchHandler extends GVREventListeners.TouchEvents
     {
+        private float[] mHitLoc;
         private float mHitY;
         private float mHitX;
         private boolean mIsDragging = false;
@@ -301,6 +268,7 @@ public class SampleMain extends GVRMain {
             {
                 mHitX = pickInfo.motionEvent.getX();
                 mHitY = pickInfo.motionEvent.getY();
+                mHitLoc = pickInfo.getHitLocation();
                 mSelector.onTouch();
                 mIsDragging = true;
             }
@@ -356,36 +324,22 @@ public class SampleMain extends GVRMain {
 
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
-            if ((mSelector.getSelected() == null) || (pickInfo.motionEvent == null))
+            GVRSceneObject selected = mSelector.getSelected();
+            if ((selected == null) || (pickInfo.motionEvent == null))
             {
                 return;
             }
+            selected = selected.getParent();
+            GVRAnchor anchor = (GVRAnchor) selected.getComponent(GVRAnchor.getComponentType());
             if (pickInfo.touched && mIsDragging)
             {
-                Display display = mGVRContext.getActivity().getWindowManager().getDefaultDisplay();
-                Point size = new Point();
-                display.getSize(size);
-                float dx = (pickInfo.motionEvent.getX() - mHitX);
-                float dy = (pickInfo.motionEvent.getY() - mHitY);
-                GVRTransform t = mSelector.getSelected().getTransform();
-                Quaternionf q = new Quaternionf();
-                Vector3f euler = new Vector3f();
-                float scale;
-
-                q.set(t.getRotationX(), t.getRotationY(), t.getRotationZ(), t.getRotationW());
-                q.getEulerAnglesXYZ(euler);
-                dx /= size.x; dy /= size.y;
-                dx *= 10;
-                q.rotate(0, dx, 0);
-                scale = t.getScaleX() + dy;
-                if (scale < 0.1f)
+                float x = pickInfo.motionEvent.getX();
+                float y = pickInfo.motionEvent.getY();
+                GVRHitResult hit = mixedReality.hitTest(x, y);
+                if (hit != null)
                 {
-                    scale = 0.1f;
+                    mixedReality.updateAnchorPose(anchor, hit.getPose());
                 }
-                t.setScale(scale, scale, scale);
-                t.setRotation(q.w, q.x, q.y, q.z);
-                mHitX = pickInfo.motionEvent.getX();
-                mHitY = pickInfo.motionEvent.getY();
             }
         }
 
@@ -414,7 +368,7 @@ public class SampleMain extends GVRMain {
                 v.x -= x;
                 v.y -= y;
                 v.z -= z;
-                if (v.length() < 25)
+                if (v.length() < 100)
                 {
                     return anchor;
                 }
