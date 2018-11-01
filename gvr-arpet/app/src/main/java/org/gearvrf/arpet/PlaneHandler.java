@@ -25,6 +25,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRPlane;
@@ -155,11 +156,9 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         GVRSceneObject polygonObject = new GVRSceneObject(mContext, mesh, mat);
 
-        GVRBoxCollider collider = new GVRBoxCollider(mContext);
-        collider.setHalfExtents(0.5f, 0.5f, 0.5f);
         polygonObject.setName("Plane");
 
-        polygonObject.attachCollider(collider);
+        polygonObject.attachCollider(new GVRMeshCollider(mContext, true));
 
         hsvHUE += 35;
         float[] hsv = new float[3];

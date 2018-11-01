@@ -256,7 +256,7 @@ public class PetMain extends DisableNativeSplashScreen {
             // TODO: Improve this if
             if (gvrSceneObject != null && gvrSceneObject.getParent() instanceof GVRPlane) {
                 final float[] modelMtx = gvrSceneObject.getParent().getTransform().getModelMatrix();
-                final float[] hitPos = gvrPickedObject.hitLocation;
+
 
                 if (!mPet.isRunning()) {
                     mPet.setPlane((GVRPlane)gvrSceneObject.getParent());
@@ -275,7 +275,10 @@ public class PetMain extends DisableNativeSplashScreen {
                     mPlaneHandler.stopTracking((GVRPlane)gvrSceneObject.getParent());
                 }
 
-                mPet.goToTap(hitPos[0], hitPos[1], hitPos[2]);
+                if (gvrSceneObject.getParent() ==  mPet.getPlane()) {
+                    final float[] hitPos = gvrPickedObject.hitLocation;
+                    mPet.goToTap(hitPos[0], hitPos[1], hitPos[2]);
+                }
             }
         }
 
