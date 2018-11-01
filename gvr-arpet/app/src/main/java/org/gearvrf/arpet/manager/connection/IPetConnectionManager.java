@@ -139,7 +139,7 @@ public interface IPetConnectionManager {
     /**
      * Cancels the process of finding a server.
      */
-    void stopFindInvitation();
+    void stopFindInvitationAndDisconnect();
 
     List<Device> getConnectedDevices();
 

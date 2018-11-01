@@ -341,7 +341,7 @@ public class ShareAnchorMode extends BasePetMode {
 
         // Disconnect from remotes
         if (mCurrentMode == MODE_GUEST) {
-            mConnectionManager.stopFindInvitation();
+            mConnectionManager.stopFindInvitationAndDisconnect();
             mConnectionManager.disconnect();
         } else {
             mConnectionManager.stopInvitationAndDisconnect();

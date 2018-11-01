@@ -171,6 +171,9 @@ public abstract class BaseSocketConnectionManager implements ConnectionManager, 
 
     @Override
     public synchronized void disconnect() {
+        if (stateIs(ManagerState.CONNECTING_TO_REMOTE)) {
+            cancelOutgoingConnectionsThreads();
+        }
         if (mOngoingConnections.size() > 0) {
             try {
                 for (Connection connection : mOngoingConnections) {

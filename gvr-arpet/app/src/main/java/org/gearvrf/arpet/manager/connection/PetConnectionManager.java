@@ -124,10 +124,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     @Override
     public void stopInvitationAndDisconnect() {
         checkInitialization();
-        mDisconnectSilently = true;
         mDeviceVisibilityMonitor.setEnabled(false);
         super.stopConnectionListener();
-        super.disconnect();
+        disconnect();
     }
 
     @Override
@@ -143,8 +142,11 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         }
     }
 
-    public void stopFindInvitation() {
+    @Override
+    public void stopFindInvitationAndDisconnect() {
+        checkInitialization();
         mServerFinder.cancel();
+        disconnect();
     }
 
     @Override
@@ -273,6 +275,9 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         checkInitialization();
         mDisconnectSilently = true;
         super.disconnect();
+        if (getTotalConnected() == 0) {
+            mDisconnectSilently = false;
+        }
     }
 
     @Override
