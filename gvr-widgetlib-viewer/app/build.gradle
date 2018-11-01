@@ -32,7 +32,7 @@ dependencies {
         }
 
     } else {
-        implementation "org.gearvrf:widgetlib:$gearvrfVersion"
+        implementation "org.gearvrf:widgetLib:$gearvrfVersion"
     }
 
     implementation 'com.android.support:support-v4:23.4.0'
