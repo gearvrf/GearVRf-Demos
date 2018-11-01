@@ -394,7 +394,8 @@ public class SampleMain extends GVRMain {
             GVRAnchor anchor;
             GVRSceneObject anchorObj = new GVRSceneObject(getGVRContext());
             anchorObj.addChildObject(andy);
-            anchor = mixedReality.createAnchor(pose, anchorObj);
+            anchor = mixedReality.createAnchor(pose);
+            anchorObj.attachComponent(anchor);
             mVirtualObjects.add(anchor);
             mainScene.addSceneObject(anchorObj);
             mVirtObjCount++;

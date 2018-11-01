@@ -127,8 +127,8 @@ public class AvatarMain extends GVRMain {
             GVRPointLight light = new GVRPointLight(ctx);
             mSelectionLight = new GVRSceneObject(mContext);
             light.setAmbientIntensity(0, 0, 0, 1);
-            light.setDiffuseIntensity(0.7f, 0.3f, 0.3f, 1);
-            light.setSpecularIntensity(0.7f, 0.3f, 0.3f, 1);
+            light.setDiffuseIntensity(0.7f, 0.7f, 0.5f, 1);
+            light.setSpecularIntensity(0.7f, 0.7f, 0.5f, 1);
             mSelectionLight.getTransform().setPositionY(1);
             mSelectionLight.attachComponent(light);
         }
@@ -136,20 +136,21 @@ public class AvatarMain extends GVRMain {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
             GVRSceneObject.BoundingVolume bv = sceneObj.getBoundingVolume();
-            GVRSceneObject parent = mSelectionLight.getParent();
+            GVRSceneObject lightParent = mSelectionLight.getParent();
+            GVRSceneObject pickedParent = sceneObj.getParent();
 
             mSelectionLight.getTransform().setPositionZ(bv.radius);
-            if (parent == sceneObj)
+            if (lightParent == pickedParent)
             {
                 GVRLight light = mSelectionLight.getLight();
                 light.setEnable(true);
                 return;
             }
-            if (parent != null)
+            if (lightParent != null)
             {
-                parent.removeChildObject(mSelectionLight);
+                lightParent.removeChildObject(mSelectionLight);
             }
-            sceneObj.addChildObject(mSelectionLight);
+            pickedParent.addChildObject(mSelectionLight);
         }
 
         public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
@@ -191,12 +192,14 @@ public class AvatarMain extends GVRMain {
             else
             {
                 avatarAnchor = new GVRSceneObject(mContext);
+                avatarAnchor.setName("AvatarAnchor");
                 avatarAnchor.addChildObject(avatarModel);
-                anchor = mMixedReality.createAnchor(pose, avatarAnchor);
-                avatarAnchor.attachComponent(new GVRBoxCollider(mContext));
+                anchor = mMixedReality.createAnchor(pose);
+                avatarModel.setName("AvatarModel");
+                avatarModel.attachComponent(new GVRBoxCollider(mContext));
                 avatarAnchor.attachComponent(anchor);
                 mScene.addSceneObject(avatarAnchor);
-                avatarAnchor.getEventReceiver().addListener(mSelector);
+                avatarModel.getEventReceiver().addListener(mSelector);
             }
         }
     };
