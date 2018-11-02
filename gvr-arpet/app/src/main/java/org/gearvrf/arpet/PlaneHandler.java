@@ -216,7 +216,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     public void onPlaneMerging(GVRPlane childPlane, GVRPlane parentPlane) {
         // Will remove PlaneBoard from childPlane because this plane is not needed anymore now
         // that parentPlane "contains" childPlane
-        childPlane.detachComponent(PLANEBOARD_COMP_TYPE);
+        //childPlane.detachComponent(PLANEBOARD_COMP_TYPE);
 
         mPlanes.remove(childPlane);
     }
