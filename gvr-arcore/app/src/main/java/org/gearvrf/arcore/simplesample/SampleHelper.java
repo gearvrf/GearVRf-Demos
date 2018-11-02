@@ -15,8 +15,6 @@
 
 package org.gearvrf.arcore.simplesample;
 
-import android.graphics.Color;
-
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
@@ -24,10 +22,10 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
-import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.joml.Vector4f;
 
 import java.util.EnumSet;
@@ -93,8 +91,9 @@ public class SampleHelper {
         return plane;
     }
 
-    public void initCursorController(GVRContext gvrContext, final SampleMain.TouchHandler handler) {
-        final int cursorDepth = 100;
+    public void initCursorController(GVRContext gvrContext, final ITouchEvents handler, final float displayDepth)
+    {
+        final float cursorDepth = 100.0f;
         gvrContext.getMainScene().getEventReceiver().addListener(handler);
         GVRInputManager inputManager = gvrContext.getInputManager();
         mCursor = new GVRSceneObject(gvrContext,
@@ -119,7 +118,7 @@ public class SampleHelper {
                 mCursorController = newController;
                 if (newController instanceof GVRGazeCursorController)
                 {
-                    ((GVRGazeCursorController) newController).setEnableTouchScreen(true);
+                    ((GVRGazeCursorController) newController).setTouchScreenDepth(displayDepth);
                 }
                 newController.setCursor(mCursor);
                 newController.setCursorDepth(cursorDepth);

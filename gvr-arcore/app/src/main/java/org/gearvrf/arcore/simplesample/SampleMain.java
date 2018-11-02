@@ -34,8 +34,9 @@ import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
-import org.gearvrf.mixedreality.IAnchorEventsListener;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.mixedreality.IAnchorEvents;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IPlaneEvents;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -74,10 +75,9 @@ public class SampleMain extends GVRMain {
         mSelector = new SelectionHandler();
         mSceneLight = new GVRDirectLight(gvrContext);
         mainScene.getMainCameraRig().getHeadTransformObject().attachComponent(mSceneLight);
-        helper.initCursorController(gvrContext, mTouchHandler);
         mixedReality = new GVRMixedReality(mainScene);
-        mixedReality.registerPlaneListener(planeEventsListener);
-        mixedReality.registerAnchorListener(anchorEventsListener);
+        mixedReality.getEventReceiver().addListener(planeEventsListener);
+        mixedReality.getEventReceiver().addListener(anchorEventsListener);
         mixedReality.resume();
     }
 
@@ -99,10 +99,20 @@ public class SampleMain extends GVRMain {
         mSceneLight.setSpecularIntensity(0.2f, 0.2f, 0.2f, 1);
     }
 
-    private IPlaneEventsListener planeEventsListener = new IPlaneEventsListener()
+    private IPlaneEvents planeEventsListener = new IPlaneEvents()
     {
         @Override
-        public void onPlaneDetection(GVRPlane gvrPlane)
+        public void onStartPlaneDetection(IMixedReality mr)
+        {
+            float screenDepth = mr.getScreenDepth();
+            helper.initCursorController(mGVRContext, mTouchHandler, screenDepth);
+        }
+
+        @Override
+        public void onStopPlaneDetection(IMixedReality mr) { }
+
+        @Override
+        public void onPlaneDetected(GVRPlane gvrPlane)
         {
             if (gvrPlane.getPlaneType() == GVRPlane.Type.VERTICAL)
             {
@@ -133,7 +143,7 @@ public class SampleMain extends GVRMain {
         }
     };
 
-    private IAnchorEventsListener anchorEventsListener = new IAnchorEventsListener() {
+    private IAnchorEvents anchorEventsListener = new IAnchorEvents() {
         @Override
         public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState) {
             if (gvrTrackingState != GVRTrackingState.TRACKING) {
@@ -143,6 +153,9 @@ public class SampleMain extends GVRMain {
                 gvrAnchor.setEnable(true);
             }
         }
+
+        @Override
+        public void onCloudUpdate(GVRAnchor anchor) { }
     };
 
     public class SelectionHandler
@@ -274,12 +287,12 @@ public class SampleMain extends GVRMain {
     {
         private float mHitY;
         private float mHitX;
-        private boolean mIsDragging = false;
+        private boolean mDoDragging = false;
 
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
             GVRSceneObject parent = sceneObj.getParent();
-            if ((parent == null) || (mSelector.getSelected() != null))
+            if (parent == null)
             {
                 return;
             }
@@ -302,40 +315,36 @@ public class SampleMain extends GVRMain {
         @Override
         public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
-            if ((mSelector.getSelected() != null) && (pickInfo.motionEvent != null))
+            GVRSceneObject selected = mSelector.getSelected();
+            if ((pickInfo.motionEvent != null) && (selected == sceneObj))
             {
                 mHitX = pickInfo.motionEvent.getX();
                 mHitY = pickInfo.motionEvent.getY();
+
                 mSelector.onTouch();
+                mDoDragging = false;
+            }
+            else
+            {
+                mDoDragging = true;
             }
         }
 
         @Override
         public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
-            if (!mIsDragging && mSelector.getSelected() != null)
+            GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
+                                              pickInfo.hitLocation[1],
+                                              pickInfo.hitLocation[2],
+                                              200.0f);
+            if (anchor != null)
             {
-                if (mSelector.getSelected() == sceneObj)
-                {
-                    mSelector.onTouchEnd();
-                }
-                else
-                {
-                    mSelector.onExit();
-                }
+                mSelector.onTouchEnd();
                 return;
             }
             GVRHitResult gvrHitResult = mixedReality.hitTest(pickInfo);
 
             if (gvrHitResult == null)
-            {
-                return;
-            }
-            GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
-                                              pickInfo.hitLocation[1],
-                                              pickInfo.hitLocation[2],
-                                              300.0f);
-            if (anchor != null)
             {
                 return;
             }
@@ -361,40 +370,40 @@ public class SampleMain extends GVRMain {
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
             GVRSceneObject selected = mSelector.getSelected();
+            GVRAnchor anchor = null;
+
             if (pickInfo.motionEvent == null)
             {
                 return;
             }
             if (pickInfo.touched)
             {
-                final DisplayMetrics metrics = new DisplayMetrics();
-                getGVRContext().getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
                 float x = pickInfo.motionEvent.getX();
                 float y = pickInfo.motionEvent.getY();
 
-                if (!mIsDragging && (sceneObj == selected))
+                if (mDoDragging && (selected != null))
                 {
+                    anchor = (GVRAnchor) selected.getParent().getComponent(GVRAnchor.getComponentType());
+                    GVRHitResult hit = mixedReality.hitTest(x, y);
+                    if (hit != null)
+                    {
+                        mixedReality.updateAnchorPose(anchor, hit.getPose());
+                    }
+                }
+                else if (sceneObj == selected)
+                {
+                    final DisplayMetrics metrics = new DisplayMetrics();
+                    getGVRContext().getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
                     float dx = (x - mHitX) / metrics.widthPixels;
                     float dy = (y - mHitY) / metrics.heightPixels;
 
                     mSelector.onUpdate(dx, dy);
-                    return;
                 }
-                GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
-                                                  pickInfo.hitLocation[1],
-                                                  pickInfo.hitLocation[2], 50.0f);
-                if (anchor != null)
-                {
-                    GVRHitResult hit = mixedReality.hitTest(x, y);
-                    if (hit != null)
-                    {
-                        mIsDragging = true;
-                        mixedReality.updateAnchorPose(anchor, hit.getPose());
-                        return;
-                    }
-                }
-                mIsDragging = false;
-                mSelector.onExit();
+            }
+            else if (mDoDragging)
+            {
+                mDoDragging = false;
+                mSelector.onTouchEnd();
             }
         }
 
