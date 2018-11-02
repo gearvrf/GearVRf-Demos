@@ -299,7 +299,7 @@ public class PetMain extends DisableNativeSplashScreen {
                         mCurrentMode.enter();
                     }
 
-                    mPlaneHandler.stopTracking((GVRPlane) gvrSceneObject.getParent());
+                    mPlaneHandler.setSelectedPlane((GVRPlane)gvrSceneObject.getParent());
                 }
 
                 if (gvrSceneObject.getParent() ==  mPet.getPlane()) {
