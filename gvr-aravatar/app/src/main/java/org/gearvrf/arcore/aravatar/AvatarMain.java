@@ -88,7 +88,7 @@ public class AvatarMain extends GVRMain {
         @Override
         public void onPlaneDetection(GVRPlane gvrPlane)
         {
-            if (gvrPlane.getPlaneType() == GVRPlane.PlaneType.HORIZONTAL_UPWARD_FACING)
+            if (gvrPlane.getPlaneType() == GVRPlane.Type.HORIZONTAL_UPWARD_FACING)
             {
                 GVRSceneObject planeMesh = mAssets.createPlane(getGVRContext(), mMixedReality.getARToVRScale());
 
@@ -191,13 +191,9 @@ public class AvatarMain extends GVRMain {
             }
             else
             {
-                avatarAnchor = new GVRSceneObject(mContext);
-                avatarAnchor.setName("AvatarAnchor");
+                avatarAnchor = mMixedReality.createAnchorNode(pose);
                 avatarAnchor.addChildObject(avatarModel);
-                anchor = mMixedReality.createAnchor(pose);
-                avatarModel.setName("AvatarModel");
                 avatarModel.attachComponent(new GVRBoxCollider(mContext));
-                avatarAnchor.attachComponent(anchor);
                 mScene.addSceneObject(avatarAnchor);
                 avatarModel.getEventReceiver().addListener(mSelector);
             }
