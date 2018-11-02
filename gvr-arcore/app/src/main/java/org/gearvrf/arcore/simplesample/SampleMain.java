@@ -15,6 +15,8 @@
 
 package org.gearvrf.arcore.simplesample;
 
+import android.util.DisplayMetrics;
+
 import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDirectLight;
@@ -25,6 +27,7 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
 import org.gearvrf.animation.GVRRotationByAxisAnimation;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -35,6 +38,7 @@ import org.gearvrf.mixedreality.IAnchorEventsListener;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.utility.Log;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.io.IOException;
@@ -161,6 +165,10 @@ public class SampleMain extends GVRMain {
 
         public GVRSceneObject getSelected() { return mTarget; }
 
+        /*
+         * When entering an anchored object, it is hilited by
+         * adding a point light under its parent.
+         */
         public void onEnter(GVRSceneObject target)
         {
             mTarget = target;
@@ -170,12 +178,14 @@ public class SampleMain extends GVRMain {
                                       PICKED_COLOR[1],
                                       PICKED_COLOR[2]);
             GVRSceneObject lightParent = mSelectionLight.getParent();
+            GVRSceneObject targetParent = target.getParent();
+
             if (lightParent != null)
             {
-                if (lightParent != target)
+                if (lightParent != targetParent)
                 {
                     lightParent.removeChildObject(mSelectionLight);
-                    mTarget.addChildObject(mSelectionLight);
+                    targetParent.addChildObject(mSelectionLight);
                     mSelectionLight.getComponent(GVRLight.getComponentType()).enable();
                 }
                 else
@@ -185,17 +195,23 @@ public class SampleMain extends GVRMain {
             }
             else
             {
-                mTarget.addChildObject(mSelectionLight);
+                targetParent.addChildObject(mSelectionLight);
                 mSelectionLight.getComponent(GVRLight.getComponentType()).enable();
             }
         }
 
+        /*
+         * When the object is no longer selected, its selection light is disabled.
+         */
         public void onExit()
         {
             mSelectionLight.getComponent(GVRLight.getComponentType()).disable();
             mTarget = null;
         }
 
+        /*
+         * The color of the selection light changes when the object is being dragged
+         */
         public void onTouch()
         {
             GVRPointLight light = (GVRPointLight) mSelectionLight.getComponent(GVRLight.getComponentType());
@@ -214,11 +230,48 @@ public class SampleMain extends GVRMain {
                                       PICKED_COLOR[2]);
         }
 
+        /*
+         * When the object is responding to input, movement along the X axis
+         * will rotate the object about Y and movement along the Y axis
+         * will scale the object. The object being rotated / scaled is a child
+         * of the anchored object (which is being oriented and positioned
+         * by MixedReality).
+         */
+        public void onUpdate(float dx, float dy)
+        {
+            GVRSceneObject selected = getSelected();
+            GVRTransform t = selected.getTransform();
+            float scale = t.getScaleX();
+            Quaternionf q = new Quaternionf();
+            Vector3f ea = new Vector3f();
+            float angle = dx * 4.0f;
+
+            //
+            // movement in X rotates about Y axis
+            //
+            q.set(t.getRotationX(), t.getRotationY(), t.getRotationZ(), t.getRotationW());
+            q.getEulerAnglesXYZ(ea);
+            q.rotateAxis(angle, 0, 1, 0);
+
+            //
+            // movement in Y scales the model
+            //
+            scale += dy / 10.0f;
+            if (scale < 0.1f)
+            {
+                scale = 0.1f;
+            }
+            else if (scale > 50.0f)
+            {
+                scale = 50.0f;
+            }
+            t.setRotation(q.w, q.x, q.y, q.z);
+            t.setScale(scale, scale, scale);
+        }
     };
 
     public class TouchHandler extends GVREventListeners.TouchEvents
     {
-        private float[] mHitLoc;
         private float mHitY;
         private float mHitX;
         private boolean mIsDragging = false;
@@ -253,16 +306,14 @@ public class SampleMain extends GVRMain {
             {
                 mHitX = pickInfo.motionEvent.getX();
                 mHitY = pickInfo.motionEvent.getY();
-                mHitLoc = pickInfo.getHitLocation();
                 mSelector.onTouch();
-                mIsDragging = true;
             }
         }
 
         @Override
         public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
-            if (mSelector.getSelected() != null)
+            if (!mIsDragging && mSelector.getSelected() != null)
             {
                 if (mSelector.getSelected() == sceneObj)
                 {
@@ -272,7 +323,6 @@ public class SampleMain extends GVRMain {
                 {
                     mSelector.onExit();
                 }
-                mIsDragging = false;
                 return;
             }
             GVRHitResult gvrHitResult = mixedReality.hitTest(pickInfo);
@@ -283,7 +333,8 @@ public class SampleMain extends GVRMain {
             }
             GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
                                               pickInfo.hitLocation[1],
-                                              pickInfo.hitLocation[2]);
+                                              pickInfo.hitLocation[2],
+                                              300.0f);
             if (anchor != null)
             {
                 return;
@@ -310,21 +361,40 @@ public class SampleMain extends GVRMain {
         public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
         {
             GVRSceneObject selected = mSelector.getSelected();
-            if ((selected == null) || (pickInfo.motionEvent == null))
+            if (pickInfo.motionEvent == null)
             {
                 return;
             }
-            selected = selected.getParent();
-            GVRAnchor anchor = (GVRAnchor) selected.getComponent(GVRAnchor.getComponentType());
-            if (pickInfo.touched && mIsDragging)
+            if (pickInfo.touched)
             {
+                final DisplayMetrics metrics = new DisplayMetrics();
+                getGVRContext().getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
                 float x = pickInfo.motionEvent.getX();
                 float y = pickInfo.motionEvent.getY();
-                GVRHitResult hit = mixedReality.hitTest(x, y);
-                if (hit != null)
+
+                if (!mIsDragging && (sceneObj == selected))
                 {
-                    mixedReality.updateAnchorPose(anchor, hit.getPose());
+                    float dx = (x - mHitX) / metrics.widthPixels;
+                    float dy = (y - mHitY) / metrics.heightPixels;
+
+                    mSelector.onUpdate(dx, dy);
+                    return;
                 }
+                GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
+                                                  pickInfo.hitLocation[1],
+                                                  pickInfo.hitLocation[2], 50.0f);
+                if (anchor != null)
+                {
+                    GVRHitResult hit = mixedReality.hitTest(x, y);
+                    if (hit != null)
+                    {
+                        mIsDragging = true;
+                        mixedReality.updateAnchorPose(anchor, hit.getPose());
+                        return;
+                    }
+                }
+                mIsDragging = false;
+                mSelector.onExit();
             }
         }
 
@@ -341,7 +411,7 @@ public class SampleMain extends GVRMain {
             return anchorObj;
         }
 
-        private GVRAnchor findAnchorNear(float x, float y, float z)
+        private GVRAnchor findAnchorNear(float x, float y, float z, float maxdist)
         {
             Matrix4f anchorMtx = new Matrix4f();
             Vector3f v = new Vector3f();
@@ -353,7 +423,8 @@ public class SampleMain extends GVRMain {
                 v.x -= x;
                 v.y -= y;
                 v.z -= z;
-                if (v.length() < 100)
+                float d = v.length();
+                if (d < maxdist)
                 {
                     return anchor;
                 }
