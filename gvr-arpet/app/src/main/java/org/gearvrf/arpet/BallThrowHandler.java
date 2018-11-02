@@ -24,6 +24,7 @@ import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageService;
@@ -50,9 +51,7 @@ public class BallThrowHandler {
     private static final float defaultPositionY = 0f;
     private static final float defaultPositionZ = -40f;
 
-    private static final float defaultScaleX = 40f;
-    private static final float defaultScaleY = 40f;
-    private static final float defaultScaleZ = 40f;
+    private static final float defaultScale = 20;
 
     private static final float MIN_Y_OFFSET = 3 * 100;
 
@@ -136,7 +135,7 @@ public class BallThrowHandler {
         createBoneCollider();
 
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
-        mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
+        mBall.getTransform().setScale(defaultScale, defaultScale, defaultScale);
 
         mRigidBody = new GVRRigidBody(mPetContext.getGVRContext(), 5.0f);
         mRigidBody.setRestitution(0.5f);
@@ -274,7 +273,7 @@ public class BallThrowHandler {
             parent.removeChildObject(mBall);
         }
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
-        mBall.getTransform().setScale(defaultScaleX, defaultScaleY, defaultScaleZ);
+        mBall.getTransform().setScale(defaultScale, defaultScale, defaultScale);
         mBall.getTransform().setRotation(1, 0, 0, 0);
 
         mPlayer.addChildObject(mBall);

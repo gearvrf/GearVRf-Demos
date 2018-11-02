@@ -267,11 +267,10 @@ public class CharacterView extends GVRSceneObject implements
 
         vectorDistance.set(modelCam[12], modelCam[13], modelCam[14]);
         // Calculates the distance in centimeters
-        float distance = vectorDistance.distance(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
+        float factor = 0.5f * vectorDistance.distance(modelCharacter[12], modelCharacter[13], modelCharacter[14]);
+        float scale = Math.max(ScaleGestureDetector.MIN_FACTOR, Math.min(factor, ScaleGestureDetector.MAX_FACTOR));
 
-        if (distance < getBoundingVolume().radius) {
-            scale(ScaleGestureDetector.MIN_FACTOR);
-        }
+        scale(scale);
     }
 
     public GVRSceneObject getGrabPivot() {
