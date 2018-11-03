@@ -293,7 +293,7 @@ public class PetActions {
         public void onRun(float frameTime) {
 
             // Min distance to ball
-            boolean moveTowardToBall = mTargetDirection.length() > mPetRadius;
+            boolean moveTowardToBall = mTargetDirection.length() > mPetRadius * 0.8f;
 
             if (moveTowardToBall) {
                 if (mAnimation != null) {
