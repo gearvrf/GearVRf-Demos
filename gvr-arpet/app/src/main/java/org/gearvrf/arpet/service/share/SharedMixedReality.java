@@ -119,7 +119,12 @@ public class SharedMixedReality implements IMRCommon {
     private synchronized void initAsGuest(SharedSceneObject shared) {
         shared.parent = shared.object.getParent();
         if (shared.parent != null) {
-            shared.parent.removeChildObject(shared.object);
+            if (shared.parent instanceof GVRPlane) {
+                // TODO: Fix MR API
+                ((GVRPlane)shared.parent).setSceneObject(null);
+            } else {
+                shared.parent.removeChildObject(shared.object);
+            }
             mPetContext.getMainScene().addSceneObject(shared.object);
         }
     }

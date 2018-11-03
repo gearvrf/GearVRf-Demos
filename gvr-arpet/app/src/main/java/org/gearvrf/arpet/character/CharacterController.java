@@ -50,6 +50,7 @@ public class CharacterController extends BasePetMode {
 
     private SharedMixedReality mMixedReality;
     private IMessageService mMessageService;
+    private boolean mIsPlaying = false;
 
     private class LocalMessageReceiver extends SimpleMessageReceiver {
 
@@ -116,17 +117,12 @@ public class CharacterController extends BasePetMode {
 
         addAction(new PetActions.TO_PLAYER(pet, mPetContext.getPlayer(), action -> {
             setCurrentAction(PetActions.IDLE.ID);
-            // TODO: Improve this Ball handler api
-            mBallThrowHandler.enable();
-            mBallThrowHandler.reset();
         }));
 
         addAction(new PetActions.GRAB(pet, mBallThrowHandler.getBall(), new OnPetActionListener() {
             @Override
             public void onActionEnd(IPetAction action) {
                 setCurrentAction(PetActions.TO_PLAYER.ID);
-                mBallThrowHandler.disable();
-                grabBall(mBallThrowHandler.getBall());
             }
         }));
 
@@ -168,10 +164,13 @@ public class CharacterController extends BasePetMode {
     }
 
     public void playBall() {
+        mIsPlaying = true;
+        mBallThrowHandler.reset();
         mBallThrowHandler.enable();
     }
 
     public void stopBall() {
+        mIsPlaying = false;
         mBallThrowHandler.disable();
     }
 
@@ -198,6 +197,16 @@ public class CharacterController extends BasePetMode {
 
     private void onSetCurrentAction(@PetActionType int action) {
         mCurrentAction = mPetActions.get(action);
+
+        if (mIsPlaying || mPetContext.getMode() == SharedMixedReality.GUEST) {
+            if (mCurrentAction.id() == PetActions.IDLE.ID) {
+                mBallThrowHandler.reset();
+                mBallThrowHandler.enable();
+            } else if (mCurrentAction.id() == PetActions.TO_PLAYER.ID) {
+                mBallThrowHandler.disable();
+                grabBall(mBallThrowHandler.getBall());
+            }
+        }
     }
 
     private void onSendCurrentAction(@PetActionType int action) {
@@ -260,7 +269,6 @@ public class CharacterController extends BasePetMode {
             // FIXME: Move this to a proper place
             if (mBallThrowHandler.canBeReseted() && activeAction != null) {
                 setCurrentAction(PetActions.IDLE.ID);
-                mBallThrowHandler.reset();
             }
         }
     }

@@ -226,12 +226,12 @@ public class BallThrowHandler {
 
     // FIXME: Why multiply by root matrix?
     private void throwLocalBall(Vector3f forceVector) {
-        Matrix4f rootMatrix = mPetContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
-        rootMatrix.invert();
+        //Matrix4f rootMatrix = mPetContext.getMainScene().getRoot().getTransform().getModelMatrix4f();
+        //rootMatrix.invert();
 
         // Calculating the new model matrix (T') for the ball: T' = iP x T
         Matrix4f ballMatrix = mBall.getTransform().getModelMatrix4f();
-        rootMatrix.mul(ballMatrix, ballMatrix);
+        //rootMatrix.mul(ballMatrix, ballMatrix);
 
         // Add the ball as physics root child...
         mBall.getParent().removeChildObject(mBall);
@@ -244,7 +244,7 @@ public class BallThrowHandler {
         Matrix4f playerMatrix = mPlayer.getTransform().getModelMatrix4f();
 
         // ... And same transformation is required
-        rootMatrix.mul(playerMatrix, playerMatrix);
+        //rootMatrix.mul(playerMatrix, playerMatrix);
         Quaternionf q = new Quaternionf();
         q.setFromNormalized(playerMatrix);
         forceVector.rotate(q);
