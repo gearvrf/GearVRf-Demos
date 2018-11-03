@@ -59,8 +59,8 @@ public class PetActions {
 
         protected float mPetRadius = 1.0f;
         protected float mTurnSpeed = 5f;
-        protected final float mWalkingSpeed = 25f;
-        protected final float mRunningSpeed = 100f;
+        protected float mWalkingSpeed = 25f;
+        protected float mRunningSpeed = 100f;
         protected float mElapsedTime = 0;
         protected float mAnimDuration = 0;
         protected GVRAnimator mAnimation;
@@ -99,6 +99,9 @@ public class PetActions {
         @Override
         public void entry() {
             mPetRadius = mCharacter.getBoundingVolume().radius;
+            mRunningSpeed = mPetRadius * 2;
+            mWalkingSpeed = mPetRadius * 0.7f;
+
             mElapsedTime = 0;
             onEntry();
             if (mAnimation != null) {
