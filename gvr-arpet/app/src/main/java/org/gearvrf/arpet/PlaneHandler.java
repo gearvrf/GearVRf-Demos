@@ -76,7 +76,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             box = new GVRSceneObject(gvrContext);
 
             GVRBoxCollider collider = new GVRBoxCollider(gvrContext);
-            collider.setHalfExtents(0.5f, 0.5f, 0.5f);
+            collider.setHalfExtents(0.5f, 0.5f, 0.05f);
             box.attachComponent(collider);
             // To touch debug
             box.setName(PLANE_PHYSICS);
@@ -132,7 +132,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
                 board.setRestitution(0.5f);
                 board.setFriction(1.0f);
                 board.setCcdMotionThreshold(0.001f);
-                board.setCcdSweptSphereRadius(5f);
+                board.setCcdSweptSphereRadius(2f);
                 box.attachComponent(board);
             }
 

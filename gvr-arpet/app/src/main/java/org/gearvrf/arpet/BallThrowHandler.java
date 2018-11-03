@@ -24,7 +24,6 @@ import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageService;
@@ -141,7 +140,7 @@ public class BallThrowHandler {
         mRigidBody.setRestitution(0.5f);
         mRigidBody.setFriction(0.5f);
         mRigidBody.setCcdMotionThreshold(0.001f);
-        mRigidBody.setCcdSweptSphereRadius(5f);
+        mRigidBody.setCcdSweptSphereRadius(2f);
 
         mBall.attachComponent(mRigidBody);
         mRigidBody.setEnable(false);
