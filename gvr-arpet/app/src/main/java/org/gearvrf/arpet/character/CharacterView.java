@@ -71,7 +71,6 @@ public class CharacterView extends GVRSceneObject implements
     protected ILoadEvents mLoadListener = null;
     private GVRSceneObject mTapObject;
 
-
     CharacterView(@NonNull PetContext petContext) {
         super(petContext.getGVRContext());
 
@@ -156,6 +155,9 @@ public class CharacterView extends GVRSceneObject implements
     }
 
     public boolean updatePose(float[] poseMatrix) {
+        float[] planeModel = mBoundaryPlane.getTransform().getModelMatrix();
+        poseMatrix[13] = planeModel[13];
+
         getTransform().setModelMatrix(poseMatrix);
 
         return true;

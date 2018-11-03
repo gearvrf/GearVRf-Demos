@@ -57,7 +57,7 @@ public class PetActions {
         protected final Vector3f mTargetDirection = new Vector3f();
         protected final Vector3f mMoveTo = new Vector3f();
 
-        protected float mCharacterHalfSize = 25.0f;
+        protected float mPetRadius = 1.0f;
         protected float mTurnSpeed = 5f;
         protected final float mWalkingSpeed = 25f;
         protected final float mRunningSpeed = 100f;
@@ -98,6 +98,7 @@ public class PetActions {
 
         @Override
         public void entry() {
+            mPetRadius = mCharacter.getBoundingVolume().radius;
             mElapsedTime = 0;
             onEntry();
             if (mAnimation != null) {
@@ -213,7 +214,7 @@ public class PetActions {
         public void onRun(float frameTime) {
             mTargetDirection.y = 0;
             // Keep a angle of 45 degree of distance
-            boolean moveTowardToCam = mTargetDirection.length() > 2 * mCharacterHalfSize;
+            boolean moveTowardToCam = mTargetDirection.length() > mPetRadius * 1.5f;
 
             if (moveTowardToCam) {
                 if (mAnimation != null) {
@@ -289,7 +290,7 @@ public class PetActions {
         public void onRun(float frameTime) {
 
             // Min distance to ball
-            boolean moveTowardToBall = mTargetDirection.length() > mCharacterHalfSize * 0.5f;
+            boolean moveTowardToBall = mTargetDirection.length() > mPetRadius;
 
             if (moveTowardToBall) {
                 if (mAnimation != null) {
@@ -392,7 +393,7 @@ public class PetActions {
         public void onRun(float frameTime) {
             mTargetDirection.y = 0;
             // Keep a angle of 45 degree of distance
-            boolean moveTowardToCam = mTargetDirection.length() > mCharacterHalfSize * 0.5f;
+            boolean moveTowardToCam = mTargetDirection.length() > mPetRadius * 0.5f;
 
             if (moveTowardToCam) {
                 if (mAnimation != null) {
