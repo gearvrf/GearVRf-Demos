@@ -36,8 +36,9 @@ import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
-import org.gearvrf.mixedreality.IAnchorEventsListener;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.mixedreality.IAnchorEvents;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IPlaneEvents;
 
 public class AvatarMain extends GVRMain {
     private static String TAG = "ARAVATAR";
@@ -68,8 +69,8 @@ public class AvatarMain extends GVRMain {
         }
         mAssets.initCursorController(gvrContext, mTouchHandler);
         mMixedReality = new GVRMixedReality(mContext);
-        mMixedReality.registerPlaneListener(planeEventsListener);
-        mMixedReality.registerAnchorListener(anchorEventsListener);
+        mMixedReality.getEventReceiver().addListener(planeEventsListener);
+        mMixedReality.getEventReceiver().addListener(anchorEventsListener);
         mMixedReality.resume();
     }
 
@@ -83,10 +84,16 @@ public class AvatarMain extends GVRMain {
     }
 
 
-    private IPlaneEventsListener planeEventsListener = new IPlaneEventsListener()
+    private IPlaneEvents planeEventsListener = new IPlaneEvents()
     {
         @Override
-        public void onPlaneDetection(GVRPlane gvrPlane)
+        public void onStartPlaneDetection(IMixedReality mr) { }
+
+        @Override
+        public void onStopPlaneDetection(IMixedReality mr) { }
+
+        @Override
+        public void onPlaneDetected(GVRPlane gvrPlane)
         {
             if (gvrPlane.getPlaneType() == GVRPlane.Type.HORIZONTAL_UPWARD_FACING)
             {
@@ -109,7 +116,7 @@ public class AvatarMain extends GVRMain {
         }
     };
 
-    private IAnchorEventsListener anchorEventsListener = new IAnchorEventsListener()
+    private IAnchorEvents anchorEventsListener = new IAnchorEvents()
     {
         @Override
         public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState)
