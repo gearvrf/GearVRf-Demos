@@ -46,7 +46,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This sample illustrates how to load, place and move a 3D model
+ * on a plane in the real world.
+ */
 public class SampleMain extends GVRMain {
     private static String TAG = "GVR_ARCORE";
     private static int MAX_VIRTUAL_OBJECTS = 20;
@@ -63,6 +66,14 @@ public class SampleMain extends GVRMain {
     private GVRRotationByAxisAnimation mOrbit = null;
     private float mOrbitDirection = 0;
 
+    /**
+     * Initialize the MixedReality extension and
+     * provide it with listeners for plane detection
+     * and anchor tracking.
+     *
+     * A headlight is put in the scene to illuminate
+     * objects the camera is pointed at.
+     */
     @Override
     public void onInit(GVRContext gvrContext)
     {
@@ -82,6 +93,14 @@ public class SampleMain extends GVRMain {
     }
 
 
+    /**
+     * Loads a 3D model using the asset loaqder and attaches
+     * a collider to it so it can be picked.
+     * If you are using phone AR, the touch screen can
+     * be used to drag, rotate or scale the object.
+     * If you are using a headset, the controller
+     * is used for picking and moving.
+     */
     private GVRSceneObject load3dModel(final GVRContext gvrContext) throws IOException
     {
         final GVRSceneObject sceneObject = gvrContext.getAssetLoader().loadModel("objects/andy.obj");
@@ -89,6 +108,11 @@ public class SampleMain extends GVRMain {
         return sceneObject;
     }
 
+    /**
+     * The mixed reality extension runs in the background and does
+     * light estimation. Each frame the intensity of the ambient
+     * lighting is adjusted based on that estimate.
+     */
     @Override
     public void onStep()
     {
@@ -99,8 +123,17 @@ public class SampleMain extends GVRMain {
         mSceneLight.setSpecularIntensity(0.2f, 0.2f, 0.2f, 1);
     }
 
+    /**
+     * The plane events listener handles plane detection events.
+     * It also handles initialization and shutdown.
+     */
     private IPlaneEvents planeEventsListener = new IPlaneEvents()
     {
+        /**
+         * Get the depth of the touch screen in the 3D world
+         * and give it to the cursor controller so touch
+         * events will be handled properly.
+         */
         @Override
         public void onStartPlaneDetection(IMixedReality mr)
         {
@@ -111,6 +144,12 @@ public class SampleMain extends GVRMain {
         @Override
         public void onStopPlaneDetection(IMixedReality mr) { }
 
+        /**
+         * Place a transparent quad in the 3D scene to indicate
+         * vertically upward planes (floor, table top).
+         * We don't need colliders on these since they are
+         * not pickable.
+          */
         @Override
         public void onPlaneDetected(GVRPlane gvrPlane)
         {
@@ -124,37 +163,40 @@ public class SampleMain extends GVRMain {
             mainScene.addSceneObject(planeMesh);
         }
 
+        /**
+         * Show/hide the 3D plane node based on whether it
+         * is being tracked or not.
+         */
         @Override
-        public void onPlaneStateChange(GVRPlane gvrPlane, GVRTrackingState gvrTrackingState)
+        public void onPlaneStateChange(GVRPlane gvrPlane, GVRTrackingState state)
         {
-            if (gvrTrackingState != GVRTrackingState.TRACKING)
-            {
-                gvrPlane.setEnable(false);
-            }
-            else
-            {
-                gvrPlane.setEnable(true);
-            }
+            gvrPlane.setEnable(state == GVRTrackingState.TRACKING);
         }
 
         @Override
-        public void onPlaneMerging(GVRPlane gvrPlane, GVRPlane gvrPlane1)
+        public void onPlaneMerging(GVRPlane gvrPlane, GVRPlane gvrPlane1) { }
+    };
+
+    /**
+     * Show/hide the 3D node associated with the anchor
+     * based on whether it is being tracked or not.
+     */
+    private IAnchorEvents anchorEventsListener = new IAnchorEvents()
+    {
+        @Override
+        public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState state)
         {
+            gvrAnchor.setEnable(state == GVRTrackingState.TRACKING);
         }
     };
 
-    private IAnchorEvents anchorEventsListener = new IAnchorEvents() {
-        @Override
-        public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState) {
-            if (gvrTrackingState != GVRTrackingState.TRACKING) {
-                gvrAnchor.setEnable(false);
-            }
-            else {
-                gvrAnchor.setEnable(true);
-            }
-        }
-    };
-
+    /**
+     * Handles selection hilighting, rotation and scaling
+     * of currently selected 3D object.
+     * A light attached to the parent of the
+     * selected 3D object is used for hiliting it.
+     * The root of the hierarchy can be rotated or scaled.
+     */
     public class SelectionHandler
     {
         private final float[] PICKED_COLOR = { 0.4f, 0.6f, 0, 1.0f };
@@ -247,32 +289,31 @@ public class SampleMain extends GVRMain {
         }
 
         /*
-         * When the object is responding to input, movement along the X axis
-         * will rotate the object about Y and movement along the Y axis
-         * will scale the object. The object being rotated / scaled is a child
+         * Rotate and scale the object relative to its current state.
+         * The node being rotated / scaled is a child
          * of the anchored object (which is being oriented and positioned
          * by MixedReality).
          */
-        public void onUpdate(float dx, float dy)
+        public void onUpdate(float rotateDelta, float scaleDelta)
         {
             GVRSceneObject selected = getSelected();
             GVRTransform t = selected.getTransform();
             float scale = t.getScaleX();
             Quaternionf q = new Quaternionf();
             Vector3f ea = new Vector3f();
-            float angle = dx * 4.0f;
+            float angle = rotateDelta * 4.0f;
 
-            //
-            // movement in X rotates about Y axis
-            //
+            /*
+             * rotate about Y axis
+             */
             q.set(t.getRotationX(), t.getRotationY(), t.getRotationZ(), t.getRotationW());
             q.getEulerAnglesXYZ(ea);
             q.rotateAxis(angle, 0, 1, 0);
 
-            //
-            // movement in Y scales the model
-            //
-            scale += dy / 10.0f;
+            /*
+             * scale the model
+             */
+            scale += scaleDelta / 10.0f;
             if (scale < 0.1f)
             {
                 scale = 0.1f;
@@ -286,6 +327,24 @@ public class SampleMain extends GVRMain {
         }
     };
 
+    /**
+     * Handles touch events for all 3D scene objects
+     * that have colliders. These include the 3D
+     * objects placed at anchors. If phone AR is
+     * being used with passthru video, the
+     * object displaying the camera output also
+     * has a collider and is touchable.
+     * This is how picking is handled when using
+     * the touch screen.
+     *
+     * Tapping the screen or clicking on a plane
+     * will cause a 3D object to be placed there.
+     * Dragging with the controller or your finger
+     * inside the object will scale it (Y direction)
+     * and rotate it (X direction). Dragging outside
+     * a 3D object will drag the currently selected
+     * object (the last one you added/manipulated).
+     */
     public class TouchHandler extends GVREventListeners.TouchEvents
     {
         static final int DRAG = 1;
@@ -331,22 +390,22 @@ public class SampleMain extends GVRMain {
 
             if (pickInfo.motionEvent == null)
             {
-                return;
+                return;                 // cannot have touch without motion event
             }
-            if (pickInfo.touched)
+            if (pickInfo.touched)       // currently touching nn object?
             {
                 float x = pickInfo.motionEvent.getX();
                 float y = pickInfo.motionEvent.getY();
 
-                if (selected != null)
+                if (selected != null)               // is a 3D object selected?
                 {
                     if (mSelectionMode == DRAG)     // dragging the selected object?
                     {
                         anchor = (GVRAnchor) selected.getParent()
                                                      .getComponent(GVRAnchor.getComponentType());
                         GVRHitResult hit = mixedReality.hitTest(x, y);
-                        if (hit != null)
-                        {
+                        if (hit != null)            // are we touching a plane>
+                        {                           // move the object to a new position
                             mixedReality.updateAnchorPose(anchor, hit.getPose());
                             return;
                         }
@@ -362,6 +421,11 @@ public class SampleMain extends GVRMain {
                         return;
                     }
                 }
+                /*
+                 * No object is selected. If the object we are touching
+                 * has an anchor attached, make this the current object.
+                 * Scale and rotate it until touch ends.
+                 */
                 GVRSceneObject par = sceneObj.getParent();
                 if (par != null)
                 {
@@ -381,6 +445,13 @@ public class SampleMain extends GVRMain {
                 }
                 mSelectionMode = DRAG;
             }
+            /*
+             * Nothing is touched (touch end or controller move).
+             * The currently selected object (if any) is
+             * put into "untouched" state.
+             * If no object is selected but a plane was touched,
+             * put a new object on the plane at the touch point.
+             */
             else
             {
                 if (mSelector.isTouched())
@@ -399,6 +470,18 @@ public class SampleMain extends GVRMain {
             }
         }
 
+        /**
+         * Load a 3D model and place it in the virtual world
+         * at the given position. The pose is a 4x4 matrix
+         * giving the real world position/orientation of
+         * the object. We create an anchor (and a corresponding
+         * node) to link the real and virtual pose together.
+         * The node attached to the anchor will be moved and
+         * oriented by the framework, anything you do
+         * to the transform of this node will be discarded
+         * (which is why we scale/rotate the child instead).
+         * @param pose
+         */
         private void addVirtualObject(float[] pose)
         {
             if (mVirtObjCount >= MAX_VIRTUAL_OBJECTS)
@@ -422,6 +505,10 @@ public class SampleMain extends GVRMain {
             }
         }
 
+        /**
+         * Look for a 3D object in the scene near the given position.
+         * Used ro prevent objects from being placed too close together.
+         */
         private GVRAnchor findAnchorNear(float x, float y, float z, float maxdist)
         {
             Matrix4f anchorMtx = new Matrix4f();
