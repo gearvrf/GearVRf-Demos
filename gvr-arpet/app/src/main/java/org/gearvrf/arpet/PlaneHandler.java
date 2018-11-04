@@ -25,24 +25,28 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
+import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
-import org.gearvrf.mixedreality.IMRCommon;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IPlaneEvents;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.utility.Log;
 import org.greenrobot.eventbus.EventBus;
+import org.joml.Vector3f;
 
 import java.util.LinkedList;
 
-public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameListener {
+public final class PlaneHandler implements IPlaneEvents, GVRDrawFrameListener {
 
     private GVRContext mContext;
     private GVRScene mScene;
-
+    private PetMain mPetMain;
     private int hsvHUE = 0;
 
     private boolean planeDetected = false;
@@ -135,26 +139,19 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
     private LinkedList<GVRPlane> mPlanes = new LinkedList<>();
 
-    private IMRCommon mixedReality;
+    private IMixedReality mixedReality;
 
-    PlaneHandler(PetContext petContext) {
-        mContext = petContext.getGVRContext();
-        mScene = petContext.getMainScene();
-        mixedReality = petContext.getMixedReality();
-        physicsPlane = new PlaneBoard(mContext);
-
-        petContext.registerPlaneListener(this);
+    PlaneHandler(PetMain petMain) {
+        mContext = petMain.getGVRContext();
+        mScene = mContext.getMainScene();
+        mPetMain = petMain;
     }
 
     private GVRSceneObject createQuadPlane() {
-        GVRMesh mesh = GVRMesh.createQuad(mContext, "float3 a_position", 1.0f, 1.0f);
-
+        GVRMesh mesh = GVRMesh.createQuad(mContext, "float3 a_position", 1, 1);
         GVRMaterial mat = new GVRMaterial(mContext, GVRMaterial.GVRShaderType.Phong.ID);
-
         GVRSceneObject polygonObject = new GVRSceneObject(mContext, mesh, mat);
-
         polygonObject.setName(PLANE_COLLIDER);
-        polygonObject.attachCollider(new GVRMeshCollider(mContext, true));
 
         hsvHUE += 35;
         float[] hsv = new float[3];
@@ -164,26 +161,47 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
 
         int c = Color.HSVToColor(50, hsv);
         mat.setDiffuseColor(Color.red(c) / 255f, Color.green(c) / 255f,
-                Color.blue(c) / 255f, 0.2f);
-
+                Color.blue(c) / 255f, 0.5f);
         polygonObject.getRenderData().setMaterial(mat);
+        polygonObject.getRenderData().disableLight();
+        polygonObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         polygonObject.getRenderData().setAlphaBlend(true);
         polygonObject.getTransform().setRotationByAxis(-90, 1, 0, 0);
+        GVRSceneObject transformNode = new GVRSceneObject(mContext);
+        transformNode.attachCollider(new GVRBoxCollider(mContext));
+        transformNode.addChildObject(polygonObject);
+        return transformNode;
+    }
 
-        return polygonObject;
+    private boolean updatePlanes = true;
+
+    /*
+     * ARCore session guaranteed to be initialized here.
+     */
+    @Override
+    public void onStartPlaneDetection(IMixedReality mr)
+    {
+        mixedReality = mr;
+        mPetMain.onARInit(mContext, mr);
     }
 
     @Override
-    public void onPlaneDetection(GVRPlane plane) {
+    public void onStopPlaneDetection(IMixedReality mr) { }
+
+    @Override
+    public void onPlaneDetected(GVRPlane plane) {
         GVRPlane.Type planeType = plane.getPlaneType();
 
         // Don't use planes that are downward facing, e.g ceiling
         if (planeType == GVRPlane.Type.HORIZONTAL_DOWNWARD_FACING || selectedPlaneObject != null) {
             return;
         }
+        GVRSceneObject planeGeo = createQuadPlane();
 
-        plane.setSceneObject(createQuadPlane());
-        mScene.addSceneObject(plane);
+        planeGeo.attachComponent(plane);
+//        mScene.addSceneObject(planeGeo);
+        plane.getGVRContext().getMainScene().addSceneObject(planeGeo);
+
 
         mPlanes.add(plane);
 
@@ -208,8 +226,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
     public void onPlaneMerging(GVRPlane childPlane, GVRPlane parentPlane) {
         // Will remove PlaneBoard from childPlane because this plane is not needed anymore now
         // that parentPlane "contains" childPlane
-        //childPlane.detachComponent(PLANEBOARD_COMP_TYPE);
-
+        childPlane.getOwnerObject().detachComponent(PLANEBOARD_COMP_TYPE);
         mPlanes.remove(childPlane);
     }
 
@@ -225,10 +242,10 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         }
 
         if (mainPlane != null) {
-            selectedPlaneObject = mainPlane.getSceneObject();
+            selectedPlaneObject = mainPlane.getOwnerObject();
             selectedPlaneObject.attachComponent(physicsPlane);
 
-            mainPlane.setName(PLANE_NAME);
+            selectedPlaneObject.setName(PLANE_NAME);
             EventBus.getDefault().post(new PlaneDetectedEvent(mainPlane));
             mContext.registerDrawFrameListener(this);
         } else {

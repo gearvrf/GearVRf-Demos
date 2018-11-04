@@ -24,14 +24,15 @@ import android.support.annotation.NonNull;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
+import org.gearvrf.IEventReceiver;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.IMRCommon;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IPlaneEvents;
 import org.gearvrf.physics.GVRWorld;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class PetContext {
     private SharedMixedReality mMixedReality;
     private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
     private PlayerSceneObject mPlayer;
-    private IPlaneEventsListener mPlaneListener;
+    private IPlaneEvents mPlaneListener;
     private GVRScene mMainScene = null;
 
     public PetContext(GVRActivity activity) {
@@ -74,7 +75,7 @@ public class PetContext {
         };
     }
 
-    public void init(GVRContext context) {
+    public void init(GVRContext context, IPlaneEvents planeListener) {
         mGvrContext = context;
         mMainScene = new GVRScene(context);
 
@@ -84,6 +85,7 @@ public class PetContext {
 
         PetConnectionManager.getInstance().init(this);
         mMixedReality = new SharedMixedReality(this);
+        registerPlaneListener(planeListener);
         mMixedReality.resume();
 
         mPlayer = new PlayerSceneObject(mGvrContext);
@@ -104,17 +106,17 @@ public class PetContext {
         return mGvrContext;
     }
 
-    public IMRCommon getMixedReality() {
+    public IMixedReality getMixedReality() {
         return mMixedReality;
     }
 
-    public void registerPlaneListener(@NonNull IPlaneEventsListener listener) {
+    public void registerPlaneListener(@NonNull IPlaneEvents listener) {
         mPlaneListener = listener;
-        mMixedReality.registerPlaneListener(listener);
+        mMixedReality.getEventReceiver().addListener(listener);
     }
 
     public void unregisterPlaneListener() {
-        mMixedReality.unregisterPlaneListener(mPlaneListener);
+        mMixedReality.getEventReceiver().removeListener(mPlaneListener);
         mPlaneListener = null;
     }
 

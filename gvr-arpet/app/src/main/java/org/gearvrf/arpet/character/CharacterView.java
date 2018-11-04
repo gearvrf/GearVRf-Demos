@@ -45,6 +45,9 @@ import org.gearvrf.arpet.mode.IPetView;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.shaders.GVRTiledMaskShader;
 import org.gearvrf.arpet.util.LoadModelHelper;
+import org.gearvrf.mixedreality.GVRPlane;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.scene_objects.GVRCubeSceneObject;
 import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 
@@ -58,7 +61,6 @@ public class CharacterView extends GVRSceneObject implements
 
     private final String TAG = getClass().getSimpleName();
 
-    private final PetContext mPetContext;
     private List<OnScaleListener> mOnScaleListeners = new ArrayList<>();
 
     private GVRSceneObject mBoundaryPlane = null;
@@ -66,7 +68,7 @@ public class CharacterView extends GVRSceneObject implements
     private GVRSceneObject mShadow;
     private GVRSceneObject mInfinityPlan;
     public final static String PET_COLLIDER = "corpo_GEO";  // From 3D model
-
+    private final PetContext mPetContext;
     private GVRSceneObject m3DModel;
     private GVRAvatar mPetAvatar;
     private String mBoneMap;
@@ -97,7 +99,7 @@ public class CharacterView extends GVRSceneObject implements
     }
 
     private void createShadow() {
-        final GVRContext gvrContext = mPetContext.getGVRContext();
+        final GVRContext gvrContext = getGVRContext();
         GVRTexture tex = gvrContext.getAssetLoader().loadTexture(
                 new GVRAndroidResource(gvrContext, R.drawable.drag_shadow));
         GVRMaterial mat = new GVRMaterial(gvrContext);
@@ -113,7 +115,7 @@ public class CharacterView extends GVRSceneObject implements
     }
 
     private void createInfinityPlan() {
-        final GVRContext gvrContext = mPetContext.getGVRContext();
+        final GVRContext gvrContext = getGVRContext();
         final float width = 2.0f;
         final float height = 2.0f;
 
@@ -247,7 +249,7 @@ public class CharacterView extends GVRSceneObject implements
 
     @Override
     public void load(ILoadEvents listener) {
-        final GVRContext gvrContext = mPetContext.getGVRContext();
+        final GVRContext gvrContext = getGVRContext();
         mLoadListener = listener;
 
         createShadow();
@@ -280,7 +282,7 @@ public class CharacterView extends GVRSceneObject implements
      */
     public void setInitialScale() {
         Vector3f vectorDistance = new Vector3f();
-        float[] modelCam = mPetContext.getMainScene().getMainCameraRig().getTransform().getModelMatrix();
+        float[] modelCam = getGVRContext().getMainScene().getMainCameraRig().getTransform().getModelMatrix();
         float[] modelCharacter = getTransform().getModelMatrix();
 
         vectorDistance.set(modelCam[12], modelCam[13], modelCam[14]);
@@ -301,7 +303,7 @@ public class CharacterView extends GVRSceneObject implements
     }
 
     private void loadAnimations() {
-        final GVRContext gvrContext = mPetContext.getGVRContext();
+        final GVRContext gvrContext = getGVRContext();
         int i = 0;
         try
         {
@@ -326,8 +328,8 @@ public class CharacterView extends GVRSceneObject implements
     private GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents() {
         int contAnim = 0;
         @Override
-        public void onAvatarLoaded(GVRSceneObject gvrSceneObject, String s, String s1) {
-            final GVRContext gvrContext = mPetContext.getGVRContext();
+        public void onAvatarLoaded(GVRAvatar avatar, GVRSceneObject gvrSceneObject, String s, String s1) {
+            final GVRContext gvrContext = getGVRContext();
             Log.d(TAG, "onAvatarLoaded %s => %s", s, s1);
 
             if (gvrSceneObject.getParent() == null)
@@ -355,12 +357,12 @@ public class CharacterView extends GVRSceneObject implements
         }
 
         @Override
-        public void onModelLoaded(GVRSceneObject gvrSceneObject, String s, String s1) {
+        public void onModelLoaded(GVRAvatar avatar, GVRSceneObject gvrSceneObject, String s, String s1) {
             Log.d(TAG, "onModelLoaded %s => %s", s, s1);
         }
 
         @Override
-        public void onAnimationLoaded(GVRAnimator animation, String s, String s1) {
+        public void onAnimationLoaded(GVRAvatar avatar, GVRAnimator animation, String s, String s1) {
             Log.d(TAG, "onAnimationLoaded %s => %s", s, s1);
             contAnim++;
 
@@ -382,12 +384,12 @@ public class CharacterView extends GVRSceneObject implements
         }
 
         @Override
-        public void onAnimationStarted(GVRAnimator gvrAnimator) {
+        public void onAnimationStarted(GVRAvatar avatar, GVRAnimator gvrAnimator) {
             Log.d(TAG, "onAnimationStarted");
         }
 
         @Override
-        public void onAnimationFinished(GVRAnimator gvrAnimator, GVRAnimation gvrAnimation) {
+        public void onAnimationFinished(GVRAvatar avatar, GVRAnimator gvrAnimator, GVRAnimation gvrAnimation) {
             Log.d(TAG, "onAnimationFinished");
         }
     };
