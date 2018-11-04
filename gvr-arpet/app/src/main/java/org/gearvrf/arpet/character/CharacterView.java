@@ -81,12 +81,8 @@ public class CharacterView extends GVRSceneObject implements
         super(petContext.getGVRContext());
 
         mPetContext = petContext;
-        mTapObject = new GVRCubeSceneObject(mPetContext.getGVRContext(), true);
+        mTapObject = new GVRSceneObject(mPetContext.getGVRContext());
         mTapObject.getTransform().setScale(0.01f, 0.01f, 0.01f);
-        GVRMaterial material = new GVRMaterial(mPetContext.getGVRContext(), GVRMaterial.GVRShaderType.Color.ID);
-        material.setColor(1, 0, 0);
-
-        mTapObject.getRenderData().setMaterial(material);
     }
 
     public GVRSceneObject getTapObject() {

@@ -80,7 +80,7 @@ public class PetContext {
     public void init(GVRContext context) {
         mGvrContext = context;
         mMainScene = new GVRScene(context);
-        //configCameraClipping(mMainScene);
+        configCameraClipping(mMainScene);
 
         GVRWorld world = new GVRWorld(mGvrContext);
         world.setGravity(0f, -200f, 0f);
@@ -101,9 +101,9 @@ public class PetContext {
 
     private static void configCameraClipping(GVRScene scene) {
         GVRCameraRig rig = scene.getMainCameraRig();
-        rig.getCenterCamera().setNearClippingDistance(1);
-        ((GVRPerspectiveCamera) rig.getLeftCamera()).setNearClippingDistance(1);
-        ((GVRPerspectiveCamera) rig.getRightCamera()).setNearClippingDistance(1);
+        //rig.getCenterCamera().setNearClippingDistance(1);
+        //((GVRPerspectiveCamera) rig.getLeftCamera()).setNearClippingDistance(1);
+        //((GVRPerspectiveCamera) rig.getRightCamera()).setNearClippingDistance(1);
         rig.getCenterCamera().setFarClippingDistance(2000);
         ((GVRPerspectiveCamera) rig.getLeftCamera()).setFarClippingDistance(2000);
         ((GVRPerspectiveCamera) rig.getRightCamera()).setFarClippingDistance(2000);

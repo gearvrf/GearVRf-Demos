@@ -128,7 +128,8 @@ public class PetMain extends DisableNativeSplashScreen {
             mCursorController = newController;
             if (newController instanceof GVRGazeCursorController) {
                 ((GVRGazeCursorController) newController).setTouchScreenDepth(mr.getScreenDepth());
-                //newController.setCursor(null);
+                // Don't show any cursor
+                newController.setCursor(null);
             }
         });
     }
