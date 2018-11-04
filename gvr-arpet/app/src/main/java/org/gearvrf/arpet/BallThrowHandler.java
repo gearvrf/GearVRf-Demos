@@ -114,6 +114,8 @@ public class BallThrowHandler {
             parent.removeChildObject(mBall);
         }
 
+        //mBall.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
+
         mPlayer.addChildObject(mBall);
         mPetContext.getGVRContext().getApplication().getEventReceiver().addListener(mEventListener);
     }
@@ -235,6 +237,7 @@ public class BallThrowHandler {
 
         // Add the ball as physics root child...
         mBall.getParent().removeChildObject(mBall);
+        // mBall.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.GEOMETRY);
         mPetContext.getMainScene().addSceneObject(mBall);
 
         // ... And set its model matrix to keep the same world matrix
@@ -274,6 +277,7 @@ public class BallThrowHandler {
         mBall.getTransform().setPosition(defaultPositionX, defaultPositionY, defaultPositionZ);
         mBall.getTransform().setScale(defaultScale, defaultScale, defaultScale);
         mBall.getTransform().setRotation(1, 0, 0, 0);
+        //mBall.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
 
         mPlayer.addChildObject(mBall);
         mResetOnTouchEnabled = true;

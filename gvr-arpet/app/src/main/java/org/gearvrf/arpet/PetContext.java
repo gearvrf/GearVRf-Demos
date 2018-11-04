@@ -22,7 +22,9 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPerspectiveCamera;
 import org.gearvrf.GVRScene;
 import org.gearvrf.IEventReceiver;
 import org.gearvrf.GVRSceneObject;
@@ -75,9 +77,10 @@ public class PetContext {
         };
     }
 
-    public void init(GVRContext context, IPlaneEvents planeListener) {
+    public void init(GVRContext context) {
         mGvrContext = context;
         mMainScene = new GVRScene(context);
+        //configCameraClipping(mMainScene);
 
         GVRWorld world = new GVRWorld(mGvrContext);
         world.setGravity(0f, -200f, 0f);
@@ -85,8 +88,6 @@ public class PetContext {
 
         PetConnectionManager.getInstance().init(this);
         mMixedReality = new SharedMixedReality(this);
-        registerPlaneListener(planeListener);
-        mMixedReality.resume();
 
         mPlayer = new PlayerSceneObject(mGvrContext);
         mMainScene.getMainCameraRig().addChildObject(mPlayer);
@@ -96,6 +97,16 @@ public class PetContext {
         // FIXME: Workaround to
         // You may only use GestureDetector constructor from a {@link android.os.Looper} thread.
         BallThrowHandler.getInstance(this);
+    }
+
+    private static void configCameraClipping(GVRScene scene) {
+        GVRCameraRig rig = scene.getMainCameraRig();
+        rig.getCenterCamera().setNearClippingDistance(1);
+        ((GVRPerspectiveCamera) rig.getLeftCamera()).setNearClippingDistance(1);
+        ((GVRPerspectiveCamera) rig.getRightCamera()).setNearClippingDistance(1);
+        rig.getCenterCamera().setFarClippingDistance(2000);
+        ((GVRPerspectiveCamera) rig.getLeftCamera()).setFarClippingDistance(2000);
+        ((GVRPerspectiveCamera) rig.getRightCamera()).setFarClippingDistance(2000);
     }
 
     public GVRActivity getActivity() {
