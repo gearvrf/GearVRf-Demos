@@ -1,4 +1,7 @@
-project.ext.hasBackend = false
+if (project.hasProperty("hasBackend"))
+    project.ext.hasBackend = true
+else
+    project.ext.hasBackend = false
 
 if (file("../../../extra_properties.gradle").exists()) {
     apply from: '../../../extra_properties.gradle'
