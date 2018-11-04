@@ -283,13 +283,12 @@ public class PetMain extends DisableNativeSplashScreen {
 
             // TODO: Improve this if
             if (gvrSceneObject != null && gvrSceneObject.getParent() instanceof GVRPlane) {
-                final float[] modelMtx = gvrSceneObject.getParent().getTransform().getModelMatrix();
+                final float[] modelMtx = gvrSceneObject.getTransform().getModelMatrix();
 
 
                 if (!mPet.isRunning()) {
-                    mPet.setPlane((GVRPlane) gvrSceneObject.getParent());
-                    mPet.getView().updatePose(modelMtx);
                     mPet.setPlane(gvrSceneObject);
+                    mPet.getView().getTransform().setPosition(modelMtx[12], modelMtx[13], modelMtx[14]);
                     mPet.enter();
                     mPet.setInitialScale();
                     mPet.enableActions();

@@ -224,20 +224,15 @@ public class PetActions {
                     animate(frameTime);
                 }
 
-                mRotation.rotationTo(mPetDirection.x, 0, mPetDirection.z,
-                        mTargetDirection.x, 0, mTargetDirection.z);
+                float[] pose = mCharacter.getTransform().getModelMatrix();
+                mMoveTo.mul(mWalkingSpeed * frameTime);
 
-                // Looks better without this if for walking movement
-                //if (mRotation.angle() < Math.PI * 0.25f) {
-                    // acceleration logic
-                    float[] pose = mCharacter.getTransform().getModelMatrix();
-                    mMoveTo.mul(mWalkingSpeed * frameTime);
+                pose[12] = pose[12] + mMoveTo.x;
+                pose[14] = pose[14] + mMoveTo.z;
 
-                    pose[12] = pose[12] + mMoveTo.x;
-                    pose[14] = pose[14] + mMoveTo.z;
-
-                    mCharacter.updatePose(pose);
-                //}
+                if (!mCharacter.updatePose(pose) && mRotation.angle() < 0.2f) {
+                    mListener.onActionEnd(this);
+                }
             } else {
                 mListener.onActionEnd(this);
             }

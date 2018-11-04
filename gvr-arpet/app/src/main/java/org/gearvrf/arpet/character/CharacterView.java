@@ -23,6 +23,7 @@ import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
+import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
@@ -41,6 +42,7 @@ import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.mode.IPetView;
+import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.shaders.GVRTiledMaskShader;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.utility.Log;
@@ -155,8 +157,22 @@ public class CharacterView extends GVRSceneObject implements
     }
 
     public boolean updatePose(float[] poseMatrix) {
-        float[] planeModel = mBoundaryPlane.getTransform().getModelMatrix();
-        poseMatrix[13] = planeModel[13];
+        if (mPetContext.getMode() != SharedMixedReality.GUEST) {
+            float[] planeModel = mBoundaryPlane.getTransform().getModelMatrix();
+            Vector3f centerPlane = new Vector3f(planeModel[12], planeModel[13], planeModel[14]);
+            poseMatrix[13] = planeModel[13];
+
+            final boolean infinityPlane = false;
+            if (!infinityPlane) {
+                GVRPicker.GVRPickedObject pickedObject = GVRPicker.pickSceneObject(mBoundaryPlane,
+                        0, 0, 0, poseMatrix[12], poseMatrix[13], poseMatrix[14]);
+                float[] petModel = getTransform().getModelMatrix();
+                if (pickedObject == null && centerPlane.distance(petModel[12], petModel[13], petModel[14])
+                        < centerPlane.distance(poseMatrix[12], poseMatrix[13], poseMatrix[14])) {
+                    return false;
+                }
+            }
+        }
 
         getTransform().setModelMatrix(poseMatrix);
 
