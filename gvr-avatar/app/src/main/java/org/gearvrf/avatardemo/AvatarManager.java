@@ -5,7 +5,11 @@ import android.util.Log;
 import org.gearvrf.GVRAndroidResource;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRMain;
+import org.gearvrf.GVRSceneObject;
+import org.gearvrf.animation.GVRAnimation;
+import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRAvatar;
+import org.gearvrf.animation.GVRRepeatMode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +38,10 @@ public class AvatarManager extends GVRMain
     AvatarManager(GVRContext ctx, GVRAvatar.IAvatarEvents handler)
     {
         mContext = ctx;
+        if (handler == null)
+        {
+            handler = mAvatarListener;
+        }
         mEventHandler = handler;
         mAvatarFiles.add(0, EVA);
         mAvatarFiles.add(1, YBOT);
@@ -195,4 +203,32 @@ public class AvatarManager extends GVRMain
             return null;
         }
     }
+
+    public  GVRAvatar.IAvatarEvents mAvatarListener = new GVRAvatar.IAvatarEvents()
+    {
+        @Override
+        public void onAvatarLoaded(final GVRAvatar avatar, final GVRSceneObject avatarRoot, String filePath, String errors)
+        {
+            GVRSceneObject.BoundingVolume bv = avatarRoot.getBoundingVolume();
+            float scale = 0.3f / bv.radius;
+            avatarRoot.getTransform().setScale(scale, scale, scale);
+            loadNextAnimation();
+        }
+
+        @Override
+        public void onAnimationLoaded(GVRAvatar avatar, GVRAnimator animation, String filePath, String errors)
+        {
+            if (animation != null)
+            {
+                animation.setRepeatMode(GVRRepeatMode.ONCE);
+                animation.setSpeed(1f);
+            }
+        }
+
+        public void onModelLoaded(GVRAvatar avatar, GVRSceneObject avatarRoot, String filePath, String errors) { }
+
+        public void onAnimationFinished(GVRAvatar avatar, GVRAnimator animator, GVRAnimation animation) { }
+
+        public void onAnimationStarted(GVRAvatar avatar, GVRAnimator animator) { }
+    };
 }
