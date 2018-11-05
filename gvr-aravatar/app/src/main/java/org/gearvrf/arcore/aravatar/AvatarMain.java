@@ -27,8 +27,6 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
-import org.gearvrf.animation.GVRAnimation;
-import org.gearvrf.animation.GVRAnimator;
 import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.mixedreality.GVRAnchor;
@@ -46,28 +44,29 @@ public class AvatarMain extends GVRMain {
     private GVRScene          mScene;
     private GVRAvatar         mAvatar;
     private GVRMixedReality   mMixedReality;
-    private AssetFactory      mAssets;
+    private SceneUtils        mUtility;
     private TouchHandler      mTouchHandler;
     private SelectionHandler  mSelector;
     private GVRDirectLight    mSceneLight;
-    private String            mAvatarName = "YBot";
+    private AvatarManager     mAvManager;
 
     @Override
     public void onInit(GVRContext gvrContext)
     {
         mContext = gvrContext;
         mScene = mContext.getMainScene();
-        mAssets = new AssetFactory();
+        mUtility = new SceneUtils();
         mTouchHandler = new TouchHandler();
         mSelector = new SelectionHandler(gvrContext);
-        mSceneLight = mAssets.makeSceneLight(gvrContext);
+        mSceneLight = mUtility.makeSceneLight(gvrContext);
         mScene.addSceneObject(mSceneLight.getOwnerObject());
-        mAvatar = mAssets.loadAvatar(mContext, mAvatarName);
+        mAvManager = new AvatarManager(mContext, null);
+        mAvatar = mAvManager.selectAvatar("EVA");
         if (mAvatar == null)
         {
-            Log.e(TAG, "Avatar could not be loaded");
+            Log.e(TAG, "Avatar could not be found");
         }
-        mAssets.initCursorController(gvrContext, mTouchHandler);
+        mAvManager.loadModel();
         mMixedReality = new GVRMixedReality(mContext);
         mMixedReality.getEventReceiver().addListener(planeEventsListener);
         mMixedReality.getEventReceiver().addListener(anchorEventsListener);
@@ -87,7 +86,12 @@ public class AvatarMain extends GVRMain {
     private IPlaneEvents planeEventsListener = new IPlaneEvents()
     {
         @Override
-        public void onStartPlaneDetection(IMixedReality mr) { }
+        public void onStartPlaneDetection(IMixedReality mr)
+        {
+            mUtility.initCursorController(getGVRContext(),
+                    mTouchHandler,
+                    mr.getScreenDepth());
+        }
 
         @Override
         public void onStopPlaneDetection(IMixedReality mr) { }
@@ -97,7 +101,7 @@ public class AvatarMain extends GVRMain {
         {
             if (gvrPlane.getPlaneType() == GVRPlane.Type.HORIZONTAL_UPWARD_FACING)
             {
-                GVRSceneObject planeMesh = mAssets.createPlane(getGVRContext(), mMixedReality.getARToVRScale());
+                GVRSceneObject planeMesh = mUtility.createPlane(getGVRContext());
 
                 planeMesh.attachComponent(gvrPlane);
                 mScene.addSceneObject(planeMesh);

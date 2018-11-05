@@ -94,7 +94,7 @@ public class ViewerMain extends GVRMain {
     {
         public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             if ((mWidgetButtonObject == sceneObj) ||
-                (mWdgetButtonObject2 == sceneObj))
+                    (mWdgetButtonObject2 == sceneObj))
             {
                 mButtonPointed = false;
             }
@@ -104,7 +104,7 @@ public class ViewerMain extends GVRMain {
         public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
             mButtonPointed = false;
             if ((mWidgetButtonObject == sceneObj) ||
-                (mWdgetButtonObject2 == sceneObj))
+                    (mWdgetButtonObject2 == sceneObj))
             {
                 mObjectPointed = false;
                 mButtonPointed = true;
@@ -328,11 +328,11 @@ public class ViewerMain extends GVRMain {
                 1.5f,1.0f,2.5f,-1.0f,new int[] { 1281, 0 },new int[] { 2560, 1440 });
 
         mWidgetButtonObject = new GVRWidgetSceneObject(mGVRContext,
-                                                       mPlugin.getTextureId(), info, mPlugin.getWidth(),
-                                                       mPlugin.getHeight());
+                mPlugin.getTextureId(), info, mPlugin.getWidth(),
+                mPlugin.getHeight());
         mWdgetButtonObject2 = new GVRWidgetSceneObject(mGVRContext,
-                                                       mPlugin.getTextureId(), info2, mPlugin.getWidth(),
-                                                       mPlugin.getHeight());
+                mPlugin.getTextureId(), info2, mPlugin.getWidth(),
+                mPlugin.getHeight());
         GVRRenderData ldata = new GVRRenderData(mGVRContext);
         GVRRenderData ldata2 = new GVRRenderData(mGVRContext);
 
