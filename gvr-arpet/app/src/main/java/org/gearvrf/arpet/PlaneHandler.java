@@ -141,10 +141,11 @@ public final class PlaneHandler implements IPlaneEvents, GVRDrawFrameListener {
 
     private IMixedReality mixedReality;
 
-    PlaneHandler(PetMain petMain) {
-        mContext = petMain.getGVRContext();
-        mScene = mContext.getMainScene();
+    PlaneHandler(PetMain petMain, PetContext petContext) {
+        mContext = petContext.getGVRContext();
+        mScene = petContext.getMainScene();
         mPetMain = petMain;
+        physicsPlane = new PlaneBoard(mContext);
     }
 
     private GVRSceneObject createQuadPlane() {
@@ -167,8 +168,11 @@ public final class PlaneHandler implements IPlaneEvents, GVRDrawFrameListener {
         polygonObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         polygonObject.getRenderData().setAlphaBlend(true);
         polygonObject.getTransform().setRotationByAxis(-90, 1, 0, 0);
+        // FIXME: BoxCollider doesn't work!
+        polygonObject.attachCollider(new GVRMeshCollider(mContext, true));
+        // See setSelectedPlane(...) will set the touched visible quad as selected plane
+
         GVRSceneObject transformNode = new GVRSceneObject(mContext);
-        transformNode.attachCollider(new GVRBoxCollider(mContext));
         transformNode.addChildObject(polygonObject);
         return transformNode;
     }
@@ -226,14 +230,14 @@ public final class PlaneHandler implements IPlaneEvents, GVRDrawFrameListener {
     public void onPlaneMerging(GVRPlane childPlane, GVRPlane parentPlane) {
         // Will remove PlaneBoard from childPlane because this plane is not needed anymore now
         // that parentPlane "contains" childPlane
-        childPlane.getOwnerObject().detachComponent(PLANEBOARD_COMP_TYPE);
+        //childPlane.getOwnerObject().detachComponent(PLANEBOARD_COMP_TYPE);
         mPlanes.remove(childPlane);
     }
 
-    public void setSelectedPlane(GVRPlane mainPlane) {
+    public void setSelectedPlane(GVRPlane mainPlane, GVRSceneObject visibleColliderPlane) {
         for (GVRPlane plane: mPlanes) {
             if (plane != mainPlane) {
-                plane.setEnable(mainPlane == null);
+                plane.getOwnerObject().setEnable(mainPlane == null);
             }
         }
 
@@ -242,7 +246,7 @@ public final class PlaneHandler implements IPlaneEvents, GVRDrawFrameListener {
         }
 
         if (mainPlane != null) {
-            selectedPlaneObject = mainPlane.getOwnerObject();
+            selectedPlaneObject = visibleColliderPlane;
             selectedPlaneObject.attachComponent(physicsPlane);
 
             selectedPlaneObject.setName(PLANE_NAME);

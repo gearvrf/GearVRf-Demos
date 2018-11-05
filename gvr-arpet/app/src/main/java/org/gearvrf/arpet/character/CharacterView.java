@@ -48,6 +48,8 @@ import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.IMixedReality;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
+import org.gearvrf.shaders.GVRColorShader;
+import org.gearvrf.shaders.GVRTextureShader;
 import org.gearvrf.utility.Log;
 import org.joml.Vector3f;
 
@@ -80,6 +82,7 @@ public class CharacterView extends GVRSceneObject implements
 
         mPetContext = petContext;
         mTapObject = new GVRSceneObject(mPetContext.getGVRContext());
+        mTapObject.getTransform().setScale(0.01f, 0.01f, 0.01f);
     }
 
     public GVRSceneObject getTapObject() {
