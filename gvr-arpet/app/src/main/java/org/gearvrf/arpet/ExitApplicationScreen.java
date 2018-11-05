@@ -24,11 +24,13 @@ public class ExitApplicationScreen extends BasePetView implements View.OnClickLi
     @Override
     protected void onShow(GVRScene mainScene) {
         mainScene.getMainCameraRig().addChildObject(this);
+        setEnable(true);
     }
 
     @Override
     protected void onHide(GVRScene mainScene) {
         mainScene.getMainCameraRig().removeChildObject(this);
+        setEnable(false);
     }
 
     public void setClickExitScreenListener(OnClickExitScreen Listener) {
@@ -46,6 +48,7 @@ public class ExitApplicationScreen extends BasePetView implements View.OnClickLi
         mExitApplicationScreen.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         mExitApplicationScreen.getTransform().setPosition(0f, 0f, -0.74f);
         addChildObject(mExitApplicationScreen);
+        setEnable(false);
         view.findViewById(R.id.cancel_button_screen).setOnClickListener(this);
         view.findViewById(R.id.button_confirm).setOnClickListener(this);
     }
