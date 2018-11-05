@@ -32,7 +32,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 /**
  * Represents a state of the Character.
@@ -216,8 +215,8 @@ public class PetActions {
         @Override
         public void onRun(float frameTime) {
             mTargetDirection.y = 0;
-            // Keep a angle of 45 degree of distance
-            boolean moveTowardToCam = mTargetDirection.length() > mPetRadius * 1.5f;
+            // Min distance to the camera/player
+            boolean moveTowardToCam = mTargetDirection.length() > mPetRadius * 2.0f;
 
             if (moveTowardToCam) {
                 if (mAnimation != null) {
