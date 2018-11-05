@@ -389,10 +389,10 @@ public class PetActions {
         @Override
         public void onRun(float frameTime) {
             mTargetDirection.y = 0;
-            // Keep a angle of 45 degree of distance
-            boolean moveTowardToCam = mTargetDirection.length() > mPetRadius * 0.5f;
+            // Min distance to the tap position
+            boolean moveTowardToTapPosition = mTargetDirection.length() > mPetRadius * 0.5f;
 
-            if (moveTowardToCam) {
+            if (moveTowardToTapPosition) {
                 if (mAnimation != null) {
                     animate(frameTime);
                 }
