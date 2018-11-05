@@ -157,7 +157,7 @@ public class SampleMain extends GVRMain {
             {
                 return;
             }
-            GVRSceneObject planeMesh = helper.createQuadPlane(getGVRContext(), mixedReality.getARToVRScale());
+            GVRSceneObject planeMesh = helper.createQuadPlane(getGVRContext());
 
             planeMesh.attachComponent(gvrPlane);
             mainScene.addSceneObject(planeMesh);

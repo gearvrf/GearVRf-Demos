@@ -70,7 +70,7 @@ public class SampleHelper {
        };
     }
 
-    public GVRSceneObject createQuadPlane(GVRContext gvrContext, float scale)
+    public GVRSceneObject createQuadPlane(GVRContext gvrContext)
     {
         GVRSceneObject plane = new GVRSceneObject(gvrContext);
         GVRMesh mesh = GVRMesh.createQuad(gvrContext,
@@ -86,7 +86,6 @@ public class SampleHelper {
         polygonObject.getRenderData().disableLight();
         polygonObject.getRenderData().setAlphaBlend(true);
         polygonObject.getTransform().setRotationByAxis(-90, 1, 0, 0);
-        polygonObject.getTransform().setScale(scale, scale, scale);
         plane.addChildObject(polygonObject);
         return plane;
     }
