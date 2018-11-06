@@ -144,7 +144,7 @@ public class PetMain extends DisableNativeSplashScreen {
 
     @Override
     public boolean onBackPress() {
-        if (mCurrentMode instanceof ShareAnchorMode) {
+        if (mCurrentMode instanceof ShareAnchorMode || mCurrentMode instanceof EditMode) {
             getGVRContext().runOnGlThread(() -> mHandlerBackToHud.OnBackToHud());
         }
 
