@@ -25,6 +25,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <!-- This tag indicates that this application requires ARCore.  This results in the application
         only being visible in the Google Play Store on devices that support ARCore. -->
