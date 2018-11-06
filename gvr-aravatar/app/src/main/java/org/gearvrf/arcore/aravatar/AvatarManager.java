@@ -16,7 +16,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AvatarManager extends GVRMain
+public class
+AvatarManager extends GVRMain
 {
     private static final String TAG = "AVATAR";
     private final String[] YBOT = new String[] { "YBot/YBot.fbx", "YBot/bonemap.txt", "YBot/Football_Hike.bvh", "YBot/Zombie_Stand_Up.bvh" };
@@ -123,7 +124,7 @@ public class AvatarManager extends GVRMain
     public String getAnimFile(int animIndex)
     {
         String[] files = mAvatarFiles.get(mAvatarIndex);
-        if (animIndex + 2 > files.length)
+        if (animIndex + 2 >= files.length)
         {
             return null;
         }
@@ -218,12 +219,13 @@ public class AvatarManager extends GVRMain
         @Override
         public void onAnimationLoaded(GVRAvatar avatar, GVRAnimator animation, String filePath, String errors)
         {
-            if (animation != null)
+            if (animation == null)
             {
-                animation.setRepeatMode(GVRRepeatMode.ONCE);
-                animation.setSpeed(1f);
-                avatar.start(animation.getName());
+                return;
             }
+            animation.setRepeatMode(GVRRepeatMode.ONCE);
+            animation.setSpeed(1f);
+            loadNextAnimation();
         }
 
         public void onModelLoaded(GVRAvatar avatar, GVRSceneObject avatarRoot, String filePath, String errors) { }
