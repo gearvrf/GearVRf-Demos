@@ -351,7 +351,6 @@ public class SampleMain extends GVRMain {
 
                 if (hit != null)
                 {                           // move the object to a new position
-                    Log.d("NOLA", "Update Anchor");
                     mMixedReality.updateAnchorPose(anchor, hit.getPose());
                 }
             }
@@ -366,12 +365,10 @@ public class SampleMain extends GVRMain {
             {
                 float dx = (x - mHitX) / 100.0f;
                 float dy = (y - mHitY) / 100.0f;
-                Log.d("NOLA", "ScaleRotate %f, %f", dx, dy);
                 scaleRotate(dx, dy);
             }
             else if (mSelectionMode == DRAG)
             {
-                Log.d("NOLA", "Drag %f, %f", x, y);
                 drag(x, y);
             }
         }
@@ -398,7 +395,6 @@ public class SampleMain extends GVRMain {
             }
             mHitX = hitx;
             mHitY = hity;
-            Log.d("NOLA", "Start Touch");
         }
 
         public void endTouch()
@@ -411,7 +407,6 @@ public class SampleMain extends GVRMain {
                                       PICKED_COLOR[2]);
             mSelected = null;
             mSelectionMode = UNTOUCHED;
-            Log.d("NOLA", "End Touch");
         }
     }
 
