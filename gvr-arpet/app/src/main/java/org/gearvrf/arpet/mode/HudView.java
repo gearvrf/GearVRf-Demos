@@ -67,8 +67,8 @@ public class HudView extends BasePetView implements View.OnClickListener {
 
     @Override
     protected void onShow(GVRScene mainScene) {
-        mConnectedLabel.setEnable(mPetContext.getMode() != SharedMixedReality.OFF);
-        mStartMenuObject.setEnable(mPetContext.getMode() != SharedMixedReality.GUEST);
+        mConnectedLabel.setEnable(mPetContext.getMode() != PetConstants.SHARE_MODE_NONE);
+        mStartMenuObject.setEnable(mPetContext.getMode() != PetConstants.SHARE_MODE_GUEST);
         mainScene.getMainCameraRig().addChildObject(this);
     }
 

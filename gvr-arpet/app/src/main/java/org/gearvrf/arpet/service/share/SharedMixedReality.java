@@ -2,13 +2,13 @@ package org.gearvrf.arpet.service.share;
 
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
-import android.support.annotation.IntDef;
 import android.util.Log;
 
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.event.UpdatePosesReceivedMessage;
@@ -26,8 +26,6 @@ import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,24 +33,15 @@ public class SharedMixedReality implements IMRCommon {
 
     private static final String TAG = SharedMixedReality.class.getSimpleName();
 
-    public static final int OFF = 0;
-    public static final int HOST = 1;
-    public static final int GUEST = 2;
-
     private final IMRCommon mMixedReality;
     private final PetContext mPetContext;
     private final List<SharedSceneObject> mSharedSceneObjects;
     private final IMessageService mMessageService;
 
-    @Mode
-    private int mMode = OFF;
+    @PetConstants.ShareMode
+    private int mMode = PetConstants.SHARE_MODE_NONE;
     private GVRAnchor mSharedAnchor = null;
     private float[] mSpaceMatrix = new float[16];
-
-    @IntDef({OFF, HOST, GUEST})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface Mode {
-    }
 
     public SharedMixedReality(PetContext petContext) {
         mMixedReality = new GVRMixedReality(petContext.getGVRContext(), true,
@@ -76,10 +65,10 @@ public class SharedMixedReality implements IMRCommon {
     /**
      * Starts the sharing mode
      *
-     * @param mode {@link SharedMixedReality#HOST} or {@link SharedMixedReality#GUEST}
+     * @param mode {@link PetConstants#SHARE_MODE_HOST} or {@link PetConstants#SHARE_MODE_GUEST}
      */
-    public void startSharing(GVRAnchor sharedAnchor, @Mode int mode) {
-        if (mMode != OFF) {
+    public void startSharing(GVRAnchor sharedAnchor, @PetConstants.ShareMode int mode) {
+        if (mMode != PetConstants.SHARE_MODE_NONE) {
             return;
         }
 
@@ -90,7 +79,7 @@ public class SharedMixedReality implements IMRCommon {
 
         mMode = mode;
 
-        if (mode == HOST) {
+        if (mode == PetConstants.SHARE_MODE_HOST) {
             mPetContext.runOnPetThread(mSharingLoop);
         } else {
             startGuest();
@@ -99,10 +88,10 @@ public class SharedMixedReality implements IMRCommon {
 
     public void stopSharing() {
         EventBus.getDefault().unregister(this);
-        if (mMode == GUEST) {
+        if (mMode == PetConstants.SHARE_MODE_GUEST) {
             stopGuest();
         }
-        mMode = OFF;
+        mMode = PetConstants.SHARE_MODE_NONE;
     }
 
     public GVRAnchor getSharedAnchor() {
@@ -148,7 +137,7 @@ public class SharedMixedReality implements IMRCommon {
 
         SharedSceneObject newShared = new SharedSceneObject(type, object);
         newShared.repeat = repeat;
-        if (mMode == GUEST) {
+        if (mMode == PetConstants.SHARE_MODE_GUEST) {
             initAsGuest(newShared);
         }
         mSharedSceneObjects.add(newShared);
@@ -256,7 +245,7 @@ public class SharedMixedReality implements IMRCommon {
         return mMixedReality.makeInterpolated(poseA, poseB, t);
     }
 
-    @Mode
+    @PetConstants.ShareMode
     public int getMode() {
         return mMode;
     }
@@ -302,7 +291,7 @@ public class SharedMixedReality implements IMRCommon {
 
         @Override
         public void run() {
-            if (mMode != OFF) {
+            if (mMode != PetConstants.SHARE_MODE_NONE) {
                 sendSharedSceneObjects();
                 mPetContext.runDelayedOnPetThread(this, LOOP_TIME);
             }

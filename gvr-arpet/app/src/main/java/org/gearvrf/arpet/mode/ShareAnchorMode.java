@@ -20,7 +20,6 @@ package org.gearvrf.arpet.mode;
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
 import android.os.Handler;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.util.Log;
@@ -30,6 +29,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.constant.ArPetObjectType;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.ManagedAnchor;
@@ -81,18 +81,6 @@ public class ShareAnchorMode extends BasePetMode {
 
     private final String TAG = ShareAnchorMode.class.getSimpleName();
 
-    private static final int MODE_NONE = 0;
-    private static final int MODE_HOST = 1;
-    private static final int MODE_GUEST = 2;
-
-    @IntDef({
-            MODE_NONE,
-            MODE_HOST,
-            MODE_GUEST
-    })
-    public @interface Mode {
-    }
-
     private IPetConnectionManager mConnectionManager;
     private ShareAnchorView mShareAnchorView;
     private final GVRAnchor mPetAnchor;
@@ -102,8 +90,8 @@ public class ShareAnchorMode extends BasePetMode {
     private PetAnchorSharingStatusHandler mPetAnchorSharingStatusHandler;
     private Resources mResources;
 
-    @Mode
-    private int mCurrentMode = MODE_NONE;
+    @PetConstants.ShareMode
+    private int mCurrentMode = PetConstants.SHARE_MODE_NONE;
 
     public ShareAnchorMode(PetContext petContext, @NonNull GVRAnchor anchor, OnBackToHudModeListener listener) {
         super(petContext, new ShareAnchorView(petContext));
@@ -134,7 +122,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showViewWaitingForGuest() {
-        mCurrentMode = MODE_HOST;
+        mCurrentMode = PetConstants.SHARE_MODE_HOST;
         IWaitingForGuestView view = mShareAnchorView.makeView(IWaitingForGuestView.class);
         view.setCancelClickListener(v -> cancelSharing());
         view.setContinueClickListener(v -> mConnectionManager.stopInvitation());
@@ -142,7 +130,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showViewWaitingForHost() {
-        mCurrentMode = MODE_GUEST;
+        mCurrentMode = PetConstants.SHARE_MODE_GUEST;
         IWaitingForHostView view = mShareAnchorView.makeView(IWaitingForHostView.class);
         view.setCancelClickListener(v -> cancelSharing());
         view.show();
@@ -153,7 +141,7 @@ public class ShareAnchorMode extends BasePetMode {
         view.setStatusText(getNoConnectionFoundString());
         view.setCancelClickListener(v -> cancelSharing());
         view.setRetryClickListener(v -> {
-            if (mCurrentMode == MODE_HOST) {
+            if (mCurrentMode == PetConstants.SHARE_MODE_HOST) {
                 mConnectionManager.startInvitation();
             } else {
                 mConnectionManager.findInvitationThenConnect();
@@ -251,7 +239,7 @@ public class ShareAnchorMode extends BasePetMode {
                 mMessageService.sendRequestStatus(requestStatus);
 
                 mSharedMixedReality.startSharing(
-                        managedAnchors.get(0).getAnchor(), SharedMixedReality.GUEST);
+                        managedAnchors.get(0).getAnchor(), PetConstants.SHARE_MODE_GUEST);
 
                 gotToHudView();
             }
@@ -277,7 +265,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private String getNoConnectionFoundString() {
-        String mode = mCurrentMode == MODE_GUEST
+        String mode = mCurrentMode == PetConstants.SHARE_MODE_GUEST
                 ? mResources.getString(R.string.common_text_guest)
                 : mResources.getString(R.string.common_text_host);
         return mResources.getString(
@@ -302,7 +290,7 @@ public class ShareAnchorMode extends BasePetMode {
 
         showViewConnectionFound();
 
-        if (mCurrentMode == MODE_HOST) {
+        if (mCurrentMode == PetConstants.SHARE_MODE_HOST) {
             new Handler().postDelayed(this::startHostSharingFlow, 3000);
         }
     }
@@ -312,7 +300,7 @@ public class ShareAnchorMode extends BasePetMode {
         int total = mConnectionManager.getTotalConnected();
 
         IConnectionFoundView view = mShareAnchorView.makeView(IConnectionFoundView.class);
-        int pluralsText = mCurrentMode == MODE_GUEST ? R.plurals.hosts_found : R.plurals.guests_found;
+        int pluralsText = mCurrentMode == PetConstants.SHARE_MODE_GUEST ? R.plurals.hosts_found : R.plurals.guests_found;
         view.setStatusText(mResources.getQuantityString(pluralsText, total, total));
         view.show();
     }
@@ -341,14 +329,14 @@ public class ShareAnchorMode extends BasePetMode {
         mSharedMixedReality.stopSharing();
 
         // Disconnect from remotes
-        if (mCurrentMode == MODE_GUEST) {
+        if (mCurrentMode == PetConstants.SHARE_MODE_GUEST) {
             mConnectionManager.stopFindInvitationAndDisconnect();
             mConnectionManager.disconnect();
         } else {
             mConnectionManager.stopInvitationAndDisconnect();
         }
 
-        mCurrentMode = MODE_NONE;
+        mCurrentMode = PetConstants.SHARE_MODE_NONE;
         gotToHudView();
 
         Log.d(TAG, "Sharing canceled");
@@ -359,7 +347,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void updateTotalConnectedUI() {
-        if (mCurrentMode == MODE_HOST) {
+        if (mCurrentMode == PetConstants.SHARE_MODE_HOST) {
             ISharingAnchorView view = mShareAnchorView.getCurrentView();
             if (IWaitingForGuestView.class.isInstance(view)) {
                 ((IWaitingForGuestView) view).setTotalConnected(
@@ -369,13 +357,13 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void onNoConnectionFound() {
-        if (mCurrentMode == MODE_GUEST) {
+        if (mCurrentMode == PetConstants.SHARE_MODE_GUEST) {
             mConnectionManager.findInvitationThenConnect();
         }
     }
 
     private void onAllConnectionLost() {
-        String text = mResources.getString(mCurrentMode == MODE_GUEST
+        String text = mResources.getString(mCurrentMode == PetConstants.SHARE_MODE_GUEST
                 ? R.string.view_host_disconnected
                 : R.string.view_guests_disconnected);
         showViewSharingFinished(text);
@@ -477,7 +465,7 @@ public class ShareAnchorMode extends BasePetMode {
                 mLock.readLock().lock();
                 try {
                     if (mTotalPendingStatus == 0) {
-                        mSharedMixedReality.startSharing(mResolvedAnchor, SharedMixedReality.HOST);
+                        mSharedMixedReality.startSharing(mResolvedAnchor, PetConstants.SHARE_MODE_HOST);
                         // Sharing succeeded, back host to hud view
                         gotToHudView();
                         mPetAnchorSharingStatusHandler = null;

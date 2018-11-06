@@ -23,6 +23,7 @@ import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.ILoadEvents;
@@ -254,7 +255,7 @@ public class PetMain extends DisableNativeSplashScreen {
             mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
             mCurrentMode.enter();
 
-            if (mPetContext.getMode() != SharedMixedReality.OFF) {
+            if (mPetContext.getMode() != PetConstants.SHARE_MODE_NONE) {
                 mPet.playBall();
             }
             mPet.setCurrentAction(PetActions.IDLE.ID);

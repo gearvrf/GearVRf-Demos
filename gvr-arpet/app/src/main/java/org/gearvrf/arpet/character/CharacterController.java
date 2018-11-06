@@ -25,6 +25,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.arpet.BallThrowHandler;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.movement.IPetAction;
@@ -187,7 +188,7 @@ public class CharacterController extends BasePetMode {
     private void onSetCurrentAction(@PetActionType int action) {
         mCurrentAction = mPetActions.get(action);
 
-        if (mIsPlaying || mPetContext.getMode() == SharedMixedReality.GUEST) {
+        if (mIsPlaying || mPetContext.getMode() == PetConstants.SHARE_MODE_GUEST) {
             if (mCurrentAction.id() == PetActions.IDLE.ID) {
                 mBallThrowHandler.reset();
                 mBallThrowHandler.enable();
@@ -199,7 +200,7 @@ public class CharacterController extends BasePetMode {
     }
 
     private void onSendCurrentAction(@PetActionType int action) {
-        if (mPetContext.getMode() == SharedMixedReality.HOST) {
+        if (mPetContext.getMode() == PetConstants.SHARE_MODE_HOST) {
             mMessageService.sendPetActionCommand(new PetActionCommand(action));
         }
     }

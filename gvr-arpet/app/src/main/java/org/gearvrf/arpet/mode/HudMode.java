@@ -21,6 +21,7 @@ import android.util.Log;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterController;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
@@ -53,7 +54,7 @@ public class HudMode extends BasePetMode {
     @Override
     protected void onEnter() {
         EventBus.getDefault().register(this);
-        if (mPetContext.getMode() != SharedMixedReality.OFF) {
+        if (mPetContext.getMode() != PetConstants.SHARE_MODE_NONE) {
             Log.d(TAG, "Play Ball activated by sharing mode!");
             mModeChangeListener.onPlayBall();
         }

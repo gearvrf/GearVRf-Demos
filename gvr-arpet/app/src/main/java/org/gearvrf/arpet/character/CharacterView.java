@@ -37,6 +37,7 @@ import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.constant.ArPetObjectType;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.gesture.OnScaleListener;
 import org.gearvrf.arpet.gesture.ScalableObject;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
@@ -157,7 +158,7 @@ public class CharacterView extends GVRSceneObject implements
     }
 
     public boolean updatePose(float[] poseMatrix) {
-        if (mPetContext.getMode() != SharedMixedReality.GUEST) {
+        if (mPetContext.getMode() != PetConstants.SHARE_MODE_GUEST) {
             float[] planeModel = mBoundaryPlane.getTransform().getModelMatrix();
             Vector3f centerPlane = new Vector3f(planeModel[12], planeModel[13], planeModel[14]);
             poseMatrix[13] = planeModel[13];

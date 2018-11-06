@@ -24,6 +24,7 @@ import org.gearvrf.GVREventListeners;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.data.BallCommand;
@@ -179,7 +180,7 @@ public class BallThrowHandler {
                     return false;
                 }
 
-                if (mPetContext.getMode() != SharedMixedReality.GUEST
+                if (mPetContext.getMode() != PetConstants.SHARE_MODE_GUEST
                         && firstPlane != null) {
                     final float vlen = (float) Math.sqrt((vx * vx) + (vy * vy));
                     final float vz = vlen / mDirTan;

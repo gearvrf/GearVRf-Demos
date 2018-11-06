@@ -17,8 +17,22 @@
 
 package org.gearvrf.arpet.constant;
 
+import android.support.annotation.IntDef;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public interface PetConstants {
     String GOOGLE_CLOUD_ANCHOR_KEY_NAME = "com.google.android.ar.API_KEY";
     int HOST_VISIBILITY_DURATION = 5 * 60; // in seconds
     int TEXTURE_BUFFER_SIZE = 2048;
+
+    int SHARE_MODE_NONE = 0;
+    int SHARE_MODE_HOST = 1;
+    int SHARE_MODE_GUEST = 2;
+
+    @IntDef({SHARE_MODE_NONE, SHARE_MODE_HOST, SHARE_MODE_GUEST})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface ShareMode {
+    }
 }
