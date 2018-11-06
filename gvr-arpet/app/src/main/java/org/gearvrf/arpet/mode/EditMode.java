@@ -106,6 +106,9 @@ public class EditMode extends BasePetMode {
             mPetContext.getGVRContext().runOnGlThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (mCharacterView.isDragging()) {
+                        mCharacterView.stopDragging();
+                    }
                     mBackToHudModeListener.OnBackToHud();
                 }
             });
