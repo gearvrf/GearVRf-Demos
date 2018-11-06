@@ -85,6 +85,7 @@ public class SampleHelper {
         mat.setDiffuseColor(color.x, color.y, color.x, color.w);
         polygonObject.getRenderData().disableLight();
         polygonObject.getRenderData().setAlphaBlend(true);
+        polygonObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.TRANSPARENT);
         polygonObject.getTransform().setRotationByAxis(-90, 1, 0, 0);
         plane.addChildObject(polygonObject);
         return plane;
@@ -105,6 +106,7 @@ public class SampleHelper {
         mCursor.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         final EnumSet<GVRPicker.EventOptions> eventOptions = EnumSet.of(
                 GVRPicker.EventOptions.SEND_TOUCH_EVENTS,
+                GVRPicker.EventOptions.SEND_TO_HIT_OBJECT,
                 GVRPicker.EventOptions.SEND_TO_LISTENERS);
         inputManager.selectController(new GVRInputManager.ICursorControllerSelectListener()
         {
@@ -120,10 +122,10 @@ public class SampleHelper {
                     ((GVRGazeCursorController) newController).setTouchScreenDepth(displayDepth);
                 }
                 newController.setCursor(mCursor);
+                newController.getPicker().setPickClosest(false);
                 newController.setCursorDepth(cursorDepth);
                 newController.setCursorControl(GVRCursorController.CursorControl.CURSOR_CONSTANT_DEPTH);
                 newController.getPicker().setEventOptions(eventOptions);
-                newController.addPickEventListener(handler);
             }
         });
     }
