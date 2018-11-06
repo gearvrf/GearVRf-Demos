@@ -115,8 +115,14 @@ public class AvatarMain extends GVRMain {
         }
 
         @Override
-        public void onPlaneMerging(GVRPlane gvrPlane, GVRPlane gvrPlane1)
+        public void onPlaneMerging(GVRPlane parent, GVRPlane child)
         {
+            GVRSceneObject childOwner = child.getOwnerObject();
+            if (childOwner != null)
+            {
+                childOwner.detachComponent(GVRPlane.getComponentType());
+                childOwner.getParent().removeChildObject(childOwner);
+            }
         }
     };
 
@@ -179,6 +185,12 @@ public class AvatarMain extends GVRMain {
             if (mAvatar == null)
             {
                 return;
+            }
+            GVRSceneObject.BoundingVolume bv = sceneObj.getBoundingVolume();
+
+            if (pickInfo.hitDistance < bv.radius)
+            {
+                pickInfo.hitLocation[2] -= 1.5f * bv.radius;
             }
             GVRHitResult hit = mMixedReality.hitTest(pickInfo);
 
