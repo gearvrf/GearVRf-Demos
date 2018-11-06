@@ -19,16 +19,12 @@ package org.gearvrf.arpet.manager.connection;
 
 import android.support.annotation.NonNull;
 
-public class BasePetConnectionEventHandler implements PetConnectionEventHandler {
+public abstract class BasePetConnectionEventHandler implements PetConnectionEventHandler {
 
     private String mName;
 
     public BasePetConnectionEventHandler(@NonNull String name) {
         this.mName = name;
-    }
-
-    @Override
-    public void handleEvent(PetConnectionEvent event) {
     }
 
     @Override

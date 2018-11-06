@@ -19,44 +19,55 @@ package org.gearvrf.arpet.service;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.SparseArray;
 
-import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.PetActionCommand;
+import org.gearvrf.arpet.service.data.RequestStatus;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.event.BallCommandReceivedMessage;
+import org.gearvrf.arpet.service.event.PetActionCommandReceivedMessage;
+import org.gearvrf.arpet.service.event.PetAnchorReceivedMessage;
+import org.gearvrf.arpet.service.event.ReceivedMessage;
+import org.gearvrf.arpet.service.event.RequestStatusReceivedMessage;
+import org.gearvrf.arpet.service.event.UpdatePosesReceivedMessage;
+import org.gearvrf.arpet.service.event.ViewCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public final class MessageService implements IMessageService {
 
     private static final String TAG = MessageService.class.getSimpleName();
 
-    private PetContext mContext;
     private IPetConnectionManager mConnectionManager;
-    private List<MessageReceiver> mMessageReceivers = new ArrayList<>();
-    private SparseArray<PendingResponseInfo<Void>> mPendingResponseInfos = new SparseArray<>();
+
+    private static Map<String, Class> mReceivedMessageTypes = new HashMap<>();
+
+    static {
+        mReceivedMessageTypes.put(MESSAGE_TYPE_PET_ANCHOR, PetAnchorReceivedMessage.class);
+        mReceivedMessageTypes.put(MESSAGE_TYPE_VIEW_COMMAND, ViewCommandReceivedMessage.class);
+        mReceivedMessageTypes.put(MESSAGE_TYPE_BALL_COMMAND, BallCommandReceivedMessage.class);
+        mReceivedMessageTypes.put(MESSAGE_TYPE_PET_ACTION_COMMAND, PetActionCommandReceivedMessage.class);
+        mReceivedMessageTypes.put(MESSAGE_TYPE_UPDATE_POSES, UpdatePosesReceivedMessage.class);
+        mReceivedMessageTypes.put(MESSAGE_TYPE_REQUEST_STATUS, RequestStatusReceivedMessage.class);
+    }
 
     private static class InstanceHolder {
         private static final IMessageService INSTANCE = new MessageService();
     }
 
     private MessageService() {
+        EventBus.getDefault().register(this);
         this.mConnectionManager = PetConnectionManager.getInstance();
-        this.mConnectionManager.addEventHandler(this::handleConnectionEvent);
-        this.mContext = this.mConnectionManager.getContext();
     }
 
     public static IMessageService getInstance() {
@@ -64,242 +75,65 @@ public final class MessageService implements IMessageService {
     }
 
     @Override
-    public void sharePetAnchor(@NonNull CloudAnchor petAnchor, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(petAnchor), callback);
+    public int sharePetAnchor(@NonNull CloudAnchor petAnchor) {
+        RequestMessage<CloudAnchor> request = new RequestMessage<>(MESSAGE_TYPE_PET_ANCHOR, petAnchor);
+        request.setStatus(new RequestStatus(request.getId()));
+        return sendRequest(request);
     }
 
     @Override
-    public void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(command), callback);
+    public void sendViewCommand(@NonNull ViewCommand command) {
+        sendRequest(new RequestMessage<>(MESSAGE_TYPE_VIEW_COMMAND, command));
     }
 
     @Override
-    public void sendBallCommand(@NonNull BallCommand command, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(command), callback);
+    public void sendBallCommand(@NonNull BallCommand command) {
+        sendRequest(new RequestMessage<>(MESSAGE_TYPE_BALL_COMMAND, command));
     }
 
     @Override
-    public void sendPetActionCommand(@NonNull PetActionCommand command, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(command), callback);
+    public void sendPetActionCommand(@NonNull PetActionCommand command) {
+        sendRequest(new RequestMessage<>(MESSAGE_TYPE_PET_ACTION_COMMAND, command));
     }
 
     @Override
-    public void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback) {
-        sendRequest(createRequest(poses), callback);
+    public void updatePoses(@NonNull SharedObjectPose[] poses) {
+        sendRequest(new RequestMessage<>(MESSAGE_TYPE_UPDATE_POSES, poses));
     }
 
     @Override
-    public void addMessageReceiver(MessageReceiver receiver) {
-        removeMessageReceiver(receiver);
-        mMessageReceivers.add(receiver);
-        Log.d(TAG, "Receiver added: " + receiver);
+    public void sendRequestStatus(@NonNull RequestStatus status) {
+        sendRequest(new RequestMessage<>(MESSAGE_TYPE_REQUEST_STATUS, status));
     }
 
-    @Override
-    public void removeMessageReceiver(MessageReceiver receiver) {
-        if (mMessageReceivers.remove(receiver)) {
-            Log.d(TAG, "Receiver removed: " + receiver);
-        }
+    private int sendRequest(RequestMessage request) {
+        int id = request.getId();
+        mConnectionManager.sendMessage(request,
+                totalSent -> logForRequest(request, "Request sent: " + request));
+        return id;
     }
 
-    private <Data extends Serializable> RequestMessage<Data> createRequest(Data data) {
-        String actionName = Thread.currentThread().getStackTrace()[3].getMethodName();
-        return new RequestMessage<>(actionName, data);
-    }
-
-    private synchronized void sendRequest(RequestMessage request, MessageCallback<Void> callback) {
-
-        PendingResponseInfo<Void> pendingResponseInfo = new PendingResponseInfo<>(
-                request.getId(), mConnectionManager.getTotalConnected(), callback);
-
-        if (mConnectionManager.getTotalConnected() == 0) {
-            onCallbackFailure(pendingResponseInfo, new IllegalStateException("No connection found"));
-            return;
-        }
-
-        mPendingResponseInfos.put(request.getId(), pendingResponseInfo);
-
-        mConnectionManager.sendMessage(request, totalSent -> {
-            logForRequest(request, "Request sent: " + request);
-            if (totalSent == 0) {
-                mPendingResponseInfos.remove(request.getId());
-                onCallbackFailure(pendingResponseInfo, new RuntimeException("Failure sending request: " + request));
-            }
-        });
-    }
-
-    private void onCallbackFailure(PendingResponseInfo callback, Exception e) {
-        mContext.runOnPetThread(() -> callback.mCallback.onFailure(e));
-    }
-
-    private void onCallbackSuccessVoid(PendingResponseInfo<Void> callback) {
-        mContext.runOnPetThread(() -> callback.mCallback.onSuccess(null));
-    }
-
-    private void onReceiveSharePetAnchor(CloudAnchor petAnchor) throws MessageException {
-        for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceivePetAnchor(petAnchor);
-        }
-    }
-
-    private void onReceiveSendViewCommand(ViewCommand command) throws MessageException {
-        for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveViewCommand(command);
-        }
-    }
-
-    private void onReceiveSendBallCommand(BallCommand command) throws MessageException {
-        for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveBallCommand(command);
-        }
-    }
-
-    private void onReceiveSendPetActionCommand(PetActionCommand command) throws MessageException {
-        for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceivePetActionCommand(command);
-        }
-    }
-
-    private void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
-        for (MessageReceiver receiver : mMessageReceivers) {
-            receiver.onReceiveUpdatePoses(poses);
-        }
-    }
-
-    private void handleConnectionEvent(PetConnectionEvent event) {
+    @Subscribe
+    public void handleConnectionEvent(PetConnectionEvent event) {
         if (event.getType() == IPetConnectionManager.EVENT_MESSAGE_RECEIVED) {
-            // Handle request or response
-            onMessageReceived((Message) event.getData());
-        } else if (event.getType() == IPetConnectionManager.EVENT_ONE_CONNECTION_LOST) {
-            if (mPendingResponseInfos.size() > 0) {
-                handleConnectionLost();
-            }
+            handleRequestMessage((RequestMessage) event.getData());
         }
     }
 
-    private synchronized void handleConnectionLost() {
-        /*
-         * This method treat the case where no new connections are made during the app experience.
-         * If new connections are accepted during the app experience, you must modify the following
-         * code to decrease the pending responses for requests associated with the lost connection.
-         */
-        for (int i = mPendingResponseInfos.size() - 1; i >= 0; i--) {
-            PendingResponseInfo<Void> pendingResponseInfo = mPendingResponseInfos.valueAt(i);
-            pendingResponseInfo.incrementTotalFailure();
-            if (!pendingResponseInfo.hasPending()) {
-                mPendingResponseInfos.removeAt(i);
-                onCallbackSuccessVoid(pendingResponseInfo);
-            }
-        }
-    }
-
-    private void onMessageReceived(Message message) {
-        if (message instanceof RequestMessage) {
-            handleRequestMessage((RequestMessage) message);
-        } else if (message instanceof ResponseMessage) {
-            handleResponseMessage((ResponseMessage) message);
-        }
-    }
-
-    private void callRequestedAction(RequestMessage request) throws MessageException {
-
-        String actionName = request.getActionName();
-        actionName = "onReceive" + Character.toUpperCase(actionName.charAt(0)) + actionName.substring(1);
-
-        try {
-            Serializable argument = request.getData();
-            this.getClass().getDeclaredMethod(actionName, argument.getClass()).invoke(this, argument);
-        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new MessageException("Error executing the requested action: " + actionName, e);
-        }
-    }
-
+    @SuppressWarnings("unchecked")
     private void handleRequestMessage(RequestMessage request) {
-
         try {
-            callRequestedAction(request);
-            logForRequest(request, "Request processing succeeded: " + request);
-            sendDefaultResponseForRequest(request);
-        } catch (MessageException error) {
-            logForRequest(request, "Request processing failed: " + getStackTraceString(error));
-            sendResponseError(request, error);
+            Class messageType = mReceivedMessageTypes.get(request.getActionName());
+            Class dataType = request.getData().getClass();
+            ReceivedMessage message = (ReceivedMessage) messageType.getConstructor(dataType).newInstance(request.getData());
+            message.setRequestStatus(request.getStatus());
+            EventBus.getDefault().post(message);
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            Log.e(TAG, "Error instantiating class for received message " + request, e);
         }
-    }
-
-    private synchronized void handleResponseMessage(ResponseMessage response) {
-
-        if (mPendingResponseInfos.size() == 0) {
-            return;
-        }
-
-        PendingResponseInfo<Void> pendingResponseInfo = mPendingResponseInfos.get(response.getRequestId());
-
-        if (pendingResponseInfo != null) {
-            pendingResponseInfo.updateTotalPending(response);
-            if (!pendingResponseInfo.hasPending()) {
-                mPendingResponseInfos.remove(response.getRequestId());
-                if (pendingResponseInfo.mTotalFailure == pendingResponseInfo.mTotalExpected) {
-                    onCallbackFailure(pendingResponseInfo, new MessageException("All remotes returned with error"));
-                } else {
-                    onCallbackSuccessVoid(pendingResponseInfo);
-                }
-            }
-        }
-    }
-
-    private void sendDefaultResponseForRequest(RequestMessage request) {
-        ResponseMessage response = ResponseMessage.createDefaultForRequest(request);
-        mConnectionManager.sendMessage(response, totalSent ->
-                logForRequest(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
-    }
-
-    private void sendResponseError(RequestMessage request, MessageException error) {
-        ResponseMessage response = new ResponseMessage.Builder(request.getId()).error(error).build();
-        mConnectionManager.sendMessage(response, totalSent ->
-                logForRequest(request, "Response " + (totalSent > 0 ? "sent" : "not sent")));
     }
 
     private void logForRequest(RequestMessage message, CharSequence text) {
         Log.d(TAG, String.format(Locale.getDefault(), "Request(%d): %s", message.getId(), text));
-    }
-
-    private static class PendingResponseInfo<T> {
-
-        final int mTotalExpected, mRequestId;
-        int mTotalSuccess, mTotalFailure;
-        MessageCallback<T> mCallback;
-
-        PendingResponseInfo(int requestId, int totalExpected, MessageCallback<T> mCallback) {
-            this.mRequestId = requestId;
-            this.mTotalExpected = totalExpected;
-            this.mCallback = mCallback;
-        }
-
-        boolean hasPending() {
-            return (mTotalSuccess + mTotalFailure) < mTotalExpected;
-        }
-
-        void incrementTotalFailure() {
-            if (hasPending()) {
-                mTotalFailure++;
-            }
-        }
-
-        void updateTotalPending(ResponseMessage response) {
-            if (hasPending()) {
-                if (response.getError() == null) {
-                    mTotalSuccess++;
-                } else {
-                    mTotalFailure++;
-                }
-            }
-        }
-    }
-
-    private static String getStackTraceString(Throwable t) {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        t.printStackTrace(writer);
-        return stringWriter.toString();
     }
 }

@@ -18,26 +18,49 @@
 package org.gearvrf.arpet.service;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.PetActionCommand;
+import org.gearvrf.arpet.service.data.RequestStatus;
 import org.gearvrf.arpet.service.data.ViewCommand;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 public interface IMessageService {
 
-    void sharePetAnchor(@NonNull CloudAnchor petAnchor, @NonNull MessageCallback<Void> callback);
+    String MESSAGE_TYPE_PET_ANCHOR = "MESSAGE_TYPE_PET_ANCHOR";
+    String MESSAGE_TYPE_VIEW_COMMAND = "MESSAGE_TYPE_VIEW_COMMAND";
+    String MESSAGE_TYPE_BALL_COMMAND = "MESSAGE_TYPE_BALL_COMMAND";
+    String MESSAGE_TYPE_PET_ACTION_COMMAND = "MESSAGE_TYPE_PET_ACTION_COMMAND";
+    String MESSAGE_TYPE_UPDATE_POSES = "MESSAGE_TYPE_UPDATE_POSES";
+    String MESSAGE_TYPE_REQUEST_STATUS = "MESSAGE_TYPE_REQUEST_STATUS";
 
-    void sendViewCommand(@NonNull ViewCommand command, @NonNull MessageCallback<Void> callback);
 
-    void sendBallCommand(@NonNull BallCommand command, @NonNull MessageCallback<Void> callback);
+    @Retention(RetentionPolicy.SOURCE)
+    @StringDef({
+            MESSAGE_TYPE_PET_ANCHOR,
+            MESSAGE_TYPE_VIEW_COMMAND,
+            MESSAGE_TYPE_BALL_COMMAND,
+            MESSAGE_TYPE_PET_ACTION_COMMAND,
+            MESSAGE_TYPE_UPDATE_POSES,
+            MESSAGE_TYPE_REQUEST_STATUS
+    })
+    @interface MessageType {
+    }
 
-    void sendPetActionCommand(@NonNull PetActionCommand command, @NonNull MessageCallback<Void> callback);
+    int sharePetAnchor(@NonNull CloudAnchor petAnchor);
 
-    void updatePoses(@NonNull SharedObjectPose[] poses, @NonNull MessageCallback<Void> callback);
+    void sendViewCommand(@NonNull ViewCommand command);
 
-    void addMessageReceiver(MessageReceiver receiver);
+    void sendBallCommand(@NonNull BallCommand command);
 
-    void removeMessageReceiver(MessageReceiver receiver);
+    void sendPetActionCommand(@NonNull PetActionCommand command);
+
+    void updatePoses(@NonNull SharedObjectPose[] poses);
+
+    void sendRequestStatus(RequestStatus status);
 }

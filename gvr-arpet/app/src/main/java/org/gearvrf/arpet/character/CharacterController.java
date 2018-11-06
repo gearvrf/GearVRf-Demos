@@ -17,7 +17,6 @@
 
 package org.gearvrf.arpet.character;
 
-import android.support.annotation.NonNull;
 import android.util.SparseArray;
 
 import org.gearvrf.GVRCameraRig;
@@ -33,13 +32,13 @@ import org.gearvrf.arpet.movement.OnPetActionListener;
 import org.gearvrf.arpet.movement.PetActionType;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.IMessageService;
-import org.gearvrf.arpet.service.MessageCallback;
-import org.gearvrf.arpet.service.MessageException;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.PetActionCommand;
+import org.gearvrf.arpet.service.event.PetActionCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.utility.Log;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 public class CharacterController extends BasePetMode {
 
@@ -52,22 +51,6 @@ public class CharacterController extends BasePetMode {
     private IMessageService mMessageService;
     private boolean mIsPlaying = false;
 
-    private class LocalMessageReceiver extends SimpleMessageReceiver {
-
-        public LocalMessageReceiver(@NonNull String name) {
-            super(name);
-        }
-
-        @Override
-        public void onReceivePetActionCommand(PetActionCommand command) throws MessageException {
-            try {
-                onSetCurrentAction(command.getType());
-            } catch (Throwable t) {
-                throw new MessageException("Error processing pet action: " + command, t);
-            }
-        }
-    }
-
     public CharacterController(PetContext petContext) {
         super(petContext, new CharacterView(petContext));
 
@@ -77,17 +60,23 @@ public class CharacterController extends BasePetMode {
         mBallThrowHandler = BallThrowHandler.getInstance(mPetContext);
 
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new LocalMessageReceiver(TAG));
 
         initPet((CharacterView) mModeScene);
     }
 
+    @Subscribe
+    public void handleReceivedMessage(PetActionCommandReceivedMessage message) {
+        onSetCurrentAction(message.getPetActionCommand().getType());
+    }
+
     @Override
     protected void onEnter() {
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onExit() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -137,7 +126,7 @@ public class CharacterController extends BasePetMode {
         if (mCurrentAction == null
                 || mCurrentAction.id() == PetActions.IDLE.ID
                 || mCurrentAction.id() == PetActions.TO_TAP.ID) {
-            ((CharacterView)mModeScene).setTapPosition(x, y, z);
+            ((CharacterView) mModeScene).setTapPosition(x, y, z);
             setCurrentAction(PetActions.TO_TAP.ID);
         }
     }
@@ -211,18 +200,7 @@ public class CharacterController extends BasePetMode {
 
     private void onSendCurrentAction(@PetActionType int action) {
         if (mPetContext.getMode() == SharedMixedReality.HOST) {
-            PetActionCommand command = new PetActionCommand(action);
-            mMessageService.sendPetActionCommand(command, new MessageCallback<Void>() {
-                @Override
-                public void onSuccess(Void result) {
-                    Log.d(TAG, "Success sending current %d action to guest(s)", action);
-                }
-
-                @Override
-                public void onFailure(Exception error) {
-                    Log.w(TAG, "Failure sending current %d action to guest(s)", action);
-                }
-            });
+            mMessageService.sendPetActionCommand(new PetActionCommand(action));
         }
     }
 

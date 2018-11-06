@@ -15,22 +15,19 @@
  *
  */
 
-package org.gearvrf.arpet.service;
+package org.gearvrf.arpet.service.event;
 
-public class MessageException extends Exception {
+import org.gearvrf.arpet.service.data.RequestStatus;
 
-    public MessageException() {
+public class RequestStatusReceivedMessage extends ReceivedMessage {
+
+    private RequestStatus requestStatus;
+
+    public RequestStatusReceivedMessage(RequestStatus requestStatus) {
+        this.requestStatus = requestStatus;
     }
 
-    public MessageException(String message) {
-        super(message);
-    }
-
-    public MessageException(Throwable cause) {
-        super(cause);
-    }
-
-    public MessageException(String message, Throwable cause) {
-        super(message, cause);
+    public RequestStatus getRequestStatus() {
+        return requestStatus;
     }
 }

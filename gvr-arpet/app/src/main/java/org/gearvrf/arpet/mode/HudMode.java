@@ -22,9 +22,10 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
-import org.gearvrf.arpet.manager.connection.PetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST;
 
@@ -46,12 +47,12 @@ public class HudMode extends BasePetMode {
         mHudView.setDisconnectListener(new OnDisconnectClickedHandler());
 
         mConnectionManager = (PetConnectionManager) PetConnectionManager.getInstance();
-        mConnectionManager.addEventHandler(new LocalConnectionEventHandler());
         mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
     }
 
     @Override
     protected void onEnter() {
+        EventBus.getDefault().register(this);
         if (mPetContext.getMode() != SharedMixedReality.OFF) {
             Log.d(TAG, "Play Ball activated by sharing mode!");
             mModeChangeListener.onPlayBall();
@@ -60,6 +61,7 @@ public class HudMode extends BasePetMode {
 
     @Override
     protected void onExit() {
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -124,29 +126,26 @@ public class HudMode extends BasePetMode {
         }
     }
 
-    private class LocalConnectionEventHandler implements PetConnectionEventHandler {
+    @SuppressLint("SwitchIntDef")
+    @Subscribe
+    public void handleConnectionEvent(PetConnectionEvent message) {
+        mPetContext.getActivity().runOnUiThread(() -> {
+            switch (message.getType()) {
+                case EVENT_ALL_CONNECTIONS_LOST:
+                    onSharingOff();
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
 
-        @SuppressLint("SwitchIntDef")
-        @Override
-        public void handleEvent(PetConnectionEvent message) {
-            mPetContext.getActivity().runOnUiThread(() -> {
-                switch (message.getType()) {
-                    case EVENT_ALL_CONNECTIONS_LOST:
-                        onSharingOff();
-                        break;
-                    default:
-                        break;
-                }
-            });
-        }
-
-        private void onSharingOff() {
-            mSharedMixedReality.stopSharing();
-            mPetController.stopBall();
-            mPetContext.getActivity().runOnUiThread(() -> {
-                mHudView.hideDisconnectView();
-                mHudView.hideConnectedLabel();
-            });
-        }
+    private void onSharingOff() {
+        mSharedMixedReality.stopSharing();
+        mPetController.stopBall();
+        mPetContext.getActivity().runOnUiThread(() -> {
+            mHudView.hideDisconnectView();
+            mHudView.hideConnectedLabel();
+        });
     }
 }

@@ -18,20 +18,31 @@
 package org.gearvrf.arpet.service;
 
 import org.gearvrf.arpet.connection.socket.bluetooth.BTMessage;
+import org.gearvrf.arpet.service.data.RequestStatus;
 
 import java.io.Serializable;
 
 public class RequestMessage<Data extends Serializable> extends BTMessage<Data> {
 
     private String mActionName;
+    private RequestStatus mStatus;
 
-    public RequestMessage(String mActionName, Data data) {
+    public RequestMessage(@IMessageService.MessageType String mActionName, Data data) {
         super(data);
         this.mActionName = mActionName;
     }
 
+    @IMessageService.MessageType
     public String getActionName() {
         return mActionName;
+    }
+
+    public RequestStatus getStatus() {
+        return mStatus;
+    }
+
+    public void setStatus(RequestStatus mStatus) {
+        this.mStatus = mStatus;
     }
 
     @Override

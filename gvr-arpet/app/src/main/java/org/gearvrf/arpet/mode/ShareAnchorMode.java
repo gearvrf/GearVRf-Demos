@@ -29,15 +29,12 @@ import android.widget.Toast;
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.common.Task;
-import org.gearvrf.arpet.common.TaskException;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.ManagedAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.exception.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.exception.NetworkException;
-import org.gearvrf.arpet.manager.connection.BasePetConnectionEventHandler;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
@@ -55,16 +52,20 @@ import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
 import org.gearvrf.arpet.mode.view.IWaitingForHostView;
 import org.gearvrf.arpet.mode.view.impl.ShareAnchorView;
 import org.gearvrf.arpet.service.IMessageService;
-import org.gearvrf.arpet.service.MessageCallback;
-import org.gearvrf.arpet.service.MessageException;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.service.SimpleMessageReceiver;
+import org.gearvrf.arpet.service.data.RequestStatus;
 import org.gearvrf.arpet.service.data.ViewCommand;
+import org.gearvrf.arpet.service.event.PetAnchorReceivedMessage;
+import org.gearvrf.arpet.service.event.RequestStatusReceivedMessage;
+import org.gearvrf.arpet.service.event.ViewCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST;
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_CONNECTION_ESTABLISHED;
@@ -98,9 +99,8 @@ public class ShareAnchorMode extends BasePetMode {
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
     private SharedMixedReality mSharedMixedReality;
-    private LocalConnectionEventHandler mConnectionEventHandler;
+    private PetAnchorSharingStatusHandler mPetAnchorSharingStatusHandler;
     private Resources mResources;
-    private LocalMessageReceiver mMessageReceiver;
 
     @Mode
     private int mCurrentMode = MODE_NONE;
@@ -109,7 +109,6 @@ public class ShareAnchorMode extends BasePetMode {
         super(petContext, new ShareAnchorView(petContext));
 
         mConnectionManager = PetConnectionManager.getInstance();
-        mConnectionManager.addEventHandler(mConnectionEventHandler = new LocalConnectionEventHandler(TAG));
         mShareAnchorView = (ShareAnchorView) mModeScene;
 
         mResources = mPetContext.getActivity().getResources();
@@ -118,16 +117,13 @@ public class ShareAnchorMode extends BasePetMode {
         mPetAnchor = anchor;
         mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(mMessageReceiver = new LocalMessageReceiver(TAG));
         mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
     }
 
     private void showViewLetsStart() {
         ILetsStartView view = mShareAnchorView.makeView(ILetsStartView.class);
         view.setBackClickListener(v -> cancelSharing());
-        view.setHostClickListener(v -> {
-            mConnectionManager.startInvitation();
-        });
+        view.setHostClickListener(v -> mConnectionManager.startInvitation());
         view.setGuestClickListener(v -> {
             // Disable the planes detection
             mPetContext.unregisterPlaneListener();
@@ -241,6 +237,38 @@ public class ShareAnchorMode extends BasePetMode {
         });
     }
 
+    private void resolvePetAnchor(PetAnchorReceivedMessage message) {
+
+        CloudAnchor[] cloudAnchors = {message.getPetAnchor()};
+
+        new CloudAnchorManager(mPetContext).resolveAnchors(cloudAnchors, new CloudAnchorManager.OnCloudAnchorCallback() {
+            @Override
+            public void onResult(List<ManagedAnchor> managedAnchors) {
+                Log.d(TAG, "Anchor resolved successfully");
+
+                RequestStatus requestStatus = message.getRequestStatus();
+                requestStatus.setStatus(RequestStatus.STATUS_OK);
+                mMessageService.sendRequestStatus(requestStatus);
+
+                mSharedMixedReality.startSharing(
+                        managedAnchors.get(0).getAnchor(), SharedMixedReality.GUEST);
+
+                gotToHudView();
+            }
+
+            @Override
+            public void onError(CloudAnchorException e) {
+                showViewSharingError(
+                        () -> cancelSharing(),
+                        () -> {
+                            showViewGuestLookingAtTarget();
+                            new Handler().postDelayed(() -> resolvePetAnchor(message), 1500);
+                        });
+                handleCloudAnchorException(e);
+            }
+        });
+    }
+
     private void handleCloudAnchorException(CloudAnchorException e) {
         if (e.getCause() instanceof NetworkException) {
             Toast.makeText(mPetContext.getActivity(),
@@ -258,12 +286,12 @@ public class ShareAnchorMode extends BasePetMode {
 
     @Override
     protected void onEnter() {
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onExit() {
-        mConnectionManager.removeEventHandler(mConnectionEventHandler);
-        mMessageService.removeMessageReceiver(mMessageReceiver);
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -292,46 +320,19 @@ public class ShareAnchorMode extends BasePetMode {
     private void startHostSharingFlow() {
 
         // Make the guests wait while host prepare pet anchor
-        showRemoteView(ViewCommand.SHOW_VIEW_LOOKING_AT_TARGET);
+        Log.d(TAG, "Request to show remote view: " + ViewCommand.SHOW_VIEW_LOOKING_AT_TARGET);
+        mMessageService.sendViewCommand(new ViewCommand(ViewCommand.SHOW_VIEW_LOOKING_AT_TARGET));
 
         hostPetAnchor();
-    }
-
-    private void showRemoteView(@ViewCommand.Type String commandType) {
-        Log.d(TAG, "Request to show remote view: " + commandType);
-        ViewCommand command = new ViewCommand(commandType);
-        mMessageService.sendViewCommand(command, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Success showing view on remote: " + commandType);
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "Failed showing view on remote: " + commandType);
-            }
-        });
     }
 
     private void sharePetAnchorWithGuests(GVRAnchor hostedAnchor) {
         Log.d(TAG, "Sharing pet anchor with guests");
         CloudAnchor cloudAnchor = new CloudAnchor(hostedAnchor.getCloudAnchorId(), ArPetObjectType.PET);
-        mMessageService.sharePetAnchor(cloudAnchor, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                mSharedMixedReality.startSharing(hostedAnchor, SharedMixedReality.HOST);
-                // Sharing succeeded, back host to hud view
-                gotToHudView();
-            }
 
-            @Override
-            public void onFailure(Exception error) {
-                Log.e(TAG, "Error sharing pet anchor with guests", error);
-                showViewSharingError(
-                        () -> cancelSharing(),
-                        () -> sharePetAnchorWithGuests(hostedAnchor));
-            }
-        });
+        int requestId = mMessageService.sharePetAnchor(cloudAnchor);
+        mPetAnchorSharingStatusHandler = new PetAnchorSharingStatusHandler(
+                mConnectionManager.getTotalConnected(), requestId, hostedAnchor);
     }
 
     private void cancelSharing() {
@@ -378,146 +379,113 @@ public class ShareAnchorMode extends BasePetMode {
                 ? R.string.view_host_disconnected
                 : R.string.view_guests_disconnected);
         showViewSharingFinished(text);
+        mPetAnchorSharingStatusHandler = null;
     }
 
-    private class LocalConnectionEventHandler extends BasePetConnectionEventHandler {
-
-        LocalConnectionEventHandler(@NonNull String name) {
-            super(name);
-        }
-
-        @SuppressLint("SwitchIntDef")
-        @Override
-        public void handleEvent(PetConnectionEvent message) {
-            mPetContext.getActivity().runOnUiThread(() -> {
-                switch (message.getType()) {
-                    case EVENT_CONNECTION_ESTABLISHED:
-                        onConnectionEstablished();
-                        break;
-                    case EVENT_NO_CONNECTION_FOUND:
-                        //showViewNoConnectionFound();
-                        onNoConnectionFound();
-                        break;
-                    case EVENT_GUEST_CONNECTION_ESTABLISHED:
-                    case EVENT_ONE_CONNECTION_LOST:
-                        updateTotalConnectedUI();
-                        break;
-                    case EVENT_ALL_CONNECTIONS_LOST:
-                        onAllConnectionLost();
-                        break;
-                    case EVENT_ON_LISTENING_TO_GUESTS:
-                        showViewWaitingForGuest();
-                        break;
-                    case EVENT_ON_REQUEST_CONNECTION_TO_HOST:
-                        showViewWaitingForHost();
-                        break;
-                    case EVENT_ENABLE_BLUETOOTH_DENIED:
-                        Toast.makeText(mPetContext.getActivity(),
-                                R.string.bluetooth_disabled, Toast.LENGTH_LONG).show();
-                        break;
-                    case EVENT_HOST_VISIBILITY_DENIED:
-                        Toast.makeText(mPetContext.getActivity(),
-                                R.string.device_not_visible, Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        break;
+    @SuppressLint("SwitchIntDef")
+    @Subscribe
+    public void handleConnectionEvent(PetConnectionEvent message) {
+        switch (message.getType()) {
+            case EVENT_CONNECTION_ESTABLISHED:
+                onConnectionEstablished();
+                break;
+            case EVENT_NO_CONNECTION_FOUND:
+                //showViewNoConnectionFound();
+                onNoConnectionFound();
+                break;
+            case EVENT_GUEST_CONNECTION_ESTABLISHED:
+            case EVENT_ONE_CONNECTION_LOST:
+                updateTotalConnectedUI();
+                if (mPetAnchorSharingStatusHandler != null) {
+                    mPetAnchorSharingStatusHandler.decrementTotalPending();
                 }
-            });
+                break;
+            case EVENT_ALL_CONNECTIONS_LOST:
+                onAllConnectionLost();
+                break;
+            case EVENT_ON_LISTENING_TO_GUESTS:
+                showViewWaitingForGuest();
+                break;
+            case EVENT_ON_REQUEST_CONNECTION_TO_HOST:
+                showViewWaitingForHost();
+                break;
+            case EVENT_ENABLE_BLUETOOTH_DENIED:
+                Toast.makeText(mPetContext.getActivity(),
+                        R.string.bluetooth_disabled, Toast.LENGTH_LONG).show();
+                break;
+            case EVENT_HOST_VISIBILITY_DENIED:
+                Toast.makeText(mPetContext.getActivity(),
+                        R.string.device_not_visible, Toast.LENGTH_LONG).show();
+                break;
+            default:
+                break;
         }
     }
 
-    private class LocalMessageReceiver extends SimpleMessageReceiver {
+    @Subscribe
+    public void handleReceivedMessage(ViewCommandReceivedMessage message) {
+        ViewCommand command = message.getViewCommand();
+        Log.d(TAG, "View command received: " + command);
+        switch (command.getType()) {
+            case ViewCommand.SHOW_VIEW_LOOKING_AT_TARGET:
+                showViewGuestLookingAtTarget();
+                break;
+            default:
+                Log.d(TAG, "Unknown view command: " + command.getType());
+                break;
+        }
+    }
 
-        LocalMessageReceiver(@NonNull String name) {
-            super(name);
+    @Subscribe
+    public void handleReceivedMessage(PetAnchorReceivedMessage message) {
+        resolvePetAnchor(message);
+    }
+
+    @Subscribe
+    public void handleReceivedMessage(RequestStatusReceivedMessage message) {
+        if (mPetAnchorSharingStatusHandler != null) {
+            mPetAnchorSharingStatusHandler.handle(message.getRequestStatus());
+        }
+    }
+
+    private class PetAnchorSharingStatusHandler {
+
+        int mTotalPendingStatus;
+        int mRequestId;
+        GVRAnchor mResolvedAnchor;
+        ReentrantReadWriteLock mLock = new ReentrantReadWriteLock();
+
+        PetAnchorSharingStatusHandler(int mTotalPendingStatus, int mRequestId, GVRAnchor resolvedAnchor) {
+            this.mTotalPendingStatus = mTotalPendingStatus;
+            this.mRequestId = mRequestId;
+            this.mResolvedAnchor = resolvedAnchor;
         }
 
-        @Override
-        public void onReceivePetAnchor(CloudAnchor petAnchor) throws MessageException {
-            Log.d(TAG, "Pet anchor received: " + petAnchor);
-
+        void decrementTotalPending() {
+            mLock.writeLock().lock();
             try {
-
-                PetAnchorResolverTask resolverTask = new PetAnchorResolverTask(petAnchor);
-                // This method gets locked and will return after task to finish
-                resolverTask.start();
-
-                if (resolverTask.getError() != null) {
-                    cancelSharing();
-                    return;
-                }
-
-                mSharedMixedReality.startSharing(
-                        resolverTask.getPetAnchor(), SharedMixedReality.GUEST);
-
-                gotToHudView();
-
-            } catch (Throwable cause) {
-                String errorString = "Error processing the shared pet anchor";
-                Log.e(TAG, errorString, cause);
-                throw new MessageException(errorString, cause);
+                mTotalPendingStatus--;
+            } finally {
+                mLock.writeLock().unlock();
             }
         }
 
-        @Override
-        public void onReceiveViewCommand(ViewCommand command) throws MessageException {
-            try {
-                Log.d(TAG, "View command received: " + command);
-                switch (command.getType()) {
-                    case ViewCommand.SHOW_VIEW_LOOKING_AT_TARGET:
-                        showViewGuestLookingAtTarget();
-                        break;
-                    default:
-                        Log.d(TAG, "Unknown view command: " + command.getType());
-                        break;
+        void handle(RequestStatus status) {
+            Log.d(TAG, "Request status received: " + status);
+            if (status.getRequestId() == mRequestId) {
+                decrementTotalPending();
+                mLock.readLock().lock();
+                try {
+                    if (mTotalPendingStatus == 0) {
+                        mSharedMixedReality.startSharing(mResolvedAnchor, SharedMixedReality.HOST);
+                        // Sharing succeeded, back host to hud view
+                        gotToHudView();
+                        mPetAnchorSharingStatusHandler = null;
+                    }
+                } finally {
+                    mLock.readLock().unlock();
                 }
-            } catch (Throwable t) {
-                throw new MessageException("Error processing view command", t);
             }
-        }
-    }
-
-    private class PetAnchorResolverTask extends Task {
-
-        CloudAnchor mPetCloudAnchor;
-        GVRAnchor mPetAnchor;
-
-        PetAnchorResolverTask(CloudAnchor petCloudAnchor) {
-            this.mPetCloudAnchor = petCloudAnchor;
-        }
-
-        @Override
-        public void execute() {
-            resolvePetAnchor();
-        }
-
-        void resolvePetAnchor() {
-
-            CloudAnchor[] cloudAnchors = {mPetCloudAnchor};
-            new CloudAnchorManager(mPetContext).resolveAnchors(cloudAnchors, new CloudAnchorManager.OnCloudAnchorCallback() {
-                @Override
-                public void onResult(List<ManagedAnchor> managedAnchors) {
-                    mPetAnchor = managedAnchors.get(0).getAnchor();
-                    finish();
-                }
-
-                @Override
-                public void onError(CloudAnchorException e) {
-                    setError(new TaskException(e));
-                    showViewSharingError(
-                            () -> finish(),
-                            () -> {
-                                setError(null);
-                                showViewGuestLookingAtTarget();
-                                resolvePetAnchor();
-                            });
-                    handleCloudAnchorException(e);
-                }
-            });
-        }
-
-        GVRAnchor getPetAnchor() {
-            return mPetAnchor;
         }
     }
 

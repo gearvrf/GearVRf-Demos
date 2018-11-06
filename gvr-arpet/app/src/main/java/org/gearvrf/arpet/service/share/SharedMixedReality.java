@@ -3,19 +3,15 @@ package org.gearvrf.arpet.service.share;
 import android.graphics.Bitmap;
 import android.opengl.Matrix;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import org.gearvrf.GVRPicker;
-import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.service.IMessageService;
-import org.gearvrf.arpet.service.MessageCallback;
-import org.gearvrf.arpet.service.MessageException;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.service.SimpleMessageReceiver;
+import org.gearvrf.arpet.service.event.UpdatePosesReceivedMessage;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRAugmentedImage;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -27,6 +23,8 @@ import org.gearvrf.mixedreality.IAugmentedImageEventsListener;
 import org.gearvrf.mixedreality.ICloudAnchorListener;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -48,7 +46,7 @@ public class SharedMixedReality implements IMRCommon {
 
     @Mode
     private int mMode = OFF;
-    GVRAnchor mSharedAnchor = null;
+    private GVRAnchor mSharedAnchor = null;
     private float[] mSpaceMatrix = new float[16];
 
     @IntDef({OFF, HOST, GUEST})
@@ -62,7 +60,6 @@ public class SharedMixedReality implements IMRCommon {
         mPetContext = petContext;
         mSharedSceneObjects = new ArrayList<>();
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new LocalMessageReceiver(TAG));
         Matrix.setIdentityM(mSpaceMatrix, 0);
     }
 
@@ -86,6 +83,7 @@ public class SharedMixedReality implements IMRCommon {
             return;
         }
 
+        EventBus.getDefault().register(this);
         Log.d(TAG, "startSharing => " + mode);
 
         mSharedAnchor = sharedAnchor;
@@ -100,6 +98,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public void stopSharing() {
+        EventBus.getDefault().unregister(this);
         if (mMode == GUEST) {
             stopGuest();
         }
@@ -121,7 +120,7 @@ public class SharedMixedReality implements IMRCommon {
         if (shared.parent != null) {
             if (shared.parent instanceof GVRPlane) {
                 // TODO: Fix MR API
-                ((GVRPlane)shared.parent).setSceneObject(null);
+                ((GVRPlane) shared.parent).setSceneObject(null);
             } else {
                 shared.parent.removeChildObject(shared.object);
             }
@@ -275,18 +274,7 @@ public class SharedMixedReality implements IMRCommon {
             poses.add(new SharedObjectPose(shared.type, result));
         }
 
-        mMessageService.updatePoses(poses.toArray(new SharedObjectPose[0]), new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Success updating positions for " + poses);
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.d(TAG, "Failed updating positions for "
-                        + poses + ". Error: " + error.getMessage());
-            }
-        });
+        mMessageService.updatePoses(poses.toArray(new SharedObjectPose[0]));
     }
 
     private synchronized void onUpdatePosesReceived(SharedObjectPose[] poses) {
@@ -310,7 +298,7 @@ public class SharedMixedReality implements IMRCommon {
 
     private Runnable mSharingLoop = new Runnable() {
 
-        final int LOOP_TIME = 300;
+        final int LOOP_TIME = 500;
 
         @Override
         public void run() {
@@ -347,19 +335,8 @@ public class SharedMixedReality implements IMRCommon {
         }
     }
 
-    private class LocalMessageReceiver extends SimpleMessageReceiver {
-
-        public LocalMessageReceiver(@NonNull String name) {
-            super(name);
-        }
-
-        @Override
-        public void onReceiveUpdatePoses(SharedObjectPose[] poses) throws MessageException {
-            try {
-                onUpdatePosesReceived(poses);
-            } catch (Throwable t) {
-                throw new MessageException("Error updating objects position", t);
-            }
-        }
+    @Subscribe
+    public void handleReceivedMessage(UpdatePosesReceivedMessage message) {
+        onUpdatePosesReceived(message.getSharedObjectPoses());
     }
 }

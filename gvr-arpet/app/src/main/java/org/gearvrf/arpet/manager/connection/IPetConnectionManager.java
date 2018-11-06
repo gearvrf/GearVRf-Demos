@@ -152,9 +152,5 @@ public interface IPetConnectionManager {
 
     void sendMessage(Message message, @NonNull SendMessageCallback callback);
 
-    void addEventHandler(PetConnectionEventHandler handler);
-
-    void removeEventHandler(PetConnectionEventHandler handler);
-
     PetContext getContext();
 }

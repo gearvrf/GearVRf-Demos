@@ -25,17 +25,15 @@ import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRRenderData;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.service.IMessageService;
-import org.gearvrf.arpet.service.MessageCallback;
 import org.gearvrf.arpet.service.MessageService;
-import org.gearvrf.arpet.service.SimpleMessageReceiver;
 import org.gearvrf.arpet.service.data.BallCommand;
+import org.gearvrf.arpet.service.event.BallCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.physics.GVRRigidBody;
-import org.gearvrf.utility.Log;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
@@ -87,14 +85,14 @@ public class BallThrowHandler {
         EventBus.getDefault().register(this);
 
         mMessageService = MessageService.getInstance();
-        mMessageService.addMessageReceiver(new SimpleMessageReceiver(TAG) {
-            @Override
-            public void onReceiveBallCommand(BallCommand command) {
-                if (BallCommand.THROW.equals(command.getType())) {
-                    throwLocalBall(command.getForceVector());
-                }
-            }
-        });
+    }
+
+    @Subscribe
+    public void handleReceivedMessage(BallCommandReceivedMessage message) {
+        BallCommand command = message.getBallCommand();
+        if (BallCommand.THROW.equals(command.getType())) {
+            throwLocalBall(command.getForceVector());
+        }
     }
 
     // FIXME: look for a different approach for this
@@ -152,7 +150,7 @@ public class BallThrowHandler {
             public boolean visit(GVRComponent gvrComponent) {
                 if (mBall.getCollider() == null) {
                     GVRCollider collider = new GVRMeshCollider(mPetContext.getGVRContext(),
-                            ((GVRRenderData)gvrComponent).getMesh().getBoundingBox());
+                            ((GVRRenderData) gvrComponent).getMesh().getBoundingBox());
                     mBall.attachCollider(collider);
                 }
                 return false;
@@ -211,17 +209,7 @@ public class BallThrowHandler {
     private void throwRemoteBall(Vector3f forceVector) {
         BallCommand throwCommand = new BallCommand(BallCommand.THROW);
         throwCommand.setForceVector(forceVector);
-        mMessageService.sendBallCommand(throwCommand, new MessageCallback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d(TAG, "Success executing throw command on guests");
-            }
-
-            @Override
-            public void onFailure(Exception error) {
-                Log.d(TAG, "Failure executing throw command on guests: " + error.getMessage());
-            }
-        });
+        mMessageService.sendBallCommand(throwCommand);
     }
 
     // FIXME: Why multiply by root matrix?

@@ -15,22 +15,19 @@
  *
  */
 
-package org.gearvrf.arpet.common;
+package org.gearvrf.arpet.service.event;
 
-public class TaskException extends Throwable {
+import org.gearvrf.arpet.service.share.SharedObjectPose;
 
-    public TaskException() {
+public class UpdatePosesReceivedMessage extends ReceivedMessage {
+
+    private SharedObjectPose[] sharedObjectPoses;
+
+    public UpdatePosesReceivedMessage(SharedObjectPose[] sharedObjectPoses) {
+        this.sharedObjectPoses = sharedObjectPoses;
     }
 
-    public TaskException(String message) {
-        super(message);
-    }
-
-    public TaskException(Throwable cause) {
-        super(cause);
-    }
-
-    public TaskException(String message, Throwable cause) {
-        super(message, cause);
+    public SharedObjectPose[] getSharedObjectPoses() {
+        return sharedObjectPoses;
     }
 }

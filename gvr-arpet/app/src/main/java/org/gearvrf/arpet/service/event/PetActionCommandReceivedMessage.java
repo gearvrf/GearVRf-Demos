@@ -15,11 +15,19 @@
  *
  */
 
-package org.gearvrf.arpet.service;
+package org.gearvrf.arpet.service.event;
 
-public interface MessageCallback<T> {
+import org.gearvrf.arpet.service.data.PetActionCommand;
 
-    void onSuccess(T result);
+public class PetActionCommandReceivedMessage extends ReceivedMessage {
 
-    void onFailure(Exception error);
+    private PetActionCommand petActionCommand;
+
+    public PetActionCommandReceivedMessage(PetActionCommand petActionCommand) {
+        this.petActionCommand = petActionCommand;
+    }
+
+    public PetActionCommand getPetActionCommand() {
+        return petActionCommand;
+    }
 }

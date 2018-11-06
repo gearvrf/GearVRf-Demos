@@ -198,6 +198,7 @@ public class BTServerDeviceFinder {
                     fetchUuidForNextPending();
                 } else {
                     Log.d(TAG, "Discovery finished. No phone found");
+                    mBluetoothAdapter.cancelDiscovery();
                     notifyFoundOrRetry();
                 }
 

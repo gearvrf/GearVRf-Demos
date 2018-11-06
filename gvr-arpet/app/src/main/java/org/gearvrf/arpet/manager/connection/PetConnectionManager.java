@@ -33,12 +33,10 @@ import org.gearvrf.arpet.connection.socket.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTDevice;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTServerDeviceFinder;
 import org.gearvrf.arpet.constant.PetConstants;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public final class PetConnectionManager extends BTConnectionManager implements IPetConnectionManager {
 
@@ -50,7 +48,6 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     private BTServerDeviceFinder mServerFinder;
     private OnEnableBluetoothCallback mEnableBTCallback;
     private OnEnableDiscoverableCallback mEnableVisibilityCallback;
-    private List<PetConnectionEventHandler> mPetConnectionEventHandlers = new ArrayList<>();
     private DeviceVisibilityMonitor mDeviceVisibilityMonitor;
     private boolean mDisconnectSilently;
 
@@ -74,25 +71,8 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mServerFinder = new BTServerDeviceFinder(mContext.getActivity());
             mDeviceVisibilityMonitor = new DeviceVisibilityMonitor(context, this::onVisibilitySateChanged);
-            mPetConnectionEventHandlers = Collections.synchronizedList(new ArrayList<>());
             mContext.addOnPetContextListener((requestCode, resultCode, data)
                     -> onActivityResult(requestCode, resultCode));
-        }
-    }
-
-    @Override
-    public synchronized void addEventHandler(PetConnectionEventHandler handler) {
-        checkInitialization();
-        removeEventHandler(handler);
-        mPetConnectionEventHandlers.add(handler);
-        Log.d(TAG, "Handler added: " + handler);
-    }
-
-    @Override
-    public synchronized void removeEventHandler(PetConnectionEventHandler handler) {
-        checkInitialization();
-        if (mPetConnectionEventHandlers.remove(handler)) {
-            Log.d(TAG, "Handler removed: " + handler);
         }
     }
 
@@ -307,9 +287,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     private synchronized void notifyManagerEvent(@EventType int type, Serializable data) {
-        for (PetConnectionEventHandler petConnectionEventHandler : mPetConnectionEventHandlers) {
-            petConnectionEventHandler.handleEvent(new PetConnectionEvent(type, data));
-        }
+        EventBus.getDefault().post(new PetConnectionEvent(type, data));
     }
 
     private void enableBluetooth(OnEnableBluetoothCallback callback) {
