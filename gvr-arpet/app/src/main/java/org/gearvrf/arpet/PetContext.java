@@ -19,7 +19,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
@@ -48,7 +47,7 @@ public class PetContext {
     private SharedMixedReality mMixedReality;
     private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
     private PlayerSceneObject mPlayer;
-    private IPlaneEventsListener mPlaneListener;
+    private IPlaneEventsListener mPlaneListener = null;
     private GVRScene mMainScene = null;
 
     public PetContext(GVRActivity activity) {
@@ -108,14 +107,20 @@ public class PetContext {
         return mMixedReality;
     }
 
-    public void registerPlaneListener(@NonNull IPlaneEventsListener listener) {
-        mPlaneListener = listener;
-        mMixedReality.registerPlaneListener(listener);
+    public void startDetectingPlanes() {
+        if (mPlaneListener != null) {
+            mMixedReality.registerPlaneListener(mPlaneListener);
+        }
     }
 
-    public void unregisterPlaneListener() {
-        mMixedReality.unregisterPlaneListener(mPlaneListener);
-        mPlaneListener = null;
+    public void stopDetectingPlanes() {
+        if (mPlaneListener != null) {
+            mMixedReality.unregisterPlaneListener(mPlaneListener);
+        }
+    }
+
+    public void setPlaneListener(IPlaneEventsListener planeListener) {
+        mPlaneListener = planeListener;
     }
 
     public GVRScene getMainScene() {

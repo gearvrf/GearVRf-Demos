@@ -142,8 +142,6 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
         mScene = petContext.getMainScene();
         mixedReality = petContext.getMixedReality();
         physicsPlane = new PlaneBoard(mContext);
-
-        petContext.registerPlaneListener(this);
     }
 
     private GVRSceneObject createQuadPlane() {

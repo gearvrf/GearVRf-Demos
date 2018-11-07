@@ -91,6 +91,7 @@ public class PetMain extends DisableNativeSplashScreen {
         mHandlerBackToHud = new HandlerBackToHud();
 
         mPlaneHandler = new PlaneHandler(mPetContext);
+        mPetContext.setPlaneListener(mPlaneHandler);
 
         configTouchScreen();
 
@@ -102,6 +103,8 @@ public class PetMain extends DisableNativeSplashScreen {
             public void onSuccess() {
                 // Will wet pet's scene as the main scene
                 mCurrentSplashScreen.onHide(mPetContext.getMainScene());
+                // Start detecting planes
+                mPetContext.startDetectingPlanes();
             }
 
             @Override
@@ -313,7 +316,6 @@ public class PetMain extends DisableNativeSplashScreen {
                 mCursorController.addPickEventListener(mTouchEventsHandler);
             }
 
-            mPetContext.registerPlaneListener(mPlaneHandler);
             mCurrentMode.exit();
             mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
             mCurrentMode.enter();
