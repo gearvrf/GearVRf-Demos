@@ -12,6 +12,7 @@ import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.event.UpdatePosesReceivedMessage;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRAugmentedImage;
 import org.gearvrf.mixedreality.GVRHitResult;
@@ -23,7 +24,6 @@ import org.gearvrf.mixedreality.IAugmentedImageEventsListener;
 import org.gearvrf.mixedreality.ICloudAnchorListener;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
@@ -72,7 +72,7 @@ public class SharedMixedReality implements IMRCommon {
             return;
         }
 
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
         Log.d(TAG, "startSharing => " + mode);
 
         mSharedAnchor = sharedAnchor;
@@ -87,7 +87,7 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     public void stopSharing() {
-        EventBus.getDefault().unregister(this);
+        EventBusUtils.unregister(this);
         if (mMode == PetConstants.SHARE_MODE_GUEST) {
             stopGuest();
         }

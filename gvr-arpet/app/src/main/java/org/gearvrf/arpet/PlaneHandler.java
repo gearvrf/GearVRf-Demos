@@ -28,13 +28,13 @@ import org.gearvrf.GVRMesh;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
 import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRRigidBody;
 import org.gearvrf.scene_objects.GVRCubeSceneObject;
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.LinkedList;
 
@@ -229,7 +229,7 @@ public final class PlaneHandler implements IPlaneEventsListener, GVRDrawFrameLis
             selectedPlaneObject.attachComponent(physicsPlane);
 
             mainPlane.setName(PLANE_NAME);
-            EventBus.getDefault().post(new PlaneDetectedEvent(mainPlane));
+            EventBusUtils.post(new PlaneDetectedEvent(mainPlane));
             mContext.registerDrawFrameListener(this);
         } else {
             mContext.unregisterDrawFrameListener(this);

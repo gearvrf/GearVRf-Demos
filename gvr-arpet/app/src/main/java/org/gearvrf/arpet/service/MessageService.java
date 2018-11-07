@@ -36,7 +36,7 @@ import org.gearvrf.arpet.service.event.RequestStatusReceivedMessage;
 import org.gearvrf.arpet.service.event.UpdatePosesReceivedMessage;
 import org.gearvrf.arpet.service.event.ViewCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.SharedObjectPose;
-import org.greenrobot.eventbus.EventBus;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.lang.reflect.InvocationTargetException;
@@ -66,7 +66,7 @@ public final class MessageService implements IMessageService {
     }
 
     private MessageService() {
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
         this.mConnectionManager = PetConnectionManager.getInstance();
     }
 
@@ -127,7 +127,7 @@ public final class MessageService implements IMessageService {
             Class dataType = request.getData().getClass();
             ReceivedMessage message = (ReceivedMessage) messageType.getConstructor(dataType).newInstance(request.getData());
             message.setRequestStatus(request.getStatus());
-            EventBus.getDefault().post(message);
+            EventBusUtils.post(message);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             Log.e(TAG, "Error instantiating class for received message " + request, e);
         }

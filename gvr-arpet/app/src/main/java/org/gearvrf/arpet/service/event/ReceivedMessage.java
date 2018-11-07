@@ -21,7 +21,7 @@ import org.gearvrf.arpet.service.data.RequestStatus;
 
 public class ReceivedMessage {
 
-    RequestStatus requestStatus;
+    private RequestStatus requestStatus;
 
     public RequestStatus getRequestStatus() {
         return requestStatus;

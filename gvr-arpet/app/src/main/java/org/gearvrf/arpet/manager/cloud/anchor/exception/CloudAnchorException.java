@@ -19,9 +19,6 @@ package org.gearvrf.arpet.manager.cloud.anchor.exception;
 
 public class CloudAnchorException extends Exception {
 
-    public CloudAnchorException() {
-    }
-
     public CloudAnchorException(String message) {
         super(message);
     }

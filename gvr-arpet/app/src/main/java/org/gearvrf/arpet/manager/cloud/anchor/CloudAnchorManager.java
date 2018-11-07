@@ -30,15 +30,12 @@ import org.gearvrf.arpet.util.ContextUtils;
 import org.gearvrf.arpet.util.NetworkUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 public class CloudAnchorManager {
 
     private static final String TAG = CloudAnchorManager.class.getSimpleName();
 
     private final PetContext mPetContext;
+    private OnCloudAnchorCallback mCallback;
 
     public CloudAnchorManager(PetContext petContext) {
         mPetContext = petContext;
@@ -49,203 +46,84 @@ public class CloudAnchorManager {
                 PetConstants.GOOGLE_CLOUD_ANCHOR_KEY_NAME);
         if (!isKeySet && BuildConfig.DEBUG) {
             Context context = mPetContext.getActivity().getApplicationContext();
-            mPetContext.runOnPetThread(() -> {
-                Toast.makeText(context, "Cloud anchor API is not set", Toast.LENGTH_LONG).show();
-            });
+            mPetContext.runOnPetThread(() ->
+                    Toast.makeText(context, "Cloud anchor API is not set",
+                            Toast.LENGTH_LONG).show());
         }
         return isKeySet;
     }
 
-    private int mPendingToHost;
-    private boolean mIsHostingAnchors;
-    private List<ManagedAnchor> mHostedAnchors;
-    private final Object HOSTING_LOCK = new Object();
-    private OnCloudAnchorCallback mHostingCallback;
+    public void hostAnchors(
+            @NonNull ManagedAnchor<GVRAnchor> managedAnchor,
+            @NonNull OnCloudAnchorCallback<GVRAnchor> callback) {
 
-    public void hostAnchors(@NonNull ManagedAnchor[] anchors, @NonNull OnCloudAnchorCallback callback) {
+        mCallback = callback;
 
-        mHostingCallback = callback;
-
-        // Already is hosting
-        if (mIsHostingAnchors) {
-            String errorString = "Already hosting anchors";
-            Log.e(TAG, errorString);
-            onHostError(errorString, null);
+        if (!checkPreconditions()) {
             return;
         }
 
-        if (anchors.length == 0) {
-            String errorString = "Nothing to host. Anchor array is empty";
-            Log.e(TAG, errorString);
-            onHostError(errorString, null);
-            return;
-        }
-
-        if (!isCloudAnchorApiKeySet()) {
-            String errorString = "Unable to host anchors. Cloud anchor API key is not set.";
-            Log.e(TAG, errorString);
-            onHostError(errorString, null);
-            return;
-        }
-
-        if (!NetworkUtils.hasInternetConnection(mPetContext)) {
-            String errorString = "Cannot host anchors. No internet connection";
-            Log.e(TAG, errorString);
-            onHostError(errorString, new NetworkException("No internet connection"));
-            return;
-        }
-
-        mPendingToHost = anchors.length;
-        mIsHostingAnchors = true;
-        mHostedAnchors = new ArrayList<>(anchors.length);
-
-        for (ManagedAnchor managedAnchor : anchors) {
-            try {
-                mPetContext.getMixedReality().hostAnchor(managedAnchor.getAnchor(), (GVRAnchor hostedAnchor) -> {
-                    synchronized (HOSTING_LOCK) {
-                        // Ignore others result if any previous already failed
-                        if (!mIsHostingAnchors) {
-                            return;
-                        }
-                        mPendingToHost--;
-                        if (hostedAnchor != null && !hostedAnchor.getCloudAnchorId().isEmpty()) {
-                            String successString = String.format(Locale.getDefault(),
-                                    "Success hosting anchor for %s", managedAnchor);
-                            Log.i(TAG, successString);
-                            mHostedAnchors.add(new ManagedAnchor(managedAnchor.getObjectType(), hostedAnchor));
-                        } else {
-                            mIsHostingAnchors = false;
-                            mHostedAnchors = null;
-                            String errorString = String.format(Locale.getDefault(),
-                                    "Failed hosting anchor for %s. Returned empty id.", managedAnchor);
-                            mHostingCallback.onError(new CloudAnchorException(errorString));
-                            Log.e(TAG, errorString);
-                        }
-                        if (mIsHostingAnchors && mPendingToHost == 0) {
-                            List<ManagedAnchor> result = new ArrayList<>(mHostedAnchors);
-                            mIsHostingAnchors = false;
-                            mHostedAnchors = null;
-                            mHostingCallback.onResult(new ArrayList<>(result));
-                        }
-                    }
-                });
-            } catch (Throwable cause) {
-                synchronized (HOSTING_LOCK) {
-                    mIsHostingAnchors = false;
-                    mHostedAnchors = null;
-                }
-                String errorString = "Error hosting anchor for " + managedAnchor;
-                Log.e(TAG, errorString, cause);
-                onHostError(errorString, cause);
-                break;
-            }
+        try {
+            mPetContext.getMixedReality().hostAnchor(
+                    managedAnchor.getAnchor(),
+                    (resultAnchor) -> onResultAnchor(managedAnchor, resultAnchor)
+            );
+        } catch (Throwable cause) {
+            mCallback.onError(new CloudAnchorException(cause));
         }
     }
 
-    private int mPendingToResolve;
-    private boolean mIsResolvingAnchors;
-    private List<ManagedAnchor> mResolvedCloudAnchors;
-    private final Object RESOLVER_LOCK = new Object();
-    private OnCloudAnchorCallback mResolveCallback;
+    public void resolveAnchors(
+            @NonNull ManagedAnchor<CloudAnchor> managedAnchor,
+            @NonNull OnCloudAnchorCallback<GVRAnchor> callback) {
 
-    /**
-     * Retrieve from cloud the anchors indicated by the given ids.
-     *
-     * @param anchors  Anchors to retrieve.
-     * @param callback The success callback will be called if and only if all anchors are successfully resolved.
-     *                 The error callback will be called if cannot resolve some anchor for any reason.
-     */
-    public void resolveAnchors(@NonNull CloudAnchor[] anchors, @NonNull OnCloudAnchorCallback callback) {
+        mCallback = callback;
 
-        mResolveCallback = callback;
-
-        // Already is resolving
-        if (mIsResolvingAnchors) {
-            String errorString = "Already resolving anchors";
-            Log.e(TAG, errorString);
-            onResolveError(errorString, null);
+        if (!checkPreconditions()) {
             return;
         }
 
-        if (anchors.length == 0) {
-            String errorString = "Nothing to resolve. Anchor array is empty";
-            Log.e(TAG, errorString);
-            onResolveError(errorString, null);
-            return;
+        try {
+            mPetContext.getMixedReality().resolveCloudAnchor(
+                    managedAnchor.getAnchor().getCloudAnchorId(),
+                    (resultAnchor) -> onResultAnchor(managedAnchor, resultAnchor)
+            );
+        } catch (Throwable cause) {
+            mCallback.onError(new CloudAnchorException(cause));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onResultAnchor(ManagedAnchor managedAnchor, GVRAnchor resultAnchor) {
+        if (resultAnchor != null && !resultAnchor.getCloudAnchorId().isEmpty()) {
+            mCallback.onResult(new ManagedAnchor<>(managedAnchor.getObjectType(), resultAnchor));
+        } else {
+            mCallback.onError(new CloudAnchorException("Returned id is empty"));
+        }
+    }
+
+    private boolean checkPreconditions() {
 
         if (!isCloudAnchorApiKeySet()) {
             String errorString = "Unable to resolver anchors. Cloud anchor API key is not set.";
             Log.e(TAG, errorString);
-            onResolveError(errorString, null);
-            return;
+            mCallback.onError(new CloudAnchorException(errorString));
+            return false;
         }
 
         if (!NetworkUtils.hasInternetConnection(mPetContext)) {
             String errorString = "Cannot resolve anchors. No internet connection";
             Log.e(TAG, errorString);
-            onResolveError(errorString, new NetworkException("No internet connection"));
-            return;
+            mCallback.onError(new CloudAnchorException(errorString, new NetworkException("No internet connection")));
+            return false;
         }
 
-        mPendingToResolve = anchors.length;
-        mIsResolvingAnchors = true;
-        mResolvedCloudAnchors = new ArrayList<>(anchors.length);
-
-        for (CloudAnchor cloudAnchor : anchors) {
-            try {
-                mPetContext.getMixedReality().resolveCloudAnchor(cloudAnchor.getCloudAnchorId(), (GVRAnchor resolvedAnchor) -> {
-                    synchronized (RESOLVER_LOCK) {
-                        // Ignore others result if any previous already failed
-                        if (!mIsResolvingAnchors) {
-                            return;
-                        }
-                        mPendingToResolve--;
-                        if (resolvedAnchor != null && !resolvedAnchor.getCloudAnchorId().isEmpty()) {
-                            String successString = String.format(Locale.getDefault(),
-                                    "Success resolving anchor for %s", cloudAnchor);
-                            Log.i(TAG, successString);
-                            mResolvedCloudAnchors.add(new ManagedAnchor(cloudAnchor.getObjectType(), resolvedAnchor));
-                        } else {
-                            mIsResolvingAnchors = false;
-                            mResolvedCloudAnchors = null;
-                            String errorString = String.format(Locale.getDefault(),
-                                    "Failed resolving anchor for %s. Returned empty id.", cloudAnchor);
-                            mResolveCallback.onError(new CloudAnchorException(errorString));
-                            Log.e(TAG, errorString);
-                        }
-                        if (mIsResolvingAnchors && mPendingToResolve == 0) {
-                            List<ManagedAnchor> result = new ArrayList<>(mResolvedCloudAnchors);
-                            mIsResolvingAnchors = false;
-                            mResolvedCloudAnchors = null;
-                            mResolveCallback.onResult(new ArrayList<>(result));
-                        }
-                    }
-                });
-            } catch (Throwable cause) {
-                synchronized (RESOLVER_LOCK) {
-                    mIsResolvingAnchors = false;
-                    mResolvedCloudAnchors = null;
-                }
-                String errorString = "Error resolving anchor for " + cloudAnchor;
-                Log.e(TAG, errorString, cause);
-                onResolveError(errorString, cause);
-                break;
-            }
-        }
+        return true;
     }
 
-    private void onResolveError(String error, Throwable cause) {
-        mResolveCallback.onError(new CloudAnchorException(error, cause));
-    }
+    public interface OnCloudAnchorCallback<Anchor> {
 
-    private void onHostError(String error, Throwable cause) {
-        mHostingCallback.onError(new CloudAnchorException(error, cause));
-    }
-
-    public interface OnCloudAnchorCallback {
-
-        void onResult(List<ManagedAnchor> managedAnchors);
+        void onResult(ManagedAnchor<Anchor> managedAnchors);
 
         void onError(CloudAnchorException e);
     }

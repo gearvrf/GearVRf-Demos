@@ -37,8 +37,8 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.event.PetActionCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.utility.Log;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 public class CharacterController extends BasePetMode {
@@ -72,12 +72,12 @@ public class CharacterController extends BasePetMode {
 
     @Override
     protected void onEnter() {
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
     }
 
     @Override
     protected void onExit() {
-        EventBus.getDefault().unregister(this);
+        EventBusUtils.unregister(this);
     }
 
     @Override

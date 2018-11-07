@@ -34,6 +34,7 @@ import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
@@ -68,7 +69,7 @@ public class PetMain extends DisableNativeSplashScreen {
 
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
     }
 
     @Override
@@ -133,13 +134,13 @@ public class PetMain extends DisableNativeSplashScreen {
 
     public void resume() {
         if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
+            EventBusUtils.register(this);
         }
     }
 
     public void pause() {
         if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
+            EventBusUtils.unregister(this);
         }
     }
 

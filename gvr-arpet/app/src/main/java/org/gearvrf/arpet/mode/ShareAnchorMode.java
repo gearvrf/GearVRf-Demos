@@ -25,6 +25,8 @@ import android.support.annotation.StringRes;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.ar.core.exceptions.NotTrackingException;
+
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
@@ -38,16 +40,13 @@ import org.gearvrf.arpet.manager.cloud.anchor.exception.NetworkException;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.mode.view.IAnchorSharedView;
 import org.gearvrf.arpet.mode.view.IConnectionFoundView;
 import org.gearvrf.arpet.mode.view.IGuestLookingAtTargetView;
 import org.gearvrf.arpet.mode.view.IHostLookingAtTargetView;
 import org.gearvrf.arpet.mode.view.ILetsStartView;
-import org.gearvrf.arpet.mode.view.INoConnectionFoundView;
 import org.gearvrf.arpet.mode.view.ISharingAnchorView;
 import org.gearvrf.arpet.mode.view.ISharingErrorView;
 import org.gearvrf.arpet.mode.view.ISharingFinishedView;
-import org.gearvrf.arpet.mode.view.IWaitingDialogView;
 import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
 import org.gearvrf.arpet.mode.view.IWaitingForHostView;
 import org.gearvrf.arpet.mode.view.impl.ShareAnchorView;
@@ -59,11 +58,10 @@ import org.gearvrf.arpet.service.event.PetAnchorReceivedMessage;
 import org.gearvrf.arpet.service.event.RequestStatusReceivedMessage;
 import org.gearvrf.arpet.service.event.ViewCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -136,20 +134,6 @@ public class ShareAnchorMode extends BasePetMode {
         view.show();
     }
 
-    private void showViewNoConnectionFound() {
-        INoConnectionFoundView view = mShareAnchorView.makeView(INoConnectionFoundView.class);
-        view.setStatusText(getNoConnectionFoundString());
-        view.setCancelClickListener(v -> cancelSharing());
-        view.setRetryClickListener(v -> {
-            if (mCurrentMode == PetConstants.SHARE_MODE_HOST) {
-                mConnectionManager.startInvitation();
-            } else {
-                mConnectionManager.findInvitationThenConnect();
-            }
-        });
-        view.show();
-    }
-
     private void showViewHostLookingAtTarget(@StringRes int stringId) {
         IHostLookingAtTargetView view;
         String text = mResources.getString(stringId);
@@ -163,19 +147,8 @@ public class ShareAnchorMode extends BasePetMode {
         }
     }
 
-    private void showViewWaitingDialog(String text) {
-        IWaitingDialogView view = mShareAnchorView.makeView(IWaitingDialogView.class);
-        view.setStatusText(text);
-        view.show();
-    }
-
     private void showViewGuestLookingAtTarget() {
         IGuestLookingAtTargetView view = mShareAnchorView.makeView(IGuestLookingAtTargetView.class);
-        view.show();
-    }
-
-    private void showViewAnchorShared() {
-        IAnchorSharedView view = mShareAnchorView.makeView(IAnchorSharedView.class);
         view.show();
     }
 
@@ -195,8 +168,6 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void hostPetAnchor() {
 
-        showViewHostLookingAtTarget(R.string.center_pet);
-
         final AtomicBoolean isHosting = new AtomicBoolean(false);
         new Handler().postDelayed(() -> {
             if (isHosting.get()) {
@@ -205,21 +176,28 @@ public class ShareAnchorMode extends BasePetMode {
         }, 5000);
 
         isHosting.set(true);
+        ManagedAnchor<GVRAnchor> managedAnchor = new ManagedAnchor<>(ArPetObjectType.PET, mPetAnchor);
+
         Log.d(TAG, "Hosting pet anchor");
-        ManagedAnchor[] managedAnchors = {new ManagedAnchor(ArPetObjectType.PET, mPetAnchor)};
-        new CloudAnchorManager(mPetContext).hostAnchors(managedAnchors, new CloudAnchorManager.OnCloudAnchorCallback() {
+        new CloudAnchorManager(mPetContext).hostAnchors(managedAnchor, new CloudAnchorManager.OnCloudAnchorCallback<GVRAnchor>() {
             @Override
-            public void onResult(List<ManagedAnchor> hostedAnchor) {
+            public void onResult(ManagedAnchor<GVRAnchor> managedAnchor) {
                 isHosting.set(false);
                 showViewHostLookingAtTarget(R.string.stay_in_position);
-                sharePetAnchorWithGuests(hostedAnchor.get(0).getAnchor());
+                sharePetAnchorWithGuests(managedAnchor.getAnchor());
             }
 
             @Override
             public void onError(CloudAnchorException e) {
                 isHosting.set(false);
                 Log.e(TAG, "Error hosting pet anchor", e);
-                showViewSharingError(() -> cancelSharing(), () -> hostPetAnchor());
+                showViewSharingError(
+                        () -> cancelSharing(),
+                        () -> {
+                            showViewHostLookingAtTarget(R.string.center_pet);
+                            new Handler().postDelayed(() -> hostPetAnchor(), 1500);
+                        }
+                );
                 handleCloudAnchorException(e);
             }
         });
@@ -227,11 +205,11 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void resolvePetAnchor(PetAnchorReceivedMessage message) {
 
-        CloudAnchor[] cloudAnchors = {message.getPetAnchor()};
+        ManagedAnchor<CloudAnchor> managedAnchor = new ManagedAnchor<>(ArPetObjectType.PET, message.getPetAnchor());
 
-        new CloudAnchorManager(mPetContext).resolveAnchors(cloudAnchors, new CloudAnchorManager.OnCloudAnchorCallback() {
+        new CloudAnchorManager(mPetContext).resolveAnchors(managedAnchor, new CloudAnchorManager.OnCloudAnchorCallback<GVRAnchor>() {
             @Override
-            public void onResult(List<ManagedAnchor> managedAnchors) {
+            public void onResult(ManagedAnchor<GVRAnchor> managedAnchor) {
                 Log.d(TAG, "Anchor resolved successfully");
 
                 RequestStatus requestStatus = message.getRequestStatus();
@@ -239,7 +217,7 @@ public class ShareAnchorMode extends BasePetMode {
                 mMessageService.sendRequestStatus(requestStatus);
 
                 mSharedMixedReality.startSharing(
-                        managedAnchors.get(0).getAnchor(), PetConstants.SHARE_MODE_GUEST);
+                        managedAnchor.getAnchor(), PetConstants.SHARE_MODE_GUEST);
 
                 gotToHudView();
             }
@@ -258,28 +236,25 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void handleCloudAnchorException(CloudAnchorException e) {
-        if (e.getCause() instanceof NetworkException) {
-            Toast.makeText(mPetContext.getActivity(),
-                    R.string.no_internet_connection, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private String getNoConnectionFoundString() {
-        String mode = mCurrentMode == PetConstants.SHARE_MODE_GUEST
-                ? mResources.getString(R.string.common_text_guest)
-                : mResources.getString(R.string.common_text_host);
-        return mResources.getString(
-                R.string.view_no_connection_found_status_text, mode.toLowerCase());
+        mPetContext.runOnPetThread(() -> {
+            if (NetworkException.class.isInstance(e.getCause())) {
+                Toast.makeText(mPetContext.getActivity(),
+                        R.string.no_internet_connection, Toast.LENGTH_LONG).show();
+            } else if (NotTrackingException.class.isInstance(e.getCause())) {
+                Toast.makeText(mPetContext.getActivity(),
+                        R.string.not_tracking, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
     protected void onEnter() {
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
     }
 
     @Override
     protected void onExit() {
-        EventBus.getDefault().unregister(this);
+        EventBusUtils.unregister(this);
     }
 
     @Override
@@ -306,6 +281,8 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void startHostSharingFlow() {
+
+        showViewHostLookingAtTarget(R.string.center_pet);
 
         // Make the guests wait while host prepare pet anchor
         Log.d(TAG, "Request to show remote view: " + ViewCommand.SHOW_VIEW_LOOKING_AT_TARGET);

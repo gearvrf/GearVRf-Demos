@@ -25,7 +25,7 @@ import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
-import org.greenrobot.eventbus.EventBus;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.greenrobot.eventbus.Subscribe;
 
 import static org.gearvrf.arpet.manager.connection.IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST;
@@ -53,7 +53,7 @@ public class HudMode extends BasePetMode {
 
     @Override
     protected void onEnter() {
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
         if (mPetContext.getMode() != PetConstants.SHARE_MODE_NONE) {
             Log.d(TAG, "Play Ball activated by sharing mode!");
             mModeChangeListener.onPlayBall();
@@ -62,7 +62,7 @@ public class HudMode extends BasePetMode {
 
     @Override
     protected void onExit() {
-        EventBus.getDefault().unregister(this);
+        EventBusUtils.unregister(this);
     }
 
     @Override

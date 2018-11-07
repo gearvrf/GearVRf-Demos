@@ -30,12 +30,11 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.event.BallCommandReceivedMessage;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
-import org.gearvrf.arpet.service.share.SharedMixedReality;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.arpet.util.LoadModelHelper;
 import org.gearvrf.io.GVRTouchPadGestureListener;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.physics.GVRRigidBody;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -83,7 +82,7 @@ public class BallThrowHandler {
         mForce = 1f;
         mForceVector = new Vector3f(mDirTan, mDirTan, -1.0f);
 
-        EventBus.getDefault().register(this);
+        EventBusUtils.register(this);
 
         mMessageService = MessageService.getInstance();
     }
@@ -241,7 +240,7 @@ public class BallThrowHandler {
         mRigidBody.setEnable(true);
         mRigidBody.applyCentralForce(forceVector.x(), forceVector.y(), forceVector.z());
         thrown = true;
-        EventBus.getDefault().post(new BallThrowHandlerEvent(BallThrowHandlerEvent.THROWN));
+        EventBusUtils.post(new BallThrowHandlerEvent(BallThrowHandlerEvent.THROWN));
     }
 
     private void resetRigidBody() {
@@ -267,7 +266,7 @@ public class BallThrowHandler {
         mPlayer.addChildObject(mBall);
         mResetOnTouchEnabled = true;
         thrown = false;
-        EventBus.getDefault().post(new BallThrowHandlerEvent(BallThrowHandlerEvent.RESET));
+        EventBusUtils.post(new BallThrowHandlerEvent(BallThrowHandlerEvent.RESET));
     }
 
     public boolean canBeReseted() {
