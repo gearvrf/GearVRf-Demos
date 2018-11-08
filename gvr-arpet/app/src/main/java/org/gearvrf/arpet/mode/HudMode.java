@@ -142,8 +142,6 @@ public class HudMode extends BasePetMode {
     }
 
     private void onSharingOff() {
-        mSharedMixedReality.stopSharing();
-        mPetController.stopBall();
         mPetContext.getActivity().runOnUiThread(() -> {
             mHudView.hideDisconnectView();
             mHudView.hideConnectedLabel();
