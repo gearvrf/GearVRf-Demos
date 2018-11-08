@@ -15,11 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.sharing.view;
 
 import android.view.View;
 
-public interface ISharingErrorView extends ISharingAnchorView {
+import org.gearvrf.arpet.mainview.IView;
+
+public interface ISharingErrorView extends IView {
 
     void setCancelClickListener(View.OnClickListener listener);
 

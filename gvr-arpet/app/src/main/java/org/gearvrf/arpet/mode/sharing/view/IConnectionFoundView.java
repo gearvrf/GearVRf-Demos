@@ -15,7 +15,11 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.sharing.view;
 
-public interface IGuestLookingAtTargetView extends ISharingAnchorView {
+import org.gearvrf.arpet.mainview.IView;
+
+public interface IConnectionFoundView extends IView {
+
+    void setStatusText(CharSequence text);
 }

@@ -15,32 +15,27 @@
  *
  */
 
-package org.gearvrf.arpet.mainview;
+package org.gearvrf.arpet.mode.sharing.view.impl;
 
 import android.view.View;
 import android.widget.TextView;
 
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.ISharingFinishedView;
+import org.gearvrf.arpet.mainview.BaseView;
+import org.gearvrf.arpet.mainview.IViewController;
+import org.gearvrf.arpet.mode.sharing.view.IHostLookingAtTargetView;
 
-class FinishedMainView extends BaseMainView implements ISharingFinishedView {
+public class HostLookingAtTargetView extends BaseView implements IHostLookingAtTargetView {
 
     private TextView mStatusText;
-    private View mOkButton;
 
-    public FinishedMainView(View view, MainView controller) {
+    public HostLookingAtTargetView(View view, IViewController controller) {
         super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
-        this.mOkButton = view.findViewById(R.id.button_ok);
     }
 
     @Override
     public void setStatusText(CharSequence text) {
         runOnUiThread(() -> mStatusText.setText(text));
-    }
-
-    @Override
-    public void setOkClickListener(View.OnClickListener listener) {
-        mOkButton.setOnClickListener(listener);
     }
 }

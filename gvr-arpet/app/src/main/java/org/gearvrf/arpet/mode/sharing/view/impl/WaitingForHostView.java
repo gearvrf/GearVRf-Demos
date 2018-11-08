@@ -15,32 +15,26 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mode.sharing.view.impl;
 
 import android.view.View;
-import android.widget.TextView;
 
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.ISharingFinishedView;
+import org.gearvrf.arpet.mainview.BaseView;
+import org.gearvrf.arpet.mainview.IViewController;
+import org.gearvrf.arpet.mode.sharing.view.IWaitingForHostView;
 
-class SharingFinishedView extends BaseSharingAnchorView implements ISharingFinishedView {
+public class WaitingForHostView extends BaseView implements IWaitingForHostView {
 
-    private TextView mStatusText;
-    private View mOkButton;
+    private View mCancelButton;
 
-    public SharingFinishedView(View view, ShareAnchorView controller) {
+    public WaitingForHostView(View view, IViewController controller) {
         super(view, controller);
-        this.mStatusText = view.findViewById(R.id.text_status);
-        this.mOkButton = view.findViewById(R.id.button_ok);
+        this.mCancelButton = view.findViewById(R.id.button_cancel);
     }
 
     @Override
-    public void setStatusText(CharSequence text) {
-        runOnUiThread(() -> mStatusText.setText(text));
-    }
-
-    @Override
-    public void setOkClickListener(View.OnClickListener listener) {
-        mOkButton.setOnClickListener(listener);
+    public void setCancelClickListener(View.OnClickListener listener) {
+        mCancelButton.setOnClickListener(listener);
     }
 }

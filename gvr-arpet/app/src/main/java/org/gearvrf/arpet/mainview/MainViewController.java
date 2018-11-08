@@ -15,15 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mainview;
 
-import android.view.View;
+import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.R;
 
-public interface ILetsStartView extends ISharingAnchorView {
+public class MainViewController extends BaseViewController {
 
-    void setBackClickListener(View.OnClickListener listener);
-
-    void setHostClickListener(View.OnClickListener listener);
-
-    void setGuestClickListener(View.OnClickListener listener);
+    public MainViewController(PetContext petContext) {
+        super(petContext);
+        registerView(IExitView.class, R.layout.screen_exit_application, ExitView.class);
+        registerView(IConnectionFinishedView.class, R.layout.view_connection_finished, ConnectionFinishedView.class);
+    }
 }

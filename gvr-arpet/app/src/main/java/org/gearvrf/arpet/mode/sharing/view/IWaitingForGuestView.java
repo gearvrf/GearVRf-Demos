@@ -15,13 +15,19 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.sharing.view;
 
 import android.view.View;
 
-public interface ISharingFinishedView extends ISharingAnchorView {
+import org.gearvrf.arpet.mainview.IView;
 
-    void setStatusText(CharSequence text);
+public interface IWaitingForGuestView extends IView {
 
-    void setOkClickListener(View.OnClickListener listener);
+    void setTotalConnected(int total);
+
+    void setCancelClickListener(View.OnClickListener listener);
+
+    void setContinueClickListener(View.OnClickListener listener);
+
+    void setContinueButtonEnabled(boolean enabled);
 }

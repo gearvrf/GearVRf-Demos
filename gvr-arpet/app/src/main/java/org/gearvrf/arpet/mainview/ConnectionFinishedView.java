@@ -15,31 +15,31 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mainview;
 
 import android.view.View;
+import android.widget.TextView;
 
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.ISharingErrorView;
 
-class SharingErrorView extends BaseSharingAnchorView implements ISharingErrorView {
+public class ConnectionFinishedView extends BaseView implements IConnectionFinishedView {
 
-    private View mCancelButton;
-    private View mRetryButton;
+    private TextView mStatusText;
+    private View mOkButton;
 
-    public SharingErrorView(View view, ShareAnchorView controller) {
+    public ConnectionFinishedView(View view, IViewController controller) {
         super(view, controller);
-        this.mCancelButton = view.findViewById(R.id.button_cancel);
-        this.mRetryButton = view.findViewById(R.id.button_retry);
+        this.mStatusText = view.findViewById(R.id.text_status);
+        this.mOkButton = view.findViewById(R.id.button_ok);
     }
 
     @Override
-    public void setCancelClickListener(View.OnClickListener listener) {
-        mCancelButton.setOnClickListener(listener);
+    public void setStatusText(CharSequence text) {
+        runOnUiThread(() -> mStatusText.setText(text));
     }
 
     @Override
-    public void setRetryClickListener(View.OnClickListener listener) {
-        mRetryButton.setOnClickListener(listener);
+    public void setOkClickListener(View.OnClickListener listener) {
+        mOkButton.setOnClickListener(listener);
     }
 }

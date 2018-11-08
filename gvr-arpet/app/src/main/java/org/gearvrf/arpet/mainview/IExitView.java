@@ -19,9 +19,7 @@ package org.gearvrf.arpet.mainview;
 
 import android.view.View;
 
-import org.gearvrf.arpet.mode.view.ISharingAnchorView;
-
-public interface IExitView extends ISharingAnchorView {
+public interface IExitView extends IView {
 
     void setOnCancelClickListener(View.OnClickListener listener);
 

@@ -15,17 +15,9 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.sharing.view;
 
-import android.view.View;
+import org.gearvrf.arpet.mainview.IView;
 
-public interface IWaitingForGuestView extends ISharingAnchorView {
-
-    void setTotalConnected(int total);
-
-    void setCancelClickListener(View.OnClickListener listener);
-
-    void setContinueClickListener(View.OnClickListener listener);
-
-    void setContinueButtonEnabled(boolean enabled);
+public interface IGuestLookingAtTargetView extends IView {
 }

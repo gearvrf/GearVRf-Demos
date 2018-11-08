@@ -15,19 +15,21 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mode.sharing.view.impl;
 
 import android.view.View;
 import android.widget.TextView;
 
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.IHostLookingAtTargetView;
+import org.gearvrf.arpet.mainview.BaseView;
+import org.gearvrf.arpet.mainview.IViewController;
+import org.gearvrf.arpet.mode.sharing.view.IConnectionFoundView;
 
-class HostLookingAtTargetView extends BaseSharingAnchorView implements IHostLookingAtTargetView {
+public class ConnectionFoundView extends BaseView implements IConnectionFoundView {
 
     private TextView mStatusText;
 
-    public HostLookingAtTargetView(View view, ShareAnchorView controller) {
+    public ConnectionFoundView(View view, IViewController controller) {
         super(view, controller);
         this.mStatusText = view.findViewById(R.id.text_status);
     }

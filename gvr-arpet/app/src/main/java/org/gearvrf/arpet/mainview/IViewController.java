@@ -15,8 +15,16 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mainview;
 
-public interface ISharingAnchorView {
-    void show();
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+
+public interface IViewController {
+
+    void registerView(Class<? extends IView> viewInterface, @LayoutRes int layoutId, Class<? extends BaseView> viewImplementation);
+
+    <T extends IView> T makeView(@NonNull Class<T> type);
+
+    void showView(IView viewModel);
 }

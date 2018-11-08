@@ -15,9 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.sharing.view;
 
-public interface IConnectionFoundView extends ISharingAnchorView {
+import android.view.View;
 
-    void setStatusText(CharSequence text);
+import org.gearvrf.arpet.mainview.IView;
+
+public interface IWaitingForHostView extends IView {
+
+    void setCancelClickListener(View.OnClickListener listener);
 }

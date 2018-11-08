@@ -27,7 +27,7 @@ import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.mainview.IExitView;
-import org.gearvrf.arpet.mainview.MainView;
+import org.gearvrf.arpet.mainview.MainViewController;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
@@ -35,8 +35,8 @@ import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
-import org.gearvrf.arpet.mode.ShareAnchorMode;
-import org.gearvrf.arpet.mode.view.ISharingFinishedView;
+import org.gearvrf.arpet.mode.sharing.ShareAnchorMode;
+import org.gearvrf.arpet.mainview.IConnectionFinishedView;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.EventBusUtils;
@@ -72,7 +72,7 @@ public class PetMain extends DisableNativeSplashScreen {
     private CurrentSplashScreen mCurrentSplashScreen;
     private SharedMixedReality mSharedMixedReality;
 
-    private MainView mMainView;
+    private MainViewController mMainViewController;
 
     public PetMain(PetContext petContext) {
         mPetContext = petContext;
@@ -150,14 +150,14 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     public void showExitView() {
-        mMainView = new MainView(mPetContext);
-        mMainView.onShow(mPetContext.getMainScene());
-        IExitView iExitView = mMainView.makeView(IExitView.class);
+        mMainViewController = new MainViewController(mPetContext);
+        mMainViewController.onShow(mPetContext.getMainScene());
+        IExitView iExitView = mMainViewController.makeView(IExitView.class);
         iExitView.setOnCancelClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainView.onHide(mPetContext.getMainScene());
-                mMainView = null;
+                mMainViewController.onHide(mPetContext.getMainScene());
+                mMainViewController = null;
             }
         });
 
@@ -174,14 +174,14 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     public void showFinishedView() {
-        mMainView = new MainView(mPetContext);
-        mMainView.onShow(mPetContext.getMainScene());
-        ISharingFinishedView iFinishedView = mMainView.makeView(ISharingFinishedView.class);
+        mMainViewController = new MainViewController(mPetContext);
+        mMainViewController.onShow(mPetContext.getMainScene());
+        IConnectionFinishedView iFinishedView = mMainViewController.makeView(IConnectionFinishedView.class);
         iFinishedView.setOkClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMainView.onHide(mPetContext.getMainScene());
-                mMainView = null;
+                mMainViewController.onHide(mPetContext.getMainScene());
+                mMainViewController = null;
             }
         });
 
@@ -345,7 +345,7 @@ public class PetMain extends DisableNativeSplashScreen {
         public void onTouchEnd(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
             Log.d(TAG, "onTouchEnd " + gvrSceneObject.getName());
 
-            if (mMainView != null && mMainView.isEnabled()) {
+            if (mMainViewController != null && mMainViewController.isEnabled()) {
                 return;
             }
 

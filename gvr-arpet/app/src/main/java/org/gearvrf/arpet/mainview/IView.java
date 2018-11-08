@@ -15,15 +15,8 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mainview;
 
-import android.view.View;
-
-import org.gearvrf.arpet.mode.view.IGuestLookingAtTargetView;
-
-class GuestLookingAtTargetView extends BaseSharingAnchorView implements IGuestLookingAtTargetView {
-
-    public GuestLookingAtTargetView(View view, ShareAnchorView controller) {
-        super(view, controller);
-    }
+public interface IView {
+    void show();
 }

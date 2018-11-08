@@ -21,15 +21,13 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 
-import org.gearvrf.arpet.mode.view.ISharingAnchorView;
-
-abstract class BaseMainView implements ISharingAnchorView {
+public abstract class BaseView implements IView {
 
     private View mView;
-    private MainView mViewController;
+    private IViewController mViewController;
     private Handler mHandler = new Handler(Looper.getMainLooper());
 
-    public BaseMainView(View view, MainView viewController) {
+    public BaseView(View view, IViewController viewController) {
         this.mView = view;
         this.mViewController = viewController;
     }
@@ -39,15 +37,15 @@ abstract class BaseMainView implements ISharingAnchorView {
         mViewController.showView(this);
     }
 
-    View getView() {
+    public View getView() {
         return mView;
     }
 
-    void runOnUiThread(Runnable runnable) {
+    public void runOnUiThread(Runnable runnable) {
         mHandler.post(runnable);
     }
 
-    void runOnUiThread(Runnable runnable, long delay) {
+    public void runOnUiThread(Runnable runnable, long delay) {
         mHandler.postDelayed(runnable, delay);
     }
 }

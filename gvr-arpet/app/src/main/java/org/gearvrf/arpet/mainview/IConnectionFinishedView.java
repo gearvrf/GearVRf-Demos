@@ -15,25 +15,13 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mainview;
 
 import android.view.View;
-import android.widget.TextView;
 
-import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.IConnectionFoundView;
+public interface IConnectionFinishedView extends IView {
 
-class ConnectionFoundView extends BaseSharingAnchorView implements IConnectionFoundView {
+    void setStatusText(CharSequence text);
 
-    private TextView mStatusText;
-
-    public ConnectionFoundView(View view, ShareAnchorView controller) {
-        super(view, controller);
-        this.mStatusText = view.findViewById(R.id.text_status);
-    }
-
-    @Override
-    public void setStatusText(CharSequence text) {
-        runOnUiThread(() -> mStatusText.setText(text));
-    }
+    void setOkClickListener(View.OnClickListener listener);
 }

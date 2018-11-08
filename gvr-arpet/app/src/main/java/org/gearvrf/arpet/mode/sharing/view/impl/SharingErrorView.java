@@ -15,30 +15,33 @@
  *
  */
 
-package org.gearvrf.arpet.mainview;
+package org.gearvrf.arpet.mode.sharing.view.impl;
 
 import android.view.View;
 
 import org.gearvrf.arpet.R;
+import org.gearvrf.arpet.mainview.BaseView;
+import org.gearvrf.arpet.mainview.IViewController;
+import org.gearvrf.arpet.mode.sharing.view.ISharingErrorView;
 
-public class ExitView extends BaseView implements IExitView {
+public class SharingErrorView extends BaseView implements ISharingErrorView {
 
     private View mCancelButton;
-    private View mConfirmButton;
+    private View mRetryButton;
 
-    public ExitView(View view, IViewController controller) {
+    public SharingErrorView(View view, IViewController controller) {
         super(view, controller);
-        this.mCancelButton = view.findViewById(R.id.cancel_button_screen);
-        this.mConfirmButton = view.findViewById(R.id.button_confirm);
+        this.mCancelButton = view.findViewById(R.id.button_cancel);
+        this.mRetryButton = view.findViewById(R.id.button_retry);
     }
 
     @Override
-    public void setOnCancelClickListener(View.OnClickListener listener) {
+    public void setCancelClickListener(View.OnClickListener listener) {
         mCancelButton.setOnClickListener(listener);
     }
 
     @Override
-    public void setOnConfirmClickListener(View.OnClickListener listener) {
-        mConfirmButton.setOnClickListener(listener);
+    public void setRetryClickListener(View.OnClickListener listener) {
+        mRetryButton.setOnClickListener(listener);
     }
 }

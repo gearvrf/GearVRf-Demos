@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet.mode;
 
-import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;

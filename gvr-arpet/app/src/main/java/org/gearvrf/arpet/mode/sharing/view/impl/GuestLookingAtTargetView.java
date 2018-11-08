@@ -15,11 +15,17 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view;
+package org.gearvrf.arpet.mode.sharing.view.impl;
 
 import android.view.View;
 
-public interface IWaitingForHostView extends ISharingAnchorView {
+import org.gearvrf.arpet.mainview.BaseView;
+import org.gearvrf.arpet.mainview.IViewController;
+import org.gearvrf.arpet.mode.sharing.view.IGuestLookingAtTargetView;
 
-    void setCancelClickListener(View.OnClickListener listener);
+public class GuestLookingAtTargetView extends BaseView implements IGuestLookingAtTargetView {
+
+    public GuestLookingAtTargetView(View view, IViewController controller) {
+        super(view, controller);
+    }
 }

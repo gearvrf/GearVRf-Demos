@@ -15,24 +15,17 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mode.sharing.view;
 
 import android.view.View;
 
-import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.IWaitingForHostView;
+import org.gearvrf.arpet.mainview.IView;
 
-class WaitingForHostView extends BaseSharingAnchorView implements IWaitingForHostView {
+public interface ILetsStartView extends IView {
 
-    private View mCancelButton;
+    void setBackClickListener(View.OnClickListener listener);
 
-    public WaitingForHostView(View view, ShareAnchorView controller) {
-        super(view, controller);
-        this.mCancelButton = view.findViewById(R.id.button_cancel);
-    }
+    void setHostClickListener(View.OnClickListener listener);
 
-    @Override
-    public void setCancelClickListener(View.OnClickListener listener) {
-        mCancelButton.setOnClickListener(listener);
-    }
+    void setGuestClickListener(View.OnClickListener listener);
 }

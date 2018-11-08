@@ -15,7 +15,7 @@
  *
  */
 
-package org.gearvrf.arpet.mode;
+package org.gearvrf.arpet.mode.sharing;
 
 import android.annotation.SuppressLint;
 import android.content.res.Resources;
@@ -40,16 +40,18 @@ import org.gearvrf.arpet.manager.cloud.anchor.exception.NetworkException;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
-import org.gearvrf.arpet.mode.view.IConnectionFoundView;
-import org.gearvrf.arpet.mode.view.IGuestLookingAtTargetView;
-import org.gearvrf.arpet.mode.view.IHostLookingAtTargetView;
-import org.gearvrf.arpet.mode.view.ILetsStartView;
-import org.gearvrf.arpet.mode.view.ISharingAnchorView;
-import org.gearvrf.arpet.mode.view.ISharingErrorView;
-import org.gearvrf.arpet.mode.view.ISharingFinishedView;
-import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
-import org.gearvrf.arpet.mode.view.IWaitingForHostView;
-import org.gearvrf.arpet.mode.view.impl.ShareAnchorView;
+import org.gearvrf.arpet.mode.BasePetMode;
+import org.gearvrf.arpet.mode.OnBackToHudModeListener;
+import org.gearvrf.arpet.mode.sharing.view.IConnectionFoundView;
+import org.gearvrf.arpet.mode.sharing.view.IGuestLookingAtTargetView;
+import org.gearvrf.arpet.mode.sharing.view.IHostLookingAtTargetView;
+import org.gearvrf.arpet.mode.sharing.view.ILetsStartView;
+import org.gearvrf.arpet.mainview.IView;
+import org.gearvrf.arpet.mode.sharing.view.ISharingErrorView;
+import org.gearvrf.arpet.mainview.IConnectionFinishedView;
+import org.gearvrf.arpet.mode.sharing.view.IWaitingForGuestView;
+import org.gearvrf.arpet.mode.sharing.view.IWaitingForHostView;
+import org.gearvrf.arpet.mode.sharing.view.impl.SharingAnchorViewController;
 import org.gearvrf.arpet.service.IMessageService;
 import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.data.RequestStatus;
@@ -80,7 +82,7 @@ public class ShareAnchorMode extends BasePetMode {
     private final String TAG = ShareAnchorMode.class.getSimpleName();
 
     private IPetConnectionManager mConnectionManager;
-    private ShareAnchorView mShareAnchorView;
+    private SharingAnchorViewController mSharingAnchorViewController;
     private final GVRAnchor mPetAnchor;
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
@@ -92,10 +94,10 @@ public class ShareAnchorMode extends BasePetMode {
     private int mCurrentMode = PetConstants.SHARE_MODE_NONE;
 
     public ShareAnchorMode(PetContext petContext, @NonNull GVRAnchor anchor, OnBackToHudModeListener listener) {
-        super(petContext, new ShareAnchorView(petContext));
+        super(petContext, new SharingAnchorViewController(petContext));
 
         mConnectionManager = PetConnectionManager.getInstance();
-        mShareAnchorView = (ShareAnchorView) mModeScene;
+        mSharingAnchorViewController = (SharingAnchorViewController) mModeScene;
 
         mResources = mPetContext.getActivity().getResources();
         showViewLetsStart();
@@ -107,7 +109,7 @@ public class ShareAnchorMode extends BasePetMode {
     }
 
     private void showViewLetsStart() {
-        ILetsStartView view = mShareAnchorView.makeView(ILetsStartView.class);
+        ILetsStartView view = mSharingAnchorViewController.makeView(ILetsStartView.class);
         view.setBackClickListener(v -> cancelSharing());
         view.setHostClickListener(v -> mConnectionManager.startInvitation());
         view.setGuestClickListener(v -> {
@@ -121,7 +123,7 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void showViewWaitingForGuest() {
         mCurrentMode = PetConstants.SHARE_MODE_HOST;
-        IWaitingForGuestView view = mShareAnchorView.makeView(IWaitingForGuestView.class);
+        IWaitingForGuestView view = mSharingAnchorViewController.makeView(IWaitingForGuestView.class);
         view.setCancelClickListener(v -> cancelSharing());
         view.setContinueClickListener(v -> mConnectionManager.stopInvitation());
         view.show();
@@ -129,7 +131,7 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void showViewWaitingForHost() {
         mCurrentMode = PetConstants.SHARE_MODE_GUEST;
-        IWaitingForHostView view = mShareAnchorView.makeView(IWaitingForHostView.class);
+        IWaitingForHostView view = mSharingAnchorViewController.makeView(IWaitingForHostView.class);
         view.setCancelClickListener(v -> cancelSharing());
         view.show();
     }
@@ -137,30 +139,30 @@ public class ShareAnchorMode extends BasePetMode {
     private void showViewHostLookingAtTarget(@StringRes int stringId) {
         IHostLookingAtTargetView view;
         String text = mResources.getString(stringId);
-        if (IHostLookingAtTargetView.class.isInstance(mShareAnchorView.getCurrentView())) {
-            view = (IHostLookingAtTargetView) mShareAnchorView.getCurrentView();
+        if (IHostLookingAtTargetView.class.isInstance(mSharingAnchorViewController.getCurrentView())) {
+            view = (IHostLookingAtTargetView) mSharingAnchorViewController.getCurrentView();
             view.setStatusText(text);
         } else {
-            view = mShareAnchorView.makeView(IHostLookingAtTargetView.class);
+            view = mSharingAnchorViewController.makeView(IHostLookingAtTargetView.class);
             view.setStatusText(text);
             view.show();
         }
     }
 
     private void showViewGuestLookingAtTarget() {
-        IGuestLookingAtTargetView view = mShareAnchorView.makeView(IGuestLookingAtTargetView.class);
+        IGuestLookingAtTargetView view = mSharingAnchorViewController.makeView(IGuestLookingAtTargetView.class);
         view.show();
     }
 
     private void showViewSharingError(@NonNull OnCancelCallback cancelCallback, @NonNull OnRetryCallback retryCallback) {
-        ISharingErrorView view = mShareAnchorView.makeView(ISharingErrorView.class);
+        ISharingErrorView view = mSharingAnchorViewController.makeView(ISharingErrorView.class);
         view.setCancelClickListener(v -> cancelCallback.onCancel());
         view.setRetryClickListener(v -> retryCallback.onRetry());
         view.show();
     }
 
     private void showViewSharingFinished(String text) {
-        ISharingFinishedView view = mShareAnchorView.makeView(ISharingFinishedView.class);
+        IConnectionFinishedView view = mSharingAnchorViewController.makeView(IConnectionFinishedView.class);
         view.setOkClickListener(v -> cancelSharing());
         view.setStatusText(text);
         view.show();
@@ -274,7 +276,7 @@ public class ShareAnchorMode extends BasePetMode {
 
         int total = mConnectionManager.getTotalConnected();
 
-        IConnectionFoundView view = mShareAnchorView.makeView(IConnectionFoundView.class);
+        IConnectionFoundView view = mSharingAnchorViewController.makeView(IConnectionFoundView.class);
         int pluralsText = mCurrentMode == PetConstants.SHARE_MODE_GUEST ? R.plurals.hosts_found : R.plurals.guests_found;
         view.setStatusText(mResources.getQuantityString(pluralsText, total, total));
         view.show();
@@ -325,7 +327,7 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void updateTotalConnectedUI() {
         if (mCurrentMode == PetConstants.SHARE_MODE_HOST) {
-            ISharingAnchorView view = mShareAnchorView.getCurrentView();
+            IView view = mSharingAnchorViewController.getCurrentView();
             if (IWaitingForGuestView.class.isInstance(view)) {
                 ((IWaitingForGuestView) view).setTotalConnected(
                         mConnectionManager.getTotalConnected());

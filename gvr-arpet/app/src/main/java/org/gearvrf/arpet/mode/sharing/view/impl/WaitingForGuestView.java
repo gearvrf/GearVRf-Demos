@@ -15,23 +15,25 @@
  *
  */
 
-package org.gearvrf.arpet.mode.view.impl;
+package org.gearvrf.arpet.mode.sharing.view.impl;
 
 import android.annotation.SuppressLint;
 import android.view.View;
 import android.widget.TextView;
 
 import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mode.view.IWaitingForGuestView;
+import org.gearvrf.arpet.mainview.BaseView;
+import org.gearvrf.arpet.mainview.IViewController;
+import org.gearvrf.arpet.mode.sharing.view.IWaitingForGuestView;
 
-class WaitingForGuestView extends BaseSharingAnchorView implements IWaitingForGuestView {
+public class WaitingForGuestView extends BaseView implements IWaitingForGuestView {
 
     private TextView mTotalConnected;
     private TextView mGuestText;
     private View mCancelButton;
     private View mContinueButton;
 
-    public WaitingForGuestView(View view, ShareAnchorView controller) {
+    public WaitingForGuestView(View view, IViewController controller) {
         super(view, controller);
         this.mTotalConnected = view.findViewById(R.id.text_total);
         this.mGuestText = view.findViewById(R.id.text_guests);

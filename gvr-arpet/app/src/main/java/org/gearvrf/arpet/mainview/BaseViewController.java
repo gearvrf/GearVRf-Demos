@@ -30,8 +30,6 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.mode.BasePetView;
-import org.gearvrf.arpet.mode.view.ISharingAnchorView;
-import org.gearvrf.arpet.mode.view.ISharingFinishedView;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 
 import java.lang.reflect.Constructor;
@@ -39,22 +37,16 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainView extends BasePetView {
+public class BaseViewController extends BasePetView implements IViewController {
 
-    private static final String TAG = MainView.class.getSimpleName();
-    private static final Map<Class<? extends ISharingAnchorView>, ViewInfo> sViewInfo;
+    private final String TAG = getClass().getSimpleName();
+    private Map<Class<? extends IView>, ViewInfo> mViewInfo = new HashMap<>();
 
     private ViewGroup mContentView;
-    private BaseMainView mViewModel;
+    private BaseView mViewModel;
     private DisplayMetrics mDisplayMetrics;
 
-    static {
-        sViewInfo = new HashMap<>();
-        sViewInfo.put(IExitView.class, new ViewInfo(R.layout.screen_exit_application, ExitView.class));
-        sViewInfo.put(ISharingFinishedView.class, new ViewInfo(R.layout.view_sharing_finished, FinishedMainView.class));
-    }
-
-    public MainView(PetContext petContext) {
+    public BaseViewController(PetContext petContext) {
         super(petContext);
 
         mDisplayMetrics = new DisplayMetrics();
@@ -71,15 +63,21 @@ public class MainView extends BasePetView {
         addChildObject(viewObject);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ISharingAnchorView> T makeView(@NonNull Class<T> type) {
+    @Override
+    public void registerView(Class<? extends IView> viewInterface, int layoutId, Class<? extends BaseView> viewImplementation) {
+        mViewInfo.put(viewInterface, new ViewInfo(layoutId, viewImplementation));
+    }
 
-        ViewInfo viewInfo = sViewInfo.get(type);
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends IView> T makeView(@NonNull Class<T> type) {
+
+        ViewInfo viewInfo = mViewInfo.get(type);
         View view = View.inflate(mPetContext.getGVRContext().getContext(), viewInfo.layoutId, null);
         T viewModel = null;
 
         try {
-            Constructor constructor = viewInfo.viewType.getConstructor(View.class, MainView.class);
+            Constructor constructor = viewInfo.viewType.getConstructor(View.class, IViewController.class);
             viewModel = (T) constructor.newInstance(view, this);
         } catch (NoSuchMethodException | IllegalAccessException
                 | InstantiationException | InvocationTargetException e) {
@@ -89,12 +87,13 @@ public class MainView extends BasePetView {
         return viewModel;
     }
 
-    <T extends ISharingAnchorView> void showView(T viewModel) {
+    @Override
+    public void showView(IView viewModel) {
 
         if (!viewModel.getClass().isInstance(mViewModel)) {
             mPetContext.getActivity().runOnUiThread(() -> {
 
-                BaseMainView vm = (BaseMainView) viewModel;
+                BaseView vm = (BaseView) viewModel;
 
                 View view = vm.getView();
                 view.setLayoutParams(new ViewGroup.LayoutParams(
@@ -109,7 +108,7 @@ public class MainView extends BasePetView {
         }
     }
 
-    public ISharingAnchorView getCurrentView() {
+    public IView getCurrentView() {
         return mViewModel;
     }
 
@@ -136,9 +135,9 @@ public class MainView extends BasePetView {
         @LayoutRes
         int layoutId;
 
-        Class<? extends ISharingAnchorView> viewType;
+        Class<? extends IView> viewType;
 
-        ViewInfo(@LayoutRes int layoutId, Class<? extends ISharingAnchorView> viewType) {
+        ViewInfo(@LayoutRes int layoutId, Class<? extends IView> viewType) {
             this.layoutId = layoutId;
             this.viewType = viewType;
         }
