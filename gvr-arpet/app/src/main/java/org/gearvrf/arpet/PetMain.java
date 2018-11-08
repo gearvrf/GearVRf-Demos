@@ -43,7 +43,6 @@ import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.EnumSet;
@@ -139,15 +138,11 @@ public class PetMain extends DisableNativeSplashScreen {
     }
 
     public void resume() {
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBusUtils.register(this);
-        }
+        EventBusUtils.register(this);
     }
 
     public void pause() {
-        if (EventBus.getDefault().isRegistered(this)) {
-            EventBusUtils.unregister(this);
-        }
+        EventBusUtils.unregister(this);
     }
 
     private void showViewExit() {

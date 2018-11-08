@@ -251,13 +251,10 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     @Override
-    public synchronized void disconnect() {
+    public void disconnect() {
         checkInitialization();
         mDisconnectSilently = true;
         super.disconnect();
-        if (getTotalConnected() == 0) {
-            mDisconnectSilently = false;
-        }
     }
 
     @Override
@@ -286,7 +283,7 @@ public final class PetConnectionManager extends BTConnectionManager implements I
         notifyManagerEvent(type, null);
     }
 
-    private synchronized void notifyManagerEvent(@EventType int type, Serializable data) {
+    private void notifyManagerEvent(@EventType int type, Serializable data) {
         EventBusUtils.post(new PetConnectionEvent(type, data));
     }
 

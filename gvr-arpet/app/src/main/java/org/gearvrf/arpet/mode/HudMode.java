@@ -131,23 +131,13 @@ public class HudMode extends BasePetMode {
     @SuppressLint("SwitchIntDef")
     @Subscribe
     public void handleConnectionEvent(PetConnectionEvent message) {
-        mPetContext.getActivity().runOnUiThread(() -> {
-            switch (message.getType()) {
-                case EVENT_ALL_CONNECTIONS_LOST:
-                    onSharingOff();
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-
-    private void onSharingOff() {
-        petExit();
-        mPetContext.getActivity().runOnUiThread(() -> {
-            mHudView.hideDisconnectView();
-            mHudView.hideConnectedLabel();
-        });
+        if (message.getType() == EVENT_ALL_CONNECTIONS_LOST) {
+            petExit();
+            mPetContext.getActivity().runOnUiThread(() -> {
+                mHudView.hideDisconnectView();
+                mHudView.hideConnectedLabel();
+            });
+        }
     }
 
     private void petExit() {
