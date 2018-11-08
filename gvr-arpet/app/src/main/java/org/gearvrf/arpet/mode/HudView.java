@@ -15,7 +15,6 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
 import org.gearvrf.arpet.constant.PetConstants;
-import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.LayoutViewUtils;
 import org.gearvrf.scene_objects.GVRViewSceneObject;
 import org.gearvrf.utility.Log;
@@ -35,6 +34,7 @@ public class HudView extends BasePetView implements View.OnClickListener {
     private OnClickDisconnectViewHandler mDisconnectViewHandler;
     private Animation openAnimation;
     private Animation closeAnimation;
+    private boolean mIsBoneButtonClicked = false;
 
     public HudView(PetContext petContext) {
         super(petContext);
@@ -161,7 +161,11 @@ public class HudView extends BasePetView implements View.OnClickListener {
                         menuHud.setVisibility(View.INVISIBLE);
                         closeButton.setVisibility(View.GONE);
                         menuButton.setVisibility(View.VISIBLE);
-                        playBoneButton.setBackgroundResource(R.drawable.bg_button_ball);
+                        mIsBoneButtonClicked = !mIsBoneButtonClicked;
+                        playBoneButton.setBackgroundResource(mIsBoneButtonClicked
+                                ? R.drawable.bg_button_ball
+                                : R.drawable.bg_functions_buttons
+                        );
                     }
                 });
                 mPetContext.getGVRContext().runOnGlThread(new Runnable() {

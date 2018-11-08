@@ -164,6 +164,10 @@ public class CharacterController extends BasePetMode {
         mBallThrowHandler.disable();
     }
 
+    public boolean isPlaying() {
+        return mIsPlaying;
+    }
+
     public void setPlane(GVRSceneObject plane) {
         CharacterView petView = (CharacterView) view();
 

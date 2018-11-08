@@ -228,7 +228,11 @@ public class PetMain extends DisableNativeSplashScreen {
 
         @Override
         public void onPlayBall() {
-            mPet.playBall();
+            if (mPet.isPlaying()) {
+                mPet.stopBall();
+            } else {
+                mPet.playBall();
+            }
             mPet.setCurrentAction(PetActions.IDLE.ID);
         }
 
