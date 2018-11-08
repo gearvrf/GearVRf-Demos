@@ -22,7 +22,10 @@ import android.support.annotation.NonNull;
 
 public interface IViewController {
 
-    void registerView(Class<? extends IView> viewInterface, @LayoutRes int layoutId, Class<? extends BaseView> viewImplementation);
+    void registerView(
+            Class<? extends IView> viewInterface,
+            @LayoutRes int layoutId,
+            Class<? extends BaseView> viewImplementation);
 
     <T extends IView> T makeView(@NonNull Class<T> type);
 

@@ -73,6 +73,10 @@ public class BaseViewController extends BasePetView implements IViewController {
     public <T extends IView> T makeView(@NonNull Class<T> type) {
 
         ViewInfo viewInfo = mViewInfo.get(type);
+        if (viewInfo == null) {
+            throw new RuntimeException("View type not registered: " + type.getClass().getSimpleName());
+        }
+
         View view = View.inflate(mPetContext.getGVRContext().getContext(), viewInfo.layoutId, null);
         T viewModel = null;
 

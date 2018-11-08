@@ -15,10 +15,8 @@
 
 package org.gearvrf.arpet;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRPicker;
@@ -26,6 +24,7 @@ import org.gearvrf.GVRSceneObject;
 import org.gearvrf.ITouchEvents;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.PetConstants;
+import org.gearvrf.arpet.mainview.IConnectionFinishedView;
 import org.gearvrf.arpet.mainview.IExitView;
 import org.gearvrf.arpet.mainview.MainViewController;
 import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
@@ -36,7 +35,6 @@ import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
 import org.gearvrf.arpet.mode.sharing.ShareAnchorMode;
-import org.gearvrf.arpet.mainview.IConnectionFinishedView;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.EventBusUtils;
@@ -152,45 +150,42 @@ public class PetMain extends DisableNativeSplashScreen {
         }
     }
 
-    public void showExitView() {
+    private void showViewExit() {
+
         mMainViewController = new MainViewController(mPetContext);
         mMainViewController.onShow(mPetContext.getMainScene());
         IExitView iExitView = mMainViewController.makeView(IExitView.class);
-        iExitView.setOnCancelClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMainViewController.onHide(mPetContext.getMainScene());
-                mMainViewController = null;
-            }
-        });
 
-        iExitView.setOnConfirmClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getGVRContext().getActivity().finish();
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(1);
-            }
+        iExitView.setOnCancelClickListener(view -> {
+            mMainViewController.onHide(mPetContext.getMainScene());
+            mMainViewController = null;
+        });
+        iExitView.setOnConfirmClickListener(view -> {
+            getGVRContext().getActivity().finish();
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(1);
         });
 
         iExitView.show();
     }
 
-    public void showFinishedView() {
+    private void showViewConnectionFinished() {
+
         mMainViewController = new MainViewController(mPetContext);
         mMainViewController.onShow(mPetContext.getMainScene());
-        IConnectionFinishedView iFinishedView = mMainViewController.makeView(IConnectionFinishedView.class);
-        iFinishedView.setOkClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMainViewController.onHide(mPetContext.getMainScene());
-                mMainViewController = null;
-            }
+
+        IConnectionFinishedView iFinishedView =
+                mMainViewController.makeView(IConnectionFinishedView.class);
+
+        iFinishedView.setOkClickListener(view -> {
+            mMainViewController.onHide(mPetContext.getMainScene());
+            mMainViewController = null;
         });
 
-        String text = getGVRContext().getActivity().getString(mSharedMixedReality.getMode() == PetConstants.SHARE_MODE_GUEST
-                ? R.string.view_host_disconnected
-                : R.string.view_guests_disconnected);
+        String text = getGVRContext().getActivity().getString(
+                mSharedMixedReality.getMode() == PetConstants.SHARE_MODE_GUEST
+                        ? R.string.view_host_disconnected
+                        : R.string.view_guests_disconnected);
         iFinishedView.setStatusText(text);
         iFinishedView.show();
     }
@@ -202,37 +197,20 @@ public class PetMain extends DisableNativeSplashScreen {
         }
 
         if (mCurrentMode instanceof HudMode || mCurrentMode == null) {
-            getGVRContext().runOnGlThread(new Runnable() {
-                @Override
-                public void run() {
-                    showExitView();
-                }
-            });
+            getGVRContext().runOnGlThread(this::showViewExit);
         }
         return true;
     }
 
-    @SuppressLint("SwitchIntDef")
     @Subscribe
     public void handleConnectionEvent(PetConnectionEvent message) {
-        mPetContext.getActivity().runOnUiThread(() -> {
-            switch (message.getType()) {
-                case EVENT_ALL_CONNECTIONS_LOST:
-                    getGVRContext().runOnGlThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mCurrentMode instanceof HudMode) {
-                                showFinishedView();
-                                mSharedMixedReality.stopSharing();
-                                mPet.stopBall();
-                            }
-                        }
-                    });
-                    break;
-                default:
-                    break;
+        if (message.getType() == EVENT_ALL_CONNECTIONS_LOST) {
+            if (mCurrentMode instanceof HudMode) {
+                getGVRContext().runOnGlThread(this::showViewConnectionFinished);
+                mSharedMixedReality.stopSharing();
+                mPet.stopBall();
             }
-        });
+        }
     }
 
     @Override
