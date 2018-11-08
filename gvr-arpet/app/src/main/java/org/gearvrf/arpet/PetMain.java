@@ -366,6 +366,8 @@ public class PetMain extends DisableNativeSplashScreen {
                     if (mCurrentMode == null) {
                         mCurrentMode = new HudMode(mPetContext, mPet, mHandlerModeChange);
                         mCurrentMode.enter();
+                    } else if (mCurrentMode instanceof HudMode) {
+                        mCurrentMode.view().show(mPetContext.getMainScene());
                     }
 
                     mPlaneHandler.setSelectedPlane((GVRPlane) gvrSceneObject.getParent());

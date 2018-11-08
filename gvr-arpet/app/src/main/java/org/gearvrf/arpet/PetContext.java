@@ -123,6 +123,13 @@ public class PetContext {
         mPlaneListener = planeListener;
     }
 
+    public void resetPlanes() {
+        if (mPlaneListener != null) {
+            PlaneHandler planeHandler = (PlaneHandler) mPlaneListener;
+            planeHandler.reset();
+        }
+    }
+
     public GVRScene getMainScene() {
         return mMainScene;
     }

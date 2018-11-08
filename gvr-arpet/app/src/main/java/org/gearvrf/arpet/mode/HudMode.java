@@ -117,6 +117,7 @@ public class HudMode extends BasePetMode {
 
         @Override
         public void onDisconnect() {
+            petExit();
             mSharedMixedReality.stopSharing();
             mConnectionManager.disconnect();
             mPetContext.getActivity().runOnUiThread(() -> {
@@ -142,9 +143,18 @@ public class HudMode extends BasePetMode {
     }
 
     private void onSharingOff() {
+        petExit();
         mPetContext.getActivity().runOnUiThread(() -> {
             mHudView.hideDisconnectView();
             mHudView.hideConnectedLabel();
         });
+    }
+
+    private void petExit() {
+        if (mPetContext.getMode() == PetConstants.SHARE_MODE_GUEST) {
+            //TODO: after finish the sharing anchor experience as guest, the scene will be reseted
+            // and the user should be notified to detect planes and positioning the pet again
+            mPetController.exit();
+        }
     }
 }
