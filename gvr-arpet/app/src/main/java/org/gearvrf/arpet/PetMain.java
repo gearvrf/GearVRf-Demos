@@ -39,6 +39,7 @@ import org.gearvrf.arpet.mode.sharing.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.EventBusUtils;
+import org.gearvrf.arpet.util.StorageUtils;
 import org.gearvrf.io.GVRCursorController;
 import org.gearvrf.io.GVRGazeCursorController;
 import org.gearvrf.io.GVRInputManager;
