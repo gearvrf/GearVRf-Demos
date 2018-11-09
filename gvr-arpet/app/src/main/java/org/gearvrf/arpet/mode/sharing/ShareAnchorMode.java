@@ -83,7 +83,6 @@ public class ShareAnchorMode extends BasePetMode {
 
     private IPetConnectionManager mConnectionManager;
     private SharingAnchorViewController mSharingAnchorViewController;
-    private final GVRAnchor mPetAnchor;
     private IMessageService mMessageService;
     private OnBackToHudModeListener mBackToHudModeListener;
     private SharedMixedReality mSharedMixedReality;
@@ -93,7 +92,7 @@ public class ShareAnchorMode extends BasePetMode {
     @PetConstants.ShareMode
     private int mCurrentMode = PetConstants.SHARE_MODE_NONE;
 
-    public ShareAnchorMode(PetContext petContext, @NonNull GVRAnchor anchor, OnBackToHudModeListener listener) {
+    public ShareAnchorMode(PetContext petContext, OnBackToHudModeListener listener) {
         super(petContext, new SharingAnchorViewController(petContext));
 
         mConnectionManager = PetConnectionManager.getInstance();
@@ -102,7 +101,6 @@ public class ShareAnchorMode extends BasePetMode {
         mResources = mPetContext.getActivity().getResources();
         showViewLetsStart();
 
-        mPetAnchor = anchor;
         mBackToHudModeListener = listener;
         mMessageService = MessageService.getInstance();
         mSharedMixedReality = (SharedMixedReality) petContext.getMixedReality();
@@ -178,7 +176,19 @@ public class ShareAnchorMode extends BasePetMode {
         }, 5000);
 
         isHosting.set(true);
-        ManagedAnchor<GVRAnchor> managedAnchor = new ManagedAnchor<>(ArPetObjectType.PET, mPetAnchor);
+
+        ManagedAnchor<GVRAnchor> managedAnchor;
+        try {
+            // Get the model matrix from the actual Pet's position and create an anchor to be
+            // hosted by Cloud Anchor service
+            float[] anchorMatrix = mPetContext.getPetController().getView().getTransform().getModelMatrix();
+            GVRAnchor petAnchor = mSharedMixedReality.createAnchor(anchorMatrix);
+            managedAnchor = new ManagedAnchor<>(ArPetObjectType.PET, petAnchor);
+        } catch (Throwable throwable) {
+            isHosting.set(false);
+            onHostingError(new CloudAnchorException(throwable));
+            return;
+        }
 
         Log.d(TAG, "Hosting pet anchor");
         new CloudAnchorManager(mPetContext).hostAnchors(managedAnchor, new CloudAnchorManager.OnCloudAnchorCallback<GVRAnchor>() {
@@ -192,17 +202,21 @@ public class ShareAnchorMode extends BasePetMode {
             @Override
             public void onError(CloudAnchorException e) {
                 isHosting.set(false);
-                Log.e(TAG, "Error hosting pet anchor", e);
-                showViewSharingError(
-                        () -> cancelSharing(),
-                        () -> {
-                            showViewHostLookingAtTarget(R.string.center_pet);
-                            new Handler().postDelayed(() -> hostPetAnchor(), 1500);
-                        }
-                );
-                handleCloudAnchorException(e);
+                onHostingError(e);
             }
         });
+    }
+
+    private void onHostingError(CloudAnchorException e) {
+        Log.e(TAG, "Error hosting pet anchor", e);
+        showViewSharingError(
+                () -> cancelSharing(),
+                () -> {
+                    showViewHostLookingAtTarget(R.string.center_pet);
+                    new Handler().postDelayed(() -> hostPetAnchor(), 1500);
+                }
+        );
+        handleCloudAnchorException(e);
     }
 
     private void resolvePetAnchor(PetAnchorReceivedMessage message) {

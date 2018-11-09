@@ -62,7 +62,6 @@ public class PetMain extends DisableNativeSplashScreen {
     private HandlerBackToHud mHandlerBackToHud;
 
     private CharacterController mPet = null;
-    private GVRAnchor mWorldCenterAnchor = null;
 
     private GVRCursorController mCursorController = null;
 
@@ -102,6 +101,8 @@ public class PetMain extends DisableNativeSplashScreen {
                 mCurrentSplashScreen.onHide(mPetContext.getMainScene());
                 // Start detecting planes
                 mPetContext.startDetectingPlanes();
+                // Set pet controller in pet context
+                mPetContext.setPetController(mPet);
             }
 
             @Override
@@ -246,14 +247,7 @@ public class PetMain extends DisableNativeSplashScreen {
                 mCurrentMode.exit();
             }
 
-            // Get the model matrix from the actual Pet's position and create an anchor to be
-            // hosted by Cloud Anchor service
-            float[] anchorMatrix = mPet.getView().getTransform().getModelMatrix();
-            if (mWorldCenterAnchor != null) {
-                mSharedMixedReality.removeAnchor(mWorldCenterAnchor);
-            }
-            mWorldCenterAnchor = mSharedMixedReality.createAnchor(anchorMatrix);
-            mCurrentMode = new ShareAnchorMode(mPetContext, mWorldCenterAnchor, mHandlerBackToHud);
+            mCurrentMode = new ShareAnchorMode(mPetContext, mHandlerBackToHud);
             mCurrentMode.enter();
             mPet.stopBall();
             mPet.setCurrentAction(PetActions.IDLE.ID);

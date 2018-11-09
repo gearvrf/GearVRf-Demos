@@ -24,6 +24,7 @@ import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
@@ -49,6 +50,7 @@ public class PetContext {
     private PlayerSceneObject mPlayer;
     private IPlaneEventsListener mPlaneListener = null;
     private GVRScene mMainScene = null;
+    private CharacterController mPetController = null;
 
     public PetContext(GVRActivity activity) {
         mActivity = activity;
@@ -93,6 +95,14 @@ public class PetContext {
         // FIXME: Workaround to
         // You may only use GestureDetector constructor from a {@link android.os.Looper} thread.
         BallThrowHandler.getInstance(this);
+    }
+
+    public void setPetController(CharacterController controller) {
+        mPetController = controller;
+    }
+
+    public CharacterController getPetController() {
+        return mPetController;
     }
 
     public GVRActivity getActivity() {
