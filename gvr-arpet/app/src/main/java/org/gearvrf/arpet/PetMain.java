@@ -34,6 +34,7 @@ import org.gearvrf.arpet.mode.ILoadEvents;
 import org.gearvrf.arpet.mode.IPetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.OnModeChange;
+import org.gearvrf.arpet.mode.photo.ScreenshotMode;
 import org.gearvrf.arpet.mode.sharing.ShareAnchorMode;
 import org.gearvrf.arpet.movement.PetActions;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
@@ -275,7 +276,16 @@ public class PetMain extends DisableNativeSplashScreen {
 
         @Override
         public void onScreenshot() {
+            if (mCurrentMode instanceof ScreenshotMode) {
+                return;
+            }
 
+            if (mCurrentMode != null) {
+                mCurrentMode.exit();
+            }
+
+            mCurrentMode = new ScreenshotMode(mPetContext, mHandlerBackToHud);
+            mCurrentMode.enter();
         }
     }
 

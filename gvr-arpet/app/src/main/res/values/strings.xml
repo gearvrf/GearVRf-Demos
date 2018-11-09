@@ -45,6 +45,7 @@
     <string name="view_guests_disconnected">Your friends disconnected</string>
     <string name="exit_message">Do you want really exit the application?</string>
     <string name="confirm">CONFIRM</string>
+    <string name="share">Share</string>
     <plurals name="guests_found">
         <item quantity="one">1 guest found\non sharing anchor</item>
         <item quantity="other">%d guests found\non sharing anchor</item>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2015 Samsung Electronics Co., LTD
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_overlay"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="365.6dp"
+        android:layout_height="288.7dp"
+        android:background="@drawable/bg_square"
+        android:rotation="-6" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="52.2dp">
+
+        <TextView
+            style="@style/StatusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50.6dp"
+            android:text="@string/share" />
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:orientation="vertical"
+            android:rowCount="2">
+
+            <LinearLayout
+                android:id="@+id/button_facebook"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="75dp"
+                android:background="@drawable/bg_functions_buttons"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20.5dp"
+                    android:layout_height="20.5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/button_whatsapp"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="27dp"
+                android:background="@drawable/bg_functions_buttons"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20.5dp"
+                    android:layout_height="20.5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/button_instagram"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="75dp"
+                android:background="@drawable/bg_functions_buttons"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20.5dp"
+                    android:layout_height="20.5dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/button_twitter"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="27dp"
+                android:background="@drawable/bg_functions_buttons"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="20.5dp"
+                    android:layout_height="20.5dp" />
+            </LinearLayout>
+        </GridLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="252dp">
+
+            <Button
+                android:id="@+id/cancel_photo"
+                style="@style/Button"
+                android:text="@string/common_text_cancel" />
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>
