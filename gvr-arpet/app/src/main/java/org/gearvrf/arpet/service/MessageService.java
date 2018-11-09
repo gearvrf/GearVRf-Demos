@@ -22,8 +22,8 @@ import android.util.Log;
 
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.manager.connection.event.MessageReceivedEvent;
 import org.gearvrf.arpet.service.data.BallCommand;
 import org.gearvrf.arpet.service.data.PetActionCommand;
 import org.gearvrf.arpet.service.data.RequestStatus;
@@ -114,10 +114,8 @@ public final class MessageService implements IMessageService {
     }
 
     @Subscribe
-    public void handleConnectionEvent(PetConnectionEvent event) {
-        if (event.getType() == IPetConnectionManager.EVENT_MESSAGE_RECEIVED) {
-            handleRequestMessage((RequestMessage) event.getData());
-        }
+    public void handleConnectionEvent(MessageReceivedEvent event) {
+        handleRequestMessage((RequestMessage) event.getData());
     }
 
     @SuppressWarnings("unchecked")

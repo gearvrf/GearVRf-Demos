@@ -27,7 +27,7 @@ import org.gearvrf.arpet.constant.PetConstants;
 import org.gearvrf.arpet.mainview.IConnectionFinishedView;
 import org.gearvrf.arpet.mainview.IExitView;
 import org.gearvrf.arpet.mainview.MainViewController;
-import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
+import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
 import org.gearvrf.arpet.mode.EditMode;
 import org.gearvrf.arpet.mode.HudMode;
 import org.gearvrf.arpet.mode.ILoadEvents;

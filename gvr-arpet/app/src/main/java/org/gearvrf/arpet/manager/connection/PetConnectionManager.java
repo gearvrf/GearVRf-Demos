@@ -33,6 +33,8 @@ import org.gearvrf.arpet.connection.socket.bluetooth.BTConnectionManager;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTDevice;
 import org.gearvrf.arpet.connection.socket.bluetooth.BTServerDeviceFinder;
 import org.gearvrf.arpet.constant.PetConstants;
+import org.gearvrf.arpet.manager.connection.event.MessageReceivedEvent;
+import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
 import org.gearvrf.arpet.util.EventBusUtils;
 
 import java.io.Serializable;
@@ -284,7 +286,11 @@ public final class PetConnectionManager extends BTConnectionManager implements I
     }
 
     private void notifyManagerEvent(@EventType int type, Serializable data) {
-        EventBusUtils.post(new PetConnectionEvent(type, data));
+        if (type == IPetConnectionManager.EVENT_MESSAGE_RECEIVED) {
+            EventBusUtils.post(new MessageReceivedEvent(data));
+        } else {
+            EventBusUtils.post(new PetConnectionEvent(type, data));
+        }
     }
 
     private void enableBluetooth(OnEnableBluetoothCallback callback) {

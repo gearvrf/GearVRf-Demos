@@ -15,19 +15,15 @@
  *
  */
 
-package org.gearvrf.arpet.service.event;
+package org.gearvrf.arpet.manager.connection.event;
 
-import org.gearvrf.arpet.service.data.RequestStatus;
+import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
 
-public abstract class ReceivedMessage {
+import java.io.Serializable;
 
-    private RequestStatus requestStatus;
+public class MessageReceivedEvent extends PetConnectionEvent {
 
-    public RequestStatus getRequestStatus() {
-        return requestStatus;
-    }
-
-    public void setRequestStatus(RequestStatus requestStatus) {
-        this.requestStatus = requestStatus;
+    public MessageReceivedEvent(Serializable data) {
+        super(IPetConnectionManager.EVENT_MESSAGE_RECEIVED, data);
     }
 }

@@ -17,6 +17,8 @@
 
 package org.gearvrf.arpet.manager.connection;
 
+import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
+
 @FunctionalInterface
 public interface PetConnectionEventHandler {
     void handleEvent(PetConnectionEvent event);

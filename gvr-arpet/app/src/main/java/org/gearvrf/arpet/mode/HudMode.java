@@ -22,7 +22,7 @@ import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.PetConstants;
-import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
+import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.arpet.util.EventBusUtils;

@@ -17,18 +17,12 @@
 
 package org.gearvrf.arpet.manager.connection;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.connection.Device;
 import org.gearvrf.arpet.connection.Message;
 import org.gearvrf.arpet.connection.SendMessageCallback;
 import org.gearvrf.arpet.connection.socket.ConnectionMode;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.List;
 
 public interface IPetConnectionManager {
 
@@ -88,21 +82,6 @@ public interface IPetConnectionManager {
      */
     int EVENT_HOST_VISIBILITY_DENIED = 31;
 
-    @IntDef({
-            IPetConnectionManager.EVENT_CONNECTION_ESTABLISHED,
-            IPetConnectionManager.EVENT_NO_CONNECTION_FOUND,
-            IPetConnectionManager.EVENT_ALL_CONNECTIONS_LOST,
-            IPetConnectionManager.EVENT_ONE_CONNECTION_LOST,
-            IPetConnectionManager.EVENT_ON_LISTENING_TO_GUESTS,
-            IPetConnectionManager.EVENT_ON_REQUEST_CONNECTION_TO_HOST,
-            IPetConnectionManager.EVENT_GUEST_CONNECTION_ESTABLISHED,
-            IPetConnectionManager.EVENT_MESSAGE_RECEIVED,
-            IPetConnectionManager.EVENT_ENABLE_BLUETOOTH_DENIED,
-            IPetConnectionManager.EVENT_HOST_VISIBILITY_DENIED})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface EventType {
-    }
-
     /**
      * This method must be called before to use the manager,
      * otherwise an {@link IllegalStateException} will be thrown
@@ -140,8 +119,6 @@ public interface IPetConnectionManager {
      * Cancels the process of finding a server.
      */
     void stopFindInvitationAndDisconnect();
-
-    List<Device> getConnectedDevices();
 
     void disconnect();
 

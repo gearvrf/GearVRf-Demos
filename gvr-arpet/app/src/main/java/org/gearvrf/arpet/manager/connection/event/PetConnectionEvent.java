@@ -15,22 +15,24 @@
  *
  */
 
-package org.gearvrf.arpet.manager.connection;
+package org.gearvrf.arpet.manager.connection.event;
+
+import org.gearvrf.arpet.manager.connection.EventType;
 
 import java.io.Serializable;
 
 public class PetConnectionEvent {
 
-    @IPetConnectionManager.EventType
+    @EventType
     private int type;
     private Serializable data;
 
-    public PetConnectionEvent(@IPetConnectionManager.EventType int type, Serializable data) {
+    public PetConnectionEvent(@EventType int type, Serializable data) {
         this.type = type;
         this.data = data;
     }
 
-    @IPetConnectionManager.EventType
+    @EventType
     public int getType() {
         return type;
     }

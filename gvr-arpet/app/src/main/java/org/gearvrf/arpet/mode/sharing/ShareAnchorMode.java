@@ -38,7 +38,7 @@ import org.gearvrf.arpet.manager.cloud.anchor.ManagedAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.exception.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.exception.NetworkException;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.PetConnectionEvent;
+import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
