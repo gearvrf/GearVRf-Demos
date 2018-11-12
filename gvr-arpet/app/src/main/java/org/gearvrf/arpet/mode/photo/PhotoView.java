@@ -28,13 +28,16 @@ import org.gearvrf.arpet.mainview.IViewController;
 public class PhotoView extends BaseView implements IPhotoView {
 
     private View mCancelButton;
-    private View mActionsShareButton;
+    private View mFacebookButton, mWhatsAppButton, mInstagramButton, mTwitterButton;
     private ImageView mPhoto;
 
     public PhotoView(View view, IViewController controller) {
         super(view, controller);
         this.mCancelButton = view.findViewById(R.id.cancel_photo);
-        this.mActionsShareButton = view.findViewById(R.id.button_facebook);
+        this.mFacebookButton = view.findViewById(R.id.button_facebook);
+        this.mWhatsAppButton = view.findViewById(R.id.button_whatsapp);
+        this.mInstagramButton = view.findViewById(R.id.button_instagram);
+        this.mTwitterButton = view.findViewById(R.id.button_twitter);
         this.mPhoto = view.findViewById(R.id.image_photo);
     }
 
@@ -45,8 +48,12 @@ public class PhotoView extends BaseView implements IPhotoView {
 
     @Override
     public void setOnActionsShareClickListener(View.OnClickListener listener) {
-        mActionsShareButton.setOnClickListener(listener);
+        mFacebookButton.setOnClickListener(listener);
+        mWhatsAppButton.setOnClickListener(listener);
+        mInstagramButton.setOnClickListener(listener);
+        mTwitterButton.setOnClickListener(listener);
     }
+
 
     @Override
     public void setPhotoBitmap(Bitmap bitmap) {

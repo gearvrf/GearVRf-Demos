@@ -22,6 +22,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import org.gearvrf.GVRCameraRig;
 import org.gearvrf.arpet.PetContext;
+import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.context.ActivityResultEvent;
 import org.gearvrf.arpet.context.RequestPermissionResultEvent;
 import org.gearvrf.arpet.mode.BasePetMode;
@@ -43,6 +46,12 @@ import java.io.IOException;
 public class ScreenshotMode extends BasePetMode {
 
     private static final String TAG = ScreenshotMode.class.getSimpleName();
+
+    static final String PACK_NAME_FACEBOOK = "com.facebook.katana";
+    static final String PACK_NAME_TWITTER = "";
+    static final String PACK_NAME_INSTAGRAM = "";
+    static final String PACK_NAME_WHATSAPP = "com.whatsapp";
+
     private static final String APP_PHOTOS_DIR_NAME = "gvr-arpet";
 
     private static final int REQUEST_STORAGE_PERMISSION = 1000;
@@ -54,7 +63,8 @@ public class ScreenshotMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
     private PhotoViewController mPhotoViewController;
     private File mPhotosDir;
-    private OnStoragePermissionCallback mPermissionCallback;
+    private OnStoragePermissionGranted mPermissionCallback;
+    private File mSavedFile;
 
     public ScreenshotMode(PetContext petContext, OnBackToHudModeListener listener) {
         super(petContext, new PhotoViewController(petContext));
@@ -68,6 +78,7 @@ public class ScreenshotMode extends BasePetMode {
     @Override
     protected void onEnter() {
         EventBusUtils.register(this);
+        requestStoragePermission(this::takePhoto);
     }
 
     @Override
@@ -77,6 +88,13 @@ public class ScreenshotMode extends BasePetMode {
 
     private void showViewScreenshot() {
         IPhotoView view = mPhotoViewController.makeView(IPhotoView.class);
+        view.setOnActionsShareClickListener(clickedButton -> {
+            if (clickedButton.getId() == R.id.button_facebook) {
+                openFacebook();
+            } else if (clickedButton.getId() == R.id.button_whatsapp) {
+                openWhatsApp();
+            }
+        });
         view.setOnCancelClickListener(
                 view1 -> mPetContext.getGVRContext().runOnGlThread(
                         () -> mBackToHudModeListener.OnBackToHud()));
@@ -124,7 +142,7 @@ public class ScreenshotMode extends BasePetMode {
         Log.d(TAG, "Photo captured " + capturedPhoto);
         if (capturedPhoto != null) {
             showPhoto(capturedPhoto);
-            //savePhoto(capturedPhoto); // Optional: save to file
+            savePhoto(capturedPhoto);
         }
     }
 
@@ -137,22 +155,19 @@ public class ScreenshotMode extends BasePetMode {
 
     private void savePhoto(Bitmap capturedPhoto) {
 
-        if (hasStoragePermission()) {
+        initPhotosDir();
 
-            initPhotosDir();
+        final String fileName = "arpet-photo-" + System.currentTimeMillis() + ".png";
+        mSavedFile = new File(mPhotosDir, fileName);
 
-            final String fileName = "arpet-photo-" + System.currentTimeMillis() + ".png";
-            File file = new File(mPhotosDir, fileName);
-
-            try (FileOutputStream output = new FileOutputStream(file)) {
-                capturedPhoto.compress(Bitmap.CompressFormat.PNG, 100, output);
-                Log.d(TAG, "Photo saved if file: " + file);
-            } catch (IOException e) {
-                Log.e(TAG, "Error saving photo: " + file, e);
-            }
-
-        } else {
-            requestStoragePermission(() -> savePhoto(capturedPhoto));
+        try (FileOutputStream output = new FileOutputStream(mSavedFile)) {
+            capturedPhoto.compress(Bitmap.CompressFormat.PNG, 100, output);
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(mPetContext.getActivity(),
+                            "Photo saved", Toast.LENGTH_LONG).show());
+        } catch (IOException e) {
+            Log.e(TAG, "Error saving photo: " + mSavedFile, e);
+            mSavedFile = null;
         }
     }
 
@@ -160,7 +175,7 @@ public class ScreenshotMode extends BasePetMode {
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
     }
 
-    private void requestStoragePermission(OnStoragePermissionCallback callback) {
+    private void requestStoragePermission(OnStoragePermissionGranted callback) {
         mPermissionCallback = callback;
         mPetContext.getActivity().requestPermissions(PERMISSION_STORAGE, REQUEST_STORAGE_PERMISSION);
     }
@@ -205,8 +220,62 @@ public class ScreenshotMode extends BasePetMode {
         context.startActivityForResult(intent, REQUEST_STORAGE_PERMISSION);
     }
 
+    public void openFacebook() {
+        if (checkAppInstalled(PACK_NAME_FACEBOOK)) {
+            Activity context = mPetContext.getActivity();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setClassName(PACK_NAME_FACEBOOK, "com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mSavedFile));
+            intent.setType("image/png");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+    }
+
+    public void openWhatsApp() {
+        if (checkAppInstalled(PACK_NAME_WHATSAPP)) {
+            Activity context = mPetContext.getActivity();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setPackage(PACK_NAME_WHATSAPP);
+            intent.setType("image/png");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mSavedFile));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+    }
+
+    private boolean checkAppInstalled(String packageName) {
+        if (isAppInstalled(packageName)) {
+            return true;
+        } else {
+            installApp(packageName);
+            return false;
+        }
+    }
+
+    private void installApp(String appName) {
+        Activity context = mPetContext.getActivity();
+        try {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appName));
+            intent.setPackage("com.android.vending");
+            context.startActivity(intent);
+        } catch (Exception exception) {
+            context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appName)));
+        }
+    }
+
+    private boolean isAppInstalled(String packageName) {
+        Activity context = mPetContext.getActivity();
+        try {
+            context.getPackageManager().getApplicationInfo(packageName, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
     @FunctionalInterface
-    private interface OnStoragePermissionCallback {
+    private interface OnStoragePermissionGranted {
         void onGranted();
     }
 }
