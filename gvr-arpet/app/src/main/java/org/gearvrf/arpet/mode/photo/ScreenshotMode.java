@@ -37,6 +37,7 @@ import org.gearvrf.arpet.context.RequestPermissionResultEvent;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.util.EventBusUtils;
+import org.gearvrf.arpet.util.StorageUtils;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
@@ -125,12 +126,12 @@ public class ScreenshotMode extends BasePetMode {
     }
 
     private void takePhotoCenter() {
-        Log.d(TAG, "Tacking photo center");
+        Log.d(TAG, "Taking photo center");
         mPetContext.getGVRContext().captureScreenCenter(this::onPhotoCaptured);
     }
 
     private void takePhoto3D() {
-        Log.d(TAG, "Tacking photo 3D");
+        Log.d(TAG, "Taking photo 3D");
         mPetContext.getGVRContext().captureScreen3D((Bitmap[] capturedPhotos) -> {
             if (capturedPhotos != null && capturedPhotos.length > 0) {
                 onPhotoCaptured(capturedPhotos[capturedPhotos.length - 1]);
@@ -154,6 +155,11 @@ public class ScreenshotMode extends BasePetMode {
     }
 
     private void savePhoto(Bitmap capturedPhoto) {
+
+        if (StorageUtils.getAvailableExternalStorageSize() <= 0) {
+            Log.e(TAG, "There is no free space to save the photo on this device.");
+            return;
+        }
 
         initPhotosDir();
 
