@@ -68,7 +68,8 @@
 
                 <ImageView
                     android:layout_width="20.5dp"
-                    android:layout_height="20.5dp" />
+                    android:layout_height="20.5dp"
+                    android:src="@drawable/fb_icn" />
             </LinearLayout>
 
             <LinearLayout
@@ -82,7 +83,8 @@
 
                 <ImageView
                     android:layout_width="20.5dp"
-                    android:layout_height="20.5dp" />
+                    android:layout_height="20.5dp"
+                    android:src="@drawable/wpp_icn" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,7 +99,8 @@
 
                 <ImageView
                     android:layout_width="20.5dp"
-                    android:layout_height="20.5dp" />
+                    android:layout_height="20.5dp"
+                    android:src="@drawable/insta_icn" />
             </LinearLayout>
 
             <LinearLayout
@@ -112,7 +115,8 @@
 
                 <ImageView
                     android:layout_width="20.5dp"
-                    android:layout_height="20.5dp" />
+                    android:layout_height="20.5dp"
+                    android:src="@drawable/tt_icon" />
             </LinearLayout>
         </GridLayout>
 
