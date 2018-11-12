@@ -21,8 +21,11 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.arpet.context.ActivityResultEvent;
+import org.gearvrf.arpet.context.RequestPermissionResultEvent;
 import org.gearvrf.arpet.manager.permission.OnPermissionResultListener;
 import org.gearvrf.arpet.manager.permission.PermissionManager;
+import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.utility.Log;
 
 public class PetActivity extends GVRActivity {
@@ -64,7 +67,7 @@ public class PetActivity extends GVRActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EventBusUtils.post(new RequestPermissionResultEvent(requestCode, permissions, grantResults));
         mPermissionManager.handlePermissionResults(requestCode);
     }
 
@@ -100,6 +103,7 @@ public class PetActivity extends GVRActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPetContext.notifyActivityResult(requestCode, resultCode, data);
+        EventBusUtils.post(new ActivityResultEvent(requestCode, resultCode, data));
     }
+
 }

@@ -15,6 +15,7 @@
   ~
   -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_overlay"
@@ -25,7 +26,17 @@
         android:layout_width="365.6dp"
         android:layout_height="288.7dp"
         android:background="@drawable/bg_square"
-        android:rotation="-6" />
+        android:rotation="-6">
+
+        <ImageView
+            android:id="@+id/image_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="12dp"
+            android:src="@drawable/ic_launcher"
+            tools:ignore="ContentDescription" />
+
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"

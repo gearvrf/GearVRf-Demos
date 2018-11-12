@@ -73,8 +73,6 @@ public final class PetConnectionManager extends BTConnectionManager implements I
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             mServerFinder = new BTServerDeviceFinder(mContext.getActivity());
             mDeviceVisibilityMonitor = new DeviceVisibilityMonitor(context, this::onVisibilitySateChanged);
-            mContext.addOnPetContextListener((requestCode, resultCode, data)
-                    -> onActivityResult(requestCode, resultCode));
         }
     }
 

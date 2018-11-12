@@ -23,7 +23,6 @@ import android.content.pm.PackageManager;
 import android.support.annotation.IntDef;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -84,8 +83,6 @@ public class PermissionManager {
             } else {
                 mPermissionResultListener.onPermissionDenied();
             }
-        } else {
-            Log.d(TAG, "invalid permission request code");
         }
     }
 

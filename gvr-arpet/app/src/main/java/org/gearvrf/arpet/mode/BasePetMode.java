@@ -29,7 +29,7 @@ public abstract class BasePetMode implements IPetMode {
     protected boolean mIsLoaded;
 
     public BasePetMode(PetContext petContext, IPetView sceneMode) {
-        TAG = sceneMode.getClass().getSimpleName();
+        TAG = getClass().getSimpleName();
         mPetContext = petContext;
         mModeScene = sceneMode;
         mLoadListener = null;

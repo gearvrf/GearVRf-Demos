@@ -15,7 +15,6 @@
 
 package org.gearvrf.arpet;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
@@ -34,9 +33,6 @@ import org.gearvrf.mixedreality.IMRCommon;
 import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.gearvrf.physics.GVRWorld;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class PetContext {
     private final GVRActivity mActivity;
     private final HandlerThread mHandlerThread;
@@ -46,7 +42,6 @@ public class PetContext {
     private long mResumeTime;
     private GVRContext mGvrContext;
     private SharedMixedReality mMixedReality;
-    private List<OnPetContextListener> mOnPetContextListeners = new ArrayList<>();
     private PlayerSceneObject mPlayer;
     private IPlaneEventsListener mPlaneListener = null;
     private GVRScene mMainScene = null;
@@ -182,25 +177,6 @@ public class PetContext {
 
     public boolean isPaused() {
         return mPaused;
-    }
-
-    public void addOnPetContextListener(OnPetContextListener listener) {
-        removeOnPetContextListener(listener);
-        mOnPetContextListeners.add(listener);
-    }
-
-    public void removeOnPetContextListener(OnPetContextListener listener) {
-        mOnPetContextListeners.remove(listener);
-    }
-
-    public void notifyActivityResult(int requestCode, int resultCode, Intent data) {
-        for (OnPetContextListener mOnPetContextListener : mOnPetContextListeners) {
-            mOnPetContextListener.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    public interface OnPetContextListener {
-        void onActivityResult(int requestCode, int resultCode, Intent data);
     }
 
     public int getMode() {

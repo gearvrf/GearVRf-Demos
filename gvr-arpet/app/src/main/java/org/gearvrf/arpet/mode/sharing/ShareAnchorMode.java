@@ -32,23 +32,23 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.constant.ArPetObjectType;
 import org.gearvrf.arpet.constant.PetConstants;
+import org.gearvrf.arpet.mainview.IConnectionFinishedView;
+import org.gearvrf.arpet.mainview.IView;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.CloudAnchorManager;
 import org.gearvrf.arpet.manager.cloud.anchor.ManagedAnchor;
 import org.gearvrf.arpet.manager.cloud.anchor.exception.CloudAnchorException;
 import org.gearvrf.arpet.manager.cloud.anchor.exception.NetworkException;
 import org.gearvrf.arpet.manager.connection.IPetConnectionManager;
-import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
 import org.gearvrf.arpet.manager.connection.PetConnectionManager;
+import org.gearvrf.arpet.manager.connection.event.PetConnectionEvent;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.mode.sharing.view.IConnectionFoundView;
 import org.gearvrf.arpet.mode.sharing.view.IGuestLookingAtTargetView;
 import org.gearvrf.arpet.mode.sharing.view.IHostLookingAtTargetView;
 import org.gearvrf.arpet.mode.sharing.view.ILetsStartView;
-import org.gearvrf.arpet.mainview.IView;
 import org.gearvrf.arpet.mode.sharing.view.ISharingErrorView;
-import org.gearvrf.arpet.mainview.IConnectionFinishedView;
 import org.gearvrf.arpet.mode.sharing.view.IWaitingForGuestView;
 import org.gearvrf.arpet.mode.sharing.view.IWaitingForHostView;
 import org.gearvrf.arpet.mode.sharing.view.impl.SharingAnchorViewController;
@@ -168,14 +168,13 @@ public class ShareAnchorMode extends BasePetMode {
 
     private void hostPetAnchor() {
 
-        final AtomicBoolean isHosting = new AtomicBoolean(false);
+        final AtomicBoolean isHosting = new AtomicBoolean(true);
+
         new Handler().postDelayed(() -> {
             if (isHosting.get()) {
                 showViewHostLookingAtTarget(R.string.move_around);
             }
         }, 5000);
-
-        isHosting.set(true);
 
         ManagedAnchor<GVRAnchor> managedAnchor;
         try {
@@ -210,10 +209,10 @@ public class ShareAnchorMode extends BasePetMode {
     private void onHostingError(CloudAnchorException e) {
         Log.e(TAG, "Error hosting pet anchor", e);
         showViewSharingError(
-                () -> cancelSharing(),
+                this::cancelSharing,
                 () -> {
                     showViewHostLookingAtTarget(R.string.center_pet);
-                    new Handler().postDelayed(() -> hostPetAnchor(), 1500);
+                    new Handler().postDelayed(this::hostPetAnchor, 1500);
                 }
         );
         handleCloudAnchorException(e);

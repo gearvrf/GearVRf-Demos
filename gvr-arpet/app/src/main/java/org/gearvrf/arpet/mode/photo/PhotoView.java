@@ -17,20 +17,25 @@
 
 package org.gearvrf.arpet.mode.photo;
 
+import android.graphics.Bitmap;
 import android.view.View;
+import android.widget.ImageView;
 
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.mainview.BaseView;
 import org.gearvrf.arpet.mainview.IViewController;
 
 public class PhotoView extends BaseView implements IPhotoView {
+
     private View mCancelButton;
     private View mActionsShareButton;
+    private ImageView mPhoto;
 
     public PhotoView(View view, IViewController controller) {
         super(view, controller);
         this.mCancelButton = view.findViewById(R.id.cancel_photo);
         this.mActionsShareButton = view.findViewById(R.id.button_facebook);
+        this.mPhoto = view.findViewById(R.id.image_photo);
     }
 
     @Override
@@ -43,4 +48,8 @@ public class PhotoView extends BaseView implements IPhotoView {
         mActionsShareButton.setOnClickListener(listener);
     }
 
+    @Override
+    public void setPhotoBitmap(Bitmap bitmap) {
+        runOnUiThread(() -> mPhoto.setImageBitmap(bitmap));
+    }
 }

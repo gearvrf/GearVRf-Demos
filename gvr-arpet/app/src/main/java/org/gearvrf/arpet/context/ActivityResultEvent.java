@@ -15,18 +15,31 @@
  *
  */
 
-package org.gearvrf.arpet.mode.photo;
+package org.gearvrf.arpet.context;
 
-import android.graphics.Bitmap;
-import android.view.View;
+import android.content.Intent;
 
-import org.gearvrf.arpet.mainview.IView;
+public class ActivityResultEvent {
 
-public interface IPhotoView extends IView {
+    private int requestCode;
+    private int resultCode;
+    private Intent data;
 
-    void setOnCancelClickListener(View.OnClickListener listener);
+    public ActivityResultEvent(int requestCode, int resultCode, Intent data) {
+        this.requestCode = requestCode;
+        this.resultCode = resultCode;
+        this.data = data;
+    }
 
-    void setOnActionsShareClickListener(View.OnClickListener listener);
+    public int getRequestCode() {
+        return requestCode;
+    }
 
-    void setPhotoBitmap(Bitmap bitmap);
+    public int getResultCode() {
+        return resultCode;
+    }
+
+    public Intent getData() {
+        return data;
+    }
 }
