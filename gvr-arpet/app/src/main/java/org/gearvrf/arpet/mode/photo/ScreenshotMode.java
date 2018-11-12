@@ -54,6 +54,7 @@ public class ScreenshotMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
     private PhotoViewController mPhotoViewController;
     private File mPhotosDir;
+    private OnStoragePermissionCallback mPermissionCallback;
 
     public ScreenshotMode(PetContext petContext, OnBackToHudModeListener listener) {
         super(petContext, new PhotoViewController(petContext));
@@ -67,7 +68,6 @@ public class ScreenshotMode extends BasePetMode {
     @Override
     protected void onEnter() {
         EventBusUtils.register(this);
-        requestStoragePermission();
     }
 
     @Override
@@ -98,7 +98,6 @@ public class ScreenshotMode extends BasePetMode {
     }
 
     private void takePhoto() {
-        initPhotosDir();
         try {
             takePhoto3D();
             //takePhotoCenter();
@@ -125,7 +124,7 @@ public class ScreenshotMode extends BasePetMode {
         Log.d(TAG, "Photo captured " + capturedPhoto);
         if (capturedPhoto != null) {
             showPhoto(capturedPhoto);
-            //savePhoto(capturedPhoto); // Optional: save file
+            //savePhoto(capturedPhoto); // Optional: save to file
         }
     }
 
@@ -138,14 +137,22 @@ public class ScreenshotMode extends BasePetMode {
 
     private void savePhoto(Bitmap capturedPhoto) {
 
-        final String fileName = "arpet-photo-" + System.currentTimeMillis() + ".png";
-        File file = new File(mPhotosDir, fileName);
+        if (hasStoragePermission()) {
 
-        try (FileOutputStream output = new FileOutputStream(file)) {
-            capturedPhoto.compress(Bitmap.CompressFormat.PNG, 100, output);
-            Log.d(TAG, "Photo saved if file: " + file);
-        } catch (IOException e) {
-            Log.e(TAG, "Error saving photo: " + file, e);
+            initPhotosDir();
+
+            final String fileName = "arpet-photo-" + System.currentTimeMillis() + ".png";
+            File file = new File(mPhotosDir, fileName);
+
+            try (FileOutputStream output = new FileOutputStream(file)) {
+                capturedPhoto.compress(Bitmap.CompressFormat.PNG, 100, output);
+                Log.d(TAG, "Photo saved if file: " + file);
+            } catch (IOException e) {
+                Log.e(TAG, "Error saving photo: " + file, e);
+            }
+
+        } else {
+            requestStoragePermission(() -> savePhoto(capturedPhoto));
         }
     }
 
@@ -153,7 +160,8 @@ public class ScreenshotMode extends BasePetMode {
     protected void onHandleOrientation(GVRCameraRig cameraRig) {
     }
 
-    private void requestStoragePermission() {
+    private void requestStoragePermission(OnStoragePermissionCallback callback) {
+        mPermissionCallback = callback;
         mPetContext.getActivity().requestPermissions(PERMISSION_STORAGE, REQUEST_STORAGE_PERMISSION);
     }
 
@@ -166,7 +174,7 @@ public class ScreenshotMode extends BasePetMode {
     public void handleContextEvent(ActivityResultEvent event) {
         if (event.getRequestCode() == REQUEST_STORAGE_PERMISSION) {
             if (hasStoragePermission()) {
-                takePhoto();
+                mPermissionCallback.onGranted();
             } else {
                 Toast.makeText(mPetContext.getActivity(),
                         "External storage access not allowed",
@@ -179,7 +187,7 @@ public class ScreenshotMode extends BasePetMode {
     public void handleContextEvent(RequestPermissionResultEvent event) {
         if (event.getRequestCode() == REQUEST_STORAGE_PERMISSION) {
             if (hasStoragePermission()) {
-                takePhoto();
+                mPermissionCallback.onGranted();
             } else {
                 Toast.makeText(mPetContext.getActivity(),
                         "External storage access not allowed",
@@ -195,5 +203,10 @@ public class ScreenshotMode extends BasePetMode {
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                 Uri.parse("package:" + context.getPackageName()));
         context.startActivityForResult(intent, REQUEST_STORAGE_PERMISSION);
+    }
+
+    @FunctionalInterface
+    private interface OnStoragePermissionCallback {
+        void onGranted();
     }
 }
