@@ -37,7 +37,6 @@ import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.context.ActivityResultEvent;
 import org.gearvrf.arpet.context.RequestPermissionResultEvent;
-import org.gearvrf.arpet.mainview.OnViewShownCallback;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.util.EventBusUtils;
@@ -92,7 +91,7 @@ public class ScreenshotMode extends BasePetMode {
         EventBusUtils.unregister(this);
     }
 
-    private void showPhotoView(OnViewShownCallback callback) {
+    private void showPhotoView(Bitmap photo) {
 
         IPhotoView view = mPhotoViewController.makeView(IPhotoView.class);
 
@@ -102,7 +101,7 @@ public class ScreenshotMode extends BasePetMode {
                 view1 -> mPetContext.getGVRContext()
                         .runOnGlThread(() -> mBackToHudModeListener.OnBackToHud()));
 
-        view.show(callback);
+        view.show();
     }
 
     private void onSocialAppButtonClicked(View clickedButton) {
@@ -141,14 +140,7 @@ public class ScreenshotMode extends BasePetMode {
         Log.d(TAG, "Photo captured " + capturedPhoto);
         if (capturedPhoto != null) {
             savePhoto(capturedPhoto);
-            showPhotoView(() -> setPhotoUI(capturedPhoto));
-        }
-    }
-
-    private void setPhotoUI(Bitmap capturedPhoto) {
-        if (IPhotoView.class.isInstance(mPhotoViewController.getCurrentView())) {
-            IPhotoView view = (IPhotoView) mPhotoViewController.getCurrentView();
-            view.setPhotoBitmap(capturedPhoto);
+            showPhotoView(capturedPhoto);
         }
     }
 
