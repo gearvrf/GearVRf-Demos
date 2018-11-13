@@ -42,20 +42,24 @@ public class BaseViewController extends BasePetView implements IViewController {
     private final String TAG = getClass().getSimpleName();
     private Map<Class<? extends IView>, ViewInfo> mViewInfo = new HashMap<>();
 
-    private ViewGroup mContentView;
+    private ViewGroup mViewContent;
     private BaseView mViewModel;
     private DisplayMetrics mDisplayMetrics;
 
     public BaseViewController(PetContext petContext) {
+        this(petContext, R.layout.view_main_content_dimmed);
+    }
+
+    public BaseViewController(PetContext petContext, @LayoutRes int viewContentId) {
         super(petContext);
 
         mDisplayMetrics = new DisplayMetrics();
         petContext.getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(mDisplayMetrics);
 
-        mContentView = (ViewGroup) View.inflate(petContext.getGVRContext().getContext(), R.layout.view_sharing_anchor_main, null);
-        mContentView.setLayoutParams(new ViewGroup.LayoutParams(mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels));
+        mViewContent = (ViewGroup) View.inflate(petContext.getGVRContext().getContext(), viewContentId, null);
+        mViewContent.setLayoutParams(new ViewGroup.LayoutParams(mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels));
 
-        GVRViewSceneObject viewObject = new GVRViewSceneObject(petContext.getGVRContext(), mContentView);
+        GVRViewSceneObject viewObject = new GVRViewSceneObject(petContext.getGVRContext(), mViewContent);
         viewObject.getRenderData().setRenderingOrder(GVRRenderData.GVRRenderingOrder.OVERLAY);
         viewObject.setTextureBufferSize(PetConstants.TEXTURE_BUFFER_SIZE);
 
@@ -104,9 +108,9 @@ public class BaseViewController extends BasePetView implements IViewController {
                         mDisplayMetrics.widthPixels, mDisplayMetrics.heightPixels));
 
                 clearContentView();
-                mContentView.addView(view);
+                mViewContent.addView(view);
                 mViewModel = vm;
-
+                mViewModel.onShown();
                 Log.d(TAG, "showView: " + viewModel.getClass().getSimpleName());
             });
         }
@@ -118,7 +122,7 @@ public class BaseViewController extends BasePetView implements IViewController {
 
     private void clearContentView() {
         mPetContext.getActivity().runOnUiThread(() -> {
-            mContentView.removeAllViews();
+            mViewContent.removeAllViews();
             mViewModel = null;
         });
     }

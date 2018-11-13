@@ -15,16 +15,8 @@
  *
  */
 
-package org.gearvrf.arpet.mode.photo;
+package org.gearvrf.arpet.mainview;
 
-import org.gearvrf.arpet.PetContext;
-import org.gearvrf.arpet.R;
-import org.gearvrf.arpet.mainview.BaseViewController;
-
-public class PhotoViewController extends BaseViewController {
-
-    public PhotoViewController(PetContext petContext) {
-        super(petContext, R.layout.view_main_content_transparent);
-        registerView(IPhotoView.class, R.layout.view_photo, PhotoView.class);
-    }
+public interface OnViewShownCallback {
+    void onShown();
 }

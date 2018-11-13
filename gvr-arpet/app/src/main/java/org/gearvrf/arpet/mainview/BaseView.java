@@ -26,6 +26,7 @@ public abstract class BaseView implements IView {
     private View mView;
     private IViewController mViewController;
     private Handler mHandler = new Handler(Looper.getMainLooper());
+    private OnViewShownCallback mOnViewShownCallback;
 
     public BaseView(View view, IViewController viewController) {
         this.mView = view;
@@ -35,6 +36,18 @@ public abstract class BaseView implements IView {
     @Override
     public void show() {
         mViewController.showView(this);
+    }
+
+    @Override
+    public void show(OnViewShownCallback callback) {
+        mOnViewShownCallback = callback;
+        mViewController.showView(this);
+    }
+
+    void onShown() {
+        if (mOnViewShownCallback != null) {
+            mOnViewShownCallback.onShown();
+        }
     }
 
     public View getView() {

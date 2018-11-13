@@ -18,5 +18,8 @@
 package org.gearvrf.arpet.mainview;
 
 public interface IView {
+
     void show();
+
+    void show(OnViewShownCallback callback);
 }

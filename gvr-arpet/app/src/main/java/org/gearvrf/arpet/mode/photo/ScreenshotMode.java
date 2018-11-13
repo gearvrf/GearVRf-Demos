@@ -26,14 +26,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import org.gearvrf.GVRCameraRig;
+import org.gearvrf.arpet.BuildConfig;
 import org.gearvrf.arpet.PetContext;
 import org.gearvrf.arpet.R;
 import org.gearvrf.arpet.context.ActivityResultEvent;
 import org.gearvrf.arpet.context.RequestPermissionResultEvent;
+import org.gearvrf.arpet.mainview.OnViewShownCallback;
 import org.gearvrf.arpet.mode.BasePetMode;
 import org.gearvrf.arpet.mode.OnBackToHudModeListener;
 import org.gearvrf.arpet.util.EventBusUtils;
@@ -48,12 +52,16 @@ public class ScreenshotMode extends BasePetMode {
 
     private static final String TAG = ScreenshotMode.class.getSimpleName();
 
-    static final String PACK_NAME_FACEBOOK = "com.facebook.katana";
-    static final String PACK_NAME_TWITTER = "";
-    static final String PACK_NAME_INSTAGRAM = "";
-    static final String PACK_NAME_WHATSAPP = "com.whatsapp";
+    private static final String PACK_NAME_FACEBOOK = "com.facebook.katana";
+    private static final String PACK_NAME_TWITTER = "";
+    private static final String PACK_NAME_INSTAGRAM = "";
+    private static final String PACK_NAME_WHATSAPP = "com.whatsapp";
+
+    private static final String ACTIVITY_SHARE_PICTURE =
+            "com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias";
 
     private static final String APP_PHOTOS_DIR_NAME = "gvr-arpet";
+    private static final String FILE_PROVIDER_AUTHORITY = BuildConfig.APPLICATION_ID + ".provider";
 
     private static final int REQUEST_STORAGE_PERMISSION = 1000;
     private static final String[] PERMISSION_STORAGE = {
@@ -70,10 +78,7 @@ public class ScreenshotMode extends BasePetMode {
     public ScreenshotMode(PetContext petContext, OnBackToHudModeListener listener) {
         super(petContext, new PhotoViewController(petContext));
         mBackToHudModeListener = listener;
-        mPhotoViewController = new PhotoViewController(petContext);
         mPhotoViewController = (PhotoViewController) mModeScene;
-
-        showViewScreenshot();
     }
 
     @Override
@@ -87,19 +92,25 @@ public class ScreenshotMode extends BasePetMode {
         EventBusUtils.unregister(this);
     }
 
-    private void showViewScreenshot() {
+    private void showPhotoView(OnViewShownCallback callback) {
+
         IPhotoView view = mPhotoViewController.makeView(IPhotoView.class);
-        view.setOnActionsShareClickListener(clickedButton -> {
-            if (clickedButton.getId() == R.id.button_facebook) {
-                openFacebook();
-            } else if (clickedButton.getId() == R.id.button_whatsapp) {
-                openWhatsApp();
-            }
-        });
+
+        view.setOnActionsShareClickListener(this::onSocialAppButtonClicked);
+
         view.setOnCancelClickListener(
-                view1 -> mPetContext.getGVRContext().runOnGlThread(
-                        () -> mBackToHudModeListener.OnBackToHud()));
-        view.show();
+                view1 -> mPetContext.getGVRContext()
+                        .runOnGlThread(() -> mBackToHudModeListener.OnBackToHud()));
+
+        view.show(callback);
+    }
+
+    private void onSocialAppButtonClicked(View clickedButton) {
+        if (clickedButton.getId() == R.id.button_facebook) {
+            openFacebook();
+        } else if (clickedButton.getId() == R.id.button_whatsapp) {
+            openWhatsApp();
+        }
     }
 
     private void initPhotosDir() {
@@ -107,7 +118,7 @@ public class ScreenshotMode extends BasePetMode {
             File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             mPhotosDir = new File(picturesDir, APP_PHOTOS_DIR_NAME);
             if (!mPhotosDir.exists()) {
-                if (mPhotosDir.mkdir()) {
+                if (mPhotosDir.mkdirs()) {
                     Log.d(TAG, "Directory created: " + mPhotosDir);
                 }
             } else {
@@ -118,36 +129,23 @@ public class ScreenshotMode extends BasePetMode {
 
     private void takePhoto() {
         try {
-            takePhoto3D();
-            //takePhotoCenter();
+            showPhotoView(null);
+            //mPetContext.getGVRContext().captureMonoscopicScreen(this::onPhotoCaptured);
+            //mPetContext.getGVRContext().captureScreenCenter(this::onPhotoCaptured);
         } catch (Throwable t) {
             Log.e(TAG, "Error taking photo", t);
         }
     }
 
-    private void takePhotoCenter() {
-        Log.d(TAG, "Taking photo center");
-        mPetContext.getGVRContext().captureScreenCenter(this::onPhotoCaptured);
-    }
-
-    private void takePhoto3D() {
-        Log.d(TAG, "Taking photo 3D");
-        mPetContext.getGVRContext().captureScreen3D((Bitmap[] capturedPhotos) -> {
-            if (capturedPhotos != null && capturedPhotos.length > 0) {
-                onPhotoCaptured(capturedPhotos[capturedPhotos.length - 1]);
-            }
-        });
-    }
-
     private void onPhotoCaptured(Bitmap capturedPhoto) {
         Log.d(TAG, "Photo captured " + capturedPhoto);
         if (capturedPhoto != null) {
-            showPhoto(capturedPhoto);
             savePhoto(capturedPhoto);
+            showPhotoView(() -> setPhotoUI(capturedPhoto));
         }
     }
 
-    private void showPhoto(Bitmap capturedPhoto) {
+    private void setPhotoUI(Bitmap capturedPhoto) {
         if (IPhotoView.class.isInstance(mPhotoViewController.getCurrentView())) {
             IPhotoView view = (IPhotoView) mPhotoViewController.getCurrentView();
             view.setPhotoBitmap(capturedPhoto);
@@ -226,28 +224,30 @@ public class ScreenshotMode extends BasePetMode {
         context.startActivityForResult(intent, REQUEST_STORAGE_PERMISSION);
     }
 
-    public void openFacebook() {
-        if (checkAppInstalled(PACK_NAME_FACEBOOK)) {
-            Activity context = mPetContext.getActivity();
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setClassName(PACK_NAME_FACEBOOK, "com.facebook.composer.shareintent.ImplicitShareIntentHandlerDefaultAlias");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mSavedFile));
-            intent.setType("image/png");
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+    private void openFacebook() {
+        if (mSavedFile != null && checkAppInstalled(PACK_NAME_FACEBOOK)) {
+            Intent intent = createIntent();
+            intent.setClassName(PACK_NAME_FACEBOOK, ACTIVITY_SHARE_PICTURE);
+            mPetContext.getActivity().startActivity(intent);
         }
     }
 
-    public void openWhatsApp() {
-        if (checkAppInstalled(PACK_NAME_WHATSAPP)) {
-            Activity context = mPetContext.getActivity();
-            Intent intent = new Intent(Intent.ACTION_SEND);
+    private void openWhatsApp() {
+        if (mSavedFile != null && checkAppInstalled(PACK_NAME_WHATSAPP)) {
+            Intent intent = createIntent();
             intent.setPackage(PACK_NAME_WHATSAPP);
-            intent.setType("image/png");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mSavedFile));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(intent);
+            mPetContext.getActivity().startActivity(intent);
         }
+    }
+
+    private Intent createIntent() {
+        Activity context = mPetContext.getActivity();
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_STREAM,
+                FileProvider.getUriForFile(context, FILE_PROVIDER_AUTHORITY, mSavedFile));
+        intent.setType("image/png");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
     }
 
     private boolean checkAppInstalled(String packageName) {
@@ -284,4 +284,5 @@ public class ScreenshotMode extends BasePetMode {
     private interface OnStoragePermissionGranted {
         void onGranted();
     }
+
 }

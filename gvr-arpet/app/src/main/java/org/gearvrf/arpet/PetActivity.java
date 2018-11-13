@@ -43,6 +43,8 @@ public class PetActivity extends GVRActivity {
 
         mPermissionManager = new PermissionManager(this);
         mPermissionManager.setPermissionResultListener(new PermissionListener());
+
+        android.util.Log.d("naveca", "contentView = " + getViewManager());
     }
 
     private void startPetMain() {
