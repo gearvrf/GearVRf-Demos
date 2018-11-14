@@ -18,10 +18,14 @@ package org.gearvrf.arpet;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 
 import org.gearvrf.GVRActivity;
+import org.gearvrf.GVRCameraRig;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRPerspectiveCamera;
 import org.gearvrf.GVRScene;
+import org.gearvrf.IEventReceiver;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.character.CharacterController;
 import org.gearvrf.arpet.constant.ArPetObjectType;
@@ -29,8 +33,8 @@ import org.gearvrf.arpet.manager.connection.PetConnectionManager;
 import org.gearvrf.arpet.service.share.PlayerSceneObject;
 import org.gearvrf.arpet.service.share.SharedMixedReality;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.IMRCommon;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IPlaneEvents;
 import org.gearvrf.physics.GVRWorld;
 
 public class PetContext {
@@ -43,7 +47,7 @@ public class PetContext {
     private GVRContext mGvrContext;
     private SharedMixedReality mMixedReality;
     private PlayerSceneObject mPlayer;
-    private IPlaneEventsListener mPlaneListener = null;
+    private IPlaneEvents mPlaneListener;
     private GVRScene mMainScene = null;
     private CharacterController mPetController = null;
 
@@ -73,6 +77,7 @@ public class PetContext {
     public void init(GVRContext context) {
         mGvrContext = context;
         mMainScene = new GVRScene(context);
+        configCameraClipping(mMainScene);
 
         GVRWorld world = new GVRWorld(mGvrContext);
         world.setGravity(0f, -200f, 0f);
@@ -80,7 +85,6 @@ public class PetContext {
 
         PetConnectionManager.getInstance().init(this);
         mMixedReality = new SharedMixedReality(this);
-        mMixedReality.resume();
 
         mPlayer = new PlayerSceneObject(mGvrContext);
         mMainScene.getMainCameraRig().addChildObject(mPlayer);
@@ -100,6 +104,16 @@ public class PetContext {
         return mPetController;
     }
 
+    private static void configCameraClipping(GVRScene scene) {
+        GVRCameraRig rig = scene.getMainCameraRig();
+        //rig.getCenterCamera().setNearClippingDistance(1);
+        //((GVRPerspectiveCamera) rig.getLeftCamera()).setNearClippingDistance(1);
+        //((GVRPerspectiveCamera) rig.getRightCamera()).setNearClippingDistance(1);
+        rig.getCenterCamera().setFarClippingDistance(2000);
+        ((GVRPerspectiveCamera) rig.getLeftCamera()).setFarClippingDistance(2000);
+        ((GVRPerspectiveCamera) rig.getRightCamera()).setFarClippingDistance(2000);
+    }
+
     public GVRActivity getActivity() {
         return mActivity;
     }
@@ -108,31 +122,28 @@ public class PetContext {
         return mGvrContext;
     }
 
-    public IMRCommon getMixedReality() {
+    public IMixedReality getMixedReality() {
         return mMixedReality;
     }
 
     public void startDetectingPlanes() {
-        if (mPlaneListener != null) {
-            mMixedReality.registerPlaneListener(mPlaneListener);
-        }
+        // TODO: add support in MixedReality
     }
 
     public void stopDetectingPlanes() {
-        if (mPlaneListener != null) {
-            mMixedReality.unregisterPlaneListener(mPlaneListener);
-        }
-    }
-
-    public void setPlaneListener(IPlaneEventsListener planeListener) {
-        mPlaneListener = planeListener;
+        // TODO: add support in MixedReality
     }
 
     public void resetPlanes() {
-        if (mPlaneListener != null) {
-            PlaneHandler planeHandler = (PlaneHandler) mPlaneListener;
-            planeHandler.reset();
-        }
+        // TODO: use PlaneHandler to reset the planes
+    }
+
+    public void registerPlaneListener(@NonNull IPlaneEvents listener) {
+        mMixedReality.getEventReceiver().addListener(listener);
+    }
+
+    public void unregisterPlaneListener(@NonNull IPlaneEvents listener) {
+        mMixedReality.getEventReceiver().removeListener(listener);
     }
 
     public GVRScene getMainScene() {

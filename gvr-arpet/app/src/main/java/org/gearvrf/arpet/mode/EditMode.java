@@ -36,14 +36,14 @@ import org.gearvrf.arpet.gesture.OnGestureListener;
 import org.gearvrf.arpet.gesture.impl.GestureDetectorFactory;
 import org.gearvrf.arpet.gesture.impl.ScaleGestureDetector;
 import org.gearvrf.io.GVRCursorController;
-import org.gearvrf.mixedreality.IMRCommon;
+import org.gearvrf.mixedreality.IMixedReality;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 public class EditMode extends BasePetMode {
     private OnBackToHudModeListener mBackToHudModeListener;
     private final CharacterView mCharacterView;
-    private final IMRCommon mMixedReality;
+    private final IMixedReality mMixedReality;
     private GestureDetector mRotationDetector;
     private GestureDetector mScaleDetector;
     private GVRCursorController mCursorController = null;

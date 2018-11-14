@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.opengl.Matrix;
 import android.util.Log;
 
+import org.gearvrf.GVREventReceiver;
 import org.gearvrf.GVRPicker;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.arpet.PetContext;
@@ -14,43 +15,51 @@ import org.gearvrf.arpet.service.MessageService;
 import org.gearvrf.arpet.service.event.UpdatePosesReceivedMessage;
 import org.gearvrf.arpet.util.EventBusUtils;
 import org.gearvrf.mixedreality.GVRAnchor;
-import org.gearvrf.mixedreality.GVRAugmentedImage;
+import org.gearvrf.mixedreality.GVRMarker;
 import org.gearvrf.mixedreality.GVRHitResult;
 import org.gearvrf.mixedreality.GVRLightEstimate;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
-import org.gearvrf.mixedreality.IAnchorEventsListener;
-import org.gearvrf.mixedreality.IAugmentedImageEventsListener;
-import org.gearvrf.mixedreality.ICloudAnchorListener;
-import org.gearvrf.mixedreality.IMRCommon;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
 import org.greenrobot.eventbus.Subscribe;
+
+import org.gearvrf.mixedreality.IAnchorEvents;
+import org.gearvrf.mixedreality.IMarkerEvents;
+import org.gearvrf.mixedreality.IMixedReality;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SharedMixedReality implements IMRCommon {
+public class SharedMixedReality implements IMixedReality {
 
     private static final String TAG = SharedMixedReality.class.getSimpleName();
 
-    private final IMRCommon mMixedReality;
+    public static final int OFF = 0;
+    public static final int HOST = 1;
+    public static final int GUEST = 2;
+
+    private final IMixedReality mMixedReality;
     private final PetContext mPetContext;
     private final List<SharedSceneObject> mSharedSceneObjects;
     private final IMessageService mMessageService;
+    private GVREventReceiver mListeners;
 
     @PetConstants.ShareMode
     private int mMode = PetConstants.SHARE_MODE_NONE;
     private GVRAnchor mSharedAnchor = null;
+    private GVRSceneObject mSharedAnchorObject = null;
     private float[] mSpaceMatrix = new float[16];
 
     public SharedMixedReality(PetContext petContext) {
-        mMixedReality = new GVRMixedReality(petContext.getGVRContext(), true,
-                petContext.getMainScene());
+        mMixedReality = new GVRMixedReality(petContext.getMainScene(), true);
         mPetContext = petContext;
         mSharedSceneObjects = new ArrayList<>();
         mMessageService = MessageService.getInstance();
         Matrix.setIdentityM(mSpaceMatrix, 0);
+        mSharedAnchorObject = new GVRSceneObject(petContext.getGVRContext());
     }
+
+    @Override
+    public float getARToVRScale() { return mMixedReality.getARToVRScale(); }
 
     @Override
     public void resume() {
@@ -61,6 +70,8 @@ public class SharedMixedReality implements IMRCommon {
     public void pause() {
         mMixedReality.pause();
     }
+
+    public GVREventReceiver getEventReceiver() { return mMixedReality.getEventReceiver(); }
 
     /**
      * Starts the sharing mode
@@ -76,6 +87,7 @@ public class SharedMixedReality implements IMRCommon {
         Log.d(TAG, "startSharing => " + mode);
 
         mSharedAnchor = sharedAnchor;
+        mSharedAnchorObject.attachComponent(mSharedAnchor);
 
         mMode = mode;
 
@@ -88,6 +100,7 @@ public class SharedMixedReality implements IMRCommon {
 
     public void stopSharing() {
         EventBusUtils.unregister(this);
+        mSharedAnchorObject.detachComponent(GVRAnchor.getComponentType());
         if (mMode == PetConstants.SHARE_MODE_GUEST) {
             stopGuest();
         }
@@ -107,9 +120,9 @@ public class SharedMixedReality implements IMRCommon {
     private synchronized void initAsGuest(SharedSceneObject shared) {
         shared.parent = shared.object.getParent();
         if (shared.parent != null) {
-            if (shared.parent instanceof GVRPlane) {
+            if (shared.parent.getComponent(GVRPlane.getComponentType()) != null) {
                 // TODO: Fix MR API
-                ((GVRPlane) shared.parent).setSceneObject(null);
+                shared.parent.detachComponent(GVRPlane.getComponentType());
             } else {
                 shared.parent.removeChildObject(shared.object);
             }
@@ -155,30 +168,12 @@ public class SharedMixedReality implements IMRCommon {
                 mSharedSceneObjects.remove(shared);
         }
     }
+    @Override
+    public float getScreenDepth() { return mMixedReality.getScreenDepth(); }
 
     @Override
     public GVRSceneObject getPassThroughObject() {
         return mMixedReality.getPassThroughObject();
-    }
-
-    @Override
-    public void registerPlaneListener(IPlaneEventsListener listener) {
-        mMixedReality.registerPlaneListener(listener);
-    }
-
-    @Override
-    public void unregisterPlaneListener(IPlaneEventsListener iPlaneEventsListener) {
-        mMixedReality.unregisterPlaneListener(iPlaneEventsListener);
-    }
-
-    @Override
-    public void registerAnchorListener(IAnchorEventsListener listener) {
-        mMixedReality.registerAnchorListener(listener);
-    }
-
-    @Override
-    public void registerAugmentedImageListener(IAugmentedImageEventsListener listener) {
-        mMixedReality.registerAugmentedImageListener(listener);
     }
 
     @Override
@@ -192,6 +187,11 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     @Override
+    public GVRSceneObject createAnchorNode(float[] pose) {
+        return mMixedReality.createAnchorNode(pose);
+    }
+
+    @Override
     public void updateAnchorPose(GVRAnchor gvrAnchor, float[] pose) {
         mMixedReality.updateAnchorPose(gvrAnchor, pose);
     }
@@ -202,13 +202,13 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     @Override
-    public void hostAnchor(GVRAnchor gvrAnchor, ICloudAnchorListener listener) {
-        mMixedReality.hostAnchor(gvrAnchor, listener);
+    public void hostAnchor(GVRAnchor gvrAnchor, IMixedReality.CloudAnchorCallback cb) {
+        mMixedReality.hostAnchor(gvrAnchor, cb);
     }
 
     @Override
-    public void resolveCloudAnchor(String anchorId, ICloudAnchorListener listener) {
-        mMixedReality.resolveCloudAnchor(anchorId, listener);
+    public void resolveCloudAnchor(String anchorId, IMixedReality.CloudAnchorCallback cb) {
+        mMixedReality.resolveCloudAnchor(anchorId, cb);
     }
 
     @Override
@@ -217,13 +217,13 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     @Override
-    public GVRHitResult hitTest(GVRSceneObject gvrSceneObject, GVRPicker.GVRPickedObject gvrPickedObject) {
-        return mMixedReality.hitTest(gvrSceneObject, gvrPickedObject);
+    public GVRHitResult hitTest(GVRPicker.GVRPickedObject gvrPickedObject) {
+        return mMixedReality.hitTest(gvrPickedObject);
     }
 
     @Override
-    public GVRHitResult hitTest(GVRSceneObject gvrSceneObject, float x, float y) {
-        return mMixedReality.hitTest(gvrSceneObject, x, y);
+    public GVRHitResult hitTest(float x, float y) {
+        return mMixedReality.hitTest(x, y);
     }
 
     @Override
@@ -232,18 +232,18 @@ public class SharedMixedReality implements IMRCommon {
     }
 
     @Override
-    public void setAugmentedImage(Bitmap bitmap) {
-        mMixedReality.setAugmentedImage(bitmap);
+    public void setMarker(Bitmap bitmap) {
+        mMixedReality.setMarker(bitmap);
     }
 
     @Override
-    public void setAugmentedImages(ArrayList<Bitmap> arrayList) {
-        mMixedReality.setAugmentedImages(arrayList);
+    public void setMarkers(ArrayList<Bitmap> arrayList) {
+        mMixedReality.setMarkers(arrayList);
     }
 
     @Override
-    public ArrayList<GVRAugmentedImage> getAllAugmentedImages() {
-        return mMixedReality.getAllAugmentedImages();
+    public ArrayList<GVRMarker> getAllMarkers() {
+        return mMixedReality.getAllMarkers();
     }
 
     @Override
