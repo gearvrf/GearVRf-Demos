@@ -37,17 +37,17 @@ public class AvatarMain extends GVRMain
         {
             if (avatarRoot.getParent() == null)
             {
-                mContext.runOnGlThread(new Runnable()
+                mScene.addSceneObject(avatarRoot);
+                mContext.runOnGlThreadPostRender(1, new Runnable()
                 {
                     public void run()
                     {
-
                         GVRTransform t = avatarRoot.getTransform();
-                        avatar.centerModel(avatarRoot);
-                        t.setPosition(0, -0.01f, -0.2f);
-                        // avatarRoot.getTransform().setRotationByAxis(-180,0,1,0);
-                        t.setScale(0.0004f, 0.0004f, 0.0004f);
-                        mScene.addSceneObject(avatarRoot);
+                        GVRSceneObject.BoundingVolume bv = avatarRoot.getBoundingVolume();
+                        float sf = 1 / bv.radius;
+                        t.setScale(sf, sf, sf);
+                        bv = avatarRoot.getBoundingVolume();
+                        t.setPosition(-bv.center.x, -0.5f - bv.center.y, -bv.center.z - 1);
                     }
                 });
             }
@@ -91,19 +91,31 @@ public class AvatarMain extends GVRMain
         mScene = gvrContext.getMainScene();
         GVRCameraRig rig = mScene.getMainCameraRig();
         GVRDirectLight topLight = new GVRDirectLight(gvrContext);
-        topLight.setAmbientIntensity(0.5f, 0.5f, 0.5f, 1f);
+        GVRDirectLight headLight = new GVRDirectLight(gvrContext);
+        GVRSceneObject environment = null;
+
+        headLight.setAmbientIntensity(0, 0, 0, 1f);
+        headLight.setDiffuseIntensity(0.3f, 0.3f, 0.3f, 1f);
+        headLight.setSpecularIntensity(0.3f, 0.3f, 0.3f, 1f);
+        topLight.setSpecularIntensity(0.3f, 0.3f, 0.3f, 1f);
+        topLight.setAmbientIntensity(0.3f, 0.3f, 0.3f, 1f);
+        topLight.setDiffuseIntensity(0.5f, 0.5f, 0.5f, 1f);
         GVRSceneObject topLightObj = new GVRSceneObject(gvrContext);
         topLightObj.attachComponent(topLight);
         topLightObj.getTransform().rotateByAxis(-45, 1, 0, 0);
-        // mScene.addSceneObject(topLightObj);
-        rig.getLeftCamera().setBackgroundColor(Color.LTGRAY);
-        rig.getRightCamera().setBackgroundColor(Color.LTGRAY);
-        GVRSceneObject environment = null;
-        GVRAvatar avatar = mAvManager.selectAvatar("YBOT");
+        mScene.addSceneObject(topLightObj);
+        rig.getOwnerObject().attachLight(headLight);
+        rig.getTransform().setPositionY(-0.5f);
+        rig.getRightCamera().setBackgroundColor(Color.BLUE);
+        rig.getLeftCamera().setBackgroundColor(Color.BLUE);
+        rig.getCenterCamera().setBackgroundColor(Color.BLUE);
+        mAvManager.selectAvatar("YBOT");
 
         try
         {
             environment = mContext.getAssetLoader().loadModel("environment/environment_test_2.fbx", mScene);
+            environment.getTransform().rotateByAxis(180, 1, 0, 0);
+            environment.getTransform().setScale(2, 2, 2);
         }
         catch (IOException ex)
         {
@@ -111,8 +123,6 @@ public class AvatarMain extends GVRMain
             mActivity.finish();
             mActivity = null;
         }
-        avatar.centerModel(environment);
-        environment.getTransform().setPositionZ(-1.25f);
         mAvManager.loadModel();
         gvrContext.getInputManager().selectController();
     }
