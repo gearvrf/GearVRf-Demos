@@ -31,6 +31,7 @@ import org.gearvrf.animation.GVRAvatar;
 import org.gearvrf.animation.GVRRepeatMode;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
+import org.gearvrf.mixedreality.GVRLightEstimate;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
@@ -76,10 +77,14 @@ public class AvatarMain extends GVRMain {
     @Override
     public void onStep()
     {
-        float light = mMixedReality.getLightEstimate().getPixelIntensity() * 1.5f;
-        mSceneLight.setAmbientIntensity(light, light, light, 1);
-        mSceneLight.setDiffuseIntensity(light, light, light, 1);
-        mSceneLight.setSpecularIntensity(light, light, light, 1);
+        GVRLightEstimate lightEstimate = mMixedReality.getLightEstimate();
+        if (lightEstimate != null)
+        {
+            float light = lightEstimate.getPixelIntensity() * 1.5f;
+            mSceneLight.setAmbientIntensity(light, light, light, 1);
+            mSceneLight.setDiffuseIntensity(light, light, light, 1);
+            mSceneLight.setSpecularIntensity(light, light, light, 1);
+        }
     }
 
 

@@ -136,10 +136,6 @@ public class SceneUtils
                 newController.setCursorDepth(cursorDepth);
                 newController.setCursorControl(GVRCursorController.CursorControl.PROJECT_CURSOR_ON_SURFACE);
                 newController.getPicker().setEventOptions(eventOptions);
-                if (newController instanceof GVRGazeCursorController)
-                {
-                    ((GVRGazeCursorController) newController).setTouchScreenDepth(screenDepth);
-                }
             }
         });
     }
