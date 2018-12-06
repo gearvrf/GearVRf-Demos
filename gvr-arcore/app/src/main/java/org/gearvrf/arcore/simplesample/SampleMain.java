@@ -161,7 +161,7 @@ public class SampleMain extends GVRMain {
                 return;
             }
 
-            if (mDraggingObject == null) {
+            if (mDraggingObject == null && pickInfo.motionEvent != null) {
                 mDraggingObject = sceneObj;
 
                 mYaw = sceneObj.getTransform().getRotationYaw();
@@ -200,7 +200,7 @@ public class SampleMain extends GVRMain {
 
             if (mDraggingObject == null) {
                 return;
-            } else {
+            } else if (pickInfo.motionEvent != null){
                 // get the current x,y hit location
                 float hitLocationX = pickInfo.motionEvent.getX();
                 float hitLocationY = pickInfo.motionEvent.getY();
@@ -262,7 +262,8 @@ public class SampleMain extends GVRMain {
         GVRAnchor anchor;
 
         if (mVirtObjCount < MAX_VIRTUAL_OBJECTS) {
-             anchor = mixedReality.createAnchor(pose, andy);
+             anchor = mixedReality.createAnchor(pose);
+             anchor.attachSceneObject(andy);
 
             mainScene.addSceneObject(anchor);
             mVirtualObjects.add(anchor);
