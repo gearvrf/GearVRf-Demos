@@ -219,7 +219,9 @@ public class AvatarMain extends GVRMain {
             }
             else
             {
-                avatarAnchor = mMixedReality.createAnchorNode(pose);
+                avatarAnchor = new GVRSceneObject(mContext);
+                anchor = mMixedReality.createAnchor(pose);
+                avatarAnchor.attachComponent(anchor);
                 avatarAnchor.addChildObject(avatarModel);
                 avatarModel.attachComponent(new GVRBoxCollider(mContext));
                 mScene.addSceneObject(avatarAnchor);
