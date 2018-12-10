@@ -15,266 +15,549 @@
 
 package org.gearvrf.arcore.simplesample;
 
-import android.util.Log;
+import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 
+import org.gearvrf.GVRBoxCollider;
 import org.gearvrf.GVRContext;
+import org.gearvrf.GVRDirectLight;
 import org.gearvrf.GVREventListeners;
+import org.gearvrf.GVRLight;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRPicker;
+import org.gearvrf.GVRPointLight;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTransform;
+import org.gearvrf.ITouchEvents;
 import org.gearvrf.mixedreality.GVRAnchor;
 import org.gearvrf.mixedreality.GVRHitResult;
+import org.gearvrf.mixedreality.GVRLightEstimate;
 import org.gearvrf.mixedreality.GVRMixedReality;
 import org.gearvrf.mixedreality.GVRPlane;
 import org.gearvrf.mixedreality.GVRTrackingState;
-import org.gearvrf.mixedreality.IAnchorEventsListener;
-import org.gearvrf.mixedreality.IPlaneEventsListener;
+import org.gearvrf.mixedreality.IAnchorEvents;
+import org.gearvrf.mixedreality.IMixedReality;
+import org.gearvrf.mixedreality.IPlaneEvents;
+import org.gearvrf.utility.Log;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * This sample illustrates how to load, place and move a 3D model
+ * on a plane in the real world.
+ */
 public class SampleMain extends GVRMain {
     private static String TAG = "GVR_ARCORE";
     private static int MAX_VIRTUAL_OBJECTS = 20;
 
     private GVRContext mGVRContext;
     private GVRScene mainScene;
-
     private GVRMixedReality mixedReality;
     private SampleHelper helper;
-    private TouchHandler mTouchHandler;
-
-
-
+    private DragHandler mTouchHandler;
     private List<GVRAnchor> mVirtualObjects;
     private int mVirtObjCount = 0;
+    private GVRDirectLight mSceneLight;
+    private SelectionHandler mSelector;
 
-
+    /**
+     * Initialize the MixedReality extension and
+     * provide it with listeners for plane detection
+     * and anchor tracking.
+     *
+     * A headlight is put in the scene to illuminate
+     * objects the camera is pointed at.
+     */
     @Override
-    public void onInit(GVRContext gvrContext) {
+    public void onInit(GVRContext gvrContext)
+    {
         mGVRContext = gvrContext;
         mainScene = mGVRContext.getMainScene();
         helper = new SampleHelper();
-        mTouchHandler = new TouchHandler();
-        mVirtualObjects = new ArrayList<>() ;
+        mTouchHandler = new DragHandler();
+        mVirtualObjects = new ArrayList<>();
         mVirtObjCount = 0;
-
-        helper.initCursorController(gvrContext, mTouchHandler);
-
-
-        mixedReality = new GVRMixedReality(gvrContext, mainScene);
-        mixedReality.registerPlaneListener(planeEventsListener);
-        mixedReality.registerAnchorListener(anchorEventsListener);
+        mSceneLight = new GVRDirectLight(gvrContext);
+        mainScene.getMainCameraRig().getHeadTransformObject().attachComponent(mSceneLight);
+        mixedReality = new GVRMixedReality(mainScene);
+        mixedReality.getEventReceiver().addListener(planeEventsListener);
+        mixedReality.getEventReceiver().addListener(anchorEventsListener);
+        mSelector = new SelectionHandler(gvrContext, mixedReality);
         mixedReality.resume();
-
     }
 
+
+    /**
+     * Loads a 3D model using the asset loaqder and attaches
+     * a collider to it so it can be picked.
+     * If you are using phone AR, the touch screen can
+     * be used to drag, rotate or scale the object.
+     * If you are using a headset, the controller
+     * is used for picking and moving.
+     */
+    private GVRSceneObject load3dModel(final GVRContext gvrContext) throws IOException
+    {
+        final GVRSceneObject sceneObject = gvrContext.getAssetLoader().loadModel("objects/andy.obj");
+        sceneObject.attachComponent(new GVRBoxCollider(gvrContext));
+        sceneObject.getEventReceiver().addListener(mSelector);
+        return sceneObject;
+    }
+
+    /**
+     * The mixed reality extension runs in the background and does
+     * light estimation. Each frame the intensity of the ambient
+     * lighting is adjusted based on that estimate.
+     */
     @Override
-    public void onStep() {
+    public void onStep()
+    {
         super.onStep();
-        for (GVRAnchor anchor: mVirtualObjects) {
-            for (GVRSceneObject obj: anchor.getChildren()) {
-                ((VirtualObject)obj).reactToLightEnvironment(
-                        mixedReality.getLightEstimate().getPixelIntensity());
-            }
+        GVRLightEstimate lightEstimate = mixedReality.getLightEstimate();
+        if (lightEstimate != null)
+        {
+            float light = lightEstimate.getPixelIntensity();
+            mSceneLight.setAmbientIntensity(light, light, light, 1);
+            mSceneLight.setDiffuseIntensity(0.4f, 0.4f, 0.4f, 1);
+            mSceneLight.setSpecularIntensity(0.2f, 0.2f, 0.2f, 1);
         }
     }
 
-    private IPlaneEventsListener planeEventsListener = new IPlaneEventsListener() {
+    /**
+     * The plane events listener handles plane detection events.
+     * It also handles initialization and shutdown.
+     */
+    private IPlaneEvents planeEventsListener = new IPlaneEvents()
+    {
+        /**
+         * Get the depth of the touch screen in the 3D world
+         * and give it to the cursor controller so touch
+         * events will be handled properly.
+         */
         @Override
-        public void onPlaneDetection(GVRPlane gvrPlane) {
-            gvrPlane.setSceneObject(helper.createQuadPlane(getGVRContext()));
-            mainScene.addSceneObject(gvrPlane);
+        public void onStartPlaneDetection(IMixedReality mr)
+        {
+            float screenDepth = mr.getScreenDepth();
+            mr.getPassThroughObject().getEventReceiver().addListener(mTouchHandler);
+            helper.initCursorController(mGVRContext, mTouchHandler, screenDepth);
         }
 
         @Override
-        public void onPlaneStateChange(GVRPlane gvrPlane, GVRTrackingState gvrTrackingState) {
-            if (gvrTrackingState != GVRTrackingState.TRACKING) {
-                gvrPlane.setEnable(false);
+        public void onStopPlaneDetection(IMixedReality mr) { }
+
+        /**
+         * Place a transparent quad in the 3D scene to indicate
+         * vertically upward planes (floor, table top).
+         * We don't need colliders on these since they are
+         * not pickable.
+          */
+        @Override
+        public void onPlaneDetected(GVRPlane gvrPlane)
+        {
+            if (gvrPlane.getPlaneType() == GVRPlane.Type.VERTICAL)
+            {
+                return;
             }
-            else {
-                gvrPlane.setEnable(true);
-            }
+            GVRSceneObject planeMesh = helper.createQuadPlane(getGVRContext());
+
+            planeMesh.attachComponent(gvrPlane);
+            mainScene.addSceneObject(planeMesh);
+        }
+
+        /**
+         * Show/hide the 3D plane node based on whether it
+         * is being tracked or not.
+         */
+        @Override
+        public void onPlaneStateChange(GVRPlane gvrPlane, GVRTrackingState state)
+        {
+            gvrPlane.setEnable(state == GVRTrackingState.TRACKING);
         }
 
         @Override
-        public void onPlaneMerging(GVRPlane gvrPlane, GVRPlane gvrPlane1) {
+        public void onPlaneMerging(GVRPlane gvrPlane, GVRPlane gvrPlane1) { }
+    };
+
+    /**
+     * Show/hide the 3D node associated with the anchor
+     * based on whether it is being tracked or not.
+     */
+    private IAnchorEvents anchorEventsListener = new IAnchorEvents()
+    {
+        @Override
+        public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState state)
+        {
+            gvrAnchor.setEnable(state == GVRTrackingState.TRACKING);
         }
     };
 
-    private IAnchorEventsListener anchorEventsListener = new IAnchorEventsListener() {
-        @Override
-        public void onAnchorStateChange(GVRAnchor gvrAnchor, GVRTrackingState gvrTrackingState) {
-            if (gvrTrackingState != GVRTrackingState.TRACKING) {
-                gvrAnchor.setEnable(false);
-            }
-            else {
-                gvrAnchor.setEnable(true);
-            }
-        }
-    };
-
-    public class TouchHandler extends GVREventListeners.TouchEvents {
-        private GVRSceneObject mDraggingObject = null;
-        private float mHitX;
+    /**
+     * Handles selection hilighting, rotation and scaling
+     * of currently selected 3D object.
+     * A light attached to the parent of the
+     * selected 3D object is used for hiliting it.
+     * The root of the hierarchy can be rotated or scaled.
+     */
+    static public class SelectionHandler implements ITouchEvents
+    {
+        static final int DRAG = 1;
+        static final int SCALE_ROTATE = -1;
+        static final int UNTOUCHED = 0;
+        static private GVRSceneObject mSelected = null;
+        private int mSelectionMode = UNTOUCHED;
+        private final float[] PICKED_COLOR = {0.4f, 0.6f, 0, 1.0f};
+        private final float[] UPDATE_COLOR = {0.6f, 0, 0.4f, 1.0f};
+        private final float[] DRAG_COLOR = {0, 0.6f, 0.4f, 1.0f};
+        private GVRSceneObject mSelectionLight;
+        private IMixedReality mMixedReality;
         private float mHitY;
-        private float mYaw;
-        private float mScale;
+        private float mHitX;
 
-
-        @Override
-        public void onEnter(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            super.onEnter(sceneObj, pickInfo);
-
-            if (sceneObj == mixedReality.getPassThroughObject() || mDraggingObject != null) {
-                return;
-            }
-
-            ((VirtualObject)sceneObj).onPickEnter();
+        public SelectionHandler(GVRContext ctx, IMixedReality mr)
+        {
+            super();
+            mMixedReality = mr;
+            mSelectionLight = new GVRSceneObject(ctx);
+            mSelectionLight.setName("SelectionLight");
+            GVRPointLight light = new GVRPointLight(ctx);
+            light.setSpecularIntensity(0.1f, 0.1f, 0.1f, 0.1f);
+            mSelectionLight.attachComponent(light);
+            mSelectionLight.getTransform().setPositionZ(1.0f);
         }
 
-        @Override
-        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            super.onExit(sceneObj, pickInfo);
+        public static GVRSceneObject getSelected() { return mSelected; }
 
-            if (sceneObj == mixedReality.getPassThroughObject()) {
-                if (mDraggingObject != null) {
-                    ((VirtualObject) mDraggingObject).onPickExit();
-                    mDraggingObject = null;
+        /*
+         * When entering an anchored object, it is hilited by
+         * adding a point light under its parent.
+         */
+        public void onEnter(GVRSceneObject target, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if (mSelected != null)
+            {
+                return;
+            }
+            GVRPointLight light =
+                (GVRPointLight) mSelectionLight.getComponent(GVRLight.getComponentType());
+            light.setDiffuseIntensity(PICKED_COLOR[0],
+                                      PICKED_COLOR[1],
+                                      PICKED_COLOR[1],
+                                      PICKED_COLOR[2]);
+            GVRSceneObject lightParent = mSelectionLight.getParent();
+            GVRSceneObject targetParent = target.getParent();
+
+            if (lightParent != null)
+            {
+                if (lightParent != targetParent)
+                {
+                    lightParent.removeChildObject(mSelectionLight);
+                    targetParent.addChildObject(mSelectionLight);
+                    mSelectionLight.getComponent(GVRLight.getComponentType()).enable();
                 }
-                return;
-            }
-
-            if (mDraggingObject == null) {
-                ((VirtualObject) sceneObj).onPickExit();
-            }
-        }
-
-        @Override
-        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            super.onTouchStart(sceneObj, pickInfo);
-
-            if (sceneObj == mixedReality.getPassThroughObject()) {
-                return;
-            }
-
-            if (mDraggingObject == null) {
-                mDraggingObject = sceneObj;
-
-                mYaw = sceneObj.getTransform().getRotationYaw();
-                mScale = sceneObj.getTransform().getScaleX();
-
-                mHitX = pickInfo.motionEvent.getX();
-                mHitY = pickInfo.motionEvent.getY();
-
-                Log.d(TAG, "onStartDragging");
-                ((VirtualObject)sceneObj).onTouchStart();
-            }
-        }
-
-        @Override
-        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            super.onTouchEnd(sceneObj, pickInfo);
-
-
-            if (mDraggingObject != null) {
-                Log.d(TAG, "onStopDragging");
-
-                if (pickSceneObject(mDraggingObject) == null) {
-                    ((VirtualObject) mDraggingObject).onPickExit();
-                } else {
-                    ((VirtualObject)mDraggingObject).onTouchEnd();
-                }
-                mDraggingObject = null;
-            } else if (sceneObj == mixedReality.getPassThroughObject()) {
-                onSingleTap(sceneObj, pickInfo);
-            }
-        }
-
-        @Override
-        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) {
-            super.onInside(sceneObj, pickInfo);
-
-            if (mDraggingObject == null) {
-                return;
-            } else {
-                // get the current x,y hit location
-                float hitLocationX = pickInfo.motionEvent.getX();
-                float hitLocationY = pickInfo.motionEvent.getY();
-
-                // find the diff from when we first touched down
-                float diffX = hitLocationX - mHitX;
-                float diffY = (hitLocationY - mHitY) / 100.0f;
-
-                // when we move along X, calculate an angle to rotate the model around the Y axis
-                float angle = mYaw + (diffX * 2);
-
-                // when we move along Y, calculate how much to scale the model
-                float scale = mScale + (diffY);
-                if(scale < 0.1f) {
-                    scale = 0.1f;
-                }
-
-                // set rotation and scale
-                mDraggingObject.getTransform().setRotationByAxis(angle, 0.0f, 1.0f, 0.0f);
-                mDraggingObject.getTransform().setScale(scale, scale, scale);
-            }
-
-
-            pickInfo = pickSceneObject(mixedReality.getPassThroughObject());
-            if (pickInfo != null) {
-                GVRHitResult gvrHitResult = mixedReality.hitTest(
-                        mixedReality.getPassThroughObject(), pickInfo);
-
-                if (gvrHitResult != null) {
-                    mixedReality.updateAnchorPose((GVRAnchor)mDraggingObject.getParent(),
-                            gvrHitResult.getPose());
+                else
+                {
+                    mSelectionLight.getComponent(GVRLight.getComponentType()).enable();
                 }
             }
+            else
+            {
+                targetParent.addChildObject(mSelectionLight);
+                mSelectionLight.getComponent(GVRLight.getComponentType()).enable();
+            }
         }
 
-        private GVRPicker.GVRPickedObject pickSceneObject(GVRSceneObject sceneObject) {
-            Vector3f origin = new Vector3f();
-            Vector3f direction = new Vector3f();
-
-            helper.getCursorController().getPicker().getWorldPickRay(origin, direction);
-
-            return GVRPicker.pickSceneObject(sceneObject, origin.x, origin.y, origin.z,
-                    direction.x, direction.y, direction.z);
+        /*
+         * When the object is no longer selected, its selection light is disabled.
+         */
+        public void onExit(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if ((mSelected == sceneObj) || (mSelected == null))
+            {
+                mSelectionLight.getComponent(GVRLight.getComponentType()).disable();
+                mSelected = null;
+            }
         }
 
-        private void onSingleTap(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject collision) {
-            GVRHitResult gvrHitResult = mixedReality.hitTest(sceneObj, collision);
-            VirtualObject andy = new VirtualObject(mGVRContext);
-
-            if (gvrHitResult == null) {
+        /*
+         * The color of the selection light changes when the object is being dragged.
+         * If another object is already selected, ignore the touch event.
+         */
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if (pickInfo.motionEvent == null)
+            {
                 return;
             }
+            if (mSelected == null)
+            {
+                startTouch(sceneObj,
+                           pickInfo.motionEvent.getX(),
+                           pickInfo.motionEvent.getY(),
+                           SCALE_ROTATE);
+            }
+        }
 
-            addVirtualObject(gvrHitResult.getPose(), andy);
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo) { }
+
+        public void onMotionOutside(GVRPicker picker, MotionEvent event) { }
+
+        /*
+         * Rotate and scale the object relative to its current state.
+         * The node being rotated / scaled is a child
+         * of the anchored object (which is being oriented and positioned
+         * by MixedReality).
+         */
+        private void scaleRotate(float rotateDelta, float scaleDelta)
+        {
+            GVRSceneObject selected = getSelected();
+            GVRTransform t = selected.getTransform();
+            float scale = t.getScaleX();
+            Quaternionf q = new Quaternionf();
+            Vector3f ea = new Vector3f();
+            float angle = rotateDelta / 10.0f;
+
+            /*
+             * rotate about Y axis
+             */
+            q.set(t.getRotationX(), t.getRotationY(), t.getRotationZ(), t.getRotationW());
+            q.getEulerAnglesXYZ(ea);
+            q.rotateAxis(angle, 0, 1, 0);
+
+            /*
+             * scale the model
+             */
+            scale += scaleDelta / 20.0f;
+            if (scale < 0.1f)
+            {
+                scale = 0.1f;
+            }
+            else if (scale > 50.0f)
+            {
+                scale = 50.0f;
+            }
+            t.setRotation(q.w, q.x, q.y, q.z);
+            t.setScale(scale, scale, scale);
+        }
+
+        private void drag(float x, float y)
+        {
+            GVRAnchor anchor = (GVRAnchor) mSelected.getParent().getComponent(GVRAnchor.getComponentType());
+
+            if (anchor != null)
+            {
+                GVRHitResult hit = mMixedReality.hitTest(x, y);
+
+                if (hit != null)
+                {                           // move the object to a new position
+                    mMixedReality.updateAnchorPose(anchor, hit.getPose());
+                }
+            }
+        }
+
+        public void update(GVRPicker.GVRPickedObject pickInfo)
+        {
+            float x = pickInfo.motionEvent.getX();
+            float y = pickInfo.motionEvent.getY();
+
+            if (mSelectionMode == SCALE_ROTATE)
+            {
+                float dx = (x - mHitX) / 100.0f;
+                float dy = (y - mHitY) / 100.0f;
+                scaleRotate(dx, dy);
+            }
+            else if (mSelectionMode == DRAG)
+            {
+                drag(x, y);
+            }
+        }
+
+        public void startTouch(GVRSceneObject sceneObj, float hitx, float hity, int mode)
+        {
+            GVRPointLight light =
+                (GVRPointLight) mSelectionLight.getComponent(GVRLight.getComponentType());
+            mSelectionMode = mode;
+            mSelected = sceneObj;
+            if (mode == DRAG)
+            {
+                light.setDiffuseIntensity(DRAG_COLOR[0],
+                                          DRAG_COLOR[1],
+                                          DRAG_COLOR[1],
+                                          DRAG_COLOR[2]);
+            }
+            else
+            {
+                light.setDiffuseIntensity(UPDATE_COLOR[0],
+                                          UPDATE_COLOR[1],
+                                          UPDATE_COLOR[1],
+                                          UPDATE_COLOR[2]);
+            }
+            mHitX = hitx;
+            mHitY = hity;
+        }
+
+        public void endTouch()
+        {
+            GVRPointLight light =
+                (GVRPointLight) mSelectionLight.getComponent(GVRLight.getComponentType());
+            light.setDiffuseIntensity(PICKED_COLOR[0],
+                                      PICKED_COLOR[1],
+                                      PICKED_COLOR[1],
+                                      PICKED_COLOR[2]);
+            mSelected = null;
+            mSelectionMode = UNTOUCHED;
         }
     }
 
-    private void addVirtualObject(float[] pose, VirtualObject andy) {
-        GVRAnchor anchor;
 
-        if (mVirtObjCount < MAX_VIRTUAL_OBJECTS) {
-             anchor = mixedReality.createAnchor(pose, andy);
+    /**
+     * Handles touch events for the screen
+     * (those not inside 3D anchored objects).
+     * If phone AR isbeing used with passthru video,
+     * the object displaying the camera output also
+     * has a collider and is touchable.
+     * This is how picking is handled when using
+     * the touch screen.
+     *
+     * Tapping the screen or clicking on a plane
+     * will cause a 3D object to be placed there.
+     * Dragging with the controller or your finger
+     * inside the object will scale it (Y direction)
+     * and rotate it (X direction). Dragging outside
+     * a 3D object will drag the currently selected
+     * object (the last one you added/manipulated).
+     */
+    public class DragHandler extends GVREventListeners.TouchEvents
+    {
 
-            mainScene.addSceneObject(anchor);
-            mVirtualObjects.add(anchor);
+        @Override
+        public void onTouchStart(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        { }
+
+        @Override
+        public void onTouchEnd(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            if (SelectionHandler.getSelected() != null)
+            {
+                mSelector.endTouch();
+            }
+            else
+            {
+                GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
+                                                  pickInfo.hitLocation[1],
+                                                  pickInfo.hitLocation[2],
+                                                  500);
+                if (anchor != null)
+                {
+                    return;
+                }
+                float x = pickInfo.motionEvent.getX();
+                float y = pickInfo.motionEvent.getY();
+                GVRHitResult hit = mixedReality.hitTest(x, y);
+                if (hit != null)
+                {
+                    addVirtualObject(hit.getPose());
+                }
+            }
         }
-        else {
-            anchor = mVirtualObjects.get(mVirtObjCount % mVirtualObjects.size());
-            mixedReality.updateAnchorPose(anchor, pose);
+
+        public void onInside(GVRSceneObject sceneObj, GVRPicker.GVRPickedObject pickInfo)
+        {
+            GVRSceneObject selected = mSelector.getSelected();
+
+            if (pickInfo.motionEvent == null)
+            {
+                return;
+            }
+            if (pickInfo.touched)           // currently touching an object?
+            {
+                if (selected != null)       // is a 3D object selected?
+                {
+                    mSelector.update(pickInfo);
+                }
+                else
+                {
+                    GVRAnchor anchor = findAnchorNear(pickInfo.hitLocation[0],
+                                                      pickInfo.hitLocation[1],
+                                                      pickInfo.hitLocation[2],
+                                                      200);
+                    if (anchor != null)
+                    {
+                        selected = anchor.getOwnerObject();
+                        mSelector.startTouch(selected.getChildByIndex(0),
+                                             pickInfo.motionEvent.getX(),
+                                             pickInfo.motionEvent.getY(),
+                                             SelectionHandler.DRAG);
+                    }
+                }
+            }
         }
 
-        anchor.setName("id: " + mVirtObjCount);
-        Log.d(TAG, "New virtual object " + anchor.getName());
+        /**
+         * Load a 3D model and place it in the virtual world
+         * at the given position. The pose is a 4x4 matrix
+         * giving the real world position/orientation of
+         * the object. We create an anchor (and a corresponding
+         * node) to link the real and virtual pose together.
+         * The node attached to the anchor will be moved and
+         * oriented by the framework, anything you do
+         * to the transform of this node will be discarded
+         * (which is why we scale/rotate the child instead).
+         * @param pose
+         */
+        private void addVirtualObject(float[] pose)
+        {
+            if (mVirtObjCount >= MAX_VIRTUAL_OBJECTS)
+            {
+                return;
+            }
+            try
+            {
+                GVRSceneObject anchorObj = mixedReality.createAnchorNode(pose);
+                GVRSceneObject andy = load3dModel(getGVRContext());
+                anchorObj.addChildObject(andy);
+                GVRAnchor anchor = (GVRAnchor) anchorObj.getComponent(GVRAnchor.getComponentType());
+                mVirtualObjects.add(anchor);
+                mainScene.addSceneObject(anchorObj);
+                mVirtObjCount++;
+            }
+            catch (IOException ex)
+            {
+                ex.printStackTrace();
+                Log.e(TAG, ex.getMessage());
+            }
+        }
 
-        mVirtObjCount++;
-    }
+        /**
+         * Look for a 3D object in the scene near the given position.
+         * Used ro prevent objects from being placed too close together.
+         */
+        private GVRAnchor findAnchorNear(float x, float y, float z, float maxdist)
+        {
+            Matrix4f anchorMtx = new Matrix4f();
+            Vector3f v = new Vector3f();
+            for (GVRAnchor anchor : mVirtualObjects)
+            {
+                float[] anchorPose = anchor.getPose();
+                anchorMtx.set(anchorPose);
+                anchorMtx.getTranslation(v);
+                v.x -= x;
+                v.y -= y;
+                v.z -= z;
+                float d = v.length();
+                if (d < maxdist)
+                {
+                    return anchor;
+                }
+            }
+            return null;
+        }
+    };
+
 }

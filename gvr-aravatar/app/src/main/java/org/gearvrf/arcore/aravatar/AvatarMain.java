@@ -62,7 +62,7 @@ public class AvatarMain extends GVRMain {
         mSceneLight = mUtility.makeSceneLight(gvrContext);
         mScene.addSceneObject(mSceneLight.getOwnerObject());
         mAvManager = new AvatarManager(mContext, null);
-        mAvatar = mAvManager.selectAvatar("EVA");
+        mAvatar = mAvManager.selectAvatar("YBOT");
         if (mAvatar == null)
         {
             Log.e(TAG, "Avatar could not be found");
@@ -219,7 +219,9 @@ public class AvatarMain extends GVRMain {
             }
             else
             {
-                avatarAnchor = mMixedReality.createAnchorNode(pose);
+                avatarAnchor = new GVRSceneObject(mContext);
+                anchor = mMixedReality.createAnchor(pose);
+                avatarAnchor.attachComponent(anchor);
                 avatarAnchor.addChildObject(avatarModel);
                 avatarModel.attachComponent(new GVRBoxCollider(mContext));
                 mScene.addSceneObject(avatarAnchor);
