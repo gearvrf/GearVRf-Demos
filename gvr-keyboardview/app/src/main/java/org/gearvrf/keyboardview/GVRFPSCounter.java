@@ -10,7 +10,7 @@ import android.view.Surface;
 
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
-import org.gearvrf.GVRExternalTexture;
+import org.gearvrf.GVRExternalImage;
 import org.gearvrf.GVRMaterial;
 import org.gearvrf.GVRSceneObject;
 import org.gearvrf.GVRTexture;
@@ -36,7 +36,8 @@ public class GVRFPSCounter extends GVRSceneObject {
     public GVRFPSCounter(final GVRContext gvrContext) {
         super(gvrContext, gvrContext.createQuad(1.0f, 1.0f));
 
-        final GVRTexture texture = new GVRExternalTexture(gvrContext);
+        final GVRExternalImage image = new GVRExternalImage(gvrContext);
+        final GVRTexture texture = new GVRTexture(image);
         final GVRMaterial material = new GVRMaterial(gvrContext, GVRMaterial.GVRShaderType.OES.ID);
 
         mActivity = gvrContext.getActivity();

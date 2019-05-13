@@ -9,11 +9,12 @@ import android.view.Surface;
 import org.gearvrf.GVRActivity;
 import org.gearvrf.GVRContext;
 import org.gearvrf.GVRDrawFrameListener;
-import org.gearvrf.GVRExternalTexture;
+import org.gearvrf.GVRExternalImage;
 import org.gearvrf.GVRMain;
 import org.gearvrf.GVRMaterial.GVRShaderType;
 import org.gearvrf.GVRScene;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +42,8 @@ public class Camera2RenderscriptManager extends GVRMain {
 	public void onInit(GVRContext gvrContext) throws Throwable {
 		GVRScene mainScene = gvrContext.getMainScene();
 
-		GVRExternalTexture passThroughTexture = new GVRExternalTexture(gvrContext);
+		GVRExternalImage image = new GVRExternalImage(gvrContext);
+		final GVRTexture passThroughTexture = new GVRTexture(image);
 		mSurfaceTexture = new SurfaceTexture(passThroughTexture.getId());
 
 		GVRSceneObject passThroughObject = new GVRSceneObject(gvrContext, gvrContext.createQuad(3.0f, 1.5f), passThroughTexture,GVRShaderType.OES.ID);
@@ -49,7 +51,8 @@ public class Camera2RenderscriptManager extends GVRMain {
 		passThroughObject.getTransform().setPositionZ(-3.0f);
 		mainScene.getMainCameraRig().addChildObject(passThroughObject);
 
-		GVRExternalTexture effectTexture = new GVRExternalTexture(gvrContext);
+        image = new GVRExternalImage(gvrContext);
+        final GVRTexture effectTexture = new GVRTexture(image);
 		mEffectTexture = new SurfaceTexture(effectTexture.getId());
 
 		GVRSceneObject effectObject = new GVRSceneObject(gvrContext, gvrContext.createQuad(3.0f, 1.5f), effectTexture,GVRShaderType.OES.ID);
