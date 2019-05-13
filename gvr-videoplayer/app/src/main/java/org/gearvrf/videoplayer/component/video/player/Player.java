@@ -40,9 +40,10 @@ import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import org.gearvrf.GVRContext;
-import org.gearvrf.GVRExternalTexture;
+import org.gearvrf.GVRExternalImage;
 import org.gearvrf.GVRMeshCollider;
 import org.gearvrf.GVRSceneObject;
+import org.gearvrf.GVRTexture;
 import org.gearvrf.GVRTransform;
 import org.gearvrf.scene_objects.GVRSphereSceneObject;
 import org.gearvrf.scene_objects.GVRVideoSceneObject;
@@ -96,7 +97,8 @@ public class Player extends FadeableObject {
     }
 
     private void createVideoSceneObject() {
-        GVRExternalTexture texture = new GVRExternalTexture(mGvrContext);
+        final GVRExternalImage image = new GVRExternalImage(mGvrContext);
+        final GVRTexture texture = new GVRTexture(image);
         SurfaceTexture surfaceTexture = new SurfaceTexture(texture.getId());
         Surface surface = new Surface(surfaceTexture);
 
